@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Syne:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,51 +6,51 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 40 20% 90%;
+    --background: 0 0% 99%;
+    --foreground: 0 0% 8%;
 
-    --card: 0 0% 8%;
-    --card-foreground: 40 20% 90%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 8%;
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 40 20% 90%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 8%;
 
-    --primary: 10 100% 59%;
+    --primary: 170 60% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 100% 55%;
-    --secondary-foreground: 0 0% 4%;
+    --secondary: 300 40% 90%;
+    --secondary-foreground: 0 0% 8%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 260 20% 96%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 10 100% 59%;
+    --accent: 170 60% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 10 100% 59%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 170 60% 60%;
 
     --radius: 0.75rem;
 
     /* Custom Rhoze tokens */
-    --rhoze-glow: 10 100% 59%;
-    --rhoze-gold: 42 100% 60%;
-    --rhoze-cream: 40 20% 90%;
-    --rhoze-dark: 0 0% 4%;
-    --rhoze-surface: 0 0% 8%;
-    --rhoze-surface-hover: 0 0% 12%;
+    --rhoze-mint: 170 60% 60%;
+    --rhoze-pink: 300 60% 90%;
+    --rhoze-lavender: 260 40% 92%;
+    --rhoze-peach: 20 80% 92%;
+    --rhoze-surface: 0 0% 97%;
+    --rhoze-surface-hover: 0 0% 94%;
 
     --font-display: 'Syne', sans-serif;
-    --font-body: 'Space Grotesk', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
 
-    --gradient-fire: linear-gradient(135deg, hsl(10 100% 59%), hsl(30 100% 55%), hsl(42 100% 60%));
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 4%), hsl(0 0% 8%));
-    --shadow-glow: 0 0 40px -10px hsl(10 100% 59% / 0.4);
-    --shadow-glow-lg: 0 0 80px -20px hsl(10 100% 59% / 0.3);
+    --gradient-pastel: linear-gradient(135deg, hsl(170 60% 90%), hsl(300 60% 92%), hsl(260 40% 94%));
+    --gradient-mint: linear-gradient(135deg, hsl(170 60% 55%), hsl(170 80% 65%));
+    --shadow-soft: 0 4px 24px -4px hsl(0 0% 0% / 0.06);
+    --shadow-lift: 0 8px 40px -8px hsl(0 0% 0% / 0.08);
   }
 }
 
@@ -70,23 +70,27 @@
 }
 
 @layer utilities {
-  .text-gradient-fire {
-    background: var(--gradient-fire);
+  .text-gradient-pastel {
+    background: var(--gradient-pastel);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .bg-gradient-fire {
-    background: var(--gradient-fire);
+  .bg-gradient-pastel {
+    background: var(--gradient-pastel);
   }
 
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
+  .bg-gradient-mint {
+    background: var(--gradient-mint);
   }
 
-  .shadow-glow-lg {
-    box-shadow: var(--shadow-glow-lg);
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-lift {
+    box-shadow: var(--shadow-lift);
   }
 
   .font-display {

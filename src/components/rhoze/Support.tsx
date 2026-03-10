@@ -49,7 +49,7 @@ const Support = () => {
           >
             <code className="text-sm font-mono text-foreground break-all">{CONTRACT_ADDRESS}</code>
             {copied ? (
-              <Check size={16} className="text-green-400 flex-shrink-0" />
+              <Check size={16} className="text-rhoze-gold flex-shrink-0" />
             ) : (
               <Copy size={16} className="text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors" />
             )}

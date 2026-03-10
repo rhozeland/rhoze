@@ -14,8 +14,8 @@ const Chart = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4">
-            Live <span className="text-gradient-fire">Chart</span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4 text-foreground">
+            Live Chart
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto font-body">
             Track $RHOZE in real-time on DexScreener.
@@ -26,10 +26,10 @@ const Chart = () => {
           initial={{ opacity: 0, scale: 0.98 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="rounded-2xl overflow-hidden border border-border shadow-glow-lg"
+          className="rounded-2xl overflow-hidden border border-border shadow-lift"
         >
           <iframe
-            src="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf?embed=1&theme=dark&info=0"
+            src="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf?embed=1&theme=light&info=0"
             className="w-full"
             style={{ height: "500px", border: "none" }}
             title="DexScreener $RHOZE Chart"

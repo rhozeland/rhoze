@@ -16,7 +16,7 @@ const Ecosystem = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="ecosystem" className="py-32 px-6 bg-card" ref={ref}>
+    <section id="ecosystem" className="py-32 px-6 bg-rhoze-surface" ref={ref}>
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -24,8 +24,8 @@ const Ecosystem = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4">
-            The <span className="text-gradient-fire">Flywheel</span>
+          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4 text-foreground">
+            The Flywheel
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-lg font-body">
             Every piece of the ecosystem feeds the next. Revenue in, value out, community first.
@@ -39,20 +39,19 @@ const Ecosystem = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.08 * i }}
-              className="relative p-6 rounded-2xl border border-border bg-background hover:border-primary/30 transition-all group"
+              className="relative p-6 rounded-2xl border border-border bg-card hover:border-primary/30 transition-all group hover:shadow-lift"
             >
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <p.icon className="text-primary" size={20} />
                 </div>
-                <h3 className="font-display font-bold text-lg">{p.label}</h3>
+                <h3 className="font-display font-bold text-lg text-foreground">{p.label}</h3>
               </div>
               <p className="text-muted-foreground text-sm font-body leading-relaxed">{p.desc}</p>
             </motion.div>
           ))}
         </div>
 
-        {/* Flywheel visual */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -66,7 +65,7 @@ const Ecosystem = () => {
                 className={
                   item === "→"
                     ? "text-primary text-xl"
-                    : "px-4 py-2 rounded-full border border-border text-sm font-body text-foreground bg-muted"
+                    : "px-4 py-2 rounded-full border border-border text-sm font-body text-foreground bg-card"
                 }
               >
                 {item}

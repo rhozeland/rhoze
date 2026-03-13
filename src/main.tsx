@@ -1,2 +1,2 @@
-// Static HTML page — no framework needed. See index.html.
-export {}
+// Site is pure HTML/CSS — see index.html
+

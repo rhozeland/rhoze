@@ -212,66 +212,33 @@
       display: flex; flex-direction: column; align-items: center; gap: 3rem;
     }
     .flywheel {
-      position: relative; width: 520px; height: 520px;
+      position: relative; width: 560px; height: 560px;
     }
-    /* Outer ring – rotating labels */
-    .flywheel-outer {
-      position: absolute; inset: 0;
-      border: 2px solid hsl(170, 60%, 75%);
-      border-radius: 50%;
-    }
-    /* Outer labels positioned around the circle */
-    .flywheel-outer-label {
-      position: absolute; font-size: 0.95rem; font-weight: 600;
-      color: var(--fg); white-space: nowrap;
-    }
-    .flywheel-outer-label.top    { top: -2rem; left: 50%; transform: translateX(-50%); }
-    .flywheel-outer-label.right  { right: -4.5rem; top: 50%; transform: translateY(-50%); }
-    .flywheel-outer-label.bottom { bottom: -2rem; left: 50%; transform: translateX(-50%); }
-    .flywheel-outer-label.left   { left: -4.5rem; top: 50%; transform: translateY(-50%); }
-    /* Arrow indicators on outer ring */
-    .flywheel-arrow {
-      position: absolute; color: hsl(170, 60%, 65%); font-size: 1rem;
-    }
-    .flywheel-arrow.top-right { top: 4.5rem; right: 3.5rem; transform: rotate(-45deg); }
-    .flywheel-arrow.bottom-right { bottom: 4.5rem; right: 3.5rem; transform: rotate(45deg); }
-    .flywheel-arrow.bottom-left { bottom: 4.5rem; left: 3.5rem; transform: rotate(135deg); }
-    .flywheel-arrow.top-left { top: 4.5rem; left: 3.5rem; transform: rotate(-135deg); }
+    .flywheel svg { width: 100%; height: 100%; }
 
-    /* Middle ring */
-    .flywheel-mid {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 370px; height: 370px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: hsla(170, 60%, 80%, 0.25);
-    }
-    /* Inner action labels on the mid ring */
-    .flywheel-mid-label {
-      position: absolute; font-size: 1.05rem; font-weight: 700;
-      color: hsl(170, 40%, 30%);
-    }
-    .flywheel-mid-label.top    { top: 1.5rem; left: 50%; transform: translateX(-50%); }
-    .flywheel-mid-label.right  { right: 1rem; top: 50%; transform: translateY(-50%) rotate(0deg); }
-    .flywheel-mid-label.bottom { bottom: 1.5rem; left: 50%; transform: translateX(-50%); }
-    .flywheel-mid-label.left   { left: 1rem; top: 50%; transform: translateY(-50%); }
+    /* Slow continuous rotation on outer arrows ring */
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .flywheel-spin { animation: spin-slow 20s linear infinite; transform-origin: 280px 280px; }
 
-    /* Center circle */
-    .flywheel-center {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 180px; height: 180px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: var(--gradient-mint);
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 8px 32px hsla(170, 60%, 50%, 0.3);
+    /* Pulsing glow on center */
+    @keyframes pulse-glow {
+      0%, 100% { filter: drop-shadow(0 0 12px hsla(170,60%,50%,0.4)); }
+      50% { filter: drop-shadow(0 0 28px hsla(170,60%,50%,0.7)); }
     }
-    .flywheel-center span {
-      font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
-      color: #fff;
+    .flywheel-center-g { animation: pulse-glow 3s ease-in-out infinite; }
+
+    /* Dash animation on the orbit path */
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -60; }
     }
+    .orbit-dash {
+      stroke-dasharray: 18 12;
+      animation: dash-flow 1.5s linear infinite;
+    }
+
+    /* Stage nodes */
+    .flywheel-node-bg { transition: filter 0.3s; }
+    .flywheel:hover .flywheel-node-bg { filter: brightness(1.08); }
 
     /* Pillar cards below the wheel */
     .flywheel-pillars {
@@ -295,16 +262,9 @@
     .flywheel-pillar p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
 
     @media (max-width: 768px) {
-      .flywheel { width: 320px; height: 320px; }
-      .flywheel-mid { width: 230px; height: 230px; }
-      .flywheel-center { width: 110px; height: 110px; }
-      .flywheel-center span { font-size: 1.1rem; }
-      .flywheel-outer-label { font-size: 0.8rem; }
-      .flywheel-outer-label.right { right: -3.5rem; }
-      .flywheel-outer-label.left { left: -3.5rem; }
-      .flywheel-mid-label { font-size: 0.85rem; }
+      .flywheel { width: 340px; height: 340px; }
+      .flywheel-spin { transform-origin: 170px 170px; }
       .flywheel-pillars { grid-template-columns: 1fr 1fr; }
-      .flywheel-arrow { display: none; }
     }
     @media (max-width: 480px) {
       .flywheel-pillars { grid-template-columns: 1fr; }

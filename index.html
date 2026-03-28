@@ -454,29 +454,74 @@
       <div class="flywheel-wrapper">
         <!-- Circular flywheel diagram -->
         <div class="flywheel">
-          <!-- Outer ring -->
-          <div class="flywheel-outer">
-            <span class="flywheel-outer-label top">Revenue</span>
-            <span class="flywheel-outer-label right">Buybacks</span>
-            <span class="flywheel-outer-label bottom">Community</span>
-            <span class="flywheel-outer-label left">Creators</span>
-            <!-- Arrows -->
-            <span class="flywheel-arrow top-right">➤</span>
-            <span class="flywheel-arrow bottom-right">➤</span>
-            <span class="flywheel-arrow bottom-left">➤</span>
-            <span class="flywheel-arrow top-left">➤</span>
-          </div>
-          <!-- Mid ring -->
-          <div class="flywheel-mid">
-            <span class="flywheel-mid-label top">Attract</span>
-            <span class="flywheel-mid-label right">Engage</span>
-            <span class="flywheel-mid-label bottom">Reward</span>
-            <span class="flywheel-mid-label left">Delight</span>
-          </div>
-          <!-- Center -->
-          <div class="flywheel-center">
-            <span>Growth</span>
-          </div>
+          <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="mintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="hsl(170,60%,55%)" />
+                <stop offset="100%" stop-color="hsl(170,80%,65%)" />
+              </linearGradient>
+              <marker id="arrowM" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6" fill="hsl(170,60%,60%)" />
+              </marker>
+            </defs>
+
+            <!-- Outer dashed orbit ring with flowing animation -->
+            <circle cx="280" cy="280" r="230" fill="none" stroke="hsl(170,60%,80%)" stroke-width="2" class="orbit-dash" />
+
+            <!-- Curved arrows between stages (clockwise) -->
+            <g class="flywheel-spin">
+              <!-- Top→Right arc arrow -->
+              <path d="M 340 58 A 230 230 0 0 1 498 200" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
+              <!-- Right→Bottom arc arrow -->
+              <path d="M 498 360 A 230 230 0 0 1 340 502" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
+              <!-- Bottom→Left arc arrow -->
+              <path d="M 220 502 A 230 230 0 0 1 62 360" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
+              <!-- Left→Top arc arrow -->
+              <path d="M 62 200 A 230 230 0 0 1 220 58" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
+            </g>
+
+            <!-- Inner ring -->
+            <circle cx="280" cy="280" r="150" fill="hsla(170,60%,85%,0.2)" stroke="hsl(170,60%,75%)" stroke-width="1.5" />
+
+            <!-- Stage nodes at cardinal points -->
+            <!-- Revenue (top) -->
+            <g>
+              <circle class="flywheel-node-bg" cx="280" cy="50" r="38" fill="hsl(170,60%,95%)" stroke="hsl(170,60%,70%)" stroke-width="2" />
+              <text x="280" y="46" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(170,30%,25%)">Revenue</text>
+              <text x="280" y="60" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Ecosystem earns</text>
+            </g>
+            <!-- Buybacks (right) -->
+            <g>
+              <circle class="flywheel-node-bg" cx="510" cy="280" r="38" fill="hsl(300,60%,95%)" stroke="hsl(300,40%,75%)" stroke-width="2" />
+              <text x="510" y="276" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(300,30%,30%)">Buybacks</text>
+              <text x="510" y="290" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Floor strengthens</text>
+            </g>
+            <!-- Community (bottom) -->
+            <g>
+              <circle class="flywheel-node-bg" cx="280" cy="510" r="38" fill="hsl(260,40%,95%)" stroke="hsl(260,30%,75%)" stroke-width="2" />
+              <text x="280" y="506" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(260,30%,30%)">Community</text>
+              <text x="280" y="520" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Trust grows</text>
+            </g>
+            <!-- Creators (left) -->
+            <g>
+              <circle class="flywheel-node-bg" cx="50" cy="280" r="38" fill="hsl(20,80%,95%)" stroke="hsl(20,60%,75%)" stroke-width="2" />
+              <text x="50" y="276" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(20,40%,30%)">Creators</text>
+              <text x="50" y="290" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Talent joins</text>
+            </g>
+
+            <!-- Inner action labels -->
+            <text x="280" y="155" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Attract</text>
+            <text x="405" y="284" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Engage</text>
+            <text x="280" y="415" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Reward</text>
+            <text x="155" y="284" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Delight</text>
+
+            <!-- Center -->
+            <g class="flywheel-center-g">
+              <circle cx="280" cy="280" r="65" fill="url(#mintGrad)" />
+              <text x="280" y="276" text-anchor="middle" font-family="'Syne',sans-serif" font-size="18" font-weight="800" fill="#fff">Growth</text>
+              <text x="280" y="296" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="10" fill="hsla(0,0%,100%,0.8)">∞ cycle</text>
+            </g>
+          </svg>
         </div>
 
         <!-- Pillar cards -->

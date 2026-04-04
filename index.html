@@ -1056,6 +1056,39 @@
     document.querySelectorAll('.count-up').forEach(function(el) {
       countObserver.observe(el);
     });
+
+    // ===================== 3D Logo Mouse Effect =====================
+    var heroLogo = document.getElementById('heroLogo');
+    var hero = document.querySelector('.hero');
+    if (hero && heroLogo) {
+      hero.addEventListener('mousemove', function(e) {
+        var rect = hero.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        heroLogo.style.transform = 'rotateY(' + (x * 25) + 'deg) rotateX(' + (-y * 20) + 'deg) translateY(-10px)';
+      });
+      hero.addEventListener('mouseleave', function() {
+        heroLogo.style.transform = '';
+      });
+    }
+
+    // ===================== Particles =====================
+    var particleContainer = document.getElementById('heroParticles');
+    if (particleContainer) {
+      var colors = ['hsla(175,60%,55%,0.4)', 'hsla(280,35%,75%,0.3)', 'hsla(320,30%,75%,0.3)', 'hsla(45,95%,65%,0.3)'];
+      for (var i = 0; i < 20; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        var size = Math.random() * 6 + 3;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        particleContainer.appendChild(p);
+      }
+    }
   </script>
 </body>
 </html>

@@ -18,6 +18,15 @@
   --font-accent: 'Playfair Display', serif;
   --radius: 12px;
   --shadow-soft: 0 2px 16px rgba(0,0,0,0.06);
+
+  /* Creator OS gradient palette */
+  --gradient-hero: linear-gradient(135deg, hsl(280 35% 85%), hsl(320 30% 82%), hsl(30 40% 85%), hsl(175 35% 82%));
+  --gradient-hero-accent: linear-gradient(135deg, hsl(280 30% 78%), hsl(320 30% 75%));
+  --gradient-soft: linear-gradient(135deg, #e8f2f4, #ede4f3, #fde8d8, #d5ece8);
+  --teal: hsl(175 60% 55%);
+  --pink: hsl(310 60% 80%);
+  --warm: hsl(45 95% 55%);
+  --blue: hsl(210 100% 55%);
 }
 
 html { scroll-behavior: smooth; }
@@ -81,7 +90,9 @@ img { max-width: 100%; display: block; }
 /* ===================== PAGE HERO ===================== */
 .page-hero {
   padding: 10rem 0 4rem;
-  background: linear-gradient(180deg, var(--bg) 0%, #e8f2f4 60%, var(--bg-white) 100%);
+  background: var(--gradient-hero);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
 }
 .page-hero-title {
   font-size: clamp(3rem, 7vw, 5rem);
@@ -129,12 +140,12 @@ img { max-width: 100%; display: block; }
 .token-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
 .token-card .pct {
   font-family: var(--font-heading); font-size: 2rem; font-weight: 800;
-  color: #4db8a4; margin-bottom: 0.5rem;
+  color: var(--teal); margin-bottom: 0.5rem;
 }
 .token-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
 .lock-badge {
   display: inline-flex; align-items: center; gap: 0.375rem;
-  font-size: 0.8rem; font-weight: 500; color: #4db8a4; margin-bottom: 0.75rem;
+  font-size: 0.8rem; font-weight: 500; color: var(--teal); margin-bottom: 0.75rem;
 }
 .address-box {
   display: inline-flex; align-items: center; gap: 0.5rem;
@@ -159,7 +170,7 @@ img { max-width: 100%; display: block; }
   border: 1px solid var(--border); font-size: 0.8rem;
   background: var(--bg-white);
 }
-.flywheel-mini .arrow { border: none; padding: 0; font-size: 1.25rem; color: #4db8a4; background: none; }
+.flywheel-mini .arrow { border: none; padding: 0; font-size: 1.25rem; color: var(--teal); background: none; }
 
 /* ===================== PROJECTS ===================== */
 .projects-marquee {
@@ -301,7 +312,9 @@ img { max-width: 100%; display: block; }
 /* ===================== SUPPORT CTA ===================== */
 .support-cta {
   padding: 6rem 0; text-align: center;
-  background: linear-gradient(135deg, #e8f2f4, #f0e6f6, #fde8d8);
+  background: var(--gradient-hero);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
 }
 .support-cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
 .support-cta > div > p { color: var(--muted); font-size: 1rem; max-width: 36rem; margin: 0 auto 2rem; line-height: 1.7; }
@@ -396,11 +409,29 @@ img { max-width: 100%; display: block; }
 @media (max-width: 768px) { .footer-top { grid-template-columns: 1fr; gap: 2rem; } }
 
 /* ===================== ANIMATIONS ===================== */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 100%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 0%; }
+  100% { background-position: 0% 50%; }
+}
+
 .fade-in {
   opacity: 0; transform: translateY(30px);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* Gradient utilities */
+.gradient-hero-bg {
+  background: var(--gradient-hero);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
+}
+.gradient-soft-bg {
+  background: var(--gradient-soft);
+}
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 900px) {

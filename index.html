@@ -99,77 +99,8 @@
       .mobile-menu .btn-login { margin-top: 0.75rem; text-align: center; justify-content: center; }
     }
 
-    /* ===================== HERO ===================== */
-    .hero {
-      position: relative; min-height: 100vh;
-      padding-top: 80px; overflow: hidden;
-      background: var(--gradient-hero); background-size: 300% 300%; animation: gradient-shift 12s ease infinite;
-    }
-    .hero-top {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 2rem; align-items: start;
-      padding: 4rem 0 2rem;
-    }
-    .hero-left { padding-top: 2rem; }
-    .hero-tag {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-size: 0.9rem; font-weight: 600; color: var(--fg);
-      margin-bottom: 1.5rem;
-    }
-    .hero-tag svg { width: 18px; height: 18px; }
-    .hero-desc {
-      font-size: 0.95rem; color: var(--muted); line-height: 1.7;
-      max-width: 420px;
-    }
-    .hero-right { text-align: right; position: relative; }
-    .hero h1 {
-      font-size: clamp(4rem, 8vw, 7rem);
-      font-weight: 800; line-height: 0.92;
-      letter-spacing: -0.04em;
-    }
-    .hero-cta-circle {
-      display: inline-flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 0.25rem;
-      width: 140px; height: 140px; border-radius: 50%;
-      background: var(--accent); color: var(--fg);
-      font-size: 0.95rem; font-weight: 600;
-      position: absolute; right: 0; bottom: -20px;
-      transition: transform 0.3s, background 0.3s;
-      text-decoration: none;
-    }
-    .hero-cta-circle:hover { transform: scale(1.05); background: var(--accent-dark); }
-    .hero-cta-circle svg { width: 16px; height: 16px; }
+    /* Old hero styles removed — new hero styles are at end of stylesheet */
 
-    /* Image carousel */
-    .hero-carousel {
-      position: relative; width: 100vw; left: 50%; right: 50%;
-      margin-left: -50vw; margin-right: -50vw;
-      margin-top: 3rem; overflow: hidden;
-      height: 380px;
-    }
-    .carousel-track {
-      display: flex; gap: 1rem;
-      animation: scroll-left 30s linear infinite;
-      width: max-content;
-    }
-    .carousel-track img {
-      height: 340px; width: 260px; object-fit: cover;
-      border-radius: 16px; flex-shrink: 0;
-      transform: rotate(var(--rot, 0deg));
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-    }
-    @keyframes scroll-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    @media (max-width: 900px) {
-      .hero-top { grid-template-columns: 1fr; text-align: left; }
-      .hero-right { text-align: left; }
-      .hero-cta-circle { position: static; margin-top: 2rem; }
-      .hero-carousel { height: 280px; }
-      .carousel-track img { height: 240px; width: 190px; }
-    }
 
     /* ===================== ABOUT ===================== */
     .about {
@@ -555,6 +486,106 @@
     .fade-in-left.visible { opacity: 1; transform: translateX(0); }
 
     .count-up { display: inline-block; }
+
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 50% 100%; }
+      50% { background-position: 100% 50%; }
+      75% { background-position: 50% 0%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ===================== NEW HERO ===================== */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; text-align: center;
+      background: var(--gradient-hero); background-size: 300% 300%;
+      animation: gradient-shift 12s ease infinite;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 6rem 2rem 4rem;
+    }
+    .hero-logo-wrapper {
+      perspective: 800px; margin-bottom: 3rem;
+    }
+    .hero-logo-3d {
+      width: 200px; height: 200px; transition: transform 0.1s ease-out;
+      transform-style: preserve-3d; will-change: transform;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+      animation: float-logo 6s ease-in-out infinite;
+    }
+    .hero-logo-3d img {
+      width: 100%; height: 100%; object-fit: contain;
+      border-radius: 24px;
+    }
+    @keyframes float-logo {
+      0%, 100% { transform: translateY(0) rotateY(0deg); }
+      25% { transform: translateY(-12px) rotateY(5deg); }
+      50% { transform: translateY(-20px) rotateY(0deg); }
+      75% { transform: translateY(-12px) rotateY(-5deg); }
+    }
+    .hero-glow {
+      position: absolute; width: 320px; height: 320px;
+      border-radius: 50%; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, hsla(175, 60%, 55%, 0.25), transparent 70%);
+      pointer-events: none; z-index: -1;
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -0.04em; margin-bottom: 1.25rem;
+      max-width: 700px;
+    }
+    .hero-subtitle {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      color: var(--muted); line-height: 1.7;
+      max-width: 520px; margin-bottom: 2.5rem;
+    }
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    }
+    .hero-actions .btn-login {
+      background: var(--fg); color: var(--bg-white); border-color: var(--fg);
+    }
+    .hero-actions .btn-login:hover {
+      background: transparent; color: var(--fg);
+    }
+    .hero-actions .btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.75rem; border-radius: 999px;
+      border: 1.5px solid var(--border); font-size: 0.9rem; font-weight: 500;
+      transition: all 0.2s;
+    }
+    .hero-actions .btn-outline:hover {
+      background: var(--fg); color: var(--bg-white); border-color: var(--fg);
+    }
+    .hero-particles {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
+    }
+    .particle {
+      position: absolute; border-radius: 50%;
+      opacity: 0.3; animation: drift linear infinite;
+    }
+    @keyframes drift {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.3; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .hero-logo-3d { width: 140px; height: 140px; }
+      .hero-glow { width: 220px; height: 220px; }
+    }
   </style>
 </head>
 <body>
@@ -593,41 +624,30 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="container">
-      <div class="hero-top">
-        <div class="hero-left fade-in">
-          <p class="hero-tag">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9.5 8.5 3 9.5l5 4.5-1.5 7L12 17.5l5.5 3.5-1.5-7 5-4.5-6.5-1z"/></svg>
-            Crafting Visions, Building Futures
-          </p>
-          <p class="hero-desc">Rhozeland is a creative studio built for modern creators, offering flexible access to studio time, design, audio, and brand strategy.</p>
-        </div>
-        <div class="hero-right fade-in" style="transition-delay: 0.15s;">
-          <h1>Your<br>Creative Engine</h1>
-          <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="hero-cta-circle">
-            Create
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
+    <!-- Floating particles -->
+    <div class="hero-particles" id="heroParticles"></div>
+
+    <div class="hero-inner">
+      <!-- 3D Floating Logo -->
+      <div class="hero-logo-wrapper">
+        <div class="hero-logo-3d" id="heroLogo">
+          <div class="hero-glow"></div>
+          <img src="/images/rhozeland_official_logo_2025.png" alt="Rhozeland" />
         </div>
       </div>
-    </div>
-    <div class="hero-carousel">
-      <div class="carousel-track" id="carouselTrack">
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db46_hero-02.avif" alt="Creative work" style="--rot:-5deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3aebb8d57ba48a5722f50_global-masterminds.gif" alt="Global Masterminds" style="--rot:3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af968bf910bfc98d9117_gaeith-no-one-to-love-live.gif" alt="Live performance" style="--rot:-2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af2d22450e910c75d725_sonicrealm-alot-of-my-mind.gif" alt="Sonic Realm" style="--rot:4deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3ad158fd909a0ec667dec_bk-whiskey-1.gif" alt="BK Whiskey" style="--rot:-3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3b0cd981e1af814fd1b7b_Adobe%20Express%20-%20La_Flame%206.gif" alt="La Flame" style="--rot:2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db32_single-img-06.avif" alt="Studio work" style="--rot:-4deg" />
-        <!-- duplicates for seamless loop -->
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db46_hero-02.avif" alt="Creative work" style="--rot:-5deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3aebb8d57ba48a5722f50_global-masterminds.gif" alt="Global Masterminds" style="--rot:3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af968bf910bfc98d9117_gaeith-no-one-to-love-live.gif" alt="Live performance" style="--rot:-2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af2d22450e910c75d725_sonicrealm-alot-of-my-mind.gif" alt="Sonic Realm" style="--rot:4deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3ad158fd909a0ec667dec_bk-whiskey-1.gif" alt="BK Whiskey" style="--rot:-3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3b0cd981e1af814fd1b7b_Adobe%20Express%20-%20La_Flame%206.gif" alt="La Flame" style="--rot:2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db32_single-img-06.avif" alt="Studio work" style="--rot:-4deg" />
+
+      <h1>The Creator<br>Ecosystem</h1>
+      <p class="hero-subtitle">Studio sessions, content production, a services marketplace, artist tools, and a community that fuels your growth — all under one roof.</p>
+
+      <div class="hero-actions">
+        <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="btn-login">
+          Log In
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+        <a href="#about" class="btn-outline">
+          Explore
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -845,14 +865,6 @@
     </div>
   </section>
 
-    @keyframes gradient-shift {
-      0% { background-position: 0% 50%; }
-      25% { background-position: 50% 100%; }
-      50% { background-position: 100% 50%; }
-      75% { background-position: 50% 0%; }
-      100% { background-position: 0% 50%; }
-    }
-
   <!-- NEWSLETTER -->
   <section class="newsletter">
     <div class="container">
@@ -975,6 +987,39 @@
     document.querySelectorAll('.count-up').forEach(function(el) {
       countObserver.observe(el);
     });
+
+    // ===================== 3D Logo Mouse Effect =====================
+    var heroLogo = document.getElementById('heroLogo');
+    var hero = document.querySelector('.hero');
+    if (hero && heroLogo) {
+      hero.addEventListener('mousemove', function(e) {
+        var rect = hero.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        heroLogo.style.transform = 'rotateY(' + (x * 25) + 'deg) rotateX(' + (-y * 20) + 'deg) translateY(-10px)';
+      });
+      hero.addEventListener('mouseleave', function() {
+        heroLogo.style.transform = '';
+      });
+    }
+
+    // ===================== Particles =====================
+    var particleContainer = document.getElementById('heroParticles');
+    if (particleContainer) {
+      var colors = ['hsla(175,60%,55%,0.4)', 'hsla(280,35%,75%,0.3)', 'hsla(320,30%,75%,0.3)', 'hsla(45,95%,65%,0.3)'];
+      for (var i = 0; i < 20; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        var size = Math.random() * 6 + 3;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        particleContainer.appendChild(p);
+      }
+    }
   </script>
 </body>
 </html>

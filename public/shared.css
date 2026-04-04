@@ -312,7 +312,9 @@ img { max-width: 100%; display: block; }
 /* ===================== SUPPORT CTA ===================== */
 .support-cta {
   padding: 6rem 0; text-align: center;
-  background: linear-gradient(135deg, #e8f2f4, #f0e6f6, #fde8d8);
+  background: var(--gradient-hero);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
 }
 .support-cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
 .support-cta > div > p { color: var(--muted); font-size: 1rem; max-width: 36rem; margin: 0 auto 2rem; line-height: 1.7; }

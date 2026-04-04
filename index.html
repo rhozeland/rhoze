@@ -693,41 +693,30 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="container">
-      <div class="hero-top">
-        <div class="hero-left fade-in">
-          <p class="hero-tag">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9.5 8.5 3 9.5l5 4.5-1.5 7L12 17.5l5.5 3.5-1.5-7 5-4.5-6.5-1z"/></svg>
-            Crafting Visions, Building Futures
-          </p>
-          <p class="hero-desc">Rhozeland is a creative studio built for modern creators, offering flexible access to studio time, design, audio, and brand strategy.</p>
-        </div>
-        <div class="hero-right fade-in" style="transition-delay: 0.15s;">
-          <h1>Your<br>Creative Engine</h1>
-          <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="hero-cta-circle">
-            Create
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
+    <!-- Floating particles -->
+    <div class="hero-particles" id="heroParticles"></div>
+
+    <div class="hero-inner">
+      <!-- 3D Floating Logo -->
+      <div class="hero-logo-wrapper">
+        <div class="hero-logo-3d" id="heroLogo">
+          <div class="hero-glow"></div>
+          <img src="/images/rhozeland_official_logo_2025.png" alt="Rhozeland" />
         </div>
       </div>
-    </div>
-    <div class="hero-carousel">
-      <div class="carousel-track" id="carouselTrack">
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db46_hero-02.avif" alt="Creative work" style="--rot:-5deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3aebb8d57ba48a5722f50_global-masterminds.gif" alt="Global Masterminds" style="--rot:3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af968bf910bfc98d9117_gaeith-no-one-to-love-live.gif" alt="Live performance" style="--rot:-2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af2d22450e910c75d725_sonicrealm-alot-of-my-mind.gif" alt="Sonic Realm" style="--rot:4deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3ad158fd909a0ec667dec_bk-whiskey-1.gif" alt="BK Whiskey" style="--rot:-3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3b0cd981e1af814fd1b7b_Adobe%20Express%20-%20La_Flame%206.gif" alt="La Flame" style="--rot:2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db32_single-img-06.avif" alt="Studio work" style="--rot:-4deg" />
-        <!-- duplicates for seamless loop -->
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db46_hero-02.avif" alt="Creative work" style="--rot:-5deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3aebb8d57ba48a5722f50_global-masterminds.gif" alt="Global Masterminds" style="--rot:3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af968bf910bfc98d9117_gaeith-no-one-to-love-live.gif" alt="Live performance" style="--rot:-2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af2d22450e910c75d725_sonicrealm-alot-of-my-mind.gif" alt="Sonic Realm" style="--rot:4deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3ad158fd909a0ec667dec_bk-whiskey-1.gif" alt="BK Whiskey" style="--rot:-3deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3b0cd981e1af814fd1b7b_Adobe%20Express%20-%20La_Flame%206.gif" alt="La Flame" style="--rot:2deg" />
-        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db32_single-img-06.avif" alt="Studio work" style="--rot:-4deg" />
+
+      <h1>The Creator<br>Ecosystem</h1>
+      <p class="hero-subtitle">Studio sessions, content production, a services marketplace, artist tools, and a community that fuels your growth — all under one roof.</p>
+
+      <div class="hero-actions">
+        <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="btn-login">
+          Log In
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+        <a href="#about" class="btn-outline">
+          Explore
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </a>
       </div>
     </div>
   </section>

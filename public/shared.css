@@ -140,7 +140,7 @@ img { max-width: 100%; display: block; }
 .token-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
 .token-card .pct {
   font-family: var(--font-heading); font-size: 2rem; font-weight: 800;
-  color: #4db8a4; margin-bottom: 0.5rem;
+  color: var(--teal); margin-bottom: 0.5rem;
 }
 .token-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
 .lock-badge {

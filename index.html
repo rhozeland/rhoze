@@ -4,102 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rhozeland — Your Creative Engine</title>
-  <meta name="description" content="Rhozeland is a creator-owned economy built on Solana — real clothing drops, a services marketplace, an artist app & a revenue flywheel." />
+  <meta name="description" content="Rhozeland is a creative studio built for modern creators, offering flexible access to studio time, design, audio, and brand strategy." />
   <link rel="icon" href="/favicon.ico" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Rhozeland — Your Creative Engine" />
-  <meta property="og:description" content="Rhozeland is a creator-owned economy built on Solana." />
+  <meta property="og:description" content="Rhozeland is a creative studio built for modern creators." />
   <meta name="twitter:card" content="summary_large_image" />
 
   <style>
-    /* ===================== RESET & BASE ===================== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    @font-face {
-      font-family: 'Neue Haas Grotesk Display Pro';
-      src: local('Neue Haas Grotesk Display Pro'), local('NeueHaasDisplay-Roman'), local('Helvetica Neue');
-      font-weight: 400; font-style: normal;
-    }
-    @font-face {
-      font-family: 'Neue Haas Grotesk Display Pro';
-      src: local('Neue Haas Grotesk Display Pro Medium'), local('NeueHaasDisplay-Mediu'), local('Helvetica Neue Medium');
-      font-weight: 500; font-style: normal;
-    }
-    @font-face {
-      font-family: 'Neue Haas Grotesk Display Pro';
-      src: local('Neue Haas Grotesk Display Pro Bold'), local('NeueHaasDisplay-Bold'), local('Helvetica Neue Bold');
-      font-weight: 700; font-style: normal;
-    }
-
     :root {
-      --bg: #fdfdfd;
-      --fg: #141414;
-      --card: #ffffff;
+      --bg: #f5f9fa;
+      --bg-white: #ffffff;
+      --fg: #0a0a0a;
+      --muted: #6b6b6b;
       --border: #e5e5e5;
-      --muted: #666666;
-      --muted-bg: #f5f3f7;
-      --primary: hsl(170, 60%, 60%);
-      --primary-fg: #ffffff;
-      --surface: #f7f7f7;
-      --pink: hsl(300, 60%, 90%);
-      --lavender: hsl(260, 40%, 92%);
-      --peach: hsl(20, 80%, 92%);
-      --gradient-pastel: linear-gradient(135deg, hsl(170,60%,90%), hsl(300,60%,92%), hsl(260,40%,94%));
-      --gradient-mint: linear-gradient(135deg, hsl(170,60%,55%), hsl(170,80%,65%));
-      --shadow-soft: 0 4px 24px -4px rgba(0,0,0,0.06);
-      --shadow-lift: 0 8px 40px -8px rgba(0,0,0,0.08);
+      --accent: #d4eaed;
+      --accent-dark: #b8dde2;
+      --dark-bg: #0a0a0a;
+      --dark-fg: #ffffff;
+      --dark-muted: #999999;
       --font-display: 'Syne', sans-serif;
-      --font-body: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      --radius: 1rem;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --radius: 12px;
+      --shadow-soft: 0 2px 16px rgba(0,0,0,0.06);
     }
 
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--fg);
       font-family: var(--font-body);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-
     h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); }
     a { text-decoration: none; color: inherit; }
     button { cursor: pointer; border: none; background: none; font-family: inherit; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+    img { max-width: 100%; display: block; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 
     /* ===================== NAVBAR ===================== */
     .navbar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      background: rgba(253,253,253,0.8);
+      background: rgba(245,249,250,0.85);
       border-bottom: 1px solid var(--border);
     }
     .navbar .container {
       display: flex; align-items: center; justify-content: space-between;
       padding-top: 1rem; padding-bottom: 1rem;
     }
-    .navbar-brand { display: flex; align-items: center; gap: 0.625rem; }
-    .navbar-brand-icon {
-      width: 2rem; height: 2rem; border-radius: 0.5rem;
-      background: var(--gradient-mint);
+    .navbar-logo { height: 44px; width: auto; }
+    .navbar-links { display: flex; align-items: center; gap: 2.5rem; }
+    .navbar-links a {
+      font-size: 0.9rem; font-weight: 500; color: var(--fg);
+      transition: opacity 0.2s; letter-spacing: -0.01em;
     }
-    .navbar-brand span {
-      font-family: var(--font-display);
-      font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em;
+    .navbar-links a:hover { opacity: 0.6; }
+    .btn-login {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.5rem; border-radius: 999px;
+      border: 1.5px solid var(--fg); font-size: 0.9rem; font-weight: 500;
+      transition: all 0.2s;
     }
-    .navbar-links { display: flex; align-items: center; gap: 2rem; }
-    .navbar-links a { font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
-    .navbar-links a:hover { color: var(--fg); }
-    .btn-buy {
-      display: inline-block; padding: 0.5rem 1.25rem; border-radius: 999px;
-      background: var(--gradient-mint); font-size: 0.875rem; font-weight: 600;
-      color: var(--primary-fg); transition: opacity 0.2s;
-    }
-    .btn-buy:hover { opacity: 0.9; }
-    .hamburger { display: none; font-size: 1.5rem; color: var(--fg); }
+    .btn-login:hover { background: var(--fg); color: var(--bg); }
+    .btn-login svg { width: 14px; height: 14px; }
+    .hamburger { display: none; font-size: 1.5rem; color: var(--fg); padding: 0.5rem; }
     .mobile-menu { display: none; }
 
     @media (max-width: 768px) {
@@ -107,247 +84,469 @@
       .hamburger { display: block; }
       .mobile-menu.open {
         display: flex; flex-direction: column;
-        background: var(--card); border-top: 1px solid var(--border);
-        padding: 1rem 1.5rem 1.5rem;
+        background: var(--bg-white); border-top: 1px solid var(--border);
+        padding: 1rem 2rem 1.5rem;
       }
-      .mobile-menu a { display: block; padding: 0.75rem 0; color: var(--muted); transition: color 0.2s; }
-      .mobile-menu a:hover { color: var(--fg); }
-      .mobile-menu .btn-buy { margin-top: 0.75rem; text-align: center; }
+      .mobile-menu a { display: block; padding: 0.75rem 0; font-weight: 500; }
+      .mobile-menu .btn-login { margin-top: 0.75rem; text-align: center; justify-content: center; }
     }
 
     /* ===================== HERO ===================== */
     .hero {
       position: relative; min-height: 100vh;
-      display: flex; align-items: center; overflow: hidden;
+      padding-top: 80px; overflow: hidden;
+      background: linear-gradient(180deg, var(--bg) 0%, #e8f2f4 60%, var(--bg-white) 100%);
     }
-    .hero-bg { position: absolute; inset: 0; background: var(--gradient-pastel); opacity: 0.6; }
-    .hero .container {
-      position: relative; z-index: 1;
+    .hero-top {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 4rem; align-items: center;
+      gap: 2rem; align-items: start;
+      padding: 4rem 0 2rem;
     }
-    .hero-content { padding: 8rem 0 4rem; }
+    .hero-left { padding-top: 2rem; }
     .hero-tag {
-      display: inline-flex; align-items: center; gap: 0.375rem;
-      font-size: 0.875rem; color: var(--muted); margin-bottom: 2rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.9rem; font-weight: 600; color: var(--fg);
+      margin-bottom: 1.5rem;
     }
-    .hero-tag .star { color: var(--primary); }
+    .hero-tag svg { width: 18px; height: 18px; }
+    .hero-desc {
+      font-size: 0.95rem; color: var(--muted); line-height: 1.7;
+      max-width: 420px;
+    }
+    .hero-right { text-align: right; position: relative; }
     .hero h1 {
-      font-size: clamp(3rem, 6vw, 4.5rem);
-      font-weight: 800; line-height: 0.95;
-      letter-spacing: -0.03em; margin-bottom: 2rem;
+      font-size: clamp(4rem, 8vw, 7rem);
+      font-weight: 800; line-height: 0.92;
+      letter-spacing: -0.04em;
     }
-    .hero p { font-size: 1.125rem; color: var(--muted); max-width: 28rem; margin-bottom: 2.5rem; line-height: 1.7; }
-    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn-primary {
-      padding: 0.875rem 2rem; border-radius: 999px;
-      background: var(--gradient-mint); font-weight: 600; color: var(--primary-fg);
-      box-shadow: var(--shadow-soft); transition: box-shadow 0.2s;
+    .hero-cta-circle {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.25rem;
+      width: 140px; height: 140px; border-radius: 50%;
+      background: var(--accent); color: var(--fg);
+      font-size: 0.95rem; font-weight: 600;
+      position: absolute; right: 0; bottom: -20px;
+      transition: transform 0.3s, background 0.3s;
+      text-decoration: none;
     }
-    .btn-primary:hover { box-shadow: var(--shadow-lift); }
-    .btn-outline {
-      padding: 0.875rem 2rem; border-radius: 999px;
-      border: 1px solid var(--border); color: var(--fg); transition: background 0.2s;
+    .hero-cta-circle:hover { transform: scale(1.05); background: var(--accent-dark); }
+    .hero-cta-circle svg { width: 16px; height: 16px; }
+
+    /* Image carousel */
+    .hero-carousel {
+      position: relative; width: 100vw; left: 50%; right: 50%;
+      margin-left: -50vw; margin-right: -50vw;
+      margin-top: 3rem; overflow: hidden;
+      height: 380px;
     }
-    .btn-outline:hover { background: var(--muted-bg); }
-    .hero-visual { display: flex; align-items: center; justify-content: center; }
-    .hero-card { position: relative; width: 20rem; height: 20rem; }
-    .hero-card-bg {
-      position: absolute; inset: 0; border-radius: 1.5rem;
-      background: var(--gradient-pastel); transform: rotate(6deg); opacity: 0.5;
+    .carousel-track {
+      display: flex; gap: 1rem;
+      animation: scroll-left 30s linear infinite;
+      width: max-content;
     }
-    .hero-card-inner {
-      position: absolute; inset: 1rem; border-radius: 1rem;
-      background: var(--card); box-shadow: var(--shadow-lift);
-      display: flex; align-items: center; justify-content: center;
+    .carousel-track img {
+      height: 340px; width: 260px; object-fit: cover;
+      border-radius: 16px; flex-shrink: 0;
+      transform: rotate(var(--rot, 0deg));
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
     }
-    .hero-card-inner span {
-      font-family: var(--font-display); font-size: 4rem; font-weight: 800; color: var(--primary);
-    }
-    .scroll-indicator {
-      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
-      animation: bounce 2s infinite;
-    }
-    .scroll-indicator svg { color: var(--muted); }
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(8px); }
-    }
-    @media (max-width: 1024px) {
-      .hero .container { grid-template-columns: 1fr; }
-      .hero-visual { display: none; }
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
-    /* ===================== SECTIONS ===================== */
-    .section { padding: 8rem 0; }
-    .section-surface { background: var(--surface); }
-    .section-pastel { background: var(--gradient-pastel); }
-    .section-header { text-align: center; margin-bottom: 5rem; }
-    .section-header h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
-    .section-header p { color: var(--muted); font-size: 1.125rem; max-width: 40rem; margin: 0 auto; line-height: 1.7; }
+    @media (max-width: 900px) {
+      .hero-top { grid-template-columns: 1fr; text-align: left; }
+      .hero-right { text-align: left; }
+      .hero-cta-circle { position: static; margin-top: 2rem; }
+      .hero-carousel { height: 280px; }
+      .carousel-track img { height: 240px; width: 190px; }
+    }
 
     /* ===================== ABOUT ===================== */
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-    .about-card {
-      padding: 2rem; border-radius: var(--radius);
-      background: var(--card); border: 1px solid var(--border);
-      transition: border-color 0.2s, box-shadow 0.2s;
+    .about {
+      padding: 8rem 0; background: var(--bg-white);
     }
-    .about-card:hover { border-color: hsla(170,60%,60%,0.4); box-shadow: var(--shadow-lift); }
-    .about-icon {
-      width: 3rem; height: 3rem; border-radius: 0.75rem;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem;
+    .about-top {
+      display: grid; grid-template-columns: auto 1fr; gap: 3rem;
+      align-items: start; margin-bottom: 5rem;
     }
-    .about-icon svg { width: 1.375rem; height: 1.375rem; color: rgba(0,0,0,0.5); }
-    .about-icon.pink { background: var(--pink); }
-    .about-icon.lavender { background: var(--lavender); }
-    .about-icon.peach { background: var(--peach); }
-    .about-icon.mint { background: hsla(170,60%,60%,0.1); }
-    .about-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .about-card p { color: var(--muted); line-height: 1.7; }
-    @media (max-width: 640px) { .about-grid { grid-template-columns: 1fr; } }
-
-    /* ===================== ECOSYSTEM / FLYWHEEL ===================== */
-    .flywheel-wrapper {
-      display: flex; flex-direction: column; align-items: center; gap: 3rem;
+    .pill-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1.25rem; border-radius: 999px;
+      border: 1.5px solid var(--border); font-size: 0.85rem; font-weight: 500;
+      white-space: nowrap;
     }
-    .flywheel {
-      position: relative; width: 560px; height: 560px;
+    .pill-tag::before {
+      content: ''; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--fg);
     }
-    .flywheel svg { width: 100%; height: 100%; }
-
-    /* Slow continuous rotation on outer arrows ring */
-    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .flywheel-spin { animation: spin-slow 20s linear infinite; transform-origin: 280px 280px; }
-
-    /* Pulsing glow on center */
-    @keyframes pulse-glow {
-      0%, 100% { filter: drop-shadow(0 0 12px hsla(170,60%,50%,0.4)); }
-      50% { filter: drop-shadow(0 0 28px hsla(170,60%,50%,0.7)); }
+    .about-heading {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      font-weight: 700; line-height: 1.25; letter-spacing: -0.02em;
+      max-width: 700px;
     }
-    .flywheel-center-g { animation: pulse-glow 3s ease-in-out infinite; }
-
-    /* Dash animation on the orbit path */
-    @keyframes dash-flow {
-      to { stroke-dashoffset: -60; }
+    .about-bottom {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+      align-items: end;
     }
-    .orbit-dash {
-      stroke-dasharray: 18 12;
-      animation: dash-flow 1.5s linear infinite;
+    .about-stat { }
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 8vw, 6rem);
+      font-weight: 800; line-height: 1;
+      letter-spacing: -0.04em;
     }
-
-    /* Stage nodes */
-    .flywheel-node-bg { transition: filter 0.3s; }
-    .flywheel:hover .flywheel-node-bg { filter: brightness(1.08); }
-
-    /* Pillar cards below the wheel */
-    .flywheel-pillars {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
-      width: 100%; max-width: 700px;
+    .stat-label {
+      font-size: 0.95rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.5;
     }
-    .flywheel-pillar {
-      text-align: center; padding: 1.25rem 1rem; border-radius: var(--radius);
-      background: var(--card); border: 1px solid var(--border);
-      transition: border-color 0.2s, box-shadow 0.2s;
+    .about-right { }
+    .about-body {
+      font-size: 0.95rem; color: var(--muted); line-height: 1.8;
+      border-left: 2px solid var(--border); padding-left: 2rem;
+      max-width: 500px;
     }
-    .flywheel-pillar:hover { border-color: hsla(170,60%,60%,0.4); box-shadow: var(--shadow-lift); }
-    .flywheel-pillar-icon {
-      width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
-      background: hsla(170,60%,60%,0.1);
+    .about-cta-circle {
       display: inline-flex; align-items: center; justify-content: center;
-      margin-bottom: 0.75rem;
+      flex-direction: column; gap: 0.25rem;
+      width: 130px; height: 130px; border-radius: 50%;
+      background: var(--accent); color: var(--fg);
+      font-size: 0.9rem; font-weight: 600;
+      margin-top: 2rem; transition: transform 0.3s, background 0.3s;
     }
-    .flywheel-pillar-icon svg { width: 1.25rem; height: 1.25rem; color: var(--primary); }
-    .flywheel-pillar h4 { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.25rem; }
-    .flywheel-pillar p { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+    .about-cta-circle:hover { transform: scale(1.05); background: var(--accent-dark); }
+    .about-cta-circle svg { width: 14px; height: 14px; }
 
     @media (max-width: 768px) {
-      .flywheel { width: 340px; height: 340px; }
-      .flywheel-spin { transform-origin: 170px 170px; }
-      .flywheel-pillars { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 480px) {
-      .flywheel-pillars { grid-template-columns: 1fr; }
+      .about-top { grid-template-columns: 1fr; gap: 1.5rem; }
+      .about-bottom { grid-template-columns: 1fr; gap: 2.5rem; }
     }
 
-    /* ===================== TOKENOMICS ===================== */
-    .token-cards { display: flex; flex-direction: column; gap: 1.5rem; }
+    /* ===================== SERVICES ===================== */
+    .services { padding: 6rem 0; background: var(--bg-white); border-top: 1px solid var(--border); }
+    .services-header {
+      display: grid; grid-template-columns: auto 1fr; gap: 3rem;
+      align-items: start; margin-bottom: 4rem;
+    }
+    .services-desc {
+      font-size: 0.95rem; color: var(--muted); line-height: 1.7;
+      max-width: 500px; margin-left: auto;
+    }
+    .services-desc a { text-decoration: underline; color: var(--fg); font-weight: 500; }
+    .service-row {
+      display: grid; grid-template-columns: 300px 1fr 1fr;
+      gap: 2rem; padding: 2.5rem 0;
+      border-top: 1px solid var(--border);
+      align-items: start;
+    }
+    .service-row:last-child { border-bottom: 1px solid var(--border); }
+    .service-label {
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .service-label svg { width: 36px; height: 36px; stroke-width: 1.5; }
+    .service-label h3 {
+      font-size: 2rem; font-weight: 700; letter-spacing: -0.02em;
+    }
+    .service-row.alt { background: var(--bg); border-radius: var(--radius); padding: 2.5rem 2rem; margin: 0 -2rem; }
+    .service-list { list-style: none; }
+    .service-list li {
+      font-size: 0.9rem; color: var(--fg); padding: 0.35rem 0;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .service-list li::before { content: '•'; color: var(--fg); font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .services-header { grid-template-columns: 1fr; gap: 1.5rem; }
+      .service-row { grid-template-columns: 1fr; gap: 1rem; }
+      .service-row.alt { margin: 0; padding: 2rem 1.5rem; }
+    }
+
+    /* ===================== PROJECTS MARQUEE ===================== */
+    .projects-marquee {
+      padding: 2rem 0; overflow: hidden;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--bg-white);
+    }
+    .marquee-track {
+      display: flex; gap: 3rem;
+      animation: marquee 20s linear infinite;
+      width: max-content;
+    }
+    .marquee-track span {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+      white-space: nowrap; color: var(--fg);
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ===================== PROJECTS GRID ===================== */
+    .projects {
+      padding: 6rem 0; background: linear-gradient(180deg, #e8f2f4 0%, var(--bg) 100%);
+    }
+    .projects-header {
+      display: grid; grid-template-columns: auto 1fr; gap: 3rem;
+      align-items: start; margin-bottom: 4rem;
+    }
+    .projects-intro {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 600; line-height: 1.3; letter-spacing: -0.02em;
+      max-width: 600px; margin-left: auto;
+    }
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    }
+    .project-card {
+      background: var(--bg); border-radius: var(--radius);
+      padding: 2rem; transition: transform 0.2s, box-shadow 0.2s;
+      display: flex; flex-direction: column; justify-content: space-between;
+      min-height: 200px;
+    }
+    .project-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
+    .project-card-top { display: flex; justify-content: space-between; align-items: start; }
+    .project-card h4 { font-size: 1.1rem; font-weight: 700; }
+    .project-card p { font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem; line-height: 1.6; }
+    .project-card-tag {
+      font-size: 0.75rem; color: var(--muted); margin-top: auto; padding-top: 1.5rem;
+    }
+    .project-card-link {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid var(--border); display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .project-card-link:hover { background: var(--fg); border-color: var(--fg); }
+    .project-card-link:hover svg { stroke: var(--bg-white); }
+    .project-card-link svg { width: 14px; height: 14px; }
+
+    @media (max-width: 900px) {
+      .projects-grid { grid-template-columns: 1fr 1fr; }
+      .projects-header { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+    @media (max-width: 600px) { .projects-grid { grid-template-columns: 1fr; } }
+
+    /* ===================== EVENTS ===================== */
+    .events { padding: 6rem 0; background: var(--bg-white); }
+    .events-header {
+      display: flex; justify-content: space-between; align-items: start;
+      margin-bottom: 4rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .events-header-left { }
+    .events-subtitle {
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 700; line-height: 1.2; letter-spacing: -0.02em;
+      margin-top: 1rem;
+    }
+    .btn-dark {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.75rem 1.75rem; border-radius: 999px;
+      background: var(--fg); color: var(--dark-fg);
+      font-size: 0.9rem; font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .btn-dark:hover { opacity: 0.85; }
+    .btn-dark svg { width: 14px; height: 14px; }
+
+    .events-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .event-card {
+      background: var(--bg); border-radius: var(--radius);
+      padding: 2rem; transition: transform 0.2s;
+      border: 1px solid var(--border);
+    }
+    .event-card:hover { transform: translateY(-2px); }
+    .event-card h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .event-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .event-card-date { font-size: 0.8rem; color: var(--muted); margin-top: 1.5rem; }
+
+    @media (max-width: 768px) { .events-grid { grid-template-columns: 1fr; } }
+
+    /* ===================== $RHOZE TOKEN SECTION ===================== */
+    .token-section { padding: 6rem 0; background: var(--bg); }
+    .token-section .section-header { text-align: center; margin-bottom: 4rem; }
+    .token-section .section-header h2 {
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem;
+    }
+    .token-section .section-header p {
+      color: var(--muted); font-size: 1rem; max-width: 40rem; margin: 0 auto; line-height: 1.7;
+    }
+    .token-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
     .token-card {
-      padding: 2rem; border-radius: var(--radius);
-      background: var(--card); border: 1px solid var(--border);
+      background: var(--bg-white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 2rem;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .token-card:hover { border-color: hsla(170,60%,60%,0.4); box-shadow: var(--shadow-lift); }
-    .token-card-inner { display: flex; gap: 1.5rem; }
-    .token-icon {
-      width: 3rem; height: 3rem; border-radius: 0.75rem;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    .token-card:hover { border-color: var(--accent-dark); box-shadow: var(--shadow-soft); }
+    .token-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .token-card .pct {
+      font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+      color: #4db8a4; margin-bottom: 0.5rem;
     }
-    .token-icon svg { width: 1.375rem; height: 1.375rem; color: rgba(0,0,0,0.5); }
-    .token-icon.mint-bg { background: hsla(170,60%,60%,0.1); }
-    .token-icon.pink-bg { background: var(--pink); }
-    .token-icon.lavender-bg { background: var(--lavender); }
-    .token-content { flex: 1; min-width: 0; }
-    .token-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.75rem; margin-bottom: 0.5rem; }
-    .token-header h3 { font-size: 1.25rem; font-weight: 700; }
-    .token-header .pct { font-size: 1.5rem; font-weight: 800; font-family: var(--font-display); color: var(--primary); }
-    .lock-info {
+    .lock-badge {
       display: inline-flex; align-items: center; gap: 0.375rem;
-      font-size: 0.875rem; font-weight: 500; color: var(--primary); margin-bottom: 0.75rem;
+      font-size: 0.8rem; font-weight: 500; color: #4db8a4; margin-bottom: 0.75rem;
     }
-    .lock-info svg { width: 0.875rem; height: 0.875rem; }
-    .token-card p { color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+    .lock-badge svg { width: 14px; height: 14px; }
+    .token-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
     .address-box {
       display: inline-flex; align-items: center; gap: 0.5rem;
-      padding: 0.5rem 0.75rem; border-radius: 0.5rem;
-      background: var(--muted-bg); max-width: 100%;
+      padding: 0.5rem 0.75rem; border-radius: 8px;
+      background: var(--bg); max-width: 100%;
     }
     .address-box code {
-      font-size: 0.75rem; color: var(--muted); font-family: monospace;
+      font-size: 0.7rem; color: var(--muted); font-family: monospace;
       overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
-    .copy-btn { padding: 0.25rem; border-radius: 0.25rem; color: var(--muted); transition: color 0.2s; }
+    .copy-btn { padding: 0.25rem; border-radius: 4px; color: var(--muted); transition: color 0.2s; }
     .copy-btn:hover { color: var(--fg); }
-    .copy-btn svg { width: 0.875rem; height: 0.875rem; }
-    @media (max-width: 640px) { .token-card-inner { flex-direction: column; } }
+    .copy-btn svg { width: 14px; height: 14px; }
+    .token-card.full-width { grid-column: 1 / -1; }
 
-    /* ===================== CHART ===================== */
-    .chart-frame { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow-lift); }
-    .chart-frame iframe { width: 100%; height: 500px; border: none; }
-    .chart-link { margin-top: 1.5rem; text-align: center; }
-    .chart-link a { font-size: 0.875rem; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; transition: color 0.2s; }
-    .chart-link a:hover { color: var(--primary); }
-
-    /* ===================== SUPPORT ===================== */
-    .support-icon {
-      width: 4rem; height: 4rem; border-radius: 1rem;
-      background: var(--card); box-shadow: var(--shadow-soft);
+    /* Flywheel mini */
+    .flywheel-mini {
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 2rem;
+      gap: 0.5rem; flex-wrap: wrap; margin-top: 2rem;
     }
-    .support-icon svg { width: 1.75rem; height: 1.75rem; color: var(--primary); }
-    .contract-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+    .flywheel-mini span {
+      padding: 0.5rem 1.25rem; border-radius: 999px;
+      border: 1px solid var(--border); font-size: 0.8rem;
+      background: var(--bg-white);
+    }
+    .flywheel-mini .arrow { border: none; padding: 0; font-size: 1.25rem; color: #4db8a4; background: none; }
+
+    /* Chart */
+    .chart-section { padding: 4rem 0; background: var(--bg); }
+    .chart-frame {
+      border-radius: var(--radius); overflow: hidden;
+      border: 1px solid var(--border); box-shadow: var(--shadow-soft);
+      max-width: 960px; margin: 0 auto;
+    }
+    .chart-frame iframe { width: 100%; height: 500px; border: none; }
+    .chart-link { text-align: center; margin-top: 1rem; }
+    .chart-link a { font-size: 0.85rem; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; }
+    .chart-link a:hover { color: var(--fg); }
+
+    /* Support CTA */
+    .support-cta {
+      padding: 6rem 0; text-align: center;
+      background: linear-gradient(135deg, #e8f2f4, #f0e6f6, #fde8d8);
+    }
+    .support-cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem; }
+    .support-cta > div > p { color: var(--muted); font-size: 1rem; max-width: 36rem; margin: 0 auto 2rem; line-height: 1.7; }
+    .contract-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
     .contract-btn {
       display: inline-flex; align-items: center; gap: 0.75rem;
-      padding: 0.75rem 1.5rem; border-radius: 0.75rem;
-      background: var(--card); border: 1px solid var(--border);
-      box-shadow: var(--shadow-soft); transition: border-color 0.2s; cursor: pointer;
+      padding: 0.75rem 1.5rem; border-radius: 12px;
+      background: var(--bg-white); border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft); cursor: pointer;
+      transition: border-color 0.2s;
     }
-    .contract-btn:hover { border-color: hsla(170,60%,60%,0.4); }
-    .contract-btn code { font-size: 0.875rem; font-family: monospace; word-break: break-all; }
+    .contract-btn:hover { border-color: var(--accent-dark); }
+    .contract-btn code { font-size: 0.8rem; font-family: monospace; word-break: break-all; }
     .contract-btn .copy-icon { flex-shrink: 0; color: var(--muted); transition: color 0.2s; }
-    .contract-btn:hover .copy-icon { color: var(--primary); }
+    .contract-btn:hover .copy-icon { color: var(--fg); }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.85rem 2rem; border-radius: 999px;
+      background: #4db8a4; color: #fff; font-weight: 600;
+      font-size: 0.9rem; transition: opacity 0.2s; margin-top: 1.5rem;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+
+    @media (max-width: 640px) {
+      .token-grid { grid-template-columns: 1fr; }
+      .token-card.full-width { grid-column: auto; }
+    }
+
+    /* ===================== NEWSLETTER ===================== */
+    .newsletter {
+      padding: 6rem 0; background: var(--dark-bg); color: var(--dark-fg);
+    }
+    .newsletter-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    .newsletter h2 {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 700; line-height: 1.2; letter-spacing: -0.02em;
+    }
+    .newsletter-form { display: flex; gap: 0; }
+    .newsletter-form input {
+      flex: 1; padding: 1rem 1.25rem; border: 1px solid #333;
+      border-radius: 12px 0 0 12px; background: transparent;
+      color: var(--dark-fg); font-size: 0.9rem; font-family: var(--font-body);
+      outline: none;
+    }
+    .newsletter-form input::placeholder { color: var(--dark-muted); }
+    .newsletter-form button {
+      padding: 1rem 1.25rem; border-radius: 0 12px 12px 0;
+      background: var(--accent); color: var(--fg);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .newsletter-form button:hover { background: var(--accent-dark); }
+    .newsletter-form button svg { width: 18px; height: 18px; }
+    .newsletter-consent {
+      display: flex; align-items: center; gap: 0.5rem;
+      margin-top: 1rem; font-size: 0.8rem; color: var(--dark-muted);
+    }
+    .newsletter-consent input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--accent);
+    }
+
+    @media (max-width: 768px) { .newsletter-inner { grid-template-columns: 1fr; gap: 2rem; } }
 
     /* ===================== FOOTER ===================== */
-    .footer { padding: 3rem 0; border-top: 1px solid var(--border); }
-    .footer .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
-    .footer-brand { display: flex; align-items: center; gap: 0.625rem; }
-    .footer-brand-icon { width: 1.5rem; height: 1.5rem; border-radius: 0.375rem; background: var(--gradient-mint); }
-    .footer-brand span { font-family: var(--font-display); font-size: 1.125rem; font-weight: 700; }
-    .footer p { font-size: 0.875rem; color: var(--muted); }
-    .footer a { font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
-    .footer a:hover { color: var(--primary); }
-    @media (max-width: 640px) { .footer .container { flex-direction: column; text-align: center; } }
+    .footer {
+      padding: 4rem 0 2rem; background: var(--dark-bg); color: var(--dark-fg);
+      border-top: 1px solid #222;
+    }
+    .footer-top {
+      display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 3rem;
+      padding-bottom: 3rem;
+    }
+    .footer-brand-logo { height: 50px; width: auto; margin-bottom: 1.25rem; filter: invert(1); }
+    .footer-desc { font-size: 0.9rem; color: var(--dark-muted); line-height: 1.6; margin-bottom: 1.5rem; }
+    .footer-social { display: flex; gap: 1rem; }
+    .footer-social a {
+      width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+      color: var(--dark-fg); transition: opacity 0.2s;
+    }
+    .footer-social a:hover { opacity: 0.6; }
+    .footer-social a svg { width: 20px; height: 20px; }
+    .footer-col h4 { font-size: 1rem; font-weight: 600; margin-bottom: 1.25rem; }
+    .footer-col a {
+      display: block; font-size: 0.9rem; color: var(--dark-muted);
+      padding: 0.35rem 0; transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--dark-fg); }
+    .footer-contact p, .footer-contact a {
+      font-size: 0.9rem; color: var(--dark-muted); line-height: 1.6;
+    }
+    .footer-contact a { font-weight: 600; color: var(--dark-fg); }
+    .footer-bottom {
+      border-top: 1px solid #222; padding-top: 1.5rem;
+      font-size: 0.8rem; color: var(--dark-muted);
+    }
+
+    @media (max-width: 768px) {
+      .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+    }
+
+    /* ===================== ANIMATIONS ===================== */
+    .fade-in {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    .fade-in-left {
+      opacity: 0; transform: translateX(-30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in-left.visible { opacity: 1; transform: translateX(0); }
+
+    .count-up { display: inline-block; }
   </style>
 </head>
 <body>
@@ -355,291 +554,384 @@
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="container">
-      <a href="#" class="navbar-brand">
-        <div class="navbar-brand-icon"></div>
-        <span>Rhozeland</span>
+      <a href="#">
+        <img src="/images/toybox_logo.png" alt="Rhozeland" class="navbar-logo" />
       </a>
       <div class="navbar-links">
         <a href="#about">About</a>
-        <a href="#ecosystem">Ecosystem</a>
-        <a href="#tokenomics">Tokenomics</a>
-        <a href="#chart">Chart</a>
-        <a href="#support">Support</a>
-        <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" rel="noopener noreferrer" class="btn-buy">Buy $RHOZE</a>
+        <a href="#projects">Projects</a>
+        <a href="#events">Events</a>
+        <a href="#token">$RHOZE</a>
+        <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="btn-login">
+          Login
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
       </div>
       <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">☰</button>
     </div>
     <div id="mobileMenu" class="mobile-menu">
-      <a href="#about" onclick="document.getElementById('mobileMenu').classList.remove('open')">About</a>
-      <a href="#ecosystem" onclick="document.getElementById('mobileMenu').classList.remove('open')">Ecosystem</a>
-      <a href="#tokenomics" onclick="document.getElementById('mobileMenu').classList.remove('open')">Tokenomics</a>
-      <a href="#chart" onclick="document.getElementById('mobileMenu').classList.remove('open')">Chart</a>
-      <a href="#support" onclick="document.getElementById('mobileMenu').classList.remove('open')">Support</a>
-      <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" rel="noopener noreferrer" class="btn-buy">Buy $RHOZE</a>
+      <a href="#about" onclick="closeMobile()">About</a>
+      <a href="#projects" onclick="closeMobile()">Projects</a>
+      <a href="#events" onclick="closeMobile()">Events</a>
+      <a href="#token" onclick="closeMobile()">$RHOZE</a>
+      <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="btn-login" onclick="closeMobile()">
+        Login
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+      </a>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-bg"></div>
     <div class="container">
-      <div class="hero-content">
-        <p class="hero-tag"><span class="star">✦</span> Crafting Visions, Building Futures</p>
-        <h1>Your<br>Creative<br>Engine</h1>
-        <p>Rhozeland is a creator-owned economy built on Solana — real clothing drops, a services marketplace, an artist app &amp; a revenue flywheel funding buybacks, burns, grants &amp; causes.</p>
-        <div class="hero-actions">
-          <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" rel="noopener noreferrer" class="btn-primary">Buy $RHOZE</a>
-          <a href="#about" class="btn-outline">Learn More</a>
+      <div class="hero-top">
+        <div class="hero-left fade-in">
+          <p class="hero-tag">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9.5 8.5 3 9.5l5 4.5-1.5 7L12 17.5l5.5 3.5-1.5-7 5-4.5-6.5-1z"/></svg>
+            Crafting Visions, Building Futures
+          </p>
+          <p class="hero-desc">Rhozeland is a creative studio built for modern creators, offering flexible access to studio time, design, audio, and brand strategy.</p>
         </div>
-      </div>
-      <div class="hero-visual">
-        <div class="hero-card">
-          <div class="hero-card-bg"></div>
-          <div class="hero-card-inner"><span>R</span></div>
+        <div class="hero-right fade-in" style="transition-delay: 0.15s;">
+          <h1>Your<br>Creative Engine</h1>
+          <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="hero-cta-circle">
+            Create
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
         </div>
       </div>
     </div>
-    <div class="scroll-indicator">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+    <div class="hero-carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db46_hero-02.avif" alt="Creative work" style="--rot:-5deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3aebb8d57ba48a5722f50_global-masterminds.gif" alt="Global Masterminds" style="--rot:3deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af968bf910bfc98d9117_gaeith-no-one-to-love-live.gif" alt="Live performance" style="--rot:-2deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af2d22450e910c75d725_sonicrealm-alot-of-my-mind.gif" alt="Sonic Realm" style="--rot:4deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3ad158fd909a0ec667dec_bk-whiskey-1.gif" alt="BK Whiskey" style="--rot:-3deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3b0cd981e1af814fd1b7b_Adobe%20Express%20-%20La_Flame%206.gif" alt="La Flame" style="--rot:2deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db32_single-img-06.avif" alt="Studio work" style="--rot:-4deg" />
+        <!-- duplicates for seamless loop -->
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db46_hero-02.avif" alt="Creative work" style="--rot:-5deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3aebb8d57ba48a5722f50_global-masterminds.gif" alt="Global Masterminds" style="--rot:3deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af968bf910bfc98d9117_gaeith-no-one-to-love-live.gif" alt="Live performance" style="--rot:-2deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3af2d22450e910c75d725_sonicrealm-alot-of-my-mind.gif" alt="Sonic Realm" style="--rot:4deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3ad158fd909a0ec667dec_bk-whiskey-1.gif" alt="BK Whiskey" style="--rot:-3deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68a3b0cd981e1af814fd1b7b_Adobe%20Express%20-%20La_Flame%206.gif" alt="La Flame" style="--rot:2deg" />
+        <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77da9f/68953b64959803ee0c77db32_single-img-06.avif" alt="Studio work" style="--rot:-4deg" />
+      </div>
     </div>
   </section>
 
   <!-- ABOUT -->
-  <section id="about" class="section">
+  <section id="about" class="about">
     <div class="container">
-      <div class="section-header">
-        <h2>What is Rhoze?</h2>
-        <p>The problem is ownership. The solution is giving it all back — a chance to finally own something meaningful and fuel more growth, together.</p>
+      <div class="about-top">
+        <span class="pill-tag">About us</span>
+        <h2 class="about-heading fade-in">Empowering creators to turn their vision into content that connects, converts, and builds lasting brands.</h2>
       </div>
-      <div class="about-grid">
-        <div class="about-card">
-          <div class="about-icon pink">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H8.5C7.57 2 6.68 2.37 6.03 3.03 5.37 3.68 5 4.57 5 5.5s.37 1.82 1.03 2.47C6.68 8.63 7.57 9 8.5 9H12"/><path d="M12 2h3.5c.93 0 1.82.37 2.47 1.03.66.65 1.03 1.55 1.03 2.47s-.37 1.82-1.03 2.47C17.32 8.63 16.43 9 15.5 9H12"/><path d="M12 9v13"/><path d="M12 22c-2 0-4-1-4-3.5S12 14 12 14s4 1 4 4.5-2 3.5-4 3.5Z"/></svg>
+      <div class="about-bottom">
+        <div class="about-stat fade-in">
+          <div class="stat-number"><span class="count-up" data-target="1000">0</span>+</div>
+          <p class="stat-label">creators &amp; projects collaborated —<br>starting out &amp; scaling up</p>
+        </div>
+        <div class="about-right fade-in" style="transition-delay: 0.15s;">
+          <p class="about-body">We're your all-in-one creator ecosystem — content, strategy, space, and support for models, artists, and influencers ready to level up.</p>
+          <a href="#token" class="about-cta-circle">
+            Learn More
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="services">
+    <div class="container">
+      <div class="services-header">
+        <span class="pill-tag">Our services</span>
+        <p class="services-desc">We provide the resources to bring your vision to life and keep your momentum going. <a href="https://www.rhozeland.com/projects" target="_blank">View portfolio</a></p>
+      </div>
+
+      <div class="service-row fade-in">
+        <div class="service-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><circle cx="12" cy="10" r="2"/><path d="M17 10h.01"/></svg>
+          <h3>Visual</h3>
+        </div>
+        <ul class="service-list">
+          <li>Photoshoots</li>
+          <li>Web Development</li>
+          <li>UI/UX Development</li>
+          <li>Graphic design</li>
+        </ul>
+        <ul class="service-list">
+          <li>Content editing</li>
+          <li>Commercial editing</li>
+          <li>Short form editing</li>
+        </ul>
+      </div>
+
+      <div class="service-row alt fade-in">
+        <div class="service-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
+          <h3>Audio</h3>
+        </div>
+        <ul class="service-list">
+          <li>Audio recording</li>
+          <li>Mixing</li>
+          <li>Mastering</li>
+        </ul>
+        <ul class="service-list">
+          <li>Mobile shortform</li>
+          <li>MV/Commercial</li>
+          <li>Podcast recording</li>
+        </ul>
+      </div>
+
+      <div class="service-row fade-in">
+        <div class="service-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></svg>
+          <h3>Development</h3>
+        </div>
+        <ul class="service-list">
+          <li>Grant funding research</li>
+          <li>Studio room rental</li>
+          <li>Brand consulting</li>
+        </ul>
+        <ul class="service-list">
+          <li>Roadmap consulting</li>
+          <li>Publishing</li>
+          <li>Management</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS MARQUEE -->
+  <div class="projects-marquee">
+    <div class="marquee-track">
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="projects">
+    <div class="container">
+      <div class="projects-header">
+        <span class="pill-tag">Explore</span>
+        <p class="projects-intro fade-in">Full-spectrum creative services — shoot, design, edit, launch</p>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card fade-in" style="background: var(--bg-white);">
+          <div class="project-card-top">
+            <h4>Angry Mortgage Podcast</h4>
+            <a href="https://www.youtube.com/@angrymortgage" target="_blank" class="project-card-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
           </div>
+          <p>Visual production for the Angry Mortgage Podcast.</p>
+          <span class="project-card-tag">Visual</span>
+        </div>
+        <div class="project-card fade-in" style="transition-delay:0.08s; background: var(--bg-white);">
+          <div class="project-card-top">
+            <h4>Brass Knuckles Whiskey</h4>
+            <a href="https://www.instagram.com/bkwhiskey/" target="_blank" class="project-card-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+          <p>Short-form content and brand visual direction.</p>
+          <span class="project-card-tag">Visual</span>
+        </div>
+        <div class="project-card fade-in" style="transition-delay:0.16s; background: var(--bg-white);">
+          <div class="project-card-top">
+            <h4>Cozal</h4>
+            <a href="https://www.youtube.com/watch?v=g4S6C9TGIZo" target="_blank" class="project-card-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+          <p>Full audio and visual production for artist launch.</p>
+          <span class="project-card-tag">Audio &amp; Visual</span>
+        </div>
+        <div class="project-card fade-in" style="background: var(--bg-white);">
+          <div class="project-card-top">
+            <h4>Server Incognito</h4>
+            <a href="https://server-incognito.indolestic.com/" target="_blank" class="project-card-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+          <p>Interactive digital art installation exploring connectivity.</p>
+          <span class="project-card-tag">Audio &amp; Visual</span>
+        </div>
+        <div class="project-card fade-in" style="transition-delay:0.08s; background: var(--bg-white);">
+          <div class="project-card-top">
+            <h4>Roosevelth — Music EP</h4>
+            <a href="https://open.spotify.com/album/17vEVvrKdexB5n6pdnc1Lf" target="_blank" class="project-card-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+          <p>Artwork and visual identity for Roosevelth's EP release.</p>
+          <span class="project-card-tag">Audio &amp; Visual</span>
+        </div>
+        <div class="project-card fade-in" style="transition-delay:0.16s; background: var(--bg-white);">
+          <div class="project-card-top">
+            <h4>LeLongLegs</h4>
+            <a href="https://www.lelonglegs.lol/" target="_blank" class="project-card-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+          </div>
+          <p>Web design and visual branding for digital presence.</p>
+          <span class="project-card-tag">Visual</span>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:3rem;">
+        <a href="https://www.rhozeland.com/contact-us" target="_blank" class="btn-dark">
+          Create
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events" class="events">
+    <div class="container">
+      <div class="events-header">
+        <div class="events-header-left">
+          <span class="pill-tag">What's happening</span>
+          <h2 class="events-subtitle fade-in">Be a part of the network</h2>
+        </div>
+        <a href="https://www.rhozeland.com/events" target="_blank" class="btn-dark">
+          More Events
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </div>
+      <div class="events-grid">
+        <div class="event-card fade-in">
+          <h4>RHOZE Creative Social</h4>
+          <p>A night for artists, musicians, and digital creators to hang, share, and party at Rhozeland on College St.</p>
+          <p class="event-card-date">March 20, 2026</p>
+        </div>
+        <div class="event-card fade-in" style="transition-delay:0.1s;">
+          <h4>Create The Future Summit 2025</h4>
+          <p>The global stage where leaders forge tomorrow — a one-day event for business leaders, tech visionaries, and government officials.</p>
+          <p class="event-card-date">August 14, 2025</p>
+        </div>
+        <div class="event-card fade-in">
+          <h4>Server Incognito @ Inter/Access</h4>
+          <p>A temporal installation that only exists when connection is lost, challenging the expectation of 24/7 digital permanence.</p>
+          <p class="event-card-date">February 5, 2025</p>
+        </div>
+        <div class="event-card fade-in" style="transition-delay:0.1s;">
+          <h4>Copyright Laws in the Digital World</h4>
+          <p>Exploring how copyright frameworks are evolving in the age of AI, sampling, and digital media.</p>
+          <p class="event-card-date">February 8, 2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- $RHOZE TOKEN SECTION -->
+  <section id="token" class="token-section">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2>$RHOZE Token</h2>
+        <p>A creator-owned economy built on Solana — real clothing drops, a services marketplace, an artist app &amp; a revenue flywheel funding buybacks, burns, grants &amp; causes.</p>
+      </div>
+
+      <!-- About cards -->
+      <div class="token-grid" style="margin-bottom: 3rem;">
+        <div class="token-card fade-in">
           <h3>For Creatives</h3>
           <p>Artists, designers, musicians — if you create, Rhoze is your launchpad.</p>
         </div>
-        <div class="about-card">
-          <div class="about-icon lavender">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-          </div>
+        <div class="token-card fade-in" style="transition-delay:0.08s;">
           <h3>For the Trenches</h3>
           <p>Real support for real people. Grants, causes, and community-first economics.</p>
         </div>
-        <div class="about-card">
-          <div class="about-icon peach">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
+        <div class="token-card fade-in">
           <h3>By the People</h3>
           <p>Ownership isn't a buzzword here. It's the blueprint. Revenue flows back to you.</p>
         </div>
-        <div class="about-card">
-          <div class="about-icon mint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-          </div>
+        <div class="token-card fade-in" style="transition-delay:0.08s;">
           <h3>Built Different</h3>
           <p>Clothing drops, services marketplace, artist tools — backed by a deflationary flywheel.</p>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ECOSYSTEM / FLYWHEEL -->
-  <section id="ecosystem" class="section section-surface">
-    <div class="container">
-      <div class="section-header">
-        <h2>The Flywheel</h2>
-        <p>Every piece of the ecosystem feeds the next. Revenue in, value out, community first.</p>
-      </div>
-      <div class="flywheel-wrapper">
-        <!-- Circular flywheel diagram -->
-        <div class="flywheel">
-          <svg viewBox="0 0 560 560" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="mintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="hsl(170,60%,55%)" />
-                <stop offset="100%" stop-color="hsl(170,80%,65%)" />
-              </linearGradient>
-              <marker id="arrowM" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <path d="M0,0 L8,3 L0,6" fill="hsl(170,60%,60%)" />
-              </marker>
-            </defs>
-
-            <!-- Outer dashed orbit ring with flowing animation -->
-            <circle cx="280" cy="280" r="230" fill="none" stroke="hsl(170,60%,80%)" stroke-width="2" class="orbit-dash" />
-
-            <!-- Curved arrows between stages (clockwise) -->
-            <g class="flywheel-spin">
-              <!-- Top→Right arc arrow -->
-              <path d="M 340 58 A 230 230 0 0 1 498 200" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
-              <!-- Right→Bottom arc arrow -->
-              <path d="M 498 360 A 230 230 0 0 1 340 502" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
-              <!-- Bottom→Left arc arrow -->
-              <path d="M 220 502 A 230 230 0 0 1 62 360" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
-              <!-- Left→Top arc arrow -->
-              <path d="M 62 200 A 230 230 0 0 1 220 58" fill="none" stroke="hsl(170,60%,60%)" stroke-width="2.5" marker-end="url(#arrowM)" />
-            </g>
-
-            <!-- Inner ring -->
-            <circle cx="280" cy="280" r="150" fill="hsla(170,60%,85%,0.2)" stroke="hsl(170,60%,75%)" stroke-width="1.5" />
-
-            <!-- Stage nodes at cardinal points -->
-            <!-- Revenue (top) -->
-            <g>
-              <circle class="flywheel-node-bg" cx="280" cy="50" r="38" fill="hsl(170,60%,95%)" stroke="hsl(170,60%,70%)" stroke-width="2" />
-              <text x="280" y="46" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(170,30%,25%)">Revenue</text>
-              <text x="280" y="60" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Ecosystem earns</text>
-            </g>
-            <!-- Buybacks (right) -->
-            <g>
-              <circle class="flywheel-node-bg" cx="510" cy="280" r="38" fill="hsl(300,60%,95%)" stroke="hsl(300,40%,75%)" stroke-width="2" />
-              <text x="510" y="276" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(300,30%,30%)">Buybacks</text>
-              <text x="510" y="290" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Floor strengthens</text>
-            </g>
-            <!-- Community (bottom) -->
-            <g>
-              <circle class="flywheel-node-bg" cx="280" cy="510" r="38" fill="hsl(260,40%,95%)" stroke="hsl(260,30%,75%)" stroke-width="2" />
-              <text x="280" y="506" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(260,30%,30%)">Community</text>
-              <text x="280" y="520" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Trust grows</text>
-            </g>
-            <!-- Creators (left) -->
-            <g>
-              <circle class="flywheel-node-bg" cx="50" cy="280" r="38" fill="hsl(20,80%,95%)" stroke="hsl(20,60%,75%)" stroke-width="2" />
-              <text x="50" y="276" text-anchor="middle" font-family="'Syne',sans-serif" font-size="11" font-weight="700" fill="hsl(20,40%,30%)">Creators</text>
-              <text x="50" y="290" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="8" fill="hsl(0,0%,40%)">Talent joins</text>
-            </g>
-
-            <!-- Inner action labels -->
-            <text x="280" y="155" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Attract</text>
-            <text x="405" y="284" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Engage</text>
-            <text x="280" y="415" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Reward</text>
-            <text x="155" y="284" text-anchor="middle" font-family="'Syne',sans-serif" font-size="12" font-weight="600" fill="hsl(170,40%,35%)">Delight</text>
-
-            <!-- Center -->
-            <g class="flywheel-center-g">
-              <circle cx="280" cy="280" r="65" fill="url(#mintGrad)" />
-              <text x="280" y="276" text-anchor="middle" font-family="'Syne',sans-serif" font-size="18" font-weight="800" fill="#fff">Growth</text>
-              <text x="280" y="296" text-anchor="middle" font-family="'Neue Haas Grotesk Display Pro',sans-serif" font-size="10" fill="hsla(0,0%,100%,0.8)">∞ cycle</text>
-            </g>
-          </svg>
+      <!-- Flywheel cycle -->
+      <div class="fade-in" style="text-align:center; margin-bottom: 4rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">The Flywheel</h3>
+        <p style="color: var(--muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Every piece of the ecosystem feeds the next.</p>
+        <div class="flywheel-mini">
+          <span>Revenue</span><span class="arrow">→</span>
+          <span>Buybacks</span><span class="arrow">→</span>
+          <span>Burns</span><span class="arrow">→</span>
+          <span>Value</span><span class="arrow">→</span>
+          <span>Growth</span><span class="arrow">→</span>
+          <span>Revenue</span>
         </div>
+      </div>
 
-        <!-- Pillar cards -->
-        <div class="flywheel-pillars">
-          <div class="flywheel-pillar">
-            <div class="flywheel-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
-            <h4>Clothing Drops</h4>
-            <p>Real fashion, real revenue flowing back.</p>
+      <!-- Tokenomics wallets -->
+      <div class="section-header fade-in" style="margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Tokenomics</h3>
+        <p style="color: var(--muted); font-size: 0.9rem;">Full transparency on supply allocation. Every wallet is public.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem;">
+        <div class="token-card fade-in">
+          <h3>Main Wallet</h3>
+          <div class="pct">0.43%</div>
+          <div class="lock-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            24% locked, 12 months left
           </div>
-          <div class="flywheel-pillar">
-            <div class="flywheel-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-            <h4>Services Marketplace</h4>
-            <p>Hire creators &amp; builders with $RHOZE.</p>
+          <p>We are seriously committed to the project with many areas to showcase from the talent within our network.</p>
+          <div class="address-box">
+            <code>6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr</code>
+            <button class="copy-btn" onclick="copyAddress(this,'6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr')" aria-label="Copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
           </div>
-          <div class="flywheel-pillar">
-            <div class="flywheel-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-            <h4>Artist App</h4>
-            <p>Tools for musicians &amp; creators to earn.</p>
+        </div>
+        <div class="token-card fade-in">
+          <h3>Marketing Wallet</h3>
+          <div class="pct">0.83%</div>
+          <div class="lock-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            6.5% locked, 3 months left
           </div>
-          <div class="flywheel-pillar">
-            <div class="flywheel-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg></div>
-            <h4>Buybacks</h4>
-            <p>Revenue fuels buybacks, strengthening the floor.</p>
+          <p>Raising awareness through livestreaming and developing Rhozeland as a credible and recognizable brand. Pursuing collaborations that uplift and inspire. Any funds used will be announced — building trust through transparency.</p>
+          <div class="address-box">
+            <code>6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C</code>
+            <button class="copy-btn" onclick="copyAddress(this,'6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C')" aria-label="Copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
           </div>
-          <div class="flywheel-pillar">
-            <div class="flywheel-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></div>
-            <h4>Burns</h4>
-            <p>Deflationary by design.</p>
-          </div>
-          <div class="flywheel-pillar">
-            <div class="flywheel-pillar-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><path d="M2 8h20v4H2z"/><path d="M12 20V8"/><path d="m7.5 2 4.5 6 4.5-6"/></svg></div>
-            <h4>Grants &amp; Causes</h4>
-            <p>Funding dreamers &amp; communities.</p>
+        </div>
+        <div class="token-card fade-in">
+          <h3>Airdrop Wallet</h3>
+          <div class="pct">1.85%</div>
+          <p>Providing supply to real-world participants of our network and studio. The real diamond holders and advocates will raise awareness of $RHOZE through engagement at our studio.</p>
+          <div class="address-box">
+            <code>USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs</code>
+            <button class="copy-btn" onclick="copyAddress(this,'USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs')" aria-label="Copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- TOKENOMICS -->
-  <section id="tokenomics" class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Tokenomics</h2>
-        <p>Full transparency on supply allocation. Every wallet is public, every move is announced.</p>
+      <!-- Chart -->
+      <div class="fade-in" style="text-align: center; margin-bottom: 2rem;">
+        <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Live Chart</h3>
+        <p style="color: var(--muted); font-size: 0.9rem;">Track $RHOZE in real-time on DexScreener.</p>
       </div>
-      <div class="token-cards">
-        <div class="token-card">
-          <div class="token-card-inner">
-            <div class="token-icon mint-bg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2.468"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
-            </div>
-            <div class="token-content">
-              <div class="token-header"><h3>Main Wallet</h3><span class="pct">0.43%</span></div>
-              <div class="lock-info">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                24% locked, 12 months left
-              </div>
-              <p>We are seriously committed to the project with many areas to showcase from the talent within our network.</p>
-              <div class="address-box">
-                <code>6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr</code>
-                <button class="copy-btn" onclick="copyAddress(this,'6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr')" aria-label="Copy">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="token-card">
-          <div class="token-card-inner">
-            <div class="token-icon pink-bg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-            </div>
-            <div class="token-content">
-              <div class="token-header"><h3>Marketing Wallet</h3><span class="pct">0.83%</span></div>
-              <div class="lock-info">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                6.5% locked, 3 months left
-              </div>
-              <p>Our focus is on raising awareness through livestreaming and developing Rhozeland as a credible and recognizable brand. We're pursuing collaborations that uplift and inspire people to achieve their dreams. Any funds used will be announced — building trust through transparency and resourcefulness.</p>
-              <div class="address-box">
-                <code>6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C</code>
-                <button class="copy-btn" onclick="copyAddress(this,'6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C')" aria-label="Copy">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="token-card">
-          <div class="token-card-inner">
-            <div class="token-icon lavender-bg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><path d="M2 8h20v4H2z"/><path d="M12 20V8"/><path d="m7.5 2 4.5 6 4.5-6"/></svg>
-            </div>
-            <div class="token-content">
-              <div class="token-header"><h3>Airdrop Wallet</h3><span class="pct">1.85%</span></div>
-              <p>We're providing supply to real-world participants of our network and studio by inviting them to hold the token. Our thesis is that the real diamond holders and advocates will raise awareness of $RHOZE through engagement at our studio. The word of $RHOZE will spread.</p>
-              <div class="address-box">
-                <code>USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs</code>
-                <button class="copy-btn" onclick="copyAddress(this,'USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs')" aria-label="Copy">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CHART -->
-  <section id="chart" class="section section-surface">
-    <div class="container" style="max-width: 960px;">
-      <div class="section-header">
-        <h2>Live Chart</h2>
-        <p>Track $RHOZE in real-time on DexScreener.</p>
-      </div>
-      <div class="chart-frame">
+      <div class="chart-frame fade-in">
         <iframe src="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf?embed=1&theme=light&info=0" title="DexScreener $RHOZE Chart" loading="lazy"></iframe>
       </div>
       <div class="chart-link">
@@ -648,21 +940,38 @@
     </div>
   </section>
 
-  <!-- SUPPORT -->
-  <section id="support" class="section section-pastel" style="text-align: center;">
+  <!-- SUPPORT CTA -->
+  <section class="support-cta">
     <div class="container" style="max-width: 48rem;">
-      <div class="support-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
-      </div>
-      <h2 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 1rem;">Join the movement</h2>
-      <p style="color: var(--muted); font-size: 1.125rem; max-width: 36rem; margin: 0 auto 2.5rem; line-height: 1.7;">Support the vision. Buy $RHOZE on Solana and become part of a creator-owned future.</p>
+      <h2 class="fade-in">Join the movement</h2>
+      <p class="fade-in">Support the vision. Buy $RHOZE on Solana and become part of a creator-owned future.</p>
       <p class="contract-label">Contract Address</p>
       <button class="contract-btn" onclick="copyAddress(this,'C4RrVR1GCNeEyHWa6mASBgyckY7671Rq3X4YfEgM4RMf')">
         <code>C4RrVR1GCNeEyHWa6mASBgyckY7671Rq3X4YfEgM4RMf</code>
-        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
       </button>
-      <div style="margin-top: 2.5rem;">
+      <div>
         <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" rel="noopener noreferrer" class="btn-primary">Buy on DexScreener</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="container">
+      <div class="newsletter-inner">
+        <h2>Stay tuned &amp; subscribe to our newsletter</h2>
+        <div>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Enter email address" />
+            <button type="button" aria-label="Subscribe">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </button>
+          </div>
+          <label class="newsletter-consent">
+            <input type="checkbox" /> I agree to the Privacy Policy.
+          </label>
+        </div>
       </div>
     </div>
   </section>
@@ -670,16 +979,51 @@
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
-      <div class="footer-brand">
-        <div class="footer-brand-icon"></div>
-        <span>Rhozeland</span>
+      <div class="footer-top">
+        <div>
+          <img src="/images/toybox_logo.png" alt="Rhozeland" class="footer-brand-logo" />
+          <p class="footer-desc">Rhozeland is a creative ecosystem built for modern creators.</p>
+          <div class="footer-social">
+            <a href="https://x.com" target="_blank" aria-label="X/Twitter">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Our page</h4>
+          <a href="https://www.rhozeland.com/about-us" target="_blank">About us</a>
+          <a href="https://www.rhozeland.com/projects" target="_blank">Projects</a>
+          <a href="https://www.rhozeland.com/events" target="_blank">Events</a>
+          <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a>
+          <a href="https://www.rhozeland.com/contact-us" target="_blank">Contact us</a>
+          <a href="https://rhozeland.app/" target="_blank">Log In</a>
+        </div>
+        <div class="footer-col footer-contact">
+          <h4>Contact</h4>
+          <a href="tel:6478746743">647-874-6743</a>
+          <a href="mailto:support@rhozeland.com">support@rhozeland.com</a>
+          <p style="margin-top: 1rem;">894 College Street, Toronto, ON, Canada</p>
+        </div>
       </div>
-      <p>&copy; 2025 Rhozeland. All rights reserved.</p>
-      <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" rel="noopener noreferrer">DexScreener</a>
+      <div class="footer-bottom">
+        <p>Copyright &copy; 2025 Rhozeland</p>
+      </div>
     </div>
   </footer>
 
   <script>
+    // Mobile menu
+    function closeMobile() {
+      document.getElementById('mobileMenu').classList.remove('open');
+    }
+
+    // Copy address
     function copyAddress(btn, text) {
       navigator.clipboard.writeText(text).then(function() {
         var icon = btn.querySelector('svg');
@@ -690,6 +1034,50 @@
         }
       });
     }
+
+    // Scroll-triggered fade-in animations
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '-50px' });
+
+    document.querySelectorAll('.fade-in, .fade-in-left').forEach(function(el) {
+      observer.observe(el);
+    });
+
+    // Count-up animation
+    function animateCountUp(el) {
+      var target = parseInt(el.getAttribute('data-target'));
+      var duration = 2000;
+      var start = 0;
+      var startTime = null;
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = Math.min((timestamp - startTime) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target);
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(step);
+    }
+
+    var countObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          animateCountUp(entry.target);
+          countObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.count-up').forEach(function(el) {
+      countObserver.observe(el);
+    });
   </script>
 </body>
 </html>

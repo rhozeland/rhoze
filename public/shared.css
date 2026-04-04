@@ -18,6 +18,15 @@
   --font-accent: 'Playfair Display', serif;
   --radius: 12px;
   --shadow-soft: 0 2px 16px rgba(0,0,0,0.06);
+
+  /* Creator OS gradient palette */
+  --gradient-hero: linear-gradient(135deg, hsl(280 35% 85%), hsl(320 30% 82%), hsl(30 40% 85%), hsl(175 35% 82%));
+  --gradient-hero-accent: linear-gradient(135deg, hsl(280 30% 78%), hsl(320 30% 75%));
+  --gradient-soft: linear-gradient(135deg, #e8f2f4, #ede4f3, #fde8d8, #d5ece8);
+  --teal: hsl(175 60% 55%);
+  --pink: hsl(310 60% 80%);
+  --warm: hsl(45 95% 55%);
+  --blue: hsl(210 100% 55%);
 }
 
 html { scroll-behavior: smooth; }

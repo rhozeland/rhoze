@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rhozeland — Events</title>
+  <meta name="description" content="Explore Rhozeland's events — creative socials, summits, and community gatherings." />
+  <link rel="icon" href="/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/"><img src="/images/toybox_logo.png" alt="Rhozeland" class="navbar-logo" /></a>
+      <div class="navbar-links">
+        <a href="/about.html">About</a>
+        <a href="/projects.html">Projects</a>
+        <a href="/events.html" class="active">Events</a>
+        <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a>
+        <a href="/contact.html">Contact</a>
+        <a href="https://rhozeland.app/" target="_blank" class="btn-login">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+      </div>
+      <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">☰</button>
+    </div>
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/about.html">About</a><a href="/projects.html">Projects</a><a href="/events.html">Events</a>
+      <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a><a href="/contact.html">Contact</a>
+      <a href="https://rhozeland.app/" target="_blank" class="btn-login">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container" style="text-align:center;">
+      <span class="pill-tag" style="margin-bottom:1.5rem;">Our Programs within the Ecosystem</span>
+      <h1 class="page-hero-title">Schedule</h1>
+    </div>
+  </section>
+
+  <!-- UPCOMING -->
+  <section style="padding:6rem 0; background:var(--bg-white);">
+    <div class="container">
+      <div style="display:grid; grid-template-columns:300px 1fr; gap:3rem; margin-bottom:5rem;">
+        <h2 style="font-size:clamp(1.75rem,3vw,2.5rem); font-weight:700; line-height:1.2;" class="fade-in">Upcoming Events</h2>
+        <div style="display:flex; align-items:center; justify-content:center;">
+          <p style="color:var(--muted); font-size:1.1rem;">There are no upcoming events</p>
+        </div>
+      </div>
+
+      <!-- PAST EVENTS -->
+      <div style="display:grid; grid-template-columns:300px 1fr; gap:3rem;">
+        <h2 style="font-size:clamp(1.75rem,3vw,2.5rem); font-weight:700; line-height:1.2;" class="fade-in">Past Events</h2>
+        <div class="events-grid">
+          <a href="https://luma.com/embed/event/evt-cLEaltiJY1AHWVY/simple" target="_blank" class="event-card fade-in">
+            <h4>RHOZE Creative Social</h4>
+            <p>A night for artists, musicians, and digital creators to hang, share, and party at Rhozeland on College St. Expect big energy, live beats, visuals, open-mic, and a room full of projects and people to spark conversation.</p>
+            <p class="event-card-date">March 20, 2026</p>
+          </a>
+          <a href="https://lu.ma/ea42t9n7" target="_blank" class="event-card fade-in" style="transition-delay:0.1s;">
+            <h4>Create The Future Summit 2025</h4>
+            <p>A one-day event where business leaders, tech visionaries, government officials, and the art community converge to shape what's next. Be part of the conversation. Be part of the change. Create the future.</p>
+            <p class="event-card-date">August 14, 2025</p>
+          </a>
+          <a href="https://vectorfestival.org/window-activation" target="_blank" class="event-card fade-in">
+            <h4>Server Incognito @ Inter/Access</h4>
+            <p>A temporal installation by Michael Lé — a website that only exists when connection is lost, challenging the expectation of 24/7 digital permanence.</p>
+            <p class="event-card-date">July 10, 2025</p>
+          </a>
+          <a href="https://torontomusicians.myshopify.com/products/toronto-musicians-unscripted" target="_blank" class="event-card fade-in" style="transition-delay:0.1s;">
+            <h4>UNSCRIPTED!</h4>
+            <p>A night of real music, open band jam — and networking.</p>
+            <p class="event-card-date">June 27, 2025</p>
+          </a>
+          <a href="https://www.universe.com/events/flvmeland-3-tickets-41CWLH" target="_blank" class="event-card fade-in">
+            <h4>FLVMELAND 3</h4>
+            <p>Maison Flvme and Rhozeland present FLVMELAND 3 — a next-level fusion of music, fashion, and culture. Genre-bending performances and real-time networking with industry movers.</p>
+            <p class="event-card-date">May 30, 2025</p>
+          </a>
+          <a href="https://www.eventbrite.ca/e/crypto-networking-meet-up-memes-blockchain-powered-by-flaundy-tickets-877121844047" target="_blank" class="event-card fade-in" style="transition-delay:0.1s;">
+            <h4>Crypto Networking Meet-Up</h4>
+            <p>Connect with like-minded individuals in the crypto space, share memes, and dive into the world of blockchain technology.</p>
+            <p class="event-card-date">April 8, 2024</p>
+          </a>
+          <a href="#" class="event-card fade-in">
+            <h4>FLVMELAND 2</h4>
+            <p>A follow up to the initial FLVMELAND event. Enjoy a night of good music and live performances by local Toronto artists.</p>
+            <p class="event-card-date">February 25, 2024</p>
+          </a>
+          <a href="#" class="event-card fade-in" style="transition-delay:0.1s;">
+            <h4>Creators Camp</h4>
+            <p>A songwriting workshop — an immersive experience where participants learn, collaborate, and refine their songwriting skills under the guidance of experienced mentors.</p>
+            <p class="event-card-date">January 20, 2024</p>
+          </a>
+          <a href="#" class="event-card fade-in">
+            <h4>Artisphere</h4>
+            <p>Some of the hottest musical artists from Toronto, all on one stage. Celebrating the vibrant music culture of Toronto.</p>
+            <p class="event-card-date">March 16, 2023</p>
+          </a>
+          <a href="#" class="event-card fade-in" style="transition-delay:0.1s;">
+            <h4>Creative Meet 'N Greet</h4>
+            <p>Meet face-to-face with everyone from videographers, photographers and managers to designers, engineers and producers.</p>
+            <p class="event-card-date">December 9, 2022</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <img src="/images/toybox_logo.png" alt="Rhozeland" class="footer-brand-logo" />
+          <p class="footer-desc">Rhozeland is a creative ecosystem built for modern creators.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Our page</h4>
+          <a href="/about.html">About us</a><a href="/projects.html">Projects</a><a href="/events.html">Events</a>
+          <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a><a href="/contact.html">Contact us</a>
+        </div>
+        <div class="footer-col footer-contact">
+          <h4>Contact</h4>
+          <a href="tel:6478746743">647-874-6743</a>
+          <a href="mailto:support@rhozeland.com">support@rhozeland.com</a>
+          <p style="margin-top:1rem;">894 College Street, Toronto, ON, Canada</p>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>Copyright © 2025 Rhozeland</p></div>
+    </div>
+  </footer>
+
+  <script src="/shared.js"></script>
+</body>
+</html>

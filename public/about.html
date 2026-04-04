@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rhozeland — About Us</title>
+  <meta name="description" content="Learn about Rhozeland — a creative studio built for modern creators, fueling brands and turning ideas into impact since 2016." />
+  <link rel="icon" href="/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/">
+        <img src="/images/toybox_logo.png" alt="Rhozeland" class="navbar-logo" />
+      </a>
+      <div class="navbar-links">
+        <a href="/about.html" class="active">About</a>
+        <a href="/projects.html">Projects</a>
+        <a href="/events.html">Events</a>
+        <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a>
+        <a href="/contact.html">Contact</a>
+        <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="btn-login">
+          Login
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </div>
+      <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">☰</button>
+    </div>
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/about.html" onclick="closeMobile()">About</a>
+      <a href="/projects.html" onclick="closeMobile()">Projects</a>
+      <a href="/events.html" onclick="closeMobile()">Events</a>
+      <a href="https://www.rhozeland.com/shop" target="_blank" onclick="closeMobile()">Shop</a>
+      <a href="/contact.html" onclick="closeMobile()">Contact</a>
+      <a href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" class="btn-login" onclick="closeMobile()">
+        Login
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+      </a>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container" style="text-align:center;">
+      <span class="pill-tag" style="margin-bottom:1.5rem;">About us</span>
+      <h1 class="page-hero-title">Our Story</h1>
+    </div>
+  </section>
+
+  <!-- WHO WE ARE -->
+  <section style="padding: 6rem 0; background: var(--bg-white);">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: auto 1fr; gap:3rem; align-items:start; margin-bottom:4rem;">
+        <span class="pill-tag">Who we are</span>
+        <div>
+          <h2 style="font-size:clamp(1.75rem,3.5vw,2.75rem); font-weight:700; line-height:1.25; letter-spacing:-0.02em; max-width:700px;" class="fade-in">We fuel creators, grow their brands, and turn ideas into impact.</h2>
+          <p style="color:var(--muted); margin-top:1.5rem; font-size:1rem; line-height:1.7;">Built alongside a community of 1,000+ artists</p>
+          <a href="/contact.html" class="btn-dark" style="margin-top:1.5rem;">
+            Contact Us
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Value props -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; border-top:1px solid var(--border); padding-top:2rem;">
+        <div class="fade-in" style="border-bottom:1px solid var(--border); padding-bottom:2rem;">
+          <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Innovative & future-proof</h3>
+          <p style="color:var(--muted); font-size:0.9rem; line-height:1.7;">Built to evolve with you, Rhozeland keeps your creativity ahead of the curve and ready for what's next.</p>
+        </div>
+        <div class="fade-in" style="border-bottom:1px solid var(--border); padding-bottom:2rem;">
+          <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">Creative engine</h3>
+          <p style="color:var(--muted); font-size:0.9rem; line-height:1.7;">The force that keeps your creativity in motion and your brand in the spotlight.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section style="padding: 4rem 0 6rem; background: var(--bg-white);">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: auto 1fr; gap:3rem; align-items:start; margin-bottom:3rem;">
+        <span class="pill-tag">Our team</span>
+        <h2 style="font-size:clamp(1.5rem,3vw,2.25rem); font-weight:700; line-height:1.25;" class="fade-in">Meet our creative minds</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card fade-in">
+          <div class="team-img" style="background:var(--accent);"></div>
+          <h4>Nina King</h4>
+          <p>Graphic Designer</p>
+        </div>
+        <div class="team-card fade-in" style="transition-delay:0.08s;">
+          <div class="team-img" style="background:var(--accent);"></div>
+          <h4>Marvin Ceron</h4>
+          <p>Audio Specialist</p>
+        </div>
+        <div class="team-card fade-in" style="transition-delay:0.16s;">
+          <div class="team-img" style="background:var(--accent);"></div>
+          <h4>David Migueles</h4>
+          <p>Audio Specialist</p>
+        </div>
+        <div class="team-card fade-in" style="transition-delay:0.24s;">
+          <div class="team-img" style="background:var(--accent);"></div>
+          <h4>Daniel Charles</h4>
+          <p>Visual Specialist</p>
+        </div>
+        <div class="team-card fade-in" style="transition-delay:0.32s;">
+          <div class="team-img" style="background:var(--accent);"></div>
+          <h4>Lucas Kim</h4>
+          <p>Visual Specialist</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY TIMELINE -->
+  <section style="padding: 6rem 0; background: var(--bg);">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: auto 1fr; gap:3rem; align-items:start; margin-bottom:4rem;">
+        <span class="pill-tag">Our history</span>
+        <h2 style="font-size:clamp(1.5rem,3vw,2.25rem); font-weight:700; line-height:1.3; max-width:700px;" class="fade-in">What began as a vision became a studio, and now stands as a launchpad for the boldest creators</h2>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item fade-in">
+          <div class="timeline-year">2016</div>
+          <div class="timeline-content">
+            <h3>The origin story</h3>
+            <p>Rhozeland was born from a group of friends with a shared passion for creative arts and culture, starting as a small community built on collaboration and self-expression.</p>
+          </div>
+        </div>
+        <div class="timeline-item fade-in">
+          <div class="timeline-year">2021</div>
+          <div class="timeline-content">
+            <h3>Building the creative hub</h3>
+            <p>We grew into a digital platform offering resources, connections, and services that helped creators bring their ideas to life, building a loyal network through our first Rhozeland hub.</p>
+          </div>
+        </div>
+        <div class="timeline-item fade-in">
+          <div class="timeline-year">2025</div>
+          <div class="timeline-content">
+            <h3>Powering the next era</h3>
+            <p>Now, with a fully equipped studio, a credit-based subscription model, and an expanded suite of services, we're a creative engine designed to fuel every stage of a creator's journey.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENIZED + CREATOR OS -->
+  <section style="padding: 6rem 0; background: var(--bg-white);">
+    <div class="container">
+      <div style="text-align:center; max-width:700px; margin:0 auto 4rem;">
+        <h2 style="font-size:clamp(1.75rem,3.5vw,2.75rem); font-weight:700; line-height:1.25; margin-bottom:1rem;" class="fade-in">Rhozeland is now a tokenized public company.</h2>
+        <p style="color:var(--muted); font-size:1rem; line-height:1.7;" class="fade-in">Now, anyone can be a part of Rhozeland through ownership of our official token. The solution is giving it all back — a chance to finally own something meaningful.</p>
+      </div>
+
+      <div class="token-grid" style="margin-bottom:4rem;">
+        <div class="token-card fade-in">
+          <h3>For Creatives</h3>
+          <p>Unlock Rhozeland perks: drops, insider access, creator support — if you create, Rhoze is your launchpad to collaborate and build ideas.</p>
+        </div>
+        <div class="token-card fade-in" style="transition-delay:0.08s;">
+          <h3>For the Trenches</h3>
+          <p>Real support for real people. Grants, causes, and community-first economics. Funding real dreams for artists & creators.</p>
+        </div>
+        <div class="token-card fade-in">
+          <h3>By the People</h3>
+          <p>Rhozeland is a grassroots and organic collective that focuses on empowering the ideas that are built on dreams.</p>
+        </div>
+        <div class="token-card fade-in" style="transition-delay:0.08s;">
+          <h3>Built Different</h3>
+          <p>Clothing drops, services marketplace, artist tools — backed by a deflationary flywheel. Revenue flows back to the ecosystem.</p>
+        </div>
+      </div>
+
+      <!-- Creator OS Platform Preview -->
+      <div style="text-align:center; max-width:600px; margin:0 auto 3rem;">
+        <span class="pill-tag" style="margin-bottom:1.5rem;">The Platform</span>
+        <h2 style="font-size:clamp(1.5rem,3vw,2.25rem); font-weight:700; line-height:1.25; margin-bottom:1rem;" class="fade-in">Rhozeland Creator OS</h2>
+        <p style="color:var(--muted); font-size:0.95rem; line-height:1.7;" class="fade-in">Book studios. Hire talent. Ship projects. One workspace for your creative team — powered by $RHOZE.</p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
+        <div class="token-card fade-in" style="text-align:center;">
+          <h3 style="font-size:1.5rem;">🏢</h3>
+          <h3>Studios</h3>
+          <p>Book creative spaces by the hour — recording, photo labs, video suites.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center; transition-delay:0.08s;">
+          <h3 style="font-size:1.5rem;">👥</h3>
+          <h3>Creators</h3>
+          <p>Hire freelance talent on the marketplace — designers, engineers, photographers.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center; transition-delay:0.16s;">
+          <h3 style="font-size:1.5rem;">📋</h3>
+          <h3>Projects</h3>
+          <p>Manage work with milestones, budgets, and smart collaboration tools.</p>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:2rem;">
+        <a href="https://rhozeland.app/" target="_blank" class="btn-dark">
+          Launch App
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLYWHEEL -->
+  <section style="padding: 6rem 0; background: var(--bg);">
+    <div class="container" style="text-align:center;">
+      <h2 style="font-size:clamp(1.75rem,3.5vw,2.5rem); font-weight:700; margin-bottom:0.5rem;" class="fade-in">The Flywheel</h2>
+      <p style="color:var(--muted); font-size:0.95rem; margin-bottom:3rem;" class="fade-in">Every piece of the ecosystem feeds the next. Revenue in, value out, community first.</p>
+
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:800px; margin:0 auto 3rem;">
+        <div class="token-card fade-in" style="text-align:center;">
+          <h3>Clothing Drops</h3>
+          <p>Real fashion, real revenue flowing back to the ecosystem.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center; transition-delay:0.08s;">
+          <h3>Marketplace</h3>
+          <p>Hire creators, freelancers & builders — all powered by $RHOZE.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center; transition-delay:0.16s;">
+          <h3>Artist App</h3>
+          <p>Tools for musicians, visual artists & content creators to earn and grow.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center;">
+          <h3>Studio Buybacks</h3>
+          <p>Revenue fuels token buybacks, strengthening the floor.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center; transition-delay:0.08s;">
+          <h3>Burns</h3>
+          <p>Deflationary by design. Supply shrinks as the ecosystem grows.</p>
+        </div>
+        <div class="token-card fade-in" style="text-align:center; transition-delay:0.16s;">
+          <h3>Grants & Causes</h3>
+          <p>Funding the dreamers, supporting the communities that need it most.</p>
+        </div>
+      </div>
+
+      <div class="flywheel-mini fade-in">
+        <span>Revenue</span><span class="arrow">→</span>
+        <span>Buybacks</span><span class="arrow">→</span>
+        <span>Burns</span><span class="arrow">→</span>
+        <span>Value</span><span class="arrow">→</span>
+        <span>Growth</span><span class="arrow">→</span>
+        <span>Revenue</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENOMICS -->
+  <section style="padding: 6rem 0; background: var(--bg-white);">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:3rem;">
+        <h2 style="font-size:clamp(1.75rem,3.5vw,2.5rem); font-weight:700; margin-bottom:0.5rem;" class="fade-in">Tokenomics</h2>
+        <p style="color:var(--muted); font-size:0.95rem;" class="fade-in">Full transparency on supply allocation. Every wallet is public, every move is announced.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:1.5rem; max-width:700px; margin:0 auto;">
+        <div class="token-card fade-in">
+          <h3>Main Wallet</h3>
+          <div class="pct">0.43%</div>
+          <div class="lock-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            24% locked, 12 months left
+          </div>
+          <p>We are seriously committed to the project with many areas to showcase from the talent within our network.</p>
+          <div class="address-box">
+            <code>6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr</code>
+            <button class="copy-btn" onclick="copyAddress(this,'6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr')" aria-label="Copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="token-card fade-in">
+          <h3>Marketing Wallet</h3>
+          <div class="pct">0.83%</div>
+          <div class="lock-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            6.5% locked, 3 months left
+          </div>
+          <p>Raising awareness through livestreaming and developing Rhozeland as a credible and recognizable brand. Any funds used will be announced — building trust through transparency.</p>
+          <div class="address-box">
+            <code>6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C</code>
+            <button class="copy-btn" onclick="copyAddress(this,'6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C')" aria-label="Copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="token-card fade-in">
+          <h3>Airdrop Wallet</h3>
+          <div class="pct">3.59%</div>
+          <p>Providing supply to real-world participants of our network and studio. The real diamond holders and advocates will raise awareness through engagement at our ecosystem.</p>
+          <div class="address-box">
+            <code>USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs</code>
+            <button class="copy-btn" onclick="copyAddress(this,'USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs')" aria-label="Copy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE CHART -->
+  <section style="padding: 4rem 0; background: var(--bg);">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <h3 style="font-size:1.5rem; font-weight:700; margin-bottom:0.5rem;" class="fade-in">Live Chart</h3>
+        <p style="color:var(--muted); font-size:0.9rem;" class="fade-in">Track $RHOZE in real-time on DexScreener.</p>
+      </div>
+      <div class="chart-frame fade-in">
+        <iframe src="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf?embed=1&theme=light&info=0" title="DexScreener $RHOZE Chart" loading="lazy" style="width:100%;height:500px;border:none;"></iframe>
+      </div>
+      <div style="text-align:center; margin-top:1rem;">
+        <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" style="font-size:0.85rem; color:var(--muted); text-decoration:underline;">View full chart on DexScreener →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT CTA -->
+  <section class="support-cta">
+    <div class="container" style="max-width:48rem;">
+      <h2 class="fade-in">It's time we RHOZE together.</h2>
+      <p class="fade-in">Support the vision. Buy $RHOZE on Solana and become part of a creator-owned future.</p>
+      <p class="contract-label">OFFICIAL CONTRACT ADDRESS</p>
+      <button class="contract-btn" onclick="copyAddress(this,'7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump')">
+        <code>7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</code>
+        <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      </button>
+      <div>
+        <a href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump" target="_blank" class="btn-primary">Buy on Pump.Fun</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="container">
+      <div class="newsletter-inner">
+        <h2>Stay tuned & subscribe to our newsletter</h2>
+        <div>
+          <div class="newsletter-form">
+            <input type="email" placeholder="Enter email address" />
+            <button type="button" aria-label="Subscribe">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </button>
+          </div>
+          <label class="newsletter-consent">
+            <input type="checkbox" /> I agree to the Privacy Policy.
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <img src="/images/toybox_logo.png" alt="Rhozeland" class="footer-brand-logo" />
+          <p class="footer-desc">Rhozeland is a creative ecosystem built for modern creators.</p>
+          <div class="footer-social">
+            <a href="https://x.com" target="_blank" aria-label="X/Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="https://instagram.com" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Our page</h4>
+          <a href="/about.html">About us</a>
+          <a href="/projects.html">Projects</a>
+          <a href="/events.html">Events</a>
+          <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a>
+          <a href="/contact.html">Contact us</a>
+          <a href="https://rhozeland.app/" target="_blank">Log In</a>
+        </div>
+        <div class="footer-col footer-contact">
+          <h4>Contact</h4>
+          <a href="tel:6478746743">647-874-6743</a>
+          <a href="mailto:support@rhozeland.com">support@rhozeland.com</a>
+          <p style="margin-top:1rem;">894 College Street, Toronto, ON, Canada</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Copyright © 2025 Rhozeland</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/shared.js"></script>
+</body>
+</html>

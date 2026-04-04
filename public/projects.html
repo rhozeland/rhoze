@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rhozeland — Projects</title>
+  <meta name="description" content="Explore Rhozeland's full-spectrum creative services and portfolio — visual, audio, and development." />
+  <link rel="icon" href="/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/"><img src="/images/toybox_logo.png" alt="Rhozeland" class="navbar-logo" /></a>
+      <div class="navbar-links">
+        <a href="/about.html">About</a>
+        <a href="/projects.html" class="active">Projects</a>
+        <a href="/events.html">Events</a>
+        <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a>
+        <a href="/contact.html">Contact</a>
+        <a href="https://rhozeland.app/" target="_blank" class="btn-login">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+      </div>
+      <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">☰</button>
+    </div>
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/about.html">About</a><a href="/projects.html">Projects</a><a href="/events.html">Events</a>
+      <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a><a href="/contact.html">Contact</a>
+      <a href="https://rhozeland.app/" target="_blank" class="btn-login">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container" style="text-align:center;">
+      <h1 class="page-hero-title">Projects</h1>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section style="padding:6rem 0; background:var(--bg-white);">
+    <div class="container">
+      <div style="display:grid; grid-template-columns:auto 1fr; gap:3rem; align-items:start; margin-bottom:3rem;">
+        <span class="pill-tag">Explore</span>
+        <h2 style="font-size:clamp(1.5rem,3vw,2.25rem); font-weight:700; line-height:1.3; max-width:600px;" class="fade-in">Full-spectrum creative services — shoot, design, edit, launch</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
+        <div class="token-card fade-in">
+          <h3>Visual</h3>
+          <p>Content that looks as good as your vision — photoshoots, web development, graphic design, content editing, commercials, short form.</p>
+        </div>
+        <div class="token-card fade-in" style="transition-delay:0.08s;">
+          <h3>Audio</h3>
+          <p>State-of-the-art recording, mixing, and mastering by our in-house professionals. Podcast recording, mobile shortform, and MV/commercials.</p>
+        </div>
+        <div class="token-card fade-in" style="transition-delay:0.16s;">
+          <h3>Development</h3>
+          <p>Branding and digital tools that grow your brand — grant funding research, studio rental, brand consulting, roadmap consulting, publishing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section style="padding:6rem 0; background:var(--bg);">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:3rem;">
+        <h2 style="font-size:clamp(1.75rem,3.5vw,2.5rem); font-weight:700; margin-bottom:0.5rem;" class="fade-in">Pricing</h2>
+        <p style="color:var(--muted); font-size:0.95rem;" class="fade-in">Choose the right package for your creative journey.</p>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem;">
+        <div class="token-card fade-in" style="background:var(--bg-white);">
+          <div class="pct" style="font-size:2.5rem;">$240</div>
+          <p style="font-weight:700; margin-bottom:0.5rem; color:black;">/month — Bronze</p>
+          <p>For new creators, freelancers, and side-hustlers.</p>
+          <ul style="list-style:none; margin-top:1rem; font-size:0.85rem; color:var(--muted);">
+            <li>✓ Livestream only workshops</li>
+            <li>✓ Entry-level assets</li>
+            <li>✓ Template distribution</li>
+            <li>✓ Aesthetic Batch reels</li>
+            <li>✓ Promotion visuals</li>
+          </ul>
+          <a href="/contact.html" class="btn-dark" style="margin-top:1.5rem; width:100%; justify-content:center;">Get started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+        </div>
+        <div class="token-card fade-in" style="background:var(--bg-white); transition-delay:0.08s; border:2px solid black;">
+          <div class="pct" style="font-size:2.5rem;">$560</div>
+          <p style="font-weight:700; margin-bottom:0.5rem; color:black;">/month — Gold</p>
+          <p>For micro-influencers, grant-seekers, and artists.</p>
+          <ul style="list-style:none; margin-top:1rem; font-size:0.85rem; color:var(--muted);">
+            <li>✓ Standard workshops</li>
+            <li>✓ Strategy consultation</li>
+            <li>✓ Intermediate scaling</li>
+            <li>✓ Portfolio shoot + edited content</li>
+            <li>✓ Mastered tracks + Brand kit</li>
+          </ul>
+          <a href="/contact.html" class="btn-dark" style="margin-top:1.5rem; width:100%; justify-content:center;">Get started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+        </div>
+        <div class="token-card fade-in" style="background:var(--bg-white); transition-delay:0.16s;">
+          <div class="pct" style="font-size:2.5rem;">$1500</div>
+          <p style="font-weight:700; margin-bottom:0.5rem; color:black;">/month — Diamond</p>
+          <p>For full-time creators, agency talent, and funded artists.</p>
+          <ul style="list-style:none; margin-top:1rem; font-size:0.85rem; color:var(--muted);">
+            <li>✓ Premium workshops</li>
+            <li>✓ Strategy consultation</li>
+            <li>✓ Full-scale growth</li>
+            <li>✓ Monthly campaigns</li>
+            <li>✓ Full project launches</li>
+          </ul>
+          <a href="/contact.html" class="btn-dark" style="margin-top:1.5rem; width:100%; justify-content:center;">Get started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO MARQUEE -->
+  <div class="projects-marquee">
+    <div class="marquee-track">
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+      <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+    </div>
+  </div>
+
+  <!-- PROJECT GRID -->
+  <section style="padding:6rem 0; background:linear-gradient(180deg,#e8f2f4 0%,var(--bg) 100%);">
+    <div class="container">
+      <div class="projects-grid">
+        <a href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" class="project-card fade-in" style="background:var(--bg-white);">
+          <div class="project-card-top"><h4>The Mask — Oaok</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Music video — audio & visual production.</p><span class="project-card-tag">Audio & Visual</span>
+        </a>
+        <a href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" class="project-card fade-in" style="background:var(--bg-white); transition-delay:0.08s;">
+          <div class="project-card-top"><h4>Mansa Musa — MONEE FINGAZ</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Music video — audio & visual production.</p><span class="project-card-tag">Audio & Visual</span>
+        </a>
+        <a href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" class="project-card fade-in" style="background:var(--bg-white); transition-delay:0.16s;">
+          <div class="project-card-top"><h4>Holy Water — Cozal</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Music video — audio & visual production.</p><span class="project-card-tag">Audio & Visual</span>
+        </a>
+        <a href="https://www.youtube.com/watch?v=u9iOP4qH2MI" target="_blank" class="project-card fade-in" style="background:var(--bg-white);">
+          <div class="project-card-top"><h4>True North Transparency</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Web series — visual production.</p><span class="project-card-tag">Visual</span>
+        </a>
+        <a href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" class="project-card fade-in" style="background:var(--bg-white); transition-delay:0.08s;">
+          <div class="project-card-top"><h4>FATE — DUBZY33</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Music video — audio & visual production.</p><span class="project-card-tag">Audio & Visual</span>
+        </a>
+        <a href="https://www.youtube.com/watch?v=QSFF9jI8f4g" target="_blank" class="project-card fade-in" style="background:var(--bg-white); transition-delay:0.16s;">
+          <div class="project-card-top"><h4>Bombaaa — MONEE FINGAZ</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Music video — audio & visual production.</p><span class="project-card-tag">Audio & Visual</span>
+        </a>
+        <a href="https://www.lelonglegs.lol/" target="_blank" class="project-card fade-in" style="background:var(--bg-white);">
+          <div class="project-card-top"><h4>LeLongLegs — Indolestic</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Web series — visual production.</p><span class="project-card-tag">Visual</span>
+        </a>
+        <a href="https://www.instagram.com/p/DKvf2jXMbRs" target="_blank" class="project-card fade-in" style="background:var(--bg-white); transition-delay:0.08s;">
+          <div class="project-card-top"><h4>BK Whiskey MMA</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Commercial — visual production.</p><span class="project-card-tag">Commercial</span>
+        </a>
+        <a href="https://torontopalapa.tours/" target="_blank" class="project-card fade-in" style="background:var(--bg-white); transition-delay:0.16s;">
+          <div class="project-card-top"><h4>Toronto Palapa Tours</h4><span class="project-card-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span></div>
+          <p>Website development — visual production.</p><span class="project-card-tag">Web Development</span>
+        </a>
+      </div>
+      <div style="text-align:center; margin-top:3rem;">
+        <a href="/contact.html" class="btn-dark">Create with us <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <img src="/images/toybox_logo.png" alt="Rhozeland" class="footer-brand-logo" />
+          <p class="footer-desc">Rhozeland is a creative ecosystem built for modern creators.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Our page</h4>
+          <a href="/about.html">About us</a><a href="/projects.html">Projects</a><a href="/events.html">Events</a>
+          <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a><a href="/contact.html">Contact us</a>
+        </div>
+        <div class="footer-col footer-contact">
+          <h4>Contact</h4>
+          <a href="tel:6478746743">647-874-6743</a>
+          <a href="mailto:support@rhozeland.com">support@rhozeland.com</a>
+          <p style="margin-top:1rem;">894 College Street, Toronto, ON, Canada</p>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>Copyright © 2025 Rhozeland</p></div>
+    </div>
+  </footer>
+
+  <script src="/shared.js"></script>
+</body>
+</html>

@@ -170,7 +170,7 @@ img { max-width: 100%; display: block; }
   border: 1px solid var(--border); font-size: 0.8rem;
   background: var(--bg-white);
 }
-.flywheel-mini .arrow { border: none; padding: 0; font-size: 1.25rem; color: #4db8a4; background: none; }
+.flywheel-mini .arrow { border: none; padding: 0; font-size: 1.25rem; color: var(--teal); background: none; }
 
 /* ===================== PROJECTS ===================== */
 .projects-marquee {

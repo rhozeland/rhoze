@@ -90,7 +90,9 @@ img { max-width: 100%; display: block; }
 /* ===================== PAGE HERO ===================== */
 .page-hero {
   padding: 10rem 0 4rem;
-  background: linear-gradient(180deg, var(--bg) 0%, #e8f2f4 60%, var(--bg-white) 100%);
+  background: var(--gradient-hero);
+  background-size: 300% 300%;
+  animation: gradient-shift 12s ease infinite;
 }
 .page-hero-title {
   font-size: clamp(3rem, 7vw, 5rem);

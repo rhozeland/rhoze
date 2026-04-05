@@ -186,7 +186,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 1.55rem;
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
 }
 
 .nav-links {
@@ -289,7 +289,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-size: clamp(3rem, 7vw, 5rem);
   font-weight: 700;
   line-height: 1;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.02em;
   color: hsl(var(--ink));
 }
 
@@ -351,7 +351,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-size: clamp(2rem, 4vw, 3.3rem);
   font-weight: 700;
   line-height: 0.98;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.02em;
   max-width: 12ch;
   text-wrap: balance;
 }
@@ -406,7 +406,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
 }
 
 .card p,
@@ -535,7 +535,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
 }
 
 .work-card p,
@@ -586,7 +586,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.15;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
   margin-bottom: 0.5rem;
 }
 
@@ -655,7 +655,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 700;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.02em;
   color: hsl(var(--ink));
 }
 
@@ -875,7 +875,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
   margin-bottom: 1rem;
 }
 
@@ -949,7 +949,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
   line-height: 1.1;
   position: relative;
   z-index: 1;
@@ -1126,7 +1126,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
 }
 
 .footer-copy {
@@ -1172,7 +1172,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.01em;
   margin-bottom: 0.35rem;
 }
 

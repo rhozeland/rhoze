@@ -886,21 +886,8 @@
       color: hsl(var(--muted));
     }
 
-    @keyframes ribbon-drift-a {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      100% { transform: translate3d(1.5%, -1.5%, 0) scale(1.04); }
-    }
 
-    @keyframes ribbon-drift-b {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      100% { transform: translate3d(-2%, 1.5%, 0) scale(1.03); }
-    }
 
-    @keyframes hue-shift {
-      0% { filter: saturate(1.12) contrast(1.04) hue-rotate(0deg); }
-      50% { filter: saturate(1.18) contrast(1.08) hue-rotate(16deg); }
-      100% { filter: saturate(1.12) contrast(1.04) hue-rotate(0deg); }
-    }
 
     @media (max-width: 1180px) {
       .nav-links { gap: 1.35rem; margin-right: 0.75rem; }

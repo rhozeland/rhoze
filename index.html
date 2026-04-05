@@ -67,15 +67,7 @@
     }
 
     .page-shell::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(to right, hsl(var(--line) / 0.68) 1px, transparent 1px),
-        linear-gradient(to bottom, hsl(var(--line) / 0.68) 1px, transparent 1px);
-      background-size: clamp(140px, 14vw, 200px) clamp(120px, 18vh, 180px);
-      pointer-events: none;
-      z-index: 0;
+      display: none;
     }
 
     .page-shell::after {

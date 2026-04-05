@@ -3,84 +3,127 @@ import { ArrowUpRight } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Soft gradient background */}
-      <div className="absolute inset-0 bg-gradient-pastel" />
+    <section className="relative min-h-screen overflow-hidden bg-background">
+      {/* Grid overlay */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, hsl(0 0% 0% / 0.04) 1px, transparent 1px), linear-gradient(to bottom, hsl(0 0% 0% / 0.04) 1px, transparent 1px)",
+          backgroundSize: "33.333% 25%",
+        }}
+      />
 
-      <div className="relative z-10 container mx-auto px-6 lg:px-16 py-24 lg:py-0">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[calc(100vh-6rem)]">
-          {/* Left — Text content */}
-          <div className="flex flex-col gap-6 lg:gap-8 order-2 lg:order-1">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-            >
-              <span className="inline-block px-4 py-1.5 rounded-full border border-border text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4 font-body">
-                Creator OS
-              </span>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-extrabold font-display leading-[0.95] tracking-tight text-foreground">
-                The
-                <br />
-                Creator
-                <br />
-                <span className="text-gradient-pastel">Ecosystem</span>
-              </h1>
-            </motion.div>
+      {/* Dot pattern overlay */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none opacity-[0.15]"
+        style={{
+          backgroundImage: "radial-gradient(circle, hsl(0 0% 0%) 0.8px, transparent 0.8px)",
+          backgroundSize: "20px 20px",
+        }}
+      />
 
-            <motion.p
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-              className="text-base sm:text-lg text-muted-foreground max-w-md font-body leading-relaxed"
-            >
-              Studio sessions, content production, a services marketplace,
-              artist tools, and a community that fuels your growth — all under
-              one roof.
-            </motion.p>
+      {/* Animated gradient blobs */}
+      <div className="absolute inset-0 z-[2] overflow-hidden">
+        {/* Main iridescent blob */}
+        <motion.div
+          className="absolute w-[900px] h-[900px] rounded-full blur-[80px] opacity-70"
+          style={{
+            background:
+              "conic-gradient(from 180deg, hsl(280 80% 60%), hsl(200 90% 50%), hsl(150 80% 50%), hsl(330 80% 60%), hsl(280 80% 60%))",
+            top: "-20%",
+            right: "-10%",
+          }}
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 1.05, 0.95, 1],
+          }}
+          transition={{
+            rotate: { duration: 25, repeat: Infinity, ease: "linear" },
+            scale: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+          }}
+        />
 
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.35, ease: "easeOut" }}
-              className="flex flex-col sm:flex-row items-start gap-3 pt-2"
-            >
-              <a
-                href="https://app.rhozeland.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground text-background font-semibold hover:opacity-90 transition-opacity text-base"
-              >
-                Log In <ArrowUpRight size={16} />
-              </a>
-              <a
-                href="#about"
-                className="px-8 py-3.5 rounded-full border border-border text-foreground hover:bg-muted transition-colors text-base font-body"
-              >
-                Explore
-              </a>
-            </motion.div>
-          </div>
+        {/* Secondary flowing blob */}
+        <motion.div
+          className="absolute w-[600px] h-[600px] rounded-full blur-[100px] opacity-50"
+          style={{
+            background:
+              "conic-gradient(from 90deg, hsl(170 80% 55%), hsl(280 70% 65%), hsl(330 80% 70%), hsl(170 80% 55%))",
+            bottom: "-10%",
+            left: "-5%",
+          }}
+          animate={{
+            rotate: [360, 0],
+            x: [0, 80, 0],
+            y: [0, -40, 0],
+          }}
+          transition={{
+            rotate: { duration: 30, repeat: Infinity, ease: "linear" },
+            x: { duration: 12, repeat: Infinity, ease: "easeInOut" },
+            y: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+          }}
+        />
 
-          {/* Right — Logo graphic */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
-            className="flex items-center justify-center order-1 lg:order-2"
+        {/* Accent streak */}
+        <motion.div
+          className="absolute w-[500px] h-[200px] blur-[60px] opacity-40"
+          style={{
+            background:
+              "linear-gradient(135deg, hsl(340 90% 60%), hsl(30 90% 60%), transparent)",
+            top: "30%",
+            left: "20%",
+            borderRadius: "50%",
+          }}
+          animate={{
+            x: [0, 200, 0],
+            y: [0, -60, 0],
+            rotate: [0, 15, -15, 0],
+          }}
+          transition={{
+            duration: 14,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
+      {/* Content — bottom-left aligned */}
+      <div className="relative z-10 container mx-auto px-6 lg:px-16 min-h-screen flex flex-col justify-end pb-16 lg:pb-24">
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-extrabold font-display leading-[0.95] tracking-tight text-foreground mb-8"
+          style={{ textShadow: "0 2px 30px hsl(0 0% 100% / 0.6)" }}
+        >
+          The Creator
+          <br />
+          Ecosystem
+        </motion.h1>
+
+        {/* Bottom row: CTA + description */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+          className="flex flex-col sm:flex-row items-start gap-6"
+        >
+          <a
+            href="https://app.rhozeland.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-foreground text-background font-semibold hover:opacity-90 transition-opacity text-base"
           >
-            <div className="relative">
-              {/* Decorative glow behind logo */}
-              <div className="absolute -inset-16 rounded-full bg-[radial-gradient(circle,hsl(var(--rhoze-pink)/0.3)_0%,transparent_70%)] blur-2xl" />
-              <div className="absolute -inset-20 rounded-full bg-[radial-gradient(circle,hsl(var(--rhoze-mint)/0.2)_0%,transparent_70%)] blur-3xl" />
-              <img
-                src="/images/rhozeland_official_logo_2025.png"
-                alt="Rhozeland logo"
-                className="relative w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96 object-contain drop-shadow-2xl"
-              />
-            </div>
-          </motion.div>
-        </div>
+            Log In <ArrowUpRight size={16} />
+          </a>
+
+          <p className="text-sm sm:text-base text-muted-foreground max-w-sm font-body leading-relaxed">
+            Studio sessions, content production, a services marketplace, artist
+            tools, and a community that fuels your growth.
+          </p>
+        </motion.div>
       </div>
     </section>
   );

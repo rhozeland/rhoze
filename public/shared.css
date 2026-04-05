@@ -116,13 +116,13 @@ button { background: none; border: 0; cursor: pointer; }
   left: 50%;
   background: conic-gradient(
     from 60deg,
-    hsl(205 94% 58%) 0%,
-    hsl(264 92% 63%) 30%,
-    hsl(332 92% 60%) 60%,
-    hsl(205 94% 58%) 100%
+    hsl(205 100% 55%) 0%,
+    hsl(264 100% 60%) 30%,
+    hsl(332 100% 58%) 60%,
+    hsl(205 100% 55%) 100%
   );
   animation: blob-drift-3 25s ease-in-out infinite, blob-morph 18s ease-in-out infinite;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 @keyframes blob-drift-1 {

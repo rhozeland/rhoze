@@ -1245,7 +1245,8 @@ button { background: none; border: 0; cursor: pointer; }
   .token-grid { grid-template-columns: 1fr; }
   .section { padding-left: 1.2rem; padding-right: 1.2rem; }
   .footer { padding-left: 1.2rem; padding-right: 1.2rem; }
-  .footer-panel { grid-template-columns: 1fr; }
+  .footer-panel { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
   .team-grid { grid-template-columns: repeat(2, 1fr); }
   .timeline-item { grid-template-columns: 1fr; gap: 1rem; }
 }

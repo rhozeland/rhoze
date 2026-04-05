@@ -787,22 +787,41 @@
 
     .newsletter-card {
       padding: 1.7rem;
-      background: linear-gradient(180deg, hsl(245 22% 11%), hsl(245 20% 8%));
+      background: linear-gradient(135deg, hsl(280 50% 15%), hsl(320 50% 12%), hsl(245 40% 10%), hsl(200 40% 12%));
       color: hsl(0 0% 100%);
       overflow: hidden;
+      transition: none;
+    }
+
+    .newsletter-card:hover {
+      transform: none;
+      border-color: hsl(var(--line));
+      box-shadow: 0 24px 60px -42px hsl(var(--shadow) / 0.24);
     }
 
     .newsletter-card::before {
       content: "";
       position: absolute;
       inset: auto -18% -26% auto;
-      width: 250px;
-      height: 250px;
+      width: 300px;
+      height: 300px;
       border-radius: 999px;
-      background: radial-gradient(circle, hsl(var(--accent-pink) / 0.38), transparent 70%);
-      filter: blur(36px);
+      background: radial-gradient(circle, hsl(330 80% 50% / 0.35), hsl(280 70% 50% / 0.2), transparent 70%);
+      filter: blur(40px);
       pointer-events: none;
-      opacity: 0.9;
+      opacity: 1;
+    }
+
+    .newsletter-card::after {
+      content: "";
+      position: absolute;
+      inset: -20% auto auto -15%;
+      width: 280px;
+      height: 280px;
+      border-radius: 999px;
+      background: radial-gradient(circle, hsl(200 90% 50% / 0.2), hsl(170 80% 50% / 0.15), transparent 70%);
+      filter: blur(40px);
+      pointer-events: none;
     }
 
     .newsletter-card h2,

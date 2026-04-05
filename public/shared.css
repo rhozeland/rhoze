@@ -531,7 +531,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 .work-card h3,
 .project-card h4 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.05;
@@ -582,7 +582,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 .event-card h3,
 .event-card h4 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 1.15;
@@ -630,7 +630,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .team-card h4 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -652,7 +652,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .timeline-year {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 700;
   letter-spacing: -0.06em;
@@ -660,7 +660,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .timeline-content h3 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
@@ -694,14 +694,14 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .token-card h3 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
 .token-card .pct {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 2rem;
   font-weight: 700;
   color: hsl(var(--accent-green));
@@ -799,7 +799,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .marquee-track span {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -872,7 +872,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .support-cta h2 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -946,7 +946,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .newsletter-card h2 {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -1065,7 +1065,7 @@ button { background: none; border: 0; cursor: pointer; }
   font-weight: 700;
   text-align: left;
   color: hsl(var(--ink));
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .faq-icon {
@@ -1123,7 +1123,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .footer-brand-header span {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: -0.04em;
@@ -1169,7 +1169,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .footer-heading {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.04em;

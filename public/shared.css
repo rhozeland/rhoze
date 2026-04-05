@@ -70,8 +70,8 @@ button { background: none; border: 0; cursor: pointer; }
 .gradient-blob {
   position: absolute;
   border-radius: 40% 60% 55% 45% / 55% 40% 60% 45%;
-  filter: blur(60px);
-  opacity: 0.55;
+  filter: blur(50px);
+  opacity: 0.75;
   will-change: transform;
 }
 

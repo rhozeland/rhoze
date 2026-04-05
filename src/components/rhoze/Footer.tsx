@@ -4,7 +4,7 @@ const Footer = () => {
       <div className="container mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2.5">
           <div className="w-6 h-6 rounded-md bg-gradient-mint" />
-          <span className="font-display text-lg font-medium text-foreground">Rhozeland</span>
+          <span className="font-display text-lg font-semibold text-foreground">Rhozeland</span>
         </div>
         <p className="text-sm text-muted-foreground font-body">
           © {new Date().getFullYear()} Rhozeland. All rights reserved.

@@ -58,12 +58,13 @@
       position: relative;
       max-width: 1480px;
       margin: 0 auto;
-      background: hsl(var(--surface));
+      background: hsl(var(--surface) / 0.82);
       border: 1px solid hsl(var(--line));
       border-radius: var(--radius-xl);
       overflow: clip;
       box-shadow: 0 45px 110px -70px hsl(var(--shadow) / 0.4);
       isolation: isolate;
+      backdrop-filter: blur(1px);
     }
 
     .page-shell::before {

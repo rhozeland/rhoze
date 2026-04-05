@@ -42,7 +42,7 @@ const About = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl sm:text-5xl font-medium font-display mb-4 text-foreground">
+          <h2 className="text-4xl sm:text-5xl font-semibold font-display mb-4 text-foreground">
             What is Rhoze?
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-body">

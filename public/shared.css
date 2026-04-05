@@ -183,7 +183,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .brand-text {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 1.55rem;
   font-weight: 700;
   letter-spacing: -0.04em;

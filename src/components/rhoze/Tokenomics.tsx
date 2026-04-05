@@ -66,7 +66,7 @@ const Tokenomics = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4 text-foreground">
+          <h2 className="text-4xl sm:text-5xl font-medium font-display mb-4 text-foreground">
             Tokenomics
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-body">
@@ -90,10 +90,10 @@ const Tokenomics = () => {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-baseline gap-3 mb-2">
-                    <h3 className="text-xl font-bold font-display text-foreground">
+                    <h3 className="text-xl font-medium font-display text-foreground">
                       {w.label}
                     </h3>
-                    <span className="text-2xl font-extrabold font-display text-primary">
+                    <span className="text-2xl font-medium font-display text-primary">
                       {w.pct}
                     </span>
                   </div>

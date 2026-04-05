@@ -14,7 +14,7 @@ const Chart = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4 text-foreground">
+          <h2 className="text-4xl sm:text-5xl font-medium font-display mb-4 text-foreground">
             Live Chart
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto font-body">

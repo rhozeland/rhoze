@@ -219,9 +219,18 @@
 
     .hero {
       position: relative;
-      min-height: 92vh;
+      min-height: 100vh;
       overflow: hidden;
       border-bottom: 1px solid hsl(var(--line));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 120% 80% at 20% 80%, hsl(310 40% 82% / 0.7), transparent 60%),
+        radial-gradient(ellipse 100% 70% at 80% 20%, hsl(30 60% 88% / 0.5), transparent 50%),
+        radial-gradient(ellipse 90% 90% at 50% 50%, hsl(280 30% 88% / 0.6), transparent 70%),
+        hsl(280 20% 90%);
     }
 
     .hero::before {
@@ -229,133 +238,80 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at 16% 78%, hsl(var(--accent-pink) / 0.15), transparent 34%),
-        radial-gradient(circle at 78% 8%, hsl(var(--accent-green) / 0.14), transparent 30%),
-        radial-gradient(circle at 58% 42%, hsl(var(--accent-purple) / 0.1), transparent 38%);
+        radial-gradient(circle at 30% 70%, hsl(var(--accent-pink) / 0.12), transparent 40%),
+        radial-gradient(circle at 70% 30%, hsl(var(--accent-purple) / 0.08), transparent 35%);
       z-index: 1;
       pointer-events: none;
     }
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, hsl(var(--ink) / 0.12) 0.85px, transparent 1px);
-      background-size: 18px 18px;
-      mask-image: linear-gradient(to bottom, transparent, black 18%, black 72%, transparent);
-      opacity: 0.22;
-      z-index: 1;
-      pointer-events: none;
-    }
-
-    .hero-ribbon {
-      position: absolute;
-      inset: -8% -6% 14% -6%;
-      z-index: 2;
-      pointer-events: none;
-      opacity: 0.98;
-    }
-
-    .hero-ribbon svg {
-      width: 100%;
-      height: 100%;
-      filter: saturate(1.12) contrast(1.04);
-      animation: hue-shift 26s linear infinite;
-    }
-
-    .ribbon-layer--primary {
-      transform-origin: 50% 35%;
-      animation: ribbon-drift-a 18s ease-in-out infinite alternate;
-    }
-
-    .ribbon-layer--secondary {
-      transform-origin: 52% 58%;
-      animation: ribbon-drift-b 22s ease-in-out infinite alternate;
-    }
-
-    .ribbon-path {
-      fill: none;
-      stroke-linecap: round;
-      stroke-width: 162;
-      filter: url(#ribbon-glow);
-    }
-
-    .ribbon-path--thin { stroke-width: 112; opacity: 0.9; }
-
-    .ribbon-highlight {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.72);
-      stroke-linecap: round;
-      stroke-width: 26;
-      filter: url(#soft-glow);
-      opacity: 0.8;
-    }
-
-    .ribbon-highlight--thin {
-      stroke-width: 18;
-      opacity: 0.62;
-    }
+    .hero::after { display: none; }
 
     .hero-inner {
       position: relative;
       z-index: 3;
-      min-height: inherit;
       display: flex;
-      align-items: flex-end;
-      padding: clamp(6rem, 11vw, 8rem) clamp(1.5rem, 4vw, 3rem) clamp(2.2rem, 6vw, 3.5rem);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem 4rem;
+      gap: 0;
+    }
+
+    .hero-logo {
+      width: clamp(80px, 12vw, 140px);
+      height: auto;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 8px 24px hsl(0 0% 0% / 0.08));
     }
 
     .hero-copy {
-      width: min(100%, 920px);
-    }
-
-    .eyebrow {
-      display: inline-flex;
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.65rem;
-      margin-bottom: 1rem;
-      color: hsl(var(--muted));
-      font-size: 0.76rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
     }
 
-    .eyebrow::before {
-      content: "";
-      width: 0.65rem;
-      height: 0.65rem;
-      border-radius: 999px;
-      background: linear-gradient(135deg, hsl(var(--accent-green)), hsl(var(--accent-purple)));
-      flex-shrink: 0;
-    }
+    .eyebrow { display: none; }
 
     .hero h1 {
       font-family: "Space Grotesk", sans-serif;
-      font-size: clamp(3.4rem, 8vw, 7.25rem);
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
       font-weight: 700;
-      line-height: 0.92;
-      letter-spacing: -0.08em;
-      max-width: 8ch;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      max-width: none;
       text-wrap: balance;
-      text-shadow: 0 10px 50px hsl(0 0% 100% / 0.9);
+      text-align: center;
+      color: hsl(var(--ink));
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-desc {
+      font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+      color: hsl(var(--muted));
+      line-height: 1.7;
+      max-width: 520px;
+      text-align: center;
+      margin-bottom: 2.25rem;
     }
 
     .hero-meta {
-      display: grid;
-      grid-template-columns: auto minmax(280px, 370px);
-      align-items: end;
-      gap: 1.4rem 2.25rem;
-      margin-top: 2rem;
-      max-width: 820px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 0;
+      max-width: none;
     }
 
     .hero-primary {
-      align-self: start;
-      border-radius: 18px;
+      align-self: auto;
+      border-radius: 999px;
       background: hsl(var(--ink));
       color: hsl(var(--surface-card));
-      padding-inline: 1.55rem;
+      padding: 1rem 2.2rem;
+      font-size: 1rem;
       box-shadow: 0 16px 40px -28px hsl(var(--ink) / 0.8);
     }
 
@@ -366,20 +322,27 @@
       opacity: 0.92;
     }
 
-    .hero-secondary {
-      color: hsl(var(--muted));
-      font-size: 1rem;
-      line-height: 1.75;
-      text-shadow: 0 2px 24px hsl(0 0% 100% / 0.92);
-    }
-
-    .hero-secondary a {
+    .hero-secondary-btn {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      margin-top: 0.75rem;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 3.2rem;
+      padding: 1rem 2.2rem;
+      border-radius: 999px;
+      border: 1.5px solid hsl(var(--line-strong));
+      background: transparent;
       color: hsl(var(--ink));
+      font-size: 1rem;
       font-weight: 700;
+      letter-spacing: -0.02em;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .hero-secondary-btn:hover {
+      background: hsl(var(--ink));
+      color: hsl(var(--surface-card));
+      transform: translateY(-1px);
     }
 
     .section {
@@ -923,21 +886,8 @@
       color: hsl(var(--muted));
     }
 
-    @keyframes ribbon-drift-a {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      100% { transform: translate3d(1.5%, -1.5%, 0) scale(1.04); }
-    }
 
-    @keyframes ribbon-drift-b {
-      0% { transform: translate3d(0, 0, 0) scale(1); }
-      100% { transform: translate3d(-2%, 1.5%, 0) scale(1.03); }
-    }
 
-    @keyframes hue-shift {
-      0% { filter: saturate(1.12) contrast(1.04) hue-rotate(0deg); }
-      50% { filter: saturate(1.18) contrast(1.08) hue-rotate(16deg); }
-      100% { filter: saturate(1.12) contrast(1.04) hue-rotate(0deg); }
-    }
 
     @media (max-width: 1180px) {
       .nav-links { gap: 1.35rem; margin-right: 0.75rem; }
@@ -958,11 +908,10 @@
       .nav-links,
       .nav-cta { display: none; }
       .menu-toggle { display: inline-flex; }
-      .hero { min-height: 84vh; }
-      .hero-ribbon { inset: -3% -25% 32% -25%; }
-      .hero-inner { padding: 5.6rem 1.2rem 2rem; }
-      .hero-meta { grid-template-columns: 1fr; max-width: 100%; }
-      .hero h1 { max-width: 9ch; }
+      .hero { min-height: 90vh; }
+      .hero-inner { padding: 5rem 1.2rem 3rem; }
+      .hero-meta { flex-direction: column; gap: 0.8rem; }
+      .hero-primary, .hero-secondary-btn { width: 100%; }
       .capability-grid,
       .work-grid,
       .event-list { grid-template-columns: 1fr; }
@@ -972,12 +921,12 @@
     }
 
     @media (max-width: 560px) {
-      .hero-ribbon { inset: 2% -45% 42% -45%; }
       .hero h1,
       .section-head h2,
       .newsletter-card h2,
       .panel-copy h2 { text-wrap: pretty; }
       .hero-primary,
+      .hero-secondary-btn,
       .panel-button,
       .newsletter-button,
       .mobile-cta { width: 100%; }
@@ -986,9 +935,6 @@
 
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
-      .hero-ribbon svg,
-      .ribbon-layer--primary,
-      .ribbon-layer--secondary,
       .card,
       .work-card,
       .event-card,
@@ -1044,60 +990,17 @@
 
     <main>
       <section class="hero" aria-labelledby="homepage-title">
-        <div class="hero-ribbon" aria-hidden="true">
-          <svg viewBox="0 0 1600 960" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="ribbonGradientPrimary" x1="0%" y1="50%" x2="100%" y2="50%">
-                <stop offset="0%" stop-color="hsl(334 92% 66%)"></stop>
-                <stop offset="18%" stop-color="hsl(262 92% 64%)"></stop>
-                <stop offset="38%" stop-color="hsl(208 94% 58%)"></stop>
-                <stop offset="58%" stop-color="hsl(160 88% 56%)"></stop>
-                <stop offset="80%" stop-color="hsl(40 96% 61%)"></stop>
-                <stop offset="100%" stop-color="hsl(332 92% 66%)"></stop>
-              </linearGradient>
-              <linearGradient id="ribbonGradientSecondary" x1="0%" y1="50%" x2="100%" y2="50%">
-                <stop offset="0%" stop-color="hsl(208 94% 58%)"></stop>
-                <stop offset="25%" stop-color="hsl(334 92% 66%)"></stop>
-                <stop offset="52%" stop-color="hsl(262 92% 64%)"></stop>
-                <stop offset="78%" stop-color="hsl(160 88% 56%)"></stop>
-                <stop offset="100%" stop-color="hsl(208 94% 58%)"></stop>
-              </linearGradient>
-              <filter id="ribbon-glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="12"></feGaussianBlur>
-              </filter>
-              <filter id="soft-glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="8"></feGaussianBlur>
-              </filter>
-            </defs>
-
-            <g class="ribbon-layer--primary">
-              <path class="ribbon-path" stroke="url(#ribbonGradientPrimary)" d="M -120 860 C 220 160, 760 -20, 1730 150"></path>
-              <path class="ribbon-highlight" d="M 10 834 C 310 235, 820 44, 1785 188"></path>
-            </g>
-
-            <g class="ribbon-layer--secondary">
-              <path class="ribbon-path ribbon-path--thin" stroke="url(#ribbonGradientSecondary)" d="M -40 955 C 420 585, 930 480, 1735 342"></path>
-              <path class="ribbon-highlight ribbon-highlight--thin" d="M 70 916 C 486 588, 1010 496, 1788 370"></path>
-            </g>
-          </svg>
-        </div>
-
         <div class="hero-inner">
+          <img class="hero-logo" src="/images/toybox_logo.png" alt="Rhozeland logo" />
           <div class="hero-copy">
-            <span class="eyebrow">Rhozeland / Creator OS</span>
-            <h1 id="homepage-title">The Creator Ecosystem</h1>
+            <h1 id="homepage-title">The Creator<br>Ecosystem</h1>
+            <p class="hero-desc">Studio sessions, content production, a services marketplace, artist tools, and a community that fuels your growth — all under one roof.</p>
             <div class="hero-meta">
               <a class="hero-primary" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
                 Log In
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
               </a>
-              <div class="hero-secondary">
-                Studio sessions, content production, a services marketplace, artist tools, and a community that fuels your growth.
-                <a href="#system">
-                  Explore the system
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-                </a>
-              </div>
+              <a class="hero-secondary-btn" href="#system">Explore</a>
             </div>
           </div>
         </div>

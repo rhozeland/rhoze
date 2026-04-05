@@ -285,7 +285,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .page-hero-title {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: clamp(3rem, 7vw, 5rem);
   font-weight: 700;
   line-height: 1;

@@ -495,7 +495,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* ===================== NEW HERO ===================== */
+    /* ===================== HERO ===================== */
     .hero {
       position: relative; min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
@@ -503,50 +503,27 @@
       background: var(--gradient-hero); background-size: 300% 300%;
       animation: gradient-shift 12s ease infinite;
     }
-    .hero-inner {
+    .hero-canvas {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    }
+    .hero-content {
       position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center;
-      padding: 6rem 2rem 4rem;
+      padding: 8rem 2rem 4rem;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 1s ease 2.5s, transform 1s ease 2.5s;
     }
-    .hero-logo-wrapper {
-      perspective: 800px; margin-bottom: 3rem;
-    }
-    .hero-logo-3d {
-      width: 200px; height: 200px; transition: transform 0.1s ease-out;
-      transform-style: preserve-3d; will-change: transform;
-      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
-      animation: float-logo 6s ease-in-out infinite;
-    }
-    .hero-logo-3d img {
-      width: 100%; height: 100%; object-fit: contain;
-      border-radius: 24px;
-    }
-    @keyframes float-logo {
-      0%, 100% { transform: translateY(0) rotateY(0deg); }
-      25% { transform: translateY(-12px) rotateY(5deg); }
-      50% { transform: translateY(-20px) rotateY(0deg); }
-      75% { transform: translateY(-12px) rotateY(-5deg); }
-    }
-    .hero-glow {
-      position: absolute; width: 320px; height: 320px;
-      border-radius: 50%; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, hsla(175, 60%, 55%, 0.25), transparent 70%);
-      pointer-events: none; z-index: -1;
-      animation: pulse-glow 4s ease-in-out infinite;
-    }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    .hero-content.revealed {
+      opacity: 1; transform: translateY(0);
     }
     .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
       font-weight: 800; line-height: 1.05;
       letter-spacing: -0.04em; margin-bottom: 1.25rem;
       max-width: 700px;
     }
     .hero-subtitle {
-      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
       color: var(--muted); line-height: 1.7;
       max-width: 520px; margin-bottom: 2.5rem;
     }
@@ -567,24 +544,6 @@
     }
     .hero-actions .btn-outline:hover {
       background: var(--fg); color: var(--bg-white); border-color: var(--fg);
-    }
-    .hero-particles {
-      position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
-    }
-    .particle {
-      position: absolute; border-radius: 50%;
-      opacity: 0.3; animation: drift linear infinite;
-    }
-    @keyframes drift {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      10% { opacity: 0.3; }
-      90% { opacity: 0.3; }
-      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
-
-    @media (max-width: 768px) {
-      .hero-logo-3d { width: 140px; height: 140px; }
-      .hero-glow { width: 220px; height: 220px; }
     }
   </style>
 </head>

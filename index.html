@@ -495,7 +495,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* ===================== NEW HERO ===================== */
+    /* ===================== HERO ===================== */
     .hero {
       position: relative; min-height: 100vh;
       display: flex; align-items: center; justify-content: center;
@@ -503,50 +503,27 @@
       background: var(--gradient-hero); background-size: 300% 300%;
       animation: gradient-shift 12s ease infinite;
     }
-    .hero-inner {
+    .hero-canvas {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    }
+    .hero-content {
       position: relative; z-index: 2;
       display: flex; flex-direction: column; align-items: center;
-      padding: 6rem 2rem 4rem;
+      padding: 8rem 2rem 4rem;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 1s ease 2.5s, transform 1s ease 2.5s;
     }
-    .hero-logo-wrapper {
-      perspective: 800px; margin-bottom: 3rem;
-    }
-    .hero-logo-3d {
-      width: 200px; height: 200px; transition: transform 0.1s ease-out;
-      transform-style: preserve-3d; will-change: transform;
-      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
-      animation: float-logo 6s ease-in-out infinite;
-    }
-    .hero-logo-3d img {
-      width: 100%; height: 100%; object-fit: contain;
-      border-radius: 24px;
-    }
-    @keyframes float-logo {
-      0%, 100% { transform: translateY(0) rotateY(0deg); }
-      25% { transform: translateY(-12px) rotateY(5deg); }
-      50% { transform: translateY(-20px) rotateY(0deg); }
-      75% { transform: translateY(-12px) rotateY(-5deg); }
-    }
-    .hero-glow {
-      position: absolute; width: 320px; height: 320px;
-      border-radius: 50%; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, hsla(175, 60%, 55%, 0.25), transparent 70%);
-      pointer-events: none; z-index: -1;
-      animation: pulse-glow 4s ease-in-out infinite;
-    }
-    @keyframes pulse-glow {
-      0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    .hero-content.revealed {
+      opacity: 1; transform: translateY(0);
     }
     .hero h1 {
-      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
       font-weight: 800; line-height: 1.05;
       letter-spacing: -0.04em; margin-bottom: 1.25rem;
       max-width: 700px;
     }
     .hero-subtitle {
-      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
       color: var(--muted); line-height: 1.7;
       max-width: 520px; margin-bottom: 2.5rem;
     }
@@ -567,24 +544,6 @@
     }
     .hero-actions .btn-outline:hover {
       background: var(--fg); color: var(--bg-white); border-color: var(--fg);
-    }
-    .hero-particles {
-      position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 1;
-    }
-    .particle {
-      position: absolute; border-radius: 50%;
-      opacity: 0.3; animation: drift linear infinite;
-    }
-    @keyframes drift {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      10% { opacity: 0.3; }
-      90% { opacity: 0.3; }
-      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-    }
-
-    @media (max-width: 768px) {
-      .hero-logo-3d { width: 140px; height: 140px; }
-      .hero-glow { width: 220px; height: 220px; }
     }
   </style>
 </head>
@@ -623,19 +582,10 @@
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
-    <!-- Floating particles -->
-    <div class="hero-particles" id="heroParticles"></div>
+  <section class="hero" id="heroSection">
+    <canvas class="hero-canvas" id="particleCanvas"></canvas>
 
-    <div class="hero-inner">
-      <!-- 3D Floating Logo -->
-      <div class="hero-logo-wrapper">
-        <div class="hero-logo-3d" id="heroLogo">
-          <div class="hero-glow"></div>
-          <img src="/images/rhozeland_official_logo_2025.png" alt="Rhozeland" />
-        </div>
-      </div>
-
+    <div class="hero-content" id="heroContent">
       <h1>The Creator<br>Ecosystem</h1>
       <p class="hero-subtitle">Studio sessions, content production, a services marketplace, artist tools, and a community that fuels your growth — all under one roof.</p>
 
@@ -988,38 +938,139 @@
       countObserver.observe(el);
     });
 
-    // ===================== 3D Logo Mouse Effect =====================
-    var heroLogo = document.getElementById('heroLogo');
-    var hero = document.querySelector('.hero');
-    if (hero && heroLogo) {
-      hero.addEventListener('mousemove', function(e) {
-        var rect = hero.getBoundingClientRect();
-        var x = (e.clientX - rect.left) / rect.width - 0.5;
-        var y = (e.clientY - rect.top) / rect.height - 0.5;
-        heroLogo.style.transform = 'rotateY(' + (x * 25) + 'deg) rotateX(' + (-y * 20) + 'deg) translateY(-10px)';
-      });
-      hero.addEventListener('mouseleave', function() {
-        heroLogo.style.transform = '';
-      });
-    }
+    // ===================== Particle Morph Logo =====================
+    (function() {
+      var canvas = document.getElementById('particleCanvas');
+      if (!canvas) return;
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio || 1;
+      var particles = [];
+      var assembled = false;
+      var colors = [
+        [77, 184, 164],   // teal
+        [180, 140, 200],  // lavender
+        [200, 130, 170],  // pink
+        [220, 180, 130],  // warm
+        [120, 190, 180],  // mint
+      ];
 
-    // ===================== Particles =====================
-    var particleContainer = document.getElementById('heroParticles');
-    if (particleContainer) {
-      var colors = ['hsla(175,60%,55%,0.4)', 'hsla(280,35%,75%,0.3)', 'hsla(320,30%,75%,0.3)', 'hsla(45,95%,65%,0.3)'];
-      for (var i = 0; i < 20; i++) {
-        var p = document.createElement('div');
-        p.className = 'particle';
-        var size = Math.random() * 6 + 3;
-        p.style.width = size + 'px';
-        p.style.height = size + 'px';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.background = colors[Math.floor(Math.random() * colors.length)];
-        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
-        p.style.animationDelay = (Math.random() * 10) + 's';
-        particleContainer.appendChild(p);
+      function resize() {
+        canvas.width = canvas.offsetWidth * dpr;
+        canvas.height = canvas.offsetHeight * dpr;
+        ctx.scale(dpr, dpr);
       }
-    }
+      resize();
+      window.addEventListener('resize', resize);
+
+      var logo = new Image();
+      logo.crossOrigin = 'anonymous';
+      logo.src = '/images/rhozeland_official_logo_2025.png';
+
+      logo.onload = function() {
+        // Sample pixels from logo
+        var sampleSize = 200;
+        var tmpCanvas = document.createElement('canvas');
+        tmpCanvas.width = sampleSize;
+        tmpCanvas.height = sampleSize;
+        var tmpCtx = tmpCanvas.getContext('2d');
+        tmpCtx.drawImage(logo, 0, 0, sampleSize, sampleSize);
+        var imgData = tmpCtx.getImageData(0, 0, sampleSize, sampleSize).data;
+
+        var targets = [];
+        var step = 3; // sample every 3 pixels
+        for (var y = 0; y < sampleSize; y += step) {
+          for (var x = 0; x < sampleSize; x += step) {
+            var i = (y * sampleSize + x) * 4;
+            if (imgData[i + 3] > 100) { // visible pixel
+              targets.push({ x: x / sampleSize, y: y / sampleSize, r: imgData[i], g: imgData[i+1], b: imgData[i+2] });
+            }
+          }
+        }
+
+        // Create particles
+        var w = canvas.offsetWidth;
+        var h = canvas.offsetHeight;
+        var logoSize = Math.min(w, h) * 0.35;
+        var offsetX = (w - logoSize) / 2;
+        var offsetY = (h - logoSize) / 2 - 40;
+
+        for (var j = 0; j < targets.length; j++) {
+          var t = targets[j];
+          var col = colors[Math.floor(Math.random() * colors.length)];
+          particles.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            tx: offsetX + t.x * logoSize,
+            ty: offsetY + t.y * logoSize,
+            r: t.r, g: t.g, b: t.b,
+            cr: col[0], cg: col[1], cb: col[2],
+            size: Math.random() * 2.5 + 1.5,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4,
+            delay: Math.random() * 60,
+            colorBlend: 0,
+          });
+        }
+
+        var frame = 0;
+        var morphDuration = 120; // frames to morph
+
+        function animate() {
+          frame++;
+          ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+
+          var allDone = true;
+          for (var k = 0; k < particles.length; k++) {
+            var p = particles[k];
+            var effectiveFrame = Math.max(0, frame - p.delay);
+
+            if (effectiveFrame <= 0) {
+              // Still waiting - drift randomly
+              p.x += p.vx * 0.5;
+              p.y += p.vy * 0.5;
+              if (p.x < 0 || p.x > canvas.offsetWidth) p.vx *= -1;
+              if (p.y < 0 || p.y > canvas.offsetHeight) p.vy *= -1;
+              allDone = false;
+            } else {
+              var progress = Math.min(effectiveFrame / morphDuration, 1);
+              var ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+              p.x = p.x + (p.tx - p.x) * 0.06;
+              p.y = p.y + (p.ty - p.y) * 0.06;
+              p.colorBlend = ease;
+              if (Math.abs(p.x - p.tx) > 0.5 || Math.abs(p.y - p.ty) > 0.5) allDone = false;
+            }
+
+            // Blend from random color to actual logo color
+            var br = Math.round(p.cr + (p.r - p.cr) * p.colorBlend);
+            var bg = Math.round(p.cg + (p.g - p.cg) * p.colorBlend);
+            var bb = Math.round(p.cb + (p.b - p.cb) * p.colorBlend);
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + br + ',' + bg + ',' + bb + ',0.85)';
+            ctx.fill();
+          }
+
+          if (allDone && !assembled) {
+            assembled = true;
+            document.getElementById('heroContent').classList.add('revealed');
+          }
+
+          requestAnimationFrame(animate);
+        }
+
+        animate();
+        // Reveal text after a reasonable time even if animation is slow
+        setTimeout(function() {
+          document.getElementById('heroContent').classList.add('revealed');
+        }, 3500);
+      };
+
+      // Fallback if image fails
+      logo.onerror = function() {
+        document.getElementById('heroContent').classList.add('revealed');
+      };
+    })();
   </script>
 </body>
 </html>

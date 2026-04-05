@@ -1,107 +1,74 @@
-import { useState, Suspense } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import LogoShards from "./LogoShards";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 
 const Hero = () => {
-  const [revealed, setRevealed] = useState(false);
-
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Pastel gradient background */}
       <div className="absolute inset-0 bg-gradient-pastel opacity-60" />
 
-      {/* 3D Canvas */}
-      <div className="absolute inset-0 z-[1]">
-        <Canvas
-          camera={{ position: [0, 0, 7], fov: 50 }}
-          dpr={[1, 2]}
-          gl={{ antialias: true, alpha: true }}
-          style={{ background: "transparent" }}
+      <div className="relative z-10 container mx-auto px-6 flex flex-col items-center text-center py-32">
+        {/* Logo */}
+        <motion.img
+          src="/images/rhozeland_official_logo_2025.png"
+          alt="Rhozeland logo"
+          initial={{ opacity: 0, y: -20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="w-40 h-40 sm:w-48 sm:h-48 object-contain mb-6"
+        />
+
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-5xl sm:text-6xl lg:text-7xl font-extrabold font-display leading-[1] tracking-tight mb-6 text-foreground"
         >
-          <ambientLight intensity={0.8} />
-          <directionalLight position={[5, 5, 5]} intensity={0.6} />
-          <pointLight position={[-3, 2, 4]} intensity={0.4} color="#66ccb3" />
-          <Suspense fallback={null}>
-            <LogoShards onAssembled={() => setRevealed(true)} />
-          </Suspense>
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            autoRotate
-            autoRotateSpeed={0.5}
-            maxPolarAngle={Math.PI / 1.8}
-            minPolarAngle={Math.PI / 2.2}
-          />
-        </Canvas>
-      </div>
+          The Creator
+          <br />
+          Ecosystem
+        </motion.h1>
 
-      {/* Hero copy overlay */}
-      <div className="relative z-10 container mx-auto px-6 pointer-events-none">
-        <div className="max-w-xl py-32">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={revealed ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground mb-8 font-body">
-              <span className="text-primary">✦</span> Crafting Visions, Building Futures
-            </span>
-          </motion.div>
+        {/* Description */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+          className="text-base sm:text-lg text-muted-foreground max-w-lg mb-10 font-body leading-relaxed"
+        >
+          Studio sessions, content production, a services marketplace, artist tools, and a community that fuels your growth — all under one roof.
+        </motion.p>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={revealed ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.9, delay: 0.15 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-extrabold font-display leading-[0.95] tracking-tight mb-8 text-foreground"
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="flex flex-col sm:flex-row items-center gap-4"
+        >
+          <a
+            href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-foreground text-background font-semibold hover:opacity-90 transition-opacity text-base"
           >
-            Your
-            <br />
-            Creative
-            <br />
-            Engine
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={revealed ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.35 }}
-            className="text-base sm:text-lg text-muted-foreground max-w-md mb-10 font-body leading-relaxed"
+            Buy $RHOZE <ArrowUpRight size={16} />
+          </a>
+          <a
+            href="#about"
+            className="px-8 py-3.5 rounded-full border border-border text-foreground hover:bg-muted transition-colors text-base font-body"
           >
-            Rhozeland is a creator-owned economy built on Solana — real clothing drops, a services marketplace, an artist app & a revenue flywheel funding buybacks, burns, grants & causes.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={revealed ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.55 }}
-            className="flex flex-col sm:flex-row items-start gap-4 pointer-events-auto"
-          >
-            <a
-              href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-8 py-3.5 rounded-full bg-gradient-mint font-semibold text-primary-foreground shadow-soft hover:shadow-lift transition-shadow text-base"
-            >
-              Buy $RHOZE
-            </a>
-            <a
-              href="#about"
-              className="px-8 py-3.5 rounded-full border border-border text-foreground hover:bg-muted transition-colors text-base font-body"
-            >
-              Learn More
-            </a>
-          </motion.div>
-        </div>
+            Explore
+          </a>
+        </motion.div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={revealed ? { opacity: 1 } : {}}
-        transition={{ delay: 1 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.5 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
       >
         <motion.div

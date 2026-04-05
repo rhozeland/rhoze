@@ -4,176 +4,191 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rhozeland — Contact Us</title>
-  <meta name="description" content="Get in touch with Rhozeland — email, phone, or visit us at our Toronto studio." />
+  <meta name="description" content="Get in touch with Rhozeland — email, phone, or connect with our team." />
   <link rel="icon" href="/favicon.ico" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
 </head>
 <body>
+  <div class="page-shell">
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="container">
-      <a href="/"><img src="/images/toybox_logo.png" alt="Rhozeland" class="navbar-logo" /></a>
-      <div class="navbar-links">
+    <!-- NAVBAR -->
+    <nav class="navbar" aria-label="Primary">
+      <a class="brand" href="/" aria-label="Rhozeland home">
+        <img src="/images/toybox_logo.png" alt="Rhozeland logo" />
+        <span class="brand-text">Rhozeland</span>
+      </a>
+      <div class="nav-links">
         <a href="/about.html">About</a>
         <a href="/projects.html">Projects</a>
         <a href="/events.html">Events</a>
-        <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a>
+        <a href="https://www.rhozeland.com/shop" target="_blank" rel="noopener noreferrer">Shop</a>
         <a href="/contact.html" class="active">Contact</a>
-        <a href="https://rhozeland.app/" target="_blank" class="btn-login">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
       </div>
-      <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu">☰</button>
-    </div>
+      <a class="nav-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
+        Log In
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+      </button>
+    </nav>
     <div id="mobileMenu" class="mobile-menu">
-      <a href="/about.html">About</a><a href="/projects.html">Projects</a><a href="/events.html">Events</a>
-      <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a><a href="/contact.html">Contact</a>
-      <a href="https://rhozeland.app/" target="_blank" class="btn-login">Login <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></a>
+      <a href="/about.html" onclick="closeMenu()">About</a>
+      <a href="/projects.html" onclick="closeMenu()">Projects</a>
+      <a href="/events.html" onclick="closeMenu()">Events</a>
+      <a href="https://www.rhozeland.com/shop" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">Shop</a>
+      <a href="/contact.html" onclick="closeMenu()">Contact</a>
+      <a class="mobile-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">
+        Log In
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+      </a>
     </div>
-  </nav>
 
-  <!-- PAGE HERO -->
-  <section class="page-hero">
-    <div class="container" style="text-align:center;">
-      <span class="pill-tag" style="margin-bottom:1.5rem;">Contact us</span>
-      <h1 class="page-hero-title">We're here to help</h1>
-    </div>
-  </section>
+    <main>
+      <!-- PAGE HERO -->
+      <section class="page-hero">
+        <span class="pill-tag" style="margin-bottom:1.5rem;">Contact us</span>
+        <h1 class="page-hero-title">We're here to help</h1>
+      </section>
 
-  <!-- CONTACT INFO BAR -->
-  <section style="padding:0 0 4rem;">
-    <div class="container">
-      <div style="display:grid; grid-template-columns:repeat(3,1fr); background:var(--accent); border-radius:var(--radius); overflow:hidden;">
-        <div style="padding:2rem; text-align:center; border-right:1px solid rgba(0,0,0,0.1);">
-          <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">Email address</p>
-          <a href="mailto:collab@rhozeland.com" style="font-weight:600; color:black;">collab@rhozeland.com</a>
+      <!-- CONTACT INFO -->
+      <section class="section">
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:3rem;">
+          <div class="card" style="min-height:auto; text-align:center;">
+            <div>
+              <span class="section-kicker">Email</span>
+              <a href="mailto:collab@rhozeland.com" style="display:block; font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-weight:700; letter-spacing:-0.04em; margin-top:0.25rem;">collab@rhozeland.com</a>
+            </div>
+          </div>
+          <div class="card" style="min-height:auto; text-align:center;">
+            <div>
+              <span class="section-kicker">Phone</span>
+              <a href="tel:6478746743" style="display:block; font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-weight:700; letter-spacing:-0.04em; margin-top:0.25rem;">647-874-6743</a>
+            </div>
+          </div>
         </div>
-        <div style="padding:2rem; text-align:center; border-right:1px solid rgba(0,0,0,0.1);">
-          <p style="font-size:0.8rem; color:var(--muted); margin-bottom:0.5rem;">Contact number</p>
-          <a href="tel:6478746743" style="font-weight:600; color:black;">647-874-6743</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- CONTACT FORM -->
-  <section style="padding:4rem 0 8rem; background:var(--bg-white);">
-    <div class="container">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start;">
-        <div style="background:var(--accent); border-radius:var(--radius); height:400px; display:flex; align-items:center; justify-content:center;">
-          <p style="color:var(--muted); font-size:0.9rem;">Studio Photo</p>
-        </div>
-        <div>
-          <h2 style="font-size:clamp(1.75rem,3vw,2.5rem); font-weight:700; margin-bottom:2rem;" class="fade-in">Connect with Rhozeland</h2>
-          <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! We\'ll be in touch.');">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-              <div class="form-field">
-                <input type="text" placeholder="Your name" required />
+        <!-- FORM -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
+          <div class="card" style="min-height:auto; background:hsl(var(--surface-alt)); align-items:center; justify-content:center; aspect-ratio:4/3;">
+            <p style="color:hsl(var(--muted)); font-size:0.9rem;">Studio Photo</p>
+          </div>
+          <div>
+            <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:700; letter-spacing:-0.04em; margin-bottom:2rem;">Connect with Rhozeland</h2>
+            <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! We\'ll be in touch.');">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div class="form-field"><input type="text" placeholder="Your name" required /></div>
+                <div class="form-field"><input type="text" placeholder="Last name" /></div>
               </div>
-              <div class="form-field">
-                <input type="text" placeholder="Last name" />
-              </div>
-            </div>
-            <div class="form-field">
-              <input type="email" placeholder="Email address" required />
-            </div>
-            <div class="form-field">
-              <textarea placeholder="Enter your message" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn-dark" style="width:100%; justify-content:center;">
-              Submit
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+              <div class="form-field"><input type="email" placeholder="Email address" required /></div>
+              <div class="form-field"><textarea placeholder="Enter your message" rows="5" required></textarea></div>
+              <button type="submit" class="btn-dark" style="width:100%; justify-content:center;">
+                Submit
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section" style="background: hsl(var(--surface-alt));">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Questions & Answers</span>
+            <h2>FAQ</h2>
+          </div>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item fade-in">
+            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <span>Who is Rhozeland for?</span>
+              <span class="faq-icon">+</span>
             </button>
-          </form>
+            <div class="faq-answer">
+              <p>Rhozeland is for creators of all levels — musicians, videographers, photographers, designers, engineers, influencers, and anyone building a creative brand. Whether you're starting out or scaling up, we have the tools and community for you.</p>
+            </div>
+          </div>
+          <div class="faq-item fade-in">
+            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <span>What's included in my membership?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Membership includes access to our studio spaces, creative services, workshops, networking events, and the Rhozeland Creator OS platform for booking studios, hiring talent, and managing projects.</p>
+            </div>
+          </div>
+          <div class="faq-item fade-in">
+            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <span>How does the credit system work?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Credits are the currency within Rhozeland's ecosystem. They can be earned through work, purchased, or received through $RHOZE token holdings. Credits unlock services, studio time, and talent hiring on the platform.</p>
+            </div>
+          </div>
+          <div class="faq-item fade-in">
+            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I get more credits if I need them?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! Additional credits can be purchased at any time, or earned by contributing to the community, completing projects, and referring new members to the platform.</p>
+            </div>
+          </div>
+          <div class="faq-item fade-in">
+            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
+              <span>What is $RHOZE?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>$RHOZE is Rhozeland's official token built on Solana. It powers every booking, hire, and collaboration on the platform. Revenue from clothing drops, the marketplace, and services flows back through buybacks, burns, grants, and causes — creating a deflationary flywheel that benefits the entire community.</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </section>
+      </section>
+    </main>
 
-  <!-- FAQ -->
-  <section style="padding:6rem 0; background:var(--bg);">
-    <div class="container">
-      <div style="display:grid; grid-template-columns:auto 1fr; gap:3rem; align-items:start; margin-bottom:3rem;">
-        <span class="pill-tag">Questions & answers</span>
-        <h2 style="font-size:clamp(1.75rem,3vw,2.5rem); font-weight:700;" class="fade-in">FAQ</h2>
-      </div>
-      <div class="faq-list">
-        <div class="faq-item fade-in">
-          <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-            <span>Who is Rhozeland for?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>Rhozeland is for creators of all levels — musicians, videographers, photographers, designers, engineers, influencers, and anyone building a creative brand. Whether you're starting out or scaling up, we have the tools and community for you.</p>
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-panel">
+        <div class="footer-brand">
+          <div class="footer-brand-header">
+            <img src="/images/toybox_logo.png" alt="Rhozeland logo" />
+            <span>Rhozeland</span>
           </div>
-        </div>
-        <div class="faq-item fade-in">
-          <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-            <span>What's included in my membership?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>Membership includes access to our studio spaces, creative services, workshops, networking events, and the Rhozeland Creator OS platform for booking studios, hiring talent, and managing projects.</p>
-          </div>
-        </div>
-        <div class="faq-item fade-in">
-          <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-            <span>How does the credit system work?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>Credits are the currency within Rhozeland's ecosystem. They can be earned through work, purchased, or received through $RHOZE token holdings. Credits unlock services, studio time, and talent hiring on the platform.</p>
-          </div>
-        </div>
-        <div class="faq-item fade-in">
-          <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-            <span>Can I get more credits if I need them?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>Yes! Additional credits can be purchased at any time, or earned by contributing to the community, completing projects, and referring new members to the platform.</p>
-          </div>
-        </div>
-        <div class="faq-item fade-in">
-          <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-            <span>What is $RHOZE?</span>
-            <span class="faq-icon">+</span>
-          </button>
-          <div class="faq-answer">
-            <p>$RHOZE is Rhozeland's official token built on Solana. It powers every booking, hire, and collaboration on the platform. Revenue from clothing drops, the marketplace, and services flows back through buybacks, burns, grants, and causes — creating a deflationary flywheel that benefits the entire community.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-top">
-        <div>
-          <img src="/images/toybox_logo.png" alt="Rhozeland" class="footer-brand-logo" />
-          <p class="footer-desc">Rhozeland is a creative ecosystem built for modern creators.</p>
+          <p class="footer-copy">Rhozeland is the creator ecosystem for people building culture through audio, visuals, web, events, and community.</p>
           <div class="footer-social">
-            <a href="https://www.instagram.com/rhozeland/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-            <a href="https://x.com/rhozeland" target="_blank" rel="noopener noreferrer" aria-label="X/Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-            <a href="https://www.linkedin.com/company/rhozeland" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+            <a href="https://www.instagram.com/rhozeland/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="https://x.com/rhozeland" target="_blank" rel="noopener noreferrer" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
+            <a href="https://www.linkedin.com/company/rhozeland" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg></a>
           </div>
-        <div class="footer-col">
-          <h4>Our page</h4>
-          <a href="/about.html">About us</a><a href="/projects.html">Projects</a><a href="/events.html">Events</a>
-          <a href="https://www.rhozeland.com/shop" target="_blank">Shop</a><a href="/contact.html">Contact us</a>
         </div>
-        <div class="footer-col footer-contact">
-          <h4>Contact</h4>
+        <div class="footer-links">
+          <h3 class="footer-heading">Explore</h3>
+          <a href="/about.html">About us</a>
+          <a href="/projects.html">Projects</a>
+          <a href="/events.html">Events</a>
+          <a href="https://www.rhozeland.com/shop" target="_blank" rel="noopener noreferrer">Shop</a>
+          <a href="/contact.html">Contact us</a>
+        </div>
+        <div class="footer-contact">
+          <h3 class="footer-heading">Contact</h3>
           <a href="tel:6478746743">647-874-6743</a>
           <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>
+          <a class="footer-link-inline" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
+            Log In
+            <svg class="footer-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+          </a>
         </div>
       </div>
-      <div class="footer-bottom"><p>Copyright © 2026 Rhozeland</p></div>
-    </div>
-  </footer>
+      <div class="footer-bottom">Copyright &copy; 2026 Rhozeland</div>
+    </footer>
 
+  </div>
   <script src="/shared.js"></script>
 </body>
 </html>

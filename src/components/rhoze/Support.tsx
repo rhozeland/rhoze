@@ -27,7 +27,7 @@ const Support = () => {
             <Rocket className="text-primary" size={28} />
           </div>
 
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4 text-foreground">
+          <h2 className="text-4xl sm:text-5xl font-medium font-display mb-4 text-foreground">
             Join the movement
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-lg font-body mb-10">

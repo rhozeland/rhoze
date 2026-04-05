@@ -22,7 +22,7 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         <a href="#" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-gradient-mint" />
-          <span className="font-display text-xl font-bold text-foreground tracking-tight">Rhozeland</span>
+          <span className="font-display text-xl font-medium text-foreground tracking-normal">Rhozeland</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">

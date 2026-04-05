@@ -95,7 +95,7 @@ const Hero = () => {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-extrabold font-display leading-[0.95] tracking-tight text-foreground mb-8"
+          className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-medium font-display leading-[0.95] tracking-normal text-foreground mb-8"
           style={{ textShadow: "0 2px 30px hsl(0 0% 100% / 0.6)" }}
         >
           The Creator

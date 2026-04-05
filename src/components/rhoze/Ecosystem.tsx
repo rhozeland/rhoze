@@ -24,7 +24,7 @@ const Ecosystem = () => {
           transition={{ duration: 0.7 }}
           className="text-center mb-20"
         >
-          <h2 className="text-4xl sm:text-5xl font-extrabold font-display mb-4 text-foreground">
+          <h2 className="text-4xl sm:text-5xl font-medium font-display mb-4 text-foreground">
             The Flywheel
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-lg font-body">
@@ -45,7 +45,7 @@ const Ecosystem = () => {
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <p.icon className="text-primary" size={20} />
                 </div>
-                <h3 className="font-display font-bold text-lg text-foreground">{p.label}</h3>
+                <h3 className="font-display font-medium text-lg text-foreground">{p.label}</h3>
               </div>
               <p className="text-muted-foreground text-sm font-body leading-relaxed">{p.desc}</p>
             </motion.div>

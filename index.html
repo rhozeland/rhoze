@@ -1635,13 +1635,17 @@
     }
 
     .bubble-node .drop-form {
-      margin-top: 0.3rem;
+      margin-top: 0.2rem;
+      gap: 0.5rem;
     }
 
     .bubble-node .drop-form input[type="email"] {
       background: hsl(var(--surface));
       border-color: hsl(var(--line));
       color: hsl(var(--ink));
+      min-height: 2.4rem;
+      padding: 0 0.8rem;
+      font-size: 0.82rem;
     }
 
     .bubble-node .drop-form input[type="email"]::placeholder {
@@ -1656,6 +1660,10 @@
     .bubble-node .drop-button {
       background: hsl(var(--ink));
       color: hsl(var(--surface-card));
+      min-height: 2.4rem;
+      min-width: 110px;
+      padding: 0 0.9rem;
+      font-size: 0.8rem;
     }
 
     .cta-card-actions {
@@ -2138,9 +2146,9 @@
       <div class="bubble-map">
         <!-- SVG connector lines -->
         <svg class="bubble-lines" viewBox="0 0 720 720" preserveAspectRatio="xMidYMid meet">
-          <line x1="240" y1="220" x2="340" y2="330" />
-          <line x1="480" y1="220" x2="380" y2="330" />
-          <line x1="360" y1="420" x2="360" y2="530" />
+          <line x1="200" y1="250" x2="320" y2="340" />
+          <line x1="520" y1="250" x2="400" y2="340" />
+          <line x1="360" y1="400" x2="360" y2="510" />
         </svg>
 
         <!-- Center hub -->

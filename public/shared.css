@@ -1254,9 +1254,8 @@ button { background: none; border: 0; cursor: pointer; }
 @media (max-width: 1180px) {
   .section-head { grid-template-columns: 1fr; }
   .work-grid,
-  .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .projects-grid .work-card:nth-child(n) { grid-column: span 1; grid-row: span 1; }
-  .projects-grid .work-card:nth-child(1) { grid-column: span 2; grid-row: span 1; }
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+  .projects-grid .work-card:nth-child(n) { grid-row: span 1; }
   .section-head h2 { max-width: none; }
 }
 
@@ -1274,7 +1273,7 @@ button { background: none; border: 0; cursor: pointer; }
   .projects-grid,
   .events-grid,
   .token-grid { grid-template-columns: 1fr; }
-  .projects-grid .work-card:nth-child(n) { grid-column: span 1; grid-row: span 1; }
+  .projects-grid .work-card:nth-child(n) { grid-row: span 1; }
   .projects-grid { grid-auto-rows: 300px; }
   .section { padding-left: 1.2rem; padding-right: 1.2rem; }
   .footer { padding-left: 1.2rem; padding-right: 1.2rem; }

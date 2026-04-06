@@ -188,31 +188,8 @@
         </div>
       </section>
 
-      <!-- CREATOR OS -->
-      <section class="section" style="text-align:center;">
-        <span class="section-kicker">The Platform</span>
-        <h2 style="font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:clamp(1.5rem,3vw,2.25rem); font-weight:700; letter-spacing:-0.04em; margin:0.5rem auto 0.75rem;">Rhozeland Creator OS</h2>
-        <p style="color:hsl(var(--muted)); max-width:520px; margin:0 auto 2.5rem; line-height:1.7;">Book studios. Hire talent. Ship projects. One workspace for your creative team — powered by $RHOZE.</p>
 
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; max-width:800px; margin:0 auto 2rem;">
-          <div class="card fade-in" style="text-align:center; min-height:180px;">
-            <div style="font-size:1.5rem;">🏢</div>
-            <div><h3>Studios</h3><p class="card-copy">Book creative spaces by the hour — recording, photo labs, video suites.</p></div>
-          </div>
-          <div class="card fade-in" style="text-align:center; min-height:180px;">
-            <div style="font-size:1.5rem;">👥</div>
-            <div><h3>Creators</h3><p class="card-copy">Hire freelance talent on the marketplace — designers, engineers, photographers.</p></div>
-          </div>
-          <div class="card fade-in" style="text-align:center; min-height:180px;">
-            <div style="font-size:1.5rem;">📋</div>
-            <div><h3>Projects</h3><p class="card-copy">Manage work with milestones, budgets, and smart collaboration tools.</p></div>
-          </div>
-        </div>
-        <a class="btn-dark" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
-          Launch App
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-        </a>
-      </section>
+
 
       <!-- FLYWHEEL -->
       <section class="section flywheel-section">
@@ -222,25 +199,27 @@
 
         <div class="flywheel-visual fade-in" style="max-width:28rem; margin:0 auto 2.5rem;">
           <svg viewBox="0 0 400 400" style="width:100%; height:auto;" role="img" aria-label="Revenue flywheel diagram">
-            <circle cx="200" cy="200" r="175" fill="none" stroke="hsl(var(--line))" stroke-width="1"></circle>
-            <circle cx="200" cy="200" r="115" fill="none" stroke="hsl(var(--line))" stroke-width="1"></circle>
-            <path d="M200 25 A175 175 0 0 1 375 200 L315 200 A115 115 0 0 0 200 85 Z" fill="hsl(var(--accent-blue) / 0.22)"></path>
-            <path d="M375 200 A175 175 0 0 1 200 375 L200 315 A115 115 0 0 0 315 200 Z" fill="hsl(var(--accent-blue) / 0.14)"></path>
-            <path d="M200 375 A175 175 0 0 1 25 200 L85 200 A115 115 0 0 0 200 315 Z" fill="hsl(var(--accent-blue) / 0.10)"></path>
-            <path d="M25 200 A175 175 0 0 1 200 25 L200 85 A115 115 0 0 0 85 200 Z" fill="hsl(var(--accent-blue) / 0.18)"></path>
-            <defs>
-              <marker id="fwArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                <path d="M0 0L8 4L0 8Z" fill="hsl(var(--accent-blue) / 0.55)"></path>
-              </marker>
-            </defs>
-            <path d="M310 105 A130 130 0 0 1 340 175" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-            <path d="M295 295 A130 130 0 0 1 225 340" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-            <path d="M90 295 A130 130 0 0 1 60 225" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-            <path d="M105 105 A130 130 0 0 1 175 60" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-            <text x="280" y="120" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Revenue</text>
-            <text x="310" y="270" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Buybacks</text>
-            <text x="120" y="310" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Burns</text>
-            <text x="90" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Value</text>
+            <g class="flywheel-ring">
+              <circle cx="200" cy="200" r="175" fill="none" stroke="hsl(var(--line))" stroke-width="1"></circle>
+              <circle cx="200" cy="200" r="115" fill="none" stroke="hsl(var(--line))" stroke-width="1"></circle>
+              <path d="M200 25 A175 175 0 0 1 375 200 L315 200 A115 115 0 0 0 200 85 Z" fill="hsl(var(--accent-blue) / 0.22)"></path>
+              <path d="M375 200 A175 175 0 0 1 200 375 L200 315 A115 115 0 0 0 315 200 Z" fill="hsl(var(--accent-blue) / 0.14)"></path>
+              <path d="M200 375 A175 175 0 0 1 25 200 L85 200 A115 115 0 0 0 200 315 Z" fill="hsl(var(--accent-blue) / 0.10)"></path>
+              <path d="M25 200 A175 175 0 0 1 200 25 L200 85 A115 115 0 0 0 85 200 Z" fill="hsl(var(--accent-blue) / 0.18)"></path>
+              <defs>
+                <marker id="fwArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                  <path d="M0 0L8 4L0 8Z" fill="hsl(var(--accent-blue) / 0.55)"></path>
+                </marker>
+              </defs>
+              <path d="M310 105 A130 130 0 0 1 340 175" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
+              <path d="M295 295 A130 130 0 0 1 225 340" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
+              <path d="M90 295 A130 130 0 0 1 60 225" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
+              <path d="M105 105 A130 130 0 0 1 175 60" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
+              <text x="280" y="120" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Revenue</text>
+              <text x="310" y="270" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Buybacks</text>
+              <text x="120" y="310" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Burns</text>
+              <text x="90" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Value</text>
+            </g>
             <circle cx="200" cy="200" r="80" fill="hsl(var(--accent-blue))"></circle>
             <text x="200" y="192" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" letter-spacing="-0.04em" fill="white">Growth</text>
             <text x="200" y="216" text-anchor="middle" font-family="Inter, sans-serif" font-weight="400" font-size="11" fill="white" opacity="0.8">
@@ -327,7 +306,7 @@
 
       <!-- SUPPORT CTA -->
       <section class="support-cta">
-        <div style="max-width:48rem; margin:0 auto; padding:0 1.5rem;">
+        <div style="max-width:36rem; margin:0 auto; padding:0 1.5rem;">
           <h2 class="fade-in">It's time we RHOZE together.</h2>
           <p class="fade-in">Support the vision. Buy $RHOZE on Solana and become part of a creator-owned future.</p>
           <p class="contract-label">OFFICIAL CONTRACT ADDRESS</p>

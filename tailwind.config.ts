@@ -74,28 +74,34 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
         },
-        "blob-drift-1": {
-          "0%, 100%": { transform: "translate(0, 0) rotate(0deg) scale(1)" },
-          "25%": { transform: "translate(-8vw, 12vh) rotate(45deg) scale(1.08)" },
-          "50%": { transform: "translate(5vw, -6vh) rotate(120deg) scale(0.95)" },
-          "75%": { transform: "translate(10vw, 8vh) rotate(200deg) scale(1.05)" },
+        "grad-drift-1": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
+          "25%": { transform: "translate(5%, -8%) scale(1.1) rotate(3deg)" },
+          "50%": { transform: "translate(-3%, 6%) scale(1.05) rotate(-2deg)" },
+          "75%": { transform: "translate(7%, 4%) scale(0.95) rotate(4deg)" },
         },
-        "blob-drift-2": {
-          "0%, 100%": { transform: "translate(0, 0) rotate(0deg) scale(1)" },
-          "25%": { transform: "translate(10vw, -8vh) rotate(-60deg) scale(1.1)" },
-          "50%": { transform: "translate(-6vw, 10vh) rotate(-150deg) scale(0.92)" },
-          "75%": { transform: "translate(8vw, 4vh) rotate(-240deg) scale(1.06)" },
+        "grad-drift-2": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1.05) rotate(0deg)" },
+          "33%": { transform: "translate(-8%, 5%) scale(1.15) rotate(-4deg)" },
+          "66%": { transform: "translate(6%, -6%) scale(0.9) rotate(3deg)" },
         },
-        "blob-drift-3": {
-          "0%, 100%": { transform: "translate(0, 0) rotate(0deg) scale(1)" },
-          "33%": { transform: "translate(-12vw, 6vh) rotate(80deg) scale(1.12)" },
-          "66%": { transform: "translate(8vw, -10vh) rotate(190deg) scale(0.9)" },
+        "grad-drift-3": {
+          "0%, 100%": { transform: "translate(0, 0) scale(1) rotate(0deg)" },
+          "20%": { transform: "translate(10%, 3%) scale(1.2) rotate(5deg)" },
+          "50%": { transform: "translate(-5%, -10%) scale(1.08) rotate(-3deg)" },
+          "80%": { transform: "translate(3%, 8%) scale(0.95) rotate(2deg)" },
         },
-        "blob-morph": {
-          "0%, 100%": { borderRadius: "40% 60% 55% 45% / 55% 40% 60% 45%" },
-          "25%": { borderRadius: "55% 45% 40% 60% / 45% 55% 45% 55%" },
-          "50%": { borderRadius: "45% 55% 60% 40% / 60% 45% 55% 40%" },
-          "75%": { borderRadius: "60% 40% 45% 55% / 40% 60% 40% 60%" },
+        "grad-fade-1": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "0.7" },
+        },
+        "grad-fade-2": {
+          "0%, 100%": { opacity: "0.4" },
+          "50%": { opacity: "0.6" },
+        },
+        "grad-fade-3": {
+          "0%, 100%": { opacity: "0.3" },
+          "50%": { opacity: "0.5" },
         },
       },
       animation: {

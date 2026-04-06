@@ -11,13 +11,6 @@ const pillars = [
   { icon: Gift, label: "Grants & Causes", desc: "Funding the dreamers, supporting the communities that need it most." },
 ];
 
-const cycleLabels = [
-  { label: "Revenue", className: "top-[13%] left-1/2 -translate-x-1/2 -rotate-6" },
-  { label: "Buybacks", className: "top-1/2 right-[8%] -translate-y-1/2 rotate-90" },
-  { label: "Burns", className: "bottom-[13%] left-1/2 -translate-x-1/2" },
-  { label: "Value", className: "top-1/2 left-[8%] -translate-y-1/2 -rotate-90" },
-];
-
 const Ecosystem = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
@@ -39,48 +32,49 @@ const Ecosystem = () => {
           </p>
         </motion.div>
 
+        {/* Flywheel SVG */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 24 }}
-          animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.08 }}
-          className="relative mx-auto mb-16 aspect-square w-full max-w-[34rem]"
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className="mx-auto mb-16 w-full max-w-[28rem]"
         >
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" aria-hidden="true">
+          <svg viewBox="0 0 400 400" className="w-full h-auto" role="img" aria-label="Revenue flywheel diagram">
+            {/* Outer ring segments */}
+            <circle cx="200" cy="200" r="175" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
+            <circle cx="200" cy="200" r="115" fill="none" stroke="hsl(var(--border))" strokeWidth="1" />
+
+            {/* Segment fills — four quadrants */}
+            <path d="M200 25 A175 175 0 0 1 375 200 L315 200 A115 115 0 0 0 200 85 Z" fill="hsl(var(--primary) / 0.22)" />
+            <path d="M375 200 A175 175 0 0 1 200 375 L200 315 A115 115 0 0 0 315 200 Z" fill="hsl(var(--primary) / 0.14)" />
+            <path d="M200 375 A175 175 0 0 1 25 200 L85 200 A115 115 0 0 0 200 315 Z" fill="hsl(var(--primary) / 0.10)" />
+            <path d="M25 200 A175 175 0 0 1 200 25 L200 85 A115 115 0 0 0 85 200 Z" fill="hsl(var(--primary) / 0.18)" />
+
+            {/* Curved arrows between segments */}
             <defs>
-              <marker id="ecosystemArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M0 0L6 3L0 6Z" fill="hsl(var(--primary))" />
+              <marker id="fwArrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0 0L8 4L0 8Z" fill="hsl(var(--primary) / 0.55)" />
               </marker>
             </defs>
-            <path d="M21 40 A36 36 0 0 1 39 21" fill="none" stroke="hsl(var(--primary) / 0.78)" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#ecosystemArrow)" />
-            <path d="M61 21 A36 36 0 0 1 79 40" fill="none" stroke="hsl(var(--primary) / 0.78)" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#ecosystemArrow)" />
-            <path d="M79 60 A36 36 0 0 1 61 79" fill="none" stroke="hsl(var(--primary) / 0.78)" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#ecosystemArrow)" />
-            <path d="M39 79 A36 36 0 0 1 21 60" fill="none" stroke="hsl(var(--primary) / 0.78)" strokeWidth="1.6" strokeLinecap="round" markerEnd="url(#ecosystemArrow)" />
+            <path d="M310 105 A130 130 0 0 1 340 175" fill="none" stroke="hsl(var(--primary) / 0.4)" strokeWidth="2.5" strokeLinecap="round" markerEnd="url(#fwArrow)" />
+            <path d="M295 295 A130 130 0 0 1 225 340" fill="none" stroke="hsl(var(--primary) / 0.4)" strokeWidth="2.5" strokeLinecap="round" markerEnd="url(#fwArrow)" />
+            <path d="M90 295 A130 130 0 0 1 60 225" fill="none" stroke="hsl(var(--primary) / 0.4)" strokeWidth="2.5" strokeLinecap="round" markerEnd="url(#fwArrow)" />
+            <path d="M105 105 A130 130 0 0 1 175 60" fill="none" stroke="hsl(var(--primary) / 0.4)" strokeWidth="2.5" strokeLinecap="round" markerEnd="url(#fwArrow)" />
+
+            {/* Quadrant labels */}
+            <text x="280" y="120" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="22" letterSpacing="-0.04em" fill="hsl(var(--foreground))">Revenue</text>
+            <text x="310" y="270" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="22" letterSpacing="-0.04em" fill="hsl(var(--foreground))">Buybacks</text>
+            <text x="120" y="310" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="22" letterSpacing="-0.04em" fill="hsl(var(--foreground))">Burns</text>
+            <text x="90" y="150" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="22" letterSpacing="-0.04em" fill="hsl(var(--foreground))">Value</text>
+
+            {/* Inner circle */}
+            <circle cx="200" cy="200" r="80" fill="hsl(var(--primary))" />
+            <text x="200" y="192" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="700" fontSize="28" letterSpacing="-0.04em" fill="white">Growth</text>
+            <text x="200" y="216" textAnchor="middle" fontFamily="Inter, sans-serif" fontWeight="400" fontSize="11" fill="white" opacity="0.8">
+              <tspan x="200" dy="0">Every loop sends value</tspan>
+              <tspan x="200" dy="14">back to the ecosystem.</tspan>
+            </text>
           </svg>
-
-          <div
-            className="absolute inset-[10%] rounded-full border border-border shadow-soft"
-            style={{
-              background:
-                "conic-gradient(from -90deg, hsl(var(--primary)) 0deg 84deg, hsl(var(--primary) / 0.12) 84deg 92deg, hsl(var(--primary) / 0.24) 92deg 174deg, hsl(var(--primary) / 0.12) 174deg 182deg, hsl(var(--primary) / 0.18) 182deg 264deg, hsl(var(--primary) / 0.12) 264deg 272deg, hsl(var(--primary) / 0.3) 272deg 354deg, hsl(var(--primary) / 0.12) 354deg 360deg)",
-            }}
-          />
-          <div className="absolute inset-[24%] rounded-full border border-border bg-rhoze-surface" />
-
-          {cycleLabels.map((item) => (
-            <span
-              key={item.label}
-              className={`absolute z-10 whitespace-nowrap font-display text-sm font-semibold tracking-tight text-foreground sm:text-lg ${item.className}`}
-            >
-              {item.label}
-            </span>
-          ))}
-
-          <div className="absolute inset-[35%] z-10 flex flex-col items-center justify-center rounded-full bg-primary px-4 text-center text-primary-foreground shadow-lift">
-            <span className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Growth</span>
-            <p className="mt-2 max-w-[11rem] text-[0.7rem] leading-relaxed text-primary-foreground/80 sm:text-sm">
-              Every loop sends value back to the ecosystem.
-            </p>
-          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

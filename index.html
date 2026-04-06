@@ -1309,6 +1309,89 @@
       letter-spacing: -0.02em;
     }
 
+    /* Events ticker */
+    .events-ticker {
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--radius);
+      padding: 0.25rem 0;
+      background: hsl(var(--surface) / 0.6);
+      backdrop-filter: blur(12px);
+    }
+    .events-ticker-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 1.25rem;
+      text-decoration: none;
+      color: hsl(var(--ink));
+      font-size: 0.88rem;
+    }
+    .events-ticker-row--link {
+      transition: background 0.15s;
+    }
+    .events-ticker-row--link:hover {
+      background: hsl(var(--ink) / 0.05);
+    }
+    .events-ticker-divider {
+      height: 1px;
+      background: hsl(var(--border));
+      margin: 0.15rem 1.25rem;
+    }
+    .ticker-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: hsl(0 0% 50%);
+      flex-shrink: 0;
+    }
+    .ticker-dot--live {
+      background: hsl(145 60% 50%);
+      box-shadow: 0 0 6px hsl(145 60% 50% / 0.5);
+    }
+    .ticker-label {
+      flex: 1;
+      font-size: 0.85rem;
+      opacity: 0.65;
+    }
+    .ticker-follow {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: hsl(var(--ink));
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .ticker-follow:hover { opacity: 1; }
+    .ticker-section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      padding: 0.3rem 1.25rem 0;
+    }
+    .ticker-date {
+      width: 3.2rem;
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      opacity: 0.5;
+    }
+    .ticker-title {
+      flex: 1;
+      font-weight: 500;
+    }
+    .ticker-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      flex-shrink: 0;
+    }
+
     .newsletter-card {
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);

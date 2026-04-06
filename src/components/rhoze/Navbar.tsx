@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import logoBlack from "@/assets/logo-black.png";
+import logoWhite from "@/assets/logo-white.png";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -21,7 +23,8 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         <a href="#" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-gradient-mint" />
+          <img src={logoBlack} alt="Rhozeland logo" className="w-8 h-8 object-contain dark-hide" />
+          <img src={logoWhite} alt="Rhozeland logo" className="w-8 h-8 object-contain light-hide" />
           <span className="font-display text-xl font-semibold text-foreground tracking-normal">Rhozeland</span>
         </a>
 

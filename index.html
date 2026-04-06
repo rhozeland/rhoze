@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
   <script>
-    (function(){var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add('dark');})();
+    (function(){
+      var o=localStorage.getItem('theme-override');
+      if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}
+      var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add('dark');
+    })();
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2051,102 +2055,104 @@
         </div>
       </section>
 
-      <section class="section reveal" style="padding-right:0;">
-        <div class="section-head" style="padding-right:clamp(1.5rem,4vw,3rem);">
-          <div>
-            <span class="section-kicker">Selected work</span>
-            <h2>Projects across music, culture, and digital product.</h2>
+      <section class="section reveal">
+        <div class="card" style="padding:clamp(1.5rem,3vw,2.5rem); min-height:auto; overflow:visible;">
+          <div class="section-head">
+            <div>
+              <span class="section-kicker">Selected work</span>
+              <h2>Projects across music, culture, and digital product.</h2>
+            </div>
+            <div>
+              <p>Rhozeland handles audio, visuals, web, and launch systems for brands and artists building with intent — not just volume.</p>
+              <a class="section-link" href="/projects.html">
+                See all projects
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+              </a>
+            </div>
           </div>
-          <div>
-            <p>Rhozeland handles audio, visuals, web, and launch systems for brands and artists building with intent — not just volume.</p>
-            <a class="section-link" href="/projects.html">
-              See all projects
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+
+          <div class="work-scroll-strip" style="margin:0 calc(-1 * clamp(1.5rem,3vw,2.5rem)); padding:0 clamp(1.5rem,3vw,2.5rem);">
+            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aeff77289928d5c3dfc5b0_Screenshot%202026-03-09%20at%201.10.39%E2%80%AFPM.png" alt="The Mask — Oaok" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Music Video</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Audio & Visual</span>
+                <h3>The Mask</h3>
+                <p>Oaok</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefb88b67bc2387a91fe59_admin-ajax%20(5).png" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Music Video</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Audio & Visual</span>
+                <h3>Mansa Musa</h3>
+                <p>MONEE FINGAZ</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefa944a0e1e698bd6f8da_admin-ajax%20(4).png" alt="Holy Water — Cozal" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Music Video</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Audio & Visual</span>
+                <h3>Holy Water</h3>
+                <p>Cozal</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.lelonglegs.lol/" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png" alt="LeLongLegs" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Web Series</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Digital</span>
+                <h3>LeLongLegs</h3>
+                <p>Indolestic</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png" alt="FATE — DUBZY33" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Music Video</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Audio & Visual</span>
+                <h3>FATE</h3>
+                <p>DUBZY33</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.instagram.com/p/DKvf2jXMbRs" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e99e0d03b856155a51475_admin-ajax%20(14).png" alt="BK Whiskey MMA" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Commercial</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Commercial</span>
+                <h3>BK Whiskey MMA</h3>
+                <p>BK Whiskey</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=u9iOP4qH2MI" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png" alt="True North Transparency" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Web Series</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Visual</span>
+                <h3>True North Transparency</h3>
+                <p>True North Transparency</p>
+              </div>
+            </a>
+            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=QSFF9jI8f4g" target="_blank" rel="noopener noreferrer">
+              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png" alt="Bombaaa" loading="lazy" />
+              <div class="work-scroll-overlay"></div>
+              <span class="work-scroll-type">Music Video</span>
+              <div class="work-scroll-body">
+                <span class="work-scroll-tag">Audio & Visual</span>
+                <h3>Bombaaa</h3>
+                <p>MONEE FINGAZ X 1CUZZMN</p>
+              </div>
             </a>
           </div>
-        </div>
-
-        <div class="work-scroll-strip">
-          <a class="work-scroll-card" href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aeff77289928d5c3dfc5b0_Screenshot%202026-03-09%20at%201.10.39%E2%80%AFPM.png" alt="The Mask — Oaok" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Music Video</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Audio & Visual</span>
-              <h3>The Mask</h3>
-              <p>Oaok</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefb88b67bc2387a91fe59_admin-ajax%20(5).png" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Music Video</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Audio & Visual</span>
-              <h3>Mansa Musa</h3>
-              <p>MONEE FINGAZ</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefa944a0e1e698bd6f8da_admin-ajax%20(4).png" alt="Holy Water — Cozal" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Music Video</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Audio & Visual</span>
-              <h3>Holy Water</h3>
-              <p>Cozal</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.lelonglegs.lol/" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png" alt="LeLongLegs" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Web Series</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Digital</span>
-              <h3>LeLongLegs</h3>
-              <p>Indolestic</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png" alt="FATE — DUBZY33" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Music Video</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Audio & Visual</span>
-              <h3>FATE</h3>
-              <p>DUBZY33</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.instagram.com/p/DKvf2jXMbRs" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e99e0d03b856155a51475_admin-ajax%20(14).png" alt="BK Whiskey MMA" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Commercial</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Commercial</span>
-              <h3>BK Whiskey MMA</h3>
-              <p>BK Whiskey</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.youtube.com/watch?v=u9iOP4qH2MI" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png" alt="True North Transparency" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Web Series</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Visual</span>
-              <h3>True North Transparency</h3>
-              <p>True North Transparency</p>
-            </div>
-          </a>
-          <a class="work-scroll-card" href="https://www.youtube.com/watch?v=QSFF9jI8f4g" target="_blank" rel="noopener noreferrer">
-            <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png" alt="Bombaaa" loading="lazy" />
-            <div class="work-scroll-overlay"></div>
-            <span class="work-scroll-type">Music Video</span>
-            <div class="work-scroll-body">
-              <span class="work-scroll-tag">Audio & Visual</span>
-              <h3>Bombaaa</h3>
-              <p>MONEE FINGAZ X 1CUZZMN</p>
-            </div>
-          </a>
         </div>
       </section>
 

@@ -13,21 +13,22 @@ const Index = () => {
     <div className="relative min-h-screen bg-background text-foreground">
       {/* Animated gradient background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <img
-          src="/images/grad-nebula.png"
-          alt=""
-          className="absolute w-[140%] h-[140%] -top-[20%] -left-[20%] object-cover opacity-50 animate-[grad-drift-1_25s_ease-in-out_infinite,grad-fade-1_20s_ease-in-out_infinite]"
-        />
-        <img
-          src="/images/grad-teal.png"
-          alt=""
-          className="absolute w-[140%] h-[140%] -top-[20%] -left-[20%] object-cover opacity-40 animate-[grad-drift-2_30s_ease-in-out_infinite,grad-fade-2_18s_ease-in-out_infinite]"
-        />
-        <img
-          src="/images/grad-amber.png"
-          alt=""
-          className="absolute w-[140%] h-[140%] -top-[20%] -left-[20%] object-cover opacity-30 animate-[grad-drift-3_35s_ease-in-out_infinite,grad-fade-3_22s_ease-in-out_infinite]"
-        />
+        <div className="absolute rounded-full blur-[80px] will-change-transform"
+          style={{ width: '60vmax', height: '60vmax', top: '-20%', left: '-10%',
+            background: 'radial-gradient(circle, hsl(270 80% 55%) 0%, hsl(250 90% 40%) 50%, transparent 70%)',
+            animation: 'orb-move-1 20s ease-in-out infinite, orb-pulse-1 8s ease-in-out infinite' }} />
+        <div className="absolute rounded-full blur-[80px] will-change-transform"
+          style={{ width: '50vmax', height: '50vmax', top: '20%', right: '-15%', opacity: 0.7,
+            background: 'radial-gradient(circle, hsl(30 90% 50%) 0%, hsl(15 80% 35%) 45%, transparent 70%)',
+            animation: 'orb-move-2 25s ease-in-out infinite, orb-pulse-2 10s ease-in-out infinite' }} />
+        <div className="absolute rounded-full blur-[80px] will-change-transform"
+          style={{ width: '55vmax', height: '55vmax', bottom: '-25%', left: '20%', opacity: 0.6,
+            background: 'radial-gradient(circle, hsl(175 80% 45%) 0%, hsl(190 70% 30%) 45%, transparent 70%)',
+            animation: 'orb-move-3 22s ease-in-out infinite, orb-pulse-3 12s ease-in-out infinite' }} />
+        <div className="absolute rounded-full blur-[80px] will-change-transform"
+          style={{ width: '40vmax', height: '40vmax', top: '-10%', right: '10%', opacity: 0.5,
+            background: 'radial-gradient(circle, hsl(310 70% 50%) 0%, hsl(280 60% 35%) 45%, transparent 70%)',
+            animation: 'orb-move-4 28s ease-in-out infinite, orb-pulse-4 9s ease-in-out infinite' }} />
       </div>
       <Navbar />
       <Hero />

@@ -53,7 +53,7 @@
       --shadow: 0 0% 0%;
     }
 
-    .dark .gradient-canvas img { opacity: 0.35; }
+    .dark .gradient-canvas { opacity: 0.6; }
     .dark .page-shell { background: hsl(var(--surface) / 0.95); }
 
     html { scroll-behavior: smooth; }
@@ -94,7 +94,7 @@
       display: none;
     }
 
-    /* Animated gradient background using images */
+    /* Animated gradient background — pure CSS */
     .gradient-canvas {
       position: fixed;
       inset: 0;
@@ -103,61 +103,97 @@
       overflow: hidden;
     }
 
-    .gradient-canvas img {
+    .gradient-canvas .g-orb {
       position: absolute;
-      width: 140%;
-      height: 140%;
-      top: -20%;
-      left: -20%;
-      object-fit: cover;
-      opacity: 0.5;
+      border-radius: 50%;
+      filter: blur(80px);
       will-change: transform, opacity;
     }
 
-    .gradient-canvas img:nth-child(1) {
-      animation: grad-drift-1 25s ease-in-out infinite, grad-fade-1 20s ease-in-out infinite;
-    }
-    .gradient-canvas img:nth-child(2) {
-      animation: grad-drift-2 30s ease-in-out infinite, grad-fade-2 18s ease-in-out infinite;
-    }
-    .gradient-canvas img:nth-child(3) {
-      animation: grad-drift-3 35s ease-in-out infinite, grad-fade-3 22s ease-in-out infinite;
-      opacity: 0.35;
-    }
-
-    @keyframes grad-drift-1 {
-      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-      25%      { transform: translate(5%, -8%) scale(1.1) rotate(3deg); }
-      50%      { transform: translate(-3%, 6%) scale(1.05) rotate(-2deg); }
-      75%      { transform: translate(7%, 4%) scale(0.95) rotate(4deg); }
+    /* Orb 1 — purple / violet (top-left) */
+    .gradient-canvas .g-orb--1 {
+      width: 60vmax;
+      height: 60vmax;
+      top: -20%;
+      left: -10%;
+      background: radial-gradient(circle, hsl(270 80% 55%) 0%, hsl(250 90% 40%) 50%, transparent 70%);
+      animation: orb-move-1 20s ease-in-out infinite, orb-pulse-1 8s ease-in-out infinite;
     }
 
-    @keyframes grad-drift-2 {
-      0%, 100% { transform: translate(0, 0) scale(1.05) rotate(0deg); }
-      33%      { transform: translate(-8%, 5%) scale(1.15) rotate(-4deg); }
-      66%      { transform: translate(6%, -6%) scale(0.9) rotate(3deg); }
+    /* Orb 2 — amber / warm (center-right) */
+    .gradient-canvas .g-orb--2 {
+      width: 50vmax;
+      height: 50vmax;
+      top: 20%;
+      right: -15%;
+      background: radial-gradient(circle, hsl(30 90% 50%) 0%, hsl(15 80% 35%) 45%, transparent 70%);
+      animation: orb-move-2 25s ease-in-out infinite, orb-pulse-2 10s ease-in-out infinite;
+      opacity: 0.7;
     }
 
-    @keyframes grad-drift-3 {
-      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-      20%      { transform: translate(10%, 3%) scale(1.2) rotate(5deg); }
-      50%      { transform: translate(-5%, -10%) scale(1.08) rotate(-3deg); }
-      80%      { transform: translate(3%, 8%) scale(0.95) rotate(2deg); }
+    /* Orb 3 — teal / cyan (bottom-left) */
+    .gradient-canvas .g-orb--3 {
+      width: 55vmax;
+      height: 55vmax;
+      bottom: -25%;
+      left: 20%;
+      background: radial-gradient(circle, hsl(175 80% 45%) 0%, hsl(190 70% 30%) 45%, transparent 70%);
+      animation: orb-move-3 22s ease-in-out infinite, orb-pulse-3 12s ease-in-out infinite;
+      opacity: 0.6;
     }
 
-    @keyframes grad-fade-1 {
+    /* Orb 4 — pink / magenta (top-right, subtle) */
+    .gradient-canvas .g-orb--4 {
+      width: 40vmax;
+      height: 40vmax;
+      top: -10%;
+      right: 10%;
+      background: radial-gradient(circle, hsl(310 70% 50%) 0%, hsl(280 60% 35%) 45%, transparent 70%);
+      animation: orb-move-4 28s ease-in-out infinite, orb-pulse-4 9s ease-in-out infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes orb-move-1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25%      { transform: translate(15vw, 10vh) scale(1.15); }
+      50%      { transform: translate(5vw, 25vh) scale(0.9); }
+      75%      { transform: translate(-5vw, 12vh) scale(1.1); }
+    }
+
+    @keyframes orb-move-2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      30%      { transform: translate(-12vw, 8vh) scale(1.2); }
+      60%      { transform: translate(-8vw, -10vh) scale(0.85); }
+    }
+
+    @keyframes orb-move-3 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%      { transform: translate(10vw, -15vh) scale(1.1); }
+      66%      { transform: translate(-8vw, -5vh) scale(1.2); }
+    }
+
+    @keyframes orb-move-4 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      20%      { transform: translate(-10vw, 15vh) scale(1.3); }
+      50%      { transform: translate(5vw, 20vh) scale(0.9); }
+      80%      { transform: translate(10vw, 5vh) scale(1.1); }
+    }
+
+    @keyframes orb-pulse-1 {
+      0%, 100% { opacity: 0.8; }
+      50%      { opacity: 1; }
+    }
+    @keyframes orb-pulse-2 {
+      0%, 100% { opacity: 0.7; }
+      50%      { opacity: 0.9; }
+    }
+    @keyframes orb-pulse-3 {
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 0.85; }
+    }
+    @keyframes orb-pulse-4 {
       0%, 100% { opacity: 0.5; }
-      50%      { opacity: 0.7; }
-    }
-
-    @keyframes grad-fade-2 {
-      0%, 100% { opacity: 0.4; }
-      50%      { opacity: 0.6; }
-    }
-
-    @keyframes grad-fade-3 {
-      0%, 100% { opacity: 0.3; }
-      50%      { opacity: 0.5; }
+      50%      { opacity: 0.75; }
     }
 
     .navbar,
@@ -1855,7 +1891,7 @@
       .hero-topline, .hero-copy h1, .hero-desc, .hero-meta, .hero-proof-links, .hero-side {
         opacity: 1; transform: none; animation: none;
       }
-      .gradient-canvas img, .newsletter-blob, .hero-side::before, .hero-side::after, .hero-drop-card::before, .hero-drop-card::after { animation: none !important; }
+      .gradient-canvas .g-orb, .newsletter-blob, .hero-side::before, .hero-side::after, .hero-drop-card::before, .hero-drop-card::after { animation: none !important; }
       .card, .work-card, .event-card, .newsletter-card,
       .nav-cta, .hero-primary, .panel-button, .newsletter-button, .footer-social a, .cta-card, .cta-action-btn, .cta-action-ghost {
         animation: none !important; transition: none !important;
@@ -1865,10 +1901,10 @@
 </head>
 <body>
   <div class="gradient-canvas" aria-hidden="true">
-    <img src="/images/grad-nebula.png" alt="" />
-    <img src="/images/grad-teal.png" alt="" />
-    <img src="/images/grad-amber.png" alt="" />
-  </div>
+    <div class="g-orb g-orb--1"></div>
+    <div class="g-orb g-orb--2"></div>
+    <div class="g-orb g-orb--3"></div>
+    <div class="g-orb g-orb--4"></div>
   </div>
 
   <div class="page-shell">

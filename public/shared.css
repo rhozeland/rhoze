@@ -52,58 +52,30 @@
   --page-hero-glow-2: 26 24% 18%;
 }
 
-/* About — warm amber + deep blue */
+/* About — warm amber tones */
 .page-about {
-  --orb-1-inner: hsl(30 90% 55%);
-  --orb-1-outer: hsl(15 80% 35%);
-  --orb-2-inner: hsl(220 80% 55%);
-  --orb-2-outer: hsl(240 70% 35%);
-  --orb-3-inner: hsl(170 70% 45%);
-  --orb-3-outer: hsl(190 60% 30%);
-  --orb-4-inner: hsl(340 65% 50%);
-  --orb-4-outer: hsl(320 55% 35%);
+  --page-gradient: linear-gradient(135deg, hsl(20 60% 14%) 0%, hsl(30 70% 20%) 20%, hsl(200 40% 12%) 40%, hsl(40 55% 18%) 60%, hsl(350 40% 14%) 80%, hsl(25 60% 16%) 100%);
   --page-hero-glow-1: 174 36% 84%;
   --page-hero-glow-2: 24 52% 88%;
 }
 
 /* Projects — teal + gold */
 .page-projects {
-  --orb-1-inner: hsl(175 85% 45%);
-  --orb-1-outer: hsl(185 70% 30%);
-  --orb-2-inner: hsl(40 90% 55%);
-  --orb-2-outer: hsl(25 80% 35%);
-  --orb-3-inner: hsl(260 70% 55%);
-  --orb-3-outer: hsl(270 60% 35%);
-  --orb-4-inner: hsl(150 65% 45%);
-  --orb-4-outer: hsl(170 55% 30%);
+  --page-gradient: linear-gradient(135deg, hsl(180 50% 12%) 0%, hsl(175 60% 18%) 20%, hsl(40 50% 16%) 40%, hsl(200 45% 14%) 60%, hsl(160 50% 15%) 80%, hsl(45 55% 18%) 100%);
   --page-hero-glow-1: 202 40% 84%;
   --page-hero-glow-2: 18 60% 88%;
 }
 
 /* Events — violet + pink */
 .page-events {
-  --orb-1-inner: hsl(280 80% 60%);
-  --orb-1-outer: hsl(260 70% 40%);
-  --orb-2-inner: hsl(330 75% 55%);
-  --orb-2-outer: hsl(310 65% 35%);
-  --orb-3-inner: hsl(200 75% 50%);
-  --orb-3-outer: hsl(220 65% 35%);
-  --orb-4-inner: hsl(40 80% 55%);
-  --orb-4-outer: hsl(25 70% 35%);
+  --page-gradient: linear-gradient(135deg, hsl(280 55% 16%) 0%, hsl(310 50% 18%) 20%, hsl(260 50% 14%) 40%, hsl(330 45% 16%) 60%, hsl(200 40% 12%) 80%, hsl(290 50% 15%) 100%);
   --page-hero-glow-1: 170 34% 84%;
   --page-hero-glow-2: 38 52% 88%;
 }
 
-/* Contact — deep blue + nebula purple */
+/* Contact — deep blue + nebula */
 .page-contact {
-  --orb-1-inner: hsl(240 75% 55%);
-  --orb-1-outer: hsl(250 65% 35%);
-  --orb-2-inner: hsl(290 70% 55%);
-  --orb-2-outer: hsl(270 60% 35%);
-  --orb-3-inner: hsl(180 70% 45%);
-  --orb-3-outer: hsl(195 60% 30%);
-  --orb-4-inner: hsl(15 80% 50%);
-  --orb-4-outer: hsl(5 70% 35%);
+  --page-gradient: linear-gradient(135deg, hsl(240 55% 14%) 0%, hsl(260 50% 18%) 20%, hsl(290 45% 16%) 40%, hsl(220 50% 14%) 60%, hsl(180 40% 12%) 80%, hsl(250 50% 16%) 100%);
   --page-hero-glow-1: 208 36% 84%;
   --page-hero-glow-2: 12 54% 88%;
 }
@@ -149,93 +121,38 @@ button { background: none; border: 0; cursor: pointer; }
   display: none;
 }
 
-/* Animated gradient background — pure CSS orbs */
+/* Animated color-shifting gradient background */
 .gradient-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  overflow: hidden;
+  background-size: 400% 400%;
+  animation: gradient-shift 30s ease infinite;
+  background-image: var(--page-gradient, linear-gradient(
+    135deg,
+    hsl(270 60% 15%) 0%,
+    hsl(250 70% 20%) 15%,
+    hsl(200 50% 12%) 30%,
+    hsl(30 60% 18%) 45%,
+    hsl(330 50% 16%) 60%,
+    hsl(180 50% 14%) 75%,
+    hsl(260 60% 18%) 100%
+  ));
 }
 
-.gradient-canvas .g-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  will-change: transform, opacity;
-}
+.dark .gradient-canvas { opacity: 1; }
 
-.dark .gradient-canvas { opacity: 0.6; }
-
-/* Page-specific orb colors use CSS vars set per page */
-.gradient-canvas .g-orb--1 {
-  width: 60vmax; height: 60vmax;
-  top: -20%; left: -10%;
-  background: radial-gradient(circle, var(--orb-1-inner, hsl(270 80% 55%)) 0%, var(--orb-1-outer, hsl(250 90% 40%)) 50%, transparent 70%);
-  animation: orb-move-1 20s ease-in-out infinite, orb-pulse-1 8s ease-in-out infinite;
-}
-
-.gradient-canvas .g-orb--2 {
-  width: 50vmax; height: 50vmax;
-  top: 20%; right: -15%;
-  background: radial-gradient(circle, var(--orb-2-inner, hsl(30 90% 50%)) 0%, var(--orb-2-outer, hsl(15 80% 35%)) 45%, transparent 70%);
-  animation: orb-move-2 25s ease-in-out infinite, orb-pulse-2 10s ease-in-out infinite;
-  opacity: 0.7;
-}
-
-.gradient-canvas .g-orb--3 {
-  width: 55vmax; height: 55vmax;
-  bottom: -25%; left: 20%;
-  background: radial-gradient(circle, var(--orb-3-inner, hsl(175 80% 45%)) 0%, var(--orb-3-outer, hsl(190 70% 30%)) 45%, transparent 70%);
-  animation: orb-move-3 22s ease-in-out infinite, orb-pulse-3 12s ease-in-out infinite;
-  opacity: 0.6;
-}
-
-.gradient-canvas .g-orb--4 {
-  width: 40vmax; height: 40vmax;
-  top: -10%; right: 10%;
-  background: radial-gradient(circle, var(--orb-4-inner, hsl(310 70% 50%)) 0%, var(--orb-4-outer, hsl(280 60% 35%)) 45%, transparent 70%);
-  animation: orb-move-4 28s ease-in-out infinite, orb-pulse-4 9s ease-in-out infinite;
-  opacity: 0.5;
-}
-
-@keyframes orb-move-1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25%      { transform: translate(15vw, 10vh) scale(1.15); }
-  50%      { transform: translate(5vw, 25vh) scale(0.9); }
-  75%      { transform: translate(-5vw, 12vh) scale(1.1); }
-}
-@keyframes orb-move-2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  30%      { transform: translate(-12vw, 8vh) scale(1.2); }
-  60%      { transform: translate(-8vw, -10vh) scale(0.85); }
-}
-@keyframes orb-move-3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%      { transform: translate(10vw, -15vh) scale(1.1); }
-  66%      { transform: translate(-8vw, -5vh) scale(1.2); }
-}
-@keyframes orb-move-4 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  20%      { transform: translate(-10vw, 15vh) scale(1.3); }
-  50%      { transform: translate(5vw, 20vh) scale(0.9); }
-  80%      { transform: translate(10vw, 5vh) scale(1.1); }
-}
-@keyframes orb-pulse-1 {
-  0%, 100% { opacity: 0.8; } 50% { opacity: 1; }
-}
-@keyframes orb-pulse-2 {
-  0%, 100% { opacity: 0.7; } 50% { opacity: 0.9; }
-}
-@keyframes orb-pulse-3 {
-  0%, 100% { opacity: 0.6; } 50% { opacity: 0.85; }
-}
-@keyframes orb-pulse-4 {
-  0%, 100% { opacity: 0.5; } 50% { opacity: 0.75; }
+@keyframes gradient-shift {
+  0%   { background-position: 0% 0%; }
+  25%  { background-position: 100% 50%; }
+  50%  { background-position: 50% 100%; }
+  75%  { background-position: 0% 50%; }
+  100% { background-position: 0% 0%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gradient-canvas .g-orb { animation: none !important; }
+  .gradient-canvas { animation: none !important; }
 }
 
 /* ===================== NAVBAR ===================== */

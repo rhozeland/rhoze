@@ -1499,165 +1499,198 @@
     .cta-triptych {
       position: relative;
       z-index: 2;
-      padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem);
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem);
     }
 
-    .cta-triptych-head {
-      text-align: center;
-      max-width: 38rem;
-      margin: 0 auto clamp(1.2rem, 2.5vw, 2rem);
-    }
-
-    .cta-triptych-head h2 {
-      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: clamp(1.8rem, 3.6vw, 2.8rem);
-      font-weight: 600;
-      line-height: 1;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.6rem;
-    }
-
-    .cta-triptych-head p {
-      color: hsl(var(--muted));
-      font-size: 0.92rem;
-      line-height: 1.68;
-      max-width: 34rem;
-      margin: 0 auto;
-    }
-
-    .cta-triptych-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 0.75rem;
-    }
-
-    .cta-card {
+    .bubble-map {
       position: relative;
-      overflow: hidden;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      aspect-ratio: 1 / 1;
+    }
+
+    /* Center hub */
+    .bubble-hub {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: clamp(140px, 22vw, 200px);
+      height: clamp(140px, 22vw, 200px);
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, hsl(var(--accent-purple) / 0.35), hsl(var(--surface-card)) 70%);
+      border: 1.5px solid hsl(var(--line-strong));
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      gap: 0.25rem;
+      z-index: 3;
+      box-shadow: 0 0 60px -20px hsl(var(--accent-purple) / 0.3);
+    }
+
+    .bubble-hub-label {
+      font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: hsl(var(--muted));
+    }
+
+    .bubble-hub h2 {
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: clamp(1rem, 2vw, 1.35rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: hsl(var(--ink));
+    }
+
+    /* Connector lines (SVG) */
+    .bubble-lines {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .bubble-lines line {
+      stroke: hsl(var(--line-strong));
+      stroke-width: 1.2;
+      stroke-dasharray: 6 4;
+      opacity: 0.5;
+    }
+
+    /* Satellite bubbles */
+    .bubble-node {
+      position: absolute;
+      z-index: 2;
+      width: clamp(200px, 30vw, 280px);
+      border-radius: 28px;
       border: 1px solid hsl(var(--line));
-      border-radius: var(--radius-lg);
-      isolation: isolate;
+      background: hsl(var(--surface-card));
+      padding: clamp(1rem, 2vw, 1.4rem);
+      display: flex; flex-direction: column;
+      gap: 0.5rem;
       transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .cta-card:hover {
-      transform: translateY(-3px);
+    .bubble-node:hover {
+      transform: scale(1.03);
       border-color: hsl(var(--line-strong));
-      box-shadow: 0 20px 50px -30px hsl(var(--shadow) / 0.25);
+      box-shadow: 0 20px 50px -25px hsl(var(--shadow) / 0.3);
     }
 
-    .cta-card-inner {
-      position: relative;
-      z-index: 1;
-      padding: clamp(1.1rem, 2vw, 1.5rem);
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
+    /* Positions — top-left, top-right, bottom-center */
+    .bubble-node--loop {
+      top: 2%; left: 0;
+      background:
+        radial-gradient(circle at 80% 90%, hsl(var(--accent-green) / 0.12), transparent 60%),
+        hsl(var(--surface-card));
     }
 
-    .cta-card-num {
+    .bubble-node--build {
+      top: 2%; right: 0;
+      background:
+        radial-gradient(circle at 20% 80%, hsl(var(--accent-blue) / 0.12), transparent 60%),
+        hsl(var(--surface-card));
+    }
+
+    .bubble-node--back {
+      bottom: 2%; left: 50%;
+      transform: translateX(-50%);
+      background:
+        radial-gradient(circle at 85% 20%, hsl(var(--accent-purple) / 0.14), transparent 56%),
+        radial-gradient(circle at 15% 80%, hsl(var(--accent-pink) / 0.1), transparent 50%),
+        hsl(var(--surface-card));
+    }
+
+    .bubble-node--back:hover {
+      transform: translateX(-50%) scale(1.03);
+    }
+
+    .bubble-node-num {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 2rem;
-      height: 2rem;
-      border-radius: 10px;
+      align-items: center; justify-content: center;
+      width: 1.7rem; height: 1.7rem;
+      border-radius: 8px;
       border: 1px solid hsl(var(--line));
-      font-size: 0.65rem;
-      font-weight: 700;
+      font-size: 0.6rem; font-weight: 700;
       letter-spacing: 0.1em;
       color: hsl(var(--muted));
       background: hsl(var(--surface));
     }
 
-    .cta-card h3 {
+    .bubble-node h3 {
       font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: clamp(1.15rem, 2vw, 1.4rem);
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
       font-weight: 600;
       letter-spacing: -0.02em;
-      line-height: 1.12;
+      line-height: 1.15;
     }
 
-    .cta-card p {
+    .bubble-node p {
       color: hsl(var(--muted));
-      font-size: 0.85rem;
-      line-height: 1.6;
-      flex: 1;
+      font-size: 0.8rem;
+      line-height: 1.55;
     }
 
-    .cta-card-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.7rem;
-      margin-top: auto;
+    .bubble-node .drop-form {
+      margin-top: 0.3rem;
     }
 
-    .cta-card--drops {
-      background:
-        radial-gradient(circle at 90% 90%, hsl(var(--accent-green) / 0.12), transparent 60%),
-        hsl(var(--surface-card));
-    }
-
-    .cta-card--drops .drop-form {
-      margin-top: auto;
-    }
-
-    .cta-card--drops .drop-form input[type="email"] {
+    .bubble-node .drop-form input[type="email"] {
       background: hsl(var(--surface));
       border-color: hsl(var(--line));
       color: hsl(var(--ink));
     }
 
-    .cta-card--drops .drop-form input[type="email"]::placeholder {
+    .bubble-node .drop-form input[type="email"]::placeholder {
       color: hsl(var(--muted));
     }
 
-    .cta-card--drops .drop-form input[type="email"]:focus {
+    .bubble-node .drop-form input[type="email"]:focus {
       border-color: hsl(var(--line-strong));
       background: hsl(var(--surface-alt));
     }
 
-    .cta-card--drops .drop-button {
+    .bubble-node .drop-button {
       background: hsl(var(--ink));
       color: hsl(var(--surface-card));
     }
 
-    .cta-card--collab {
-      background:
-        radial-gradient(circle at 10% 80%, hsl(var(--accent-blue) / 0.1), transparent 60%),
-        hsl(var(--surface-card));
+    .cta-card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.2rem;
     }
 
     .cta-action-btn {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      min-height: 2.5rem;
-      padding: 0.6rem 1.1rem;
+      align-items: center; justify-content: center;
+      gap: 0.45rem;
+      min-height: 2.2rem;
+      padding: 0.5rem 1rem;
       border-radius: 999px;
       background: hsl(var(--ink));
       color: hsl(var(--surface-card));
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.78rem; font-weight: 600;
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
     .cta-action-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    .cta-action-btn svg { width: 0.85rem; height: 0.85rem; flex-shrink: 0; }
+    .cta-action-btn svg { width: 0.8rem; height: 0.8rem; flex-shrink: 0; }
 
     .cta-action-ghost {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 2.5rem;
-      padding: 0.6rem 1.1rem;
+      align-items: center; justify-content: center;
+      min-height: 2.2rem;
+      padding: 0.5rem 1rem;
       border-radius: 999px;
       border: 1.5px solid hsl(var(--line-strong));
       background: transparent;
       color: hsl(var(--ink));
-      font-size: 0.82rem;
-      font-weight: 500;
+      font-size: 0.78rem; font-weight: 500;
       transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
     }
 
@@ -1667,16 +1700,35 @@
       transform: translateY(-1px);
     }
 
-    .cta-card--rhoze {
-      background:
-        radial-gradient(circle at 85% 20%, hsl(var(--accent-purple) / 0.14), transparent 56%),
-        radial-gradient(circle at 15% 80%, hsl(var(--accent-pink) / 0.1), transparent 50%),
-        hsl(var(--surface-card));
-    }
-
     .cta-action-btn--token {
       background: linear-gradient(135deg, hsl(var(--accent-purple)), hsl(var(--accent-pink)));
       color: hsl(0 0% 100%);
+    }
+
+    /* Mobile: stack vertically */
+    @media (max-width: 720px) {
+      .bubble-map {
+        aspect-ratio: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-width: 100%;
+      }
+      .bubble-hub {
+        position: relative;
+        top: auto; left: auto;
+        transform: none;
+        margin: 0 auto 0.5rem;
+      }
+      .bubble-node {
+        position: relative;
+        top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+        transform: none !important;
+        width: 100%;
+      }
+      .bubble-node:hover { transform: none !important; }
+      .bubble-node--back:hover { transform: none !important; }
+      .bubble-lines { display: none; }
     }
 
     @media (max-width: 980px) {
@@ -1713,8 +1765,6 @@
       }
       .event-list--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .cta-triptych-grid { grid-template-columns: 1fr; }
-      .cta-card-inner { min-height: auto; }
     }
 
     @media (max-width: 860px) {
@@ -2086,40 +2136,52 @@
 
     <!-- ===================== 3-WAY CTA ===================== -->
     <section class="cta-triptych reveal" id="engage">
-      <div class="cta-triptych-grid">
-        <article class="cta-card cta-card--drops">
-          <div class="cta-card-inner">
-            <span class="cta-card-num">01</span>
-            <h3>Stay in the loop &#x1F514;</h3>
-            <p>New releases, open calls, events, and ecosystem updates &mdash; delivered before they hit socials.</p>
-            <form class="drop-form" id="newsletterForm">
-              <input type="email" name="email" placeholder="Your email" aria-label="Email address" required maxlength="255" />
-              <button class="drop-button" type="submit">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></button>
-            </form>
+      <div class="bubble-map">
+        <!-- SVG connector lines -->
+        <svg class="bubble-lines" viewBox="0 0 720 720" preserveAspectRatio="xMidYMid meet">
+          <line x1="240" y1="220" x2="340" y2="330" />
+          <line x1="480" y1="220" x2="380" y2="330" />
+          <line x1="360" y1="420" x2="360" y2="530" />
+        </svg>
+
+        <!-- Center hub -->
+        <div class="bubble-hub">
+          <span class="bubble-hub-label">Ecosystem</span>
+          <h2>Support Rhozeland</h2>
+        </div>
+
+        <!-- Node 1: Stay in the loop -->
+        <div class="bubble-node bubble-node--loop">
+          <span class="bubble-node-num">01</span>
+          <h3>Stay in the loop &#x1F514;</h3>
+          <p>New releases, open calls, events, and ecosystem updates &mdash; delivered before they hit socials.</p>
+          <form class="drop-form" id="newsletterForm">
+            <input type="email" name="email" placeholder="Your email" aria-label="Email address" required maxlength="255" />
+            <button class="drop-button" type="submit">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></button>
+          </form>
+        </div>
+
+        <!-- Node 2: Build with us -->
+        <div class="bubble-node bubble-node--build">
+          <span class="bubble-node-num">02</span>
+          <h3>Build with us &#x1F6E0;&#xFE0F;</h3>
+          <p>Got a project, a release, or a wild idea? We bring studio time, visuals, strategy, and launch infra.</p>
+          <div class="cta-card-actions">
+            <a class="cta-action-btn" href="/contact.html">Start a project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
+            <a class="cta-action-ghost" href="/projects.html">See past work</a>
           </div>
-        </article>
-        <article class="cta-card cta-card--collab">
-          <div class="cta-card-inner">
-            <span class="cta-card-num">02</span>
-            <h3>Build with us &#x1F6E0;&#xFE0F;</h3>
-            <p>Got a project, a release, or a wild idea? We bring studio time, visuals, strategy, and launch infra.</p>
-            <div class="cta-card-actions">
-              <a class="cta-action-btn" href="/contact.html">Start a project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
-              <a class="cta-action-ghost" href="/projects.html">See past work</a>
-            </div>
+        </div>
+
+        <!-- Node 3: Back the ecosystem -->
+        <div class="bubble-node bubble-node--back">
+          <span class="bubble-node-num">03</span>
+          <h3>Back the ecosystem &#x1F339;</h3>
+          <p>$RHOZE is how the community supports the machine. Buy, hold, and ride the wave.</p>
+          <div class="cta-card-actions">
+            <a class="cta-action-btn cta-action-btn--token" href="https://app.rhozeland.com" target="_blank" rel="noopener noreferrer">Buy $RHOZE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
+            <a class="cta-action-ghost" href="/about.html">Learn more</a>
           </div>
-        </article>
-        <article class="cta-card cta-card--rhoze">
-          <div class="cta-card-inner">
-            <span class="cta-card-num">03</span>
-            <h3>Back the ecosystem &#x1F339;</h3>
-            <p>$RHOZE is how the community supports the machine. Buy, hold, and ride the wave.</p>
-            <div class="cta-card-actions">
-              <a class="cta-action-btn cta-action-btn--token" href="https://app.rhozeland.com" target="_blank" rel="noopener noreferrer">Buy $RHOZE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
-              <a class="cta-action-ghost" href="/about.html">Learn more</a>
-            </div>
-          </div>
-        </article>
+        </div>
       </div>
     </section>
 

@@ -876,22 +876,37 @@ button { background: none; border: 0; cursor: pointer; }
 .flywheel-section {
   text-align: center;
   background: hsl(var(--surface-alt));
+  padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem);
 }
 
 .flywheel-heading {
   font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(1.75rem, 3.5vw, 2.7rem);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
   font-weight: 600;
-  letter-spacing: -0.045em;
-  margin: 0.5rem auto 0.75rem;
-  max-width: none;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0.6rem auto 0.5rem;
 }
 
 .flywheel-intro {
   color: hsl(var(--muted));
-  margin: 0 auto 2.5rem;
-  max-width: 34rem;
-  font-size: 1.05rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+@keyframes flywheel-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.flywheel-ring {
+  transform-origin: 200px 200px;
+  animation: flywheel-spin 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flywheel-ring { animation: none; }
 }
 
 .dark .gradient-blob { opacity: 0.25; }

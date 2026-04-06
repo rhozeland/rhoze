@@ -52,46 +52,58 @@
   --page-hero-glow-2: 26 24% 18%;
 }
 
+/* About — warm amber + deep blue */
 .page-about {
-  --page-blob-1a: 188 74% 58%;
-  --page-blob-1b: 162 62% 54%;
-  --page-blob-2a: 28 86% 64%;
-  --page-blob-2b: 350 72% 62%;
-  --page-blob-3a: 206 84% 60%;
-  --page-blob-3b: 242 66% 66%;
+  --orb-1-inner: hsl(30 90% 55%);
+  --orb-1-outer: hsl(15 80% 35%);
+  --orb-2-inner: hsl(220 80% 55%);
+  --orb-2-outer: hsl(240 70% 35%);
+  --orb-3-inner: hsl(170 70% 45%);
+  --orb-3-outer: hsl(190 60% 30%);
+  --orb-4-inner: hsl(340 65% 50%);
+  --orb-4-outer: hsl(320 55% 35%);
   --page-hero-glow-1: 174 36% 84%;
   --page-hero-glow-2: 24 52% 88%;
 }
 
+/* Projects — teal + gold */
 .page-projects {
-  --page-blob-1a: 194 82% 60%;
-  --page-blob-1b: 222 76% 60%;
-  --page-blob-2a: 20 90% 62%;
-  --page-blob-2b: 8 82% 58%;
-  --page-blob-3a: 208 86% 60%;
-  --page-blob-3b: 258 68% 64%;
+  --orb-1-inner: hsl(175 85% 45%);
+  --orb-1-outer: hsl(185 70% 30%);
+  --orb-2-inner: hsl(40 90% 55%);
+  --orb-2-outer: hsl(25 80% 35%);
+  --orb-3-inner: hsl(260 70% 55%);
+  --orb-3-outer: hsl(270 60% 35%);
+  --orb-4-inner: hsl(150 65% 45%);
+  --orb-4-outer: hsl(170 55% 30%);
   --page-hero-glow-1: 202 40% 84%;
   --page-hero-glow-2: 18 60% 88%;
 }
 
+/* Events — violet + pink */
 .page-events {
-  --page-blob-1a: 162 62% 56%;
-  --page-blob-1b: 192 74% 58%;
-  --page-blob-2a: 40 86% 60%;
-  --page-blob-2b: 18 78% 60%;
-  --page-blob-3a: 176 74% 56%;
-  --page-blob-3b: 214 68% 60%;
+  --orb-1-inner: hsl(280 80% 60%);
+  --orb-1-outer: hsl(260 70% 40%);
+  --orb-2-inner: hsl(330 75% 55%);
+  --orb-2-outer: hsl(310 65% 35%);
+  --orb-3-inner: hsl(200 75% 50%);
+  --orb-3-outer: hsl(220 65% 35%);
+  --orb-4-inner: hsl(40 80% 55%);
+  --orb-4-outer: hsl(25 70% 35%);
   --page-hero-glow-1: 170 34% 84%;
   --page-hero-glow-2: 38 52% 88%;
 }
 
+/* Contact — deep blue + nebula purple */
 .page-contact {
-  --page-blob-1a: 204 78% 60%;
-  --page-blob-1b: 248 68% 64%;
-  --page-blob-2a: 14 86% 64%;
-  --page-blob-2b: 340 70% 60%;
-  --page-blob-3a: 186 68% 56%;
-  --page-blob-3b: 224 70% 62%;
+  --orb-1-inner: hsl(240 75% 55%);
+  --orb-1-outer: hsl(250 65% 35%);
+  --orb-2-inner: hsl(290 70% 55%);
+  --orb-2-outer: hsl(270 60% 35%);
+  --orb-3-inner: hsl(180 70% 45%);
+  --orb-3-outer: hsl(195 60% 30%);
+  --orb-4-inner: hsl(15 80% 50%);
+  --orb-4-outer: hsl(5 70% 35%);
   --page-hero-glow-1: 208 36% 84%;
   --page-hero-glow-2: 12 54% 88%;
 }

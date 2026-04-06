@@ -864,21 +864,35 @@
 
     @media (min-width: 640px) {
       .card--metric-video {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.2fr 1fr;
+        min-height: 280px;
       }
     }
 
     .card--metric-video .card-video-wrap {
+      position: relative;
       aspect-ratio: 16 / 9;
       border-bottom: 1px solid hsl(var(--line));
+      background: hsl(240 10% 8%);
+    }
+
+    .card--metric-video .card-video-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
     }
 
     @media (min-width: 640px) {
       .card--metric-video .card-video-wrap {
         aspect-ratio: auto;
-        height: 100%;
+        position: relative;
         border-bottom: none;
         border-right: 1px solid hsl(var(--line));
+      }
+      .card--metric-video .card-video-wrap iframe {
+        position: absolute;
+        inset: 0;
       }
     }
 

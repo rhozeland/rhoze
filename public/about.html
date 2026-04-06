@@ -214,27 +214,42 @@
       </section>
 
       <!-- FLYWHEEL -->
-      <section class="section" style="text-align:center; background: hsl(var(--surface-alt));">
+      <section class="section flywheel-section">
         <span class="section-kicker">The Flywheel</span>
-        <h2 style="font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:clamp(1.75rem,3.5vw,2.5rem); font-weight:700; letter-spacing:-0.04em; margin:0.5rem auto 0.75rem;">Every piece feeds the next.</h2>
-        <p style="color:hsl(var(--muted)); margin-bottom:2.5rem;">Revenue in, value out, community first.</p>
+        <h2 class="flywheel-heading">Every piece feeds the next.</h2>
+        <p class="flywheel-intro">Revenue in, value out, community first.</p>
 
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; max-width:800px; margin:0 auto 2rem;">
-          <div class="token-card fade-in" style="text-align:center;"><h3>Clothing Drops</h3><p>Real fashion, real revenue flowing back to the ecosystem.</p></div>
-          <div class="token-card fade-in" style="text-align:center;"><h3>Marketplace</h3><p>Hire creators, freelancers & builders — all powered by $RHOZE.</p></div>
-          <div class="token-card fade-in" style="text-align:center;"><h3>Artist App</h3><p>Tools for musicians, visual artists & content creators to earn and grow.</p></div>
-          <div class="token-card fade-in" style="text-align:center;"><h3>Studio Buybacks</h3><p>Revenue fuels token buybacks, strengthening the floor.</p></div>
-          <div class="token-card fade-in" style="text-align:center;"><h3>Burns</h3><p>Deflationary by design. Supply shrinks as the ecosystem grows.</p></div>
-          <div class="token-card fade-in" style="text-align:center;"><h3>Grants & Causes</h3><p>Funding the dreamers, supporting the communities that need it most.</p></div>
+        <div class="flywheel-visual fade-in">
+          <svg class="flywheel-orbit-svg" viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <marker id="flywheelArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                <path d="M0 0L6 3L0 6Z" fill="hsl(var(--accent-blue))"></path>
+              </marker>
+            </defs>
+            <path d="M21 40 A36 36 0 0 1 39 21" marker-end="url(#flywheelArrow)"></path>
+            <path d="M61 21 A36 36 0 0 1 79 40" marker-end="url(#flywheelArrow)"></path>
+            <path d="M79 60 A36 36 0 0 1 61 79" marker-end="url(#flywheelArrow)"></path>
+            <path d="M39 79 A36 36 0 0 1 21 60" marker-end="url(#flywheelArrow)"></path>
+          </svg>
+          <div class="flywheel-ring">
+            <span class="flywheel-label flywheel-label--top">Revenue</span>
+            <span class="flywheel-label flywheel-label--right">Buybacks</span>
+            <span class="flywheel-label flywheel-label--bottom">Burns</span>
+            <span class="flywheel-label flywheel-label--left">Value</span>
+            <div class="flywheel-core">
+              <span>Growth</span>
+              <p>Every loop sends value back to the ecosystem.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="flywheel-mini fade-in">
-          <span>Revenue</span><span class="arrow">→</span>
-          <span>Buybacks</span><span class="arrow">→</span>
-          <span>Burns</span><span class="arrow">→</span>
-          <span>Value</span><span class="arrow">→</span>
-          <span>Growth</span><span class="arrow">→</span>
-          <span>Revenue</span>
+        <div class="flywheel-grid">
+          <div class="token-card fade-in"><h3>Clothing Drops</h3><p>Real fashion, real revenue flowing back to the ecosystem.</p></div>
+          <div class="token-card fade-in"><h3>Marketplace</h3><p>Hire creators, freelancers & builders — all powered by $RHOZE.</p></div>
+          <div class="token-card fade-in"><h3>Artist App</h3><p>Tools for musicians, visual artists & content creators to earn and grow.</p></div>
+          <div class="token-card fade-in"><h3>Studio Buybacks</h3><p>Revenue fuels token buybacks, strengthening the floor.</p></div>
+          <div class="token-card fade-in"><h3>Burns</h3><p>Deflationary by design. Supply shrinks as the ecosystem grows.</p></div>
+          <div class="token-card fade-in"><h3>Grants & Causes</h3><p>Funding the dreamers, supporting the communities that need it most.</p></div>
         </div>
       </section>
 
@@ -280,7 +295,7 @@
           </div>
           <div class="token-card fade-in">
             <h3>Airdrop Wallet</h3>
-            <div class="pct">3.59%</div>
+            <div class="pct">9.54%</div>
             <p>Providing supply to real-world participants of our network and studio.</p>
             <div class="address-box">
               <code>USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs</code>

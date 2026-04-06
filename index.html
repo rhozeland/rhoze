@@ -500,10 +500,27 @@
     }
 
     .hero-proof-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
       margin-top: 1.3rem;
+      mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    }
+
+    .proof-track {
+      display: flex;
+      gap: 0.75rem;
+      width: max-content;
+      animation: proof-scroll 20s linear infinite;
+    }
+
+    .hero-proof-links:hover .proof-track {
+      animation-play-state: paused;
+    }
+
+    @keyframes proof-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
     .proof-link {
@@ -1924,11 +1941,20 @@
             <h1 id="homepage-title">Build the release, the rollout, and the world around it.</h1>
             <p class="hero-desc">Rhozeland combines studio sessions, content production, digital builds, and community programming so artists and brands can move with one system instead of five disconnected vendors.</p>
             <div class="hero-proof-links" id="proof">
-              <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://voyagehouston.com/favicon.ico" alt="" class="proof-favicon" />VoyageHouston Feature</a>
-              <a class="proof-link" href="https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups" target="_blank" rel="noopener noreferrer"><img src="https://fi.co/favicon.ico" alt="" class="proof-favicon" />Founder Institute Alumni</a>
-              <a class="proof-link" href="https://vectorfestival.org/window-activation" target="_blank" rel="noopener noreferrer"><img src="https://vectorfestival.org/favicon.ico" alt="" class="proof-favicon" />Vector Festival</a>
-              <a class="proof-link" href="https://www.tomusicians.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.tomusicians.com/favicon.ico" alt="" class="proof-favicon" />TO Musicians &middot; Event Partner</a>
-              <a class="proof-link" href="https://www.sourcefromontario.com/en/page/delegate/138483/rhozeland" target="_blank" rel="noopener noreferrer"><img src="https://www.sourcefromontario.com/favicon.ico" alt="" class="proof-favicon" />Source From Ontario</a>
+              <div class="proof-track">
+                <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://voyagehouston.com/favicon.ico" alt="" class="proof-favicon" />VoyageHouston Feature</a>
+                <a class="proof-link" href="https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups" target="_blank" rel="noopener noreferrer"><img src="https://fi.co/favicon.ico" alt="" class="proof-favicon" />Founder Institute Alumni</a>
+                <a class="proof-link" href="https://vectorfestival.org/window-activation" target="_blank" rel="noopener noreferrer"><img src="https://vectorfestival.org/favicon.ico" alt="" class="proof-favicon" />Vector Festival</a>
+                <a class="proof-link" href="https://www.tomusicians.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.tomusicians.com/favicon.ico" alt="" class="proof-favicon" />TO Musicians &middot; Event Partner</a>
+                <a class="proof-link" href="https://www.sourcefromontario.com/en/page/delegate/138483/rhozeland" target="_blank" rel="noopener noreferrer"><img src="https://www.sourcefromontario.com/favicon.ico" alt="" class="proof-favicon" />Source From Ontario</a>
+                <!-- duplicate set for seamless loop -->
+                <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://voyagehouston.com/favicon.ico" alt="" class="proof-favicon" />VoyageHouston Feature</a>
+                <a class="proof-link" href="https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups" target="_blank" rel="noopener noreferrer"><img src="https://fi.co/favicon.ico" alt="" class="proof-favicon" />Founder Institute Alumni</a>
+                <a class="proof-link" href="https://vectorfestival.org/window-activation" target="_blank" rel="noopener noreferrer"><img src="https://vectorfestival.org/favicon.ico" alt="" class="proof-favicon" />Vector Festival</a>
+                <a class="proof-link" href="https://www.tomusicians.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.tomusicians.com/favicon.ico" alt="" class="proof-favicon" />TO Musicians &middot; Event Partner</a>
+                <a class="proof-link" href="https://www.sourcefromontario.com/en/page/delegate/138483/rhozeland" target="_blank" rel="noopener noreferrer"><img src="https://www.sourcefromontario.com/favicon.ico" alt="" class="proof-favicon" />Source From Ontario</a>
+              </div>
+            </div>
             </div>
           </div>
 

@@ -37,10 +37,10 @@
 }
 
 /* Logo visibility */
-.logo-dark { display: inline-block; }
-.logo-light { display: none; }
-.dark .logo-dark { display: none; }
-.dark .logo-light { display: inline-block; }
+.logo-dark { display: inline-block !important; }
+.logo-light { display: none !important; }
+.dark .logo-dark { display: none !important; }
+.dark .logo-light { display: inline-block !important; }
 
 html { scroll-behavior: smooth; }
 

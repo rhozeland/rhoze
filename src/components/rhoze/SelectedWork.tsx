@@ -1,0 +1,165 @@
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
+import { ArrowUpRight } from "lucide-react";
+
+const projects = [
+  {
+    title: "The Mask",
+    artist: "Oaok",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aeff77289928d5c3dfc5b0_Screenshot%202026-03-09%20at%201.10.39%E2%80%AFPM.png",
+  },
+  {
+    title: "Mansa Musa",
+    artist: "MONEE FINGAZ",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=w9dYE595cBw",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefb88b67bc2387a91fe59_admin-ajax%20(5).png",
+  },
+  {
+    title: "Holy Water",
+    artist: "Cozal",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=VPLyATcs7fE",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefa944a0e1e698bd6f8da_admin-ajax%20(4).png",
+  },
+  {
+    title: "LeLongLegs",
+    artist: "Indolestic",
+    tag: "Digital",
+    type: "Web Series",
+    href: "https://www.lelonglegs.lol/",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
+  },
+  {
+    title: "FATE",
+    artist: "DUBZY33",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=EPnVN9riFtI",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
+  },
+  {
+    title: "BK Whiskey MMA",
+    artist: "BK Whiskey",
+    tag: "Commercial",
+    type: "Commercial",
+    href: "https://www.instagram.com/p/DKvf2jXMbRs",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e99e0d03b856155a51475_admin-ajax%20(14).png",
+  },
+  {
+    title: "True North Transparency",
+    artist: "True North Transparency",
+    tag: "Visual",
+    type: "Web Series",
+    href: "https://www.youtube.com/watch?v=u9iOP4qH2MI",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png",
+  },
+  {
+    title: "Bombaaa",
+    artist: "MONEE FINGAZ X 1CUZZMN",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
+  },
+];
+
+const SelectedWork = () => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
+  return (
+    <section id="work" className="py-20 lg:py-28" ref={ref}>
+      {/* Header */}
+      <div className="container mx-auto px-6 lg:px-16 mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-3 block">
+            Selected Work
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-display leading-[1.05] text-foreground mb-4">
+            Projects across music,
+            <br />
+            culture, and digital product.
+          </h2>
+          <p className="text-muted-foreground max-w-lg text-sm sm:text-base leading-relaxed mb-5">
+            Rhozeland handles audio, visuals, web, and launch systems for brands
+            and artists building with intent — not just volume.
+          </p>
+          <a
+            href="/projects.html"
+            className="inline-flex items-center gap-2 text-foreground font-semibold text-sm hover:opacity-70 transition-opacity"
+          >
+            See all projects <ArrowUpRight size={14} />
+          </a>
+        </motion.div>
+      </div>
+
+      {/* Horizontal scroll strip */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="overflow-x-auto scrollbar-hide"
+      >
+        <div className="flex gap-4 px-6 lg:px-16 pb-4" style={{ width: "max-content" }}>
+          {projects.map((p, i) => (
+            <motion.a
+              key={p.title}
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.1 + i * 0.06 }}
+              className="relative group flex-shrink-0 w-[300px] sm:w-[340px] h-[220px] sm:h-[260px] rounded-xl overflow-hidden block"
+            >
+              {/* Image */}
+              <img
+                src={p.image}
+                alt={`${p.title} — ${p.artist}`}
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+              {/* Type tag */}
+              <span className="absolute top-3 right-3 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
+                {p.type}
+              </span>
+
+              {/* Arrow */}
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
+                  <ArrowUpRight size={14} className="text-white" />
+                </div>
+              </div>
+
+              {/* Bottom content */}
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-white/60 mb-1 block">
+                  {p.tag}
+                </span>
+                <h3 className="text-white font-semibold text-base leading-tight">
+                  {p.title}
+                </h3>
+                <p className="text-white/50 text-xs mt-0.5">{p.artist}</p>
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
+export default SelectedWork;

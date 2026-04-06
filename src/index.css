@@ -52,6 +52,48 @@
     --shadow-soft: 0 4px 24px -4px hsl(0 0% 0% / 0.06);
     --shadow-lift: 0 8px 40px -8px hsl(0 0% 0% / 0.08);
   }
+
+  .dark {
+    --background: 240 10% 6%;
+    --foreground: 0 0% 95%;
+
+    --card: 240 10% 9%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 240 10% 9%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 170 60% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 260 30% 20%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 240 10% 15%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 170 60% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 8% 18%;
+    --input: 240 8% 18%;
+    --ring: 170 60% 55%;
+
+    --rhoze-mint: 170 60% 55%;
+    --rhoze-pink: 300 40% 25%;
+    --rhoze-lavender: 260 30% 20%;
+    --rhoze-peach: 20 50% 18%;
+    --rhoze-surface: 240 10% 10%;
+    --rhoze-surface-hover: 240 10% 14%;
+
+    --gradient-pastel: linear-gradient(135deg, hsl(170 40% 20%), hsl(300 30% 18%), hsl(260 30% 16%));
+    --gradient-mint: linear-gradient(135deg, hsl(170 60% 40%), hsl(170 80% 50%));
+    --shadow-soft: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
+    --shadow-lift: 0 8px 40px -8px hsl(0 0% 0% / 0.4);
+  }
 }
 
 @layer base {
@@ -62,11 +104,18 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-body);
   }
+
+  /* Logo visibility based on theme */
+  .dark-hide { display: inline-block; }
+  .light-hide { display: none; }
+  .dark .dark-hide { display: none; }
+  .dark .light-hide { display: inline-block; }
 }
 
 @layer utilities {

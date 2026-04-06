@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
+import logoColor from "@/assets/logo-color.png";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -13,6 +14,7 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.nav
@@ -22,9 +24,34 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border"
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
-        <a href="#" className="flex items-center gap-2.5">
-          <img src={logoBlack} alt="Rhozeland logo" className="w-8 h-8 object-contain dark-hide" />
-          <img src={logoWhite} alt="Rhozeland logo" className="w-8 h-8 object-contain light-hide" />
+        <a
+          href="#"
+          className="flex items-center gap-2.5 group"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          <div className="relative w-8 h-8">
+            {/* Default logos */}
+            <img
+              src={logoBlack}
+              alt="Rhozeland logo"
+              className="absolute inset-0 w-8 h-8 object-contain dark-hide transition-all duration-300"
+              style={{ opacity: hovered ? 0 : 1, transform: hovered ? 'scale(0.7) rotate(-20deg)' : 'scale(1) rotate(0deg)' }}
+            />
+            <img
+              src={logoWhite}
+              alt="Rhozeland logo"
+              className="absolute inset-0 w-8 h-8 object-contain light-hide transition-all duration-300"
+              style={{ opacity: hovered ? 0 : 1, transform: hovered ? 'scale(0.7) rotate(-20deg)' : 'scale(1) rotate(0deg)' }}
+            />
+            {/* Color logo on hover */}
+            <img
+              src={logoColor}
+              alt="Rhozeland Toybox logo"
+              className="absolute inset-0 w-8 h-8 object-contain transition-all duration-300"
+              style={{ opacity: hovered ? 1 : 0, transform: hovered ? 'scale(1) rotate(0deg)' : 'scale(0.7) rotate(20deg)' }}
+            />
+          </div>
           <span className="font-display text-xl font-semibold text-foreground tracking-normal">Rhozeland</span>
         </a>
 

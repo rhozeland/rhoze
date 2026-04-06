@@ -26,7 +26,7 @@ const wallets = [
   {
     icon: Gift,
     label: "Airdrop Wallet",
-    pct: "1.85%",
+    pct: "9.54%",
     address: "USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs",
     color: "bg-rhoze-lavender",
     lockInfo: null,

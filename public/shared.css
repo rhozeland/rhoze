@@ -23,6 +23,25 @@
   --radius-md: 18px;
 }
 
+/* Dark mode overrides */
+.dark {
+  --page-bg: 240 10% 6%;
+  --surface: 240 10% 9%;
+  --surface-alt: 240 10% 12%;
+  --surface-card: 240 10% 11%;
+  --ink: 0 0% 92%;
+  --muted: 0 0% 55%;
+  --line: 240 8% 20%;
+  --line-strong: 240 8% 30%;
+  --shadow: 0 0% 0%;
+}
+
+/* Logo visibility */
+.logo-dark { display: inline-block; }
+.logo-light { display: none; }
+.dark .logo-dark { display: none; }
+.dark .logo-light { display: inline-block; }
+
 html { scroll-behavior: smooth; }
 
 body {

@@ -615,7 +615,97 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .work-card {
+    .work-scroll-strip {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .work-scroll-strip::-webkit-scrollbar { display: none; }
+
+    .work-scroll-card {
+      position: relative;
+      flex-shrink: 0;
+      width: 320px;
+      height: 240px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .work-scroll-card:hover { transform: translateY(-4px); }
+
+    .work-scroll-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .work-scroll-card:hover img { transform: scale(1.05); }
+
+    .work-scroll-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, hsl(0 0% 0% / 0.75) 0%, hsl(0 0% 0% / 0.15) 50%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .work-scroll-type {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: hsl(0 0% 100% / 0.7);
+      background: hsl(0 0% 100% / 0.1);
+      backdrop-filter: blur(8px);
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+    }
+
+    .work-scroll-body {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 1.1rem;
+    }
+
+    .work-scroll-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: hsl(0 0% 100% / 0.55);
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .work-scroll-body h3 {
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .work-scroll-body p {
+      font-size: 0.78rem;
+      color: hsl(0 0% 100% / 0.5);
+      margin-top: 0.15rem;
+    }
+
+    @media (max-width: 640px) {
+      .work-scroll-card { width: 270px; height: 200px; }
+    }
+
+
       overflow: hidden;
       display: flex;
       flex-direction: column;

@@ -52,30 +52,38 @@
   --page-hero-glow-2: 26 24% 18%;
 }
 
-/* About — warm amber tones */
+/* About — warm editorial */
 .page-about {
-  --page-gradient: linear-gradient(135deg, hsl(20 60% 14%) 0%, hsl(30 70% 20%) 20%, hsl(200 40% 12%) 40%, hsl(40 55% 18%) 60%, hsl(350 40% 14%) 80%, hsl(25 60% 16%) 100%);
+  --page-gradient: linear-gradient(135deg, hsl(32 88% 78%) 0%, hsl(20 84% 82%) 26%, hsl(350 70% 85%) 54%, hsl(46 90% 80%) 100%);
+  --page-gradient-glow-1: radial-gradient(circle at 18% 20%, hsl(22 95% 70% / 0.62) 0%, transparent 35%);
+  --page-gradient-glow-2: radial-gradient(circle at 82% 30%, hsl(45 92% 78% / 0.55) 0%, transparent 40%);
   --page-hero-glow-1: 174 36% 84%;
   --page-hero-glow-2: 24 52% 88%;
 }
 
-/* Projects — teal + gold */
+/* Projects — vibrant candy */
 .page-projects {
-  --page-gradient: linear-gradient(135deg, hsl(180 50% 12%) 0%, hsl(175 60% 18%) 20%, hsl(40 50% 16%) 40%, hsl(200 45% 14%) 60%, hsl(160 50% 15%) 80%, hsl(45 55% 18%) 100%);
+  --page-gradient: linear-gradient(135deg, hsl(28 96% 64%) 0%, hsl(350 92% 72%) 24%, hsl(286 76% 82%) 50%, hsl(203 92% 82%) 74%, hsl(178 74% 72%) 100%);
+  --page-gradient-glow-1: radial-gradient(circle at 24% 18%, hsl(48 100% 72% / 0.62) 0%, transparent 34%);
+  --page-gradient-glow-2: radial-gradient(circle at 80% 34%, hsl(188 92% 70% / 0.5) 0%, transparent 38%);
   --page-hero-glow-1: 202 40% 84%;
   --page-hero-glow-2: 18 60% 88%;
 }
 
-/* Events — violet + pink */
+/* Events — bright pop */
 .page-events {
-  --page-gradient: linear-gradient(135deg, hsl(280 55% 16%) 0%, hsl(310 50% 18%) 20%, hsl(260 50% 14%) 40%, hsl(330 45% 16%) 60%, hsl(200 40% 12%) 80%, hsl(290 50% 15%) 100%);
+  --page-gradient: linear-gradient(135deg, hsl(355 98% 62%) 0%, hsl(330 88% 72%) 28%, hsl(282 72% 80%) 58%, hsl(208 88% 80%) 100%);
+  --page-gradient-glow-1: radial-gradient(circle at 18% 22%, hsl(8 100% 72% / 0.6) 0%, transparent 36%);
+  --page-gradient-glow-2: radial-gradient(circle at 84% 26%, hsl(212 92% 76% / 0.45) 0%, transparent 40%);
   --page-hero-glow-1: 170 34% 84%;
   --page-hero-glow-2: 38 52% 88%;
 }
 
-/* Contact — deep blue + nebula */
+/* Contact — airy neutral blue */
 .page-contact {
-  --page-gradient: linear-gradient(135deg, hsl(240 55% 14%) 0%, hsl(260 50% 18%) 20%, hsl(290 45% 16%) 40%, hsl(220 50% 14%) 60%, hsl(180 40% 12%) 80%, hsl(250 50% 16%) 100%);
+  --page-gradient: linear-gradient(135deg, hsl(34 64% 84%) 0%, hsl(18 54% 86%) 28%, hsl(218 34% 88%) 62%, hsl(208 42% 82%) 100%);
+  --page-gradient-glow-1: radial-gradient(circle at 20% 18%, hsl(42 88% 80% / 0.48) 0%, transparent 34%);
+  --page-gradient-glow-2: radial-gradient(circle at 76% 34%, hsl(210 70% 82% / 0.42) 0%, transparent 40%);
   --page-hero-glow-1: 208 36% 84%;
   --page-hero-glow-2: 12 54% 88%;
 }
@@ -127,23 +135,29 @@ button { background: none; border: 0; cursor: pointer; }
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-size: 400% 400%;
-  animation: gradient-shift 30s ease infinite;
-  background-image: var(--page-gradient, linear-gradient(
-    135deg,
-    hsl(270 60% 15%) 0%,
-    hsl(250 70% 20%) 15%,
-    hsl(200 50% 12%) 30%,
-    hsl(30 60% 18%) 45%,
-    hsl(330 50% 16%) 60%,
-    hsl(180 50% 14%) 75%,
-    hsl(260 60% 18%) 100%
-  ));
+  background-size: 220% 220%, 180% 180%, 100% 100%;
+  animation: gradient-shift 28s ease-in-out infinite;
+  background-image:
+    var(--page-gradient-glow-1, radial-gradient(circle at 18% 22%, hsl(38 92% 78% / 0.9) 0%, transparent 34%)),
+    var(--page-gradient-glow-2, radial-gradient(circle at 78% 28%, hsl(195 88% 76% / 0.75) 0%, transparent 38%)),
+    var(--page-gradient, linear-gradient(135deg, hsl(22 96% 68%) 0%, hsl(340 88% 77%) 24%, hsl(286 72% 82%) 48%, hsl(205 88% 81%) 72%, hsl(174 74% 72%) 100%));
 }
 
-.dark .gradient-canvas { opacity: 1; }
+.dark .gradient-canvas {
+  background-size: 400% 400%;
+  background-image: linear-gradient(135deg, hsl(270 60% 15%) 0%, hsl(250 70% 20%) 15%, hsl(200 50% 12%) 30%, hsl(30 60% 18%) 45%, hsl(330 50% 16%) 60%, hsl(180 50% 14%) 75%, hsl(260 60% 18%) 100%);
+  animation: gradient-shift-dark 30s ease infinite;
+}
 
 @keyframes gradient-shift {
+  0%   { background-position: 0% 0%, 100% 0%, 0% 0%; }
+  25%  { background-position: 20% 30%, 80% 15%, 100% 40%; }
+  50%  { background-position: 40% 65%, 65% 55%, 60% 100%; }
+  75%  { background-position: 10% 85%, 90% 70%, 0% 55%; }
+  100% { background-position: 0% 0%, 100% 0%, 0% 0%; }
+}
+
+@keyframes gradient-shift-dark {
   0%   { background-position: 0% 0%; }
   25%  { background-position: 100% 50%; }
   50%  { background-position: 50% 100%; }

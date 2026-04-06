@@ -1505,7 +1505,7 @@
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     .cta-hub-label {
@@ -1537,101 +1537,210 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: background 0.3s ease, transform 0.2s ease, color 0.3s ease;
     }
+
     .cta-hub-trigger:hover {
       background: hsl(var(--ink));
       color: hsl(var(--surface-card));
       transform: translateY(-2px);
     }
+
     .cta-hub-trigger svg {
-      width: 1rem; height: 1rem;
+      width: 1rem;
+      height: 1rem;
       transition: transform 0.3s ease;
     }
+
     .cta-hub-trigger.active svg {
       transform: rotate(45deg);
     }
 
-    /* Cards container — hidden by default, revealed on click */
     .cta-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.2rem;
-      max-width: 900px;
+      position: relative;
+      width: min(100%, 980px);
+      height: 720px;
       margin: 0 auto;
       opacity: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: opacity 0.5s ease, max-height 0.6s ease;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition: opacity 0.45s ease, transform 0.55s ease;
     }
+
     .cta-cards.visible {
       opacity: 1;
-      max-height: 600px;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    .cta-map-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.45s ease 0.08s;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .cta-cards.visible .cta-map-lines {
+      opacity: 0.55;
+    }
+
+    .cta-map-lines line {
+      stroke: hsl(var(--line-strong));
+      stroke-width: 1.6;
+      stroke-dasharray: 6 6;
+    }
+
+    .cta-map-core {
+      position: absolute;
+      left: 50%;
+      top: 51%;
+      width: 120px;
+      height: 120px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      border: 1px solid hsl(var(--line));
+      background: radial-gradient(circle at 40% 35%, hsl(var(--accent-purple) / 0.16), hsl(var(--surface-card)) 72%);
+      box-shadow: 0 20px 60px -38px hsl(var(--shadow) / 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.45s ease 0.1s, transform 0.5s ease 0.1s;
+    }
+
+    .cta-cards.visible .cta-map-core {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .cta-map-core span {
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: hsl(var(--muted));
+      font-weight: 600;
     }
 
     .cta-card {
-      border-radius: 20px;
+      position: absolute;
+      width: clamp(240px, 26vw, 300px);
+      aspect-ratio: 1 / 1;
+      border-radius: 999px;
       border: 1px solid hsl(var(--line));
       background: hsl(var(--surface-card));
-      padding: clamp(1.2rem, 2vw, 1.6rem);
+      padding: clamp(1.5rem, 2vw, 1.9rem);
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       text-align: center;
       gap: 0.6rem;
-      transition: transform 0.3s ease, border-color 0.3s ease;
+      box-shadow: 0 20px 60px -38px hsl(var(--shadow) / 0.35);
+      z-index: 2;
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, border-color 0.3s ease;
     }
+
     .cta-card:hover {
-      transform: translateY(-4px);
       border-color: hsl(var(--line-strong));
+    }
+
+    .cta-card--loop {
+      left: 0;
+      top: 56px;
+      transform: translate(-22px, 14px) scale(0.9);
+    }
+
+    .cta-card--build {
+      right: 0;
+      top: 56px;
+      transform: translate(22px, 14px) scale(0.9);
+    }
+
+    .cta-card--back {
+      left: 50%;
+      bottom: 26px;
+      transform: translate(-50%, 18px) scale(0.9);
+    }
+
+    .cta-cards.visible .cta-card {
+      opacity: 1;
+    }
+
+    .cta-cards.visible .cta-card--loop {
+      transform: translate(0, 0) scale(1);
+    }
+
+    .cta-cards.visible .cta-card--build {
+      transform: translate(0, 0) scale(1);
+    }
+
+    .cta-cards.visible .cta-card--back {
+      transform: translate(-50%, 0) scale(1);
     }
 
     .cta-card-num {
       display: inline-flex;
-      align-items: center; justify-content: center;
-      width: 1.6rem; height: 1.6rem;
-      border-radius: 6px;
+      align-items: center;
+      justify-content: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 999px;
       border: 1px solid hsl(var(--line));
-      font-size: 0.6rem; font-weight: 700;
-      letter-spacing: 0.1em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
       color: hsl(var(--muted));
       background: hsl(var(--surface));
     }
 
     .cta-card h3 {
       font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      font-size: clamp(1.05rem, 1.75vw, 1.35rem);
       font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      max-width: 10ch;
     }
 
     .cta-card p {
       color: hsl(var(--muted));
-      font-size: 0.78rem;
-      line-height: 1.5;
+      font-size: 0.74rem;
+      line-height: 1.45;
+      max-width: 19ch;
     }
 
     .cta-card .drop-form {
       margin-top: 0.2rem;
-      gap: 0.5rem;
-      width: 100%;
+      width: min(86%, 210px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
     }
 
     .cta-card .drop-form input[type="email"] {
       background: hsl(var(--surface));
       border-color: hsl(var(--line));
       color: hsl(var(--ink));
-      min-height: 2.4rem;
-      padding: 0 0.8rem;
-      font-size: 0.82rem;
+      min-height: 2.35rem;
+      padding: 0 0.9rem;
+      font-size: 0.8rem;
       width: 100%;
       border-radius: 999px;
       border: 1px solid hsl(var(--line));
+      text-align: center;
     }
+
     .cta-card .drop-form input[type="email"]::placeholder {
       color: hsl(var(--muted));
     }
+
     .cta-card .drop-form input[type="email"]:focus {
       border-color: hsl(var(--line-strong));
       background: hsl(var(--surface-alt));
@@ -1640,28 +1749,76 @@
 
     .cta-btn {
       display: inline-flex;
-      align-items: center; justify-content: center;
+      align-items: center;
+      justify-content: center;
       gap: 0.45rem;
-      min-height: 2.3rem;
-      padding: 0.5rem 1.2rem;
+      min-height: 2.4rem;
+      padding: 0.55rem 1.25rem;
       border-radius: 999px;
       background: hsl(var(--ink));
       color: hsl(var(--surface-card));
-      font-size: 0.8rem; font-weight: 600;
+      font-size: 0.82rem;
+      font-weight: 600;
       transition: transform 0.2s ease, opacity 0.2s ease;
       border: none;
       cursor: pointer;
+      white-space: nowrap;
     }
-    .cta-btn:hover { transform: translateY(-2px); opacity: 0.9; }
-    .cta-btn svg { width: 0.8rem; height: 0.8rem; flex-shrink: 0; }
 
-    @media (max-width: 720px) {
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .cta-btn svg {
+      width: 0.8rem;
+      height: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 860px) {
       .cta-cards {
-        grid-template-columns: 1fr;
-        max-width: 100%;
+        width: min(100%, 420px);
+        height: auto;
+        display: grid;
+        gap: 1rem;
+        transform: none;
       }
+
+      .cta-map-lines,
+      .cta-map-core {
+        display: none;
+      }
+
+      .cta-card,
+      .cta-card--loop,
+      .cta-card--build,
+      .cta-card--back,
+      .cta-cards.visible .cta-card--loop,
+      .cta-cards.visible .cta-card--build,
+      .cta-cards.visible .cta-card--back {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        transform: none;
+        width: 100%;
+        aspect-ratio: auto;
+        border-radius: 28px;
+        opacity: 1;
+      }
+
+      .cta-cards {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.5s ease, opacity 0.35s ease;
+      }
+
       .cta-cards.visible {
         max-height: 1200px;
+        opacity: 1;
       }
     }
 
@@ -2058,32 +2215,39 @@
         <h2>Support Rhozeland</h2>
         <button class="cta-hub-trigger" id="ctaToggle" onclick="document.getElementById('ctaCards').classList.toggle('visible'); this.classList.toggle('active');">
           Get involved
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
         </button>
       </div>
 
       <div class="cta-cards" id="ctaCards">
-        <div class="cta-card">
+        <svg class="cta-map-lines" viewBox="0 0 980 720" preserveAspectRatio="none" aria-hidden="true">
+          <line x1="490" y1="365" x2="190" y2="200"></line>
+          <line x1="490" y1="365" x2="790" y2="200"></line>
+          <line x1="490" y1="365" x2="490" y2="590"></line>
+        </svg>
+        <div class="cta-map-core" aria-hidden="true"><span>Support</span></div>
+
+        <div class="cta-card cta-card--loop">
           <span class="cta-card-num">01</span>
           <h3>Stay in the loop</h3>
-          <p>Updates on releases, events, and ecosystem news before they go public.</p>
+          <p>Get releases, events, and updates first.</p>
           <form class="drop-form" id="newsletterForm">
             <input type="email" name="email" placeholder="Your email" aria-label="Email address" required maxlength="255" />
             <button class="cta-btn" type="submit">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></button>
           </form>
         </div>
 
-        <div class="cta-card">
+        <div class="cta-card cta-card--build">
           <span class="cta-card-num">02</span>
           <h3>Build with us</h3>
-          <p>Bring a project or idea — we handle studio, visuals, strategy, and launch.</p>
+          <p>Bring a project and we’ll shape the launch.</p>
           <a class="cta-btn" href="/contact.html">Start a project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
         </div>
 
-        <div class="cta-card">
+        <div class="cta-card cta-card--back">
           <span class="cta-card-num">03</span>
           <h3>Back the ecosystem</h3>
-          <p>$RHOZE is how the community fuels the machine.</p>
+          <p>$RHOZE helps power the ecosystem.</p>
           <a class="cta-btn" href="https://app.rhozeland.com" target="_blank" rel="noopener noreferrer">Buy $RHOZE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
         </div>
       </div>

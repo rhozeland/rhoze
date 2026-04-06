@@ -1,5 +1,16 @@
 // Shared JS for all Rhozeland pages
 
+// Time-based dark mode
+(function() {
+  function applyTheme() {
+    var hour = new Date().getHours();
+    var isDark = hour < 6 || hour >= 19;
+    document.documentElement.classList.toggle('dark', isDark);
+  }
+  applyTheme();
+  setInterval(applyTheme, 60000);
+})();
+
 // Mobile menu
 function closeMobile() {
   document.getElementById('mobileMenu').classList.remove('open');

@@ -11,46 +11,22 @@ import Footer from "@/components/rhoze/Footer";
 const Index = () => {
   return (
     <div className="relative min-h-screen bg-background text-foreground">
-      {/* Persistent animated gradient blobs */}
+      {/* Animated gradient background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div
-          className="absolute animate-[blob-drift-1_18s_ease-in-out_infinite,blob-morph_12s_ease-in-out_infinite]"
-          style={{
-            width: 'clamp(400px, 55vw, 800px)',
-            height: 'clamp(400px, 55vw, 800px)',
-            top: '-10%',
-            right: '-15%',
-            opacity: 0.75,
-            borderRadius: '40% 60% 55% 45% / 55% 40% 60% 45%',
-            background: 'conic-gradient(from 180deg, hsl(280 100% 65%), hsl(200 100% 55%), hsl(150 100% 50%), hsl(330 100% 60%), hsl(264 100% 60%))',
-            filter: 'blur(60px)',
-          }}
+        <img
+          src="/images/grad-nebula.png"
+          alt=""
+          className="absolute w-[140%] h-[140%] -top-[20%] -left-[20%] object-cover opacity-50 animate-[grad-drift-1_25s_ease-in-out_infinite,grad-fade-1_20s_ease-in-out_infinite]"
         />
-        <div
-          className="absolute animate-[blob-drift-2_22s_ease-in-out_infinite,blob-morph_15s_ease-in-out_infinite_reverse]"
-          style={{
-            width: 'clamp(300px, 40vw, 600px)',
-            height: 'clamp(300px, 40vw, 600px)',
-            bottom: '10%',
-            left: '-10%',
-            opacity: 0.6,
-            borderRadius: '40% 60% 55% 45% / 55% 40% 60% 45%',
-            background: 'conic-gradient(from 90deg, hsl(30 100% 60%), hsl(350 100% 58%), hsl(280 100% 55%), hsl(332 100% 58%))',
-            filter: 'blur(60px)',
-          }}
+        <img
+          src="/images/grad-teal.png"
+          alt=""
+          className="absolute w-[140%] h-[140%] -top-[20%] -left-[20%] object-cover opacity-40 animate-[grad-drift-2_30s_ease-in-out_infinite,grad-fade-2_18s_ease-in-out_infinite]"
         />
-        <div
-          className="absolute animate-[blob-drift-3_25s_ease-in-out_infinite,blob-morph_18s_ease-in-out_infinite]"
-          style={{
-            width: 'clamp(250px, 30vw, 500px)',
-            height: 'clamp(250px, 30vw, 500px)',
-            top: '40%',
-            left: '30%',
-            opacity: 0.5,
-            borderRadius: '40% 60% 55% 45% / 55% 40% 60% 45%',
-            background: 'conic-gradient(from 270deg, hsl(170 100% 50%), hsl(200 100% 60%), hsl(240 100% 55%), hsl(205 100% 55%))',
-            filter: 'blur(60px)',
-          }}
+        <img
+          src="/images/grad-amber.png"
+          alt=""
+          className="absolute w-[140%] h-[140%] -top-[20%] -left-[20%] object-cover opacity-30 animate-[grad-drift-3_35s_ease-in-out_infinite,grad-fade-3_22s_ease-in-out_infinite]"
         />
       </div>
       <Navbar />

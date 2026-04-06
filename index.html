@@ -53,7 +53,7 @@
       --shadow: 0 0% 0%;
     }
 
-    .dark .gradient-blob { opacity: 0.25; }
+    .dark .gradient-canvas img { opacity: 0.35; }
     .dark .page-shell { background: hsl(var(--surface) / 0.95); }
 
     html { scroll-behavior: smooth; }
@@ -94,7 +94,7 @@
       display: none;
     }
 
-    /* Animated iridescent gradient blobs */
+    /* Animated gradient background using images */
     .gradient-canvas {
       position: fixed;
       inset: 0;
@@ -103,89 +103,61 @@
       overflow: hidden;
     }
 
-    .gradient-blob {
+    .gradient-canvas img {
       position: absolute;
-      border-radius: 40% 60% 55% 45% / 55% 40% 60% 45%;
-      filter: blur(50px);
-      opacity: 0.75;
-      will-change: transform;
-    }
-
-    .gradient-blob--1 {
-      width: clamp(400px, 55vw, 800px);
-      height: clamp(400px, 55vw, 800px);
-      top: -15%;
-      right: -12%;
-      background: conic-gradient(
-        from 160deg,
-        hsl(264 100% 60%) 0%,
-        hsl(230 100% 55%) 20%,
-        hsl(15 100% 55%) 40%,
-        hsl(332 100% 58%) 60%,
-        hsl(290 100% 52%) 80%,
-        hsl(264 100% 60%) 100%
-      );
-      animation: blob-drift-1 18s ease-in-out infinite, blob-morph 12s ease-in-out infinite;
-    }
-
-    .gradient-blob--2 {
-      width: clamp(300px, 40vw, 600px);
-      height: clamp(300px, 40vw, 600px);
-      bottom: 8%;
-      left: -8%;
-      background: conic-gradient(
-        from 300deg,
-        hsl(332 100% 58%) 0%,
-        hsl(15 100% 52%) 25%,
-        hsl(40 100% 55%) 50%,
-        hsl(264 100% 60%) 75%,
-        hsl(332 100% 58%) 100%
-      );
-      animation: blob-drift-2 22s ease-in-out infinite, blob-morph 15s ease-in-out infinite reverse;
-      opacity: 0.6;
-    }
-
-    .gradient-blob--3 {
-      width: clamp(250px, 30vw, 500px);
-      height: clamp(250px, 30vw, 500px);
-      top: 40%;
-      left: 50%;
-      background: conic-gradient(
-        from 60deg,
-        hsl(205 100% 55%) 0%,
-        hsl(264 100% 60%) 30%,
-        hsl(332 100% 58%) 60%,
-        hsl(205 100% 55%) 100%
-      );
-      animation: blob-drift-3 25s ease-in-out infinite, blob-morph 18s ease-in-out infinite;
+      width: 140%;
+      height: 140%;
+      top: -20%;
+      left: -20%;
+      object-fit: cover;
       opacity: 0.5;
+      will-change: transform, opacity;
     }
 
-    @keyframes blob-drift-1 {
-      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      25%      { transform: translate(-8vw, 12vh) rotate(45deg) scale(1.08); }
-      50%      { transform: translate(-4vw, 20vh) rotate(120deg) scale(0.95); }
-      75%      { transform: translate(5vw, 8vh) rotate(200deg) scale(1.05); }
+    .gradient-canvas img:nth-child(1) {
+      animation: grad-drift-1 25s ease-in-out infinite, grad-fade-1 20s ease-in-out infinite;
+    }
+    .gradient-canvas img:nth-child(2) {
+      animation: grad-drift-2 30s ease-in-out infinite, grad-fade-2 18s ease-in-out infinite;
+    }
+    .gradient-canvas img:nth-child(3) {
+      animation: grad-drift-3 35s ease-in-out infinite, grad-fade-3 22s ease-in-out infinite;
+      opacity: 0.35;
     }
 
-    @keyframes blob-drift-2 {
-      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      25%      { transform: translate(10vw, -8vh) rotate(-60deg) scale(1.1); }
-      50%      { transform: translate(6vw, -16vh) rotate(-140deg) scale(0.92); }
-      75%      { transform: translate(-3vw, -6vh) rotate(-220deg) scale(1.04); }
+    @keyframes grad-drift-1 {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      25%      { transform: translate(5%, -8%) scale(1.1) rotate(3deg); }
+      50%      { transform: translate(-3%, 6%) scale(1.05) rotate(-2deg); }
+      75%      { transform: translate(7%, 4%) scale(0.95) rotate(4deg); }
     }
 
-    @keyframes blob-drift-3 {
-      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      33%      { transform: translate(-12vw, 6vh) rotate(80deg) scale(1.12); }
-      66%      { transform: translate(8vw, -10vh) rotate(180deg) scale(0.9); }
+    @keyframes grad-drift-2 {
+      0%, 100% { transform: translate(0, 0) scale(1.05) rotate(0deg); }
+      33%      { transform: translate(-8%, 5%) scale(1.15) rotate(-4deg); }
+      66%      { transform: translate(6%, -6%) scale(0.9) rotate(3deg); }
     }
 
-    @keyframes blob-morph {
-      0%, 100% { border-radius: 40% 60% 55% 45% / 55% 40% 60% 45%; }
-      25%      { border-radius: 55% 45% 40% 60% / 45% 55% 45% 55%; }
-      50%      { border-radius: 45% 55% 60% 40% / 60% 45% 55% 45%; }
-      75%      { border-radius: 60% 40% 45% 55% / 40% 60% 40% 60%; }
+    @keyframes grad-drift-3 {
+      0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      20%      { transform: translate(10%, 3%) scale(1.2) rotate(5deg); }
+      50%      { transform: translate(-5%, -10%) scale(1.08) rotate(-3deg); }
+      80%      { transform: translate(3%, 8%) scale(0.95) rotate(2deg); }
+    }
+
+    @keyframes grad-fade-1 {
+      0%, 100% { opacity: 0.5; }
+      50%      { opacity: 0.7; }
+    }
+
+    @keyframes grad-fade-2 {
+      0%, 100% { opacity: 0.4; }
+      50%      { opacity: 0.6; }
+    }
+
+    @keyframes grad-fade-3 {
+      0%, 100% { opacity: 0.3; }
+      50%      { opacity: 0.5; }
     }
 
     .navbar,
@@ -1883,7 +1855,7 @@
       .hero-topline, .hero-copy h1, .hero-desc, .hero-meta, .hero-proof-links, .hero-side {
         opacity: 1; transform: none; animation: none;
       }
-      .gradient-blob, .newsletter-blob, .hero-side::before, .hero-side::after, .hero-drop-card::before, .hero-drop-card::after { animation: none !important; }
+      .gradient-canvas img, .newsletter-blob, .hero-side::before, .hero-side::after, .hero-drop-card::before, .hero-drop-card::after { animation: none !important; }
       .card, .work-card, .event-card, .newsletter-card,
       .nav-cta, .hero-primary, .panel-button, .newsletter-button, .footer-social a, .cta-card, .cta-action-btn, .cta-action-ghost {
         animation: none !important; transition: none !important;
@@ -1893,9 +1865,10 @@
 </head>
 <body>
   <div class="gradient-canvas" aria-hidden="true">
-    <div class="gradient-blob gradient-blob--1"></div>
-    <div class="gradient-blob gradient-blob--2"></div>
-    <div class="gradient-blob gradient-blob--3"></div>
+    <img src="/images/grad-nebula.png" alt="" />
+    <img src="/images/grad-teal.png" alt="" />
+    <img src="/images/grad-amber.png" alt="" />
+  </div>
   </div>
 
   <div class="page-shell">

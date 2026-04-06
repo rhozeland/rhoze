@@ -1001,17 +1001,17 @@ button { background: none; border: 0; cursor: pointer; }
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.85rem 2rem;
+  padding: 0.75rem 1.8rem;
   border-radius: 999px;
-  background: hsl(var(--accent-green));
-  color: hsl(var(--ink));
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: opacity 0.2s;
-  margin-top: 1.5rem;
+  background: linear-gradient(135deg, hsl(var(--accent-purple)), hsl(var(--accent-pink)));
+  color: hsl(0 0% 100%);
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  margin-top: 1.2rem;
 }
 
-.btn-primary:hover { opacity: 0.85; }
+.btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
 
 /* ===================== CHART ===================== */
 .chart-frame {

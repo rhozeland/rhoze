@@ -837,6 +837,63 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .capability-grid--3 {
+      grid-template-columns: 1fr;
+    }
+
+    .capability-grid--3 > :first-child {
+      grid-column: 1;
+    }
+
+    @media (min-width: 640px) {
+      .capability-grid--3 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .capability-grid--3 > :first-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .card--metric-video {
+      padding: 0;
+      overflow: hidden;
+      min-height: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 640px) {
+      .card--metric-video {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card--metric-video .card-video-wrap {
+      aspect-ratio: 16 / 9;
+      border-bottom: 1px solid hsl(var(--line));
+    }
+
+    @media (min-width: 640px) {
+      .card--metric-video .card-video-wrap {
+        aspect-ratio: auto;
+        height: 100%;
+        border-bottom: none;
+        border-right: 1px solid hsl(var(--line));
+      }
+    }
+
+    .card--metric-body {
+      padding: clamp(1.2rem, 2.5vw, 1.8rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    .card--metric-body .stat-value {
+      margin: 0.2rem 0 0.6rem;
+    }
+
     .card,
     .work-card,
     .event-card,
@@ -1797,13 +1854,6 @@
           <div class="hero-copy">
             <h1 id="homepage-title">Build the release, the rollout, and the world around it.</h1>
             <p class="hero-desc">Rhozeland combines studio sessions, content production, digital builds, and community programming so artists and brands can move with one system instead of five disconnected vendors.</p>
-            <div class="hero-meta">
-              <a class="hero-primary" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
-                Enter Creator OS
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-              </a>
-              <a class="hero-secondary-btn" href="/projects.html">See projects</a>
-            </div>
             <div class="hero-proof-links" id="proof">
               <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://voyagehouston.com/favicon.ico" alt="" class="proof-favicon" />VoyageHouston Feature</a>
               <a class="proof-link" href="https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups" target="_blank" rel="noopener noreferrer"><img src="https://fi.co/favicon.ico" alt="" class="proof-favicon" />Founder Institute Alumni</a>
@@ -1831,63 +1881,52 @@
           </div>
         </div>
 
-        <div class="capability-grid">
-          <article class="card card--metric">
-            <div>
-              <span class="section-kicker">Since 2016</span>
-              <div class="stat-value">1000+</div>
-            </div>
-            <div>
-              <h3>Creator collaborations</h3>
-              <p class="card-copy">Artists, brands, founders, and culture builders have used Rhozeland to shape content, campaigns, and launch moments — from first draft to public release.</p>
-            </div>
-          </article>
-
-          <article class="card card--video">
+        <div class="capability-grid capability-grid--3">
+          <article class="card card--metric card--metric-video">
             <div class="card-video-wrap">
               <iframe src="https://www.youtube.com/embed/DOdvB1A5r80?autoplay=1&mute=1&loop=1&playlist=DOdvB1A5r80&controls=0&showinfo=0&rel=0&modestbranding=1" title="The Rhozeland Documentary" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
             </div>
-            <div>
-              <h3>The Documentary</h3>
-              <p class="card-copy">Watch how Rhozeland went from a creative collective to a full ecosystem — told by the people who built it.</p>
+            <div class="card--metric-body">
+              <span class="section-kicker">Since 2016</span>
+              <div class="stat-value">1000+</div>
+              <h3>Creator collaborations</h3>
+              <p class="card-copy">Artists, brands, founders, and culture builders have shaped content, campaigns, and launch moments with Rhozeland.</p>
             </div>
           </article>
 
           <article class="card">
             <svg class="line-icon" viewBox="0 0 80 80" aria-hidden="true">
-              <path d="M12 44c8-18 20-28 28-28s20 10 28 28"></path>
-              <path d="M18 53c6-11 14-17 22-17s16 6 22 17"></path>
-              <path d="M27 61c3-5 8-8 13-8s10 3 13 8"></path>
-              <circle cx="40" cy="24" r="3.5"></circle>
+              <rect x="12" y="14" width="56" height="40" rx="8"></rect>
+              <circle cx="40" cy="34" r="10"></circle>
+              <path d="M36 30l10 4-10 4z" fill="currentColor" stroke="none"></path>
+              <path d="M24 62h32"></path>
+              <path d="M32 54v8"></path><path d="M48 54v8"></path>
             </svg>
             <div>
-              <h3>Studio &amp; sound</h3>
-              <p class="card-copy">Recording, mixing, mastering, podcasts — everything to help music, voice, and culture projects sound release-ready.</p>
+              <h3>Creator OS</h3>
+              <p class="card-copy">Our digital platform where creators manage projects, releases, and collaborations — all in one place.</p>
             </div>
             <div class="card-tags">
-              <span class="chip">Recording</span>
-              <span class="chip">Mixing</span>
-              <span class="chip">Podcasts</span>
+              <span class="chip">App</span>
+              <span class="chip">Dashboard</span>
+              <span class="chip">Releases</span>
             </div>
           </article>
 
           <article class="card">
             <svg class="line-icon" viewBox="0 0 80 80" aria-hidden="true">
-              <rect x="14" y="16" width="52" height="48" rx="12"></rect>
-              <path d="M26 30h28"></path>
-              <path d="M26 40h16"></path>
-              <path d="M26 50h22"></path>
-              <path d="M54 46l6 6"></path>
-              <path d="M60 46l-6 6"></path>
+              <path d="M16 60V28l24-12 24 12v32"></path>
+              <path d="M28 44v16"></path><path d="M40 38v22"></path><path d="M52 44v16"></path>
+              <circle cx="40" cy="24" r="4"></circle>
             </svg>
             <div>
-              <h3>Digital &amp; web</h3>
-              <p class="card-copy">Websites, product design, e-commerce, creator tools — digital experiences that turn attention into a platform.</p>
+              <h3>Events &amp; community</h3>
+              <p class="card-copy">Live showcases, pop-ups, panels, and cultural programming — online and IRL moments that connect creators to audiences.</p>
             </div>
             <div class="card-tags">
-              <span class="chip">Web</span>
-              <span class="chip">Marketplace</span>
-              <span class="chip">UI / UX</span>
+              <span class="chip">Live shows</span>
+              <span class="chip">Pop-ups</span>
+              <span class="chip">Panels</span>
             </div>
           </article>
         </div>

@@ -914,7 +914,7 @@
     }
 
     .newsletter-card {
-      padding: 1.4rem 1.5rem;
+      padding: clamp(2rem, 4vw, 3.5rem) clamp(2rem, 5vw, 4rem);
       background: linear-gradient(135deg, hsl(280 50% 15%), hsl(320 50% 12%), hsl(245 40% 10%), hsl(200 40% 12%));
       color: hsl(0 0% 100%);
       overflow: hidden;
@@ -928,29 +928,52 @@
       box-shadow: 0 24px 60px -42px hsl(var(--shadow) / 0.24);
     }
 
-    .newsletter-card::before {
-      content: "";
+    .newsletter-blob {
       position: absolute;
-      inset: auto -18% -26% auto;
-      width: 300px;
-      height: 300px;
       border-radius: 999px;
-      background: radial-gradient(circle, hsl(330 80% 50% / 0.35), hsl(280 70% 50% / 0.2), transparent 70%);
-      filter: blur(40px);
+      filter: blur(50px);
       pointer-events: none;
-      opacity: 1;
+      will-change: transform;
     }
 
-    .newsletter-card::after {
-      content: "";
-      position: absolute;
-      inset: -20% auto auto -15%;
+    .newsletter-blob--1 {
+      width: 320px;
+      height: 320px;
+      bottom: -25%;
+      right: -10%;
+      background: radial-gradient(circle, hsl(330 80% 50% / 0.4), hsl(280 70% 50% / 0.25), transparent 70%);
+      animation: nl-drift-1 12s ease-in-out infinite;
+    }
+
+    .newsletter-blob--2 {
       width: 280px;
       height: 280px;
-      border-radius: 999px;
-      background: radial-gradient(circle, hsl(200 90% 50% / 0.2), hsl(170 80% 50% / 0.15), transparent 70%);
-      filter: blur(40px);
-      pointer-events: none;
+      top: -20%;
+      left: -10%;
+      background: radial-gradient(circle, hsl(200 90% 50% / 0.25), hsl(170 80% 50% / 0.18), transparent 70%);
+      animation: nl-drift-2 15s ease-in-out infinite;
+    }
+
+    .newsletter-blob--3 {
+      width: 200px;
+      height: 200px;
+      top: 30%;
+      right: 25%;
+      background: radial-gradient(circle, hsl(264 80% 55% / 0.3), transparent 70%);
+      animation: nl-drift-3 10s ease-in-out infinite;
+    }
+
+    @keyframes nl-drift-1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-30px, -20px) scale(1.15); }
+    }
+    @keyframes nl-drift-2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(25px, 15px) scale(1.1); }
+    }
+    @keyframes nl-drift-3 {
+      0%, 100% { transform: translate(0, 0) scale(0.9); }
+      50% { transform: translate(-15px, 10px) scale(1.2); }
     }
 
     .newsletter-card h2,
@@ -1382,6 +1405,9 @@
           </div>
 
           <aside class="newsletter-card">
+            <div class="newsletter-blob newsletter-blob--1"></div>
+            <div class="newsletter-blob newsletter-blob--2"></div>
+            <div class="newsletter-blob newsletter-blob--3"></div>
             <span class="section-kicker">Stay close</span>
             <h2>Get the next drop before it goes public.</h2>
             <p>New events, collabs, launches, and ecosystem updates — sent directly to your inbox.</p>

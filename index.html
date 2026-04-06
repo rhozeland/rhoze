@@ -933,7 +933,19 @@
       gap: 1.2rem;
     }
 
-    .card--metric {
+    .card--link {
+      min-height: auto;
+      padding: 1.3rem;
+      gap: 0.8rem;
+      cursor: pointer;
+    }
+
+    .card--link:hover {
+      transform: translateY(-4px);
+      border-color: hsl(var(--line-strong));
+    }
+
+
       background: linear-gradient(180deg, hsl(var(--surface-card)), hsl(var(--surface-alt)));
     }
 
@@ -1962,7 +1974,7 @@
             </div>
           </article>
 
-          <article class="card">
+          <a class="card card--link" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
             <svg class="line-icon" viewBox="0 0 80 80" aria-hidden="true">
               <rect x="12" y="14" width="56" height="40" rx="8"></rect>
               <circle cx="40" cy="34" r="10"></circle>
@@ -1972,16 +1984,11 @@
             </svg>
             <div>
               <h3>Creator OS</h3>
-              <p class="card-copy">Our digital platform where creators manage projects, releases, and collaborations — all in one place.</p>
+              <p class="card-copy">Our digital platform where creators manage projects, releases, and collaborations.</p>
             </div>
-            <div class="card-tags">
-              <span class="chip">App</span>
-              <span class="chip">Dashboard</span>
-              <span class="chip">Releases</span>
-            </div>
-          </article>
+          </a>
 
-          <article class="card">
+          <a class="card card--link" href="/events.html">
             <svg class="line-icon" viewBox="0 0 80 80" aria-hidden="true">
               <path d="M16 60V28l24-12 24 12v32"></path>
               <path d="M28 44v16"></path><path d="M40 38v22"></path><path d="M52 44v16"></path>
@@ -1989,14 +1996,9 @@
             </svg>
             <div>
               <h3>Events &amp; community</h3>
-              <p class="card-copy">Live showcases, pop-ups, panels, and cultural programming — online and IRL moments that connect creators to audiences.</p>
+              <p class="card-copy">Live showcases, pop-ups, panels, and cultural programming that connect creators to audiences.</p>
             </div>
-            <div class="card-tags">
-              <span class="chip">Live shows</span>
-              <span class="chip">Pop-ups</span>
-              <span class="chip">Panels</span>
-            </div>
-          </article>
+          </a>
         </div>
       </section>
 

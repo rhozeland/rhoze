@@ -11,6 +11,40 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
+  <style>
+    .contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:3rem;align-items:start}
+    .contact-sidebar{display:flex;flex-direction:column;gap:1.5rem}
+    .contact-card{border:1px solid hsl(var(--border));border-radius:var(--radius);padding:1.5rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(12px)}
+    .contact-card h3{font-family:'Inter',system-ui,sans-serif;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:hsl(var(--muted));margin-bottom:1rem}
+    .contact-link{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;color:hsl(var(--fg));text-decoration:none;font-size:0.95rem;font-weight:500;transition:color 0.2s}
+    .contact-link:hover{color:hsl(var(--accent-fg,var(--fg)));opacity:0.7}
+    .contact-link svg{width:18px;height:18px;flex-shrink:0;opacity:0.6}
+    .social-row{display:flex;gap:0.5rem;flex-wrap:wrap}
+    .social-pill{display:inline-flex;align-items:center;gap:0.5rem;padding:0.45rem 0.85rem;border:1px solid hsl(var(--border));border-radius:999px;font-size:0.8rem;font-weight:500;color:hsl(var(--fg));text-decoration:none;transition:all 0.2s}
+    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.2)}
+    .social-pill svg{width:14px;height:14px}
+
+    .inquiry-form{display:flex;flex-direction:column;gap:1.25rem}
+    .inquiry-form h2{font-family:'Inter',system-ui,sans-serif;font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.04em;margin-bottom:0.25rem}
+    .inquiry-form p.subtitle{font-size:0.9rem;color:hsl(var(--muted));margin-bottom:0.5rem}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .form-group{display:flex;flex-direction:column;gap:0.35rem}
+    .form-group label{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:hsl(var(--muted))}
+    .form-group input,.form-group textarea,.form-group select{
+      width:100%;padding:0.65rem 0.85rem;border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 2px);
+      background:hsl(var(--surface)/0.4);color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.9rem;
+      transition:border-color 0.2s;outline:none
+    }
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:hsl(var(--fg)/0.4)}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:hsl(var(--muted)/0.6)}
+    .form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.75rem center;padding-right:2rem}
+    .form-group select option{background:hsl(var(--bg));color:hsl(var(--fg))}
+
+    @media(max-width:768px){
+      .contact-grid{grid-template-columns:1fr;gap:2rem}
+      .form-row{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body class="page-contact">
   <div class="gradient-canvas" aria-hidden="true"></div>
@@ -50,101 +84,115 @@
     </div>
 
     <main>
-
-      <!-- CONTACT INFO -->
       <section class="section">
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin-bottom:3rem;">
-          <div class="card" style="min-height:auto; text-align:center;">
-            <div>
-              <span class="section-kicker">Email</span>
-              <a href="mailto:collab@rhozeland.com" style="display:block; font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:1.2rem; font-weight:700; letter-spacing:-0.04em; margin-top:0.25rem;">collab@rhozeland.com</a>
-            </div>
-          </div>
-          <div class="card" style="min-height:auto; text-align:center;">
-            <div>
-              <span class="section-kicker">Phone</span>
-              <a href="tel:6478746743" style="display:block; font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:1.2rem; font-weight:700; letter-spacing:-0.04em; margin-top:0.25rem;">647-874-6743</a>
-            </div>
-          </div>
-        </div>
+        <div class="contact-grid">
 
-        <!-- FORM -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
-          <div class="card" style="min-height:auto; background:hsl(var(--surface-alt)); align-items:center; justify-content:center; aspect-ratio:4/3;">
-            <p style="color:hsl(var(--muted)); font-size:0.9rem;">Studio Photo</p>
-          </div>
-          <div>
-            <h2 style="font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:clamp(1.75rem,3vw,2.5rem); font-weight:700; letter-spacing:-0.04em; margin-bottom:2rem;">Connect with Rhozeland</h2>
-            <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! We\'ll be in touch.');">
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-                <div class="form-field"><input type="text" placeholder="Your name" required /></div>
-                <div class="form-field"><input type="text" placeholder="Last name" /></div>
+          <!-- LEFT SIDEBAR -->
+          <div class="contact-sidebar">
+            <div class="contact-card">
+              <h3>Quick Contact</h3>
+              <a href="mailto:collab@rhozeland.com" class="contact-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                collab@rhozeland.com
+              </a>
+              <a href="tel:6478746743" class="contact-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                647-874-6743
+              </a>
+            </div>
+
+            <div class="contact-card">
+              <h3>Follow Us</h3>
+              <div class="social-row">
+                <a href="https://www.instagram.com/rhozeland/" target="_blank" rel="noopener noreferrer" class="social-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                  Instagram
+                </a>
+                <a href="https://x.com/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                  X / Twitter
+                </a>
+                <a href="https://www.linkedin.com/company/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
+                  LinkedIn
+                </a>
+                <a href="https://www.tiktok.com/@rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78 2.92 2.92 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.57 6.33 6.33 0 0 0 9.37 22a6.33 6.33 0 0 0 6.37-6.22V9.4a8.16 8.16 0 0 0 3.85.96V7.04a4.78 4.78 0 0 1-1-.35z"/></svg>
+                  TikTok
+                </a>
+                <a href="https://luma.com/user/collabrhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Luma Events
+                </a>
               </div>
-              <div class="form-field"><input type="email" placeholder="Email address" required /></div>
-              <div class="form-field"><textarea placeholder="Enter your message" rows="5" required></textarea></div>
-              <button type="submit" class="btn-dark" style="width:100%; justify-content:center;">
-                Submit
+            </div>
+          </div>
+
+          <!-- RIGHT: PROJECT INQUIRY FORM -->
+          <div class="contact-card">
+            <form class="inquiry-form" onsubmit="handleInquiry(event)">
+              <h2>Start a Project</h2>
+              <p class="subtitle">Tell us about what you're working on and we'll get back to you.</p>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fname">First Name</label>
+                  <input type="text" id="fname" name="fname" placeholder="Jane" required />
+                </div>
+                <div class="form-group">
+                  <label for="lname">Last Name</label>
+                  <input type="text" id="lname" name="lname" placeholder="Doe" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required />
+              </div>
+
+              <div class="form-group">
+                <label for="project-type">Project Type</label>
+                <select id="project-type" name="project-type" required>
+                  <option value="" disabled selected>Select a category</option>
+                  <option value="music-production">Music Production</option>
+                  <option value="video-production">Video & Film Production</option>
+                  <option value="photography">Photography</option>
+                  <option value="graphic-design">Graphic Design & Branding</option>
+                  <option value="web-development">Web & App Development</option>
+                  <option value="marketing">Marketing & Social Media</option>
+                  <option value="event-production">Event Production</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="support-level">Level of Support</label>
+                <select id="support-level" name="support-level" required>
+                  <option value="" disabled selected>What do you need?</option>
+                  <option value="consultation">Consultation / Advisory</option>
+                  <option value="partial">Partial Support (I have a team)</option>
+                  <option value="full-service">Full-Service (End to End)</option>
+                  <option value="unsure">Not sure yet</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="reason">Why Rhozeland?</label>
+                <textarea id="reason" name="reason" rows="3" placeholder="What drew you to us and what are you hoping to achieve?" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="details">Project Details</label>
+                <textarea id="details" name="details" rows="4" placeholder="Describe your project — timeline, budget range, any specifics..."></textarea>
+              </div>
+
+              <button type="submit" class="btn-dark" style="width:100%;justify-content:center;">
+                Submit Inquiry
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
               </button>
             </form>
           </div>
-        </div>
-      </section>
 
-      <!-- FAQ -->
-      <section class="section" style="background: hsl(var(--surface-alt));">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Questions & Answers</span>
-            <h2>FAQ</h2>
-          </div>
-        </div>
-        <div class="faq-list">
-          <div class="faq-item fade-in">
-            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-              <span>Who is Rhozeland for?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Rhozeland is for creators of all levels — musicians, videographers, photographers, designers, engineers, influencers, and anyone building a creative brand. Whether you're starting out or scaling up, we have the tools and community for you.</p>
-            </div>
-          </div>
-          <div class="faq-item fade-in">
-            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-              <span>What's included in my membership?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Membership includes access to our studio spaces, creative services, workshops, networking events, and the Rhozeland Creator OS platform for booking studios, hiring talent, and managing projects.</p>
-            </div>
-          </div>
-          <div class="faq-item fade-in">
-            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-              <span>How does the credit system work?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Credits are the currency within Rhozeland's ecosystem. They can be earned through work, purchased, or received through $RHOZE token holdings. Credits unlock services, studio time, and talent hiring on the platform.</p>
-            </div>
-          </div>
-          <div class="faq-item fade-in">
-            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-              <span>Can I get more credits if I need them?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Yes! Additional credits can be purchased at any time, or earned by contributing to the community, completing projects, and referring new members to the platform.</p>
-            </div>
-          </div>
-          <div class="faq-item fade-in">
-            <button class="faq-toggle" onclick="this.parentElement.classList.toggle('open')">
-              <span>What is $RHOZE?</span>
-              <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-              <p>$RHOZE is Rhozeland's official token built on Solana. It powers every booking, hire, and collaboration on the platform. Revenue from clothing drops, the marketplace, and services flows back through buybacks, burns, grants, and causes — creating a deflationary flywheel that benefits the entire community.</p>
-            </div>
-          </div>
         </div>
       </section>
     </main>
@@ -187,5 +235,22 @@
 
   </div>
   <script src="/shared.js"></script>
+  <script>
+    function handleInquiry(e){
+      e.preventDefault();
+      var f=e.target;
+      var name=f.fname.value+(f.lname.value?' '+f.lname.value:'');
+      var subject=encodeURIComponent('Project Inquiry from '+name+' — '+f['project-type'].value);
+      var body=encodeURIComponent(
+        'Name: '+name+'\n'+
+        'Email: '+f.email.value+'\n'+
+        'Project Type: '+f['project-type'].value+'\n'+
+        'Support Level: '+f['support-level'].value+'\n\n'+
+        'Why Rhozeland:\n'+f.reason.value+'\n\n'+
+        'Project Details:\n'+(f.details.value||'N/A')
+      );
+      window.location.href='mailto:collab@rhozeland.com?subject='+subject+'&body='+body;
+    }
+  </script>
 </body>
 </html>

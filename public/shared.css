@@ -1265,9 +1265,7 @@ button { background: none; border: 0; cursor: pointer; }
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 1180px) {
   .section-head { grid-template-columns: 1fr; }
-  .work-grid,
-  .projects-grid { grid-template-columns: repeat(2, 1fr); }
-  .projects-grid .work-card:nth-child(n) { grid-row: span 1; }
+  .work-grid { grid-template-columns: repeat(2, 1fr); }
   .section-head h2 { max-width: none; }
 }
 

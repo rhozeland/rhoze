@@ -627,7 +627,7 @@ button { background: none; border: 0; cursor: pointer; }
 .work-type-tag {
   position: absolute;
   top: 1rem;
-  right: 1rem;
+  right: 3.5rem;
   z-index: 3;
   color: #fff;
   font-size: 0.8rem;

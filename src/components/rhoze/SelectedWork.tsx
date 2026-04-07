@@ -131,7 +131,7 @@ const SelectedWork = () => {
               />
 
               {/* Type tag — hidden, shown on hover */}
-              <span className="absolute top-3 right-3 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+              <span className="absolute top-3 right-14 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                 {p.type}
               </span>
 

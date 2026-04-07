@@ -129,26 +129,21 @@ const SelectedWork = () => {
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-              {/* Type tag */}
-              <span className="absolute top-3 right-3 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
+              {/* Type tag — hidden, shown on hover */}
+              <span className="absolute top-3 right-3 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                 {p.type}
               </span>
 
-              {/* Arrow */}
-              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Arrow — shown on hover */}
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                 <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
                   <ArrowUpRight size={14} className="text-white" />
                 </div>
               </div>
 
-              {/* Bottom content */}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
-                <span className="text-[10px] font-semibold tracking-[0.15em] uppercase text-white/60 mb-1 block">
-                  {p.tag}
-                </span>
+              {/* Bottom content — hidden, revealed on hover */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                 <h3 className="text-white font-semibold text-base leading-tight">
                   {p.title}
                 </h3>

@@ -1,5 +1,5 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 const projects = [
@@ -9,7 +9,8 @@ const projects = [
     tag: "Audio & Visual",
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aeff77289928d5c3dfc5b0_Screenshot%202026-03-09%20at%201.10.39%E2%80%AFPM.png",
+    image: "/images/ooak-the-mask-thumb.jpg",
+    video: "/videos/ooak-the-mask.mov",
   },
   {
     title: "Mansa Musa",

@@ -1,5 +1,5 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 
 const projects = [
@@ -9,7 +9,8 @@ const projects = [
     tag: "Audio & Visual",
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aeff77289928d5c3dfc5b0_Screenshot%202026-03-09%20at%201.10.39%E2%80%AFPM.png",
+    image: "/images/ooak-the-mask-thumb.jpg",
+    video: "/videos/ooak-the-mask.mov",
   },
   {
     title: "Mansa Musa",
@@ -69,6 +70,81 @@ const projects = [
   },
 ];
 
+const ProjectCard = ({ project: p, index: i, inView }: { project: typeof projects[number]; index: number; inView: boolean }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (p.video && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (p.video && videoRef.current) {
+      videoRef.current.pause();
+    }
+  };
+
+  return (
+    <motion.a
+      href={p.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay: 0.1 + i * 0.06 }}
+      className="relative group flex-shrink-0 w-[300px] sm:w-[340px] h-[220px] sm:h-[260px] rounded-xl overflow-hidden block"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Image */}
+      <img
+        src={p.image}
+        alt={`${p.title} — ${p.artist}`}
+        loading="lazy"
+        className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
+          p.video && isHovered ? "opacity-0" : "opacity-100 group-hover:scale-105"
+        }`}
+      />
+
+      {/* Video overlay */}
+      {p.video && (
+        <video
+          ref={videoRef}
+          src={p.video}
+          muted
+          playsInline
+          loop
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+            isHovered ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      )}
+
+      {/* Type tag */}
+      <span className="absolute top-3 right-14 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+        {p.type}
+      </span>
+
+      {/* Arrow */}
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+        <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
+          <ArrowUpRight size={14} className="text-white" />
+        </div>
+      </div>
+
+      {/* Bottom content */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+        <h3 className="text-white font-semibold text-base leading-tight">{p.title}</h3>
+        <p className="text-white/50 text-xs mt-0.5">{p.artist}</p>
+      </div>
+    </motion.a>
+  );
+};
 const SelectedWork = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
@@ -112,44 +188,7 @@ const SelectedWork = () => {
       >
         <div className="flex gap-4 px-6 lg:px-16 pb-4" style={{ width: "max-content" }}>
           {projects.map((p, i) => (
-            <motion.a
-              key={p.title}
-              href={p.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 + i * 0.06 }}
-              className="relative group flex-shrink-0 w-[300px] sm:w-[340px] h-[220px] sm:h-[260px] rounded-xl overflow-hidden block"
-            >
-              {/* Image */}
-              <img
-                src={p.image}
-                alt={`${p.title} — ${p.artist}`}
-                loading="lazy"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-
-              {/* Type tag — hidden, shown on hover */}
-              <span className="absolute top-3 right-14 text-[10px] font-semibold tracking-wider uppercase text-white/70 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                {p.type}
-              </span>
-
-              {/* Arrow — shown on hover */}
-              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
-                  <ArrowUpRight size={14} className="text-white" />
-                </div>
-              </div>
-
-              {/* Bottom content — hidden, revealed on hover */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                <h3 className="text-white font-semibold text-base leading-tight">
-                  {p.title}
-                </h3>
-                <p className="text-white/50 text-xs mt-0.5">{p.artist}</p>
-              </div>
-            </motion.a>
+            <ProjectCard key={p.title} project={p} index={i} inView={inView} />
           ))}
         </div>
       </motion.div>

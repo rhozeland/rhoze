@@ -10,7 +10,7 @@ const projects = [
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
     image: "/images/ooak-the-mask-thumb.jpg",
-    video: "/videos/ooak-the-mask.mov",
+    video: "/videos/ooak-the-mask.mp4",
   },
   {
     title: "Mansa Musa",

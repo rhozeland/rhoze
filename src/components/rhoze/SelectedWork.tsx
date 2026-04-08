@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 const projects = [
   {
     title: "The Mask",
-    artist: "Oaok",
+    artist: "Ooak",
     tag: "Audio & Visual",
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",

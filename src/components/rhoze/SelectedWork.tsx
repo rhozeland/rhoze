@@ -145,8 +145,7 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
     </motion.a>
   );
 };
-
-
+const SelectedWork = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 

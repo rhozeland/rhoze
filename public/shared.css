@@ -485,19 +485,16 @@ button { background: none; border: 0; cursor: pointer; }
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 160px;
-  grid-auto-flow: dense;
+  grid-auto-rows: 280px;
   gap: 4px;
 }
 
-/* Default landscape 16:9: 1col × 1row */
-.projects-grid .work-card { grid-column: span 1; grid-row: span 1; }
+.projects-grid .work-card:nth-child(1) {
+  grid-row: span 2;
+}
 
-/* Square 1:1: 1col × 2rows */
-.work-card--square { grid-row: span 2 !important; }
-
-/* Portrait 9:16: 1col × 3rows */
-.work-card--portrait { grid-row: span 3 !important; }
+.projects-grid .work-card:nth-child(4) { grid-row: span 2; }
+.projects-grid .work-card:nth-child(7) { grid-row: span 2; }
 
 /* ===================== PROJECT CARDS ===================== */
 .work-card,

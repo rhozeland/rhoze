@@ -397,6 +397,9 @@ button { background: none; border: 0; cursor: pointer; }
   color: hsl(var(--muted));
   font-size: 0.97rem;
   line-height: 1.75;
+  max-width: 380px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .section-link {

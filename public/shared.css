@@ -556,10 +556,6 @@ button { background: none; border: 0; cursor: pointer; }
   object-position: center 32%;
 }
 
-/* Portrait (9:16) card variant */
-.work-card--portrait { grid-row: span 2; }
-/* Square card variant */
-.work-card--square { aspect-ratio: 1 / 1; height: auto; }
 
 .work-body {
   position: relative;

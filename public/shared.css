@@ -384,17 +384,27 @@ button { background: none; border: 0; cursor: pointer; }
   font-weight: 600;
   line-height: 0.98;
   letter-spacing: -0.02em;
-  max-width: 12ch;
   text-wrap: balance;
+}
+
+.section-head > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-head > div:last-child,
+.section-head > p {
+  color: hsl(var(--muted));
+  font-size: 0.97rem;
+  line-height: 1.75;
+  max-width: 380px;
+  flex-shrink: 0;
 }
 
 .section-head p {
   color: hsl(var(--muted));
   font-size: 0.97rem;
   line-height: 1.75;
-  max-width: 380px;
-  text-align: right;
-  flex-shrink: 0;
 }
 
 .section-link {

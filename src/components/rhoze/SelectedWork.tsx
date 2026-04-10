@@ -9,7 +9,7 @@ const projects = [
     tag: "Audio & Visual",
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/ooak-the-mask-thumb.jpg",
+    image: "/images/ooak-the-mask-thumb.png",
     video: "/videos/ooak-the-mask.mp4",
   },
   {
@@ -116,9 +116,11 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
         <video
           ref={videoRef}
           src={p.video}
+          poster={p.image}
           muted
           playsInline
           loop
+          preload="metadata"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             isHovered ? "opacity-100" : "opacity-0"
           }`}

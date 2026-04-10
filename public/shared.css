@@ -557,6 +557,8 @@ button { background: none; border: 0; cursor: pointer; }
 
 /* Portrait (9:16) card variant */
 .work-card--portrait { grid-row: span 2; }
+/* Square card variant */
+.work-card--square { grid-row: span 2; }
 
 .work-body {
   position: relative;

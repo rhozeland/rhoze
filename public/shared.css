@@ -492,6 +492,8 @@ button { background: none; border: 0; cursor: pointer; }
 .projects-grid .work-card:nth-child(4) { grid-row: span 2; }
 .projects-grid .work-card:nth-child(7) { grid-row: span 2; }
 .work-card--portrait { grid-row: span 2 !important; }
+.work-card--square img,
+.work-card--square .work-video { aspect-ratio: 1 / 1; object-fit: cover; }
 
 /* ===================== SERVICE ROWS ===================== */
 .services-rows { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; }

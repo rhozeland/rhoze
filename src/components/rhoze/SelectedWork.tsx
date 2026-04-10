@@ -18,7 +18,8 @@ const projects = [
     tag: "Audio & Visual",
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=w9dYE595cBw",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefb88b67bc2387a91fe59_admin-ajax%20(5).png",
+    image: "/images/fingaz-mansa-musa-thumb.png",
+    video: "/videos/fingaz-mansa-musa.mp4",
   },
   {
     title: "Holy Water",
@@ -26,7 +27,8 @@ const projects = [
     tag: "Audio & Visual",
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=VPLyATcs7fE",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aefa944a0e1e698bd6f8da_admin-ajax%20(4).png",
+    image: "/images/cozal-holy-water-thumb.png",
+    video: "/videos/cozal-holy-water.mp4",
   },
   {
     title: "LeLongLegs",

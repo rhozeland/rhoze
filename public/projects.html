@@ -129,289 +129,305 @@
         </div>
       </div>
 
+      <!-- FILTER BAR -->
+      <div class="filter-bar" id="filterBar">
+        <div class="filter-pills">
+          <button class="filter-pill active" data-filter="all">All</button>
+          <button class="filter-pill" data-filter="video">Video</button>
+          <button class="filter-pill" data-filter="audio">Audio</button>
+          <button class="filter-pill" data-filter="development">Development</button>
+        </div>
+        <div class="filter-right">
+          <button class="sort-toggle" id="sortToggle" data-sort="curated">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            <span>Curated</span>
+          </button>
+        </div>
+      </div>
+
       <!-- PROJECT GRID -->
       <section class="section" style="padding-left:0; padding-right:0;">
-        <div class="projects-grid">
-          <a href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" rel="noopener noreferrer" class="work-card work-card--mask fade-in" data-hover-video="true">
+        <div class="projects-grid" id="projectsGrid">
+          <a href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" rel="noopener noreferrer" class="work-card work-card--mask fade-in" data-hover-video="true" data-category="video" data-artist="Ooak" data-date="2025-05" data-order="1">
             <img src="/images/ooak-the-mask-thumb.png" alt="The Mask — Ooak" loading="lazy" />
             <video class="work-video" src="/videos/ooak-the-mask.mp4" poster="/images/ooak-the-mask-thumb.png" muted playsinline loop preload="metadata" aria-hidden="true"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>The Mask</h3><p>Ooak</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>The Mask</h3><p class="artist-link" data-artist="Ooak">Ooak</p><span class="work-date">May 2025</span></div>
           </a>
-           <a href="https://www.youtube.com/@iimpctmedia" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+           <a href="https://www.youtube.com/@iimpctmedia" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="video" data-artist="iiMPCT Media" data-date="2025-03" data-order="2">
             <img src="/images/iimpct-media-thumb.png" alt="iiMPCT Media" loading="lazy" />
             <span class="work-type-tag">Web Series</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>iiMPCT Media</h3><p>iiMPCT Media</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>iiMPCT Media</h3><p class="artist-link" data-artist="iiMPCT Media">iiMPCT Media</p><span class="work-date">Mar 2025</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="MONEE FINGAZ" data-date="2025-04" data-order="3">
             <img src="/images/fingaz-mansa-musa-thumb.png" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
             <video class="work-video" src="/videos/fingaz-mansa-musa.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Mansa Musa</h3><p>MONEE FINGAZ</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Mansa Musa</h3><p class="artist-link" data-artist="MONEE FINGAZ">MONEE FINGAZ</p><span class="work-date">Apr 2025</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Cozal" data-date="2025-03" data-order="4">
             <img src="/images/holy-water-thumb.jpg" alt="Holy Water — Cozal" loading="lazy" />
             <video class="work-video" src="/videos/cozal-holy-water.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Holy Water</h3><p>Cozal</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Holy Water</h3><p class="artist-link" data-artist="Cozal">Cozal</p><span class="work-date">Mar 2025</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=JL85Aej4Je4" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=JL85Aej4Je4" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="YOUNG $TEELO" data-date="2025-02" data-order="5">
             <img src="/images/steelo-u-outta-know-thumb.jpg" alt="U OUTTA KNOW — YOUNG $TEELO" loading="lazy" />
             <video class="work-video" src="/videos/steelo-u-outta-know.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>U OUTTA KNOW</h3><p>YOUNG $TEELO</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>U OUTTA KNOW</h3><p class="artist-link" data-artist="YOUNG $TEELO">YOUNG $TEELO</p><span class="work-date">Feb 2025</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=u9iOP4qH2MI" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+           <a href="https://www.youtube.com/watch?v=u9iOP4qH2MI" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="video" data-artist="True North Transparency" data-date="2025-01" data-order="6">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png" alt="True North Transparency" loading="lazy" />
             <span class="work-type-tag">Web Series</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>True North Transparency</h3><p>True North Transparency</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>True North Transparency</h3><p class="artist-link" data-artist="True North Transparency">True North Transparency</p><span class="work-date">Jan 2025</span></div>
           </a>
-          <a href="https://www.lelonglegs.lol/" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://www.lelonglegs.lol/" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="development" data-artist="Indolestic" data-date="2025-04" data-order="7">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png" alt="LeLongLegs — Indolestic" loading="lazy" />
             <span class="work-type-tag">Web Series</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>LeLongLegs</h3><p>Indolestic</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>LeLongLegs</h3><p class="artist-link" data-artist="Indolestic">Indolestic</p><span class="work-date">Apr 2025</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="DUBZY33" data-date="2025-01" data-order="8">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png" alt="FATE — DUBZY33" loading="lazy" />
             <video class="work-video" src="/videos/dubzy-fate.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>FATE</h3><p>DUBZY33</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>FATE</h3><p class="artist-link" data-artist="DUBZY33">DUBZY33</p><span class="work-date">Jan 2025</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=QSFF9jI8f4g" target="_blank" rel="noopener noreferrer" class="work-card work-card--portrait fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=QSFF9jI8f4g" target="_blank" rel="noopener noreferrer" class="work-card work-card--portrait fade-in" data-hover-video data-category="video" data-artist="MONEE FINGAZ" data-date="2024-11" data-order="9">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png" alt="Bombaaa — Fingaz" loading="lazy" />
             <video class="work-video" src="/videos/fingaz-bombaaa.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Bombaaa</h3><p>Fingaz</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Bombaaa</h3><p class="artist-link" data-artist="MONEE FINGAZ">MONEE FINGAZ</p><span class="work-date">Nov 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=IDnaGbAzRlk" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+          <a href="https://www.youtube.com/watch?v=IDnaGbAzRlk" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="MONEE FINGAZ" data-date="2024-10" data-order="10">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9ca403ddb9c178904d5e_admin-ajax%20(16).png" alt="We The Ones — MONEE FINGAZ X 1CUZZMN" loading="lazy" />
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>We The Ones</h3><p>MONEE FINGAZ X 1CUZZMN</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>We The Ones</h3><p class="artist-link" data-artist="MONEE FINGAZ">MONEE FINGAZ X 1CUZZMN</p><span class="work-date">Oct 2024</span></div>
           </a>
-           <a href="https://server-incognito.indolestic.com/" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+           <a href="https://server-incognito.indolestic.com/" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="development" data-artist="Indolestic" data-date="2024-12" data-order="11">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif" alt="Server Incognito — Indolestic" loading="lazy" />
             <span class="work-type-tag">Art Installation</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Server Incognito</h3><p>Indolestic</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Server Incognito</h3><p class="artist-link" data-artist="Indolestic">Indolestic</p><span class="work-date">Dec 2024</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=xhAA_iVJP0w" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=xhAA_iVJP0w" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Semiah" data-date="2024-09" data-order="12">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9b4591a36ab4564c8560_admin-ajax%20(15).png" alt="Nothing At All — Semiah" loading="lazy" />
             <video class="work-video" src="/videos/semiah-nothing-at-all.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Nothing At All</h3><p>Semiah</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Nothing At All</h3><p class="artist-link" data-artist="Semiah">Semiah</p><span class="work-date">Sep 2024</span></div>
           </a>
-          <a href="https://www.instagram.com/p/DKvf2jXMbRs" target="_blank" rel="noopener noreferrer" class="work-card work-card--portrait fade-in" data-hover-video>
+          <a href="https://www.instagram.com/p/DKvf2jXMbRs" target="_blank" rel="noopener noreferrer" class="work-card work-card--portrait fade-in" data-hover-video data-category="video" data-artist="BK Whiskey" data-date="2025-06" data-order="13">
             <img src="/images/bk-whiskey-mma-thumb.png" alt="BK Whiskey x United Nations MMA" loading="lazy" />
             <video class="work-video" src="/videos/bk-whiskey-mma.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Commercial</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>BK Whiskey x United Nations MMA</h3><p>BK Whiskey</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>BK Whiskey x United Nations MMA</h3><p class="artist-link" data-artist="BK Whiskey">BK Whiskey</p><span class="work-date">Jun 2025</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=GVptvbn9BmQ" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=GVptvbn9BmQ" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Cozal" data-date="2024-08" data-order="14">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9975361a00a78d2c4a14_admin-ajax%20(13).png" alt="The Greatest Gift — Cozal" loading="lazy" />
             <video class="work-video" src="/videos/cozal-greatest-gift.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Song & Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h3>The Greatest Gift</h3><p>Cozal</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h3>The Greatest Gift</h3><p class="artist-link" data-artist="Cozal">Cozal</p><span class="work-date">Aug 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=g4S6C9TGIZo" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+          <a href="https://www.youtube.com/watch?v=g4S6C9TGIZo" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="Cozal" data-date="2024-06" data-order="15">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9834a8f9280ee15e26aa_admin-ajax%20(6).jpeg" alt="Lisa — Cozal" loading="lazy" />
             <span class="work-type-tag">Song & Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Lisa</h3><p>Cozal</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Lisa</h3><p class="artist-link" data-artist="Cozal">Cozal</p><span class="work-date">Jun 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=c7HxJdX_jyQ&list=RDc7HxJdX_jyQ&start_radio=1" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=c7HxJdX_jyQ&list=RDc7HxJdX_jyQ&start_radio=1" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="MARV" data-date="2024-07" data-order="16">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9789c2a98b5fea259afc_admin-ajax%20(11).png" alt="Show Me Something — MARV" loading="lazy" />
             <video class="work-video" src="/videos/marv-show-me-something.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Show Me Something</h3><p>MARV</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Show Me Something</h3><p class="artist-link" data-artist="MARV">MARV</p><span class="work-date">Jul 2024</span></div>
           </a>
-          <a href="https://torontopalapa.tours/" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+          <a href="https://torontopalapa.tours/" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="development" data-artist="Toronto Palapa Tours" data-date="2024-05" data-order="17">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e962a828465eeb8dcd60e_admin-ajax%20(7).webp" alt="Toronto Palapa Tours" loading="lazy" />
             <span class="work-type-tag">Website Development</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Toronto Palapa Tours</h3><p>Toronto Palapa Tours</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Toronto Palapa Tours</h3><p class="artist-link" data-artist="Toronto Palapa Tours">Toronto Palapa Tours</p><span class="work-date">May 2024</span></div>
           </a>
-           <a href="https://www.youtube.com/watch?v=q8NaoLH_W8U" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=q8NaoLH_W8U" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="YOUNG $TEELO" data-date="2025-06" data-order="18">
              <img src="/images/sofina-thumb.jpg" alt="SOFINA — YOUNG $TEELO x Straightdizzy" loading="lazy" />
              <video class="work-video" src="/videos/sofina.mp4" muted playsinline loop preload="metadata"></video>
              <span class="work-type-tag">Music Video</span>
-             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>SOFINA</h3><p>YOUNG $TEELO x Straightdizzy</p></div>
+             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>SOFINA</h3><p class="artist-link" data-artist="YOUNG $TEELO">YOUNG $TEELO x Straightdizzy</p><span class="work-date">Jun 2025</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=Y1v-IBb2aIA" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=Y1v-IBb2aIA" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Semiah" data-date="2024-12" data-order="19">
             <img src="/images/semiah-withdrawals-thumb.png" alt="Withdrawals — Semiah" loading="lazy" />
             <video class="work-video" src="/videos/semiah-withdrawals.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Withdrawals</h3><p>Semiah</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Withdrawals</h3><p class="artist-link" data-artist="Semiah">Semiah</p><span class="work-date">Dec 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=BwxU4Pub52w" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=BwxU4Pub52w" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Gaeln" data-date="2024-04" data-order="20">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e94809c8bc1f3c5d1a7fa_admin-ajax%20(4).gif" alt="No One To Love — Gaeln" loading="lazy" />
             <video class="work-video" src="/videos/gaeln-no-one-to-love.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Live Performance</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>No One To Love</h3><p>Gaeln</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>No One To Love</h3><p class="artist-link" data-artist="Gaeln">Gaeln</p><span class="work-date">Apr 2024</span></div>
           </a>
-          <a href="https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63?si=157021a0c33e4a8f" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63?si=157021a0c33e4a8f" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Straightdizzy" data-date="2024-09" data-order="21">
             <img src="/images/surfin-thumb.png" alt="Surfin' — Straightdizzy & MARV" loading="lazy" />
             <span class="work-type-tag">EP</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Surfin'</h3><p>Straightdizzy & MARV</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Surfin'</h3><p class="artist-link" data-artist="Straightdizzy">Straightdizzy & MARV</p><span class="work-date">Sep 2024</span></div>
           </a>
-          <a href="https://music.apple.com/ca/album/figure-it-out-single/1750641530" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-hover-video>
+          <a href="https://music.apple.com/ca/album/figure-it-out-single/1750641530" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-hover-video data-category="audio" data-artist="MEE$CH" data-date="2024-07" data-order="22">
             <img src="/images/meesch-figure-it-out-thumb.jpg" alt="Figure It Out — MEE$CH" loading="lazy" />
             <video class="work-video" src="/videos/meesch-figure-it-out.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Song & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Figure It Out</h3><p>MEE$CH</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Figure It Out</h3><p class="artist-link" data-artist="MEE$CH">MEE$CH</p><span class="work-date">Jul 2024</span></div>
           </a>
-          <a href="https://open.spotify.com/album/5pXm56e1gcMQDtBtdwMBP5?si=yMiCQteSTh2OjTNR_uJQug" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/5pXm56e1gcMQDtBtdwMBP5?si=yMiCQteSTh2OjTNR_uJQug" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="MARV" data-date="2024-05" data-order="23">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8e8de7154d055844c689_admin-ajax%20(10).png" alt="Blue — Marv" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Blue</h3><p>Marv</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Blue</h3><p class="artist-link" data-artist="MARV">Marv</p><span class="work-date">May 2024</span></div>
           </a>
-          <a href="https://open.spotify.com/album/0zhoy2ExT6BOW9bGSVKYUy?si=hbdk1LbxRC-E0C-14CNg_w" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/0zhoy2ExT6BOW9bGSVKYUy?si=hbdk1LbxRC-E0C-14CNg_w" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Luckz" data-date="2024-03" data-order="24">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8da55d1cae4f9fb31d7a_admin-ajax%20(9).png" alt="3561 — Luckz" loading="lazy" />
             <span class="work-type-tag">Album</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>3561</h3><p>Luckz</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>3561</h3><p class="artist-link" data-artist="Luckz">Luckz</p><span class="work-date">Mar 2024</span></div>
           </a>
-          <a href="https://open.spotify.com/album/1mukP25MQplOYvCZfuvQQz?si=60hktDMvREeF6Kvt3bzzUg" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/1mukP25MQplOYvCZfuvQQz?si=60hktDMvREeF6Kvt3bzzUg" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="MARV" data-date="2024-02" data-order="25">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8bd99ee3c86565114625_admin-ajax%20(8).png" alt="GTTB — Marv" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>GTTB</h3><p>Marv</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>GTTB</h3><p class="artist-link" data-artist="MARV">Marv</p><span class="work-date">Feb 2024</span></div>
           </a>
-          <a href="https://open.spotify.com/album/48lJEjOJJnYgumDuzm8xG2?si=dYaPlxXzTmyX9zHh78bc-A" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/48lJEjOJJnYgumDuzm8xG2?si=dYaPlxXzTmyX9zHh78bc-A" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="MARV" data-date="2024-01" data-order="26">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8b17b7931a27455c65b9_admin-ajax%20(7).png" alt="Bank — Marv" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Bank</h3><p>Marv</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Bank</h3><p class="artist-link" data-artist="MARV">Marv</p><span class="work-date">Jan 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=Tg3XY_SnswM&list=RDTg3XY_SnswM&start_radio=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://www.youtube.com/watch?v=Tg3XY_SnswM&list=RDTg3XY_SnswM&start_radio=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Luckz" data-date="2023-11" data-order="27">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8a3ed8b1cc652638e388_admin-ajax%20(6).png" alt="60 Seconds — Luckz" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>60 Seconds</h3><p>Luckz</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>60 Seconds</h3><p class="artist-link" data-artist="Luckz">Luckz</p><span class="work-date">Nov 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/album/5ZkQQl4jtPdbTGGW952rQR?si=GnCq4z9AQ_qM9TSRViWjiw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/5ZkQQl4jtPdbTGGW952rQR?si=GnCq4z9AQ_qM9TSRViWjiw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Luckz" data-date="2023-10" data-order="28">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e89c8ed77bd02fcbb7fd5_admin-ajax%20(5).png" alt="Envy — Luckz" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Envy</h3><p>Luckz</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Envy</h3><p class="artist-link" data-artist="Luckz">Luckz</p><span class="work-date">Oct 2023</span></div>
           </a>
-          <a href="https://www.instagram.com/p/CtZWTOzgJam/" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.instagram.com/p/CtZWTOzgJam/" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Global Masterminds" data-date="2023-06" data-order="29">
             <img src="/images/global-masterminds-doc-thumb.jpg" alt="Global Masterminds Documentary" loading="lazy" />
             <video class="work-video" src="/videos/global-masterminds-doc.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Documentary</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Global Masterminds Documentary</h3><p>Global Masterminds</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Global Masterminds Documentary</h3><p class="artist-link" data-artist="Global Masterminds">Global Masterminds</p><span class="work-date">Jun 2023</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=2MP56asIWVg" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=2MP56asIWVg" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Lex Carter" data-date="2024-03" data-order="30">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e83d144f8861770224c7b_admin-ajax%20(3).jpeg" alt="Bet The House — Lex Carter" loading="lazy" />
             <video class="work-video" src="/videos/lex-carter-bet-the-house.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Bet The House</h3><p>Lex Carter</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Bet The House</h3><p class="artist-link" data-artist="Lex Carter">Lex Carter</p><span class="work-date">Mar 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=pDO4sTpWKng" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-hover-video>
+          <a href="https://www.youtube.com/watch?v=pDO4sTpWKng" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-hover-video data-category="video" data-artist="Luckz" data-date="2024-02" data-order="31">
             <img src="/images/luckz-night-come-thumb.png" alt="Night Come — Luckz" loading="lazy" />
             <video class="work-video" src="/videos/luckz-night-come.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Night Come</h3><p>Luckz</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Night Come</h3><p class="artist-link" data-artist="Luckz">Luckz</p><span class="work-date">Feb 2024</span></div>
           </a>
-          <a href="https://open.spotify.com/album/65YoCetjYqnw3CDfJFp6ys" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-hover-video>
+          <a href="https://open.spotify.com/album/65YoCetjYqnw3CDfJFp6ys" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-hover-video data-category="audio" data-artist="Luckz" data-date="2023-09" data-order="32">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e7ec15d38a34bc4a525c7_on-my-own.gif" alt="On My Own — Luckz" loading="lazy" />
             <video class="work-video" src="/videos/luckz-on-my-own.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Song & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>On My Own</h3><p>Luckz</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>On My Own</h3><p class="artist-link" data-artist="Luckz">Luckz</p><span class="work-date">Sep 2023</span></div>
           </a>
-          <a href="https://www.instagram.com/p/Ck2JBEDLcxA/?img_index=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://www.instagram.com/p/Ck2JBEDLcxA/?img_index=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="video" data-artist="YOUNG $TEELO" data-date="2023-01" data-order="33">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fd2fa549e80530bb29f92c_young-steelo.png" alt="YOUNG $TEELO Photoshoot" loading="lazy" />
             <span class="work-type-tag">Photography</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>YOUNG $TEELO Photoshoot</h3><p>YOUNG $TEELO</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>YOUNG $TEELO Photoshoot</h3><p class="artist-link" data-artist="YOUNG $TEELO">YOUNG $TEELO</p><span class="work-date">Jan 2023</span></div>
           </a>
-          <a href="https://soundcloud.com/maizyf/dead-to-me-explicit-mastered-bounce-1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://soundcloud.com/maizyf/dead-to-me-explicit-mastered-bounce-1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Maizy F" data-date="2024-09" data-order="34">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fd2b080a1722c9119be6ed_image_2024-09-25_140430498-e1761421918140.webp" alt="Dead 2 Me — Maizy F" loading="lazy" />
             <span class="work-type-tag">Song & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Dead 2 Me</h3><p>Maizy F</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Dead 2 Me</h3><p class="artist-link" data-artist="Maizy F">Maizy F</p><span class="work-date">Sep 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=GByVLmiiODw" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+          <a href="https://www.youtube.com/watch?v=GByVLmiiODw" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="Indigo Son" data-date="2023-08" data-order="35">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa82b16330085d876800d9_indigo%20son%20(1).webp" alt="Indigo Son Project" loading="lazy" />
             <span class="work-type-tag">Photography</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Indigo Son Project</h3><p>Indigo Son</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Indigo Son Project</h3><p class="artist-link" data-artist="Indigo Son">Indigo Son</p><span class="work-date">Aug 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/album/4NoevGZ1eva2kMrUOcYdMC" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/4NoevGZ1eva2kMrUOcYdMC" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Florreina Vu" data-date="2023-05" data-order="36">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa7fec02c8f35bdb6ee1fd_floreina%20vu%27.jpeg" alt="You Did It — Florreina Vu" loading="lazy" />
             <span class="work-type-tag">Song</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h3>You Did It</h3><p>Florreina Vu</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h3>You Did It</h3><p class="artist-link" data-artist="Florreina Vu">Florreina Vu</p><span class="work-date">May 2023</span></div>
           </a>
-           <a href="https://www.youtube.com/watch?v=tsW5qU0Qx-I&t=2s" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=tsW5qU0Qx-I&t=2s" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="audio" data-artist="YOUNG $TEELO" data-date="2023-04" data-order="37">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa7f79f570003671e2e9da_my%20love.gif" alt="MY LOVE — YOUNG $TEELO" loading="lazy" />
             <video class="work-video" src="/videos/steelo-my-love.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Song & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>MY LOVE</h3><p>YOUNG $TEELO</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>MY LOVE</h3><p class="artist-link" data-artist="YOUNG $TEELO">YOUNG $TEELO</p><span class="work-date">Apr 2023</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=OVGfQ7dyo7c" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=OVGfQ7dyo7c" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="Indigo Son" data-date="2023-07" data-order="38">
             <img src="/images/indigo-son-be-someone-thumb.png" alt="Be Someone — Indigo Son" loading="lazy" />
             <video class="work-video" src="/videos/indigo-son-be-someone.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Be Someone</h3><p>Indigo Son</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Be Someone</h3><p class="artist-link" data-artist="Indigo Son">Indigo Son</p><span class="work-date">Jul 2023</span></div>
            </a>
-          <a href="https://open.spotify.com/album/5PwYTCrLbWtFKMhLSDse4K" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/5PwYTCrLbWtFKMhLSDse4K" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Sonicrealm" data-date="2023-03" data-order="39">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa79f9adcfb055c6141875_sonic%20boy.webp" alt="Sonic Boy — Sonicrealm" loading="lazy" />
             <span class="work-type-tag">EP & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Sonic Boy</h3><p>Sonicrealm</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Sonic Boy</h3><p class="artist-link" data-artist="Sonicrealm">Sonicrealm</p><span class="work-date">Mar 2023</span></div>
           </a>
-           <a href="https://www.youtube.com/watch?v=xiYRiPtRxcU" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video>
+           <a href="https://www.youtube.com/watch?v=xiYRiPtRxcU" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-hover-video data-category="video" data-artist="ETHDenver" data-date="2025-02" data-order="40">
             <img src="/images/ethdenver-hacking-tower-thumb.jpg" alt="Hacking The Tower — ETHDenver" loading="lazy" />
             <video class="work-video" src="/videos/ethdenver-hacking-tower.mp4" muted playsinline loop preload="metadata"></video>
             <span class="work-type-tag">Art Installation</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Hacking The Tower</h3><p>ETHDenver</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Hacking The Tower</h3><p class="artist-link" data-artist="ETHDenver">ETHDenver</p><span class="work-date">Feb 2025</span></div>
            </a>
-           <a href="https://www.youtube.com/watch?v=MzlnePpnvo0" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+           <a href="https://www.youtube.com/watch?v=MzlnePpnvo0" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="P.J.C" data-date="2023-12" data-order="41">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ede2813da82277288ea23a_ezgif.com-video-to-gif-converter%20(2).gif" alt="ELLA QUIERE BAILA — P.J.C" loading="lazy" />
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>ELLA QUIERE BAILA</h3><p>P.J.C</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>ELLA QUIERE BAILA</h3><p class="artist-link" data-artist="P.J.C">P.J.C</p><span class="work-date">Dec 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/album/5t4cBxUm01aHVMKXImW7E0?si=izZQ3QVaSN66BU29pow8fA" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/5t4cBxUm01aHVMKXImW7E0?si=izZQ3QVaSN66BU29pow8fA" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Straightdizzy" data-date="2023-08" data-order="42">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ede15b98d00c27f4ec7be1_C2-300x300.jpg" alt="Collection 2 — Straightdizzy" loading="lazy" />
             <span class="work-type-tag">EP</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Collection 2</h3><p>Straightdizzy</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Collection 2</h3><p class="artist-link" data-artist="Straightdizzy">Straightdizzy</p><span class="work-date">Aug 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/album/70Ml0FkeN0hKs7PcrdnLCe?si=9zWsJ0MRT-GPRZH475oCRw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/70Ml0FkeN0hKs7PcrdnLCe?si=9zWsJ0MRT-GPRZH475oCRw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Straightdizzy" data-date="2023-02" data-order="43">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ede0b5d3073f2188f9be08_admin-ajax%20(2).jpeg" alt="Collection 1 — Straightdizzy" loading="lazy" />
             <span class="work-type-tag">EP</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Collection 1</h3><p>Straightdizzy</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Collection 1</h3><p class="artist-link" data-artist="Straightdizzy">Straightdizzy</p><span class="work-date">Feb 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/track/4oVoo0jhikBNv6V3fOE3OK?si=d24784bbb9fa407d" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/track/4oVoo0jhikBNv6V3fOE3OK?si=d24784bbb9fa407d" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Roosevelth" data-date="2023-06" data-order="44">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68eddf1b4a8a6e4bbd436874_admin-ajax%20(1).png" alt="Wait — Roosevelth" loading="lazy" />
             <span class="work-type-tag">Song & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Wait</h3><p>Roosevelth</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Wait</h3><p class="artist-link" data-artist="Roosevelth">Roosevelth</p><span class="work-date">Jun 2023</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=gnLYHanlqrU" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+          <a href="https://www.youtube.com/watch?v=gnLYHanlqrU" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="SONICREALM" data-date="2023-05" data-order="45">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68eddd1fa073418df4edeb65_ezgif.com-video-to-gif-converter%20(1).gif" alt="Lead Em To The Lake — SONICREALM" loading="lazy" />
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Lead Em To The Lake</h3><p>SONICREALM</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Lead Em To The Lake</h3><p class="artist-link" data-artist="SONICREALM">SONICREALM</p><span class="work-date">May 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/album/1yKktFw5LhmFQubwQ6tU0A?si=ghwIzhIhShSMpqe9vDmh4w" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/1yKktFw5LhmFQubwQ6tU0A?si=ghwIzhIhShSMpqe9vDmh4w" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="MARV" data-date="2023-01" data-order="46">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68eddbffb702c1f04dd49282_admin-ajax%20(2).webp" alt="M C — Marv" loading="lazy" />
             <span class="work-type-tag">EP</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h3>M C</h3><p>Marv</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><h3>M C</h3><p class="artist-link" data-artist="MARV">Marv</p><span class="work-date">Jan 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/track/48FdIGtXonO8Wll38PUIi0" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/track/48FdIGtXonO8Wll38PUIi0" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Jevy" data-date="2023-07" data-order="47">
             <img src="/images/jevy-privilege-thumb.png" alt="Privilege — Jevy" loading="lazy" />
             <span class="work-type-tag">Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Privilege</h3><p>Privilege Jevy</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Privilege</h3><p class="artist-link" data-artist="Jevy">Jevy</p><span class="work-date">Jul 2023</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=VC-8HlMZpfQ" target="_blank" rel="noopener noreferrer" class="work-card fade-in">
+          <a href="https://www.youtube.com/watch?v=VC-8HlMZpfQ" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="SONICREALM" data-date="2023-04" data-order="48">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68edd7d02e6ba397447c5cc7_gudda1-ezgif.com-video-to-gif-converter.gif" alt="GUDDA — SONICREALM" loading="lazy" />
             <span class="work-type-tag">Music Video</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>GUDDA</h3><p>SONICREALM</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>GUDDA</h3><p class="artist-link" data-artist="SONICREALM">SONICREALM</p><span class="work-date">Apr 2023</span></div>
           </a>
-          <a href="https://open.spotify.com/album/0e5aeV4Kt9hVE28QsjJcQc?si=ljK88I83RYGWHEk3Sjmucw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/0e5aeV4Kt9hVE28QsjJcQc?si=ljK88I83RYGWHEk3Sjmucw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Straightdizzy" data-date="2022-11" data-order="49">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68edd56a93bf414c65930f70_admin-ajax.webp" alt="Swish — Straightdizzy" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Swish</h3><p>Straightdizzy</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Swish</h3><p class="artist-link" data-artist="Straightdizzy">Straightdizzy</p><span class="work-date">Nov 2022</span></div>
           </a>
-          <a href="https://open.spotify.com/album/1LqMeUxrKFLPGEocbiDq1v?si=mMsipWVqSLSPk3pjEchzEA" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/1LqMeUxrKFLPGEocbiDq1v?si=mMsipWVqSLSPk3pjEchzEA" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Straightdizzy" data-date="2022-08" data-order="50">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ed5494a155546a21a729cd_admin-ajax.jpeg" alt="Lost — Straightdizzy" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Lost</h3><p>Straightdizzy</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Lost</h3><p class="artist-link" data-artist="Straightdizzy">Straightdizzy</p><span class="work-date">Aug 2022</span></div>
           </a>
-          <a href="https://open.spotify.com/album/5C93rPWKivVliGhX5CKiT4?si=BNhC99KRTYS5Gw33GQvkJg" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/5C93rPWKivVliGhX5CKiT4?si=BNhC99KRTYS5Gw33GQvkJg" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Straightdizzy" data-date="2022-06" data-order="51">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ed50b5a155546a21a6138c_admin-ajax.png" alt="On Your Own — Straightdizzy" loading="lazy" />
             <span class="work-type-tag">Single</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>On Your Own</h3><p>Straightdizzy</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>On Your Own</h3><p class="artist-link" data-artist="Straightdizzy">Straightdizzy</p><span class="work-date">Jun 2022</span></div>
           </a>
-          <a href="https://open.spotify.com/album/17vEVvrKdexB5n6pdnc1Lf?si=K_T9cYIgSt6BzwDG2nNJUw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in">
+          <a href="https://open.spotify.com/album/17vEVvrKdexB5n6pdnc1Lf?si=K_T9cYIgSt6BzwDG2nNJUw" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="audio" data-artist="Rhozeland" data-date="2022-10" data-order="52">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ed234c00af8fc5265e080b_image_2024-10-08_224006635.png" alt="Rhozeland Music EP" loading="lazy" />
             <span class="work-type-tag">Music EP & Artwork</span>
-            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Rhozeland Music EP</h3><p>Rhozeland</p></div>
+            <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Rhozeland Music EP</h3><p class="artist-link" data-artist="Rhozeland">Rhozeland</p><span class="work-date">Oct 2022</span></div>
           </a>
         </div>
         <div style="text-align:center; margin-top:2.5rem; padding: 0 2rem;">
@@ -461,5 +477,155 @@
 
   </div>
   <script src="/shared.js"></script>
+
+  <!-- Artist Modal -->
+  <div class="artist-modal-overlay" id="artistModal">
+    <div class="artist-modal">
+      <button class="artist-modal-close" id="artistModalClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+      <h2 id="artistModalName"></h2>
+      <p class="artist-stats" id="artistModalStats"></p>
+      <div class="artist-timeline" id="artistTimeline"></div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    var grid = document.getElementById('projectsGrid');
+    var pills = document.querySelectorAll('.filter-pill');
+    var sortBtn = document.getElementById('sortToggle');
+    var modal = document.getElementById('artistModal');
+    var currentFilter = 'all';
+    var currentSort = 'curated';
+
+    // FILTER
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        pills.forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        currentFilter = pill.getAttribute('data-filter');
+        applyFilter();
+      });
+    });
+
+    function applyFilter() {
+      var cards = grid.querySelectorAll('.work-card');
+      cards.forEach(function(card) {
+        var cat = card.getAttribute('data-category') || '';
+        if (currentFilter === 'all' || cat === currentFilter) {
+          card.classList.remove('filtered-out');
+        } else {
+          card.classList.add('filtered-out');
+        }
+      });
+    }
+
+    // SORT
+    sortBtn.addEventListener('click', function() {
+      if (currentSort === 'curated') {
+        currentSort = 'newest';
+        sortBtn.querySelector('span').textContent = 'Newest';
+        sortBtn.setAttribute('data-sort', 'newest');
+      } else {
+        currentSort = 'curated';
+        sortBtn.querySelector('span').textContent = 'Curated';
+        sortBtn.setAttribute('data-sort', 'curated');
+      }
+      applySort();
+    });
+
+    function applySort() {
+      var cards = Array.from(grid.querySelectorAll('.work-card'));
+      if (currentSort === 'curated') {
+        cards.sort(function(a, b) {
+          return (parseInt(a.dataset.order) || 0) - (parseInt(b.dataset.order) || 0);
+        });
+      } else {
+        cards.sort(function(a, b) {
+          return (b.dataset.date || '').localeCompare(a.dataset.date || '');
+        });
+      }
+      cards.forEach(function(card) { grid.appendChild(card); });
+      if (typeof setupHoverVideos === 'function') setupHoverVideos();
+    }
+
+    // ARTIST MODAL
+    grid.addEventListener('click', function(e) {
+      var artistEl = e.target.closest('.artist-link');
+      if (!artistEl) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var artistName = artistEl.getAttribute('data-artist');
+      if (!artistName) return;
+      openArtistModal(artistName);
+    });
+
+    function openArtistModal(name) {
+      var cards = Array.from(grid.querySelectorAll('.work-card'));
+      var matches = cards.filter(function(c) { return c.getAttribute('data-artist') === name; });
+      matches.sort(function(a, b) { return (b.dataset.date || '').localeCompare(a.dataset.date || ''); });
+
+      document.getElementById('artistModalName').textContent = name;
+      document.getElementById('artistModalStats').textContent = matches.length + ' project' + (matches.length !== 1 ? 's' : '') + ' with Rhozeland';
+
+      var timeline = document.getElementById('artistTimeline');
+      timeline.innerHTML = '';
+      matches.forEach(function(card) {
+        var img = card.querySelector('img');
+        var h3 = card.querySelector('.work-body h3');
+        var typeTag = card.querySelector('.work-type-tag');
+        var dateEl = card.querySelector('.work-date');
+        var href = card.getAttribute('href');
+
+        var item = document.createElement('a');
+        item.className = 'artist-timeline-item';
+        item.href = href;
+        item.target = '_blank';
+        item.rel = 'noopener noreferrer';
+
+        var thumb = document.createElement('img');
+        thumb.src = img ? img.src : '';
+        thumb.alt = h3 ? h3.textContent : '';
+        thumb.loading = 'lazy';
+
+        var info = document.createElement('div');
+        info.className = 'artist-timeline-info';
+        var title = document.createElement('h4');
+        title.textContent = h3 ? h3.textContent : '';
+        var type = document.createElement('span');
+        type.className = 'tl-type';
+        type.textContent = typeTag ? typeTag.textContent : '';
+        info.appendChild(title);
+        info.appendChild(type);
+
+        var date = document.createElement('span');
+        date.className = 'artist-timeline-date';
+        date.textContent = dateEl ? dateEl.textContent : '';
+
+        item.appendChild(thumb);
+        item.appendChild(info);
+        item.appendChild(date);
+        timeline.appendChild(item);
+      });
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('artistModalClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  })();
+  </script>
 </body>
 </html>

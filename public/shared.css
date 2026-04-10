@@ -1462,8 +1462,10 @@ button { background: none; border: 0; cursor: pointer; }
   .projects-grid,
   .events-grid,
   .token-grid { grid-template-columns: 1fr; }
-  .projects-grid .work-card:nth-child(n) { grid-row: span 1; }
-  .projects-grid { grid-auto-rows: 300px; }
+  .projects-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 120px; }
+  .projects-grid .work-card:nth-child(n) { grid-column: span 2; grid-row: span 2; }
+  .projects-grid .work-card--portrait { grid-row: span 3; }
+  .projects-grid .work-card--square { grid-row: span 2; }
   .section { padding-left: 1.2rem; padding-right: 1.2rem; }
   .footer { padding-left: 1.2rem; padding-right: 1.2rem; }
   .footer-panel { grid-template-columns: 1fr 1fr; }

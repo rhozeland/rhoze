@@ -486,16 +486,18 @@ button { background: none; border: 0; cursor: pointer; }
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: 140px;
+  grid-auto-flow: dense;
   gap: 4px;
 }
 
-/* Tile sizes: landscape 16:9, square 1:1, portrait 9:16 */
-.work-card--landscape { grid-column: span 2; grid-row: span 2; }  /* 2×2 = wide short */
-.work-card--square    { grid-column: span 2; grid-row: span 2; }  /* 2×2 = equal */
-.work-card--portrait  { grid-column: span 2; grid-row: span 3; }  /* 2×3 = tall */
-
-/* Default: landscape */
+/* Default: all cards span 2 cols × 2 rows (landscape 16:9) */
 .projects-grid .work-card { grid-column: span 2; grid-row: span 2; }
+
+/* Square: same footprint, object-fit handles it */
+.work-card--square { grid-column: span 1 !important; grid-row: span 1 !important; }
+
+/* Portrait 9:16: taller */
+.work-card--portrait { grid-row: span 3 !important; }
 
 /* ===================== PROJECT CARDS ===================== */
 .work-card,

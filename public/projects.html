@@ -477,5 +477,155 @@
 
   </div>
   <script src="/shared.js"></script>
+
+  <!-- Artist Modal -->
+  <div class="artist-modal-overlay" id="artistModal">
+    <div class="artist-modal">
+      <button class="artist-modal-close" id="artistModalClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+      <h2 id="artistModalName"></h2>
+      <p class="artist-stats" id="artistModalStats"></p>
+      <div class="artist-timeline" id="artistTimeline"></div>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    var grid = document.getElementById('projectsGrid');
+    var pills = document.querySelectorAll('.filter-pill');
+    var sortBtn = document.getElementById('sortToggle');
+    var modal = document.getElementById('artistModal');
+    var currentFilter = 'all';
+    var currentSort = 'curated';
+
+    // FILTER
+    pills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        pills.forEach(function(p) { p.classList.remove('active'); });
+        pill.classList.add('active');
+        currentFilter = pill.getAttribute('data-filter');
+        applyFilter();
+      });
+    });
+
+    function applyFilter() {
+      var cards = grid.querySelectorAll('.work-card');
+      cards.forEach(function(card) {
+        var cat = card.getAttribute('data-category') || '';
+        if (currentFilter === 'all' || cat === currentFilter) {
+          card.classList.remove('filtered-out');
+        } else {
+          card.classList.add('filtered-out');
+        }
+      });
+    }
+
+    // SORT
+    sortBtn.addEventListener('click', function() {
+      if (currentSort === 'curated') {
+        currentSort = 'newest';
+        sortBtn.querySelector('span').textContent = 'Newest';
+        sortBtn.setAttribute('data-sort', 'newest');
+      } else {
+        currentSort = 'curated';
+        sortBtn.querySelector('span').textContent = 'Curated';
+        sortBtn.setAttribute('data-sort', 'curated');
+      }
+      applySort();
+    });
+
+    function applySort() {
+      var cards = Array.from(grid.querySelectorAll('.work-card'));
+      if (currentSort === 'curated') {
+        cards.sort(function(a, b) {
+          return (parseInt(a.dataset.order) || 0) - (parseInt(b.dataset.order) || 0);
+        });
+      } else {
+        cards.sort(function(a, b) {
+          return (b.dataset.date || '').localeCompare(a.dataset.date || '');
+        });
+      }
+      cards.forEach(function(card) { grid.appendChild(card); });
+      if (typeof setupHoverVideos === 'function') setupHoverVideos();
+    }
+
+    // ARTIST MODAL
+    grid.addEventListener('click', function(e) {
+      var artistEl = e.target.closest('.artist-link');
+      if (!artistEl) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var artistName = artistEl.getAttribute('data-artist');
+      if (!artistName) return;
+      openArtistModal(artistName);
+    });
+
+    function openArtistModal(name) {
+      var cards = Array.from(grid.querySelectorAll('.work-card'));
+      var matches = cards.filter(function(c) { return c.getAttribute('data-artist') === name; });
+      matches.sort(function(a, b) { return (b.dataset.date || '').localeCompare(a.dataset.date || ''); });
+
+      document.getElementById('artistModalName').textContent = name;
+      document.getElementById('artistModalStats').textContent = matches.length + ' project' + (matches.length !== 1 ? 's' : '') + ' with Rhozeland';
+
+      var timeline = document.getElementById('artistTimeline');
+      timeline.innerHTML = '';
+      matches.forEach(function(card) {
+        var img = card.querySelector('img');
+        var h3 = card.querySelector('.work-body h3');
+        var typeTag = card.querySelector('.work-type-tag');
+        var dateEl = card.querySelector('.work-date');
+        var href = card.getAttribute('href');
+
+        var item = document.createElement('a');
+        item.className = 'artist-timeline-item';
+        item.href = href;
+        item.target = '_blank';
+        item.rel = 'noopener noreferrer';
+
+        var thumb = document.createElement('img');
+        thumb.src = img ? img.src : '';
+        thumb.alt = h3 ? h3.textContent : '';
+        thumb.loading = 'lazy';
+
+        var info = document.createElement('div');
+        info.className = 'artist-timeline-info';
+        var title = document.createElement('h4');
+        title.textContent = h3 ? h3.textContent : '';
+        var type = document.createElement('span');
+        type.className = 'tl-type';
+        type.textContent = typeTag ? typeTag.textContent : '';
+        info.appendChild(title);
+        info.appendChild(type);
+
+        var date = document.createElement('span');
+        date.className = 'artist-timeline-date';
+        date.textContent = dateEl ? dateEl.textContent : '';
+
+        item.appendChild(thumb);
+        item.appendChild(info);
+        item.appendChild(date);
+        timeline.appendChild(item);
+      });
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('artistModalClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  })();
+  </script>
 </body>
 </html>

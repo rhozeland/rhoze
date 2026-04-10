@@ -555,6 +555,9 @@ button { background: none; border: 0; cursor: pointer; }
   object-position: center 32%;
 }
 
+/* Portrait (9:16) card variant */
+.work-card--portrait { grid-row: span 2; }
+
 .work-body {
   position: relative;
   z-index: 2;

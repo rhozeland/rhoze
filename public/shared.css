@@ -1493,7 +1493,8 @@ button { background: none; border: 0; cursor: pointer; }
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 1180px) {
-  .section-head { grid-template-columns: 1fr; }
+  .section-head { flex-direction: column; align-items: flex-start; }
+  .section-head p { text-align: left; max-width: none; }
   .work-grid { grid-template-columns: repeat(2, 1fr); }
   .section-head h2 { max-width: none; }
 }

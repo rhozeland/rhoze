@@ -361,11 +361,16 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .section-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-  gap: 1.5rem 3rem;
-  align-items: end;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
   margin-bottom: 2.4rem;
+}
+.section-head p {
+  max-width: 380px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .section-kicker {

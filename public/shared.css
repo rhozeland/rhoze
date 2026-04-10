@@ -496,28 +496,36 @@ button { background: none; border: 0; cursor: pointer; }
 /* ===================== SERVICE ROWS ===================== */
 .services-rows { display: flex; flex-direction: column; max-width: 900px; margin: 0 auto; }
 .service-row {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr;
+  align-items: start;
   padding: 1.5rem 0;
   border-bottom: 1px solid hsl(var(--line));
+  gap: 1rem;
 }
 .service-row:first-child { border-top: 1px solid hsl(var(--line)); }
 .service-row-left {
-  display: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
+.service-row-left h3 {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: hsl(var(--ink));
+  margin: 0;
+}
+.service-row-left svg { color: hsl(var(--ink)); flex-shrink: 0; }
 .service-row-right {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 4rem;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  display: contents;
 }
 .service-row-right ul { list-style: disc; padding-left: 1.4rem; margin: 0; }
-.service-row-right li { font-size: 1rem; color: hsl(var(--ink)); line-height: 1.8; }
+.service-row-right li { font-size: 0.95rem; color: hsl(var(--ink)); line-height: 1.8; }
 @media (max-width: 768px) {
-  .service-row-right { gap: 0 2rem; max-width: 100%; }
+  .service-row { grid-template-columns: 1fr; gap: 0.5rem; }
+  .service-row-right { display: flex; gap: 2rem; }
 }
 
 /* ===================== PROJECT CARDS ===================== */

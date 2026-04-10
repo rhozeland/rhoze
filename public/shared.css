@@ -367,11 +367,6 @@ button { background: none; border: 0; cursor: pointer; }
   gap: 2rem;
   margin-bottom: 2.4rem;
 }
-.section-head p {
-  max-width: 380px;
-  text-align: right;
-  flex-shrink: 0;
-}
 
 .section-kicker {
   display: inline-block;

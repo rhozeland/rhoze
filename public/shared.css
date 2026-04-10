@@ -489,10 +489,6 @@ button { background: none; border: 0; cursor: pointer; }
   gap: 4px;
 }
 
-.projects-grid .work-card:nth-child(1) {
-  grid-row: span 2;
-}
-
 .projects-grid .work-card:nth-child(4) { grid-row: span 2; }
 .projects-grid .work-card:nth-child(7) { grid-row: span 2; }
 

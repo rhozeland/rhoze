@@ -2484,6 +2484,29 @@
     document.querySelectorAll('.reveal').forEach(function(el) {
       revealObserver.observe(el);
     });
+
+    // Hover-to-play video previews
+    document.querySelectorAll('[data-hover-video]').forEach(function(card) {
+      var video = card.querySelector('.work-video');
+      if (!video) return;
+
+      function startPreview() {
+        card.classList.add('is-hover-preview');
+        video.currentTime = 0;
+        var p = video.play();
+        if (p && typeof p.catch === 'function') p.catch(function(){
+          card.classList.remove('is-hover-preview');
+        });
+      }
+      function stopPreview() {
+        card.classList.remove('is-hover-preview');
+        video.pause();
+        video.currentTime = 0;
+      }
+
+      card.addEventListener('mouseenter', startPreview);
+      card.addEventListener('mouseleave', stopPreview);
+    });
   </script>
 </body>
 </html>

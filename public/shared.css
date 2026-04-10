@@ -484,17 +484,18 @@ button { background: none; border: 0; cursor: pointer; }
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 280px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 140px;
   gap: 4px;
 }
 
-.projects-grid .work-card:nth-child(1) {
-  grid-row: span 2;
-}
+/* Tile sizes: landscape 16:9, square 1:1, portrait 9:16 */
+.work-card--landscape { grid-column: span 2; grid-row: span 2; }  /* 2×2 = wide short */
+.work-card--square    { grid-column: span 2; grid-row: span 2; }  /* 2×2 = equal */
+.work-card--portrait  { grid-column: span 2; grid-row: span 3; }  /* 2×3 = tall */
 
-.projects-grid .work-card:nth-child(4) { grid-row: span 2; }
-.projects-grid .work-card:nth-child(7) { grid-row: span 2; }
+/* Default: landscape */
+.projects-grid .work-card { grid-column: span 2; grid-row: span 2; }
 
 /* ===================== PROJECT CARDS ===================== */
 .work-card,

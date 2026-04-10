@@ -69,7 +69,7 @@ const projects = [
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
-    video: "/videos/fingaz-bombaaa.mp4",
+    video: "/videos/fingaz-bombaaa-v2.mp4",
   },
 ];
 
@@ -79,9 +79,17 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
 
   const handleMouseEnter = () => {
     setIsHovered(true);
+
     if (p.video && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
+      const video = videoRef.current;
+
+      if (video.readyState < 2) {
+        video.load();
+      } else {
+        video.currentTime = Math.min(0.15, video.duration || 0);
+      }
+
+      video.play().catch(() => {});
     }
   };
 
@@ -89,6 +97,7 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
     setIsHovered(false);
     if (p.video && videoRef.current) {
       videoRef.current.pause();
+      videoRef.current.currentTime = 0;
     }
   };
 
@@ -123,8 +132,16 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
           muted
           playsInline
           loop
-          preload="metadata"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+          preload="auto"
+          onCanPlay={() => {
+            if (isHovered && videoRef.current) {
+              if (videoRef.current.currentTime < 0.15) {
+                videoRef.current.currentTime = Math.min(0.15, videoRef.current.duration || 0);
+              }
+              videoRef.current.play().catch(() => {});
+            }
+          }}
+          className={`pointer-events-none absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             isHovered ? "opacity-100" : "opacity-0"
           }`}
         />

@@ -129,22 +129,16 @@ const Hero = () => {
               transition={{ duration: 0.7, delay: 0.08, ease: "easeOut" }}
               className="text-5xl font-semibold leading-[0.92] tracking-tight text-foreground sm:text-6xl lg:text-7xl xl:text-[5.9rem]"
             >
-              Build the release,
-              <br />
-              the rollout,
-              <br />
-              and the world around it.
+              One studio. Every moving part.
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.18, ease: "easeOut" }}
-              className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
+              className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
             >
-              Rhozeland combines studio sessions, content production, launch strategy, creator tools,
-              and community programming so artists and brands can move with one operating system instead
-              of five disconnected vendors.
+              Record, produce, launch, and grow with one system built for creators.
             </motion.p>
 
             <motion.div

@@ -385,6 +385,7 @@ button { background: none; border: 0; cursor: pointer; }
   line-height: 0.98;
   letter-spacing: -0.02em;
   text-wrap: balance;
+  color: hsl(var(--ink, 0 0% 8%));
 }
 
 .section-head > div:first-child {

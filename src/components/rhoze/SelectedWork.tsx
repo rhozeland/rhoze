@@ -13,6 +13,15 @@ const projects = [
     video: "/videos/ooak-the-mask.mp4",
   },
   {
+    title: "Feel Like A Superhero",
+    artist: "MONEE FINGAZ",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=_4FotFv6VWc",
+    image: "/images/fingaz-superhero-thumb.jpg",
+    video: "/videos/fingaz-superhero.mp4",
+  },
+  {
     title: "Mansa Musa",
     artist: "MONEE FINGAZ",
     tag: "Audio & Visual",

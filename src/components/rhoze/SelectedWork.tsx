@@ -40,12 +40,12 @@ const projects = [
     video: "/videos/cozal-holy-water.mp4",
   },
   {
-    title: "LeLongLegs",
-    artist: "Indolestic",
-    tag: "Digital",
+    title: "iiMPCT Media",
+    artist: "iiMPCT Media",
+    tag: "Visual",
     type: "Web Series",
-    href: "https://www.lelonglegs.lol/",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
+    href: "https://www.youtube.com/@iimpctmedia",
+    image: "/images/iimpct-media-thumb.png",
   },
   {
     title: "FATE",
@@ -54,14 +54,6 @@ const projects = [
     type: "Music Video",
     href: "https://www.youtube.com/watch?v=EPnVN9riFtI",
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
-  },
-  {
-    title: "BK Whiskey MMA",
-    artist: "BK Whiskey",
-    tag: "Commercial",
-    type: "Commercial",
-    href: "https://www.instagram.com/p/DKvf2jXMbRs",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e99e0d03b856155a51475_admin-ajax%20(14).png",
   },
   {
     title: "True North Transparency",

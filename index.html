@@ -2693,25 +2693,7 @@
       }
     }
 
-    /* Toybox interactive logo — click to randomize colors */
-    var TB_COLORS = ["#FF6B6B","#FFB347","#FFE066","#6BCB77","#4ECDC4","#45B7D1","#7C83FD","#A66CFF","#F472B6","#FDA4AF","#94A3B8","#FBBF77","#C4B5FD","#2DD4BF","#F8FAFC"];
-    function randomizeToybox() {
-      var pick = function() { return TB_COLORS[Math.floor(Math.random() * TB_COLORS.length)]; };
-      var f = document.getElementById("tb-front");
-      var l = document.getElementById("tb-lid");
-      var s = document.getElementById("tb-side");
-      var t = document.getElementById("tb-tag");
-      if (f) f.setAttribute("fill", pick());
-      if (l) l.setAttribute("fill", pick());
-      if (s) s.setAttribute("fill", pick());
-      if (t) t.setAttribute("fill", pick());
-      var el = document.getElementById("heroToybox");
-      if (el) { el.style.transform = "scale(1.08) rotate(3deg)"; setTimeout(function(){ el.style.transform = ""; }, 300); }
-    }
-    /* Randomize on load for initial color */
-    randomizeToybox();
-
-    function toggleMenu() {
+        function toggleMenu() {
       var menu = document.getElementById("mobileMenu");
 
       var button = document.querySelector(".menu-toggle");

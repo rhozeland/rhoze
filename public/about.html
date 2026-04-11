@@ -175,27 +175,15 @@
             <div class="team-img" style="background:hsl(var(--surface-alt));"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:hsl(var(--muted));">Photo soon</div></div>
             <h4>Vanshika Khanna</h4>
             <p class="team-role">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>
               Marketing Specialist
             </p>
           </div>
         </div>
       </section>
 
-      <!-- Artist Lightbox Modal (About page) -->
-      <div class="artist-modal-overlay" id="aboutArtistModal">
-        <div class="artist-modal">
-          <button class="artist-modal-close" id="aboutArtistModalClose" aria-label="Close">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
-          </button>
-          <div class="artist-modal-header">
-            <h2 id="aboutArtistModalName"></h2>
-            <div class="artist-modal-badges" id="aboutArtistModalBadges"></div>
-          </div>
-          <p class="artist-stats" id="aboutArtistModalStats"></p>
-          <div class="artist-timeline" id="aboutArtistTimeline"></div>
-        </div>
-      </div>
+
+
 
       <!-- TOKENIZED COMPANY -->
       <section class="section" id="tokenized">
@@ -392,6 +380,22 @@
     </footer>
 
   </div>
+
+  <!-- Artist Lightbox Modal (About page) — outside page-shell for proper z-index -->
+  <div class="artist-modal-overlay" id="aboutArtistModal">
+    <div class="artist-modal">
+      <button class="artist-modal-close" id="aboutArtistModalClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+      <div class="artist-modal-header">
+        <h2 id="aboutArtistModalName"></h2>
+        <div class="artist-modal-badges" id="aboutArtistModalBadges"></div>
+      </div>
+      <p class="artist-stats" id="aboutArtistModalStats"></p>
+      <div class="artist-timeline" id="aboutArtistTimeline"></div>
+    </div>
+  </div>
+
   <script src="/shared.js"></script>
   <script>
   (function() {

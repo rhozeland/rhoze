@@ -149,6 +149,13 @@
       100% { background-position: 0% 0%; }
     }
 
+    @keyframes hero-blob-drift {
+      0%, 100% { transform: translate(0%, 0%) scale(1) rotate(0deg); }
+      25% { transform: translate(-4%, 6%) scale(1.06) rotate(5deg); }
+      50% { transform: translate(3%, -3%) scale(0.95) rotate(-3deg); }
+      75% { transform: translate(-2%, 4%) scale(1.03) rotate(2deg); }
+    }
+
     .navbar,
     main,
     .footer {
@@ -2145,6 +2152,8 @@
     <main>
       <section class="hero" aria-labelledby="homepage-title">
         <div class="hero-inner">
+          <!-- Iridescent gradient blob -->
+          <div aria-hidden="true" style="position:absolute; top:-15%; right:-10%; width:clamp(300px,45vw,600px); height:clamp(300px,45vw,600px); border-radius:48% 52% 58% 42% / 42% 56% 44% 58%; background:linear-gradient(135deg, hsl(320 50% 72% / 0.35), hsl(30 60% 72% / 0.3), hsl(175 50% 65% / 0.3), hsl(280 40% 72% / 0.25)); filter:blur(40px); pointer-events:none; z-index:1; animation: hero-blob-drift 14s ease-in-out infinite;"></div>
           <div class="hero-copy">
             <h1 id="homepage-title">Build the world you imagine</h1>
             <p class="hero-desc">The creative ecosystem for launching culture.</p>

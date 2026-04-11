@@ -2636,5 +2636,28 @@
       card.addEventListener('mouseleave', stopPreview);
     });
   </script>
+  <script>
+    (function() {
+      const strip = document.getElementById('workAutoScroll');
+      if (!strip) return;
+      let speed = 0.5;
+      let paused = false;
+      let raf;
+      function step() {
+        if (!paused) {
+          strip.scrollLeft += speed;
+          if (strip.scrollLeft >= strip.scrollWidth - strip.clientWidth) {
+            strip.scrollLeft = 0;
+          }
+        }
+        raf = requestAnimationFrame(step);
+      }
+      strip.addEventListener('mouseenter', function() { paused = true; });
+      strip.addEventListener('mouseleave', function() { paused = false; });
+      strip.addEventListener('touchstart', function() { paused = true; }, { passive: true });
+      strip.addEventListener('touchend', function() { setTimeout(function() { paused = false; }, 3000); });
+      raf = requestAnimationFrame(step);
+    })();
+  </script>
 </body>
 </html>

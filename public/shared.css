@@ -507,7 +507,7 @@ button { background: none; border: 0; cursor: pointer; }
 .projects-grid .work-card:nth-child(7) { grid-row: span 2; }
 .work-card--portrait { grid-row: span 3 !important; }
 .work-card--square {
-  grid-row: span 2;
+  grid-row: span 3;
 }
 
 .work-card--square img,
@@ -515,6 +515,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 @media (min-width: 1480px) {
   .projects-grid { grid-auto-rows: 266px; }
+  .work-card--square { grid-row: span 3; }
 }
 
 /* ===================== SERVICES TABS ===================== */
@@ -732,8 +733,11 @@ button { background: none; border: 0; cursor: pointer; }
 .work-type-tag {
   position: absolute;
   top: 1rem;
-  right: 3.5rem;
+  right: 1rem;
   z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: #fff;
   font-size: 0.8rem;
   font-weight: 500;
@@ -745,6 +749,18 @@ button { background: none; border: 0; cursor: pointer; }
 .work-card:hover .work-type-tag,
 .work-card.is-hover-preview .work-type-tag {
   opacity: 0.9;
+}
+
+/* Hover arrow now inside work-type-tag */
+.work-type-tag::after {
+  content: '';
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid hsla(0 0% 100% / 0.4);
+  border-radius: 50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L17 7'/%3E%3Cpath d='M7 7h10v10'/%3E%3C/svg%3E") no-repeat center;
+  flex-shrink: 0;
 }
 
 /* Hover arrow indicator */
@@ -1306,8 +1322,7 @@ button { background: none; border: 0; cursor: pointer; }
 .work-date {
   display: block;
   font-size: 0.7rem;
-  color: hsl(var(--muted));
-  opacity: 0.7;
+  color: hsla(0 0% 100% / 0.55);
   margin-top: 0.15rem;
 }
 

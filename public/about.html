@@ -11,6 +11,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
+  <style>
+    .btn-pumpfun {
+      display:inline-block; padding:0.85rem 2.2rem; border-radius:0.75rem; font-weight:700; font-size:0.95rem;
+      text-decoration:none; transition: transform 0.2s, box-shadow 0.2s;
+      background: linear-gradient(135deg, #a8e063, #56ab2f);
+      color: #1a1a1a; border:none; cursor:pointer;
+    }
+    .btn-pumpfun:hover { transform:translateY(-2px); box-shadow: 0 6px 24px rgba(86,171,47,0.35); }
+    .dark .btn-pumpfun { color: #111; }
+  </style>
 </head>
 <body class="page-about">
   <div class="gradient-canvas" aria-hidden="true"></div>
@@ -52,45 +62,54 @@
     <main>
 
       <!-- WHO WE ARE -->
-      <section class="section">
-        <div class="section-head">
+      <section class="section" style="padding-bottom:2rem;">
+        <div class="section-head" style="margin-bottom:1.5rem;">
           <div>
             <span class="section-kicker">Who we are</span>
             <h2>We fuel creators, grow their brands, and turn ideas into impact.</h2>
           </div>
-          <div>
-            <p>Built alongside a community of 1,000+ artists, Rhozeland is a creative engine designed to fuel every stage of a creator's journey.</p>
-          </div>
         </div>
 
-        <!-- HISTORY TIMELINE (inline under Who We Are) -->
-        <div class="timeline" style="margin-top:2.5rem;">
+        <!-- HISTORY TIMELINE with photos -->
+        <div class="timeline" style="margin-top:1.5rem;">
           <div class="timeline-item fade-in">
             <div class="timeline-year">2016</div>
-            <div class="timeline-content">
-              <h3>The origin story</h3>
-              <p>Rhozeland was born from a group of friends with a shared passion for creative arts and culture, starting as a small community built on collaboration and self-expression.</p>
+            <div class="timeline-content" style="display:flex; gap:1.25rem; align-items:flex-start;">
+              <div style="flex:1; min-width:0;">
+                <h3>The origin story</h3>
+                <p>Rhozeland was born from a group of friends with a shared passion for creative arts and culture, starting as a small community built on collaboration and self-expression.</p>
+              </div>
+              <img src="/images/timeline-2016.jpg" alt="Rhozeland 2016" loading="lazy" style="width:120px; height:80px; object-fit:cover; border-radius:0.75rem; flex-shrink:0;" />
             </div>
           </div>
           <div class="timeline-item fade-in">
             <div class="timeline-year">2021</div>
-            <div class="timeline-content">
-              <h3>Building the creative hub</h3>
-              <p>We grew into a digital platform offering resources, connections, and services that helped creators bring their ideas to life, building a loyal network through our first Rhozeland hub.</p>
+            <div class="timeline-content" style="display:flex; gap:1.25rem; align-items:flex-start;">
+              <div style="flex:1; min-width:0;">
+                <h3>Building the creative hub</h3>
+                <p>We grew into a digital platform offering resources, connections, and services that helped creators bring their ideas to life, building a loyal network through our first Rhozeland hub.</p>
+              </div>
+              <img src="/images/timeline-2021.jpg" alt="Rhozeland 2021" loading="lazy" style="width:120px; height:80px; object-fit:cover; border-radius:0.75rem; flex-shrink:0;" />
             </div>
           </div>
           <div class="timeline-item fade-in">
             <div class="timeline-year">2023</div>
-            <div class="timeline-content">
-              <h3>Studio launch</h3>
-              <p>We opened our first physical studio space — a creative hub for recording, production, and collaboration under one roof.</p>
+            <div class="timeline-content" style="display:flex; gap:1.25rem; align-items:flex-start;">
+              <div style="flex:1; min-width:0;">
+                <h3>Studio launch</h3>
+                <p>We opened our first physical studio space — a creative hub for recording, production, and collaboration under one roof.</p>
+              </div>
+              <img src="/images/timeline-2023.jpg" alt="Rhozeland 2023" loading="lazy" style="width:120px; height:80px; object-fit:cover; border-radius:0.75rem; flex-shrink:0;" />
             </div>
           </div>
           <div class="timeline-item fade-in">
             <div class="timeline-year">2025</div>
-            <div class="timeline-content">
-              <h3>Powering the next era</h3>
-              <p>Now, with a fully equipped studio, a credit-based subscription model, and an expanded suite of services, we're a creative engine designed to fuel every stage of a creator's journey.</p>
+            <div class="timeline-content" style="display:flex; gap:1.25rem; align-items:flex-start;">
+              <div style="flex:1; min-width:0;">
+                <h3>Powering the next era</h3>
+                <p>Now, with a fully equipped studio, a credit-based subscription model, and an expanded suite of services, we're a creative engine designed to fuel every stage of a creator's journey.</p>
+              </div>
+              <div style="width:120px; height:80px; border-radius:0.75rem; flex-shrink:0; background:hsl(var(--surface-alt)); display:flex; align-items:center; justify-content:center; font-size:0.7rem; color:hsl(var(--muted));">Coming soon</div>
             </div>
           </div>
         </div>
@@ -135,93 +154,98 @@
 
       <!-- TOKENIZED COMPANY -->
       <section class="section" id="tokenized">
-        <div class="section-head">
+        <div class="section-head" style="margin-bottom:1rem;">
           <div>
             <span class="section-kicker">Tokenized company</span>
             <h2>Rhozeland is now a tokenized public company.</h2>
           </div>
           <p>Now, anyone can be a part of Rhozeland through ownership of our official token. The solution is giving it all back — a chance to finally own something meaningful.</p>
         </div>
-
-        <div class="token-grid" style="margin-bottom:3rem;">
-          <div class="token-card fade-in">
-            <h3>For Creatives</h3>
-            <p>Unlock Rhozeland perks: drops, insider access, creator support — if you create, Rhoze is your launchpad to collaborate and build ideas.</p>
-          </div>
-          <div class="token-card fade-in">
-            <h3>For the Trenches</h3>
-            <p>Real support for real people. Grants, causes, and community-first economics. Funding real dreams for artists & creators.</p>
-          </div>
-          <div class="token-card fade-in">
-            <h3>By the People</h3>
-            <p>Rhozeland is a grassroots and organic collective that focuses on empowering the ideas that are built on dreams.</p>
-          </div>
-          <div class="token-card fade-in">
-            <h3>Built Different</h3>
-            <p>Clothing drops, services marketplace, artist tools — backed by a deflationary flywheel. Revenue flows back to the ecosystem.</p>
-          </div>
-        </div>
       </section>
 
-
-
-
-      <!-- FLYWHEEL -->
-      <section class="section flywheel-section">
+      <!-- FLYWHEEL — redesigned -->
+      <section class="section flywheel-section" style="padding-top:1rem;">
         <span class="section-kicker">The Flywheel</span>
-        <h2 class="flywheel-heading">Every piece feeds the next.</h2>
-        <p class="flywheel-intro">Revenue in, value out, community first.</p>
+        <h2 class="flywheel-heading">How the ecosystem works</h2>
+        <p class="flywheel-intro">A self-reinforcing creative economy where every action — creating, proving, spending — powers the next.</p>
 
-        <div class="flywheel-visual fade-in" style="max-width:28rem; margin:0 auto 2.5rem;">
-          <svg viewBox="0 0 400 400" style="width:100%; height:auto;" role="img" aria-label="Revenue flywheel diagram">
-            <g class="flywheel-ring">
-              <circle cx="200" cy="200" r="175" fill="none" stroke="hsl(var(--line))" stroke-width="1"></circle>
-              <circle cx="200" cy="200" r="115" fill="none" stroke="hsl(var(--line))" stroke-width="1"></circle>
-              <path d="M200 25 A175 175 0 0 1 375 200 L315 200 A115 115 0 0 0 200 85 Z" fill="hsl(var(--accent-blue) / 0.22)"></path>
-              <path d="M375 200 A175 175 0 0 1 200 375 L200 315 A115 115 0 0 0 315 200 Z" fill="hsl(var(--accent-blue) / 0.14)"></path>
-              <path d="M200 375 A175 175 0 0 1 25 200 L85 200 A115 115 0 0 0 200 315 Z" fill="hsl(var(--accent-blue) / 0.10)"></path>
-              <path d="M25 200 A175 175 0 0 1 200 25 L200 85 A115 115 0 0 0 85 200 Z" fill="hsl(var(--accent-blue) / 0.18)"></path>
-              <defs>
-                <marker id="fwArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                  <path d="M0 0L8 4L0 8Z" fill="hsl(var(--accent-blue) / 0.55)"></path>
-                </marker>
-              </defs>
-              <path d="M310 105 A130 130 0 0 1 340 175" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-              <path d="M295 295 A130 130 0 0 1 225 340" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-              <path d="M90 295 A130 130 0 0 1 60 225" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-              <path d="M105 105 A130 130 0 0 1 175 60" fill="none" stroke="hsl(var(--accent-blue) / 0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#fwArr)"></path>
-              <text x="280" y="120" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Revenue</text>
-              <text x="310" y="270" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Buybacks</text>
-              <text x="120" y="310" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Burns</text>
-              <text x="90" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">Value</text>
+        <div class="flywheel-redesign fade-in" style="max-width:28rem; margin:2rem auto 3rem; position:relative;">
+          <svg viewBox="0 0 500 500" style="width:100%; height:auto;" role="img" aria-label="$RHOZE Flywheel: Earn, Prove, Grow, Reinvest">
+            <!-- Outer circle -->
+            <circle cx="250" cy="250" r="200" fill="none" stroke="hsl(var(--line))" stroke-width="1" opacity="0.4"></circle>
+            <!-- Dashed colored arc segments rotating -->
+            <g style="animation: flywheel-spin 30s linear infinite; transform-origin: 250px 250px;">
+              <path d="M250 95 A155 155 0 0 1 405 250" fill="none" stroke="hsl(280 60% 70%)" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"></path>
+              <path d="M405 250 A155 155 0 0 1 250 405" fill="none" stroke="hsl(175 60% 55%)" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"></path>
+              <path d="M250 405 A155 155 0 0 1 95 250" fill="none" stroke="hsl(30 70% 60%)" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"></path>
+              <path d="M95 250 A155 155 0 0 1 250 95" fill="none" stroke="hsl(340 60% 65%)" stroke-width="2" stroke-dasharray="8 6" opacity="0.6"></path>
             </g>
-            <circle cx="200" cy="200" r="80" fill="hsl(var(--accent-blue))"></circle>
-            <text x="200" y="192" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="28" letter-spacing="-0.04em" fill="white">Growth</text>
-            <text x="200" y="216" text-anchor="middle" font-family="Inter, sans-serif" font-weight="400" font-size="11" fill="white" opacity="0.8">
-              <tspan x="200" dy="0">Every loop sends value</tspan>
-              <tspan x="200" dy="14">back to the ecosystem.</tspan>
-            </text>
+
+            <!-- Center content -->
+            <text x="250" y="242" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="22" letter-spacing="-0.04em" fill="hsl(var(--ink))">$RHOZE</text>
+            <text x="250" y="264" text-anchor="middle" font-family="Inter,sans-serif" font-weight="500" font-size="11" letter-spacing="0.15em" fill="hsl(var(--muted))">FLYWHEEL</text>
+
+            <!-- Node: Earn (top) -->
+            <rect x="215" y="48" width="70" height="50" rx="12" fill="hsl(var(--surface))" stroke="hsl(var(--line))" stroke-width="1"></rect>
+            <text x="250" y="80" text-anchor="middle" font-size="20" fill="hsl(280 60% 60%)">&#10024;</text>
+            <text x="250" y="118" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="14" fill="hsl(var(--ink))">Earn</text>
+
+            <!-- Node: Prove (right) -->
+            <rect x="400" y="225" width="70" height="50" rx="12" fill="hsl(var(--surface))" stroke="hsl(var(--line))" stroke-width="1"></rect>
+            <text x="435" y="257" text-anchor="middle" font-size="20" fill="hsl(175 60% 50%)">&#9733;</text>
+            <text x="435" y="296" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="14" fill="hsl(var(--ink))">Prove</text>
+
+            <!-- Node: Grow (bottom) -->
+            <rect x="215" y="398" width="70" height="50" rx="12" fill="hsl(var(--surface))" stroke="hsl(var(--line))" stroke-width="1"></rect>
+            <text x="250" y="430" text-anchor="middle" font-size="20" fill="hsl(30 70% 55%)">&#8599;</text>
+            <text x="250" y="468" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="14" fill="hsl(var(--ink))">Grow</text>
+
+            <!-- Node: Reinvest (left) -->
+            <rect x="30" y="225" width="70" height="50" rx="12" fill="hsl(var(--surface))" stroke="hsl(var(--line))" stroke-width="1"></rect>
+            <text x="65" y="257" text-anchor="middle" font-size="20" fill="hsl(340 60% 60%)">&#8644;</text>
+            <text x="65" y="296" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="14" fill="hsl(var(--ink))">Reinvest</text>
           </svg>
         </div>
 
-        <div class="flywheel-grid">
-          <div class="token-card fade-in"><h3>Clothing Drops</h3><p>Real fashion, real revenue flowing back to the ecosystem.</p></div>
-          <div class="token-card fade-in"><h3>Marketplace</h3><p>Hire creators, freelancers & builders — all powered by $RHOZE.</p></div>
-          <div class="token-card fade-in"><h3>Artist App</h3><p>Tools for musicians, visual artists & content creators to earn and grow.</p></div>
-          <div class="token-card fade-in"><h3>Studio Buybacks</h3><p>Revenue fuels token buybacks, strengthening the floor.</p></div>
-          <div class="token-card fade-in"><h3>Burns</h3><p>Deflationary by design. Supply shrinks as the ecosystem grows.</p></div>
-          <div class="token-card fade-in"><h3>Grants & Causes</h3><p>Funding the dreamers, supporting the communities that need it most.</p></div>
+        <!-- Steps breakdown -->
+        <div style="display:flex; flex-direction:column; gap:1rem; max-width:600px; margin:0 auto;">
+          <div class="token-card fade-in" style="border-left:3px solid hsl(280 60% 65%); padding-left:1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+              <span style="font-size:0.75rem; font-weight:700; color:hsl(280 60% 60%);">01</span>
+              <h3 style="margin:0;">Create & Contribute</h3>
+            </div>
+            <p>Post to Flow, complete milestones, review peers, or join Drop Rooms. Every meaningful action earns $RHOZE credits automatically.</p>
+          </div>
+          <div class="token-card fade-in" style="border-left:3px solid hsl(175 60% 50%); padding-left:1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+              <span style="font-size:0.75rem; font-weight:700; color:hsl(175 60% 50%);">02</span>
+              <h3 style="margin:0;">Build Reputation</h3>
+            </div>
+            <p>Each reward generates a Contribution Proof — a tamper-proof record of your work. Anchor it on Solana for a portable, verifiable creative identity.</p>
+          </div>
+          <div class="token-card fade-in" style="border-left:3px solid hsl(30 70% 55%); padding-left:1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+              <span style="font-size:0.75rem; font-weight:700; color:hsl(30 70% 55%);">03</span>
+              <h3 style="margin:0;">Spend & Unlock</h3>
+            </div>
+            <p>Use $RHOZE to book studios, hire talent, and purchase marketplace offerings. Higher token tiers unlock premium perks and visibility.</p>
+          </div>
+          <div class="token-card fade-in" style="border-left:3px solid hsl(340 60% 65%); padding-left:1.5rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+              <span style="font-size:0.75rem; font-weight:700; color:hsl(340 60% 65%);">04</span>
+              <h3 style="margin:0;">Revenue Sharing</h3>
+            </div>
+            <p>When your work sells, revenue splits automatically between creator, curator, and a 10% buyback pool that strengthens the ecosystem.</p>
+          </div>
         </div>
       </section>
 
       <!-- TOKENOMICS -->
       <section class="section">
-        <div class="section-head" style="justify-content:center; text-align:center;">
-          <div>
-            <span class="section-kicker">Allocation</span>
-            <h2 style="max-width:none;">Tokenomics</h2>
-            <p style="color:hsl(var(--muted)); margin-top:0.5rem;">Full transparency on supply allocation. Every wallet is public, every move is announced.</p>
-          </div>
+        <div style="text-align:center; margin-bottom:2rem;">
+          <span class="section-kicker" style="display:block; text-align:center;">Allocation</span>
+          <h2 style="font-family:'Inter',system-ui,sans-serif; font-size:clamp(1.75rem,4vw,2.5rem); font-weight:800; letter-spacing:-0.04em; margin:0.5rem auto 0; text-align:center;">Tokenomics</h2>
+          <p style="color:hsl(var(--muted)); margin:0.5rem auto 0; max-width:36rem; text-align:center;">Full transparency on supply allocation. Every wallet is public, every move is announced.</p>
         </div>
         <div style="display:flex; flex-direction:column; gap:1rem; max-width:700px; margin:0 auto;">
           <div class="token-card fade-in">
@@ -232,11 +256,15 @@
               24% locked, 12 months left
             </div>
             <p>We are seriously committed to the project with many areas to showcase from the talent within our network.</p>
-            <div class="address-box">
+            <div class="address-box" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
               <code>6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr</code>
               <button class="copy-btn" onclick="copyAddress(this,'6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr')" aria-label="Copy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
               </button>
+              <a href="https://solscan.io/account/6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.75rem; font-weight:600; color:hsl(var(--accent-blue)); text-decoration:none; padding:0.25rem 0.6rem; border-radius:0.375rem; border:1px solid hsl(var(--accent-blue) / 0.3); transition:background 0.2s;" onmouseover="this.style.background='hsl(var(--accent-blue) / 0.08)'" onmouseout="this.style.background='transparent'">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                Solscan
+              </a>
             </div>
           </div>
           <div class="token-card fade-in">
@@ -247,22 +275,30 @@
               6.5% locked, 3 months left
             </div>
             <p>Raising awareness through livestreaming and developing Rhozeland as a credible and recognizable brand.</p>
-            <div class="address-box">
+            <div class="address-box" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
               <code>6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C</code>
               <button class="copy-btn" onclick="copyAddress(this,'6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C')" aria-label="Copy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
               </button>
+              <a href="https://solscan.io/account/6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.75rem; font-weight:600; color:hsl(var(--accent-blue)); text-decoration:none; padding:0.25rem 0.6rem; border-radius:0.375rem; border:1px solid hsl(var(--accent-blue) / 0.3); transition:background 0.2s;" onmouseover="this.style.background='hsl(var(--accent-blue) / 0.08)'" onmouseout="this.style.background='transparent'">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                Solscan
+              </a>
             </div>
           </div>
           <div class="token-card fade-in">
             <h3>Airdrop Wallet</h3>
             <div class="pct">9.54%</div>
             <p>Providing supply to real-world participants of our network and studio.</p>
-            <div class="address-box">
+            <div class="address-box" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
               <code>USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs</code>
               <button class="copy-btn" onclick="copyAddress(this,'USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs')" aria-label="Copy">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
               </button>
+              <a href="https://solscan.io/account/USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.3rem; font-size:0.75rem; font-weight:600; color:hsl(var(--accent-blue)); text-decoration:none; padding:0.25rem 0.6rem; border-radius:0.375rem; border:1px solid hsl(var(--accent-blue) / 0.3); transition:background 0.2s;" onmouseover="this.style.background='hsl(var(--accent-blue) / 0.08)'" onmouseout="this.style.background='transparent'">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                Solscan
+              </a>
             </div>
           </div>
         </div>
@@ -279,9 +315,6 @@
         <a href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf" target="_blank" rel="noopener noreferrer" style="display:inline-block; margin-top:1rem; font-size:0.85rem; color:hsl(var(--muted)); text-decoration:underline;">View full chart on DexScreener →</a>
       </section>
 
-
-
-
       <!-- SUPPORT CTA -->
       <section class="support-cta">
         <div style="max-width:36rem; margin:0 auto; padding:0 1.5rem;">
@@ -292,7 +325,7 @@
             <code>7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</code>
             <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
           </button>
-          <div><a href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump" target="_blank" class="btn-primary">Buy on Pump.Fun</a></div>
+          <div><a href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump" target="_blank" class="btn-pumpfun">Buy on Pump.Fun</a></div>
         </div>
       </section>
     </main>

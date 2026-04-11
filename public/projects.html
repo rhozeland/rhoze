@@ -604,7 +604,7 @@
 
     function openArtistModal(name) {
       var cards = Array.from(grid.querySelectorAll('.work-card'));
-      var matches = cards.filter(function(c) { return c.getAttribute('data-artist') === name; });
+      var matches = cards.filter(function(c) { var a = c.getAttribute('data-artist') || ''; return a === name || a.split(',').indexOf(name) !== -1; });
       matches.sort(function(a, b) { return (b.dataset.date || '').localeCompare(a.dataset.date || ''); });
 
       document.getElementById('artistModalName').textContent = name;

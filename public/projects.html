@@ -579,12 +579,18 @@
     var currentSearch = '';
     var currentSort = 'portfolio';
     var badgeMap = {
-      'Indoléstic': [{ label: 'OG', tone: 'og' }],
-      'MARV': [{ label: 'OG', tone: 'og' }, { label: 'Managed', tone: 'managed' }],
-      'Straightdizzy': [{ label: 'OG', tone: 'og' }, { label: 'Managed', tone: 'managed' }],
-      'Roosevelth': [{ label: 'OG', tone: 'og' }],
-      'Cozal': [{ label: 'Managed', tone: 'managed' }],
-      'Rhozeland': [{ label: 'Founding Community', tone: 'rhoze' }]
+      'Indoléstic': [{ label: 'Founder', tone: 'founder', desc: 'Helped build and shape Rhozeland from the ground up.' }, { label: 'In-House', tone: 'inhouse', desc: 'Represented by Rhozeland — creating and releasing through the collective.' }],
+      'MARV': [{ label: 'Founder', tone: 'founder', desc: 'Helped build and shape Rhozeland from the ground up.' }, { label: 'In-House', tone: 'inhouse', desc: 'Represented by Rhozeland — creating and releasing through the collective.' }],
+      'Straightdizzy': [{ label: 'Founder', tone: 'founder', desc: 'Helped build and shape Rhozeland from the ground up.' }, { label: 'In-House', tone: 'inhouse', desc: 'Represented by Rhozeland — creating and releasing through the collective.' }],
+      'Roosevelth': [{ label: 'OG', tone: 'og', desc: 'Early adopter and supporter of the Rhozeland community.' }],
+      'Cozal': [{ label: 'In-House', tone: 'inhouse', desc: 'Represented by Rhozeland — creating and releasing through the collective.' }],
+      'Rhozeland': [{ label: 'Founding Community', tone: 'rhoze', desc: 'The collective behind the ecosystem.' }]
+    };
+    var badgeIcons = {
+      og: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+      founder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 7 7 7 7"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5C17 4 17 7 17 7"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+      inhouse: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+      rhoze: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>'
     };
 
     function getOrder(card) {
@@ -683,7 +689,15 @@
       badges.forEach(function(badge) {
         var el = document.createElement('span');
         el.className = 'artist-badge artist-badge--' + badge.tone;
-        el.textContent = badge.label;
+        el.innerHTML = (badgeIcons[badge.tone] || '') + '<span>' + badge.label + '</span>';
+        if (badge.desc) {
+          var tip = document.createElement('span');
+          tip.className = 'badge-tooltip';
+          tip.textContent = badge.desc;
+          el.appendChild(tip);
+          el.style.position = 'relative';
+          el.style.cursor = 'default';
+        }
         badgeWrap.appendChild(el);
       });
     }

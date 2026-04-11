@@ -2177,8 +2177,15 @@
         <!-- Documentary + metric (not a card) -->
         <div style="display:grid; grid-template-columns:1fr; gap:0.75rem; margin-bottom:0.75rem;">
           <div style="display:grid; gap:0.75rem;" class="story-doc-row">
-            <div class="card-video-wrap" style="border-radius:var(--radius-lg); overflow:hidden; border:1px solid hsl(var(--line));">
-              <iframe src="https://www.youtube.com/embed/DOdvB1A5r80?autoplay=1&mute=1&loop=1&playlist=DOdvB1A5r80&controls=0&showinfo=0&rel=0&modestbranding=1" title="The Rhozeland Documentary" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+<div class="card-video-wrap" style="border-radius:var(--radius-lg); overflow:hidden; border:1px solid hsl(var(--line)); position:relative;">
+              <iframe id="docIframe" src="https://www.youtube.com/embed/DOdvB1A5r80?autoplay=0&mute=1&loop=1&playlist=DOdvB1A5r80&controls=0&showinfo=0&rel=0&modestbranding=1&enablejsapi=1" title="The Rhozeland Documentary" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+              <!-- Play overlay -->
+              <div id="docPlayOverlay" onclick="document.getElementById('docIframe').src=document.getElementById('docIframe').src.replace('autoplay=0','autoplay=1');this.style.opacity='0';this.style.pointerEvents='none';" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.55) 100%);transition:opacity 0.4s ease;z-index:2;">
+                <div style="width:3.2rem;height:3.2rem;border-radius:50%;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;transition:transform 0.25s ease,background 0.25s ease;" onmouseover="this.style.transform='scale(1.1)';this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.transform='scale(1)';this.style.background='rgba(255,255,255,0.15)'">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="6,3 20,12 6,21"/></svg>
+                </div>
+                <span style="font-size:0.7rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.8);">Songwriting Camp Documentary</span>
+              </div>
             </div>
              <div style="display:flex; flex-direction:column; justify-content:center; gap:0.2rem;">
                <span class="section-kicker">Since 2016</span>

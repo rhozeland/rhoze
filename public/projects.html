@@ -105,10 +105,21 @@
           <input id="projectSearch" type="search" placeholder="Search projects, artists, or release types" aria-label="Search projects" />
         </div>
         <div class="filter-right">
-          <button class="sort-toggle" id="sortToggle" data-sort="portfolio" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-            <span>Portfolio Flow</span>
-          </button>
+          <div class="filter-dropdown" id="filterDropdown">
+            <button class="filter-dropdown-btn" id="filterDropdownBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              <span id="filterDropdownLabel">Portfolio Flow</span>
+              <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="filter-dropdown-menu" id="filterDropdownMenu">
+              <button class="filter-dropdown-item active" data-filter="portfolio" type="button">Portfolio Flow</button>
+              <button class="filter-dropdown-item" data-filter="newest" type="button">Newest First</button>
+              <div class="filter-dropdown-divider"></div>
+              <button class="filter-dropdown-item" data-filter="video" type="button">Video</button>
+              <button class="filter-dropdown-item" data-filter="audio" type="button">Audio</button>
+              <button class="filter-dropdown-item" data-filter="photo" type="button">Photo</button>
+            </div>
+          </div>
           <button class="shuffle-toggle" id="shuffleToggle" type="button" aria-label="Shuffle project layout">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M16 3h5v5"></path><path d="M4 20 21 3"></path><path d="M21 16v5h-5"></path><path d="m15 15 6 6"></path><path d="M4 4h5"></path><path d="m9 4 3 3"></path></svg>
             <span>Shake it up</span>
@@ -375,12 +386,12 @@
             <span class="work-type-tag">Full Release</span>
             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>For The Dot</h3><p class="artist-link" data-artist="Luckz">Luckz</p><span class="work-date">Apr 2023</span></div>
           </a>
-          <a href="https://www.instagram.com/p/Ck2JBEDLcxA/?img_index=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="video" data-artist="YOUNG $TEELO" data-date="2023-01" data-order="33">
+          <a href="https://www.instagram.com/p/Ck2JBEDLcxA/?img_index=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="photo" data-artist="YOUNG $TEELO" data-date="2023-01" data-order="33">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fd2fa549e80530bb29f92c_young-steelo.png" alt="Photoshoot — YOUNG $TEELO" loading="lazy" />
             <span class="work-type-tag">Photography</span>
             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Photoshoot</h3><p class="artist-link" data-artist="YOUNG $TEELO">YOUNG $TEELO</p><span class="work-date">Jan 2023</span></div>
           </a>
-          <a href="https://www.instagram.com/p/DWp2HNMDc50/?img_index=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="video" data-artist="YOUNG $TEELO" data-date="2026-04" data-order="53">
+          <a href="https://www.instagram.com/p/DWp2HNMDc50/?img_index=1" target="_blank" rel="noopener noreferrer" class="work-card work-card--square fade-in" data-category="photo" data-artist="YOUNG $TEELO" data-date="2026-04" data-order="53">
             <img src="/images/steelo-photoshoot-2.png" alt="Photoshoot — YOUNG $TEELO" loading="lazy" />
             <span class="work-type-tag">Photography</span>
             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Photoshoot</h3><p class="artist-link" data-artist="YOUNG $TEELO">YOUNG $TEELO</p><span class="work-date">Apr 2026</span></div>
@@ -390,7 +401,7 @@
             <span class="work-type-tag">Song & Artwork</span>
             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Dead 2 Me</h3><p class="artist-link" data-artist="Maizy F">Maizy F</p><span class="work-date">Sep 2024</span></div>
           </a>
-          <a href="https://www.youtube.com/watch?v=GByVLmiiODw" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="video" data-artist="Indigo Son" data-date="2022-06" data-order="35">
+          <a href="https://www.youtube.com/watch?v=GByVLmiiODw" target="_blank" rel="noopener noreferrer" class="work-card fade-in" data-category="photo" data-artist="Indigo Son" data-date="2022-06" data-order="35">
             <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa82b16330085d876800d9_indigo%20son%20(1).webp" alt="Indigo Son — Self-Titled" loading="lazy" />
             <span class="work-type-tag">Photography</span>
             <div class="work-body"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Indigo Son</h3><p class="artist-link" data-artist="Indigo Son">Indigo Son</p><span class="work-date">Jun 2022</span></div>

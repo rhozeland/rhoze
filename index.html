@@ -2622,11 +2622,11 @@
     /* Toybox interactive logo — click to randomize colors */
     var TB_COLORS = ["#FF6B6B","#FFB347","#FFE066","#6BCB77","#4ECDC4","#45B7D1","#7C83FD","#A66CFF","#F472B6","#FDA4AF","#94A3B8","#FBBF77","#C4B5FD","#2DD4BF","#F8FAFC"];
     function randomizeToybox() {
-      var pick = function() { return TB_COLORS[Math.floor(Math.random() * TB_COLORS.length)]; };
-      document.getElementById("tb-front").setAttribute("fill", pick());
-      document.getElementById("tb-lid").setAttribute("fill", pick());
-      document.getElementById("tb-side").setAttribute("fill", pick());
-      document.getElementById("tb-tag").setAttribute("fill", pick());
+      var hue = Math.floor(Math.random() * 360);
+      var img = document.getElementById("toyboxImg");
+      if (img) {
+        img.style.filter = "hue-rotate(" + hue + "deg) saturate(1.4) brightness(1.1)";
+      }
       var el = document.getElementById("heroToybox");
       if (el) { el.style.transform = "scale(1.08) rotate(3deg)"; setTimeout(function(){ el.style.transform = ""; }, 300); }
     }

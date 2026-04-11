@@ -33,8 +33,22 @@ function toggleTheme() {
 }
 
 // Mobile menu
+function toggleMenu() {
+  var menu = document.getElementById('mobileMenu');
+  var button = document.querySelector('.menu-toggle');
+  var isOpen = menu.classList.toggle('open');
+  if (button) button.setAttribute('aria-expanded', String(isOpen));
+}
+
+function closeMenu() {
+  var menu = document.getElementById('mobileMenu');
+  var button = document.querySelector('.menu-toggle');
+  menu.classList.remove('open');
+  if (button) button.setAttribute('aria-expanded', 'false');
+}
+
 function closeMobile() {
-  document.getElementById('mobileMenu').classList.remove('open');
+  closeMenu();
 }
 
 // Copy address

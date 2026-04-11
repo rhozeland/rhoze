@@ -2020,6 +2020,8 @@
       .work-grid,
       .event-list { grid-template-columns: 1fr; }
       .section { padding-left: 1.2rem; padding-right: 1.2rem; }
+      .card[style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+      .creator-os-preview { padding: 0 1.2rem 1.2rem !important; }
     }
 
     @media (max-width: 560px) {
@@ -2166,11 +2168,6 @@
         <div class="section-head" style="grid-template-columns:1fr; align-items:start;">
           <div>
             <span class="section-kicker">Our story</span>
-            <h2>What started as a group of friends<br>became a launchpad.</h2>
-            <a class="section-link" href="/about.html">
-              Learn more about us
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-            </a>
           </div>
         </div>
 
@@ -2184,7 +2181,12 @@
               <span class="section-kicker">Since 2016</span>
               <div class="stat-value">1000+</div>
               <h3 style="font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.35rem; font-weight:500; line-height:1.05; letter-spacing:-0.01em;">Creator collaborations</h3>
-              <p style="color:hsl(var(--muted)); font-size:0.97rem; line-height:1.75;">Artists, brands, founders, and culture builders have shaped content, campaigns, and launch moments with Rhozeland.</p>
+              <p style="color:hsl(var(--muted)); font-size:0.97rem; line-height:1.75;">Artists, brands, founders, and culture builders have shaped content, campaigns, and launch moments with Rhozeland.
+                <a class="section-link" href="/about.html" style="margin-top:0.5rem;">
+                  Learn more about us
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                </a>
+              </p>
             </div>
           </div>
         </div>
@@ -2213,27 +2215,74 @@
             <span class="ticker-title">RHOZE Creative Social</span>
             <span class="ticker-tag">Social</span>
           </a>
+          <a class="events-ticker-row events-ticker-row--link" href="/events.html">
+            <span class="ticker-date">Mar 8</span>
+            <span class="ticker-title">RHOZE x TO Musicians Showcase</span>
+            <span class="ticker-tag">Showcase</span>
+          </a>
+          <a class="events-ticker-row events-ticker-row--link" href="/events.html">
+            <span class="ticker-date">Feb 14</span>
+            <span class="ticker-title">Rhozeland Valentine's Pop-Up</span>
+            <span class="ticker-tag">Pop-Up</span>
+          </a>
+          <a class="events-ticker-row events-ticker-row--link" href="/events.html">
+            <span class="ticker-date">Jan 25</span>
+            <span class="ticker-title">Frequency 01 — Launch Night</span>
+            <span class="ticker-tag">Launch</span>
+          </a>
           <div class="events-ticker-divider"></div>
           <div class="events-ticker-row">
             <a class="hero-primary" style="font-size:0.82rem; padding:0.55rem 1rem;" href="/events.html">All events <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:0.8rem;height:0.8rem;"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
           </div>
         </div>
 
-        <div class="capability-grid">
-          <a class="card card--link" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" style="justify-content:center;">
-            <div>
-              <h3>Creator OS</h3>
-              <p class="card-copy">Our digital platform where creators manage projects, releases, and collaborations.</p>
+        <!-- Creator OS (full width with visual) -->
+        <a class="card" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" style="min-height:auto; padding:0; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; cursor:pointer;">
+          <div style="padding:clamp(1.5rem,3vw,2.2rem); display:flex; flex-direction:column; justify-content:center; gap:0.5rem;">
+            <h3 style="font-size:1.5rem;">Creator OS</h3>
+            <p class="card-copy">What started as a group of friends became a launchpad. Our digital platform where creators manage projects, releases, and collaborations.</p>
+            <span class="section-link" style="margin-top:0.6rem;">
+              Explore the app
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+            </span>
+          </div>
+          <div class="creator-os-preview" style="position:relative; padding:1.2rem 1.2rem 0 0; display:flex; flex-direction:column; gap:0.6rem; overflow:hidden;">
+            <!-- App mockup: 3 mini cards inspired by the Creator OS screens -->
+            <div style="border:1px solid hsl(var(--line)); border-radius:16px; background:hsl(var(--surface-card)); padding:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <div style="width:2rem; height:2rem; border-radius:10px; background:hsl(var(--surface-alt)); display:flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:1rem; height:1rem; color:hsl(var(--muted));"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:0.82rem; font-weight:600;">Studios</div>
+                  <div style="font-size:0.68rem; color:hsl(var(--muted));">Book creative spaces</div>
+                </div>
+              </div>
             </div>
-          </a>
-
-          <a class="card card--link" href="/events.html" style="justify-content:center;">
-            <div>
-              <h3>Public Moments</h3>
-              <p class="card-copy">Showcases, launches, activations, and community touchpoints that keep creators connected.</p>
+            <div style="border:1px solid hsl(var(--line)); border-radius:16px; background:hsl(var(--surface-card)); padding:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <div style="width:2rem; height:2rem; border-radius:10px; background:hsl(var(--surface-alt)); display:flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:1rem; height:1rem; color:hsl(var(--muted));"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:0.82rem; font-weight:600;">Projects</div>
+                  <div style="font-size:0.68rem; color:hsl(var(--muted));">Manage work & budgets</div>
+                </div>
+              </div>
             </div>
-          </a>
-        </div>
+            <div style="border:1px solid hsl(var(--line)); border-radius:16px; background:hsl(var(--surface-card)); padding:1rem; display:flex; flex-direction:column; gap:0.5rem;">
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <div style="width:2rem; height:2rem; border-radius:10px; background:hsl(var(--surface-alt)); display:flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:1rem; height:1rem; color:hsl(var(--muted));"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                  <div style="font-size:0.82rem; font-weight:600;">Creators</div>
+                  <div style="font-size:0.68rem; color:hsl(var(--muted));">Hire freelance talent</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
       </section>
 
       <section class="section reveal">

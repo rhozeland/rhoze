@@ -1051,6 +1051,28 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .work-scroll-wrap {
+      position: relative;
+    }
+    .work-scroll-wrap::before,
+    .work-scroll-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .work-scroll-wrap::before {
+      left: 0;
+      background: linear-gradient(to right, hsl(var(--bg)), transparent);
+    }
+    .work-scroll-wrap::after {
+      right: 0;
+      background: linear-gradient(to left, hsl(var(--bg)), transparent);
+    }
+
     .work-scroll-strip {
       display: flex;
       gap: 1rem;
@@ -2436,6 +2458,7 @@
             </div>
           </div>
 
+          <div class="work-scroll-wrap">
           <div class="work-scroll-strip" id="workAutoScroll">
             <!-- Photoshoot — YOUNG $TEELO (Apr 2026) -->
             <a class="work-scroll-card" href="https://www.instagram.com/p/DWp2HNMDc50/?img_index=1" target="_blank" rel="noopener noreferrer">

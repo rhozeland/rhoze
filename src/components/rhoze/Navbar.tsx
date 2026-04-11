@@ -66,12 +66,12 @@ const Navbar = () => {
             </a>
           ))}
           <a
-            href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"
+            href="https://rhozeland.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           >
-            Buy $RHOZE
+            Create
           </a>
         </div>
 
@@ -97,12 +97,12 @@ const Navbar = () => {
             </a>
           ))}
           <a
-            href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"
+            href="https://rhozeland.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-block px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
           >
-            Buy $RHOZE
+            Create
           </a>
         </motion.div>
       )}

@@ -1725,19 +1725,21 @@
     .cta-cards {
       position: relative;
       width: min(100%, 860px);
-      height: 0;
+      max-height: 0;
       margin: 0 auto;
       opacity: 0;
       pointer-events: none;
-      overflow: hidden;
+      overflow: visible;
+      clip-path: inset(0 -40px -40px -40px);
       transform: translateY(-12px) scale(0.98);
-      transition: height 0.55s ease, opacity 0.35s ease, transform 0.45s ease;
+      transition: max-height 0.55s ease, opacity 0.35s ease, transform 0.45s ease, clip-path 0.55s ease;
     }
 
     .cta-cards.visible {
-      height: 500px;
+      max-height: 600px;
       opacity: 1;
       pointer-events: auto;
+      clip-path: inset(-60px -60px -60px -60px);
       transform: translateY(0) scale(1);
     }
 

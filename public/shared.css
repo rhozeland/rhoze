@@ -1195,8 +1195,8 @@ button { background: none; border: 0; cursor: pointer; }
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
-  padding: 1rem clamp(1.5rem, 4vw, 3rem);
-  border-bottom: 1px solid hsl(var(--line));
+  padding: 0.75rem clamp(1.5rem, 4vw, 3rem);
+  margin-bottom: 0;
 }
 
 .filter-search {
@@ -1843,13 +1843,19 @@ button { background: none; border: 0; cursor: pointer; }
   .page-hero { padding: 6.6rem 1.5rem 2.5rem; }
   .capability-grid,
   .work-grid,
-  .projects-grid,
   .events-grid,
   .token-grid { grid-template-columns: 1fr; }
-  .projects-grid .work-card:nth-child(n) { grid-row: span 1; }
-  .projects-grid { grid-auto-rows: 300px; }
-  .section { padding-left: 1.2rem; padding-right: 1.2rem; }
-  .footer { padding-left: 1.2rem; padding-right: 1.2rem; }
+  /* Instagram-style 3-col square grid on mobile */
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    grid-auto-rows: calc(33.33vw - 3px) !important;
+    gap: 2px !important;
+  }
+  .projects-grid .work-card:nth-child(n) { grid-row: span 1 !important; }
+  .projects-grid .work-card--square { grid-row: span 1 !important; }
+  .projects-grid .work-card--portrait { grid-row: span 1 !important; }
+  .projects-grid .work-card img,
+  .projects-grid .work-card .work-video { object-fit: cover; }
   .section { padding-left: 1.2rem; padding-right: 1.2rem; }
   .footer { padding-left: 1.2rem; padding-right: 1.2rem; }
   .footer-panel { grid-template-columns: 1fr 1fr; }

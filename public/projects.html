@@ -118,7 +118,7 @@
       </div>
 
       <!-- PROJECT GRID -->
-      <section class="section" style="padding-left:0; padding-right:0;">
+      <section class="section" style="padding-left:0; padding-right:0; padding-top:0;">
         <div class="projects-grid" id="projectsGrid">
           <a href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" rel="noopener noreferrer" class="work-card work-card--mask fade-in" data-hover-video="true" data-category="video" data-artist="Ooak" data-date="2026-02" data-order="1">
             <img src="/images/ooak-the-mask-thumb.png" alt="The Mask — Ooak" loading="lazy" />
@@ -553,6 +553,16 @@
 
   <script>
   (function() {
+    /* Services tab toggle */
+    var tabBtns = document.querySelectorAll('.services-tab-btn');
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        tabBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.services-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelector('.services-tab-panel[data-panel="' + btn.getAttribute('data-tab') + '"]').classList.add('active');
+      });
+    });
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');

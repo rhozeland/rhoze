@@ -2843,18 +2843,5 @@
       requestAnimationFrame(step);
     })();
   </script>
-  <script>
-    var osSlide = 0;
-    var osDots = document.querySelectorAll('.os-dot');
-    var osSlider = document.getElementById('osSlider');
-    function goOsSlide(n) {
-      osSlide = n;
-      if (osSlider) osSlider.style.transform = 'translateX(-' + (n * 50) + '%)';
-      osDots.forEach(function(d, i) {
-        d.classList.toggle('os-dot-active', i === n);
-      });
-    }
-    setInterval(function() { goOsSlide(osSlide === 0 ? 1 : 0); }, 5000);
-  </script>
 </body>
 </html>

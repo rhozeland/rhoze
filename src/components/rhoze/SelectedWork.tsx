@@ -82,7 +82,7 @@ const projects = [
   },
 ];
 
-const iconMap: Record<string, React.FC<{ size: number; className?: string }>> = {
+const iconMap: Record<string, typeof Music> = {
   music: Music,
   camera: Camera,
   video: Video,

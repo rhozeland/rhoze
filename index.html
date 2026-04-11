@@ -1811,11 +1811,20 @@
       box-shadow: 0 20px 60px -38px hsl(var(--shadow) / 0.35);
       z-index: 2;
       opacity: 0;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, border-color 0.3s ease;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
 
     .cta-card:hover {
       border-color: hsl(var(--line-strong));
+      box-shadow: 0 24px 70px -30px hsl(var(--shadow) / 0.5);
+      transform: scale(1.04);
+    }
+
+    .cta-card:active {
+      transform: scale(0.97);
     }
 
     .cta-card--loop {
@@ -1851,6 +1860,68 @@
     .cta-cards.visible .cta-card--back {
       transform: translate(-50%, 0) scale(1);
     }
+
+    .cta-cards.visible .cta-card--loop:hover {
+      transform: translate(0, -4px) scale(1.04);
+    }
+    .cta-cards.visible .cta-card--build:hover {
+      transform: translate(0, -4px) scale(1.04);
+    }
+    .cta-cards.visible .cta-card--back:hover {
+      transform: translate(-50%, -4px) scale(1.04);
+    }
+
+    /* Newsletter Modal */
+    .newsletter-modal-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .newsletter-modal-overlay.open {
+      opacity: 1; pointer-events: auto;
+    }
+    .newsletter-modal {
+      background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line));
+      border-radius: 1.5rem; padding: 2.5rem 2rem; max-width: 380px; width: 90%;
+      text-align: center; position: relative;
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.3);
+      transform: scale(0.92) translateY(12px); transition: transform 0.3s ease;
+    }
+    .newsletter-modal-overlay.open .newsletter-modal {
+      transform: scale(1) translateY(0);
+    }
+    .newsletter-modal-close {
+      position: absolute; top: 0.75rem; right: 1rem;
+      background: none; border: none; font-size: 1.5rem;
+      color: hsl(var(--muted)); cursor: pointer; line-height: 1;
+    }
+    .newsletter-modal-close:hover { color: hsl(var(--ink)); }
+    .newsletter-modal h3 {
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; color: hsl(var(--ink));
+    }
+    .newsletter-modal p {
+      color: hsl(var(--muted)); font-size: 0.85rem; margin-bottom: 1.25rem;
+    }
+    .newsletter-modal-form {
+      display: flex; gap: 0; max-width: 300px; margin: 0 auto;
+    }
+    .newsletter-modal-form input {
+      flex: 1; min-width: 0; border: 1px solid hsl(var(--line)); border-right: none;
+      border-radius: 999px 0 0 999px; padding: 0.6rem 1rem; font-size: 0.85rem;
+      background: hsl(var(--surface)); color: hsl(var(--ink)); outline: none;
+    }
+    .newsletter-modal-form input:focus { border-color: hsl(var(--line-strong)); }
+    .newsletter-modal-form input::placeholder { color: hsl(var(--muted)); }
+    .newsletter-modal-form button {
+      flex: 0 0 auto; border: none; border-radius: 0 999px 999px 0;
+      background: hsl(var(--ink)); color: hsl(var(--surface-card));
+      padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+    }
+    .newsletter-modal-form button:hover { opacity: 0.85; }
+
 
     .cta-card-num {
       display: inline-flex;
@@ -2540,28 +2611,35 @@
         </svg>
         <div class="cta-map-core" aria-hidden="true"><span>Support</span></div>
 
-        <div class="cta-card cta-card--loop">
+        <div class="cta-card cta-card--loop" onclick="document.getElementById('newsletterModal').classList.add('open')" role="button" tabindex="0" aria-label="Stay in the loop">
           <span class="cta-card-num">01</span>
           <h3>Stay in the loop</h3>
           <p>Get releases, events, and updates first.</p>
-          <form class="drop-form" id="newsletterForm" style="display:flex;gap:0;margin-top:0.5rem;max-width:260px;width:100%;">
-            <input type="email" name="email" placeholder="Your email" aria-label="Email address" required maxlength="255" style="border-radius:2rem 0 0 2rem;border:1px solid hsl(var(--line));border-right:none;flex:1;min-width:0;padding:0.45rem 0.8rem;font-size:0.8rem;background:hsl(var(--surface-card));color:hsl(var(--ink));" />
-            <button class="cta-btn" type="submit" style="border-radius:0 2rem 2rem 0;white-space:nowrap;padding:0.45rem 1rem;font-size:0.8rem;">Subscribe ↗</button>
-          </form>
         </div>
 
-        <div class="cta-card cta-card--build">
+        <a class="cta-card cta-card--build" href="/contact.html" aria-label="Build with us">
           <span class="cta-card-num">02</span>
           <h3>Build with us</h3>
           <p>Bring a project and we’ll shape the launch.</p>
-          <a class="cta-btn" href="/contact.html">Start a project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
-        </div>
+        </a>
 
-        <div class="cta-card cta-card--back">
+        <a class="cta-card cta-card--back" href="/about.html#tokenized" aria-label="Back the ecosystem">
           <span class="cta-card-num">03</span>
           <h3>Back the ecosystem</h3>
           <p>$RHOZE helps power the ecosystem.</p>
-          <a class="cta-btn" href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump" target="_blank" rel="noopener noreferrer">Buy $RHOZE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
+        </a>
+      </div>
+
+      <!-- Newsletter Modal -->
+      <div id="newsletterModal" class="newsletter-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+        <div class="newsletter-modal">
+          <button class="newsletter-modal-close" onclick="document.getElementById('newsletterModal').classList.remove('open')" aria-label="Close">&times;</button>
+          <h3>Stay in the loop</h3>
+          <p>Get releases, events, and updates first.</p>
+          <form class="newsletter-modal-form" id="newsletterForm" onsubmit="event.preventDefault();var e=this.querySelector('input');if(e.value){this.querySelector('button').textContent='Subscribed!';e.disabled=true;this.querySelector('button').disabled=true;}">
+            <input type="email" name="email" placeholder="Your email" aria-label="Email address" required maxlength="255" />
+            <button type="submit">Subscribe ↗</button>
+          </form>
         </div>
       </div>
     </section>

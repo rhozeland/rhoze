@@ -520,9 +520,9 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 /* ===================== SERVICES TABS ===================== */
-.services-tabs { max-width: 700px; margin: 0 auto; }
+.services-tabs { max-width: 700px; margin: 0 auto; text-align: center; }
 .services-tab-buttons {
-  display: flex;
+  display: inline-flex;
   gap: 0;
   border: 1px solid hsl(var(--line));
   border-radius: 999px;
@@ -530,12 +530,11 @@ button { background: none; border: 0; cursor: pointer; }
   margin-bottom: 1.25rem;
 }
 .services-tab-btn {
-  flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 1.2rem;
   border: none;
   background: transparent;
   color: hsl(var(--muted));
@@ -566,7 +565,7 @@ button { background: none; border: 0; cursor: pointer; }
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
+  gap: 0.5rem 0.5rem;
   justify-content: center;
 }
 .services-tab-panel li {

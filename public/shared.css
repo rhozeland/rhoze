@@ -520,7 +520,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 /* ===================== SERVICES TABS ===================== */
-.services-tabs { max-width: 700px; margin: 0 auto; }
+.services-tabs { max-width: 700px; margin: 0 0 0 auto; }
 .services-tab-buttons {
   display: flex;
   gap: 0;

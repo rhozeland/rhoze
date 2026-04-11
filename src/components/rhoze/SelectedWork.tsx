@@ -1,31 +1,43 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Music, Camera, Video } from "lucide-react";
 
 const projects = [
+  {
+    title: "BK Whiskey x United Nations MMA",
+    artist: "BK Whiskey",
+    tag: "Commercial",
+    type: "Commercial",
+    icons: ["camera"],
+    href: "https://www.instagram.com/p/DKvf2jXMbRs",
+    image: "/images/bk-whiskey-mma-thumb.png",
+    video: "/videos/bk-whiskey-mma.mp4",
+  },
   {
     title: "The Mask",
     artist: "Ooak",
     tag: "Audio & Visual",
     type: "Music Video",
+    icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
     image: "/images/ooak-the-mask-thumb.png",
     video: "/videos/ooak-the-mask.mp4",
   },
   {
-    title: "Feel Like A Superhero",
-    artist: "MONEE FINGAZ",
-    tag: "Audio & Visual",
-    type: "Music Video",
-    href: "https://www.youtube.com/watch?v=_4FotFv6VWc",
-    image: "/images/fingaz-superhero-thumb.png",
-    video: "/videos/fingaz-superhero.mp4",
+    title: "iiMPCT Media",
+    artist: "iiMPCT Media",
+    tag: "Visual",
+    type: "Web Series",
+    icons: ["camera"],
+    href: "https://www.youtube.com/@iimpctmedia",
+    image: "/images/iimpct-media-thumb.png",
   },
   {
     title: "Mansa Musa",
     artist: "MONEE FINGAZ",
     tag: "Audio & Visual",
     type: "Music Video",
+    icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=w9dYE595cBw",
     image: "/images/fingaz-mansa-musa-thumb.png",
     video: "/videos/fingaz-mansa-musa.mp4",
@@ -35,71 +47,46 @@ const projects = [
     artist: "Cozal",
     tag: "Audio & Visual",
     type: "Music Video",
+    icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=VPLyATcs7fE",
     image: "/images/cozal-holy-water-thumb.png",
     video: "/videos/cozal-holy-water.mp4",
   },
   {
-    title: "iiMPCT Media",
-    artist: "iiMPCT Media",
-    tag: "Visual",
+    title: "LeLongLegs",
+    artist: "Indolestic",
+    tag: "Digital",
     type: "Web Series",
-    href: "https://www.youtube.com/@iimpctmedia",
-    image: "/images/iimpct-media-thumb.png",
+    icons: ["camera"],
+    href: "https://www.lelonglegs.lol/",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
   },
   {
     title: "FATE",
     artist: "DUBZY33",
     tag: "Audio & Visual",
     type: "Music Video",
+    icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=EPnVN9riFtI",
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
-  },
-  {
-    title: "True North Transparency",
-    artist: "True North Transparency",
-    tag: "Visual",
-    type: "Web Series",
-    href: "https://www.youtube.com/watch?v=u9iOP4qH2MI",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png",
   },
   {
     title: "Bombaaa",
     artist: "MONEE FINGAZ X 1CUZZMN",
     tag: "Audio & Visual",
     type: "Music Video",
+    icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
     video: "/videos/fingaz-bombaaa-v2.mp4",
   },
-  {
-    title: "In 2 Deep",
-    artist: "MONEE FINGAZ X 1CUZZMN",
-    tag: "Audio & Visual",
-    type: "Music Video",
-    href: "https://www.youtube.com/watch?v=3obuWhWFLD0",
-    image: "/images/fingaz-in2deep-thumb.jpg",
-    video: "/videos/fingaz-in2deep.mp4",
-  },
-  {
-    title: "The Only Reason",
-    artist: "Straightdizzy",
-    tag: "Audio & Visual",
-    type: "Music Video",
-    href: "https://www.youtube.com/watch?v=DOOhqDP9pc8",
-    image: "/images/straightdizzy-the-only-reason-thumb.jpg",
-    video: "/videos/straightdizzy-the-only-reason.mp4",
-  },
-  {
-    title: "Gotta Go",
-    artist: "Straightdizzy x MARV",
-    tag: "Audio & Visual",
-    type: "Music Video",
-    href: "https://www.youtube.com/watch?v=nLlh8k-Uwdg",
-    image: "/images/straightdizzy-gotta-go-thumb.jpg",
-    video: "/videos/straightdizzy-gotta-go.mp4",
-  },
 ];
+
+const iconMap: Record<string, typeof Music> = {
+  music: Music,
+  camera: Camera,
+  video: Video,
+};
 
 const ProjectCard = ({ project: p, index: i, inView }: { project: typeof projects[number]; index: number; inView: boolean }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -107,16 +94,13 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-
     if (p.video && videoRef.current) {
       const video = videoRef.current;
-
       if (video.readyState < 2) {
         video.load();
       } else {
         video.currentTime = Math.min(0.15, video.duration || 0);
       }
-
       video.play().catch(() => {});
     }
   };
@@ -141,7 +125,6 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Image */}
       <img
         src={p.image}
         alt={`${p.title} — ${p.artist}`}
@@ -151,7 +134,6 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
         }`}
       />
 
-      {/* Video overlay */}
       {p.video && (
         <video
           ref={videoRef}
@@ -189,19 +171,26 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
 
       {/* Bottom content */}
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+        <div className="flex items-center gap-1.5 mb-1">
+          {p.icons?.map((icon) => {
+            const Icon = iconMap[icon];
+            return Icon ? <Icon key={icon} size={12} className="text-white/55" /> : null;
+          })}
+          <span className="text-[10px] font-semibold tracking-wider uppercase text-white/55">{p.tag}</span>
+        </div>
         <h3 className="text-white font-semibold text-base leading-tight">{p.title}</h3>
         <p className="text-white/50 text-xs mt-0.5">{p.artist}</p>
       </div>
     </motion.a>
   );
 };
+
 const SelectedWork = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
     <section id="work" className="py-20 lg:py-28" ref={ref}>
-      {/* Header */}
       <div className="container mx-auto px-6 lg:px-16 mb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -229,7 +218,6 @@ const SelectedWork = () => {
         </motion.div>
       </div>
 
-      {/* Horizontal scroll strip */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}

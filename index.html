@@ -2638,7 +2638,9 @@
     /* Randomize on load for initial color */
     randomizeToybox();
 
+    function toggleMenu() {
       var menu = document.getElementById("mobileMenu");
+
       var button = document.querySelector(".menu-toggle");
       var isOpen = menu.classList.toggle("open");
       if (button) button.setAttribute("aria-expanded", String(isOpen));

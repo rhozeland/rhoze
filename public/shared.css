@@ -1328,11 +1328,14 @@ button { background: none; border: 0; cursor: pointer; }
   right: 0;
   min-width: 170px;
   background: hsl(var(--surface));
-  border: 1px solid hsl(var(--line));
+  border: 1px solid hsl(var(--line-strong, var(--line)));
   border-radius: 12px;
   padding: 0.35rem;
-  z-index: 50;
-  box-shadow: 0 8px 24px -4px rgba(0,0,0,0.12);
+  z-index: 100;
+  box-shadow: 0 8px 30px -4px rgba(0,0,0,0.35);
+}
+.dark .filter-dropdown-menu {
+  background: hsl(0 0% 14%);
 }
 
 .filter-dropdown.open .filter-dropdown-menu {

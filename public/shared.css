@@ -763,26 +763,7 @@ button { background: none; border: 0; cursor: pointer; }
   flex-shrink: 0;
 }
 
-/* Hover arrow indicator */
-.work-card::after {
-  content: '';
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 32px;
-  height: 32px;
-  border: 1.5px solid hsla(0 0% 100% / 0.3);
-  border-radius: 50%;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L17 7'/%3E%3Cpath d='M7 7h10v10'/%3E%3C/svg%3E") no-repeat center;
-  z-index: 4;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.work-card:hover::after,
-.work-card.is-hover-preview::after {
-  opacity: 1;
-}
+/* Old separate arrow removed — now integrated into .work-type-tag::after */
 
 /* ===================== EVENTS ===================== */
 .events-grid {

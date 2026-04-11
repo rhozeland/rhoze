@@ -383,28 +383,6 @@
   <script src="/shared.js"></script>
   <script>
   (function() {
-    var projectData = [
-      { title: 'The Mask', artist: 'Ooak', type: 'Music Video', date: 'Feb 2026', href: 'https://www.youtube.com/watch?v=Ht1RPGlJBZg', img: '/images/ooak-the-mask-thumb.png' },
-      { title: 'Saint Flair West', artist: 'Ooak', type: 'EP', date: 'Dec 2025', href: 'https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM', img: '/images/ooak-saint-flair-west-thumb.png' },
-      { title: 'iiMPCT Media', artist: 'iiMPCT Media', type: 'Web Series', date: 'Mar 2026 — Present', href: 'https://www.youtube.com/@iimpctmedia', img: '/images/iimpct-media-thumb.png' },
-      { title: 'Mansa Musa', artist: 'MONEE FINGAZ', type: 'Music Video', date: 'Feb 2026', href: 'https://www.youtube.com/watch?v=w9dYE595cBw', img: '/images/fingaz-mansa-musa-thumb.png' },
-      { title: 'FUS', artist: 'Rhozeland,Indoléstic,Straightdizzy,Roosevelth,MARV', type: 'EP', date: 'Sep 2025', href: 'https://www.youtube.com/watch?v=WULC2OD8EFs', img: '/images/rhozeland-fus-thumb.png' },
-      { title: 'Feel Like A Superhero', artist: 'MONEE FINGAZ', type: 'Music Video', date: 'Mar 2026', href: 'https://www.youtube.com/watch?v=_4FotFv6VWc', img: '/images/fingaz-superhero-thumb.png' },
-      { title: 'The Only Reason', artist: 'Straightdizzy', type: 'Music Video', date: 'Mar 2020', href: 'https://www.youtube.com/watch?v=DOOhqDP9pc8', img: '/images/straightdizzy-the-only-reason-thumb.png' },
-      { title: 'Gotta Go', artist: 'Straightdizzy,MARV', type: 'Music Video', date: 'Sep 2020', href: 'https://www.youtube.com/watch?v=nLlh8k-Uwdg', img: '/images/straightdizzy-gotta-go-thumb.png' },
-      { title: '2027', artist: 'Vampurp', type: 'Music Video', date: 'Feb 2026', href: 'https://www.youtube.com/watch?v=XTy-FFH_PAg', img: '/images/vampurp-2027-thumb.jpg' },
-      { title: 'Holy Water', artist: 'Cozal', type: 'Full Release', date: 'Jan 2026', href: 'https://www.youtube.com/watch?v=VPLyATcs7fE', img: '/images/holy-water-thumb.jpg' },
-      { title: 'U OUTTA KNOW', artist: 'YOUNG $TEELO', type: 'Music Video', date: 'Nov 2025', href: 'https://www.youtube.com/watch?v=JL85Aej4Je4', img: '/images/steelo-u-outta-know-thumb.jpg' },
-      { title: 'True North Transparency', artist: 'True North Transparency', type: 'Web Series', date: 'Jun 2024 — Present', href: 'https://www.youtube.com/watch?v=u9iOP4qH2MI', img: 'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png' },
-      { title: 'Indo LeLongLegs', artist: 'Indoléstic', type: 'Web Series', date: 'Oct 2024', href: 'https://www.lelonglegs.lol/', img: 'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png' },
-      { title: 'FATE', artist: 'DUBZY33', type: 'Music Video', date: 'Oct 2025', href: 'https://www.youtube.com/watch?v=EPnVN9riFtI', img: 'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png' },
-      { title: 'Bombaaa', artist: 'MONEE FINGAZ,1CUZZMN', type: 'Music Video', date: 'Oct 2025', href: 'https://www.youtube.com/watch?v=QSFF9jI8f4g', img: 'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png' },
-      { title: 'We The Ones', artist: 'MONEE FINGAZ,1CUZZMN', type: 'Music Video', date: 'Oct 2025', href: 'https://www.youtube.com/watch?v=IDnaGbAzRlk', img: 'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9ca403ddb9c178904d5e_admin-ajax%20(16).png' },
-      { title: 'Wait', artist: 'Straightdizzy', type: 'Single', date: 'Dec 2019', href: '#', img: '' },
-      { title: 'Collection 1', artist: 'Indoléstic', type: 'Full Release', date: '2020', href: '#', img: '' },
-      { title: 'Collection 2', artist: 'Indoléstic', type: 'Full Release', date: '2020', href: '#', img: '' }
-    ];
-
     var badgeMap = {
       'Indoléstic': [{ label: 'Founder', tone: 'founder', desc: 'Helped build and shape Rhozeland from the ground up.' }, { label: 'In-House', tone: 'inhouse', desc: 'Represented by Rhozeland.' }],
       'MARV': [{ label: 'Founder', tone: 'founder', desc: 'Helped build and shape Rhozeland from the ground up.' }, { label: 'In-House', tone: 'inhouse', desc: 'Represented by Rhozeland.' }],
@@ -417,10 +395,39 @@
 
     var modal = document.getElementById('aboutArtistModal');
     var closeBtn = document.getElementById('aboutArtistModalClose');
+    var cachedProjects = null;
 
-    window.openAboutArtistModal = function(name) {
-      var matches = projectData.filter(function(p) {
+    function parseProjectsFromHTML(html) {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html, 'text/html');
+      var cards = doc.querySelectorAll('.work-card');
+      var projects = [];
+      cards.forEach(function(card) {
+        var h3 = card.querySelector('.work-body h3');
+        var img = card.querySelector('img');
+        var typeTag = card.querySelector('.work-type-tag');
+        var dateEl = card.querySelector('.work-date');
+        var artists = card.getAttribute('data-artist') || '';
+        projects.push({
+          title: h3 ? h3.textContent : '',
+          artist: artists,
+          type: typeTag ? typeTag.textContent : '',
+          date: dateEl ? dateEl.textContent : '',
+          href: card.getAttribute('href') || '#',
+          img: img ? img.getAttribute('src') : '',
+          dateSort: card.getAttribute('data-date') || '',
+          order: parseFloat(card.getAttribute('data-order') || '0') || 0
+        });
+      });
+      return projects;
+    }
+
+    function renderModal(name, projects) {
+      var matches = projects.filter(function(p) {
         return p.artist.split(',').indexOf(name) !== -1;
+      });
+      matches.sort(function(a, b) {
+        return (b.dateSort || '').localeCompare(a.dateSort || '') || a.order - b.order;
       });
 
       document.getElementById('aboutArtistModalName').textContent = name;
@@ -483,6 +490,22 @@
 
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
+    }
+
+    window.openAboutArtistModal = function(name) {
+      if (cachedProjects) {
+        renderModal(name, cachedProjects);
+        return;
+      }
+      fetch('/projects.html')
+        .then(function(r) { return r.text(); })
+        .then(function(html) {
+          cachedProjects = parseProjectsFromHTML(html);
+          renderModal(name, cachedProjects);
+        })
+        .catch(function() {
+          alert('Could not load projects. Please try again.');
+        });
     };
 
     closeBtn.addEventListener('click', function() { modal.classList.remove('open'); document.body.style.overflow = ''; });

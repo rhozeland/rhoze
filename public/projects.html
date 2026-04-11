@@ -583,11 +583,36 @@
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');
-    var sortBtn = document.getElementById('sortToggle');
+    var dropdown = document.getElementById('filterDropdown');
+    var dropdownBtn = document.getElementById('filterDropdownBtn');
+    var dropdownMenu = document.getElementById('filterDropdownMenu');
+    var dropdownLabel = document.getElementById('filterDropdownLabel');
+    var dropdownItems = document.querySelectorAll('.filter-dropdown-item');
     var shuffleBtn = document.getElementById('shuffleToggle');
     var modal = document.getElementById('artistModal');
     var currentSearch = '';
-    var currentSort = 'portfolio';
+    var currentFilter = 'portfolio'; // portfolio, newest, video, audio, photo
+
+    // Dropdown toggle
+    dropdownBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', function() {
+      dropdown.classList.remove('open');
+    });
+    dropdownMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+
+    dropdownItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        currentFilter = item.getAttribute('data-filter');
+        dropdownLabel.textContent = item.textContent;
+        dropdownItems.forEach(function(i) { i.classList.remove('active'); });
+        item.classList.add('active');
+        dropdown.classList.remove('open');
+        renderGrid();
+      });
+    });
 
     function syncProjectGridRows() {
       if (!grid) return;
@@ -635,6 +660,12 @@
       return getSearchText(card).indexOf(currentSearch) !== -1;
     }
 
+    function matchesCategory(card) {
+      if (currentFilter === 'portfolio' || currentFilter === 'newest') return true;
+      var cats = (card.getAttribute('data-category') || '').split(',');
+      return cats.indexOf(currentFilter) !== -1;
+    }
+
     function shuffleList(list) {
       var shuffled = list.slice();
       for (var i = shuffled.length - 1; i > 0; i -= 1) {
@@ -648,7 +679,7 @@
 
     function getOrderedCards(list) {
       var ordered = list.slice();
-      if (currentSort === 'newest') {
+      if (currentFilter === 'newest') {
         ordered.sort(function(a, b) {
           return (b.dataset.date || '').localeCompare(a.dataset.date || '') || getOrder(a) - getOrder(b);
         });
@@ -661,8 +692,8 @@
     }
 
     function renderGrid(mode) {
-      var visible = getOrderedCards(cards.filter(matchesSearch));
-      if (mode === 'shuffle' || currentSort === 'portfolio') visible = shuffleList(visible);
+      var visible = getOrderedCards(cards.filter(function(c) { return matchesSearch(c) && matchesCategory(c); }));
+      if (mode === 'shuffle' || currentFilter === 'portfolio') visible = shuffleList(visible);
       var hidden = cards.filter(function(card) { return visible.indexOf(card) === -1; });
 
       visible.forEach(function(card) {
@@ -679,23 +710,12 @@
       if (typeof setupHoverVideos === 'function') setupHoverVideos();
     }
 
-    function updateSortToggle() {
-      sortBtn.setAttribute('data-sort', currentSort);
-      sortBtn.querySelector('span').textContent = currentSort === 'newest' ? 'Newest First' : 'Portfolio Flow';
-    }
-
     if (searchInput) {
       searchInput.addEventListener('input', function() {
         currentSearch = searchInput.value.trim().toLowerCase();
         renderGrid();
       });
     }
-
-    sortBtn.addEventListener('click', function() {
-      currentSort = currentSort === 'portfolio' ? 'newest' : 'portfolio';
-      updateSortToggle();
-      renderGrid();
-    });
 
     shuffleBtn.addEventListener('click', function() {
       shuffleBtn.classList.remove('is-shuffling');

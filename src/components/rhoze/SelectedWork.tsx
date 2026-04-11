@@ -81,6 +81,24 @@ const projects = [
     image: "/images/fingaz-in2deep-thumb.jpg",
     video: "/videos/fingaz-in2deep.mp4",
   },
+  {
+    title: "The Only Reason",
+    artist: "Straightdizzy",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=DOOhqDP9pc8",
+    image: "/images/straightdizzy-the-only-reason-thumb.jpg",
+    video: "/videos/straightdizzy-the-only-reason.mp4",
+  },
+  {
+    title: "Gotta Go",
+    artist: "Straightdizzy x MARV",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    href: "https://www.youtube.com/watch?v=nLlh8k-Uwdg",
+    image: "/images/straightdizzy-gotta-go-thumb.jpg",
+    video: "/videos/straightdizzy-gotta-go.mp4",
+  },
 ];
 
 const ProjectCard = ({ project: p, index: i, inView }: { project: typeof projects[number]; index: number; inView: boolean }) => {

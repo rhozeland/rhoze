@@ -853,6 +853,24 @@ button { background: none; border: 0; cursor: pointer; }
 .team-card p {
   font-size: 0.8rem;
   color: hsl(var(--muted));
+  justify-content: center;
+}
+
+.team-aka {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: hsl(var(--accent-blue));
+  text-decoration: none;
+  padding: 0.2rem 0.65rem;
+  border-radius: 2rem;
+  border: 1px solid hsl(var(--accent-blue) / 0.25);
+  transition: background 0.2s, transform 0.2s;
+}
+.team-aka:hover {
+  background: hsl(var(--accent-blue) / 0.08);
+  transform: translateY(-1px);
 }
 
 /* ===================== TIMELINE ===================== */

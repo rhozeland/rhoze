@@ -637,7 +637,7 @@
 
     function renderGrid(mode) {
       var visible = getOrderedCards(cards.filter(matchesSearch));
-      if (mode === 'shuffle') visible = shuffleList(visible);
+      if (mode === 'shuffle' || currentSort === 'portfolio') visible = shuffleList(visible);
       var hidden = cards.filter(function(card) { return visible.indexOf(card) === -1; });
 
       visible.forEach(function(card) {

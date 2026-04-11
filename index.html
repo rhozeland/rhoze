@@ -1411,6 +1411,11 @@
     .ticker-dot--live {
       background: hsl(145 60% 50%);
       box-shadow: 0 0 6px hsl(145 60% 50% / 0.5);
+      animation: ticker-pulse 2s ease-in-out infinite;
+    }
+    @keyframes ticker-pulse {
+      0%, 100% { box-shadow: 0 0 4px hsl(145 60% 50% / 0.4); transform: scale(1); }
+      50% { box-shadow: 0 0 10px hsl(145 60% 50% / 0.7); transform: scale(1.25); }
     }
     .ticker-label {
       flex: 1;

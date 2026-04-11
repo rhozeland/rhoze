@@ -2184,14 +2184,8 @@
           <!-- Iridescent gradient blob -->
           <div aria-hidden="true" style="position:absolute; top:-15%; right:-10%; width:clamp(300px,45vw,600px); height:clamp(300px,45vw,600px); border-radius:48% 52% 58% 42% / 42% 56% 44% 58%; background:linear-gradient(135deg, hsl(320 50% 72% / 0.35), hsl(30 60% 72% / 0.3), hsl(175 50% 65% / 0.3), hsl(280 40% 72% / 0.25)); filter:blur(40px); pointer-events:none; z-index:1; animation: hero-blob-drift 14s ease-in-out infinite;"></div>
           <!-- Interactive Toybox Logo -->
-          <div id="heroToybox" style="position:absolute; bottom:clamp(20%,8vw,30%); right:clamp(1%,2vw,4%); z-index:2; cursor:pointer; transition:transform 0.3s ease; filter:drop-shadow(0 8px 24px rgba(0,0,0,0.08)); opacity:0.7;" onclick="randomizeToybox()" title="Click to remix colors">
-            <svg id="toyboxSvg" width="203" height="204" viewBox="0 0 203 204" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:clamp(80px,12vw,150px);height:auto;">
-              <path id="tb-front" d="M8.69714 62.3362 L110.377 62.3362 L110.377 155.646 L110.377 184.479 C110.377 190.864 105.201 196.041 98.815 196.041 L20.2595 196.041 C13.8738 196.041 8.69713 190.864 8.69713 184.479 L8.69713 155.646 Z" fill="#F8FAFC" style="transition:fill 0.5s ease"/>
-              <path id="tb-lid" d="M8.69714 62.3362 L59.6897 11.3436 C61.8581 9.17521 64.7991 7.95704 67.8656 7.95704 L164.757 7.95704 L110.377 62.3362 Z" fill="#F8FAFC" style="transition:fill 0.5s ease"/>
-              <path id="tb-side" d="M110.377 62.3362 L164.757 7.95704 L164.757 101.267 L110.377 155.646 Z" fill="#F8FAFC" opacity="0.7" style="transition:fill 0.5s ease"/>
-              <path id="tb-tag" d="M110.377 155.646 L164.757 101.267 L191.127 127.638 C195.643 132.153 195.643 139.474 191.127 143.99 L153.1 182.017 C148.584 186.533 141.263 186.532 136.748 182.017 Z" fill="#F8FAFC" style="transition:fill 0.5s ease"/>
-              <path d="M8.69714 62.3362L8.69713 155.646L8.69713 184.479C8.69713 190.864 13.8738 196.041 20.2595 196.041L98.815 196.041C105.201 196.041 110.377 190.864 110.377 184.479L110.377 155.646M8.69714 62.3362L110.377 62.3362M8.69714 62.3362L59.6897 11.3436C61.8581 9.17521 64.7991 7.95704 67.8656 7.95704L164.757 7.95704M110.377 62.3362L164.757 7.95704M110.377 62.3362L110.377 155.646M164.757 7.95704L164.757 101.267M110.377 155.646L164.757 101.267M110.377 155.646L136.748 182.017C141.263 186.532 148.584 186.533 153.1 182.017L191.127 143.99C195.643 139.474 195.643 132.153 191.127 127.638L164.757 101.267" stroke="hsl(var(--ink))" stroke-width="15.8983"/>
-            </svg>
+          <div id="heroToybox" style="position:absolute; top:clamp(8%,4vw,14%); right:clamp(4%,5vw,10%); z-index:2; cursor:pointer; transition:transform 0.3s ease, filter 0.5s ease; filter:drop-shadow(0 12px 32px rgba(0,0,0,0.12)); opacity:0.55;" onclick="randomizeToybox()" title="Click to remix colors">
+            <img id="toyboxImg" src="/images/toybox-silhouette.png" alt="Rhozeland Toybox" style="width:clamp(120px,18vw,220px); height:auto; transition:filter 0.5s ease;" />
           </div>
           <div class="hero-copy">
             <h1 id="homepage-title">Build the world you imagine</h1>
@@ -2628,11 +2622,11 @@
     /* Toybox interactive logo — click to randomize colors */
     var TB_COLORS = ["#FF6B6B","#FFB347","#FFE066","#6BCB77","#4ECDC4","#45B7D1","#7C83FD","#A66CFF","#F472B6","#FDA4AF","#94A3B8","#FBBF77","#C4B5FD","#2DD4BF","#F8FAFC"];
     function randomizeToybox() {
-      var pick = function() { return TB_COLORS[Math.floor(Math.random() * TB_COLORS.length)]; };
-      document.getElementById("tb-front").setAttribute("fill", pick());
-      document.getElementById("tb-lid").setAttribute("fill", pick());
-      document.getElementById("tb-side").setAttribute("fill", pick());
-      document.getElementById("tb-tag").setAttribute("fill", pick());
+      var hue = Math.floor(Math.random() * 360);
+      var img = document.getElementById("toyboxImg");
+      if (img) {
+        img.style.filter = "hue-rotate(" + hue + "deg) saturate(1.4) brightness(1.1)";
+      }
       var el = document.getElementById("heroToybox");
       if (el) { el.style.transform = "scale(1.08) rotate(3deg)"; setTimeout(function(){ el.style.transform = ""; }, 300); }
     }

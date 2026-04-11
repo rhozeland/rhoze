@@ -785,6 +785,13 @@
 
     updateSortToggle();
     renderGrid();
+
+    // Auto-open artist modal if navigated from team page
+    var pendingArtist = localStorage.getItem('open-artist');
+    if (pendingArtist) {
+      localStorage.removeItem('open-artist');
+      setTimeout(function() { openArtistModal(pendingArtist); }, 400);
+    }
   })();
   </script>
 </body>

@@ -1861,6 +1861,68 @@
       transform: translate(-50%, 0) scale(1);
     }
 
+    .cta-cards.visible .cta-card--loop:hover {
+      transform: translate(0, -4px) scale(1.04);
+    }
+    .cta-cards.visible .cta-card--build:hover {
+      transform: translate(0, -4px) scale(1.04);
+    }
+    .cta-cards.visible .cta-card--back:hover {
+      transform: translate(-50%, -4px) scale(1.04);
+    }
+
+    /* Newsletter Modal */
+    .newsletter-modal-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .newsletter-modal-overlay.open {
+      opacity: 1; pointer-events: auto;
+    }
+    .newsletter-modal {
+      background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line));
+      border-radius: 1.5rem; padding: 2.5rem 2rem; max-width: 380px; width: 90%;
+      text-align: center; position: relative;
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.3);
+      transform: scale(0.92) translateY(12px); transition: transform 0.3s ease;
+    }
+    .newsletter-modal-overlay.open .newsletter-modal {
+      transform: scale(1) translateY(0);
+    }
+    .newsletter-modal-close {
+      position: absolute; top: 0.75rem; right: 1rem;
+      background: none; border: none; font-size: 1.5rem;
+      color: hsl(var(--muted)); cursor: pointer; line-height: 1;
+    }
+    .newsletter-modal-close:hover { color: hsl(var(--ink)); }
+    .newsletter-modal h3 {
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; color: hsl(var(--ink));
+    }
+    .newsletter-modal p {
+      color: hsl(var(--muted)); font-size: 0.85rem; margin-bottom: 1.25rem;
+    }
+    .newsletter-modal-form {
+      display: flex; gap: 0; max-width: 300px; margin: 0 auto;
+    }
+    .newsletter-modal-form input {
+      flex: 1; min-width: 0; border: 1px solid hsl(var(--line)); border-right: none;
+      border-radius: 999px 0 0 999px; padding: 0.6rem 1rem; font-size: 0.85rem;
+      background: hsl(var(--surface)); color: hsl(var(--ink)); outline: none;
+    }
+    .newsletter-modal-form input:focus { border-color: hsl(var(--line-strong)); }
+    .newsletter-modal-form input::placeholder { color: hsl(var(--muted)); }
+    .newsletter-modal-form button {
+      flex: 0 0 auto; border: none; border-radius: 0 999px 999px 0;
+      background: hsl(var(--ink)); color: hsl(var(--surface-card));
+      padding: 0.6rem 1.2rem; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+    }
+    .newsletter-modal-form button:hover { opacity: 0.85; }
+
+
     .cta-card-num {
       display: inline-flex;
       align-items: center;

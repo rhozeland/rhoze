@@ -2754,15 +2754,9 @@
           <h3>Start a Project</h3>
           <p>Tell us a bit about your project and we'll get back to you within 48 hours.</p>
           <form class="build-modal-form" onsubmit="handleBuildForm(event)">
-            <div class="bm-row">
-              <div>
-                <label for="bm-fname">First Name</label>
-                <input type="text" id="bm-fname" name="fname" placeholder="Jane" required />
-              </div>
-              <div>
-                <label for="bm-lname">Last Name</label>
-                <input type="text" id="bm-lname" name="lname" placeholder="Doe" />
-              </div>
+            <div>
+              <label for="bm-fullname">Full Name</label>
+              <input type="text" id="bm-fullname" name="fullname" placeholder="Jane Doe" required />
             </div>
             <div>
               <label for="bm-email">Email</label>
@@ -2982,7 +2976,7 @@
     function handleBuildForm(e) {
       e.preventDefault();
       var f = e.target;
-      var name = f.fname.value + (f.lname.value ? ' ' + f.lname.value : '');
+      var name = f.fullname.value;
       var subject = encodeURIComponent('Project Inquiry from ' + name + ' — ' + f['project-type'].value);
       var body = encodeURIComponent(
         'Name: ' + name + '\n' +

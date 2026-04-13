@@ -637,7 +637,40 @@
       var subject = encodeURIComponent(subjectPrefix + ' from ' + name);
       var body = encodeURIComponent(lines.join('\n'));
       var mailto = EMAIL_MAP[category];
-      window.location.href = 'mailto:' + mailto + '?subject=' + subject + '&body=' + body;
+
+      // Build summary HTML
+      var catLabels = {project:'Project Inquiry',technical:'Technical Support',general:'General Inquiry'};
+      var summaryHtml = '<strong>Category:</strong> ' + catLabels[category] + '<br>';
+      summaryHtml += '<strong>Name:</strong> ' + name + '<br>';
+      summaryHtml += '<strong>Email:</strong> ' + email + '<br>';
+      if (phone) summaryHtml += '<strong>Phone:</strong> ' + phone + '<br>';
+
+      // Show success state
+      document.querySelector('.form-panel').style.display = 'none';
+      document.querySelector('.cat-tabs').style.display = 'none';
+      var successEl = document.getElementById('form-success');
+      successEl.style.display = 'block';
+      document.getElementById('success-summary').innerHTML = summaryHtml;
+
+      // Scroll to top of success
+      successEl.scrollIntoView({behavior:'smooth', block:'start'});
+
+      // Open mailto in background
+      setTimeout(function(){
+        window.open('mailto:' + mailto + '?subject=' + subject + '&body=' + body, '_blank');
+      }, 600);
+    }
+
+    var lastCategory = 'project';
+    function resetForm() {
+      document.getElementById('form-success').style.display = 'none';
+      document.querySelector('.form-panel').style.display = '';
+      document.querySelector('.cat-tabs').style.display = '';
+      // Reset all forms
+      document.querySelectorAll('.inquiry-form').forEach(function(f){ f.reset(); });
+      document.querySelectorAll('.char-count').forEach(function(c){ c.textContent = '0 / 2,000'; c.classList.remove('warn','over'); });
+      switchCategory('project');
+      window.scrollTo({top: 0, behavior:'smooth'});
     }
   </script>
 </body>

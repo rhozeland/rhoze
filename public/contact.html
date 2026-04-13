@@ -653,10 +653,11 @@
       // Scroll to top of success
       successEl.scrollIntoView({behavior:'smooth', block:'start'});
 
-      // Open mailto in background
-      setTimeout(function(){
-        window.open('mailto:' + mailto + '?subject=' + subject + '&body=' + body, '_blank');
-      }, 600);
+      // Open mailto via hidden link (avoids page navigation)
+      var mailtoLink = document.createElement('a');
+      mailtoLink.href = 'mailto:' + mailto + '?subject=' + subject + '&body=' + body;
+      mailtoLink.target = '_blank';
+      setTimeout(function(){ mailtoLink.click(); }, 600);
     }
 
     var lastCategory = 'project';

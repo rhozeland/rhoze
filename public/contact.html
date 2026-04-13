@@ -580,7 +580,7 @@
       var f = e.target;
       if (!validateForm(f)) return;
 
-      var name = f.fname.value + (f.lname.value ? ' ' + f.lname.value : '');
+      var name = f.fullname.value;
       var email = f.email.value;
       var phone = f.phone ? f.phone.value : '';
       var lines = ['Name: ' + name, 'Email: ' + email];

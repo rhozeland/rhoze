@@ -64,7 +64,7 @@ const Hero = () => {
       />
 
       {/* Animated gradient blobs */}
-      <div className="absolute inset-0 z-[2] overflow-hidden">
+      <div className="absolute inset-0 z-[2] overflow-hidden" style={{ mixBlendMode: 'normal' }}>
         <motion.div
           className="absolute h-[640px] w-[640px] rounded-full blur-[100px] opacity-50"
           style={{
@@ -107,7 +107,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 py-28 lg:px-16 lg:pb-20 lg:pt-36">
+      <div className="relative z-10 container mx-auto px-6 py-28 lg:px-16 lg:pb-20 lg:pt-36 [&_h1]:drop-shadow-[0_1px_1px_hsl(var(--background)/0.5)] [&_h2]:drop-shadow-[0_1px_1px_hsl(var(--background)/0.3)]">
         <div className="grid items-end gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(340px,0.9fr)] lg:gap-14">
           <div className="max-w-3xl">
             <motion.div

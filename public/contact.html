@@ -12,37 +12,75 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
   <style>
-    .contact-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:3rem;align-items:start}
-    .contact-sidebar{display:flex;flex-direction:column;gap:1.5rem}
-    .contact-card{border:1px solid hsl(var(--border));border-radius:var(--radius);padding:1.5rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(12px)}
-    .contact-card h3{font-family:'Inter',system-ui,sans-serif;font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:hsl(var(--muted));margin-bottom:1rem}
-    .contact-link{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0;color:hsl(var(--fg));text-decoration:none;font-size:0.95rem;font-weight:500;transition:color 0.2s}
-    .contact-link:hover{color:hsl(var(--accent-fg,var(--fg)));opacity:0.7}
-    .contact-link svg{width:18px;height:18px;flex-shrink:0;opacity:0.6}
-    .social-row{display:flex;gap:0.5rem;flex-wrap:wrap}
-    .social-pill{display:inline-flex;align-items:center;gap:0.5rem;padding:0.45rem 0.85rem;border:1px solid hsl(var(--border));border-radius:999px;font-size:0.8rem;font-weight:500;color:hsl(var(--fg));text-decoration:none;transition:all 0.2s}
-    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.2)}
-    .social-pill svg{width:14px;height:14px}
+    /* ===== CONTACT PAGE STYLES ===== */
+    .contact-hero{text-align:center;padding:2rem 0 1rem}
+    .contact-hero h1{font-family:'Inter',system-ui,sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-0.04em;margin-bottom:0.5rem}
+    .contact-hero p{font-size:1rem;color:hsl(var(--muted));max-width:540px;margin:0 auto}
 
-    .inquiry-form{display:flex;flex-direction:column;gap:1.25rem}
-    .inquiry-form h2{font-family:'Inter',system-ui,sans-serif;font-size:clamp(1.5rem,2.5vw,2rem);font-weight:700;letter-spacing:-0.04em;margin-bottom:0.25rem}
-    .inquiry-form p.subtitle{font-size:0.9rem;color:hsl(var(--muted));margin-bottom:0.5rem}
+    /* Category Tabs */
+    .cat-tabs{display:flex;gap:0.75rem;justify-content:center;margin:2rem 0 2.5rem;flex-wrap:wrap}
+    .cat-tab{display:flex;align-items:center;gap:0.5rem;padding:0.7rem 1.25rem;border:1px solid hsl(var(--border));border-radius:var(--radius);background:hsl(var(--surface)/0.4);backdrop-filter:blur(12px);font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:hsl(var(--muted));cursor:pointer;transition:all 0.25s ease}
+    .cat-tab:hover{border-color:hsl(var(--fg)/0.3);color:hsl(var(--fg))}
+    .cat-tab.active{border-color:hsl(var(--fg));color:hsl(var(--fg));background:hsl(var(--surface)/0.8)}
+    .cat-tab svg{width:18px;height:18px;flex-shrink:0}
+    .cat-tab .cat-badge{font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:999px;background:hsl(var(--fg)/0.08);color:hsl(var(--fg)/0.6);font-weight:500;letter-spacing:0.02em}
+
+    /* Form Layout */
+    .contact-layout{display:grid;grid-template-columns:1fr 320px;gap:3rem;align-items:start;max-width:960px;margin:0 auto}
+    .form-panel{border:1px solid hsl(var(--border));border-radius:var(--radius);padding:2rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(12px)}
+    .form-panel h2{font-family:'Inter',system-ui,sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:0.25rem}
+    .form-panel p.subtitle{font-size:0.85rem;color:hsl(var(--muted));margin-bottom:1.5rem}
+    .inquiry-form{display:flex;flex-direction:column;gap:1.15rem}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-    .form-group{display:flex;flex-direction:column;gap:0.35rem}
-    .form-group label{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:hsl(var(--muted))}
+    .form-group{display:flex;flex-direction:column;gap:0.3rem}
+    .form-group label{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:hsl(var(--muted))}
     .form-group input,.form-group textarea,.form-group select{
-      width:100%;padding:0.65rem 0.85rem;border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 2px);
-      background:hsl(var(--surface)/0.4);color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.9rem;
+      width:100%;padding:0.6rem 0.8rem;border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 2px);
+      background:hsl(var(--surface)/0.4);color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.88rem;
       transition:border-color 0.2s;outline:none
     }
     .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:hsl(var(--fg)/0.4)}
     .form-group input::placeholder,.form-group textarea::placeholder{color:hsl(var(--muted)/0.6)}
     .form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.75rem center;padding-right:2rem}
     .form-group select option{background:hsl(var(--bg));color:hsl(var(--fg))}
+    .form-actions{display:flex;gap:0.75rem;margin-top:0.5rem}
+    .form-actions .btn-dark{flex:1;justify-content:center}
+    .btn-outline-call{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.65rem 1.25rem;border:1px solid hsl(var(--border));border-radius:var(--radius);background:transparent;color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;white-space:nowrap}
+    .btn-outline-call:hover{border-color:hsl(var(--fg)/0.4);background:hsl(var(--surface)/0.4)}
+    .btn-outline-call svg{width:16px;height:16px}
+
+    /* Sidebar */
+    .contact-sidebar{display:flex;flex-direction:column;gap:1.25rem}
+    .sidebar-card{border:1px solid hsl(var(--border));border-radius:var(--radius);padding:1.25rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(12px)}
+    .sidebar-card h3{font-family:'Inter',system-ui,sans-serif;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:hsl(var(--muted));margin-bottom:0.75rem}
+    .sidebar-link{display:flex;align-items:center;gap:0.6rem;padding:0.45rem 0;color:hsl(var(--fg));text-decoration:none;font-size:0.88rem;font-weight:500;transition:opacity 0.2s}
+    .sidebar-link:hover{opacity:0.6}
+    .sidebar-link svg{width:16px;height:16px;opacity:0.5;flex-shrink:0}
+    .social-row{display:flex;gap:0.4rem;flex-wrap:wrap}
+    .social-pill{display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 0.7rem;border:1px solid hsl(var(--border));border-radius:999px;font-size:0.75rem;font-weight:500;color:hsl(var(--fg));text-decoration:none;transition:all 0.2s}
+    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.2)}
+    .social-pill svg{width:13px;height:13px}
+
+    /* Email routing badge */
+    .route-badge{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.7rem;color:hsl(var(--muted));margin-top:0.25rem}
+    .route-badge svg{width:12px;height:12px;opacity:0.5}
+
+    /* Hidden form sections */
+    .form-section{display:none}
+    .form-section.active{display:flex;flex-direction:column;gap:1.15rem}
+
+    /* Success state */
+    .success-msg{display:none;text-align:center;padding:2rem 1rem}
+    .success-msg.show{display:block}
+    .success-msg h3{font-size:1.25rem;font-weight:700;margin-bottom:0.5rem}
+    .success-msg p{font-size:0.9rem;color:hsl(var(--muted))}
 
     @media(max-width:768px){
-      .contact-grid{grid-template-columns:1fr;gap:2rem}
+      .contact-layout{grid-template-columns:1fr;gap:2rem}
       .form-row{grid-template-columns:1fr}
+      .cat-tabs{gap:0.5rem}
+      .cat-tab{padding:0.55rem 0.9rem;font-size:0.8rem}
+      .form-actions{flex-direction:column}
     }
   </style>
 </head>
@@ -84,24 +122,260 @@
     </div>
 
     <main>
-      <section class="section">
-        <div class="contact-grid">
+      <!-- Hero -->
+      <div class="contact-hero">
+        <h1>Get in Touch</h1>
+        <p>Whether you're starting a project, need technical support, or just have a question — we'd love to hear from you.</p>
+      </div>
 
-          <!-- LEFT SIDEBAR -->
+      <!-- Category Tabs -->
+      <div class="cat-tabs">
+        <button class="cat-tab active" onclick="switchCategory('project')" data-cat="project">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Start a Project
+          <span class="cat-badge">collab@</span>
+        </button>
+        <button class="cat-tab" onclick="switchCategory('technical')" data-cat="technical">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          Technical & Studio
+          <span class="cat-badge">support@</span>
+        </button>
+        <button class="cat-tab" onclick="switchCategory('general')" data-cat="general">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          General Inquiry
+          <span class="cat-badge">both</span>
+        </button>
+      </div>
+
+      <section class="section" style="padding-top:0">
+        <div class="contact-layout">
+
+          <!-- LEFT: FORMS -->
+          <div class="form-panel">
+
+            <!-- ===== PROJECT FORM ===== -->
+            <div class="form-section active" id="form-project">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'project')">
+                <h2>Start a Project</h2>
+                <p class="subtitle">Tell us about what you're building and we'll find the right path forward.</p>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="p-fname">First Name</label>
+                    <input type="text" id="p-fname" name="fname" placeholder="Jane" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="p-lname">Last Name</label>
+                    <input type="text" id="p-lname" name="lname" placeholder="Doe" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="p-email">Email</label>
+                  <input type="email" id="p-email" name="email" placeholder="you@example.com" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="p-type">Project Type</label>
+                  <select id="p-type" name="project-type" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="music-production">Music Production</option>
+                    <option value="video-production">Video & Film Production</option>
+                    <option value="photography">Photography</option>
+                    <option value="graphic-design">Graphic Design & Branding</option>
+                    <option value="web-development">Web & App Development</option>
+                    <option value="marketing">Marketing & Social Media</option>
+                    <option value="event-production">Event Production</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="p-support">Level of Support</label>
+                  <select id="p-support" name="support-level" required>
+                    <option value="" disabled selected>What do you need?</option>
+                    <option value="consultation">Consultation / Advisory</option>
+                    <option value="partial">Partial Support (I have a team)</option>
+                    <option value="full-service">Full-Service (End to End)</option>
+                    <option value="unsure">Not sure yet</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="p-budget">Budget Range</label>
+                  <select id="p-budget" name="budget">
+                    <option value="" disabled selected>Select a range</option>
+                    <option value="under-1k">Under $1,000</option>
+                    <option value="1k-5k">$1,000 – $5,000</option>
+                    <option value="5k-15k">$5,000 – $15,000</option>
+                    <option value="15k-plus">$15,000+</option>
+                    <option value="not-sure">Not sure yet</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="p-details">Project Details</label>
+                  <textarea id="p-details" name="details" rows="4" placeholder="Describe your project — timeline, vision, any specifics..." required></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-dark">
+                    Submit Inquiry
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                  </button>
+                  <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" class="btn-outline-call">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Book a Call
+                  </a>
+                </div>
+                <span class="route-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  Routes to collab@rhozeland.com
+                </span>
+              </form>
+            </div>
+
+            <!-- ===== TECHNICAL FORM ===== -->
+            <div class="form-section" id="form-technical">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'technical')">
+                <h2>Technical & Studio Support</h2>
+                <p class="subtitle">Questions about platforms, tools, studio access, or billing — we're here to help.</p>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="t-fname">First Name</label>
+                    <input type="text" id="t-fname" name="fname" placeholder="Jane" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="t-lname">Last Name</label>
+                    <input type="text" id="t-lname" name="lname" placeholder="Doe" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="t-email">Email</label>
+                  <input type="email" id="t-email" name="email" placeholder="you@example.com" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="t-topic">Topic</label>
+                  <select id="t-topic" name="topic" required>
+                    <option value="" disabled selected>What do you need help with?</option>
+                    <option value="studio-booking">Studio Booking & Access</option>
+                    <option value="platform-issue">Platform / App Issue</option>
+                    <option value="billing">Billing & Payments</option>
+                    <option value="account">Account & Membership</option>
+                    <option value="equipment">Equipment & Gear</option>
+                    <option value="other-tech">Other Technical</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="t-urgency">Urgency</label>
+                  <select id="t-urgency" name="urgency">
+                    <option value="" disabled selected>How urgent is this?</option>
+                    <option value="low">Low — no rush</option>
+                    <option value="medium">Medium — within a few days</option>
+                    <option value="high">High — need help ASAP</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="t-details">Describe Your Issue</label>
+                  <textarea id="t-details" name="details" rows="4" placeholder="Include any relevant details, error messages, or context..." required></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
+                    Submit Request
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                  </button>
+                </div>
+                <span class="route-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  Routes to support@rhozeland.com
+                </span>
+              </form>
+            </div>
+
+            <!-- ===== GENERAL FORM ===== -->
+            <div class="form-section" id="form-general">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'general')">
+                <h2>General Inquiry</h2>
+                <p class="subtitle">Partnerships, press, sponsorships, or anything else — drop us a line.</p>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="g-fname">First Name</label>
+                    <input type="text" id="g-fname" name="fname" placeholder="Jane" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="g-lname">Last Name</label>
+                    <input type="text" id="g-lname" name="lname" placeholder="Doe" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="g-email">Email</label>
+                  <input type="email" id="g-email" name="email" placeholder="you@example.com" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="g-reason">Reason for Reaching Out</label>
+                  <select id="g-reason" name="reason" required>
+                    <option value="" disabled selected>Select a reason</option>
+                    <option value="partnership">Partnership / Collaboration</option>
+                    <option value="press">Press / Media</option>
+                    <option value="sponsorship">Sponsorship</option>
+                    <option value="feedback">Feedback / Suggestion</option>
+                    <option value="other-general">Other</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="g-message">Your Message</label>
+                  <textarea id="g-message" name="message" rows="4" placeholder="Tell us what's on your mind..." required></textarea>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
+                    Send Message
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                  </button>
+                </div>
+                <span class="route-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  Routes to collab@ &amp; support@rhozeland.com
+                </span>
+              </form>
+            </div>
+
+          </div>
+
+          <!-- RIGHT SIDEBAR -->
           <div class="contact-sidebar">
-            <div class="contact-card">
-              <h3>Quick Contact</h3>
-              <a href="mailto:collab@rhozeland.com" class="contact-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                collab@rhozeland.com
-              </a>
-              <a href="tel:6478746743" class="contact-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                647-874-6743
+            <div class="sidebar-card">
+              <h3>Book a Call</h3>
+              <p style="font-size:0.85rem;color:hsl(var(--muted));margin-bottom:0.75rem">Prefer to talk it through? Schedule a free discovery call.</p>
+              <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" class="btn-outline-call" style="width:100%">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Schedule a Call
               </a>
             </div>
 
-            <div class="contact-card">
+            <div class="sidebar-card">
+              <h3>Direct Contact</h3>
+              <a href="mailto:collab@rhozeland.com" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                collab@rhozeland.com
+              </a>
+              <a href="mailto:support@rhozeland.com" class="sidebar-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                support@rhozeland.com
+              </a>
+            </div>
+
+            <div class="sidebar-card">
               <h3>Follow Us</h3>
               <div class="social-row">
                 <a href="https://www.instagram.com/rhozeland/" target="_blank" rel="noopener noreferrer" class="social-pill">
@@ -110,7 +384,7 @@
                 </a>
                 <a href="https://x.com/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
                   <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                  X / Twitter
+                  X
                 </a>
                 <a href="https://www.linkedin.com/company/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
                   <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
@@ -122,75 +396,10 @@
                 </a>
                 <a href="https://luma.com/user/collabrhozeland" target="_blank" rel="noopener noreferrer" class="social-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  Luma Events
+                  Luma
                 </a>
               </div>
             </div>
-          </div>
-
-          <!-- RIGHT: PROJECT INQUIRY FORM -->
-          <div class="contact-card">
-            <form class="inquiry-form" onsubmit="handleInquiry(event)">
-              <h2>Start a Project</h2>
-              <p class="subtitle">Tell us about what you're working on and we'll get back to you.</p>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="fname">First Name</label>
-                  <input type="text" id="fname" name="fname" placeholder="Jane" required />
-                </div>
-                <div class="form-group">
-                  <label for="lname">Last Name</label>
-                  <input type="text" id="lname" name="lname" placeholder="Doe" />
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required />
-              </div>
-
-              <div class="form-group">
-                <label for="project-type">Project Type</label>
-                <select id="project-type" name="project-type" required>
-                  <option value="" disabled selected>Select a category</option>
-                  <option value="music-production">Music Production</option>
-                  <option value="video-production">Video & Film Production</option>
-                  <option value="photography">Photography</option>
-                  <option value="graphic-design">Graphic Design & Branding</option>
-                  <option value="web-development">Web & App Development</option>
-                  <option value="marketing">Marketing & Social Media</option>
-                  <option value="event-production">Event Production</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="support-level">Level of Support</label>
-                <select id="support-level" name="support-level" required>
-                  <option value="" disabled selected>What do you need?</option>
-                  <option value="consultation">Consultation / Advisory</option>
-                  <option value="partial">Partial Support (I have a team)</option>
-                  <option value="full-service">Full-Service (End to End)</option>
-                  <option value="unsure">Not sure yet</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="reason">Why Rhozeland?</label>
-                <textarea id="reason" name="reason" rows="3" placeholder="What drew you to us and what are you hoping to achieve?" required></textarea>
-              </div>
-
-              <div class="form-group">
-                <label for="details">Project Details</label>
-                <textarea id="details" name="details" rows="4" placeholder="Describe your project — timeline, budget range, any specifics..."></textarea>
-              </div>
-
-              <button type="submit" class="btn-dark" style="width:100%;justify-content:center;">
-                Submit Inquiry
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-              </button>
-            </form>
           </div>
 
         </div>
@@ -222,8 +431,8 @@
         </div>
         <div class="footer-contact">
           <h3 class="footer-heading">Contact</h3>
-          <a href="tel:6478746743">647-874-6743</a>
           <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>
+          <a href="mailto:support@rhozeland.com">support@rhozeland.com</a>
           <a class="footer-link-inline" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
         Create
             <svg class="footer-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
@@ -236,20 +445,54 @@
   </div>
   <script src="/shared.js"></script>
   <script>
-    function handleInquiry(e){
+    var EMAIL_MAP = {
+      project: 'collab@rhozeland.com',
+      technical: 'support@rhozeland.com',
+      general: 'collab@rhozeland.com,support@rhozeland.com'
+    };
+
+    function switchCategory(cat) {
+      document.querySelectorAll('.cat-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelector('[data-cat="'+cat+'"]').classList.add('active');
+      document.querySelectorAll('.form-section').forEach(function(s){ s.classList.remove('active'); });
+      document.getElementById('form-'+cat).classList.add('active');
+    }
+
+    function handleSubmit(e, category) {
       e.preventDefault();
-      var f=e.target;
-      var name=f.fname.value+(f.lname.value?' '+f.lname.value:'');
-      var subject=encodeURIComponent('Project Inquiry from '+name+' — '+f['project-type'].value);
-      var body=encodeURIComponent(
-        'Name: '+name+'\n'+
-        'Email: '+f.email.value+'\n'+
-        'Project Type: '+f['project-type'].value+'\n'+
-        'Support Level: '+f['support-level'].value+'\n\n'+
-        'Why Rhozeland:\n'+f.reason.value+'\n\n'+
-        'Project Details:\n'+(f.details.value||'N/A')
-      );
-      window.location.href='mailto:collab@rhozeland.com?subject='+subject+'&body='+body;
+      var f = e.target;
+      var name = f.fname.value + (f.lname.value ? ' ' + f.lname.value : '');
+      var email = f.email.value;
+      var lines = ['Name: ' + name, 'Email: ' + email];
+      var subjectPrefix = '';
+
+      if (category === 'project') {
+        subjectPrefix = 'Project Inquiry';
+        lines.push('Project Type: ' + (f['project-type'] ? f['project-type'].value : ''));
+        lines.push('Support Level: ' + (f['support-level'] ? f['support-level'].value : ''));
+        lines.push('Budget: ' + (f.budget ? f.budget.value : 'N/A'));
+        lines.push('');
+        lines.push('Project Details:');
+        lines.push(f.details ? f.details.value : 'N/A');
+      } else if (category === 'technical') {
+        subjectPrefix = 'Technical Support';
+        lines.push('Topic: ' + (f.topic ? f.topic.value : ''));
+        lines.push('Urgency: ' + (f.urgency ? f.urgency.value : 'N/A'));
+        lines.push('');
+        lines.push('Details:');
+        lines.push(f.details ? f.details.value : 'N/A');
+      } else {
+        subjectPrefix = 'General Inquiry';
+        lines.push('Reason: ' + (f.reason ? f.reason.value : ''));
+        lines.push('');
+        lines.push('Message:');
+        lines.push(f.message ? f.message.value : 'N/A');
+      }
+
+      var subject = encodeURIComponent(subjectPrefix + ' from ' + name);
+      var body = encodeURIComponent(lines.join('\n'));
+      var mailto = EMAIL_MAP[category];
+      window.location.href = 'mailto:' + mailto + '?subject=' + subject + '&body=' + body;
     }
   </script>
 </body>

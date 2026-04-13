@@ -639,6 +639,17 @@
       successEl.style.display = 'block';
       document.getElementById('success-summary').innerHTML = summaryHtml;
 
+      // Show Book a Call only for project inquiries
+      var bookCallEl = document.getElementById('success-book-call');
+      var ctaTextEl = document.getElementById('success-cta-text');
+      if (category === 'project') {
+        bookCallEl.style.display = 'block';
+        ctaTextEl.style.display = 'block';
+      } else {
+        bookCallEl.style.display = 'none';
+        ctaTextEl.style.display = 'none';
+      }
+
       // Scroll to top of success
       successEl.scrollIntoView({behavior:'smooth', block:'start'});
 

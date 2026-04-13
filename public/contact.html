@@ -86,17 +86,29 @@
     .success-msg h3{font-size:1.3rem;font-weight:700;margin-bottom:0.5rem}
     .success-msg p{font-size:0.9rem;color:hsl(var(--muted));line-height:1.5}
 
+    /* Success state */
+    .success-state{text-align:center;padding:3rem 2rem;animation:fadeIn 0.4s ease}
+    .success-icon{width:64px;height:64px;border-radius:50%;background:hsl(150 50% 95%);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem}
+    .dark .success-icon{background:hsl(150 40% 15%)}
+    .success-icon svg{width:32px;height:32px;color:hsl(150 60% 40%)}
+    .success-state h2{font-family:'Inter',system-ui,sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:0.5rem}
+    .success-subtitle{font-size:0.92rem;color:hsl(var(--muted));line-height:1.6;margin-bottom:1.5rem}
+    .success-details{text-align:left;background:hsl(var(--surface)/0.5);border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 2px);padding:1rem 1.25rem;margin-bottom:1.75rem;font-size:0.82rem;line-height:1.7;color:hsl(var(--muted))}
+    .success-details strong{color:hsl(var(--fg));font-weight:600}
+    .success-actions{display:flex;gap:0.75rem;justify-content:center}
+
     @media(max-width:768px){
       .contact-layout{max-width:100%}
       .form-panel{padding:1.5rem}
       .form-row,.form-row-3{grid-template-columns:1fr}
       .cat-tabs{gap:0.5rem}
       .cat-tab{padding:0.6rem 1rem;font-size:0.8rem}
-      .form-actions{flex-direction:column}
+      .form-actions,.success-actions{flex-direction:column}
       .form-actions .btn-dark,.btn-outline-call{width:100%}
       .contact-hero{padding:2rem 0 1rem}
       .contact-socials{gap:0.35rem}
       .social-pill{font-size:0.7rem;padding:0.3rem 0.6rem}
+      .success-state{padding:2rem 1rem}
     }
 
     @media(max-width:480px){
@@ -449,6 +461,28 @@
               </form>
             </div>
 
+            <!-- ===== SUCCESS STATE ===== -->
+            <div id="form-success" style="display:none">
+              <div class="success-state">
+                <div class="success-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <h2>Message Sent!</h2>
+                <p class="success-subtitle">Your inquiry has been submitted successfully. We'll get back to you shortly.</p>
+                <div class="success-details" id="success-summary"></div>
+                <div class="success-actions">
+                  <button class="btn-dark" onclick="resetForm()">
+                    Send Another
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                  </button>
+                  <a href="https://calendar.app.google/cXfhA8SeNLXeBYNdA" target="_blank" rel="noopener noreferrer" class="btn-outline-call">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Book a Call Instead
+                  </a>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -603,7 +637,40 @@
       var subject = encodeURIComponent(subjectPrefix + ' from ' + name);
       var body = encodeURIComponent(lines.join('\n'));
       var mailto = EMAIL_MAP[category];
-      window.location.href = 'mailto:' + mailto + '?subject=' + subject + '&body=' + body;
+
+      // Build summary HTML
+      var catLabels = {project:'Project Inquiry',technical:'Technical Support',general:'General Inquiry'};
+      var summaryHtml = '<strong>Category:</strong> ' + catLabels[category] + '<br>';
+      summaryHtml += '<strong>Name:</strong> ' + name + '<br>';
+      summaryHtml += '<strong>Email:</strong> ' + email + '<br>';
+      if (phone) summaryHtml += '<strong>Phone:</strong> ' + phone + '<br>';
+
+      // Show success state
+      document.querySelector('.form-panel').style.display = 'none';
+      document.querySelector('.cat-tabs').style.display = 'none';
+      var successEl = document.getElementById('form-success');
+      successEl.style.display = 'block';
+      document.getElementById('success-summary').innerHTML = summaryHtml;
+
+      // Scroll to top of success
+      successEl.scrollIntoView({behavior:'smooth', block:'start'});
+
+      // Open mailto in background
+      setTimeout(function(){
+        window.open('mailto:' + mailto + '?subject=' + subject + '&body=' + body, '_blank');
+      }, 600);
+    }
+
+    var lastCategory = 'project';
+    function resetForm() {
+      document.getElementById('form-success').style.display = 'none';
+      document.querySelector('.form-panel').style.display = '';
+      document.querySelector('.cat-tabs').style.display = '';
+      // Reset all forms
+      document.querySelectorAll('.inquiry-form').forEach(function(f){ f.reset(); });
+      document.querySelectorAll('.char-count').forEach(function(c){ c.textContent = '0 / 2,000'; c.classList.remove('warn','over'); });
+      switchCategory('project');
+      window.scrollTo({top: 0, behavior:'smooth'});
     }
   </script>
 </body>

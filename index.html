@@ -2978,5 +2978,20 @@
       requestAnimationFrame(step);
     })();
   </script>
+  <script>
+    function handleBuildForm(e) {
+      e.preventDefault();
+      var f = e.target;
+      var name = f.fname.value + (f.lname.value ? ' ' + f.lname.value : '');
+      var subject = encodeURIComponent('Project Inquiry from ' + name + ' — ' + f['project-type'].value);
+      var body = encodeURIComponent(
+        'Name: ' + name + '\n' +
+        'Email: ' + f.email.value + '\n' +
+        'Project Type: ' + f['project-type'].value + '\n\n' +
+        'Message:\n' + f.message.value
+      );
+      window.location.href = 'mailto:collab@rhozeland.com?subject=' + subject + '&body=' + body;
+    }
+  </script>
 </body>
 </html>

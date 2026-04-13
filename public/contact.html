@@ -13,77 +13,96 @@
   <link rel="stylesheet" href="/shared.css" />
   <style>
     /* ===== CONTACT PAGE STYLES ===== */
-    .contact-hero{text-align:center;padding:2rem 0 1rem}
-    .contact-hero h1{font-family:'Inter',system-ui,sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:700;letter-spacing:-0.04em;margin-bottom:0.5rem}
-    .contact-hero p{font-size:1rem;color:hsl(var(--muted));max-width:540px;margin:0 auto}
+    .contact-hero{text-align:center;padding:3rem 0 1.5rem}
+    .contact-hero h1{font-family:'Inter',system-ui,sans-serif;font-size:clamp(2.2rem,4.5vw,3.2rem);font-weight:700;letter-spacing:-0.04em;margin-bottom:0.6rem;background:linear-gradient(135deg,hsl(var(--fg)),hsl(var(--fg)/0.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .contact-hero p{font-size:1.05rem;color:hsl(var(--muted));max-width:540px;margin:0 auto;line-height:1.6}
 
     /* Category Tabs */
     .cat-tabs{display:flex;gap:0.75rem;justify-content:center;margin:2rem 0 2.5rem;flex-wrap:wrap}
-    .cat-tab{display:flex;align-items:center;gap:0.5rem;padding:0.7rem 1.25rem;border:1px solid hsl(var(--border));border-radius:var(--radius);background:hsl(var(--surface)/0.4);backdrop-filter:blur(12px);font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:hsl(var(--muted));cursor:pointer;transition:all 0.25s ease}
-    .cat-tab:hover{border-color:hsl(var(--fg)/0.3);color:hsl(var(--fg))}
-    .cat-tab.active{border-color:hsl(var(--fg));color:hsl(var(--fg));background:hsl(var(--surface)/0.8)}
+    .cat-tab{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.4rem;border:1px solid hsl(var(--border));border-radius:var(--radius);background:hsl(var(--surface)/0.4);backdrop-filter:blur(12px);font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:hsl(var(--muted));cursor:pointer;transition:all 0.3s ease}
+    .cat-tab:hover{border-color:hsl(var(--fg)/0.3);color:hsl(var(--fg));transform:translateY(-1px)}
+    .cat-tab.active{border-color:hsl(var(--fg));color:hsl(var(--fg));background:hsl(var(--surface)/0.8);box-shadow:0 4px 12px hsl(var(--fg)/0.08)}
     .cat-tab svg{width:18px;height:18px;flex-shrink:0}
-    .cat-tab .cat-badge{font-size:0.65rem;padding:0.15rem 0.45rem;border-radius:999px;background:hsl(var(--fg)/0.08);color:hsl(var(--fg)/0.6);font-weight:500;letter-spacing:0.02em}
 
     /* Social row under hero */
     .contact-socials{display:flex;justify-content:center;gap:0.5rem;flex-wrap:wrap;margin-bottom:2rem}
 
     /* Form Layout */
-    .contact-layout{max-width:640px;margin:0 auto}
-    .form-panel{border:1px solid hsl(var(--border));border-radius:var(--radius);padding:2rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(12px)}
-    .form-panel h2{font-family:'Inter',system-ui,sans-serif;font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:0.25rem}
-    .form-panel p.subtitle{font-size:0.85rem;color:hsl(var(--muted));margin-bottom:1.5rem}
-    .inquiry-form{display:flex;flex-direction:column;gap:1.15rem}
+    .contact-layout{max-width:680px;margin:0 auto}
+    .form-panel{border:1px solid hsl(var(--border));border-radius:calc(var(--radius) + 4px);padding:2.5rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(16px);box-shadow:0 8px 32px hsl(var(--fg)/0.04)}
+    .form-panel h2{font-family:'Inter',system-ui,sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:0.25rem}
+    .form-panel p.subtitle{font-size:0.88rem;color:hsl(var(--muted));margin-bottom:1.75rem;line-height:1.5}
+    .inquiry-form{display:flex;flex-direction:column;gap:1.25rem}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-    .form-group{display:flex;flex-direction:column;gap:0.3rem}
-    .form-group label{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:hsl(var(--muted))}
+    .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+    .form-group{display:flex;flex-direction:column;gap:0.35rem;position:relative}
+    .form-group label{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:hsl(var(--muted));transition:color 0.2s}
+    .form-group:focus-within label{color:hsl(var(--fg))}
     .form-group input,.form-group textarea,.form-group select{
-      width:100%;padding:0.6rem 0.8rem;border:1px solid hsl(var(--border));border-radius:calc(var(--radius) - 2px);
-      background:hsl(var(--surface)/0.4);color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.88rem;
-      transition:border-color 0.2s;outline:none
+      width:100%;padding:0.7rem 0.9rem;border:1.5px solid hsl(var(--border));border-radius:calc(var(--radius) - 2px);
+      background:hsl(var(--surface)/0.3);color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.88rem;
+      transition:all 0.25s ease;outline:none
     }
-    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:hsl(var(--fg)/0.4)}
-    .form-group input::placeholder,.form-group textarea::placeholder{color:hsl(var(--muted)/0.6)}
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:hsl(var(--fg)/0.5);background:hsl(var(--surface)/0.5);box-shadow:0 0 0 3px hsl(var(--fg)/0.06)}
+    .form-group input::placeholder,.form-group textarea::placeholder{color:hsl(var(--muted)/0.5)}
+    .form-group input.error,.form-group textarea.error,.form-group select.error{border-color:hsl(0 70% 55%);box-shadow:0 0 0 3px hsl(0 70% 55%/0.08)}
+    .form-group .error-msg{font-size:0.68rem;color:hsl(0 70% 55%);font-weight:500;margin-top:0.15rem;display:none}
+    .form-group .error-msg.show{display:block}
     .form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.75rem center;padding-right:2rem}
     .form-group select option{background:hsl(var(--bg));color:hsl(var(--fg))}
-    .form-actions{display:flex;gap:0.75rem;margin-top:0.5rem}
+    .form-group textarea{resize:vertical;min-height:100px}
+    .form-group .char-count{font-size:0.65rem;color:hsl(var(--muted)/0.5);text-align:right;margin-top:0.15rem;transition:color 0.2s}
+    .form-group .char-count.warn{color:hsl(30 80% 50%)}
+    .form-group .char-count.over{color:hsl(0 70% 55%)}
+
+    /* Optional label */
+    .form-group .optional-tag{font-size:0.6rem;font-weight:400;text-transform:none;letter-spacing:0;color:hsl(var(--muted)/0.5);margin-left:0.35rem}
+
+    .form-actions{display:flex;gap:0.75rem;margin-top:0.75rem}
     .form-actions .btn-dark{flex:1;justify-content:center}
-    .btn-outline-call{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.65rem 1.25rem;border:1px solid hsl(var(--border));border-radius:var(--radius);background:transparent;color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;text-decoration:none;white-space:nowrap}
-    .btn-outline-call:hover{border-color:hsl(var(--fg)/0.4);background:hsl(var(--surface)/0.4)}
+    .btn-outline-call{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.7rem 1.4rem;border:1.5px solid hsl(var(--border));border-radius:var(--radius);background:transparent;color:hsl(var(--fg));font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.25s;text-decoration:none;white-space:nowrap}
+    .btn-outline-call:hover{border-color:hsl(var(--fg)/0.4);background:hsl(var(--surface)/0.4);transform:translateY(-1px)}
     .btn-outline-call svg{width:16px;height:16px}
 
-    /* Sidebar */
-    .contact-sidebar{display:flex;flex-direction:column;gap:1.25rem}
-    .sidebar-card{border:1px solid hsl(var(--border));border-radius:var(--radius);padding:1.25rem;background:hsl(var(--surface)/0.6);backdrop-filter:blur(12px)}
-    .sidebar-card h3{font-family:'Inter',system-ui,sans-serif;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:hsl(var(--muted));margin-bottom:0.75rem}
-    .sidebar-link{display:flex;align-items:center;gap:0.6rem;padding:0.45rem 0;color:hsl(var(--fg));text-decoration:none;font-size:0.88rem;font-weight:500;transition:opacity 0.2s}
-    .sidebar-link:hover{opacity:0.6}
-    .sidebar-link svg{width:16px;height:16px;opacity:0.5;flex-shrink:0}
-    .social-row{display:flex;gap:0.4rem;flex-wrap:wrap}
-    .social-pill{display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 0.7rem;border:1px solid hsl(var(--border));border-radius:999px;font-size:0.75rem;font-weight:500;color:hsl(var(--fg));text-decoration:none;transition:all 0.2s}
-    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.2)}
+    /* Divider */
+    .form-divider{display:flex;align-items:center;gap:0.75rem;margin:0.25rem 0}
+    .form-divider span{font-size:0.7rem;font-weight:500;color:hsl(var(--muted)/0.5);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap}
+    .form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:hsl(var(--border))}
+
+    /* Social pill */
+    .social-pill{display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.8rem;border:1px solid hsl(var(--border));border-radius:999px;font-size:0.75rem;font-weight:500;color:hsl(var(--fg));text-decoration:none;transition:all 0.25s}
+    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.2);transform:translateY(-1px)}
     .social-pill svg{width:13px;height:13px}
 
-    /* Email routing badge */
-    .route-badge{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.7rem;color:hsl(var(--muted));margin-top:0.25rem}
-    .route-badge svg{width:12px;height:12px;opacity:0.5}
-
     /* Hidden form sections */
-    .form-section{display:none}
-    .form-section.active{display:flex;flex-direction:column;gap:1.15rem}
+    .form-section{display:none;animation:fadeIn 0.3s ease}
+    .form-section.active{display:flex;flex-direction:column;gap:1.25rem}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
     /* Success state */
-    .success-msg{display:none;text-align:center;padding:2rem 1rem}
-    .success-msg.show{display:block}
-    .success-msg h3{font-size:1.25rem;font-weight:700;margin-bottom:0.5rem}
-    .success-msg p{font-size:0.9rem;color:hsl(var(--muted))}
+    .success-msg{display:none;text-align:center;padding:3rem 1.5rem}
+    .success-msg.show{display:block;animation:fadeIn 0.4s ease}
+    .success-msg svg{width:48px;height:48px;color:hsl(150 60% 45%);margin:0 auto 1rem}
+    .success-msg h3{font-size:1.3rem;font-weight:700;margin-bottom:0.5rem}
+    .success-msg p{font-size:0.9rem;color:hsl(var(--muted));line-height:1.5}
 
     @media(max-width:768px){
       .contact-layout{max-width:100%}
-      .form-row{grid-template-columns:1fr}
+      .form-panel{padding:1.5rem}
+      .form-row,.form-row-3{grid-template-columns:1fr}
       .cat-tabs{gap:0.5rem}
-      .cat-tab{padding:0.55rem 0.9rem;font-size:0.8rem}
+      .cat-tab{padding:0.6rem 1rem;font-size:0.8rem}
       .form-actions{flex-direction:column}
+      .form-actions .btn-dark,.btn-outline-call{width:100%}
+      .contact-hero{padding:2rem 0 1rem}
+      .contact-socials{gap:0.35rem}
+      .social-pill{font-size:0.7rem;padding:0.3rem 0.6rem}
+    }
+
+    @media(max-width:480px){
+      .form-panel{padding:1.25rem}
+      .cat-tab{padding:0.5rem 0.75rem;font-size:0.75rem}
+      .cat-tab svg{width:15px;height:15px}
     }
   </style>
 </head>
@@ -179,7 +198,7 @@
 
             <!-- ===== PROJECT FORM ===== -->
             <div class="form-section active" id="form-project">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'project')">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'project')" novalidate>
                 <h2>Start a Project</h2>
                 <p class="subtitle">Tell us about what you're building and we'll find the right path forward.</p>
 
@@ -187,6 +206,7 @@
                   <div class="form-group">
                     <label for="p-fname">First Name</label>
                     <input type="text" id="p-fname" name="fname" placeholder="Jane" required />
+                    <span class="error-msg">First name is required</span>
                   </div>
                   <div class="form-group">
                     <label for="p-lname">Last Name</label>
@@ -194,53 +214,85 @@
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="p-email">Email</label>
-                  <input type="email" id="p-email" name="email" placeholder="you@example.com" required />
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="p-email">Email</label>
+                    <input type="email" id="p-email" name="email" placeholder="you@example.com" required />
+                    <span class="error-msg">Valid email is required</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="p-phone">Phone <span class="optional-tag">optional</span></label>
+                    <input type="tel" id="p-phone" name="phone" placeholder="+1 (555) 000-0000" />
+                  </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="p-type">Project Type</label>
-                  <select id="p-type" name="project-type" required>
-                    <option value="" disabled selected>Select a category</option>
-                    <option value="music-production">Music Production</option>
-                    <option value="video-production">Video & Film Production</option>
-                    <option value="photography">Photography</option>
-                    <option value="graphic-design">Graphic Design & Branding</option>
-                    <option value="web-development">Web & App Development</option>
-                    <option value="marketing">Marketing & Social Media</option>
-                    <option value="event-production">Event Production</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <label for="p-org">Company / Organization <span class="optional-tag">optional</span></label>
+                  <input type="text" id="p-org" name="org" placeholder="Your company or project name" />
                 </div>
 
-                <div class="form-group">
-                  <label for="p-support">Level of Support</label>
-                  <select id="p-support" name="support-level" required>
-                    <option value="" disabled selected>What do you need?</option>
-                    <option value="consultation">Consultation / Advisory</option>
-                    <option value="partial">Partial Support (I have a team)</option>
-                    <option value="full-service">Full-Service (End to End)</option>
-                    <option value="unsure">Not sure yet</option>
-                  </select>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="p-type">Project Type</label>
+                    <select id="p-type" name="project-type" required>
+                      <option value="" disabled selected>Select a category</option>
+                      <option value="music-production">Music Production</option>
+                      <option value="video-production">Video & Film Production</option>
+                      <option value="photography">Photography</option>
+                      <option value="graphic-design">Graphic Design & Branding</option>
+                      <option value="web-development">Web & App Development</option>
+                      <option value="marketing">Marketing & Social Media</option>
+                      <option value="event-production">Event Production</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <span class="error-msg">Please select a project type</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="p-support">Level of Support</label>
+                    <select id="p-support" name="support-level" required>
+                      <option value="" disabled selected>What do you need?</option>
+                      <option value="consultation">Consultation / Advisory</option>
+                      <option value="partial">Partial Support (I have a team)</option>
+                      <option value="full-service">Full-Service (End to End)</option>
+                      <option value="unsure">Not sure yet</option>
+                    </select>
+                    <span class="error-msg">Please select support level</span>
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="p-budget">Budget Range</label>
-                  <select id="p-budget" name="budget">
-                    <option value="" disabled selected>Select a range</option>
-                    <option value="under-1k">Under $1,000</option>
-                    <option value="1k-5k">$1,000 – $5,000</option>
-                    <option value="5k-15k">$5,000 – $15,000</option>
-                    <option value="15k-plus">$15,000+</option>
-                    <option value="not-sure">Not sure yet</option>
-                  </select>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="p-budget">Budget Range</label>
+                    <select id="p-budget" name="budget">
+                      <option value="" disabled selected>Select a range</option>
+                      <option value="under-1k">Under $1,000</option>
+                      <option value="1k-5k">$1,000 – $5,000</option>
+                      <option value="5k-15k">$5,000 – $15,000</option>
+                      <option value="15k-plus">$15,000+</option>
+                      <option value="not-sure">Not sure yet</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="p-timeline">Timeline <span class="optional-tag">optional</span></label>
+                    <select id="p-timeline" name="timeline">
+                      <option value="" disabled selected>When do you need this?</option>
+                      <option value="asap">ASAP</option>
+                      <option value="1-2-weeks">1–2 weeks</option>
+                      <option value="1-month">Within a month</option>
+                      <option value="2-3-months">2–3 months</option>
+                      <option value="flexible">Flexible / No rush</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div class="form-group">
                   <label for="p-details">Project Details</label>
-                  <textarea id="p-details" name="details" rows="4" placeholder="Describe your project — timeline, vision, any specifics..." required></textarea>
+                  <textarea id="p-details" name="details" rows="5" placeholder="Describe your project — timeline, vision, any specifics..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
+                  <span class="error-msg">Please describe your project</span>
+                  <span class="char-count" id="p-details-count">0 / 2,000</span>
                 </div>
+
+                <div class="form-divider"><span>or</span></div>
 
                 <div class="form-actions">
                   <button type="submit" class="btn-dark">
@@ -257,7 +309,7 @@
 
             <!-- ===== TECHNICAL FORM ===== -->
             <div class="form-section" id="form-technical">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'technical')">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'technical')" novalidate>
                 <h2>Technical & Studio Support</h2>
                 <p class="subtitle">Questions about platforms, tools, studio access, or billing — we're here to help.</p>
 
@@ -265,6 +317,7 @@
                   <div class="form-group">
                     <label for="t-fname">First Name</label>
                     <input type="text" id="t-fname" name="fname" placeholder="Jane" required />
+                    <span class="error-msg">First name is required</span>
                   </div>
                   <div class="form-group">
                     <label for="t-lname">Last Name</label>
@@ -272,38 +325,51 @@
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="t-email">Email</label>
-                  <input type="email" id="t-email" name="email" placeholder="you@example.com" required />
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="t-email">Email</label>
+                    <input type="email" id="t-email" name="email" placeholder="you@example.com" required />
+                    <span class="error-msg">Valid email is required</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="t-phone">Phone <span class="optional-tag">optional</span></label>
+                    <input type="tel" id="t-phone" name="phone" placeholder="+1 (555) 000-0000" />
+                  </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="t-topic">Topic</label>
-                  <select id="t-topic" name="topic" required>
-                    <option value="" disabled selected>What do you need help with?</option>
-                    <option value="studio-booking">Studio Booking & Access</option>
-                    <option value="platform-issue">Platform / App Issue</option>
-                    <option value="billing">Billing & Payments</option>
-                    <option value="account">Account & Membership</option>
-                    <option value="equipment">Equipment & Gear</option>
-                    <option value="other-tech">Other Technical</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label for="t-urgency">Urgency</label>
-                  <select id="t-urgency" name="urgency">
-                    <option value="" disabled selected>How urgent is this?</option>
-                    <option value="low">Low — no rush</option>
-                    <option value="medium">Medium — within a few days</option>
-                    <option value="high">High — need help ASAP</option>
-                  </select>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="t-topic">Topic</label>
+                    <select id="t-topic" name="topic" required>
+                      <option value="" disabled selected>What do you need help with?</option>
+                      <option value="studio-booking">Studio Booking & Access</option>
+                      <option value="platform-issue">Platform / App Issue</option>
+                      <option value="billing">Billing & Payments</option>
+                      <option value="account">Account & Membership</option>
+                      <option value="equipment">Equipment & Gear</option>
+                      <option value="other-tech">Other Technical</option>
+                    </select>
+                    <span class="error-msg">Please select a topic</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="t-urgency">Urgency</label>
+                    <select id="t-urgency" name="urgency">
+                      <option value="" disabled selected>How urgent is this?</option>
+                      <option value="low">Low — no rush</option>
+                      <option value="medium">Medium — within a few days</option>
+                      <option value="high">High — need help ASAP</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div class="form-group">
                   <label for="t-details">Describe Your Issue</label>
-                  <textarea id="t-details" name="details" rows="4" placeholder="Include any relevant details, error messages, or context..." required></textarea>
+                  <textarea id="t-details" name="details" rows="5" placeholder="Include any relevant details, error messages, or context..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
+                  <span class="error-msg">Please describe your issue</span>
+                  <span class="char-count" id="t-details-count">0 / 2,000</span>
                 </div>
+
+                <div class="form-divider"><span>or</span></div>
 
                 <div class="form-actions">
                   <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
@@ -320,7 +386,7 @@
 
             <!-- ===== GENERAL FORM ===== -->
             <div class="form-section" id="form-general">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'general')">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'general')" novalidate>
                 <h2>General Inquiry</h2>
                 <p class="subtitle">Partnerships, press, sponsorships, or anything else — drop us a line.</p>
 
@@ -328,6 +394,7 @@
                   <div class="form-group">
                     <label for="g-fname">First Name</label>
                     <input type="text" id="g-fname" name="fname" placeholder="Jane" required />
+                    <span class="error-msg">First name is required</span>
                   </div>
                   <div class="form-group">
                     <label for="g-lname">Last Name</label>
@@ -335,9 +402,16 @@
                   </div>
                 </div>
 
-                <div class="form-group">
-                  <label for="g-email">Email</label>
-                  <input type="email" id="g-email" name="email" placeholder="you@example.com" required />
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="g-email">Email</label>
+                    <input type="email" id="g-email" name="email" placeholder="you@example.com" required />
+                    <span class="error-msg">Valid email is required</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="g-phone">Phone <span class="optional-tag">optional</span></label>
+                    <input type="tel" id="g-phone" name="phone" placeholder="+1 (555) 000-0000" />
+                  </div>
                 </div>
 
                 <div class="form-group">
@@ -350,12 +424,17 @@
                     <option value="feedback">Feedback / Suggestion</option>
                     <option value="other-general">Other</option>
                   </select>
+                  <span class="error-msg">Please select a reason</span>
                 </div>
 
                 <div class="form-group">
                   <label for="g-message">Your Message</label>
-                  <textarea id="g-message" name="message" rows="4" placeholder="Tell us what's on your mind..." required></textarea>
+                  <textarea id="g-message" name="message" rows="5" placeholder="Tell us what's on your mind..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
+                  <span class="error-msg">Please enter your message</span>
+                  <span class="char-count" id="g-message-count">0 / 2,000</span>
                 </div>
+
+                <div class="form-divider"><span>or</span></div>
 
                 <div class="form-actions">
                   <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
@@ -427,19 +506,82 @@
       document.getElementById('form-'+cat).classList.add('active');
     }
 
+    function updateCharCount(el, max) {
+      var len = el.value.length;
+      var counter = el.parentElement.querySelector('.char-count');
+      if (!counter) return;
+      counter.textContent = len.toLocaleString() + ' / ' + max.toLocaleString();
+      counter.classList.remove('warn','over');
+      if (len > max * 0.9) counter.classList.add('warn');
+      if (len >= max) counter.classList.add('over');
+    }
+
+    function validateForm(form) {
+      var valid = true;
+      form.querySelectorAll('.error').forEach(function(el){ el.classList.remove('error'); });
+      form.querySelectorAll('.error-msg.show').forEach(function(el){ el.classList.remove('show'); });
+
+      form.querySelectorAll('[required]').forEach(function(field) {
+        var val = field.value.trim();
+        var isInvalid = false;
+
+        if (!val || (field.tagName === 'SELECT' && val === '')) {
+          isInvalid = true;
+        }
+        if (field.type === 'email' && val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+          isInvalid = true;
+        }
+
+        if (isInvalid) {
+          valid = false;
+          field.classList.add('error');
+          var msg = field.parentElement.querySelector('.error-msg');
+          if (msg) msg.classList.add('show');
+        }
+      });
+
+      if (!valid) {
+        var firstError = form.querySelector('.error');
+        if (firstError) firstError.focus();
+      }
+      return valid;
+    }
+
+    // Clear error on input
+    document.addEventListener('input', function(e) {
+      if (e.target.classList.contains('error')) {
+        e.target.classList.remove('error');
+        var msg = e.target.parentElement.querySelector('.error-msg');
+        if (msg) msg.classList.remove('show');
+      }
+    });
+    document.addEventListener('change', function(e) {
+      if (e.target.classList.contains('error')) {
+        e.target.classList.remove('error');
+        var msg = e.target.parentElement.querySelector('.error-msg');
+        if (msg) msg.classList.remove('show');
+      }
+    });
+
     function handleSubmit(e, category) {
       e.preventDefault();
       var f = e.target;
+      if (!validateForm(f)) return;
+
       var name = f.fname.value + (f.lname.value ? ' ' + f.lname.value : '');
       var email = f.email.value;
+      var phone = f.phone ? f.phone.value : '';
       var lines = ['Name: ' + name, 'Email: ' + email];
+      if (phone) lines.push('Phone: ' + phone);
       var subjectPrefix = '';
 
       if (category === 'project') {
         subjectPrefix = 'Project Inquiry';
+        if (f.org && f.org.value) lines.push('Organization: ' + f.org.value);
         lines.push('Project Type: ' + (f['project-type'] ? f['project-type'].value : ''));
         lines.push('Support Level: ' + (f['support-level'] ? f['support-level'].value : ''));
         lines.push('Budget: ' + (f.budget ? f.budget.value : 'N/A'));
+        lines.push('Timeline: ' + (f.timeline ? f.timeline.value : 'N/A'));
         lines.push('');
         lines.push('Project Details:');
         lines.push(f.details ? f.details.value : 'N/A');

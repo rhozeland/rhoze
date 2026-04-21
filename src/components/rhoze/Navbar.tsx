@@ -61,6 +61,7 @@ const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
+              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               className="text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
             >
               {link.label}
@@ -91,6 +92,7 @@ const Navbar = () => {
             <a
               key={link.label}
               href={link.href}
+              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
               onClick={() => setOpen(false)}
               className="block py-3 text-muted-foreground hover:text-foreground transition-colors font-body"
             >

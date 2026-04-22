@@ -129,6 +129,7 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
         src={p.image}
         alt={`${p.title} — ${p.artist}`}
         loading="lazy"
+        decoding="async"
         className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
           p.video && isHovered ? "opacity-0" : "opacity-100 group-hover:scale-105"
         }`}
@@ -142,7 +143,7 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
           muted
           playsInline
           loop
-          preload="auto"
+          preload="none"
           onCanPlay={() => {
             if (isHovered && videoRef.current) {
               if (videoRef.current.currentTime < 0.15) {

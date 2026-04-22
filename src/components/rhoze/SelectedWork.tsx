@@ -191,7 +191,7 @@ const SelectedWork = () => {
 
   return (
     <section id="work" className="py-20 lg:py-28" ref={ref}>
-      <div className="container mx-auto px-6 lg:px-16 mb-10">
+      <div className="container mx-auto max-w-6xl px-6 mb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -224,7 +224,14 @@ const SelectedWork = () => {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="overflow-x-auto scrollbar-hide"
       >
-        <div className="flex gap-4 px-6 lg:px-16 pb-4" style={{ width: "max-content" }}>
+        {/* Horizontal scroll row: left padding matches centered max-w-6xl container so cards start in line with the heading */}
+        <div
+          className="flex gap-4 pb-4 pr-6"
+          style={{
+            width: "max-content",
+            paddingLeft: "max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem))",
+          }}
+        >
           {projects.map((p, i) => (
             <ProjectCard key={p.title} project={p} index={i} inView={inView} />
           ))}

@@ -1,18 +1,8 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Music, Camera, Video } from "lucide-react";
 
 const projects = [
-  {
-    title: "BK Whiskey x United Nations MMA",
-    artist: "BK Whiskey",
-    tag: "Commercial",
-    type: "Commercial",
-    icons: ["camera"],
-    href: "https://www.instagram.com/p/DKvf2jXMbRs",
-    image: "/images/bk-whiskey-mma-thumb.png",
-    video: "/videos/bk-whiskey-mma.mp4",
-  },
   {
     title: "The Mask",
     artist: "Ooak",
@@ -22,15 +12,6 @@ const projects = [
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
     image: "/images/ooak-the-mask-thumb.png",
     video: "/videos/ooak-the-mask.mp4",
-  },
-  {
-    title: "iiMPCT Media",
-    artist: "iiMPCT Media",
-    tag: "Visual",
-    type: "Web Series",
-    icons: ["camera"],
-    href: "https://www.youtube.com/@iimpctmedia",
-    image: "/images/iimpct-media-thumb.png",
   },
   {
     title: "Mansa Musa",
@@ -43,6 +24,25 @@ const projects = [
     video: "/videos/fingaz-mansa-musa.mp4",
   },
   {
+    title: "Bombaaa",
+    artist: "MONEE FINGAZ X 1CUZZMN",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
+    video: "/videos/fingaz-bombaaa-v2.mp4",
+  },
+  {
+    title: "Feel Like A Superhero",
+    artist: "MONEE FINGAZ",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/fingaz-superhero-thumb.png",
+  },
+  {
     title: "Holy Water",
     artist: "Cozal",
     tag: "Audio & Visual",
@@ -51,15 +51,6 @@ const projects = [
     href: "https://www.youtube.com/watch?v=VPLyATcs7fE",
     image: "/images/cozal-holy-water-thumb.png",
     video: "/videos/cozal-holy-water.mp4",
-  },
-  {
-    title: "LeLongLegs",
-    artist: "Indolestic",
-    tag: "Digital",
-    type: "Web Series",
-    icons: ["camera"],
-    href: "https://www.lelonglegs.lol/",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
   },
   {
     title: "FATE",
@@ -71,14 +62,59 @@ const projects = [
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
   },
   {
-    title: "Bombaaa",
-    artist: "MONEE FINGAZ X 1CUZZMN",
+    title: "iiMPCT Media",
+    artist: "iiMPCT Media",
+    tag: "Visual",
+    type: "Web Series",
+    icons: ["camera"],
+    href: "https://www.youtube.com/@iimpctmedia",
+    image: "/images/iimpct-media-thumb.png",
+  },
+  {
+    title: "BK Whiskey x United Nations MMA",
+    artist: "BK Whiskey",
+    tag: "Commercial",
+    type: "Commercial",
+    icons: ["camera"],
+    href: "https://www.instagram.com/p/DKvf2jXMbRs",
+    image: "/images/bk-whiskey-mma-thumb.png",
+    video: "/videos/bk-whiskey-mma.mp4",
+  },
+  {
+    title: "Telephone",
+    artist: "Runner's Club",
     tag: "Audio & Visual",
     type: "Music Video",
     icons: ["music", "camera"],
-    href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
-    video: "/videos/fingaz-bombaaa-v2.mp4",
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/runners-club-telephone-thumb.png",
+  },
+  {
+    title: "Nothing At All",
+    artist: "Semiah",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/semiah-nothing-at-all-thumb.png",
+  },
+  {
+    title: "Photoshoot",
+    artist: "YOUNG $TEELO",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/young-steelo-photoshoot-thumb.png",
+  },
+  {
+    title: "LeLongLegs",
+    artist: "Indolestic",
+    tag: "Digital",
+    type: "Web Series",
+    icons: ["camera"],
+    href: "https://www.lelonglegs.lol/",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
   },
 ];
 

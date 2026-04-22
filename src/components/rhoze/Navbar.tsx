@@ -6,11 +6,11 @@ import logoWhite from "@/assets/logo-white.png";
 import logoColor from "@/assets/logo-color.png";
 
 const navLinks = [
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Events", href: "/events" },
+  { label: "About", href: "/about.html" },
+  { label: "Projects", href: "/projects.html" },
+  { label: "Events", href: "/events.html" },
   { label: "Shop", href: "https://rhozeland.shop", external: true },
-  { label: "Contact", href: "/contact" },
+  { label: "Contact", href: "/contact.html" },
 ];
 
 const Navbar = () => {

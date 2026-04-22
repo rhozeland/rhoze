@@ -219,7 +219,7 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 .nav-links a:hover,
-.mobile-menu a:hover { color: hsl(var(--ink)); }
+.mobile-menu a:not(.mobile-cta):hover { color: hsl(var(--ink)); }
 
 .nav-links a.active { color: hsl(var(--ink)); }
 

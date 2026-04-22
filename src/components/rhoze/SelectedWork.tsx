@@ -1,18 +1,8 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Music, Camera, Video } from "lucide-react";
 
 const projects = [
-  {
-    title: "BK Whiskey x United Nations MMA",
-    artist: "BK Whiskey",
-    tag: "Commercial",
-    type: "Commercial",
-    icons: ["camera"],
-    href: "https://www.instagram.com/p/DKvf2jXMbRs",
-    image: "/images/bk-whiskey-mma-thumb.png",
-    video: "/videos/bk-whiskey-mma.mp4",
-  },
   {
     title: "The Mask",
     artist: "Ooak",
@@ -22,15 +12,6 @@ const projects = [
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
     image: "/images/ooak-the-mask-thumb.png",
     video: "/videos/ooak-the-mask.mp4",
-  },
-  {
-    title: "iiMPCT Media",
-    artist: "iiMPCT Media",
-    tag: "Visual",
-    type: "Web Series",
-    icons: ["camera"],
-    href: "https://www.youtube.com/@iimpctmedia",
-    image: "/images/iimpct-media-thumb.png",
   },
   {
     title: "Mansa Musa",
@@ -43,6 +24,25 @@ const projects = [
     video: "/videos/fingaz-mansa-musa.mp4",
   },
   {
+    title: "Bombaaa",
+    artist: "MONEE FINGAZ X 1CUZZMN",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
+    video: "/videos/fingaz-bombaaa-v2.mp4",
+  },
+  {
+    title: "Feel Like A Superhero",
+    artist: "MONEE FINGAZ",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/fingaz-superhero-thumb.png",
+  },
+  {
     title: "Holy Water",
     artist: "Cozal",
     tag: "Audio & Visual",
@@ -51,15 +51,6 @@ const projects = [
     href: "https://www.youtube.com/watch?v=VPLyATcs7fE",
     image: "/images/cozal-holy-water-thumb.png",
     video: "/videos/cozal-holy-water.mp4",
-  },
-  {
-    title: "LeLongLegs",
-    artist: "Indolestic",
-    tag: "Digital",
-    type: "Web Series",
-    icons: ["camera"],
-    href: "https://www.lelonglegs.lol/",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
   },
   {
     title: "FATE",
@@ -71,14 +62,59 @@ const projects = [
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
   },
   {
-    title: "Bombaaa",
-    artist: "MONEE FINGAZ X 1CUZZMN",
+    title: "iiMPCT Media",
+    artist: "iiMPCT Media",
+    tag: "Visual",
+    type: "Web Series",
+    icons: ["camera"],
+    href: "https://www.youtube.com/@iimpctmedia",
+    image: "/images/iimpct-media-thumb.png",
+  },
+  {
+    title: "BK Whiskey x United Nations MMA",
+    artist: "BK Whiskey",
+    tag: "Commercial",
+    type: "Commercial",
+    icons: ["camera"],
+    href: "https://www.instagram.com/p/DKvf2jXMbRs",
+    image: "/images/bk-whiskey-mma-thumb.png",
+    video: "/videos/bk-whiskey-mma.mp4",
+  },
+  {
+    title: "Telephone",
+    artist: "Runner's Club",
     tag: "Audio & Visual",
     type: "Music Video",
     icons: ["music", "camera"],
-    href: "https://www.youtube.com/watch?v=QSFF9jI8f4g",
-    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
-    video: "/videos/fingaz-bombaaa-v2.mp4",
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/rc1-thumb.jpg",
+  },
+  {
+    title: "Nothing At All",
+    artist: "Semiah",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/semiah-withdrawals-thumb.png",
+  },
+  {
+    title: "Photoshoot",
+    artist: "YOUNG $TEELO",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    image: "/images/steelo-photoshoot-2.png",
+  },
+  {
+    title: "LeLongLegs",
+    artist: "Indolestic",
+    tag: "Digital",
+    type: "Web Series",
+    icons: ["camera"],
+    href: "https://www.lelonglegs.lol/",
+    image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
   },
 ];
 
@@ -190,11 +226,6 @@ const SelectedWork = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
-  // Duplicate the list so the marquee can loop seamlessly
-  const loop = [...projects, ...projects];
-  // Tune speed by total content; ~7s per card feels smooth without being dizzy
-  const durationSec = projects.length * 7;
-
   return (
     <section id="work" className="py-20 lg:py-28" ref={ref}>
       <div className="container mx-auto max-w-6xl px-6 mb-10">
@@ -216,7 +247,7 @@ const SelectedWork = () => {
             and artists building with intent — not just volume.
           </p>
           <a
-            href="/projects"
+            href="/projects.html"
             className="inline-flex items-center gap-2 text-foreground font-semibold text-sm hover:opacity-70 transition-opacity"
           >
             See all projects <ArrowUpRight size={14} />
@@ -224,18 +255,109 @@ const SelectedWork = () => {
         </motion.div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="group/marquee relative overflow-hidden"
+      <ScrollingStrip inView={inView} />
+    </section>
+  );
+};
+
+export default SelectedWork;
+
+/**
+ * Horizontal strip with:
+ *  - Native horizontal scroll (trackpad / touch swipe / mouse wheel via shift)
+ *  - Click-and-drag to scroll
+ *  - Continuous auto-scroll via rAF that snaps back at the halfway point of
+ *    a duplicated track for seamless looping
+ *  - Auto-scroll pauses on hover, focus, touch, and active drag
+ */
+const ScrollingStrip = ({ inView }: { inView: boolean }) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const pauseRef = useRef(false);
+  const draggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartScrollRef = useRef(0);
+  const movedRef = useRef(false);
+
+  // Duplicate list for seamless loop
+  const loop = [...projects, ...projects];
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let raf = 0;
+    let last = performance.now();
+    const SPEED = 30; // px/sec — gentle drift
+
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      if (!pauseRef.current && !draggingRef.current) {
+        const half = el.scrollWidth / 2;
+        let next = el.scrollLeft + SPEED * dt;
+        if (next >= half) next -= half;
+        el.scrollLeft = next;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    draggingRef.current = true;
+    movedRef.current = false;
+    dragStartXRef.current = e.pageX;
+    dragStartScrollRef.current = el.scrollLeft;
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!draggingRef.current) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    const dx = e.pageX - dragStartXRef.current;
+    if (Math.abs(dx) > 4) movedRef.current = true;
+    el.scrollLeft = dragStartScrollRef.current - dx;
+  };
+  const endDrag = () => {
+    draggingRef.current = false;
+  };
+  const onClickCapture = (e: React.MouseEvent) => {
+    // Suppress the link click if the user actually dragged
+    if (movedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      movedRef.current = false;
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="relative"
+      onMouseEnter={() => (pauseRef.current = true)}
+      onMouseLeave={() => {
+        pauseRef.current = false;
+        endDrag();
+      }}
+      onFocusCapture={() => (pauseRef.current = true)}
+      onBlurCapture={() => (pauseRef.current = false)}
+      onTouchStart={() => (pauseRef.current = true)}
+      onTouchEnd={() => (pauseRef.current = false)}
+    >
+      <div
+        ref={scrollerRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onClickCapture={onClickCapture}
+        className="overflow-x-auto overflow-y-hidden scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+        style={{ scrollBehavior: "auto" }}
       >
-        {/* Infinite marquee — duplicated list animates -50% so it seamlessly loops.
-            Pauses on hover so a user can hover a thumbnail to preview without it sliding away. */}
-        <div
-          className="flex gap-4 pb-4 w-max animate-[marquee_var(--marquee-duration)_linear_infinite] group-hover/marquee:[animation-play-state:paused]"
-          style={{ ["--marquee-duration" as any]: `${durationSec}s` }}
-        >
+        <div className="flex gap-4 pb-4 w-max px-6">
           {loop.map((p, i) => (
             <ProjectCard
               key={`${p.title}-${i}`}
@@ -245,12 +367,10 @@ const SelectedWork = () => {
             />
           ))}
         </div>
-        {/* Soft edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
-      </motion.div>
-    </section>
+      </div>
+      {/* Soft edge fades */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
+    </motion.div>
   );
 };
-
-export default SelectedWork;

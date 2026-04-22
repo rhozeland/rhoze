@@ -211,7 +211,7 @@ const SelectedWork = () => {
             and artists building with intent — not just volume.
           </p>
           <a
-            href="/projects.html"
+            href="/projects"
             className="inline-flex items-center gap-2 text-foreground font-semibold text-sm hover:opacity-70 transition-opacity"
           >
             See all projects <ArrowUpRight size={14} />

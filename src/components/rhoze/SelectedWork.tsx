@@ -226,11 +226,6 @@ const SelectedWork = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
-  // Duplicate the list so the marquee can loop seamlessly
-  const loop = [...projects, ...projects];
-  // Tune speed by total content; ~7s per card feels smooth without being dizzy
-  const durationSec = projects.length * 7;
-
   return (
     <section id="work" className="py-20 lg:py-28" ref={ref}>
       <div className="container mx-auto max-w-6xl px-6 mb-10">
@@ -266,3 +261,116 @@ const SelectedWork = () => {
 };
 
 export default SelectedWork;
+
+/**
+ * Horizontal strip with:
+ *  - Native horizontal scroll (trackpad / touch swipe / mouse wheel via shift)
+ *  - Click-and-drag to scroll
+ *  - Continuous auto-scroll via rAF that snaps back at the halfway point of
+ *    a duplicated track for seamless looping
+ *  - Auto-scroll pauses on hover, focus, touch, and active drag
+ */
+const ScrollingStrip = ({ inView }: { inView: boolean }) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const pauseRef = useRef(false);
+  const draggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartScrollRef = useRef(0);
+  const movedRef = useRef(false);
+
+  // Duplicate list for seamless loop
+  const loop = [...projects, ...projects];
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let raf = 0;
+    let last = performance.now();
+    const SPEED = 30; // px/sec — gentle drift
+
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      if (!pauseRef.current && !draggingRef.current) {
+        const half = el.scrollWidth / 2;
+        let next = el.scrollLeft + SPEED * dt;
+        if (next >= half) next -= half;
+        el.scrollLeft = next;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    draggingRef.current = true;
+    movedRef.current = false;
+    dragStartXRef.current = e.pageX;
+    dragStartScrollRef.current = el.scrollLeft;
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!draggingRef.current) return;
+    const el = scrollerRef.current;
+    if (!el) return;
+    const dx = e.pageX - dragStartXRef.current;
+    if (Math.abs(dx) > 4) movedRef.current = true;
+    el.scrollLeft = dragStartScrollRef.current - dx;
+  };
+  const endDrag = () => {
+    draggingRef.current = false;
+  };
+  const onClickCapture = (e: React.MouseEvent) => {
+    // Suppress the link click if the user actually dragged
+    if (movedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      movedRef.current = false;
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={inView ? { opacity: 1 } : {}}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="relative"
+      onMouseEnter={() => (pauseRef.current = true)}
+      onMouseLeave={() => {
+        pauseRef.current = false;
+        endDrag();
+      }}
+      onFocusCapture={() => (pauseRef.current = true)}
+      onBlurCapture={() => (pauseRef.current = false)}
+      onTouchStart={() => (pauseRef.current = true)}
+      onTouchEnd={() => (pauseRef.current = false)}
+    >
+      <div
+        ref={scrollerRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onClickCapture={onClickCapture}
+        className="overflow-x-auto overflow-y-hidden scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+        style={{ scrollBehavior: "auto" }}
+      >
+        <div className="flex gap-4 pb-4 w-max px-6">
+          {loop.map((p, i) => (
+            <ProjectCard
+              key={`${p.title}-${i}`}
+              project={p}
+              index={i % projects.length}
+              inView={inView}
+            />
+          ))}
+        </div>
+      </div>
+      {/* Soft edge fades */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
+    </motion.div>
+  );
+};

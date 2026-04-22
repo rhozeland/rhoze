@@ -272,18 +272,57 @@ export default SelectedWork;
  */
 const ScrollingStrip = ({ inView }: { inView: boolean }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const pauseRef = useRef(false);
   const draggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const dragStartScrollRef = useRef(0);
   const movedRef = useRef(false);
 
-  // Duplicate list for seamless loop
-  const loop = [...projects, ...projects];
+  // Triple the list so the scroller can start in the middle copy and wrap both directions.
+  const loop = [...projects, ...projects, ...projects];
+
+  const getSegmentWidth = () => {
+    const track = trackRef.current;
+    return track ? track.scrollWidth / 3 : 0;
+  };
+
+  const normalizeScrollPosition = () => {
+    const el = scrollerRef.current;
+    const segmentWidth = getSegmentWidth();
+    if (!el || !segmentWidth) return;
+
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 0) return;
+
+    if (el.scrollLeft <= 1) {
+      el.scrollLeft += segmentWidth;
+    } else if (el.scrollLeft >= maxScroll - 1) {
+      el.scrollLeft -= segmentWidth;
+    }
+  };
 
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
+
+    const setInitialPosition = () => {
+      const segmentWidth = getSegmentWidth();
+      if (segmentWidth) {
+        el.scrollLeft = segmentWidth;
+      }
+    };
+
+    const frame = requestAnimationFrame(setInitialPosition);
+
+    const handleResize = () => {
+      const segmentWidth = getSegmentWidth();
+      if (!segmentWidth) return;
+      const relativeOffset = ((el.scrollLeft % segmentWidth) + segmentWidth) % segmentWidth;
+      el.scrollLeft = segmentWidth + relativeOffset;
+    };
+
+    window.addEventListener("resize", handleResize);
 
     let raf = 0;
     let last = performance.now();
@@ -293,38 +332,67 @@ const ScrollingStrip = ({ inView }: { inView: boolean }) => {
       const dt = (now - last) / 1000;
       last = now;
       if (!pauseRef.current && !draggingRef.current) {
-        const half = el.scrollWidth / 2;
+        const segmentWidth = getSegmentWidth();
         let next = el.scrollLeft + SPEED * dt;
-        if (next >= half) next -= half;
+        if (segmentWidth && next >= segmentWidth * 2) {
+          next -= segmentWidth;
+        }
         el.scrollLeft = next;
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
     const el = scrollerRef.current;
     if (!el) return;
+
     draggingRef.current = true;
+    pauseRef.current = true;
     movedRef.current = false;
-    dragStartXRef.current = e.pageX;
+    dragStartXRef.current = e.clientX;
     dragStartScrollRef.current = el.scrollLeft;
+    e.currentTarget.setPointerCapture(e.pointerId);
   };
-  const onMouseMove = (e: React.MouseEvent) => {
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
     if (!draggingRef.current) return;
+
     const el = scrollerRef.current;
     if (!el) return;
-    const dx = e.pageX - dragStartXRef.current;
+
+    const dx = e.clientX - dragStartXRef.current;
     if (Math.abs(dx) > 4) movedRef.current = true;
     el.scrollLeft = dragStartScrollRef.current - dx;
+
+    const segmentWidth = getSegmentWidth();
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (segmentWidth && el.scrollLeft <= 1) {
+      el.scrollLeft += segmentWidth;
+      dragStartScrollRef.current = el.scrollLeft;
+      dragStartXRef.current = e.clientX;
+    } else if (segmentWidth && el.scrollLeft >= maxScroll - 1) {
+      el.scrollLeft -= segmentWidth;
+      dragStartScrollRef.current = el.scrollLeft;
+      dragStartXRef.current = e.clientX;
+    }
   };
+
   const endDrag = () => {
     draggingRef.current = false;
+    pauseRef.current = false;
   };
+
   const onClickCapture = (e: React.MouseEvent) => {
-    // Suppress the link click if the user actually dragged
     if (movedRef.current) {
       e.preventDefault();
       e.stopPropagation();
@@ -339,10 +407,7 @@ const ScrollingStrip = ({ inView }: { inView: boolean }) => {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="relative"
       onMouseEnter={() => (pauseRef.current = true)}
-      onMouseLeave={() => {
-        pauseRef.current = false;
-        endDrag();
-      }}
+      onMouseLeave={endDrag}
       onFocusCapture={() => (pauseRef.current = true)}
       onBlurCapture={() => (pauseRef.current = false)}
       onTouchStart={() => (pauseRef.current = true)}
@@ -350,14 +415,16 @@ const ScrollingStrip = ({ inView }: { inView: boolean }) => {
     >
       <div
         ref={scrollerRef}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={endDrag}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onScroll={normalizeScrollPosition}
         onClickCapture={onClickCapture}
         className="overflow-x-auto overflow-y-hidden scrollbar-hide cursor-grab active:cursor-grabbing select-none"
-        style={{ scrollBehavior: "auto" }}
+        style={{ scrollBehavior: "auto", touchAction: "pan-x" }}
       >
-        <div className="flex gap-4 pb-4 w-max px-6">
+        <div ref={trackRef} className="flex gap-4 pb-4 w-max px-6">
           {loop.map((p, i) => (
             <ProjectCard
               key={`${p.title}-${i}`}

@@ -1078,10 +1078,15 @@
       gap: 1rem;
       overflow-x: auto;
       padding-bottom: 0.5rem;
+      cursor: grab;
+      user-select: none;
+      touch-action: pan-x;
+      overscroll-behavior-x: contain;
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
     .work-scroll-strip::-webkit-scrollbar { display: none; }
+    .work-scroll-strip.is-dragging { cursor: grabbing; }
 
     .work-scroll-card {
       position: relative;
@@ -2938,38 +2943,128 @@
     (function() {
       var strip = document.getElementById('workAutoScroll');
       if (!strip) return;
-      // Clone all cards to create seamless infinite loop
-      var cards = strip.querySelectorAll('.work-scroll-card');
-      cards.forEach(function(card) {
+      var originals = Array.prototype.slice.call(strip.querySelectorAll('.work-scroll-card'));
+      if (!originals.length) return;
+
+      originals.slice().reverse().forEach(function(card) {
+        var clone = card.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        strip.insertBefore(clone, strip.firstChild);
+      });
+      originals.forEach(function(card) {
         var clone = card.cloneNode(true);
         clone.setAttribute('aria-hidden', 'true');
         strip.appendChild(clone);
       });
-      var speed = 0.5;
+
       var paused = false;
-      var halfWidth = 0;
+      var dragging = false;
+      var suppressClick = false;
+      var dragStartX = 0;
+      var dragStartScroll = 0;
+      var segmentWidth = 0;
+      var last = performance.now();
+      var touchResumeTimer = 0;
+
       function measure() {
-        halfWidth = 0;
-        for (var i = 0; i < cards.length; i++) {
-          halfWidth += cards[i].offsetWidth + 16; // 1rem gap
+        segmentWidth = 0;
+        for (var i = 0; i < originals.length; i++) {
+          segmentWidth += originals[i].offsetWidth + 16;
+        }
+        if (!segmentWidth) return;
+        var relative = ((strip.scrollLeft % segmentWidth) + segmentWidth) % segmentWidth;
+        strip.scrollLeft = segmentWidth + relative;
+      }
+
+      function normalize() {
+        if (!segmentWidth) return;
+        var maxScroll = strip.scrollWidth - strip.clientWidth;
+        if (maxScroll <= 0) return;
+        if (strip.scrollLeft <= 1) {
+          strip.scrollLeft += segmentWidth;
+        } else if (strip.scrollLeft >= maxScroll - 1) {
+          strip.scrollLeft -= segmentWidth;
         }
       }
-      measure();
-      window.addEventListener('resize', measure);
-      function step() {
-        if (!paused) {
-          strip.scrollLeft += speed;
-          if (strip.scrollLeft >= halfWidth) {
-            strip.scrollLeft -= halfWidth;
+
+      function step(now) {
+        var dt = (now - last) / 1000;
+        last = now;
+        if (!paused && !dragging && segmentWidth) {
+          var next = strip.scrollLeft + (30 * dt);
+          if (next >= segmentWidth * 2) {
+            next -= segmentWidth;
           }
+          strip.scrollLeft = next;
         }
         requestAnimationFrame(step);
       }
+
+      function endDrag() {
+        dragging = false;
+        strip.classList.remove('is-dragging');
+        paused = false;
+        normalize();
+      }
+
+      strip.addEventListener('scroll', normalize, { passive: true });
       strip.addEventListener('mouseenter', function() { paused = true; });
-      strip.addEventListener('mouseleave', function() { paused = false; });
-      strip.addEventListener('touchstart', function() { paused = true; }, { passive: true });
-      strip.addEventListener('touchend', function() { setTimeout(function() { paused = false; }, 3000); });
-      requestAnimationFrame(step);
+      strip.addEventListener('mouseleave', endDrag);
+      strip.addEventListener('touchstart', function() {
+        clearTimeout(touchResumeTimer);
+        paused = true;
+      }, { passive: true });
+      strip.addEventListener('touchend', function() {
+        clearTimeout(touchResumeTimer);
+        touchResumeTimer = setTimeout(function() { paused = false; }, 1200);
+      }, { passive: true });
+
+      strip.addEventListener('pointerdown', function(e) {
+        if (e.pointerType !== 'mouse') return;
+        dragging = true;
+        paused = true;
+        suppressClick = false;
+        dragStartX = e.clientX;
+        dragStartScroll = strip.scrollLeft;
+        strip.classList.add('is-dragging');
+        if (strip.setPointerCapture) strip.setPointerCapture(e.pointerId);
+      });
+
+      strip.addEventListener('pointermove', function(e) {
+        if (!dragging || e.pointerType !== 'mouse') return;
+        var dx = e.clientX - dragStartX;
+        if (Math.abs(dx) > 4) suppressClick = true;
+        strip.scrollLeft = dragStartScroll - dx;
+
+        if (!segmentWidth) return;
+        var maxScroll = strip.scrollWidth - strip.clientWidth;
+        if (strip.scrollLeft <= 1) {
+          strip.scrollLeft += segmentWidth;
+          dragStartScroll = strip.scrollLeft;
+          dragStartX = e.clientX;
+        } else if (strip.scrollLeft >= maxScroll - 1) {
+          strip.scrollLeft -= segmentWidth;
+          dragStartScroll = strip.scrollLeft;
+          dragStartX = e.clientX;
+        }
+      });
+
+      strip.addEventListener('pointerup', endDrag);
+      strip.addEventListener('pointercancel', endDrag);
+      strip.addEventListener('click', function(e) {
+        if (!suppressClick) return;
+        e.preventDefault();
+        e.stopPropagation();
+        suppressClick = false;
+      }, true);
+
+      measure();
+      window.addEventListener('resize', measure);
+      requestAnimationFrame(function() {
+        if (segmentWidth) strip.scrollLeft = segmentWidth;
+        last = performance.now();
+        requestAnimationFrame(step);
+      });
     })();
   </script>
   <script>

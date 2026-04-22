@@ -87,7 +87,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/runners-club-telephone-thumb.png",
+    image: "/images/rc1-thumb.jpg",
   },
   {
     title: "Nothing At All",
@@ -96,7 +96,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/semiah-nothing-at-all-thumb.png",
+    image: "/images/semiah-withdrawals-thumb.png",
   },
   {
     title: "Photoshoot",
@@ -105,7 +105,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/young-steelo-photoshoot-thumb.png",
+    image: "/images/steelo-photoshoot-2.png",
   },
   {
     title: "LeLongLegs",
@@ -252,7 +252,7 @@ const SelectedWork = () => {
             and artists building with intent — not just volume.
           </p>
           <a
-            href="/projects"
+            href="/projects.html"
             className="inline-flex items-center gap-2 text-foreground font-semibold text-sm hover:opacity-70 transition-opacity"
           >
             See all projects <ArrowUpRight size={14} />
@@ -260,31 +260,7 @@ const SelectedWork = () => {
         </motion.div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="group/marquee relative overflow-hidden"
-      >
-        {/* Infinite marquee — duplicated list animates -50% so it seamlessly loops.
-            Pauses on hover so a user can hover a thumbnail to preview without it sliding away. */}
-        <div
-          className="flex gap-4 pb-4 w-max animate-[marquee_var(--marquee-duration)_linear_infinite] group-hover/marquee:[animation-play-state:paused]"
-          style={{ ["--marquee-duration" as any]: `${durationSec}s` }}
-        >
-          {loop.map((p, i) => (
-            <ProjectCard
-              key={`${p.title}-${i}`}
-              project={p}
-              index={i % projects.length}
-              inView={inView}
-            />
-          ))}
-        </div>
-        {/* Soft edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
-      </motion.div>
+      <ScrollingStrip inView={inView} />
     </section>
   );
 };

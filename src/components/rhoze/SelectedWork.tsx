@@ -190,6 +190,11 @@ const SelectedWork = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
+  // Duplicate the list so the marquee can loop seamlessly
+  const loop = [...projects, ...projects];
+  // Tune speed by total content; ~7s per card feels smooth without being dizzy
+  const durationSec = projects.length * 7;
+
   return (
     <section id="work" className="py-20 lg:py-28" ref={ref}>
       <div className="container mx-auto max-w-6xl px-6 mb-10">
@@ -211,7 +216,7 @@ const SelectedWork = () => {
             and artists building with intent — not just volume.
           </p>
           <a
-            href="/projects.html"
+            href="/projects"
             className="inline-flex items-center gap-2 text-foreground font-semibold text-sm hover:opacity-70 transition-opacity"
           >
             See all projects <ArrowUpRight size={14} />
@@ -223,20 +228,26 @@ const SelectedWork = () => {
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="overflow-x-auto scrollbar-hide"
+        className="group/marquee relative overflow-hidden"
       >
-        {/* Horizontal scroll row: left padding matches centered max-w-6xl container so cards start in line with the heading */}
+        {/* Infinite marquee — duplicated list animates -50% so it seamlessly loops.
+            Pauses on hover so a user can hover a thumbnail to preview without it sliding away. */}
         <div
-          className="flex gap-4 pb-4 pr-6"
-          style={{
-            width: "max-content",
-            paddingLeft: "max(1.5rem, calc((100vw - 72rem) / 2 + 1.5rem))",
-          }}
+          className="flex gap-4 pb-4 w-max animate-[marquee_var(--marquee-duration)_linear_infinite] group-hover/marquee:[animation-play-state:paused]"
+          style={{ ["--marquee-duration" as any]: `${durationSec}s` }}
         >
-          {projects.map((p, i) => (
-            <ProjectCard key={p.title} project={p} index={i} inView={inView} />
+          {loop.map((p, i) => (
+            <ProjectCard
+              key={`${p.title}-${i}`}
+              project={p}
+              index={i % projects.length}
+              inView={inView}
+            />
           ))}
         </div>
+        {/* Soft edge fades */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
       </motion.div>
     </section>
   );

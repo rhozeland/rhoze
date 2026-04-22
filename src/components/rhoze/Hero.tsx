@@ -156,7 +156,7 @@ const Hero = () => {
                 Enter Creator OS <ArrowUpRight size={16} />
               </a>
               <a
-                href="/projects.html"
+                href="/projects"
                 className="inline-flex items-center gap-3 rounded-full border border-border bg-background/40 px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-card/70 sm:px-8"
               >
                 See projects
@@ -267,13 +267,13 @@ const Hero = () => {
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <a
-                    href="/events.html"
+                    href="/events"
                     className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
                   >
                     Explore events
                   </a>
                   <a
-                    href="/contact.html"
+                    href="/contact"
                     className="inline-flex items-center gap-2 rounded-full border border-border bg-background/40 px-4 py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-card/70"
                   >
                     Join the network

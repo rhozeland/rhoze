@@ -71,7 +71,7 @@ const projects = [
     image: "/images/iimpct-media-thumb.png",
   },
   {
-    title: "BK Whiskey x United Nations MMA",
+    title: "United MMA Sponsorship",
     artist: "BK Whiskey",
     tag: "Commercial",
     type: "Commercial",

@@ -190,6 +190,16 @@ const projects = [
     image: "/images/luckz-night-come-thumb.png",
     video: "/videos/luckz-night-come.mp4",
   },
+  {
+    title: "Lucky Charm",
+    artist: "Carina",
+    tag: "Audio",
+    type: "Reel",
+    icons: ["music"],
+    href: "https://www.instagram.com/p/DXdWvKNDsOA/",
+    image: "/images/carina-lucky-charm-thumb.jpg",
+    video: "/videos/carina-lucky-charm.mp4",
+  },
 ];
 
 const iconMap: Record<string, typeof Music> = {

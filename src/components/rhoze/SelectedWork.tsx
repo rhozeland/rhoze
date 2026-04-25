@@ -193,9 +193,9 @@ const projects = [
   {
     title: "Lucky Charm",
     artist: "Carina",
-    tag: "Audio",
+    tag: "Visual",
     type: "Reel",
-    icons: ["music"],
+    icons: ["camera"],
     href: "https://www.instagram.com/p/DXdWvKNDsOA/",
     image: "/images/carina-lucky-charm-thumb.jpg",
     video: "/videos/carina-lucky-charm.mp4",

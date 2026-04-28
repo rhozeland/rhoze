@@ -5,7 +5,27 @@
 
 ---
 
-## 📋 Phase 1 — Employee Portal + CRM (planned)
+## ✅ Phase 1 — Employee Portal + CRM (Shipped MVP)
+
+**Entry**: `/team.html` — separate Vite HTML entry, hash routing, `noindex,nofollow`. Discreet "Team Access" link in every static-site footer.
+
+**Stack**: Lovable Cloud (Postgres + Auth + RLS + Realtime).
+
+**Auth**: Email/password + Google OAuth. First-ever signup is auto-promoted to `admin` via DB trigger; subsequent signups have no role until an admin grants one in `/team.html#/roles`.
+
+**Roles**: `admin` / `employee` / `client` enum, stored in `user_roles`. `has_role()` + `is_team_member()` security-definer helpers gate all RLS.
+
+**Modules built**:
+1. **Dashboard** — counts: contacts, open deals, activities, pipeline value
+2. **Contacts** — leads/clients/partners/vendors with CRUD
+3. **Deals** — Kanban pipeline (Lead → Qualified → Proposal → Negotiation → Won/Lost) with inline stage change
+4. **Activities** — call/email/meeting/note/task log
+5. **Docs & Training** — categorized library, search, per-user completion tracking, admin-only writes, `is_required` flag
+6. **Messages** — channel-based realtime team chat (`general` channel seeded)
+7. **Payroll** — admin-managed pay periods + per-user stubs (employees see only their own)
+8. **Roles** — admin-only role manager
+
+**Files**: `team.html`, `src/main.tsx`, `src/team/**`
 
 **Goal**: Internal-only area for Rhozeland team. Footer-only entrance.
 

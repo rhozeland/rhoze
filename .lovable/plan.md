@@ -1,70 +1,58 @@
+# Rhozeland — Major Site Expansion Plan
 
-
-## Bump Selected Work to ~20 + compress oversized thumbnails
-
-Two things in one pass: more featured projects on the homepage, and a real fix for the heavy image files dragging performance down everywhere they appear.
+## ✅ Phase 0 — Navbar Copy (Shipped)
+- Replaced "Create" CTA with "Join Community" across React Navbar + all static HTML headers/footers.
 
 ---
 
-### Part 1 — Selected Work: 12 → 20 featured projects
+## 📋 Phase 1 — Employee Portal + CRM (planned)
 
-Curate 20 of the strongest projects from the Projects page into the homepage carousel. DOM goes from 36 cards (12 × 3 clones) to 60 cards — still well within safe range, no perf regression expected since videos remain `preload="none"` and only initialize on hover.
+**Goal**: Internal-only area for Rhozeland team. Footer-only entrance.
 
-**Updated featured list (20):**
+**Stack**: Lovable Cloud (Postgres, Auth, RLS, Edge Functions).
 
-Existing 12 + adding:
-- Withdrawals — Semiah
-- Sensimelia — Julz
-- Baby Blue — Godfrey Noir
-- Solo Para Ti — DUBZY33
-- Loyal — Cozal
-- The Eulogy — Ooak
-- Runner's Club (additional cut)
-- One more standout from the projects.html lineup
+### Architecture
+- Auth: email/password + Google. Roles stored in dedicated `user_roles` table (admin / employee). Never on profiles.
+- `has_role()` security-definer function for RLS.
+- Footer entrance: small "Team Access" link → `/team/login` (unindexed).
+- Authenticated layout at `/team/*` gated by role check.
 
-Final picks confirmed against `public/projects.html` so every entry has a real thumbnail + working link.
+### Modules (MVP)
+1. **Dashboard** — quick stats, announcements feed.
+2. **Payroll** — read-only view of pay periods + downloadable stubs (admin uploads).
+3. **Docs & Training** — categorized library (Markdown/PDF), search, completion tracking.
+4. **Internal Messaging** — channel-based or 1:1 (Realtime).
+5. **CRM**:
+   - Contacts (leads, clients, partners)
+   - Deals/pipeline (Kanban: Lead → Qualified → Proposal → Won/Lost)
+   - Activities log (calls, emails, notes)
+   - Marketing: campaign list, email templates, subscriber lists
 
-### Part 2 — Compress oversized thumbnails
+### Suggested footer copy
+- "Team Access" or "Staff Login" — unobtrusive, in footer right column.
 
-Real lag culprit. Audit every image in `/public/images/`, re-encode anything over ~150 KB. Targets:
+---
 
-| File | Current | Target |
-|---|---|---|
-| `julz-sensimelia.png` | 1.2 MB | ~120 KB |
-| `godfrey-noir-baby-blue.png` | 939 KB | ~120 KB |
-| Any other PNG > 200 KB | varies | ~150 KB |
+## 📋 Phase 2 — Start a Project + Subscription Tiers (planned, awaiting docs)
 
-**How:**
-- Run a sweep over `public/images/` and identify every file > 200 KB.
-- Re-encode each with `sharp` (already common in the toolchain) or `imagemagick`:
-  - PNGs → high-quality WebP at quality 82, max-width 800px (cards display at 340px, so 800px covers retina).
-  - Keep `.png` extension fallback only if a file is referenced by name elsewhere; otherwise swap references to `.webp`.
-- Overwrite originals in place so no link updates needed across `index.html` / `projects.html` / `SelectedWork.tsx`.
+**Goal**: Move "Start a Project" out of contact page into its own flow with two paths.
 
-**Expected wins:**
-- 1.2 MB → ~120 KB = **90% smaller**
-- Total page weight on homepage Selected Work + Projects page should drop by several MB
-- Mobile load + scroll feel noticeably snappier
+### Path A — One-off project intake
+- Dedicated page: `/start`
+- Service selector (audio mix/master, visual, design, web, etc.)
+- Scope/budget/timeline form → email + CRM lead.
 
-### Part 3 — Bonus cleanup
+### Path B — Subscription (PRIMARY)
+- Monthly tiers, each grants a credit allowance.
+- Credits redeemable against service catalog (variable cost per service).
+- **Awaiting**: user-provided documentation describing tier structure, credit costs, and improvisation rules.
 
-While we're in there:
-- Delete or re-encode the 6 MB `.mov` file in `/public/videos/` if still referenced (or remove if unused).
-- Quick scan for any stray uncompressed assets > 1 MB and flag them.
+### Stack
+- Stripe (Lovable built-in payments) — subscriptions + customer portal.
+- Cloud DB tables: `subscription_tiers`, `user_subscriptions`, `credit_balance`, `credit_transactions`, `service_catalog`, `service_orders`.
+- Client dashboard: balance, history, redeem credits, manage subscription.
 
-### Files touched
-
-- `src/components/rhoze/SelectedWork.tsx` — expand featured array from 12 to 20
-- `index.html` — same expansion in the static `workStrip` markup
-- `public/images/*.png` — compress + re-encode in place
-- `public/videos/*.mov` — delete or compress if unused
-
-### Behavior after
-
-| Before | After |
-|---|---|
-| 12 featured projects | 20 featured projects |
-| 1.2 MB image loads on Projects page | ~120 KB |
-| Carousel feels heavy on mobile | Snappier scroll, faster paint |
-| ~36 DOM cards in loop | ~60 DOM cards (still smooth) |
-
+### Pending decisions
+- Tier names + prices + credit allotments (from user docs)
+- Credit cost per service (from user docs)
+- Rollover policy, expiry, top-up packs

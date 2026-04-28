@@ -216,11 +216,6 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
     setIsHovered(true);
     if (p.video && videoRef.current) {
       const video = videoRef.current;
-      if (video.readyState < 2) {
-        video.load();
-      } else {
-        video.currentTime = Math.min(0.15, video.duration || 0);
-      }
       video.play().catch(() => {});
     }
   };
@@ -263,12 +258,9 @@ const ProjectCard = ({ project: p, index: i, inView }: { project: typeof project
           muted
           playsInline
           loop
-          preload="none"
+          preload="metadata"
           onCanPlay={() => {
             if (isHovered && videoRef.current) {
-              if (videoRef.current.currentTime < 0.15) {
-                videoRef.current.currentTime = Math.min(0.15, videoRef.current.duration || 0);
-              }
               videoRef.current.play().catch(() => {});
             }
           }}

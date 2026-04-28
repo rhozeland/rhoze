@@ -73,7 +73,7 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className="px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           >
-            Create
+            Join Community
           </a>
         </div>
 
@@ -105,7 +105,7 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className="mt-3 inline-block px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
           >
-            Create
+            Join Community
           </a>
         </motion.div>
       )}

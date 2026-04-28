@@ -15,13 +15,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { to: "/team", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/team/contacts", label: "Contacts", icon: Users },
-  { to: "/team/deals", label: "Deals", icon: TrendingUp },
-  { to: "/team/activities", label: "Activities", icon: ClipboardList },
-  { to: "/team/docs", label: "Docs & Training", icon: BookOpen },
-  { to: "/team/messages", label: "Messages", icon: MessageSquare },
-  { to: "/team/payroll", label: "Payroll", icon: DollarSign },
+  { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
+  { to: "/contacts", label: "Contacts", icon: Users },
+  { to: "/deals", label: "Deals", icon: TrendingUp },
+  { to: "/activities", label: "Activities", icon: ClipboardList },
+  { to: "/docs", label: "Docs & Training", icon: BookOpen },
+  { to: "/messages", label: "Messages", icon: MessageSquare },
+  { to: "/payroll", label: "Payroll", icon: DollarSign },
 ];
 
 export default function TeamLayout() {
@@ -30,7 +30,7 @@ export default function TeamLayout() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/team/login");
+    navigate("/login");
   };
 
   return (
@@ -61,7 +61,7 @@ export default function TeamLayout() {
           ))}
           {isAdmin && (
             <NavLink
-              to="/team/roles"
+              to="/roles"
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",

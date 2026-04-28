@@ -22,7 +22,7 @@ export default function TeamLogin() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && session) navigate("/team", { replace: true });
+    if (!loading && session) navigate("/", { replace: true });
   }, [session, loading, navigate]);
 
   const onSubmit = async (e: FormEvent) => {
@@ -42,7 +42,7 @@ export default function TeamLogin() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/team` },
+          options: { emailRedirectTo: `${window.location.origin}/team.html` },
         });
         if (error) throw error;
         toast({
@@ -61,7 +61,7 @@ export default function TeamLogin() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/team` },
+      options: { redirectTo: `${window.location.origin}/team.html` },
     });
     if (error) {
       toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });

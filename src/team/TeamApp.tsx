@@ -14,7 +14,7 @@ import { useAuth } from "./lib/auth";
 function RequireTeam({ children }: { children: React.ReactNode }) {
   const { loading, session, isTeam } = useAuth();
   if (loading) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
-  if (!session) return <Navigate to="/team/login" replace />;
+  if (!session) return <Navigate to="/login" replace />;
   if (!isTeam)
     return (
       <div className="p-8 max-w-md mx-auto text-center space-y-3">
@@ -32,9 +32,9 @@ function RequireTeam({ children }: { children: React.ReactNode }) {
 export default function TeamApp() {
   return (
     <Routes>
-      <Route path="/team/login" element={<TeamLogin />} />
+      <Route path="/login" element={<TeamLogin />} />
       <Route
-        path="/team"
+        path="/"
         element={
           <RequireTeam>
             <TeamLayout />
@@ -50,7 +50,7 @@ export default function TeamApp() {
         <Route path="payroll" element={<Payroll />} />
         <Route path="roles" element={<RoleManager />} />
       </Route>
-      <Route path="*" element={<Navigate to="/team" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

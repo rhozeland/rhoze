@@ -687,7 +687,7 @@ function EditableCell({
         }
       }}
       className={cn(
-        "min-h-[24px] cursor-text rounded px-1 -mx-1 hover:bg-muted/60 transition truncate max-w-xs",
+        "min-h-[24px] cursor-text rounded px-1 -mx-1 hover:bg-muted/60 transition whitespace-pre-wrap break-words",
         !value && "text-muted-foreground italic",
       )}
       title={value || placeholder}

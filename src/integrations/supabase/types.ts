@@ -361,6 +361,45 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number
+          note: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          uses: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          note?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          uses?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number
+          note?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          uses?: number
+        }
+        Relationships: []
+      }
       team_invites: {
         Row: {
           accepted_at: string | null
@@ -423,6 +462,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_referral_code: {
+        Args: { _code: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -431,6 +474,10 @@ export type Database = {
         Returns: boolean
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      validate_referral_code: {
+        Args: { _code: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
     }
     Enums: {
       activity_type: "call" | "email" | "meeting" | "note" | "task"

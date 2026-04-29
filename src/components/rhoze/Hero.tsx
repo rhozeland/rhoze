@@ -156,6 +156,12 @@ const Hero = () => {
                 Enter Creator OS <ArrowUpRight size={16} />
               </a>
               <a
+                href="/start.html"
+                className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 sm:px-8"
+              >
+                Start a project <ArrowUpRight size={16} />
+              </a>
+              <a
                 href="/projects"
                 className="inline-flex items-center gap-3 rounded-full border border-border bg-background/40 px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-card/70 sm:px-8"
               >

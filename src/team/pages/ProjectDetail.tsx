@@ -10,9 +10,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, ArrowUpDown, ExternalLink } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,8 @@ export default function ProjectDetail() {
   const { isAdmin } = useAuth();
   const [payOpen, setPayOpen] = useState(false);
   const [itemOpen, setItemOpen] = useState(false);
+  const [tierOpen, setTierOpen] = useState(false);
+  const [tierForm, setTierForm] = useState({ newTierSlug: "gold", immediate: false, topUpCredits: false });
 
   const [payForm, setPayForm] = useState({ label: "", amount: "", due_date: "", paid_date: "", method: "e-transfer", notes: "" });
   const [itemForm, setItemForm] = useState({
@@ -58,6 +61,38 @@ export default function ProjectDetail() {
   const totalPaid = (payments ?? []).filter((p: any) => p.paid_date).reduce((s: number, p: any) => s + (p.amount_cents ?? 0), 0);
   const totalSpent = (items ?? []).filter((i: any) => i.debit_kind === "dollar").reduce((s: number, i: any) => s + (i.grand_total_cents ?? 0), 0);
   const creditsSpent = (items ?? []).filter((i: any) => i.debit_kind === "credit").reduce((s: number, i: any) => s + (i.credits_used ?? 0), 0);
+
+  const changeTier = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke("admin-change-tier", {
+        body: {
+          projectId: id!,
+          newTierSlug: tierForm.newTierSlug,
+          immediate: tierForm.immediate,
+          topUpCredits: tierForm.topUpCredits,
+          environment: getStripeEnvironment(),
+        },
+      });
+      if (error || data?.error) throw new Error(error?.message || data?.error || "Failed");
+    },
+    onSuccess: () => {
+      toast({ title: tierForm.immediate ? "Tier switched immediately" : "Tier change queued for next cycle" });
+      setTierOpen(false);
+      qc.invalidateQueries({ queryKey: ["project", id] });
+    },
+    onError: (e: any) => toast({ title: "Tier change failed", description: e.message, variant: "destructive" }),
+  });
+
+  const openPortal = async () => {
+    const { data, error } = await supabase.functions.invoke("create-portal-session", {
+      body: { environment: getStripeEnvironment(), returnUrl: window.location.href },
+    });
+    if (error || !data?.url) {
+      toast({ title: "Could not open portal", description: error?.message || data?.error || "No subscription on file", variant: "destructive" });
+      return;
+    }
+    window.open(data.url, "_blank");
+  };
 
   const addPayment = useMutation({
     mutationFn: async () => {
@@ -140,13 +175,57 @@ export default function ProjectDetail() {
         <div>
           <h1 className="text-2xl font-semibold">{project.title}</h1>
           <p className="text-sm text-muted-foreground">{project.client_name} · {project.client_email || "no email"} · {project.status}</p>
+          {project.active_tier_slug && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Active tier: <span className="font-medium text-foreground">{project.active_tier_slug}</span>
+              {project.pending_tier_slug && <> · Pending → <span className="font-medium text-foreground">{project.pending_tier_slug}</span></>}
+            </p>
+          )}
         </div>
-        {project.project_code && (
-          <div className="text-right">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Client code</div>
-            <div className="text-sm font-mono">{project.project_code}</div>
+        <div className="flex flex-col items-end gap-2">
+          {project.project_code && (
+            <div className="text-right">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Client code</div>
+              <div className="text-sm font-mono">{project.project_code}</div>
+            </div>
+          )}
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={openPortal}><ExternalLink size={12} /> Manage subscription</Button>
+            {isAdmin && (
+              <Dialog open={tierOpen} onOpenChange={setTierOpen}>
+                <DialogTrigger asChild><Button size="sm" variant="outline"><ArrowUpDown size={12} /> Change tier</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader><DialogTitle>Change subscription tier</DialogTitle></DialogHeader>
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label>New tier</Label>
+                      <Select value={tierForm.newTierSlug} onValueChange={(v) => setTierForm({ ...tierForm, newTierSlug: v })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="bronze">Bronze ($240/mo · 4 credits)</SelectItem>
+                          <SelectItem value="gold">Gold ($560/mo · 10 credits)</SelectItem>
+                          <SelectItem value="diamond">Diamond ($1500/mo · 25 credits)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={tierForm.immediate} onChange={(e) => setTierForm({ ...tierForm, immediate: e.target.checked })} />
+                      Switch immediately (with proration)
+                    </label>
+                    {tierForm.immediate && (
+                      <label className="flex items-center gap-2 text-sm pl-6">
+                        <input type="checkbox" checked={tierForm.topUpCredits} onChange={(e) => setTierForm({ ...tierForm, topUpCredits: e.target.checked })} />
+                        Top up credits for new tier now
+                      </label>
+                    )}
+                    <p className="text-xs text-muted-foreground">Default: change applies at next billing cycle for cleanest accounting. Use immediate only for special accommodations.</p>
+                  </div>
+                  <DialogFooter><Button onClick={() => changeTier.mutate()} disabled={changeTier.isPending}>Apply</Button></DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
           </div>
-        )}
+        </div>
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function(){
+      var o=localStorage.getItem('theme-override');
+      if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}
+      var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add('dark');
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Start a project — Rhozeland</title>
+  <meta name="description" content="Book studio time, start a creative project, or subscribe to a Rhozeland retainer tier." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/start-main.tsx"></script>
+</body>
+</html>

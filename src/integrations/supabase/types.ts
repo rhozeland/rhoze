@@ -510,6 +510,48 @@ export type Database = {
           },
         ]
       }
+      profile_employment_history: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          department: Database["public"]["Enums"]["department"] | null
+          ended_at: string | null
+          id: string
+          job_title: string | null
+          notes: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          department?: Database["public"]["Enums"]["department"] | null
+          ended_at?: string | null
+          id?: string
+          job_title?: string | null
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          department?: Database["public"]["Enums"]["department"] | null
+          ended_at?: string | null
+          id?: string
+          job_title?: string | null
+          notes?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

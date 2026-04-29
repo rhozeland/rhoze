@@ -121,7 +121,7 @@ export default function RoleManager() {
 
   const setEmp = useMutation({
     mutationFn: async ({ userId, patch }: { userId: string; patch: Record<string, any> }) => {
-      const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
+      const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
       if (error) throw error;
     },
     onSuccess: () => {

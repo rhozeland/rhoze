@@ -9,6 +9,7 @@ import Docs from "./pages/Docs";
 import Messages from "./pages/Messages";
 import Payroll from "./pages/Payroll";
 import RoleManager from "./pages/RoleManager";
+import Invites from "./pages/Invites";
 import { useAuth } from "./lib/auth";
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
@@ -49,6 +50,7 @@ export default function TeamApp() {
         <Route path="messages" element={<Messages />} />
         <Route path="payroll" element={<Payroll />} />
         <Route path="roles" element={<RoleManager />} />
+        <Route path="invites" element={<Invites />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

@@ -9,6 +9,7 @@ import {
   MessageSquare,
   DollarSign,
   Shield,
+  UserPlus,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -60,6 +61,7 @@ export default function TeamLayout() {
             </NavLink>
           ))}
           {isAdmin && (
+            <>
             <NavLink
               to="/roles"
               className={({ isActive }) =>
@@ -74,6 +76,21 @@ export default function TeamLayout() {
               <Shield size={16} />
               Roles
             </NavLink>
+            <NavLink
+              to="/invites"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                )
+              }
+            >
+              <UserPlus size={16} />
+              Invites
+            </NavLink>
+            </>
           )}
         </nav>
         <div className="p-3 border-t border-border space-y-2">

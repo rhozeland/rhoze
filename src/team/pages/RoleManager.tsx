@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
 import EmploymentTimeline from "@/team/components/EmploymentTimeline";
 
 type Role = "admin" | "employee" | "client";
@@ -64,6 +64,13 @@ function tenure(start?: string | null, end?: string | null): string {
   return `${m}m`;
 }
 
+function tenureMonths(start?: string | null, end?: string | null): number | null {
+  if (!start) return null;
+  const s = new Date(start);
+  const e = end ? new Date(end) : new Date();
+  return Math.max(0, (e.getFullYear() - s.getFullYear()) * 12 + (e.getMonth() - s.getMonth()));
+}
+
 export default function RoleManager() {
   const qc = useQueryClient();
   const [picks, setPicks] = useState<Record<string, Role>>({});
@@ -72,6 +79,11 @@ export default function RoleManager() {
   const [view, setView] = useState<"current" | "former" | "all">("current");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [errors, setErrors] = useState<Record<string, string | null>>({});
+  const [search, setSearch] = useState("");
+  const [deptFilter, setDeptFilter] = useState<Dept | "all" | "unassigned">("all");
+  const [statusFilter, setStatusFilter] = useState<EmpStatus | "all">("all");
+  const [tenureMin, setTenureMin] = useState<string>("");
+  const [tenureMax, setTenureMax] = useState<string>("");
 
   const { data: profiles } = useQuery({
     queryKey: ["all-profiles"],
@@ -158,11 +170,58 @@ export default function RoleManager() {
   });
 
   const filtered = useMemo(() => {
-    const list = profiles ?? [];
-    if (view === "all") return list;
-    if (view === "former") return list.filter((p: any) => p.employment_status === "former");
-    return list.filter((p: any) => p.employment_status !== "former");
-  }, [profiles, view]);
+    let list = profiles ?? [];
+    if (view === "former") list = list.filter((p: any) => p.employment_status === "former");
+    else if (view === "current") list = list.filter((p: any) => p.employment_status !== "former");
+
+    const q = search.trim().toLowerCase();
+    if (q) {
+      list = list.filter((p: any) =>
+        [p.display_name, p.job_title, p.employment_notes, p.id]
+          .filter(Boolean)
+          .some((s: string) => String(s).toLowerCase().includes(q))
+      );
+    }
+
+    if (deptFilter !== "all") {
+      list = list.filter((p: any) =>
+        deptFilter === "unassigned" ? !p.department : p.department === deptFilter
+      );
+    }
+
+    if (statusFilter !== "all") {
+      list = list.filter((p: any) => (p.employment_status ?? "active") === statusFilter);
+    }
+
+    const min = tenureMin ? Number(tenureMin) : null;
+    const max = tenureMax ? Number(tenureMax) : null;
+    if (min !== null || max !== null) {
+      list = list.filter((p: any) => {
+        const m = tenureMonths(p.started_at, p.ended_at);
+        if (m === null) return false;
+        if (min !== null && m < min) return false;
+        if (max !== null && m > max) return false;
+        return true;
+      });
+    }
+
+    return list;
+  }, [profiles, view, search, deptFilter, statusFilter, tenureMin, tenureMax]);
+
+  const activeFilterCount =
+    (deptFilter !== "all" ? 1 : 0) +
+    (statusFilter !== "all" ? 1 : 0) +
+    (tenureMin ? 1 : 0) +
+    (tenureMax ? 1 : 0) +
+    (search.trim() ? 1 : 0);
+
+  const clearFilters = () => {
+    setSearch("");
+    setDeptFilter("all");
+    setStatusFilter("all");
+    setTenureMin("");
+    setTenureMax("");
+  };
 
   const counts = useMemo(() => {
     const list = profiles ?? [];
@@ -194,6 +253,58 @@ export default function RoleManager() {
             {t.label}
           </button>
         ))}
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3 border border-border rounded-lg p-3 bg-card">
+        <div className="flex-1 min-w-[220px]">
+          <label className="text-[10px] uppercase text-muted-foreground">Search</label>
+          <div className="relative">
+            <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="h-9 pl-7"
+              placeholder="Name, title, notes…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="w-44">
+          <label className="text-[10px] uppercase text-muted-foreground">Department</label>
+          <Select value={deptFilter} onValueChange={(v) => setDeptFilter(v as any)}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All departments</SelectItem>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+              {DEPTS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-40">
+          <label className="text-[10px] uppercase text-muted-foreground">Status</label>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              {EMP_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-28">
+          <label className="text-[10px] uppercase text-muted-foreground">Tenure ≥ (mo)</label>
+          <Input type="number" min={0} className="h-9" value={tenureMin} onChange={(e) => setTenureMin(e.target.value)} placeholder="0" />
+        </div>
+        <div className="w-28">
+          <label className="text-[10px] uppercase text-muted-foreground">Tenure ≤ (mo)</label>
+          <Input type="number" min={0} className="h-9" value={tenureMax} onChange={(e) => setTenureMax(e.target.value)} placeholder="∞" />
+        </div>
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">{filtered.length} result{filtered.length === 1 ? "" : "s"}</span>
+          {activeFilterCount > 0 && (
+            <button onClick={clearFilters} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+              <X size={12} /> Clear ({activeFilterCount})
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="border border-border rounded-lg overflow-x-auto">

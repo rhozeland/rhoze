@@ -17,6 +17,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import Catalog from "./pages/Catalog";
 import Intake from "./pages/Intake";
 import Timesheets from "./pages/Timesheets";
+import ClientPortal from "./pages/ClientPortal";
 import { useAuth } from "./lib/auth";
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
@@ -41,6 +42,8 @@ export default function TeamApp() {
   return (
     <Routes>
       <Route path="/login" element={<TeamLogin />} />
+      {/* Client-facing portal — accessible to any signed-in user; RLS gates project access */}
+      <Route path="/portal/:id" element={<ClientPortal />} />
       <Route
         path="/"
         element={

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import {
   Search, Plus, X, Instagram, DollarSign, Users as UsersIcon,
-  MessageCircle, ExternalLink, Tag, Trash2,
+  MessageCircle, ExternalLink, Tag, Trash2, ChevronDown, Check,
 } from "lucide-react";
 
 type Contact = {
@@ -85,6 +85,11 @@ export default function CRM() {
   const [search, setSearch] = useState("");
   const [openThread, setOpenThread] = useState<Thread | null>(null);
   const [adding, setAdding] = useState(false);
+  // Live toggle filters (IG views only)
+  const [flagFilters, setFlagFilters] = useState<{
+    follower: boolean; mutual: boolean; pending: boolean; commenter: boolean; dm: boolean;
+  }>({ follower: false, mutual: false, pending: false, commenter: false, dm: false });
+  const [hasNotes, setHasNotes] = useState(false);
 
   const contactsQ = useQuery({
     queryKey: ["crm-contacts"],
@@ -120,9 +125,15 @@ export default function CRM() {
     else if (view === "ig-inbound") list = list.filter((t) => t.status?.startsWith("Inbound"));
     else if (view === "ig-cold") list = list.filter((t) => t.status?.startsWith("Cold"));
     else if (view === "ig-leads") list = list.filter((t) => !t.status); // leads-only (no convo)
+    if (flagFilters.follower) list = list.filter((t) => t.is_follower);
+    if (flagFilters.mutual) list = list.filter((t) => t.follows_us);
+    if (flagFilters.pending) list = list.filter((t) => t.pending_request);
+    if (flagFilters.commenter) list = list.filter((t) => t.commenter);
+    if (flagFilters.dm) list = list.filter((t) => t.has_dm_history);
+    if (hasNotes) list = list.filter((t) => (t.notes ?? "").trim().length > 0);
     if (q) list = list.filter((t) => t.handle.includes(q) || (t.key_topics ?? "").toLowerCase().includes(q));
     return list;
-  }, [threadsQ.data, view, search]);
+  }, [threadsQ.data, view, search, flagFilters, hasNotes]);
 
   const filteredContacts = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -239,7 +250,7 @@ export default function CRM() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-border overflow-x-auto">
+      <div className="flex gap-1 border-b border-border overflow-x-auto -mx-1 px-1">
         {VIEWS.map((v) => (
           <button
             key={v.id}
@@ -257,13 +268,35 @@ export default function CRM() {
         ))}
       </div>
 
+      {/* Live filter chips (IG views only) */}
+      {showThreads && (
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="text-muted-foreground mr-1">Filter:</span>
+          <Chip on={flagFilters.follower} onClick={() => setFlagFilters((f) => ({ ...f, follower: !f.follower }))}>Follower</Chip>
+          <Chip on={flagFilters.mutual} onClick={() => setFlagFilters((f) => ({ ...f, mutual: !f.mutual }))}>Mutual</Chip>
+          <Chip on={flagFilters.pending} onClick={() => setFlagFilters((f) => ({ ...f, pending: !f.pending }))}>Pending</Chip>
+          <Chip on={flagFilters.commenter} onClick={() => setFlagFilters((f) => ({ ...f, commenter: !f.commenter }))}>Commenter</Chip>
+          <Chip on={flagFilters.dm} onClick={() => setFlagFilters((f) => ({ ...f, dm: !f.dm }))}>DM history</Chip>
+          <Chip on={hasNotes} onClick={() => setHasNotes((v) => !v)}>Has notes</Chip>
+          {(Object.values(flagFilters).some(Boolean) || hasNotes) && (
+            <button
+              onClick={() => { setFlagFilters({ follower: false, mutual: false, pending: false, commenter: false, dm: false }); setHasNotes(false); }}
+              className="text-muted-foreground hover:text-foreground underline ml-1"
+            >
+              Clear
+            </button>
+          )}
+          <span className="ml-auto text-muted-foreground tabular-nums">{filteredThreads.length} shown</span>
+        </div>
+      )}
+
       {/* Add inline */}
       {adding && !showThreads && (
         <InlineAdd onSave={(n) => addContact.mutate(n)} onCancel={() => setAdding(false)} />
       )}
 
-      {/* Tables */}
-      <div className="border border-border rounded-lg overflow-hidden bg-card">
+      {/* Tables — horizontal scroll wrapper to prevent column clipping */}
+      <div className="border border-border rounded-lg bg-card overflow-x-auto">
         {showThreads ? (
           <ThreadTable
             threads={filteredThreads}
@@ -290,6 +323,23 @@ export default function CRM() {
         />
       )}
     </div>
+  );
+}
+
+function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-1 px-2 py-1 rounded-full border text-xs transition",
+        on
+          ? "bg-primary text-primary-foreground border-primary"
+          : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/40",
+      )}
+    >
+      {on && <Check size={11} />} {children}
+    </button>
   );
 }
 
@@ -343,18 +393,18 @@ function ContactTable({
   onDelete: (id: string) => void;
 }) {
   return (
-    <table className="w-full text-sm">
+    <table className="w-full text-sm min-w-[1100px]">
       <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
         <tr>
-          <th className="px-3 py-2">Name</th>
-          <th className="px-3 py-2">Company</th>
-          <th className="px-3 py-2">Email</th>
-          <th className="px-3 py-2">Phone</th>
-          <th className="px-3 py-2 text-right">Lifetime</th>
-          <th className="px-3 py-2 text-right">Tx</th>
-          <th className="px-3 py-2">Last visit</th>
-          <th className="px-3 py-2 w-64">Notes</th>
-          <th className="px-3 py-2"></th>
+          <th className="px-3 py-2 min-w-[160px]">Name</th>
+          <th className="px-3 py-2 min-w-[140px]">Company</th>
+          <th className="px-3 py-2 min-w-[200px]">Email</th>
+          <th className="px-3 py-2 min-w-[130px]">Phone</th>
+          <th className="px-3 py-2 text-right min-w-[100px]">Lifetime</th>
+          <th className="px-3 py-2 text-right min-w-[60px]">Tx</th>
+          <th className="px-3 py-2 min-w-[100px]">Last visit</th>
+          <th className="px-3 py-2 min-w-[240px]">Notes</th>
+          <th className="px-3 py-2 w-10"></th>
         </tr>
       </thead>
       <tbody>
@@ -417,18 +467,18 @@ function ThreadTable({
   onUpdate: (id: string, patch: Partial<Thread>) => void;
 }) {
   return (
-    <table className="w-full text-sm">
+    <table className="w-full text-sm min-w-[1200px]">
       <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
         <tr>
-          <th className="px-3 py-2">Handle</th>
-          <th className="px-3 py-2">Status</th>
-          <th className="px-3 py-2">Topics</th>
-          <th className="px-3 py-2 text-right">Msgs</th>
-          <th className="px-3 py-2 text-right">Replies</th>
-          <th className="px-3 py-2">Last</th>
-          <th className="px-3 py-2">Flags</th>
-          <th className="px-3 py-2 w-56">Action / Notes</th>
-          <th className="px-3 py-2"></th>
+          <th className="px-3 py-2 min-w-[170px]">Handle</th>
+          <th className="px-3 py-2 min-w-[180px]">Status</th>
+          <th className="px-3 py-2 min-w-[200px]">Topics</th>
+          <th className="px-3 py-2 text-right min-w-[60px]">Msgs</th>
+          <th className="px-3 py-2 text-right min-w-[60px]">Replies</th>
+          <th className="px-3 py-2 min-w-[90px]">Last</th>
+          <th className="px-3 py-2 min-w-[160px]">Flags</th>
+          <th className="px-3 py-2 min-w-[220px]">Action / Notes</th>
+          <th className="px-3 py-2 w-10"></th>
         </tr>
       </thead>
       <tbody>
@@ -449,20 +499,24 @@ function ThreadTable({
               </button>
             </td>
             <td className="px-3 py-2">
-              <StatusBadge status={t.status} />
+              <StatusSelect value={t.status} onChange={(s) => onUpdate(t.id, { status: s })} />
             </td>
-            <td className="px-3 py-2 text-muted-foreground max-w-xs truncate" title={t.key_topics ?? ""}>
-              {t.key_topics ?? "—"}
+            <td className="px-3 py-2 text-muted-foreground">
+              <EditableCell
+                value={t.key_topics ?? ""}
+                onSave={(v) => onUpdate(t.id, { key_topics: v || null })}
+                placeholder="Add topic…"
+              />
             </td>
             <td className="px-3 py-2 text-right tabular-nums">{t.total_messages || "—"}</td>
             <td className="px-3 py-2 text-right tabular-nums">{t.their_replies || "—"}</td>
             <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{fmtDate(t.last_message_date)}</td>
             <td className="px-3 py-2">
-              <div className="flex gap-1">
-                {t.is_follower && <Pill>Follower</Pill>}
-                {t.follows_us && <Pill>Mutual</Pill>}
-                {t.pending_request && <Pill>Pending</Pill>}
-                {t.commenter && <Pill>Commenter</Pill>}
+              <div className="flex flex-wrap gap-1">
+                <FlagPill on={t.is_follower} onClick={() => onUpdate(t.id, { is_follower: !t.is_follower })}>Follower</FlagPill>
+                <FlagPill on={t.follows_us} onClick={() => onUpdate(t.id, { follows_us: !t.follows_us })}>Mutual</FlagPill>
+                <FlagPill on={t.pending_request} onClick={() => onUpdate(t.id, { pending_request: !t.pending_request })}>Pending</FlagPill>
+                <FlagPill on={t.commenter} onClick={() => onUpdate(t.id, { commenter: !t.commenter })}>Comm</FlagPill>
               </div>
             </td>
             <td className="px-3 py-2">
@@ -493,11 +547,60 @@ function ThreadTable({
   );
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
+function FlagPill({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-muted text-muted-foreground">
+    <button
+      type="button"
+      onClick={onClick}
+      title={on ? "Click to remove" : "Click to add"}
+      className={cn(
+        "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] border transition",
+        on
+          ? "bg-primary/15 border-primary/40 text-foreground"
+          : "border-dashed border-border text-muted-foreground/60 hover:text-foreground hover:border-border",
+      )}
+    >
       {children}
-    </span>
+    </button>
+  );
+}
+
+function StatusSelect({ value, onChange }: { value: string | null; onChange: (v: string | null) => void }) {
+  const OPTIONS: { v: string | null; label: string }[] = [
+    { v: null, label: "Lead" },
+    { v: "Active Conversation", label: "Active" },
+    { v: "Inbound Inquiry (We haven't replied)", label: "Inbound" },
+    { v: "Cold Outreach (No Reply)", label: "Cold" },
+  ];
+  const current = OPTIONS.find((o) => o.v === value) ?? OPTIONS[0];
+  const tone =
+    value === "Active Conversation"
+      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+      : value?.startsWith("Inbound")
+      ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+      : value?.startsWith("Cold")
+      ? "bg-muted text-muted-foreground border-border"
+      : "bg-transparent text-muted-foreground border-dashed border-border";
+  return (
+    <select
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value || null)}
+      className={cn(
+        "text-xs px-2 py-1 rounded-full border outline-none cursor-pointer transition appearance-none pr-6 bg-no-repeat",
+        tone,
+      )}
+      style={{
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")",
+        backgroundPosition: "right 6px center",
+      }}
+    >
+      {OPTIONS.map((o) => (
+        <option key={o.label} value={o.v ?? ""}>
+          {o.label}
+        </option>
+      ))}
+    </select>
   );
 }
 
@@ -584,7 +687,7 @@ function EditableCell({
         }
       }}
       className={cn(
-        "min-h-[24px] cursor-text rounded px-1 -mx-1 hover:bg-muted/60 transition truncate max-w-xs",
+        "min-h-[24px] cursor-text rounded px-1 -mx-1 hover:bg-muted/60 transition whitespace-pre-wrap break-words",
         !value && "text-muted-foreground italic",
       )}
       title={value || placeholder}

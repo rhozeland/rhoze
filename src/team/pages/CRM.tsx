@@ -467,18 +467,18 @@ function ThreadTable({
   onUpdate: (id: string, patch: Partial<Thread>) => void;
 }) {
   return (
-    <table className="w-full text-sm">
+    <table className="w-full text-sm min-w-[1200px]">
       <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
         <tr>
-          <th className="px-3 py-2">Handle</th>
-          <th className="px-3 py-2">Status</th>
-          <th className="px-3 py-2">Topics</th>
-          <th className="px-3 py-2 text-right">Msgs</th>
-          <th className="px-3 py-2 text-right">Replies</th>
-          <th className="px-3 py-2">Last</th>
-          <th className="px-3 py-2">Flags</th>
-          <th className="px-3 py-2 w-56">Action / Notes</th>
-          <th className="px-3 py-2"></th>
+          <th className="px-3 py-2 min-w-[170px]">Handle</th>
+          <th className="px-3 py-2 min-w-[180px]">Status</th>
+          <th className="px-3 py-2 min-w-[200px]">Topics</th>
+          <th className="px-3 py-2 text-right min-w-[60px]">Msgs</th>
+          <th className="px-3 py-2 text-right min-w-[60px]">Replies</th>
+          <th className="px-3 py-2 min-w-[90px]">Last</th>
+          <th className="px-3 py-2 min-w-[160px]">Flags</th>
+          <th className="px-3 py-2 min-w-[220px]">Action / Notes</th>
+          <th className="px-3 py-2 w-10"></th>
         </tr>
       </thead>
       <tbody>
@@ -499,20 +499,24 @@ function ThreadTable({
               </button>
             </td>
             <td className="px-3 py-2">
-              <StatusBadge status={t.status} />
+              <StatusSelect value={t.status} onChange={(s) => onUpdate(t.id, { status: s })} />
             </td>
-            <td className="px-3 py-2 text-muted-foreground max-w-xs truncate" title={t.key_topics ?? ""}>
-              {t.key_topics ?? "—"}
+            <td className="px-3 py-2 text-muted-foreground">
+              <EditableCell
+                value={t.key_topics ?? ""}
+                onSave={(v) => onUpdate(t.id, { key_topics: v || null })}
+                placeholder="Add topic…"
+              />
             </td>
             <td className="px-3 py-2 text-right tabular-nums">{t.total_messages || "—"}</td>
             <td className="px-3 py-2 text-right tabular-nums">{t.their_replies || "—"}</td>
             <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">{fmtDate(t.last_message_date)}</td>
             <td className="px-3 py-2">
-              <div className="flex gap-1">
-                {t.is_follower && <Pill>Follower</Pill>}
-                {t.follows_us && <Pill>Mutual</Pill>}
-                {t.pending_request && <Pill>Pending</Pill>}
-                {t.commenter && <Pill>Commenter</Pill>}
+              <div className="flex flex-wrap gap-1">
+                <FlagPill on={t.is_follower} onClick={() => onUpdate(t.id, { is_follower: !t.is_follower })}>Follower</FlagPill>
+                <FlagPill on={t.follows_us} onClick={() => onUpdate(t.id, { follows_us: !t.follows_us })}>Mutual</FlagPill>
+                <FlagPill on={t.pending_request} onClick={() => onUpdate(t.id, { pending_request: !t.pending_request })}>Pending</FlagPill>
+                <FlagPill on={t.commenter} onClick={() => onUpdate(t.id, { commenter: !t.commenter })}>Comm</FlagPill>
               </div>
             </td>
             <td className="px-3 py-2">
@@ -543,11 +547,60 @@ function ThreadTable({
   );
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
+function FlagPill({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-muted text-muted-foreground">
+    <button
+      type="button"
+      onClick={onClick}
+      title={on ? "Click to remove" : "Click to add"}
+      className={cn(
+        "inline-flex items-center px-1.5 py-0.5 rounded text-[10px] border transition",
+        on
+          ? "bg-primary/15 border-primary/40 text-foreground"
+          : "border-dashed border-border text-muted-foreground/60 hover:text-foreground hover:border-border",
+      )}
+    >
       {children}
-    </span>
+    </button>
+  );
+}
+
+function StatusSelect({ value, onChange }: { value: string | null; onChange: (v: string | null) => void }) {
+  const OPTIONS: { v: string | null; label: string }[] = [
+    { v: null, label: "Lead" },
+    { v: "Active Conversation", label: "Active" },
+    { v: "Inbound Inquiry (We haven't replied)", label: "Inbound" },
+    { v: "Cold Outreach (No Reply)", label: "Cold" },
+  ];
+  const current = OPTIONS.find((o) => o.v === value) ?? OPTIONS[0];
+  const tone =
+    value === "Active Conversation"
+      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+      : value?.startsWith("Inbound")
+      ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+      : value?.startsWith("Cold")
+      ? "bg-muted text-muted-foreground border-border"
+      : "bg-transparent text-muted-foreground border-dashed border-border";
+  return (
+    <select
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value || null)}
+      className={cn(
+        "text-xs px-2 py-1 rounded-full border outline-none cursor-pointer transition appearance-none pr-6 bg-no-repeat",
+        tone,
+      )}
+      style={{
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")",
+        backgroundPosition: "right 6px center",
+      }}
+    >
+      {OPTIONS.map((o) => (
+        <option key={o.label} value={o.v ?? ""}>
+          {o.label}
+        </option>
+      ))}
+    </select>
   );
 }
 

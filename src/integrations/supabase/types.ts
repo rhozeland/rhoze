@@ -213,6 +213,81 @@ export type Database = {
         }
         Relationships: []
       }
+      intake_requests: {
+        Row: {
+          cart: Json
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          contract_accepted: boolean
+          contract_accepted_at: string | null
+          created_at: string
+          deposit_cents: number
+          id: string
+          message: string | null
+          package_id: string | null
+          project_id: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          subscribe_monthly: boolean
+          updated_at: string
+        }
+        Insert: {
+          cart?: Json
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          contract_accepted?: boolean
+          contract_accepted_at?: string | null
+          created_at?: string
+          deposit_cents?: number
+          id?: string
+          message?: string | null
+          package_id?: string | null
+          project_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          subscribe_monthly?: boolean
+          updated_at?: string
+        }
+        Update: {
+          cart?: Json
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          contract_accepted?: boolean
+          contract_accepted_at?: string | null
+          created_at?: string
+          deposit_cents?: number
+          id?: string
+          message?: string | null
+          package_id?: string | null
+          project_id?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          subscribe_monthly?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "intake_requests_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "service_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "intake_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_channels: {
         Row: {
           created_at: string
@@ -376,6 +451,218 @@ export type Database = {
         }
         Relationships: []
       }
+      project_clients: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_clients_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_line_items: {
+        Row: {
+          base_amount_cents: number
+          booking_date: string | null
+          created_at: string
+          created_by: string | null
+          credits_used: number
+          debit_kind: string
+          deliverable: string
+          description: string | null
+          discount_cents: number
+          grand_total_cents: number
+          id: string
+          location: string | null
+          payment_method: string | null
+          project_id: string
+          session_hours: number | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          base_amount_cents?: number
+          booking_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          credits_used?: number
+          debit_kind?: string
+          deliverable: string
+          description?: string | null
+          discount_cents?: number
+          grand_total_cents?: number
+          id?: string
+          location?: string | null
+          payment_method?: string | null
+          project_id: string
+          session_hours?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          base_amount_cents?: number
+          booking_date?: string | null
+          created_at?: string
+          created_by?: string | null
+          credits_used?: number
+          debit_kind?: string
+          deliverable?: string
+          description?: string | null
+          discount_cents?: number
+          grand_total_cents?: number
+          id?: string
+          location?: string | null
+          payment_method?: string | null
+          project_id?: string
+          session_hours?: number | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_line_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          due_date: string | null
+          id: string
+          label: string
+          method: string | null
+          notes: string | null
+          paid_date: string | null
+          project_id: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_cents?: number
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          label: string
+          method?: string | null
+          notes?: string | null
+          paid_date?: string | null
+          project_id: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          label?: string
+          method?: string | null
+          notes?: string | null
+          paid_date?: string | null
+          project_id?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_payments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          client_email: string | null
+          client_name: string
+          client_phone: string | null
+          created_at: string
+          credit_balance: number
+          dollar_balance_cents: number
+          id: string
+          notes: string | null
+          owner_id: string | null
+          package_id: string | null
+          project_code: string | null
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_email?: string | null
+          client_name: string
+          client_phone?: string | null
+          created_at?: string
+          credit_balance?: number
+          dollar_balance_cents?: number
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          package_id?: string | null
+          project_code?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_email?: string | null
+          client_name?: string
+          client_phone?: string | null
+          created_at?: string
+          credit_balance?: number
+          dollar_balance_cents?: number
+          id?: string
+          notes?: string | null
+          owner_id?: string | null
+          package_id?: string | null
+          project_code?: string | null
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "service_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       referral_codes: {
         Row: {
           code: string
@@ -412,6 +699,54 @@ export type Database = {
           note?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           uses?: number
+        }
+        Relationships: []
+      }
+      service_packages: {
+        Row: {
+          billing_interval: string | null
+          created_at: string
+          credits: number
+          description: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          name: string
+          price_cents: number
+          slug: string
+          sort_order: number
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_interval?: string | null
+          created_at?: string
+          credits?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          name: string
+          price_cents?: number
+          slug: string
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_interval?: string | null
+          created_at?: string
+          credits?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          kind?: string
+          name?: string
+          price_cents?: number
+          slug?: string
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -490,6 +825,149 @@ export type Database = {
         }
         Relationships: []
       }
+      timesheet_entries: {
+        Row: {
+          created_at: string
+          day: string | null
+          deliverable: string
+          end_time: string | null
+          expense_cents: number
+          hours: number
+          id: string
+          notes: string | null
+          project_id: string | null
+          rate_amount_cents: number
+          start_time: string | null
+          timesheet_id: string
+          work_type: string
+        }
+        Insert: {
+          created_at?: string
+          day?: string | null
+          deliverable: string
+          end_time?: string | null
+          expense_cents?: number
+          hours?: number
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          rate_amount_cents?: number
+          start_time?: string | null
+          timesheet_id: string
+          work_type?: string
+        }
+        Update: {
+          created_at?: string
+          day?: string | null
+          deliverable?: string
+          end_time?: string | null
+          expense_cents?: number
+          hours?: number
+          id?: string
+          notes?: string | null
+          project_id?: string | null
+          rate_amount_cents?: number
+          start_time?: string | null
+          timesheet_id?: string
+          work_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timesheet_entries_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "timesheet_entries_timesheet_id_fkey"
+            columns: ["timesheet_id"]
+            isOneToOne: false
+            referencedRelation: "timesheets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timesheet_periods: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          is_open: boolean
+          label: string
+          pay_date: string
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          is_open?: boolean
+          label: string
+          pay_date: string
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_open?: boolean
+          label?: string
+          pay_date?: string
+          start_date?: string
+        }
+        Relationships: []
+      }
+      timesheets: {
+        Row: {
+          approved_at: string | null
+          created_at: string
+          id: string
+          next_period_goals: string | null
+          notes: string | null
+          period_id: string
+          status: string
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+          work_summary: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          created_at?: string
+          id?: string
+          next_period_goals?: string | null
+          notes?: string | null
+          period_id: string
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+          work_summary?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          created_at?: string
+          id?: string
+          next_period_goals?: string | null
+          notes?: string | null
+          period_id?: string
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+          work_summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timesheets_period_id_fkey"
+            columns: ["period_id"]
+            isOneToOne: false
+            referencedRelation: "timesheet_periods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -527,7 +1005,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_project_member: {
+        Args: { _project_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      redeem_project_code: { Args: { _code: string }; Returns: string }
       validate_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]

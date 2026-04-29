@@ -14,7 +14,11 @@ const DEPT_LABEL: Record<string, string> = {
   hr: "HR",
   development: "Development",
   sales: "Sales",
+  operations: "Operations",
 };
+
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 
 export default function Settings() {
   const { user, roles } = useAuth();
@@ -33,6 +37,7 @@ export default function Settings() {
   });
 
   const [form, setForm] = useState({ display_name: "", pronouns: "", bio: "" });
+  const [personal, setPersonal] = useState({ phone: "", address: "", date_of_birth: "", emergency_contact_name: "", emergency_contact_relation: "", emergency_contact_phone: "", stage_name: "" });
 
   useEffect(() => {
     if (profile) {
@@ -40,6 +45,15 @@ export default function Settings() {
         display_name: profile.display_name ?? "",
         pronouns: profile.pronouns ?? "",
         bio: profile.bio ?? "",
+      });
+      setPersonal({
+        phone: (profile as any).phone ?? "",
+        address: (profile as any).address ?? "",
+        date_of_birth: (profile as any).date_of_birth ?? "",
+        emergency_contact_name: (profile as any).emergency_contact_name ?? "",
+        emergency_contact_relation: (profile as any).emergency_contact_relation ?? "",
+        emergency_contact_phone: (profile as any).emergency_contact_phone ?? "",
+        stage_name: (profile as any).stage_name ?? "",
       });
     }
   }, [profile]);
@@ -50,6 +64,13 @@ export default function Settings() {
         display_name: form.display_name.trim() || null,
         pronouns: form.pronouns.trim() || null,
         bio: form.bio.trim() || null,
+        phone: personal.phone.trim() || null,
+        address: personal.address.trim() || null,
+        date_of_birth: personal.date_of_birth || null,
+        emergency_contact_name: personal.emergency_contact_name.trim() || null,
+        emergency_contact_relation: personal.emergency_contact_relation.trim() || null,
+        emergency_contact_phone: personal.emergency_contact_phone.trim() || null,
+        stage_name: personal.stage_name.trim() || null,
       }).eq("id", user!.id);
       if (error) throw error;
     },
@@ -60,6 +81,43 @@ export default function Settings() {
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
+
+  // Availability
+  const { data: availability } = useQuery({
+    queryKey: ["my-availability", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_availability")
+        .select("*")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [avail, setAvail] = useState<{ days: string[]; time_blocks: string[]; notes: string }>({ days: [], time_blocks: [], notes: "" });
+  useEffect(() => {
+    if (availability) {
+      setAvail({ days: availability.days ?? [], time_blocks: availability.time_blocks ?? [], notes: availability.notes ?? "" });
+    }
+  }, [availability]);
+
+  const saveAvail = useMutation({
+    mutationFn: async () => {
+      const payload = { user_id: user!.id, days: avail.days, time_blocks: avail.time_blocks, notes: avail.notes.trim() || null };
+      const { error } = await supabase.from("team_availability").upsert(payload, { onConflict: "user_id" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Availability saved" });
+      qc.invalidateQueries({ queryKey: ["my-availability"] });
+    },
+    onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
+  const toggle = (arr: string[], v: string) => arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
 
   async function handleFile(file: File) {
     if (!user) return;
@@ -161,6 +219,60 @@ export default function Settings() {
         <div className="pt-2">
           <Button onClick={() => save.mutate()} disabled={save.isPending}>Save profile</Button>
         </div>
+      </div>
+
+      <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">Personal & emergency</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-1.5"><Label>Phone</Label><Input value={personal.phone} onChange={(e) => setPersonal({ ...personal, phone: e.target.value })} /></div>
+          <div className="space-y-1.5"><Label>Date of birth</Label><Input type="date" value={personal.date_of_birth} onChange={(e) => setPersonal({ ...personal, date_of_birth: e.target.value })} /></div>
+          <div className="space-y-1.5 sm:col-span-2"><Label>Address</Label><Textarea rows={2} value={personal.address} onChange={(e) => setPersonal({ ...personal, address: e.target.value })} /></div>
+          <div className="space-y-1.5"><Label>Stage / artist name</Label><Input value={personal.stage_name} onChange={(e) => setPersonal({ ...personal, stage_name: e.target.value })} /></div>
+          <div /> 
+          <div className="space-y-1.5"><Label>Emergency contact name</Label><Input value={personal.emergency_contact_name} onChange={(e) => setPersonal({ ...personal, emergency_contact_name: e.target.value })} /></div>
+          <div className="space-y-1.5"><Label>Relation</Label><Input placeholder="Mother, Sibling…" value={personal.emergency_contact_relation} onChange={(e) => setPersonal({ ...personal, emergency_contact_relation: e.target.value })} /></div>
+          <div className="space-y-1.5 sm:col-span-2"><Label>Emergency phone</Label><Input value={personal.emergency_contact_phone} onChange={(e) => setPersonal({ ...personal, emergency_contact_phone: e.target.value })} /></div>
+        </div>
+        <div className="pt-1"><Button onClick={() => save.mutate()} disabled={save.isPending}>Save details</Button></div>
+        <p className="text-[11px] text-muted-foreground">Wage, payment method, department and program are managed by an admin in Role Manager.</p>
+      </div>
+
+      <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">Weekly availability</div>
+        <p className="text-xs text-muted-foreground -mt-2">Pick the days and times you're typically available. Other team members can see this.</p>
+        <div>
+          <Label className="text-xs">Days of the week</Label>
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            {DAYS.map((d) => {
+              const on = avail.days.includes(d);
+              return (
+                <button key={d} type="button" onClick={() => setAvail({ ...avail, days: toggle(avail.days, d) })}
+                  className={`px-2.5 py-1 rounded text-xs border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                  {d}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div>
+          <Label className="text-xs">Time of day</Label>
+          <div className="flex flex-wrap gap-1.5 mt-1.5">
+            {TIME_BLOCKS.map((t) => {
+              const on = avail.time_blocks.includes(t);
+              return (
+                <button key={t} type="button" onClick={() => setAvail({ ...avail, time_blocks: toggle(avail.time_blocks, t) })}
+                  className={`px-2.5 py-1 rounded text-xs border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Extra notes</Label>
+          <Textarea rows={2} placeholder="e.g. Sundays 12:30 AM – 4:00 PM" value={avail.notes} onChange={(e) => setAvail({ ...avail, notes: e.target.value })} />
+        </div>
+        <div><Button onClick={() => saveAvail.mutate()} disabled={saveAvail.isPending}>Save availability</Button></div>
       </div>
     </div>
   );

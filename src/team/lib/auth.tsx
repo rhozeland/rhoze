@@ -37,7 +37,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(s);
       // Defer Supabase calls to avoid deadlock inside the callback
       if (s?.user) {
-        setTimeout(() => {
+        setTimeout(async () => {
+          // If a referral code was stored at signup (email-confirmation flow), consume it now.
+          const pending = localStorage.getItem("pending_referral_code");
+          if (pending) {
+            const { error } = await supabase.rpc("consume_referral_code", { _code: pending });
+            if (!error) localStorage.removeItem("pending_referral_code");
+          }
           loadRoles(s.user.id);
         }, 0);
       } else {

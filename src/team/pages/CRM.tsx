@@ -393,18 +393,18 @@ function ContactTable({
   onDelete: (id: string) => void;
 }) {
   return (
-    <table className="w-full text-sm">
+    <table className="w-full text-sm min-w-[1100px]">
       <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider text-muted-foreground">
         <tr>
-          <th className="px-3 py-2">Name</th>
-          <th className="px-3 py-2">Company</th>
-          <th className="px-3 py-2">Email</th>
-          <th className="px-3 py-2">Phone</th>
-          <th className="px-3 py-2 text-right">Lifetime</th>
-          <th className="px-3 py-2 text-right">Tx</th>
-          <th className="px-3 py-2">Last visit</th>
-          <th className="px-3 py-2 w-64">Notes</th>
-          <th className="px-3 py-2"></th>
+          <th className="px-3 py-2 min-w-[160px]">Name</th>
+          <th className="px-3 py-2 min-w-[140px]">Company</th>
+          <th className="px-3 py-2 min-w-[200px]">Email</th>
+          <th className="px-3 py-2 min-w-[130px]">Phone</th>
+          <th className="px-3 py-2 text-right min-w-[100px]">Lifetime</th>
+          <th className="px-3 py-2 text-right min-w-[60px]">Tx</th>
+          <th className="px-3 py-2 min-w-[100px]">Last visit</th>
+          <th className="px-3 py-2 min-w-[240px]">Notes</th>
+          <th className="px-3 py-2 w-10"></th>
         </tr>
       </thead>
       <tbody>

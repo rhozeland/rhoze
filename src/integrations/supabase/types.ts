@@ -337,27 +337,42 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
           id: string
           job_title: string | null
+          portfolio_url: string | null
+          pronouns: string | null
+          specialty: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id: string
           job_title?: string | null
+          portfolio_url?: string | null
+          pronouns?: string | null
+          specialty?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
           job_title?: string | null
+          portfolio_url?: string | null
+          pronouns?: string | null
+          specialty?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
@@ -397,6 +412,45 @@ export type Database = {
           note?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           uses?: number
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          done: boolean
+          due_date: string | null
+          id: string
+          important: boolean
+          notes: string | null
+          owner_id: string
+          title: string
+          updated_at: string
+          urgent: boolean
+        }
+        Insert: {
+          created_at?: string
+          done?: boolean
+          due_date?: string | null
+          id?: string
+          important?: boolean
+          notes?: string | null
+          owner_id: string
+          title: string
+          updated_at?: string
+          urgent?: boolean
+        }
+        Update: {
+          created_at?: string
+          done?: boolean
+          due_date?: string | null
+          id?: string
+          important?: boolean
+          notes?: string | null
+          owner_id?: string
+          title?: string
+          updated_at?: string
+          urgent?: boolean
         }
         Relationships: []
       }

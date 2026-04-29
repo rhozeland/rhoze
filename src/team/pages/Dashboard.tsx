@@ -1,56 +1,81 @@
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
+import { Megaphone, Users, DollarSign, BookOpen, Settings as SettingsIcon, ListChecks, UserCircle2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-function StatCard({ label, value }: { label: string; value: number | string }) {
-  return (
-    <div className="border border-border rounded-lg p-5 bg-card">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className="text-3xl font-semibold mt-2">{value}</div>
-    </div>
-  );
-}
+const TILES = [
+  { to: "/priorities", label: "Priorities", desc: "Eisenhower matrix", icon: ListChecks, tone: "from-red-500/10 to-amber-500/5" },
+  { to: "/marketing", label: "Marketing", desc: "Campaigns & outreach", icon: Megaphone, tone: "from-fuchsia-500/10 to-purple-500/5" },
+  { to: "/crm", label: "CRM", desc: "Contacts, deals, pipeline", icon: Users, tone: "from-blue-500/10 to-cyan-500/5" },
+  { to: "/payroll", label: "Payroll", desc: "Pay periods & stubs", icon: DollarSign, tone: "from-green-500/10 to-emerald-500/5" },
+  { to: "/docs", label: "Docs & Training", desc: "SOPs, handbook, files", icon: BookOpen, tone: "from-indigo-500/10 to-blue-500/5" },
+  { to: "/directory", label: "Team Directory", desc: "People & specialties", icon: UserCircle2, tone: "from-pink-500/10 to-rose-500/5" },
+  { to: "/settings", label: "Settings", desc: "Your profile & account", icon: SettingsIcon, tone: "from-slate-500/10 to-zinc-500/5" },
+];
 
 export default function Dashboard() {
-  const { user, roles } = useAuth();
+  const { user } = useAuth();
+  const name = user?.email?.split("@")[0] ?? "team";
 
-  const { data: stats } = useQuery({
-    queryKey: ["dashboard-stats"],
+  const { data: myTasks } = useQuery({
+    queryKey: ["my-open-tasks", user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      const [contacts, deals, activities] = await Promise.all([
-        supabase.from("contacts").select("id", { count: "exact", head: true }),
-        supabase.from("deals").select("id, value, stage").neq("stage", "lost"),
-        supabase.from("activities").select("id", { count: "exact", head: true }),
-      ]);
-      const openValue = (deals.data ?? [])
-        .filter((d) => d.stage !== "won")
-        .reduce((s, d) => s + Number(d.value ?? 0), 0);
-      return {
-        contacts: contacts.count ?? 0,
-        deals: deals.data?.length ?? 0,
-        activities: activities.count ?? 0,
-        pipelineValue: openValue,
-      };
+      const { data } = await supabase.from("tasks").select("id, title, urgent, important, due_date").eq("owner_id", user!.id).eq("done", false).order("created_at", { ascending: false }).limit(5);
+      return data ?? [];
     },
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold">Welcome{user?.email ? `, ${user.email.split("@")[0]}` : ""}</h1>
-        <p className="text-sm text-muted-foreground">Roles: {roles.length ? roles.join(", ") : "none"}</p>
+        <h1 className="text-3xl font-semibold">Welcome, {name}</h1>
+        <p className="text-sm text-muted-foreground mt-1">Your Rhozeland workspace.</p>
       </header>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Contacts" value={stats?.contacts ?? "—"} />
-        <StatCard label="Open deals" value={stats?.deals ?? "—"} />
-        <StatCard label="Activities" value={stats?.activities ?? "—"} />
-        <StatCard
-          label="Pipeline value"
-          value={
-            stats ? `$${stats.pipelineValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : "—"
-          }
-        />
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {TILES.map((t) => (
+          <Link
+            key={t.to}
+            to={t.to}
+            className={cn(
+              "group relative overflow-hidden border border-border rounded-lg p-5 bg-gradient-to-br transition-all hover:border-primary/50 hover:-translate-y-0.5",
+              t.tone,
+            )}
+          >
+            <t.icon size={20} className="text-foreground/80 mb-3" />
+            <div className="font-medium">{t.label}</div>
+            <div className="text-xs text-muted-foreground mt-0.5">{t.desc}</div>
+          </Link>
+        ))}
       </div>
+
+      <section className="border border-border rounded-lg bg-card">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <div>
+            <div className="font-medium">Top of mind</div>
+            <div className="text-xs text-muted-foreground">Your open priorities.</div>
+          </div>
+          <Link to="/priorities" className="text-xs text-primary hover:underline">Open matrix →</Link>
+        </div>
+        <div className="divide-y divide-border">
+          {(myTasks ?? []).length === 0 && (
+            <div className="px-5 py-8 text-sm text-muted-foreground text-center">Nothing on your plate. Add a task in Priorities.</div>
+          )}
+          {(myTasks ?? []).map((t: any) => (
+            <div key={t.id} className="px-5 py-3 flex items-center justify-between text-sm">
+              <div className="truncate">{t.title}</div>
+              <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                {t.important && <span className="text-blue-500">important</span>}
+                {t.urgent && <span className="text-red-500">urgent</span>}
+                {t.due_date && <span>{new Date(t.due_date).toLocaleDateString()}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

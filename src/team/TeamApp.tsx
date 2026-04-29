@@ -2,12 +2,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import TeamLogin from "./pages/TeamLogin";
 import TeamLayout from "./components/TeamLayout";
 import Dashboard from "./pages/Dashboard";
-import Contacts from "./pages/Contacts";
-import Deals from "./pages/Deals";
-import Activities from "./pages/Activities";
+import Priorities from "./pages/Priorities";
+import CRM from "./pages/CRM";
+import Marketing from "./pages/Marketing";
 import Docs from "./pages/Docs";
-import Messages from "./pages/Messages";
 import Payroll from "./pages/Payroll";
+import Directory from "./pages/Directory";
+import Settings from "./pages/Settings";
 import RoleManager from "./pages/RoleManager";
 import Invites from "./pages/Invites";
 import ReferralCodes from "./pages/ReferralCodes";
@@ -44,12 +45,13 @@ export default function TeamApp() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="contacts" element={<Contacts />} />
-        <Route path="deals" element={<Deals />} />
-        <Route path="activities" element={<Activities />} />
+        <Route path="priorities" element={<Priorities />} />
+        <Route path="marketing" element={<Marketing />} />
+        <Route path="crm" element={<CRM />} />
         <Route path="docs" element={<Docs />} />
-        <Route path="messages" element={<Messages />} />
         <Route path="payroll" element={<Payroll />} />
+        <Route path="directory" element={<Directory />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="roles" element={<RoleManager />} />
         <Route path="invites" element={<Invites />} />
         <Route path="referral-codes" element={<ReferralCodes />} />

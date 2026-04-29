@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import EmploymentTimeline from "@/team/components/EmploymentTimeline";
 
 type Role = "admin" | "employee" | "client";
 const ROLES: Role[] = ["admin", "employee", "client"];
@@ -45,6 +46,7 @@ export default function RoleManager() {
   const [titleDrafts, setTitleDrafts] = useState<Record<string, string>>({});
   const [notesDrafts, setNotesDrafts] = useState<Record<string, string>>({});
   const [view, setView] = useState<"current" | "former" | "all">("current");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
   const { data: profiles } = useQuery({
     queryKey: ["all-profiles"],
@@ -173,6 +175,7 @@ export default function RoleManager() {
         <table className="w-full text-sm min-w-[1500px]">
           <thead className="bg-muted/40 text-left">
             <tr>
+              <th className="px-2 py-3 w-8"></th>
               <th className="px-4 py-3">User</th>
               <th className="px-4 py-3 w-44">Department</th>
               <th className="px-4 py-3 w-56">Job title</th>
@@ -191,8 +194,19 @@ export default function RoleManager() {
               const titleVal = titleDrafts[p.id] ?? p.job_title ?? "";
               const notesVal = notesDrafts[p.id] ?? p.employment_notes ?? "";
               const isFormer = p.employment_status === "former";
+              const isOpen = !!expanded[p.id];
               return (
+                <>
                 <tr key={p.id} className={`border-t border-border align-top ${isFormer ? "opacity-70" : ""}`}>
+                  <td className="px-2 py-3">
+                    <button
+                      onClick={() => setExpanded({ ...expanded, [p.id]: !isOpen })}
+                      className="text-muted-foreground hover:text-foreground"
+                      title={isOpen ? "Collapse history" : "Expand history"}
+                    >
+                      {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    </button>
+                  </td>
                   <td className="px-4 py-3">
                     <div className="font-medium">{p.display_name ?? "—"}</div>
                     <div className="text-xs text-muted-foreground">{p.id.slice(0, 8)}…</div>
@@ -286,6 +300,14 @@ export default function RoleManager() {
                     </div>
                   </td>
                 </tr>
+                {isOpen && (
+                  <tr className="border-t border-border bg-muted/10">
+                    <td colSpan={11} className="p-0">
+                      <EmploymentTimeline userId={p.id} />
+                    </td>
+                  </tr>
+                )}
+                </>
               );
             })}
           </tbody>

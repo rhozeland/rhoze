@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
-import EmploymentTimeline from "@/team/components/EmploymentTimeline";
 
 type Role = "admin" | "employee" | "client";
 const ROLES: Role[] = ["admin", "employee", "client"];

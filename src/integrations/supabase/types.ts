@@ -517,11 +517,15 @@ export type Database = {
           created_at: string
           department: Database["public"]["Enums"]["department"] | null
           display_name: string | null
+          employment_notes: string | null
+          employment_status: string
+          ended_at: string | null
           id: string
           job_title: string | null
           portfolio_url: string | null
           pronouns: string | null
           specialty: string | null
+          started_at: string | null
           updated_at: string
           website: string | null
         }
@@ -531,11 +535,15 @@ export type Database = {
           created_at?: string
           department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
+          employment_notes?: string | null
+          employment_status?: string
+          ended_at?: string | null
           id: string
           job_title?: string | null
           portfolio_url?: string | null
           pronouns?: string | null
           specialty?: string | null
+          started_at?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -545,11 +553,15 @@ export type Database = {
           created_at?: string
           department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
+          employment_notes?: string | null
+          employment_status?: string
+          ended_at?: string | null
           id?: string
           job_title?: string | null
           portfolio_url?: string | null
           pronouns?: string | null
           specialty?: string | null
+          started_at?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -1223,7 +1235,7 @@ export type Database = {
         | "negotiation"
         | "won"
         | "lost"
-      department: "marketing" | "hr" | "development" | "sales"
+      department: "marketing" | "hr" | "development" | "sales" | "operations"
       invite_status: "pending" | "accepted" | "revoked"
     }
     CompositeTypes: {
@@ -1363,7 +1375,7 @@ export const Constants = {
         "won",
         "lost",
       ],
-      department: ["marketing", "hr", "development", "sales"],
+      department: ["marketing", "hr", "development", "sales", "operations"],
       invite_status: ["pending", "accepted", "revoked"],
     },
   },

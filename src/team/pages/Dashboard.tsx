@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
 import { Megaphone, Users, DollarSign, BookOpen, Settings as SettingsIcon, ListChecks, UserCircle2, FolderKanban, Clock, Inbox, Package } from "lucide-react";
-import { useAuth as _useAuthIcons } from "../lib/auth";
 import { cn } from "@/lib/utils";
 
 const TILES = [

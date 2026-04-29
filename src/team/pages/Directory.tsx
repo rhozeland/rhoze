@@ -11,6 +11,17 @@ export default function Directory() {
     },
   });
 
+  const { data: availability } = useQuery({
+    queryKey: ["team-availability-all"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("team_availability").select("user_id, days, time_blocks, notes");
+      if (error) throw error;
+      const map: Record<string, any> = {};
+      (data ?? []).forEach((r: any) => { map[r.user_id] = r; });
+      return map;
+    },
+  });
+
   return (
     <div className="space-y-6">
       <div>
@@ -18,7 +29,9 @@ export default function Directory() {
         <p className="text-sm text-muted-foreground">Who's who at Rhozeland.</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(people ?? []).map((p: any) => (
+        {(people ?? []).map((p: any) => {
+          const av = availability?.[p.id];
+          return (
           <div key={p.id} className="border border-border rounded-lg p-4 bg-card">
             <div className="flex items-start gap-3">
               {p.avatar_url ? (
@@ -41,8 +54,17 @@ export default function Directory() {
               {p.website && <a href={p.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">Website</a>}
               {p.portfolio_url && <a href={p.portfolio_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">Portfolio</a>}
             </div>
+            {av && ((av.days?.length ?? 0) > 0 || (av.time_blocks?.length ?? 0) > 0 || av.notes) && (
+              <div className="mt-3 pt-3 border-t border-border space-y-1 text-[11px]">
+                <div className="uppercase tracking-wide text-muted-foreground">Availability</div>
+                {av.days?.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av.days.map((d: string) => d.slice(0,3)).join(", ")}</div>}
+                {av.time_blocks?.length > 0 && <div><span className="text-muted-foreground">When:</span> {av.time_blocks.join(", ")}</div>}
+                {av.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
+              </div>
+            )}
           </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

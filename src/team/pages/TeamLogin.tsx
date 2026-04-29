@@ -8,9 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 
-const schema = z.object({
+const signinSchema = z.object({
   email: z.string().trim().email().max(255),
   password: z.string().min(6).max(72),
+});
+const signupSchema = signinSchema.extend({
+  referralCode: z.string().trim().min(4).max(64),
 });
 
 export default function TeamLogin() {
@@ -19,6 +22,7 @@ export default function TeamLogin() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -27,10 +31,18 @@ export default function TeamLogin() {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse({ email, password });
-    if (!parsed.success) {
-      toast({ title: "Check your input", description: "Valid email and 6+ char password required.", variant: "destructive" });
-      return;
+    if (mode === "signin") {
+      const parsed = signinSchema.safeParse({ email, password });
+      if (!parsed.success) {
+        toast({ title: "Check your input", description: "Valid email and 6+ char password required.", variant: "destructive" });
+        return;
+      }
+    } else {
+      const parsed = signupSchema.safeParse({ email, password, referralCode });
+      if (!parsed.success) {
+        toast({ title: "Check your input", description: "Email, 6+ char password, and a referral code are required.", variant: "destructive" });
+        return;
+      }
     }
     setBusy(true);
     try {
@@ -39,32 +51,38 @@ export default function TeamLogin() {
         if (error) throw error;
         toast({ title: "Welcome back" });
       } else {
-        const { error } = await supabase.auth.signUp({
+        // Sign up, then immediately consume the referral code to assign role.
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/team.html` },
         });
         if (error) throw error;
-        toast({
-          title: "Account created",
-          description: "Ask an admin to grant you team access.",
-        });
+
+        // If session exists (auto-confirm enabled), consume now.
+        if (signUpData.session) {
+          const { error: rpcErr } = await supabase.rpc("consume_referral_code", { _code: referralCode });
+          if (rpcErr) {
+            toast({
+              title: "Account created, code rejected",
+              description: rpcErr.message + " — ask an admin for a valid referral code.",
+              variant: "destructive",
+            });
+          } else {
+            toast({ title: "Welcome to the team", description: "Referral code accepted." });
+          }
+        } else {
+          // Email confirmation required — store code so it can be consumed after first sign-in.
+          localStorage.setItem("pending_referral_code", referralCode);
+          toast({
+            title: "Check your email",
+            description: "Confirm your email, then sign in to activate your team access.",
+          });
+        }
       }
     } catch (err: any) {
-      toast({ title: "Login failed", description: err.message, variant: "destructive" });
+      toast({ title: mode === "signin" ? "Sign-in failed" : "Sign-up failed", description: err.message, variant: "destructive" });
     } finally {
-      setBusy(false);
-    }
-  };
-
-  const signInGoogle = async () => {
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/team.html` },
-    });
-    if (error) {
-      toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
       setBusy(false);
     }
   };
@@ -86,17 +104,27 @@ export default function TeamLogin() {
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} required value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          {mode === "signup" && (
+            <div className="space-y-1.5">
+              <Label htmlFor="referral">Referral code</Label>
+              <Input
+                id="referral"
+                type="text"
+                autoComplete="off"
+                required
+                placeholder="Provided by your admin"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                A valid referral code is required. Contact an admin if you don't have one.
+              </p>
+            </div>
+          )}
           <Button type="submit" className="w-full" disabled={busy}>
             {mode === "signin" ? "Sign in" : "Create account"}
           </Button>
         </form>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-          <div className="relative flex justify-center text-xs"><span className="bg-card px-2 text-muted-foreground">or</span></div>
-        </div>
-        <Button variant="outline" className="w-full" onClick={signInGoogle} disabled={busy}>
-          Continue with Google
-        </Button>
         <button type="button" className="w-full text-xs text-muted-foreground hover:text-foreground" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
           {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
         </button>

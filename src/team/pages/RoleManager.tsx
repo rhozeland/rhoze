@@ -307,22 +307,80 @@ export default function RoleManager() {
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1.5">
                       {cur.length === 0 && <span className="text-xs text-muted-foreground">none</span>}
-                      {cur.map((r) => (
-                        <span key={r.id} className="inline-flex items-center gap-1 text-xs bg-muted px-2 py-1 rounded">
-                          {r.role}
-                          <button onClick={() => revoke.mutate(r.id)} className="hover:text-destructive"><Trash2 size={12} /></button>
-                        </span>
-                      ))}
+                      {cur.map((r) => {
+                        const invalid = !allowedRoles(p.department as Dept | null).includes(r.role);
+                        return (
+                          <span
+                            key={r.id}
+                            title={invalid ? `'${r.role}' is not allowed in this department` : undefined}
+                            className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
+                              invalid
+                                ? "bg-destructive/10 text-destructive border border-destructive/40"
+                                : "bg-muted"
+                            }`}
+                          >
+                            {r.role}
+                            {invalid && <span className="text-[10px] uppercase">invalid</span>}
+                            <button onClick={() => revoke.mutate(r.id)} className="hover:text-destructive"><Trash2 size={12} /></button>
+                          </span>
+                        );
+                      })}
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex gap-2">
-                      <Select value={picks[p.id] ?? "employee"} onValueChange={(v) => setPicks({ ...picks, [p.id]: v as Role })}>
-                        <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                        <SelectContent>{ROLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
-                      </Select>
-                      <Button size="sm" onClick={() => grant.mutate({ userId: p.id, role: picks[p.id] ?? "employee" })}>Add</Button>
-                    </div>
+                    {(() => {
+                      const dept = (p.department ?? null) as Dept | null;
+                      const allowed = allowedRoles(dept);
+                      const pick = picks[p.id] ?? allowed[0] ?? "employee";
+                      const err = errors[p.id] ?? validateRoleForDept(pick as Role, dept);
+                      const hasAllowed = allowed.length > 0;
+                      return (
+                        <div className="space-y-1">
+                          <div className="flex gap-2">
+                            <Select
+                              value={pick}
+                              onValueChange={(v) => {
+                                setPicks({ ...picks, [p.id]: v as Role });
+                                setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
+                              }}
+                            >
+                              <SelectTrigger className={`h-9 ${err ? "border-destructive" : ""}`}><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                {ROLES.map((r) => {
+                                  const disabled = !allowed.includes(r);
+                                  return (
+                                    <SelectItem key={r} value={r} disabled={disabled}>
+                                      {r}{disabled ? " — not allowed" : ""}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              size="sm"
+                              disabled={!!err || !hasAllowed}
+                              onClick={() => {
+                                const v = validateRoleForDept(pick as Role, dept);
+                                if (v) {
+                                  setErrors({ ...errors, [p.id]: v });
+                                  toast({ title: "Role not allowed", description: v, variant: "destructive" });
+                                  return;
+                                }
+                                grant.mutate({ userId: p.id, role: pick as Role });
+                              }}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                          {err && <div className="text-[11px] text-destructive">{err}</div>}
+                          {!err && (
+                            <div className="text-[10px] text-muted-foreground">
+                              Allowed: {allowed.join(", ") || "none"}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </td>
                 </tr>
                 {isOpen && (

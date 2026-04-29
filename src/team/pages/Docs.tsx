@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { toast } from "@/hooks/use-toast";
 import { Plus, Search, CheckCircle2, Circle } from "lucide-react";
 import { useAuth } from "../lib/auth";
+import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 
 export default function Docs() {
   const qc = useQueryClient();
@@ -132,7 +133,15 @@ export default function Docs() {
                         {d.is_required && <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary">Required</span>}
                       </div>
                       {d.content && <div className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{d.content}</div>}
-                      {d.file_url && <a href={d.file_url} target="_blank" rel="noreferrer" className="text-xs text-primary mt-1 inline-block">Open file →</a>}
+                      {d.file_url && (
+                        <div className="mt-3">
+                          {toEmbedUrl(d.file_url) ? (
+                            <EmbedPreview url={d.file_url} title={d.title} height={420} />
+                          ) : (
+                            <a href={d.file_url} target="_blank" rel="noreferrer" className="text-xs text-primary inline-block">Open file →</a>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={() => toggleComplete.mutate({ docId: d.id, done })}

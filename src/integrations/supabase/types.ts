@@ -67,11 +67,19 @@ export type Database = {
           company: string | null
           created_at: string
           email: string | null
+          first_visit: string | null
           id: string
+          ig_handle: string | null
+          last_visit: string | null
+          lifetime_spend_cents: number
           name: string
           notes: string | null
           owner_id: string | null
           phone: string | null
+          relationship_status: string | null
+          source: string
+          tags: string[]
+          transaction_count: number
           type: Database["public"]["Enums"]["contact_type"]
           updated_at: string
         }
@@ -79,11 +87,19 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          first_visit?: string | null
           id?: string
+          ig_handle?: string | null
+          last_visit?: string | null
+          lifetime_spend_cents?: number
           name: string
           notes?: string | null
           owner_id?: string | null
           phone?: string | null
+          relationship_status?: string | null
+          source?: string
+          tags?: string[]
+          transaction_count?: number
           type?: Database["public"]["Enums"]["contact_type"]
           updated_at?: string
         }
@@ -91,11 +107,19 @@ export type Database = {
           company?: string | null
           created_at?: string
           email?: string | null
+          first_visit?: string | null
           id?: string
+          ig_handle?: string | null
+          last_visit?: string | null
+          lifetime_spend_cents?: number
           name?: string
           notes?: string | null
           owner_id?: string | null
           phone?: string | null
+          relationship_status?: string | null
+          source?: string
+          tags?: string[]
+          transaction_count?: number
           type?: Database["public"]["Enums"]["contact_type"]
           updated_at?: string
         }
@@ -212,6 +236,77 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      ig_threads: {
+        Row: {
+          commenter: boolean
+          contact_id: string | null
+          created_at: string
+          follows_us: boolean
+          handle: string
+          has_dm_history: boolean
+          id: string
+          is_follower: boolean
+          key_topics: string | null
+          last_message_date: string | null
+          notes: string | null
+          pending_request: boolean
+          profile_link: string | null
+          snippet: string | null
+          status: string | null
+          their_replies: number
+          total_messages: number
+          updated_at: string
+        }
+        Insert: {
+          commenter?: boolean
+          contact_id?: string | null
+          created_at?: string
+          follows_us?: boolean
+          handle: string
+          has_dm_history?: boolean
+          id?: string
+          is_follower?: boolean
+          key_topics?: string | null
+          last_message_date?: string | null
+          notes?: string | null
+          pending_request?: boolean
+          profile_link?: string | null
+          snippet?: string | null
+          status?: string | null
+          their_replies?: number
+          total_messages?: number
+          updated_at?: string
+        }
+        Update: {
+          commenter?: boolean
+          contact_id?: string | null
+          created_at?: string
+          follows_us?: boolean
+          handle?: string
+          has_dm_history?: boolean
+          id?: string
+          is_follower?: boolean
+          key_topics?: string | null
+          last_message_date?: string | null
+          notes?: string | null
+          pending_request?: boolean
+          profile_link?: string | null
+          snippet?: string | null
+          status?: string | null
+          their_replies?: number
+          total_messages?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ig_threads_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       intake_requests: {
         Row: {

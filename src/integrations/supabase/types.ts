@@ -226,11 +226,13 @@ export type Database = {
           id: string
           message: string | null
           package_id: string | null
+          paid_at: string | null
           project_id: string | null
           status: string
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
           subscribe_monthly: boolean
+          total_cents: number
           updated_at: string
         }
         Insert: {
@@ -245,11 +247,13 @@ export type Database = {
           id?: string
           message?: string | null
           package_id?: string | null
+          paid_at?: string | null
           project_id?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           subscribe_monthly?: boolean
+          total_cents?: number
           updated_at?: string
         }
         Update: {
@@ -264,11 +268,13 @@ export type Database = {
           id?: string
           message?: string | null
           package_id?: string | null
+          paid_at?: string | null
           project_id?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           subscribe_monthly?: boolean
+          total_cents?: number
           updated_at?: string
         }
         Relationships: [
@@ -554,12 +560,14 @@ export type Database = {
           created_at: string
           due_date: string | null
           id: string
+          kind: string
           label: string
           method: string | null
           notes: string | null
           paid_date: string | null
           project_id: string
           stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           updated_at: string
         }
         Insert: {
@@ -567,12 +575,14 @@ export type Database = {
           created_at?: string
           due_date?: string | null
           id?: string
+          kind?: string
           label: string
           method?: string | null
           notes?: string | null
           paid_date?: string | null
           project_id: string
           stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -580,12 +590,14 @@ export type Database = {
           created_at?: string
           due_date?: string | null
           id?: string
+          kind?: string
           label?: string
           method?: string | null
           notes?: string | null
           paid_date?: string | null
           project_id?: string
           stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -600,6 +612,8 @@ export type Database = {
       }
       projects: {
         Row: {
+          active_tier_slug: string | null
+          archived_at: string | null
           client_email: string | null
           client_name: string
           client_phone: string | null
@@ -610,6 +624,9 @@ export type Database = {
           notes: string | null
           owner_id: string | null
           package_id: string | null
+          paused_at: string | null
+          pending_change_at: string | null
+          pending_tier_slug: string | null
           project_code: string | null
           status: string
           stripe_customer_id: string | null
@@ -618,6 +635,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active_tier_slug?: string | null
+          archived_at?: string | null
           client_email?: string | null
           client_name: string
           client_phone?: string | null
@@ -628,6 +647,9 @@ export type Database = {
           notes?: string | null
           owner_id?: string | null
           package_id?: string | null
+          paused_at?: string | null
+          pending_change_at?: string | null
+          pending_tier_slug?: string | null
           project_code?: string | null
           status?: string
           stripe_customer_id?: string | null
@@ -636,6 +658,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active_tier_slug?: string | null
+          archived_at?: string | null
           client_email?: string | null
           client_name?: string
           client_phone?: string | null
@@ -646,6 +670,9 @@ export type Database = {
           notes?: string | null
           owner_id?: string | null
           package_id?: string | null
+          paused_at?: string | null
+          pending_change_at?: string | null
+          pending_tier_slug?: string | null
           project_code?: string | null
           status?: string
           stripe_customer_id?: string | null
@@ -747,6 +774,60 @@ export type Database = {
           sort_order?: number
           stripe_price_id?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          pending_price_id: string | null
+          price_id: string
+          product_id: string
+          project_id: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          pending_price_id?: string | null
+          price_id: string
+          product_id: string
+          project_id?: string | null
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          pending_price_id?: string | null
+          price_id?: string
+          product_id?: string
+          project_id?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -994,9 +1075,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_pending_tier_change: {
+        Args: { _subscription_id: string }
+        Returns: undefined
+      }
+      apply_tier_credits: {
+        Args: { _project_id: string; _tier_slug: string }
+        Returns: undefined
+      }
+      archive_expired_projects: { Args: never; Returns: number }
       consume_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      create_project_from_intake: {
+        Args: { _intake_id: string }
+        Returns: string
+      }
+      has_active_subscription: {
+        Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
       }
       has_role: {
         Args: {

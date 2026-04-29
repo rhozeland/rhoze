@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
       input: {
         main: path.resolve(__dirname, "index.html"),
         team: path.resolve(__dirname, "team.html"),
+        start: path.resolve(__dirname, "start.html"),
       },
     },
   },

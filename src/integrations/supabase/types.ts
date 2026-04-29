@@ -515,6 +515,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          department: Database["public"]["Enums"]["department"] | null
           display_name: string | null
           id: string
           job_title: string | null
@@ -528,6 +529,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
           id: string
           job_title?: string | null
@@ -541,6 +543,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
           id?: string
           job_title?: string | null
@@ -1220,6 +1223,7 @@ export type Database = {
         | "negotiation"
         | "won"
         | "lost"
+      department: "marketing" | "hr" | "development" | "sales"
       invite_status: "pending" | "accepted" | "revoked"
     }
     CompositeTypes: {
@@ -1359,6 +1363,7 @@ export const Constants = {
         "won",
         "lost",
       ],
+      department: ["marketing", "hr", "development", "sales"],
       invite_status: ["pending", "accepted", "revoked"],
     },
   },

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import {
   Search, Plus, X, Instagram, DollarSign, Users as UsersIcon,
-  MessageCircle, ExternalLink, Tag, Trash2,
+  MessageCircle, ExternalLink, Tag, Trash2, ChevronDown, Check,
 } from "lucide-react";
 
 type Contact = {
@@ -85,6 +85,11 @@ export default function CRM() {
   const [search, setSearch] = useState("");
   const [openThread, setOpenThread] = useState<Thread | null>(null);
   const [adding, setAdding] = useState(false);
+  // Live toggle filters (IG views only)
+  const [flagFilters, setFlagFilters] = useState<{
+    follower: boolean; mutual: boolean; pending: boolean; commenter: boolean; dm: boolean;
+  }>({ follower: false, mutual: false, pending: false, commenter: false, dm: false });
+  const [hasNotes, setHasNotes] = useState(false);
 
   const contactsQ = useQuery({
     queryKey: ["crm-contacts"],
@@ -120,9 +125,15 @@ export default function CRM() {
     else if (view === "ig-inbound") list = list.filter((t) => t.status?.startsWith("Inbound"));
     else if (view === "ig-cold") list = list.filter((t) => t.status?.startsWith("Cold"));
     else if (view === "ig-leads") list = list.filter((t) => !t.status); // leads-only (no convo)
+    if (flagFilters.follower) list = list.filter((t) => t.is_follower);
+    if (flagFilters.mutual) list = list.filter((t) => t.follows_us);
+    if (flagFilters.pending) list = list.filter((t) => t.pending_request);
+    if (flagFilters.commenter) list = list.filter((t) => t.commenter);
+    if (flagFilters.dm) list = list.filter((t) => t.has_dm_history);
+    if (hasNotes) list = list.filter((t) => (t.notes ?? "").trim().length > 0);
     if (q) list = list.filter((t) => t.handle.includes(q) || (t.key_topics ?? "").toLowerCase().includes(q));
     return list;
-  }, [threadsQ.data, view, search]);
+  }, [threadsQ.data, view, search, flagFilters, hasNotes]);
 
   const filteredContacts = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -239,7 +250,7 @@ export default function CRM() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-border overflow-x-auto">
+      <div className="flex gap-1 border-b border-border overflow-x-auto -mx-1 px-1">
         {VIEWS.map((v) => (
           <button
             key={v.id}
@@ -257,13 +268,35 @@ export default function CRM() {
         ))}
       </div>
 
+      {/* Live filter chips (IG views only) */}
+      {showThreads && (
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="text-muted-foreground mr-1">Filter:</span>
+          <Chip on={flagFilters.follower} onClick={() => setFlagFilters((f) => ({ ...f, follower: !f.follower }))}>Follower</Chip>
+          <Chip on={flagFilters.mutual} onClick={() => setFlagFilters((f) => ({ ...f, mutual: !f.mutual }))}>Mutual</Chip>
+          <Chip on={flagFilters.pending} onClick={() => setFlagFilters((f) => ({ ...f, pending: !f.pending }))}>Pending</Chip>
+          <Chip on={flagFilters.commenter} onClick={() => setFlagFilters((f) => ({ ...f, commenter: !f.commenter }))}>Commenter</Chip>
+          <Chip on={flagFilters.dm} onClick={() => setFlagFilters((f) => ({ ...f, dm: !f.dm }))}>DM history</Chip>
+          <Chip on={hasNotes} onClick={() => setHasNotes((v) => !v)}>Has notes</Chip>
+          {(Object.values(flagFilters).some(Boolean) || hasNotes) && (
+            <button
+              onClick={() => { setFlagFilters({ follower: false, mutual: false, pending: false, commenter: false, dm: false }); setHasNotes(false); }}
+              className="text-muted-foreground hover:text-foreground underline ml-1"
+            >
+              Clear
+            </button>
+          )}
+          <span className="ml-auto text-muted-foreground tabular-nums">{filteredThreads.length} shown</span>
+        </div>
+      )}
+
       {/* Add inline */}
       {adding && !showThreads && (
         <InlineAdd onSave={(n) => addContact.mutate(n)} onCancel={() => setAdding(false)} />
       )}
 
-      {/* Tables */}
-      <div className="border border-border rounded-lg overflow-hidden bg-card">
+      {/* Tables — horizontal scroll wrapper to prevent column clipping */}
+      <div className="border border-border rounded-lg bg-card overflow-x-auto">
         {showThreads ? (
           <ThreadTable
             threads={filteredThreads}
@@ -290,6 +323,23 @@ export default function CRM() {
         />
       )}
     </div>
+  );
+}
+
+function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center gap-1 px-2 py-1 rounded-full border text-xs transition",
+        on
+          ? "bg-primary text-primary-foreground border-primary"
+          : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/40",
+      )}
+    >
+      {on && <Check size={11} />} {children}
+    </button>
   );
 }
 

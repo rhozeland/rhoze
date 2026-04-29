@@ -28,6 +28,30 @@ const EMP_STATUSES: { value: EmpStatus; label: string }[] = [
   { value: "former", label: "Former" },
 ];
 
+// Department → roles allow-list. `null` department (unassigned) only allows `client`.
+const DEPT_ROLE_MATRIX: Record<Dept, Role[]> = {
+  operations: ["admin", "employee"],
+  hr: ["admin", "employee"],
+  development: ["employee"],
+  marketing: ["employee"],
+  sales: ["employee", "client"],
+};
+const UNASSIGNED_ROLES: Role[] = ["client"];
+
+function allowedRoles(dept: Dept | null | undefined): Role[] {
+  if (!dept) return UNASSIGNED_ROLES;
+  return DEPT_ROLE_MATRIX[dept] ?? [];
+}
+
+function validateRoleForDept(role: Role, dept: Dept | null | undefined): string | null {
+  const allowed = allowedRoles(dept);
+  if (!allowed.includes(role)) {
+    const deptLabel = dept ? (DEPTS.find((d) => d.value === dept)?.label ?? dept) : "Unassigned";
+    return `'${role}' is not allowed in ${deptLabel}. Allowed: ${allowed.join(", ") || "none"}.`;
+  }
+  return null;
+}
+
 function tenure(start?: string | null, end?: string | null): string {
   if (!start) return "—";
   const s = new Date(start);
@@ -47,6 +71,7 @@ export default function RoleManager() {
   const [notesDrafts, setNotesDrafts] = useState<Record<string, string>>({});
   const [view, setView] = useState<"current" | "former" | "all">("current");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
 
   const { data: profiles } = useQuery({
     queryKey: ["all-profiles"],

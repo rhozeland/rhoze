@@ -538,7 +538,7 @@ function MastersheetPanel({ userId }: { userId: string }) {
       const patch: Record<string, any> = {};
       Object.keys(draft).forEach((k) => { patch[k] = draft[k] === "" ? null : draft[k]; });
       if (Object.keys(patch).length === 0) return;
-      const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
+      const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
       if (error) throw error;
     },
     onSuccess: () => {

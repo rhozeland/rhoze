@@ -10,6 +10,7 @@ import {
   DollarSign,
   Shield,
   UserPlus,
+  KeyRound,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -89,6 +90,20 @@ export default function TeamLayout() {
             >
               <UserPlus size={16} />
               Invites
+            </NavLink>
+            <NavLink
+              to="/referral-codes"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                )
+              }
+            >
+              <KeyRound size={16} />
+              Referral codes
             </NavLink>
             </>
           )}

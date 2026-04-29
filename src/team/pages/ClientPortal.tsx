@@ -40,6 +40,22 @@ export default function ClientPortal() {
     },
   });
 
+  const { data: subscription } = useQuery({
+    queryKey: ["portal_subscription", id, getStripeEnvironment()],
+    enabled: !!id && !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("subscriptions")
+        .select("status,cancel_at_period_end,current_period_end,current_period_start,price_id")
+        .eq("project_id", id!)
+        .eq("environment", getStripeEnvironment())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+  });
+
   const openPortal = async () => {
     const t = toast({ title: "Opening billing portal…" });
     const { data, error } = await supabase.functions.invoke("create-portal-session", {
@@ -104,7 +120,10 @@ export default function ClientPortal() {
         <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-1">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Billing</div>
+              <div className="flex items-center gap-2">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">Billing</div>
+                <SubscriptionBadge sub={subscription} hasStripeSub={!!project.stripe_subscription_id} />
+              </div>
               <div className="text-lg font-semibold">
                 {tier ? `${tier.charAt(0).toUpperCase()}${tier.slice(1)} retainer` : "No active retainer"}
               </div>
@@ -114,6 +133,17 @@ export default function ClientPortal() {
                   : "If you'd like a monthly retainer, start one from the home page."}
                 {pending && pending !== tier && (
                   <> · Switching to <span className="font-medium text-foreground">{pending}</span>{project.pending_change_at && <> on {formatDate(project.pending_change_at)}</>}.</>
+                )}
+                {subscription?.current_period_end && (
+                  <>
+                    {" "}·{" "}
+                    {subscription.cancel_at_period_end || subscription.status === "canceled"
+                      ? <>Access ends {formatDate(subscription.current_period_end)}</>
+                      : <>Renews {formatDate(subscription.current_period_end)}</>}
+                  </>
+                )}
+                {subscription?.status === "past_due" && (
+                  <> · <span className="text-amber-600 dark:text-amber-400 font-medium">Payment failed — please update your card.</span></>
                 )}
               </div>
             </div>
@@ -171,5 +201,36 @@ export default function ClientPortal() {
         </section>
       </div>
     </div>
+  );
+}
+
+function SubscriptionBadge({ sub, hasStripeSub }: { sub: any; hasStripeSub: boolean }) {
+  if (!sub) {
+    return (
+      <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border bg-muted text-muted-foreground border-border">
+        {hasStripeSub ? "no status" : "none"}
+      </span>
+    );
+  }
+  const status: string = sub.status;
+  const endingSoon = sub.cancel_at_period_end || status === "canceled";
+  const map: Record<string, string> = {
+    active: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30",
+    trialing: "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30",
+    past_due: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
+    incomplete: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
+    unpaid: "bg-destructive/15 text-destructive border-destructive/30",
+    canceled: "bg-muted text-muted-foreground border-border",
+    paused: "bg-muted text-muted-foreground border-border",
+  };
+  const label =
+    status === "active" && endingSoon ? "Active · ending"
+    : status === "past_due" ? "Past due"
+    : status.replace("_", " ");
+  const cls = map[status] ?? "bg-muted text-muted-foreground border-border";
+  return (
+    <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${cls}`}>
+      {label}
+    </span>
   );
 }

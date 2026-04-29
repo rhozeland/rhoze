@@ -75,7 +75,6 @@ export default function ProjectDetail() {
       if (error) throw error;
       // If marked paid, increment dollar balance
       if (payForm.paid_date) {
-        await supabase.rpc as any; // no-op if not present
         await supabase.from("projects").update({
           dollar_balance_cents: (project?.dollar_balance_cents ?? 0) + amount,
         }).eq("id", id!);

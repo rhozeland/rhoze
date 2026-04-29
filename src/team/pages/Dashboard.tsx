@@ -2,11 +2,14 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
-import { Megaphone, Users, DollarSign, BookOpen, Settings as SettingsIcon, ListChecks, UserCircle2 } from "lucide-react";
+import { Megaphone, Users, DollarSign, BookOpen, Settings as SettingsIcon, ListChecks, UserCircle2, FolderKanban, Clock, Inbox, Package } from "lucide-react";
+import { useAuth as _useAuthIcons } from "../lib/auth";
 import { cn } from "@/lib/utils";
 
 const TILES = [
   { to: "/priorities", label: "Priorities", desc: "Eisenhower matrix", icon: ListChecks, tone: "from-red-500/10 to-amber-500/5" },
+  { to: "/projects", label: "Projects", desc: "Client work & balances", icon: FolderKanban, tone: "from-orange-500/10 to-amber-500/5" },
+  { to: "/timesheets", label: "Timesheets", desc: "Hours & expenses", icon: Clock, tone: "from-cyan-500/10 to-teal-500/5" },
   { to: "/marketing", label: "Marketing", desc: "Campaigns & outreach", icon: Megaphone, tone: "from-fuchsia-500/10 to-purple-500/5" },
   { to: "/crm", label: "CRM", desc: "Contacts, deals, pipeline", icon: Users, tone: "from-blue-500/10 to-cyan-500/5" },
   { to: "/payroll", label: "Payroll", desc: "Pay periods & stubs", icon: DollarSign, tone: "from-green-500/10 to-emerald-500/5" },
@@ -15,8 +18,13 @@ const TILES = [
   { to: "/settings", label: "Settings", desc: "Your profile & account", icon: SettingsIcon, tone: "from-slate-500/10 to-zinc-500/5" },
 ];
 
+const ADMIN_TILES = [
+  { to: "/intake", label: "Intake", desc: "Project requests", icon: Inbox, tone: "from-yellow-500/10 to-orange-500/5" },
+  { to: "/catalog", label: "Catalog", desc: "Tiers & services", icon: Package, tone: "from-violet-500/10 to-purple-500/5" },
+];
+
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const name = user?.email?.split("@")[0] ?? "team";
 
   const { data: myTasks } = useQuery({
@@ -36,7 +44,7 @@ export default function Dashboard() {
       </header>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {TILES.map((t) => (
+        {[...TILES, ...(isAdmin ? ADMIN_TILES : [])].map((t) => (
           <Link
             key={t.to}
             to={t.to}

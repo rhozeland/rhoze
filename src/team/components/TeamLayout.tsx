@@ -3,6 +3,7 @@ import { useAuth } from "../lib/auth";
 import {
   LayoutDashboard, ListChecks, Megaphone, Users, BookOpen, DollarSign,
   UserCircle2, Settings, Shield, UserPlus, KeyRound, LogOut,
+  FolderKanban, Inbox, Package, Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,8 @@ import { cn } from "@/lib/utils";
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/priorities", label: "Priorities", icon: ListChecks },
+  { to: "/projects", label: "Projects", icon: FolderKanban },
+  { to: "/timesheets", label: "Timesheets", icon: Clock },
   { to: "/marketing", label: "Marketing", icon: Megaphone },
   { to: "/crm", label: "CRM", icon: Users },
   { to: "/payroll", label: "Payroll", icon: DollarSign },
@@ -19,6 +22,8 @@ const nav = [
 ];
 
 const adminNav = [
+  { to: "/intake", label: "Intake", icon: Inbox },
+  { to: "/catalog", label: "Catalog", icon: Package },
   { to: "/roles", label: "Roles", icon: Shield },
   { to: "/invites", label: "Invites", icon: UserPlus },
   { to: "/referral-codes", label: "Referral codes", icon: KeyRound },

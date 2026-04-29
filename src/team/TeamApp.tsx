@@ -12,6 +12,11 @@ import Settings from "./pages/Settings";
 import RoleManager from "./pages/RoleManager";
 import Invites from "./pages/Invites";
 import ReferralCodes from "./pages/ReferralCodes";
+import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
+import Catalog from "./pages/Catalog";
+import Intake from "./pages/Intake";
+import Timesheets from "./pages/Timesheets";
 import { useAuth } from "./lib/auth";
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
@@ -48,6 +53,11 @@ export default function TeamApp() {
         <Route path="priorities" element={<Priorities />} />
         <Route path="marketing" element={<Marketing />} />
         <Route path="crm" element={<CRM />} />
+        <Route path="projects" element={<Projects />} />
+        <Route path="projects/:id" element={<ProjectDetail />} />
+        <Route path="catalog" element={<Catalog />} />
+        <Route path="intake" element={<Intake />} />
+        <Route path="timesheets" element={<Timesheets />} />
         <Route path="docs" element={<Docs />} />
         <Route path="payroll" element={<Payroll />} />
         <Route path="directory" element={<Directory />} />

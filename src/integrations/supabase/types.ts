@@ -884,12 +884,15 @@ export type Database = {
       service_packages: {
         Row: {
           billing_interval: string | null
+          category: string | null
           created_at: string
           credits: number
+          credits_cost: number
           description: string | null
           id: string
           is_active: boolean
           kind: string
+          min_quantity: number
           name: string
           price_cents: number
           slug: string
@@ -899,12 +902,15 @@ export type Database = {
         }
         Insert: {
           billing_interval?: string | null
+          category?: string | null
           created_at?: string
           credits?: number
+          credits_cost?: number
           description?: string | null
           id?: string
           is_active?: boolean
           kind?: string
+          min_quantity?: number
           name: string
           price_cents?: number
           slug: string
@@ -914,12 +920,15 @@ export type Database = {
         }
         Update: {
           billing_interval?: string | null
+          category?: string | null
           created_at?: string
           credits?: number
+          credits_cost?: number
           description?: string | null
           id?: string
           is_active?: boolean
           kind?: string
+          min_quantity?: number
           name?: string
           price_cents?: number
           slug?: string

@@ -9,9 +9,10 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, ShieldCheck } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents } from "../lib/format";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export default function Catalog() {
   const qc = useQueryClient();
@@ -66,6 +67,18 @@ export default function Catalog() {
   const subs = (pkgs ?? []).filter((p: any) => p.kind === "subscription");
   const aLaCarte = (pkgs ?? []).filter((p: any) => p.kind === "a_la_carte");
 
+  const setTaxCodes = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke("set-tax-codes", {
+        body: { environment: getStripeEnvironment() },
+      });
+      if (error || data?.error) throw new Error(error?.message || data?.error || "Failed");
+      return data;
+    },
+    onSuccess: (data: any) => toast({ title: "Tax codes synced", description: `${Object.keys(data?.updated ?? {}).length} products updated` }),
+    onError: (e: any) => toast({ title: "Tax sync failed", description: e.message, variant: "destructive" }),
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -74,6 +87,10 @@ export default function Catalog() {
           <p className="text-sm text-muted-foreground">Subscription tiers and à la carte services.</p>
         </div>
         {isAdmin && (
+          <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setTaxCodes.mutate()} disabled={setTaxCodes.isPending} title="Apply tax codes to all Stripe products for compliance handling">
+            <ShieldCheck size={14} /> Sync tax codes
+          </Button>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild><Button><Plus size={14} /> New item</Button></DialogTrigger>
             <DialogContent>
@@ -104,6 +121,7 @@ export default function Catalog() {
               <DialogFooter><Button onClick={() => create.mutate()} disabled={create.isPending}>Save</Button></DialogFooter>
             </DialogContent>
           </Dialog>
+          </div>
         )}
       </div>
 

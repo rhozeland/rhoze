@@ -361,6 +361,42 @@ export type Database = {
         }
         Relationships: []
       }
+      team_invites: {
+        Row: {
+          accepted_at: string | null
+          email: string
+          id: string
+          invited_at: string
+          invited_by: string | null
+          note: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          status: Database["public"]["Enums"]["invite_status"]
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          email: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          note?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["invite_status"]
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          email?: string
+          id?: string
+          invited_at?: string
+          invited_by?: string | null
+          note?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["invite_status"]
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -407,6 +443,7 @@ export type Database = {
         | "negotiation"
         | "won"
         | "lost"
+      invite_status: "pending" | "accepted" | "revoked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -545,6 +582,7 @@ export const Constants = {
         "won",
         "lost",
       ],
+      invite_status: ["pending", "accepted", "revoked"],
     },
   },
 } as const

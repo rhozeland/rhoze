@@ -1,3 +1,37 @@
+
+---
+
+## Team Portal v2 — Phased Restructure (April 2026)
+
+### Phase 1 — Portal restructure (THIS ROUND)
+- Remove **Messages** tab entirely (sidebar + route + page file).
+- Replace **Activities** with **Priorities** (Eisenhower 2x2 matrix). Personal view default, toggle to Team-wide.
+- Rebuild **Dashboard** as employee hub: tile grid → Marketing, CRM, Payroll, Docs & Training, Settings. Drop CLM-style stats.
+- Expand **Profiles**: role/title, designer/specialist info, bio, avatar. Settings page lets each user edit their own.
+- Sidebar reorganized to match new module structure.
+
+### Phase 2 — Docs & Training uploads + CRM tightening
+- Storage bucket `docs-files` for admin uploads (PDFs, slides).
+- Embed support for Google Drive/Docs links inside doc cards.
+- Merge Contacts + Deals into a single tighter CRM workspace (one detail view, inline activities).
+- Incorporate sales-team doc once provided.
+
+### Phase 3 — Google Workspace (workspace-level account)
+- Connect ONE Rhozeland Google account via standard connector.
+- Shared Drive browser inside Docs & Training.
+- Embed Sheets/Docs/Slides directly. Optional: shared calendar feed on Dashboard.
+
+### Phase 4 — Payroll automation
+- Time sheets, reimbursements, hourly specialist projects.
+- Project schedule fees (% allocations per person per project).
+- Admin filters → auto-generate pay periods. Awaiting user's structure example.
+
+### Phase 5 — Client-facing intake on rhozeland.com
+- Project intake flow on public site → lands in Team Portal CRM.
+- À la carte services + predefined credit packages.
+- Estimate generation, contract attachment, payment scheduling.
+- Stripe (Lovable built-in) for payments.
+
 # Rhozeland — Major Site Expansion Plan
 
 ## ✅ Phase 0 — Navbar Copy (Shipped)

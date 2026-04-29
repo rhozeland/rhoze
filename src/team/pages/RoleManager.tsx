@@ -196,8 +196,8 @@ export default function RoleManager() {
               const isFormer = p.employment_status === "former";
               const isOpen = !!expanded[p.id];
               return (
-                <>
-                <tr key={p.id} className={`border-t border-border align-top ${isFormer ? "opacity-70" : ""}`}>
+                <Fragment key={p.id}>
+                <tr className={`border-t border-border align-top ${isFormer ? "opacity-70" : ""}`}>
                   <td className="px-2 py-3">
                     <button
                       onClick={() => setExpanded({ ...expanded, [p.id]: !isOpen })}
@@ -307,7 +307,7 @@ export default function RoleManager() {
                     </td>
                   </tr>
                 )}
-                </>
+                </Fragment>
               );
             })}
           </tbody>

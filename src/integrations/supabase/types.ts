@@ -554,58 +554,94 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
           avatar_url: string | null
           bio: string | null
           created_at: string
+          date_of_birth: string | null
           department: Database["public"]["Enums"]["department"] | null
           display_name: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          emergency_contact_relation: string | null
           employment_notes: string | null
           employment_status: string
           ended_at: string | null
           id: string
+          internal_notes: string | null
           job_title: string | null
+          payment_method: string | null
+          phone: string | null
           portfolio_url: string | null
+          program: string | null
           pronouns: string | null
           specialty: string | null
+          stage_name: string | null
           started_at: string | null
           updated_at: string
+          wage: string | null
           website: string | null
+          work_type: string | null
         }
         Insert: {
+          address?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
           employment_notes?: string | null
           employment_status?: string
           ended_at?: string | null
           id: string
+          internal_notes?: string | null
           job_title?: string | null
+          payment_method?: string | null
+          phone?: string | null
           portfolio_url?: string | null
+          program?: string | null
           pronouns?: string | null
           specialty?: string | null
+          stage_name?: string | null
           started_at?: string | null
           updated_at?: string
+          wage?: string | null
           website?: string | null
+          work_type?: string | null
         }
         Update: {
+          address?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          emergency_contact_relation?: string | null
           employment_notes?: string | null
           employment_status?: string
           ended_at?: string | null
           id?: string
+          internal_notes?: string | null
           job_title?: string | null
+          payment_method?: string | null
+          phone?: string | null
           portfolio_url?: string | null
+          program?: string | null
           pronouns?: string | null
           specialty?: string | null
+          stage_name?: string | null
           started_at?: string | null
           updated_at?: string
+          wage?: string | null
           website?: string | null
+          work_type?: string | null
         }
         Relationships: []
       }
@@ -1028,6 +1064,36 @@ export type Database = {
           title?: string
           updated_at?: string
           urgent?: boolean
+        }
+        Relationships: []
+      }
+      team_availability: {
+        Row: {
+          created_at: string
+          days: string[]
+          id: string
+          notes: string | null
+          time_blocks: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days?: string[]
+          id?: string
+          notes?: string | null
+          time_blocks?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days?: string[]
+          id?: string
+          notes?: string | null
+          time_blocks?: string[]
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

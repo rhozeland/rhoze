@@ -4,9 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
-import EmploymentTimeline from "@/team/components/EmploymentTimeline";
 
 type Role = "admin" | "employee" | "client";
 const ROLES: Role[] = ["admin", "employee", "client"];
@@ -497,7 +497,7 @@ export default function RoleManager() {
                 {isOpen && (
                   <tr className="border-t border-border bg-muted/10">
                     <td colSpan={11} className="p-0">
-                      <EmploymentTimeline userId={p.id} />
+                      <MastersheetPanel userId={p.id} />
                     </td>
                   </tr>
                 )}
@@ -507,6 +507,143 @@ export default function RoleManager() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+const WORK_TYPES = ["Remote", "Hybrid", "In-Studio", "On-Site"];
+const PAYMENT_METHODS = ["QuickBooks", "Interac e-Transfer", "Cash", "Cheque", "Equity", "Other"];
+const PROGRAMS = ["In-House", "Signed", "Ambassador", "Partner", "Affiliate"];
+
+function MastersheetPanel({ userId }: { userId: string }) {
+  const qc = useQueryClient();
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["mastersheet", userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone, wage, payment_method, work_type, stage_name, program, internal_notes")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const [draft, setDraft] = useState<Record<string, string>>({});
+  const val = (k: string) => draft[k] ?? (profile as any)?.[k] ?? "";
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const patch: Record<string, any> = {};
+      Object.keys(draft).forEach((k) => { patch[k] = draft[k] === "" ? null : draft[k]; });
+      if (Object.keys(patch).length === 0) return;
+      const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Mastersheet saved" });
+      setDraft({});
+      qc.invalidateQueries({ queryKey: ["mastersheet", userId] });
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    },
+    onError: (e: any) => toast({ title: "Save failed", description: e.message, variant: "destructive" }),
+  });
+
+  const { data: avail } = useQuery({
+    queryKey: ["availability", userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_availability")
+        .select("days, time_blocks, notes")
+        .eq("user_id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoading) return <div className="p-4 text-xs text-muted-foreground">Loading mastersheet…</div>;
+
+  const dirty = Object.keys(draft).length > 0;
+
+  return (
+    <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
+      <section className="border border-border rounded p-3 bg-background space-y-2">
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Contact</div>
+        <Field label="Phone"><Input className="h-8" value={val("phone")} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} /></Field>
+        <Field label="Address"><Textarea rows={2} value={val("address")} onChange={(e) => setDraft({ ...draft, address: e.target.value })} /></Field>
+        <Field label="Date of birth"><Input type="date" className="h-8" value={val("date_of_birth")} onChange={(e) => setDraft({ ...draft, date_of_birth: e.target.value })} /></Field>
+        <Field label="Stage name"><Input className="h-8" value={val("stage_name")} onChange={(e) => setDraft({ ...draft, stage_name: e.target.value })} /></Field>
+      </section>
+
+      <section className="border border-border rounded p-3 bg-background space-y-2">
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Emergency contact</div>
+        <Field label="Name"><Input className="h-8" value={val("emergency_contact_name")} onChange={(e) => setDraft({ ...draft, emergency_contact_name: e.target.value })} /></Field>
+        <Field label="Relation"><Input className="h-8" placeholder="Mother, Sibling…" value={val("emergency_contact_relation")} onChange={(e) => setDraft({ ...draft, emergency_contact_relation: e.target.value })} /></Field>
+        <Field label="Phone"><Input className="h-8" value={val("emergency_contact_phone")} onChange={(e) => setDraft({ ...draft, emergency_contact_phone: e.target.value })} /></Field>
+
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground pt-2">Program</div>
+        <Select value={val("program") || "__none"} onValueChange={(v) => setDraft({ ...draft, program: v === "__none" ? "" : v })}>
+          <SelectTrigger className="h-8"><SelectValue placeholder="—" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__none">—</SelectItem>
+            {PROGRAMS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </section>
+
+      <section className="border border-border rounded p-3 bg-background space-y-2">
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Payroll</div>
+        <Field label="Work type">
+          <Select value={val("work_type") || "__none"} onValueChange={(v) => setDraft({ ...draft, work_type: v === "__none" ? "" : v })}>
+            <SelectTrigger className="h-8"><SelectValue placeholder="—" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none">—</SelectItem>
+              {WORK_TYPES.map((w) => <SelectItem key={w} value={w}>{w}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field label="Wage"><Input className="h-8" placeholder="$19.50/hour, Equity…" value={val("wage")} onChange={(e) => setDraft({ ...draft, wage: e.target.value })} /></Field>
+        <Field label="Payment method">
+          <Select value={val("payment_method") || "__none"} onValueChange={(v) => setDraft({ ...draft, payment_method: v === "__none" ? "" : v })}>
+            <SelectTrigger className="h-8"><SelectValue placeholder="—" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none">—</SelectItem>
+              {PAYMENT_METHODS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </Field>
+        <Field label="Internal notes"><Textarea rows={2} value={val("internal_notes")} onChange={(e) => setDraft({ ...draft, internal_notes: e.target.value })} /></Field>
+      </section>
+
+      <section className="lg:col-span-3 border border-border rounded p-3 bg-background">
+        <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Availability (read-only — edited by user in Settings)</div>
+        {!avail || ((avail.days ?? []).length === 0 && (avail.time_blocks ?? []).length === 0 && !avail.notes) ? (
+          <div className="text-xs text-muted-foreground">No availability set.</div>
+        ) : (
+          <div className="text-xs space-y-1">
+            <div><span className="text-muted-foreground">Days:</span> {(avail.days ?? []).join(", ") || "—"}</div>
+            <div><span className="text-muted-foreground">Time of day:</span> {(avail.time_blocks ?? []).join(", ") || "—"}</div>
+            {avail.notes && <div><span className="text-muted-foreground">Notes:</span> {avail.notes}</div>}
+          </div>
+        )}
+      </section>
+
+      <div className="lg:col-span-3 flex justify-end">
+        <Button size="sm" disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
+          {save.isPending ? "Saving…" : dirty ? "Save mastersheet" : "Saved"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1">
+      <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      {children}
     </div>
   );
 }

@@ -11,11 +11,10 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const SEED_SECRET = Deno.env.get("SEED_SECRET");
+    // One-time bootstrap key. This file will be deleted right after use.
+    const BOOTSTRAP = "rhz-seed-9c4e-2026-bootstrap";
     const provided = req.headers.get("x-seed-secret");
-    if (!SEED_SECRET || provided !== SEED_SECRET) {
-      return json({ error: "Forbidden" }, 403);
-    }
+    if (provided !== BOOTSTRAP) return json({ error: "Forbidden" }, 403);
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;

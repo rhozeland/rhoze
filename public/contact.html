@@ -220,102 +220,24 @@
 
             <!-- ===== PROJECT FORM ===== -->
             <div class="form-section active" id="form-project">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'project')" novalidate>
-                <h2>Start a Project</h2>
-                <p class="subtitle">Tell us about what you're building and we'll find the right path forward.</p>
-
-                <div class="form-group">
-                  <label for="p-fullname">Full Name</label>
-                  <input type="text" id="p-fullname" name="fullname" placeholder="Jane Doe" required />
-                  <span class="error-msg">Name is required</span>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="p-email">Email</label>
-                    <input type="email" id="p-email" name="email" placeholder="you@example.com" required />
-                    <span class="error-msg">Valid email is required</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="p-phone">Phone <span class="optional-tag">optional</span></label>
-                    <input type="tel" id="p-phone" name="phone" placeholder="+1 (555) 000-0000" />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="p-org">Company / Organization <span class="optional-tag">optional</span></label>
-                  <input type="text" id="p-org" name="org" placeholder="Your company or project name" />
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="p-type">Project Type</label>
-                    <select id="p-type" name="project-type" required>
-                      <option value="" disabled selected>Select a category</option>
-                      <option value="music-production">Music Production</option>
-                      <option value="video-production">Video & Film Production</option>
-                      <option value="photography">Photography</option>
-                      <option value="graphic-design">Graphic Design & Branding</option>
-                      <option value="web-development">Web & App Development</option>
-                      <option value="marketing">Marketing & Social Media</option>
-                      <option value="event-production">Event Production</option>
-                      <option value="other">Other</option>
-                    </select>
-                    <span class="error-msg">Please select a project type</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="p-support">Level of Support</label>
-                    <select id="p-support" name="support-level" required>
-                      <option value="" disabled selected>What do you need?</option>
-                      <option value="consultation">Consultation / Advisory</option>
-                      <option value="partial">Partial Support (I have a team)</option>
-                      <option value="full-service">Full-Service (End to End)</option>
-                      <option value="unsure">Not sure yet</option>
-                    </select>
-                    <span class="error-msg">Please select support level</span>
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="p-budget">Budget Range</label>
-                    <select id="p-budget" name="budget">
-                      <option value="" disabled selected>Select a range</option>
-                      <option value="under-1k">Under $1,000</option>
-                      <option value="1k-5k">$1,000 – $5,000</option>
-                      <option value="5k-15k">$5,000 – $15,000</option>
-                      <option value="15k-plus">$15,000+</option>
-                      <option value="not-sure">Not sure yet</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for="p-timeline">Timeline <span class="optional-tag">optional</span></label>
-                    <select id="p-timeline" name="timeline">
-                      <option value="" disabled selected>When do you need this?</option>
-                      <option value="asap">ASAP</option>
-                      <option value="1-2-weeks">1–2 weeks</option>
-                      <option value="1-month">Within a month</option>
-                      <option value="2-3-months">2–3 months</option>
-                      <option value="flexible">Flexible / No rush</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="p-details">Project Details</label>
-                  <textarea id="p-details" name="details" rows="5" placeholder="Describe your project — timeline, vision, any specifics..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
-                  <span class="error-msg">Please describe your project</span>
-                  <span class="char-count" id="p-details-count">0 / 2,000</span>
-                </div>
-
-
-                <div class="form-actions">
-                  <button type="submit" class="btn-dark">
-                    Submit Inquiry
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-                  </button>
-                </div>
-              </form>
+              <h2>Start a Project</h2>
+              <p class="subtitle">Pick a monthly retainer tier or build an à la carte cart with secure checkout — your project ledger and client portal are created the moment you book.</p>
+              <ul style="list-style:none;padding:0;margin:1.25rem 0 1.75rem;display:grid;gap:0.65rem;font-size:0.88rem;color:hsl(var(--muted));line-height:1.5;">
+                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Choose a subscription tier (monthly credits) or pay as you go</li>
+                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Add à la carte sessions and a custom-amount deposit to your cart</li>
+                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Checkout securely; manage your subscription and balance from your client portal</li>
+              </ul>
+              <div class="form-actions">
+                <a href="/start" class="btn-dark" style="flex:1;justify-content:center;">
+                  Open the project intake
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                </a>
+                <a href="https://calendar.app.google/cXfhA8SeNLXeBYNdA" target="_blank" rel="noopener noreferrer" class="btn-outline-call">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Book a discovery call
+                </a>
+              </div>
+              <p style="margin-top:1.25rem;font-size:0.78rem;color:hsl(var(--muted)/0.7);">Have a quick non-project question instead? Switch to <button type="button" onclick="switchCategory('technical')" style="background:none;border:none;padding:0;color:hsl(var(--fg));font-weight:600;cursor:pointer;text-decoration:underline;">Technical & Studio</button> or <button type="button" onclick="switchCategory('general')" style="background:none;border:none;padding:0;color:hsl(var(--fg));font-weight:600;cursor:pointer;text-decoration:underline;">General Inquiry</button>.</p>
             </div>
 
             <!-- ===== TECHNICAL FORM ===== -->

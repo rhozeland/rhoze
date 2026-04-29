@@ -2,11 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import TeamLogin from "./pages/TeamLogin";
 import TeamLayout from "./components/TeamLayout";
 import Dashboard from "./pages/Dashboard";
-import Priorities from "./pages/Priorities";
 import CRM from "./pages/CRM";
-import Marketing from "./pages/Marketing";
 import Docs from "./pages/Docs";
-import Payroll from "./pages/Payroll";
 import Directory from "./pages/Directory";
 import Settings from "./pages/Settings";
 import RoleManager from "./pages/RoleManager";
@@ -16,7 +13,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Catalog from "./pages/Catalog";
 import Intake from "./pages/Intake";
-import Timesheets from "./pages/Timesheets";
+import TimeAndPay from "./pages/TimeAndPay";
 import ClientPortal from "./pages/ClientPortal";
 import { useAuth } from "./lib/auth";
 
@@ -53,16 +50,18 @@ export default function TeamApp() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="priorities" element={<Priorities />} />
-        <Route path="marketing" element={<Marketing />} />
+        {/* Priorities merged into Dashboard; legacy URL redirects */}
+        <Route path="priorities" element={<Navigate to="/" replace />} />
         <Route path="crm" element={<CRM />} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="catalog" element={<Catalog />} />
         <Route path="intake" element={<Intake />} />
-        <Route path="timesheets" element={<Timesheets />} />
+        <Route path="time" element={<TimeAndPay />} />
+        {/* Legacy URLs */}
+        <Route path="timesheets" element={<Navigate to="/time" replace />} />
+        <Route path="payroll" element={<Navigate to="/time" replace />} />
         <Route path="docs" element={<Docs />} />
-        <Route path="payroll" element={<Payroll />} />
         <Route path="directory" element={<Directory />} />
         <Route path="settings" element={<Settings />} />
         <Route path="roles" element={<RoleManager />} />

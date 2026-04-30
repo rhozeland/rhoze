@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
+import { useAuth } from "../lib/auth";
+
+const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 
 type Role = "admin" | "employee" | "client";
 const ROLES: Role[] = ["admin", "employee", "client"];
@@ -517,6 +521,7 @@ const PROGRAMS = ["In-House", "Signed", "Ambassador", "Partner", "Affiliate"];
 
 function MastersheetPanel({ userId }: { userId: string }) {
   const qc = useQueryClient();
+  const { isAdmin } = useAuth();
   const { data: profile, isLoading } = useQuery({
     queryKey: ["mastersheet", userId],
     queryFn: async () => {
@@ -561,6 +566,48 @@ function MastersheetPanel({ userId }: { userId: string }) {
       if (error) throw error;
       return data;
     },
+  });
+
+  const [availDraft, setAvailDraft] = useState<{ days: string[]; time_blocks: string[]; notes: string } | null>(null);
+  const currentAvail = availDraft ?? {
+    days: avail?.days ?? [],
+    time_blocks: avail?.time_blocks ?? [],
+    notes: avail?.notes ?? "",
+  };
+  const toggle = (arr: string[], v: string) => arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+
+  const saveAvail = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        user_id: userId,
+        days: currentAvail.days,
+        time_blocks: currentAvail.time_blocks,
+        notes: currentAvail.notes.trim() || null,
+      };
+      const { error } = await supabase.from("team_availability").upsert(payload, { onConflict: "user_id" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Availability updated" });
+      setAvailDraft(null);
+      qc.invalidateQueries({ queryKey: ["availability", userId] });
+      qc.invalidateQueries({ queryKey: ["team-availability-all"] });
+    },
+    onError: (e: any) => toast({ title: "Save failed", description: e.message, variant: "destructive" }),
+  });
+
+  const clearAvail = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("team_availability").delete().eq("user_id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Availability cleared" });
+      setAvailDraft(null);
+      qc.invalidateQueries({ queryKey: ["availability", userId] });
+      qc.invalidateQueries({ queryKey: ["team-availability-all"] });
+    },
+    onError: (e: any) => toast({ title: "Clear failed", description: e.message, variant: "destructive" }),
   });
 
   if (isLoading) return <div className="p-4 text-xs text-muted-foreground">Loading mastersheet…</div>;
@@ -618,14 +665,73 @@ function MastersheetPanel({ userId }: { userId: string }) {
       </section>
 
       <section className="lg:col-span-3 border border-border rounded p-3 bg-background">
-        <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Availability (read-only — edited by user in Settings)</div>
-        {!avail || ((avail.days ?? []).length === 0 && (avail.time_blocks ?? []).length === 0 && !avail.notes) ? (
-          <div className="text-xs text-muted-foreground">No availability set.</div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            Availability {isAdmin ? "(admin override)" : "(read-only — user edits in Settings)"}
+          </div>
+          {isAdmin && avail && (
+            <button
+              type="button"
+              onClick={() => clearAvail.mutate()}
+              className="text-[10px] text-muted-foreground hover:text-destructive"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {!isAdmin ? (
+          !avail || ((avail.days ?? []).length === 0 && (avail.time_blocks ?? []).length === 0 && !avail.notes) ? (
+            <div className="text-xs text-muted-foreground">No availability set.</div>
+          ) : (
+            <div className="text-xs space-y-1">
+              <div><span className="text-muted-foreground">Days:</span> {(avail.days ?? []).join(", ") || "—"}</div>
+              <div><span className="text-muted-foreground">Time of day:</span> {(avail.time_blocks ?? []).join(", ") || "—"}</div>
+              {avail.notes && <div><span className="text-muted-foreground">Notes:</span> {avail.notes}</div>}
+            </div>
+          )
         ) : (
-          <div className="text-xs space-y-1">
-            <div><span className="text-muted-foreground">Days:</span> {(avail.days ?? []).join(", ") || "—"}</div>
-            <div><span className="text-muted-foreground">Time of day:</span> {(avail.time_blocks ?? []).join(", ") || "—"}</div>
-            {avail.notes && <div><span className="text-muted-foreground">Notes:</span> {avail.notes}</div>}
+          <div className="space-y-3">
+            <div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Days</div>
+              <div className="flex flex-wrap gap-1.5">
+                {DAYS_OF_WEEK.map((d) => {
+                  const on = currentAvail.days.includes(d);
+                  return (
+                    <button key={d} type="button"
+                      onClick={() => setAvailDraft({ ...currentAvail, days: toggle(currentAvail.days, d) })}
+                      className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                      {d.slice(0, 3)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Time of day</div>
+              <div className="flex flex-wrap gap-1.5">
+                {TIME_BLOCKS.map((t) => {
+                  const on = currentAvail.time_blocks.includes(t);
+                  return (
+                    <button key={t} type="button"
+                      onClick={() => setAvailDraft({ ...currentAvail, time_blocks: toggle(currentAvail.time_blocks, t) })}
+                      className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <Field label="Notes">
+              <Textarea rows={2} value={currentAvail.notes}
+                onChange={(e) => setAvailDraft({ ...currentAvail, notes: e.target.value })} />
+            </Field>
+            <div className="flex justify-end">
+              <Button size="sm" variant="outline" disabled={!availDraft || saveAvail.isPending}
+                onClick={() => saveAvail.mutate()}>
+                {saveAvail.isPending ? "Saving…" : availDraft ? "Save availability" : "Saved"}
+              </Button>
+            </div>
           </div>
         )}
       </section>

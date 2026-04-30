@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
 import { Upload } from "lucide-react";
+import { formatPhone, validateAll, type MastersheetField } from "../lib/validation";
 
 const DEPT_LABEL: Record<string, string> = {
   marketing: "Marketing",
@@ -39,6 +40,15 @@ export default function Settings() {
   const [form, setForm] = useState({ display_name: "", pronouns: "", bio: "" });
   const [personal, setPersonal] = useState({ phone: "", address: "", date_of_birth: "", emergency_contact_name: "", emergency_contact_relation: "", emergency_contact_phone: "", stage_name: "" });
 
+  const personalErrors = validateAll({
+    phone: personal.phone,
+    date_of_birth: personal.date_of_birth,
+    emergency_contact_name: personal.emergency_contact_name,
+    emergency_contact_relation: personal.emergency_contact_relation,
+    emergency_contact_phone: personal.emergency_contact_phone,
+  } as Partial<Record<MastersheetField, string>>);
+  const hasPersonalErrors = Object.keys(personalErrors).length > 0;
+
   useEffect(() => {
     if (profile) {
       setForm({
@@ -60,6 +70,10 @@ export default function Settings() {
 
   const save = useMutation({
     mutationFn: async () => {
+      if (hasPersonalErrors) {
+        const first = Object.values(personalErrors)[0];
+        throw new Error(first ?? "Please fix the highlighted fields");
+      }
       const { error } = await supabase.from("profiles").update({
         display_name: form.display_name.trim() || null,
         pronouns: form.pronouns.trim() || null,
@@ -224,16 +238,45 @@ export default function Settings() {
       <div className="border border-border rounded-lg p-5 bg-card space-y-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Personal & emergency</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Phone</Label><Input value={personal.phone} onChange={(e) => setPersonal({ ...personal, phone: e.target.value })} /></div>
-          <div className="space-y-1.5"><Label>Date of birth</Label><Input type="date" value={personal.date_of_birth} onChange={(e) => setPersonal({ ...personal, date_of_birth: e.target.value })} /></div>
+          <div className="space-y-1.5">
+            <Label>Phone</Label>
+            <Input inputMode="tel" placeholder="(416) 555-0123" value={personal.phone}
+              onChange={(e) => setPersonal({ ...personal, phone: formatPhone(e.target.value) })} />
+            {personalErrors.phone && <div className="text-[11px] text-destructive">{personalErrors.phone}</div>}
+          </div>
+          <div className="space-y-1.5">
+            <Label>Date of birth</Label>
+            <Input type="date" max={new Date().toISOString().slice(0, 10)} min="1900-01-01"
+              value={personal.date_of_birth}
+              onChange={(e) => setPersonal({ ...personal, date_of_birth: e.target.value })} />
+            {personalErrors.date_of_birth && <div className="text-[11px] text-destructive">{personalErrors.date_of_birth}</div>}
+          </div>
           <div className="space-y-1.5 sm:col-span-2"><Label>Address</Label><Textarea rows={2} value={personal.address} onChange={(e) => setPersonal({ ...personal, address: e.target.value })} /></div>
           <div className="space-y-1.5"><Label>Stage / artist name</Label><Input value={personal.stage_name} onChange={(e) => setPersonal({ ...personal, stage_name: e.target.value })} /></div>
           <div /> 
-          <div className="space-y-1.5"><Label>Emergency contact name</Label><Input value={personal.emergency_contact_name} onChange={(e) => setPersonal({ ...personal, emergency_contact_name: e.target.value })} /></div>
-          <div className="space-y-1.5"><Label>Relation</Label><Input placeholder="Mother, Sibling…" value={personal.emergency_contact_relation} onChange={(e) => setPersonal({ ...personal, emergency_contact_relation: e.target.value })} /></div>
-          <div className="space-y-1.5 sm:col-span-2"><Label>Emergency phone</Label><Input value={personal.emergency_contact_phone} onChange={(e) => setPersonal({ ...personal, emergency_contact_phone: e.target.value })} /></div>
+          <div className="space-y-1.5">
+            <Label>Emergency contact name</Label>
+            <Input maxLength={80} value={personal.emergency_contact_name}
+              onChange={(e) => setPersonal({ ...personal, emergency_contact_name: e.target.value })} />
+            {personalErrors.emergency_contact_name && <div className="text-[11px] text-destructive">{personalErrors.emergency_contact_name}</div>}
+          </div>
+          <div className="space-y-1.5">
+            <Label>Relation</Label>
+            <Input maxLength={40} placeholder="Mother, Sibling…" value={personal.emergency_contact_relation}
+              onChange={(e) => setPersonal({ ...personal, emergency_contact_relation: e.target.value })} />
+            {personalErrors.emergency_contact_relation && <div className="text-[11px] text-destructive">{personalErrors.emergency_contact_relation}</div>}
+          </div>
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label>Emergency phone</Label>
+            <Input inputMode="tel" placeholder="(416) 555-0123" value={personal.emergency_contact_phone}
+              onChange={(e) => setPersonal({ ...personal, emergency_contact_phone: formatPhone(e.target.value) })} />
+            {personalErrors.emergency_contact_phone && <div className="text-[11px] text-destructive">{personalErrors.emergency_contact_phone}</div>}
+          </div>
         </div>
-        <div className="pt-1"><Button onClick={() => save.mutate()} disabled={save.isPending}>Save details</Button></div>
+        <div className="pt-1 flex items-center gap-3">
+          <Button onClick={() => save.mutate()} disabled={save.isPending || hasPersonalErrors}>Save details</Button>
+          {hasPersonalErrors && <span className="text-xs text-destructive">Fix the highlighted fields above.</span>}
+        </div>
         <p className="text-[11px] text-muted-foreground">Wage, payment method, department and program are managed by an admin in Role Manager.</p>
       </div>
 

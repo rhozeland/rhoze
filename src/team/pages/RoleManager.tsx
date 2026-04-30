@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
 import { useAuth } from "../lib/auth";
+import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
@@ -538,8 +539,30 @@ function MastersheetPanel({ userId }: { userId: string }) {
   const [draft, setDraft] = useState<Record<string, string>>({});
   const val = (k: string) => draft[k] ?? (profile as any)?.[k] ?? "";
 
+  // Live validation only for known validated fields
+  const validatedFields: MastersheetField[] = [
+    "phone", "date_of_birth", "emergency_contact_name", "emergency_contact_relation", "emergency_contact_phone",
+  ];
+  const errors = useMemo(() => {
+    const subset: Partial<Record<MastersheetField, string>> = {};
+    validatedFields.forEach((k) => {
+      if (k in draft) subset[k] = draft[k] ?? "";
+    });
+    return validateAll(subset);
+  }, [draft]);
+  const hasErrors = Object.keys(errors).length > 0;
+
+  const setField = (k: string, v: string) => setDraft({ ...draft, [k]: v });
+  const setPhoneField = (k: "phone" | "emergency_contact_phone", raw: string) => setField(k, formatPhone(raw));
+
   const save = useMutation({
     mutationFn: async () => {
+      // Re-validate everything in the draft before saving
+      const allErrors = validateAll(draft as any);
+      if (Object.keys(allErrors).length > 0) {
+        const first = Object.values(allErrors)[0];
+        throw new Error(first ?? "Please fix the highlighted fields");
+      }
       const patch: Record<string, any> = {};
       Object.keys(draft).forEach((k) => { patch[k] = draft[k] === "" ? null : draft[k]; });
       if (Object.keys(patch).length === 0) return;
@@ -618,17 +641,32 @@ function MastersheetPanel({ userId }: { userId: string }) {
     <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
       <section className="border border-border rounded p-3 bg-background space-y-2">
         <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Contact</div>
-        <Field label="Phone"><Input className="h-8" value={val("phone")} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} /></Field>
+        <Field label="Phone" error={errors.phone} hint="e.g. (416) 555-0123 or +1 416 555 0123">
+          <Input className="h-8" inputMode="tel" placeholder="(416) 555-0123"
+            value={val("phone")} onChange={(e) => setPhoneField("phone", e.target.value)} />
+        </Field>
         <Field label="Address"><Textarea rows={2} value={val("address")} onChange={(e) => setDraft({ ...draft, address: e.target.value })} /></Field>
-        <Field label="Date of birth"><Input type="date" className="h-8" value={val("date_of_birth")} onChange={(e) => setDraft({ ...draft, date_of_birth: e.target.value })} /></Field>
+        <Field label="Date of birth" error={errors.date_of_birth}>
+          <Input type="date" className="h-8" max={new Date().toISOString().slice(0, 10)} min="1900-01-01"
+            value={val("date_of_birth")} onChange={(e) => setField("date_of_birth", e.target.value)} />
+        </Field>
         <Field label="Stage name"><Input className="h-8" value={val("stage_name")} onChange={(e) => setDraft({ ...draft, stage_name: e.target.value })} /></Field>
       </section>
 
       <section className="border border-border rounded p-3 bg-background space-y-2">
         <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Emergency contact</div>
-        <Field label="Name"><Input className="h-8" value={val("emergency_contact_name")} onChange={(e) => setDraft({ ...draft, emergency_contact_name: e.target.value })} /></Field>
-        <Field label="Relation"><Input className="h-8" placeholder="Mother, Sibling…" value={val("emergency_contact_relation")} onChange={(e) => setDraft({ ...draft, emergency_contact_relation: e.target.value })} /></Field>
-        <Field label="Phone"><Input className="h-8" value={val("emergency_contact_phone")} onChange={(e) => setDraft({ ...draft, emergency_contact_phone: e.target.value })} /></Field>
+        <Field label="Name" error={errors.emergency_contact_name}>
+          <Input className="h-8" maxLength={80} value={val("emergency_contact_name")}
+            onChange={(e) => setField("emergency_contact_name", e.target.value)} />
+        </Field>
+        <Field label="Relation" error={errors.emergency_contact_relation}>
+          <Input className="h-8" maxLength={40} placeholder="Mother, Sibling…" value={val("emergency_contact_relation")}
+            onChange={(e) => setField("emergency_contact_relation", e.target.value)} />
+        </Field>
+        <Field label="Phone" error={errors.emergency_contact_phone}>
+          <Input className="h-8" inputMode="tel" placeholder="(416) 555-0123"
+            value={val("emergency_contact_phone")} onChange={(e) => setPhoneField("emergency_contact_phone", e.target.value)} />
+        </Field>
 
         <div className="text-[10px] uppercase tracking-wide text-muted-foreground pt-2">Program</div>
         <Select value={val("program") || "__none"} onValueChange={(v) => setDraft({ ...draft, program: v === "__none" ? "" : v })}>
@@ -737,19 +775,25 @@ function MastersheetPanel({ userId }: { userId: string }) {
       </section>
 
       <div className="lg:col-span-3 flex justify-end">
-        <Button size="sm" disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
-          {save.isPending ? "Saving…" : dirty ? "Save mastersheet" : "Saved"}
-        </Button>
+        <div className="flex items-center gap-3">
+          {hasErrors && <span className="text-[11px] text-destructive">Fix the highlighted fields</span>}
+          <Button size="sm" disabled={!dirty || hasErrors || save.isPending} onClick={() => save.mutate()}>
+            {save.isPending ? "Saving…" : dirty ? "Save mastersheet" : "Saved"}
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children, error, hint }: { label: string; children: React.ReactNode; error?: string; hint?: string }) {
   return (
     <div className="space-y-1">
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
       {children}
+      {error
+        ? <div className="text-[10px] text-destructive">{error}</div>
+        : hint ? <div className="text-[10px] text-muted-foreground">{hint}</div> : null}
     </div>
   );
 }

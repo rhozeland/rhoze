@@ -6,9 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
+
+const WEEK_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAY_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
@@ -311,6 +314,8 @@ export default function RoleManager() {
           )}
         </div>
       </div>
+
+      <CoveragePanel profiles={profiles ?? []} />
 
       <div className="border border-border rounded-lg overflow-x-auto">
         <table className="w-full text-sm min-w-[1500px]">

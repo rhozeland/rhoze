@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useMemo, useState } from "react";
+
+const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 
 export default function Directory() {
   const { data: people } = useQuery({
@@ -22,12 +26,141 @@ export default function Directory() {
     },
   });
 
+  const profileMap = useMemo(() => {
+    const m: Record<string, any> = {};
+    (people ?? []).forEach((p: any) => { m[p.id] = p; });
+    return m;
+  }, [people]);
+
+  // grid[day][block] = array of user ids available in that day AND that block
+  const grid = useMemo(() => {
+    const g: Record<string, Record<string, string[]>> = {};
+    DAYS.forEach((d) => {
+      g[d] = {};
+      TIME_BLOCKS.forEach((b) => { g[d][b] = []; });
+    });
+    Object.values(availability ?? {}).forEach((av: any) => {
+      const days: string[] = av.days ?? [];
+      const blocks: string[] = av.time_blocks ?? [];
+      if (!days.length || !blocks.length) return;
+      days.forEach((d) => {
+        if (!g[d]) return;
+        blocks.forEach((b) => {
+          if (!g[d][b]) return;
+          g[d][b].push(av.user_id);
+        });
+      });
+    });
+    return g;
+  }, [availability]);
+
+  const [active, setActive] = useState<{ day: string; block: string } | null>(null);
+  const activeIds = active ? grid[active.day]?.[active.block] ?? [] : [];
+
+  const heatColor = (n: number, max: number) => {
+    if (n === 0) return "bg-muted/40 text-muted-foreground";
+    const ratio = max ? n / max : 0;
+    if (ratio > 0.66) return "bg-primary text-primary-foreground";
+    if (ratio > 0.33) return "bg-primary/60 text-primary-foreground";
+    return "bg-primary/25 text-foreground";
+  };
+
+  const maxCount = useMemo(() => {
+    let m = 0;
+    DAYS.forEach((d) => TIME_BLOCKS.forEach((b) => { m = Math.max(m, grid[d][b].length); }));
+    return m;
+  }, [grid]);
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Team directory</h1>
         <p className="text-sm text-muted-foreground">Who's who at Rhozeland.</p>
       </div>
+
+      <div className="border border-border rounded-lg p-5 bg-card space-y-3">
+        <div className="flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Shared availability</div>
+            <div className="text-sm text-muted-foreground">Click a cell to see who's free.</div>
+          </div>
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+            <span>Fewer</span>
+            <span className="inline-block h-3 w-4 rounded bg-muted/40 border border-border" />
+            <span className="inline-block h-3 w-4 rounded bg-primary/25" />
+            <span className="inline-block h-3 w-4 rounded bg-primary/60" />
+            <span className="inline-block h-3 w-4 rounded bg-primary" />
+            <span>More</span>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border-separate border-spacing-1 min-w-[560px]">
+            <thead>
+              <tr>
+                <th className="text-left font-medium text-muted-foreground px-2 py-1 w-20"> </th>
+                {DAYS.map((d) => (
+                  <th key={d} className="text-center font-medium text-muted-foreground px-2 py-1">{d.slice(0, 3)}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {TIME_BLOCKS.map((b) => (
+                <tr key={b}>
+                  <td className="text-left text-muted-foreground px-2 py-1 align-middle">{b}</td>
+                  {DAYS.map((d) => {
+                    const ids = grid[d][b];
+                    const isActive = active?.day === d && active?.block === b;
+                    return (
+                      <td key={d} className="p-0">
+                        <button
+                          type="button"
+                          onClick={() => setActive(isActive ? null : { day: d, block: b })}
+                          className={`w-full h-10 rounded text-xs font-medium transition-all ${heatColor(ids.length, maxCount)} ${isActive ? "ring-2 ring-foreground" : "hover:opacity-80"}`}
+                          title={`${d} · ${b}: ${ids.length} available`}
+                        >
+                          {ids.length > 0 ? ids.length : ""}
+                        </button>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {active && (
+          <div className="border-t border-border pt-3">
+            <div className="text-xs text-muted-foreground mb-2">
+              {active.day} · {active.block} — {activeIds.length} available
+            </div>
+            {activeIds.length === 0 ? (
+              <div className="text-sm text-muted-foreground italic">No one is marked available.</div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {activeIds.map((uid) => {
+                  const p = profileMap[uid];
+                  if (!p) return null;
+                  return (
+                    <div key={uid} className="flex items-center gap-2 border border-border rounded-full pl-1 pr-3 py-1 bg-background">
+                      {p.avatar_url ? (
+                        <img src={p.avatar_url} alt="" className="h-6 w-6 rounded-full object-cover" />
+                      ) : (
+                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-medium">
+                          {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
+                        </div>
+                      )}
+                      <span className="text-xs">{p.display_name ?? "Unnamed"}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {(people ?? []).map((p: any) => {
           const av = availability?.[p.id];

@@ -523,6 +523,20 @@
       gap: 0.75rem;
       width: max-content;
       user-select: none;
+      animation: proof-marquee 38s linear infinite;
+      will-change: transform;
+    }
+    .hero-proof-track-wrap:hover .proof-track,
+    .hero-proof-track-wrap:focus-within .proof-track,
+    .hero-proof-track-wrap.is-dragging .proof-track {
+      animation-play-state: paused;
+    }
+    @keyframes proof-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(calc(-100% / 3)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .proof-track { animation: none; }
     }
 
     .proof-link {

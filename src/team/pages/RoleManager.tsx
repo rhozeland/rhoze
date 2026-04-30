@@ -802,3 +802,239 @@ function Field({ label, children, error, hint }: { label: string; children: Reac
     </div>
   );
 }
+
+function CoveragePanel({ profiles }: { profiles: any[] }) {
+  const [open, setOpen] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [windowDays, setWindowDays] = useState<string[]>([...WEEK_DAYS]);
+  const [windowBlocks, setWindowBlocks] = useState<string[]>([...DAY_BLOCKS]);
+
+  const { data: availability } = useQuery({
+    queryKey: ["coverage-availability"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_availability")
+        .select("user_id, days, time_blocks");
+      if (error) throw error;
+      const map: Record<string, { days: string[]; time_blocks: string[] }> = {};
+      (data ?? []).forEach((r: any) => {
+        map[r.user_id] = { days: r.days ?? [], time_blocks: r.time_blocks ?? [] };
+      });
+      return map;
+    },
+    enabled: open,
+  });
+
+  const profileMap = useMemo(() => {
+    const m: Record<string, any> = {};
+    profiles.forEach((p) => { m[p.id] = p; });
+    return m;
+  }, [profiles]);
+
+  const toggle = (arr: string[], v: string) => arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+
+  // For each (day, block) cell in the window, list which selected users are available.
+  // A user is "available" in (day, block) if their availability includes that day AND that block.
+  const analysis = useMemo(() => {
+    if (!availability || selectedUsers.length < 2 || windowDays.length === 0 || windowBlocks.length === 0) return null;
+    const cells: { day: string; block: string; available: string[]; missing: string[] }[] = [];
+    let fullyCovered = 0;
+    let partial = 0;
+    let empty = 0;
+    windowDays.forEach((d) => {
+      windowBlocks.forEach((b) => {
+        const available: string[] = [];
+        const missing: string[] = [];
+        selectedUsers.forEach((uid) => {
+          const av = availability[uid];
+          const ok = av && (av.days ?? []).includes(d) && (av.time_blocks ?? []).includes(b);
+          if (ok) available.push(uid);
+          else missing.push(uid);
+        });
+        cells.push({ day: d, block: b, available, missing });
+        if (available.length === selectedUsers.length) fullyCovered++;
+        else if (available.length === 0) empty++;
+        else partial++;
+      });
+    });
+    // Per-person summary: which people never overlap with everyone else in the window
+    const perPersonGaps: Record<string, number> = {};
+    selectedUsers.forEach((uid) => { perPersonGaps[uid] = 0; });
+    cells.forEach((c) => c.missing.forEach((uid) => { perPersonGaps[uid] = (perPersonGaps[uid] ?? 0) + 1; }));
+    return { cells, fullyCovered, partial, empty, total: cells.length, perPersonGaps };
+  }, [availability, selectedUsers, windowDays, windowBlocks]);
+
+  const eligible = useMemo(
+    () => profiles.filter((p) => p.employment_status !== "former"),
+    [profiles]
+  );
+
+  return (
+    <div className="border border-border rounded-lg bg-card">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left"
+      >
+        <div>
+          <div className="text-sm font-medium">Coverage check</div>
+          <div className="text-xs text-muted-foreground">Pick 2+ people and a time window — get an alert if their availability doesn't overlap.</div>
+        </div>
+        {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+      </button>
+
+      {open && (
+        <div className="border-t border-border p-4 space-y-4">
+          {/* People picker */}
+          <div>
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1.5">People ({selectedUsers.length})</div>
+            <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
+              {eligible.map((p: any) => {
+                const on = selectedUsers.includes(p.id);
+                return (
+                  <button key={p.id} type="button"
+                    onClick={() => setSelectedUsers(toggle(selectedUsers, p.id))}
+                    className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                    {p.display_name ?? "Unnamed"}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Window picker */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1.5">Days in window</div>
+              <div className="flex flex-wrap gap-1.5">
+                {WEEK_DAYS.map((d) => {
+                  const on = windowDays.includes(d);
+                  return (
+                    <button key={d} type="button"
+                      onClick={() => setWindowDays(toggle(windowDays, d))}
+                      className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                      {d.slice(0, 3)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1.5">Blocks in window</div>
+              <div className="flex flex-wrap gap-1.5">
+                {DAY_BLOCKS.map((b) => {
+                  const on = windowBlocks.includes(b);
+                  return (
+                    <button key={b} type="button"
+                      onClick={() => setWindowBlocks(toggle(windowBlocks, b))}
+                      className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                      {b}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Result */}
+          {!analysis ? (
+            <div className="text-xs text-muted-foreground italic">
+              {selectedUsers.length < 2
+                ? "Select at least 2 people."
+                : "Pick at least one day and one block."}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {/* Top-level alert */}
+              {analysis.fullyCovered === 0 ? (
+                <div className="flex items-start gap-2 border border-destructive/50 bg-destructive/5 text-destructive rounded p-3 text-sm">
+                  <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+                  <div>
+                    <div className="font-medium">No overlap in this window</div>
+                    <div className="text-xs opacity-90">None of the {analysis.total} selected slots have all {selectedUsers.length} people available together.</div>
+                  </div>
+                </div>
+              ) : analysis.partial > 0 || analysis.empty > 0 ? (
+                <div className="flex items-start gap-2 border border-amber-500/50 bg-amber-500/5 text-amber-700 dark:text-amber-400 rounded p-3 text-sm">
+                  <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+                  <div>
+                    <div className="font-medium">Partial overlap</div>
+                    <div className="text-xs opacity-90">
+                      {analysis.fullyCovered}/{analysis.total} slots fully covered · {analysis.partial} partial · {analysis.empty} with no one.
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-start gap-2 border border-emerald-500/50 bg-emerald-500/5 text-emerald-700 dark:text-emerald-400 rounded p-3 text-sm">
+                  <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
+                  <div>
+                    <div className="font-medium">Full overlap across the window</div>
+                    <div className="text-xs opacity-90">All {selectedUsers.length} people are available in every selected slot.</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Grid */}
+              <div className="overflow-x-auto">
+                <table className="text-xs border-separate border-spacing-1 min-w-[420px]">
+                  <thead>
+                    <tr>
+                      <th className="text-left font-medium text-muted-foreground px-2 py-1 w-20"> </th>
+                      {windowDays.map((d) => (
+                        <th key={d} className="text-center font-medium text-muted-foreground px-2 py-1">{d.slice(0, 3)}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {windowBlocks.map((b) => (
+                      <tr key={b}>
+                        <td className="text-left text-muted-foreground px-2 py-1">{b}</td>
+                        {windowDays.map((d) => {
+                          const cell = analysis.cells.find((c) => c.day === d && c.block === b)!;
+                          const n = cell.available.length;
+                          const total = selectedUsers.length;
+                          const cls =
+                            n === total ? "bg-emerald-500/70 text-white" :
+                            n === 0 ? "bg-destructive/70 text-white" :
+                            "bg-amber-500/60 text-white";
+                          const title = n === total
+                            ? `All ${total} available`
+                            : n === 0
+                              ? `No one available · missing: ${cell.missing.map((u) => profileMap[u]?.display_name ?? u).join(", ")}`
+                              : `${n}/${total} available · missing: ${cell.missing.map((u) => profileMap[u]?.display_name ?? u).join(", ")}`;
+                          return (
+                            <td key={d} className="p-0">
+                              <div title={title} className={`h-8 rounded text-[11px] font-medium flex items-center justify-center ${cls}`}>
+                                {n}/{total}
+                              </div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Per-person gaps */}
+              <div>
+                <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Gaps per person</div>
+                <div className="flex flex-wrap gap-2">
+                  {selectedUsers.map((uid) => {
+                    const gaps = analysis.perPersonGaps[uid] ?? 0;
+                    const ok = gaps === 0;
+                    return (
+                      <div key={uid} className={`text-[11px] px-2 py-1 rounded border ${ok ? "border-emerald-500/40 text-emerald-700 dark:text-emerald-400" : "border-destructive/40 text-destructive"}`}>
+                        {profileMap[uid]?.display_name ?? "Unnamed"}: {ok ? "no gaps" : `${gaps} missing slot${gaps === 1 ? "" : "s"}`}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

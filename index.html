@@ -523,6 +523,20 @@
       gap: 0.75rem;
       width: max-content;
       user-select: none;
+      animation: proof-marquee 38s linear infinite;
+      will-change: transform;
+    }
+    .hero-proof-track-wrap:hover .proof-track,
+    .hero-proof-track-wrap:focus-within .proof-track,
+    .hero-proof-track-wrap.is-dragging .proof-track {
+      animation-play-state: paused;
+    }
+    @keyframes proof-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(calc(-100% / 3)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .proof-track { animation: none; }
     }
 
     .proof-link {
@@ -3196,71 +3210,33 @@
     }
   </script>
   <script>
-    // Featured-On strip: native horizontal scroll + drag + seamless auto-drift
+    // Featured-On strip: enables click-and-drag horizontal scrolling on top of
+    // the CSS marquee. Auto-drift is handled entirely via CSS keyframes on
+    // .proof-track so it never depends on rAF or JS execution.
     (function () {
       var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
       if (!scroller || !track) return;
 
-      // The HTML already has the list duplicated (2 copies). Clone one more
-      // copy so we have 3 segments and can wrap in either direction.
-      var originalHTML = track.innerHTML;
-      var segmentCount = 2;
+      // Ensure 3 segments so dragging in either direction always shows content.
       try {
-        // Add a third segment by cloning half of the existing content.
-        // Existing markup contains 2 copies, so half == one copy.
-        var halfMarker = track.children.length / 2;
-        var thirdSegment = '';
+        var originalChildren = Array.prototype.slice.call(track.children);
+        var halfMarker = Math.floor(originalChildren.length / 2);
+        var frag = document.createDocumentFragment();
         for (var i = 0; i < halfMarker; i++) {
-          thirdSegment += track.children[i].outerHTML;
+          frag.appendChild(originalChildren[i].cloneNode(true));
         }
-        track.innerHTML = originalHTML + thirdSegment;
-        segmentCount = 3;
-      } catch (e) { /* fallback: keep 2 */ }
+        track.appendChild(frag);
+      } catch (e) { /* fallback: keep existing copies */ }
 
-      function getSegmentWidth() {
-        return track.scrollWidth / segmentCount;
-      }
-
-      function setInitial() {
-        var seg = getSegmentWidth();
-        if (seg) scroller.scrollLeft = seg;
-      }
-      requestAnimationFrame(setInitial);
-      window.addEventListener('resize', function () {
-        var seg = getSegmentWidth();
-        if (!seg) return;
-        var rel = ((scroller.scrollLeft % seg) + seg) % seg;
-        scroller.scrollLeft = seg + rel;
-      });
-
-      function normalize() {
-        var seg = getSegmentWidth();
-        if (!seg) return;
-        var max = scroller.scrollWidth - scroller.clientWidth;
-        if (max <= 0) return;
-        if (scroller.scrollLeft <= 1) scroller.scrollLeft += seg;
-        else if (scroller.scrollLeft >= max - 1) scroller.scrollLeft -= seg;
-      }
-      scroller.addEventListener('scroll', normalize);
-
-      var paused = false;
       var dragging = false;
       var startX = 0;
       var startScroll = 0;
       var moved = false;
 
-      scroller.addEventListener('mouseenter', function () { paused = true; });
-      scroller.addEventListener('mouseleave', function () { paused = false; dragging = false; scroller.classList.remove('is-dragging'); });
-      scroller.addEventListener('focusin', function () { paused = true; });
-      scroller.addEventListener('focusout', function () { paused = false; });
-      scroller.addEventListener('touchstart', function () { paused = true; }, { passive: true });
-      scroller.addEventListener('touchend', function () { paused = false; });
-
       scroller.addEventListener('pointerdown', function (e) {
         if (e.pointerType !== 'mouse') return;
         dragging = true;
-        paused = true;
         moved = false;
         startX = e.clientX;
         startScroll = scroller.scrollLeft;
@@ -3272,39 +3248,14 @@
         var dx = e.clientX - startX;
         if (Math.abs(dx) > 4) moved = true;
         scroller.scrollLeft = startScroll - dx;
-        var seg = getSegmentWidth();
-        var max = scroller.scrollWidth - scroller.clientWidth;
-        if (seg && scroller.scrollLeft <= 1) {
-          scroller.scrollLeft += seg;
-          startScroll = scroller.scrollLeft;
-          startX = e.clientX;
-        } else if (seg && scroller.scrollLeft >= max - 1) {
-          scroller.scrollLeft -= seg;
-          startScroll = scroller.scrollLeft;
-          startX = e.clientX;
-        }
       });
       function endDrag() { dragging = false; scroller.classList.remove('is-dragging'); }
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);
+      scroller.addEventListener('pointerleave', endDrag);
       scroller.addEventListener('click', function (e) {
         if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
       }, true);
-
-      var last = performance.now();
-      var SPEED = 30; // px/sec
-      function tick(now) {
-        var dt = (now - last) / 1000;
-        last = now;
-        if (!paused && !dragging) {
-          var seg = getSegmentWidth();
-          var next = scroller.scrollLeft + SPEED * dt;
-          if (seg && next >= seg * 2) next -= seg;
-          scroller.scrollLeft = next;
-        }
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
     })();
   </script>
 </body>

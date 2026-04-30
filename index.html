@@ -3197,32 +3197,94 @@
     }
   </script>
   <script>
-    // Featured-On strip: enables click-and-drag horizontal scrolling on top of
-    // the CSS marquee. Auto-drift is handled entirely via CSS keyframes on
-    // .proof-track so it never depends on rAF or JS execution.
+    // Featured-On strip: scroll-position based marquee.
+    // Uses native scrollLeft so trackpad wheel, touch swipe, and click-drag
+    // all share the same coordinate system across browsers.
     (function () {
       var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
       if (!scroller || !track) return;
 
-      // Ensure 3 segments so dragging in either direction always shows content.
+      // Build 3 segments so we can sit in the middle and wrap either direction.
       try {
-        var originalChildren = Array.prototype.slice.call(track.children);
-        var halfMarker = Math.floor(originalChildren.length / 2);
+        var original = Array.prototype.slice.call(track.children);
         var frag = document.createDocumentFragment();
-        for (var i = 0; i < halfMarker; i++) {
-          frag.appendChild(originalChildren[i].cloneNode(true));
-        }
+        for (var i = 0; i < original.length; i++) frag.appendChild(original[i].cloneNode(true));
+        for (var j = 0; j < original.length; j++) frag.appendChild(original[j].cloneNode(true));
         track.appendChild(frag);
-      } catch (e) { /* fallback: keep existing copies */ }
+      } catch (e) { /* keep existing */ }
 
+      function segmentWidth() { return track.scrollWidth / 3; }
+
+      function normalize() {
+        var seg = segmentWidth();
+        if (!seg) return;
+        var max = scroller.scrollWidth - scroller.clientWidth;
+        if (max <= 0) return;
+        if (scroller.scrollLeft <= 1) scroller.scrollLeft += seg;
+        else if (scroller.scrollLeft >= max - 1) scroller.scrollLeft -= seg;
+      }
+
+      // Start in the middle segment.
+      requestAnimationFrame(function () {
+        var seg = segmentWidth();
+        if (seg) scroller.scrollLeft = seg;
+      });
+
+      var paused = false;
       var dragging = false;
+      var moved = false;
       var startX = 0;
       var startScroll = 0;
-      var moved = false;
+      var pauseUntil = 0;
 
+      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var SPEED = 30; // px/sec
+      var last = performance.now();
+
+      function tick(now) {
+        var dt = (now - last) / 1000;
+        last = now;
+        if (!prefersReduced && !paused && !dragging && now > pauseUntil) {
+          var seg = segmentWidth();
+          var next = scroller.scrollLeft + SPEED * dt;
+          if (seg && next >= seg * 2) next -= seg;
+          scroller.scrollLeft = next;
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      scroller.addEventListener('scroll', normalize, { passive: true });
+
+      // Hover / focus / touch pause auto-drift
+      scroller.addEventListener('mouseenter', function () { paused = true; });
+      scroller.addEventListener('mouseleave', function () { paused = false; });
+      scroller.addEventListener('focusin', function () { paused = true; });
+      scroller.addEventListener('focusout', function () { paused = false; });
+      scroller.addEventListener('touchstart', function () { paused = true; }, { passive: true });
+      scroller.addEventListener('touchend', function () { paused = false; });
+
+      // Wheel: translate vertical trackpad/mousewheel into horizontal scroll.
+      // Use the larger of |deltaX|, |deltaY| so two-finger swipes in either
+      // axis advance the strip. Only intercept when the gesture is meaningful.
+      scroller.addEventListener('wheel', function (e) {
+        var dx = e.deltaX;
+        var dy = e.deltaY;
+        var delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+        if (Math.abs(delta) < 1) return;
+        // Convert line/page deltas to pixels.
+        if (e.deltaMode === 1) delta *= 16;
+        else if (e.deltaMode === 2) delta *= scroller.clientWidth;
+        e.preventDefault();
+        scroller.scrollLeft += delta;
+        pauseUntil = performance.now() + 800;
+        normalize();
+      }, { passive: false });
+
+      // Click-and-drag (mouse + pen)
       scroller.addEventListener('pointerdown', function (e) {
-        if (e.pointerType !== 'mouse') return;
+        if (e.pointerType === 'touch') return;
         dragging = true;
         moved = false;
         startX = e.clientX;
@@ -3231,15 +3293,20 @@
         try { scroller.setPointerCapture(e.pointerId); } catch (err) {}
       });
       scroller.addEventListener('pointermove', function (e) {
-        if (!dragging || e.pointerType !== 'mouse') return;
+        if (!dragging || e.pointerType === 'touch') return;
         var dx = e.clientX - startX;
         if (Math.abs(dx) > 4) moved = true;
         scroller.scrollLeft = startScroll - dx;
+        normalize();
       });
-      function endDrag() { dragging = false; scroller.classList.remove('is-dragging'); }
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        scroller.classList.remove('is-dragging');
+      }
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);
-      scroller.addEventListener('pointerleave', endDrag);
+      scroller.addEventListener('lostpointercapture', endDrag);
       scroller.addEventListener('click', function (e) {
         if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
       }, true);

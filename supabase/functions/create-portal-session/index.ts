@@ -37,15 +37,23 @@ Deno.serve(async (req) => {
     // Fallback: anonymous subscription that was linked via project_clients
     // (e.g. buyer subscribed before signing up, then redeemed a project code).
     if (!customerId) {
-      const { data: linked } = await supabase
-        .from("subscriptions")
-        .select("stripe_customer_id, project_id, project_clients!inner(user_id)")
-        .eq("environment", env)
-        .eq("project_clients.user_id", user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      customerId = linked?.stripe_customer_id as string | undefined;
+      const { data: memberships } = await supabase
+        .from("project_clients")
+        .select("project_id")
+        .eq("user_id", user.id);
+      const projectIds = (memberships ?? []).map((m: any) => m.project_id);
+      if (projectIds.length > 0) {
+        const { data: linked } = await supabase
+          .from("subscriptions")
+          .select("stripe_customer_id")
+          .eq("environment", env)
+          .in("project_id", projectIds)
+          .not("stripe_customer_id", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        customerId = linked?.stripe_customer_id as string | undefined;
+      }
     }
 
     if (!customerId) {

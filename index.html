@@ -3227,8 +3227,12 @@
       var direction = -1;
       var speed = 34;
       var last = performance.now();
+      var cachedWidth = 0;
 
-      function loopWidth() { return Math.max(1, track.scrollWidth / 2); }
+      function measure() {
+        cachedWidth = Math.max(1, track.scrollWidth / 2);
+      }
+      function loopWidth() { return cachedWidth || Math.max(1, track.scrollWidth / 2); }
       function normalize() {
         var width = loopWidth();
         offset = ((offset % width) + width) % width;
@@ -3253,6 +3257,7 @@
       scroller.addEventListener('focusout', function () { paused = false; });
       scroller.addEventListener('wheel', function (event) {
         var delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        if (!delta) return;
         direction = delta > 0 ? 1 : -1;
         offset += delta;
         normalize();
@@ -3260,19 +3265,21 @@
         event.preventDefault();
       }, { passive: false });
       scroller.addEventListener('pointerdown', function (event) {
+        if (event.button !== undefined && event.button !== 0) return;
         dragging = true;
         dragStartX = event.clientX;
         dragStartOffset = offset;
         scroller.classList.add('is-dragging');
-        scroller.setPointerCapture(event.pointerId);
+        try { scroller.setPointerCapture(event.pointerId); } catch (e) {}
       });
       scroller.addEventListener('pointermove', function (event) {
         if (!dragging) return;
         var dx = event.clientX - dragStartX;
-        direction = dx > 0 ? -1 : 1;
+        if (Math.abs(dx) > 2) direction = dx > 0 ? -1 : 1;
         offset = dragStartOffset - dx;
         normalize();
         render();
+        event.preventDefault();
       });
       function endDrag(event) {
         if (!dragging) return;
@@ -3282,6 +3289,22 @@
       }
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);
+      scroller.addEventListener('pointerleave', endDrag);
+      // Prevent click after a drag
+      track.addEventListener('click', function (event) {
+        if (scroller.classList.contains('is-dragging')) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+      // Re-measure when images load and on resize
+      Array.prototype.forEach.call(track.querySelectorAll('img'), function (img) {
+        if (img.complete) return;
+        img.addEventListener('load', measure);
+        img.addEventListener('error', measure);
+      });
+      window.addEventListener('resize', measure);
+      measure();
       render();
       requestAnimationFrame(animate);
     })();

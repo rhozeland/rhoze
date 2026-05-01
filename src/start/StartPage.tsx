@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 
@@ -28,6 +28,7 @@ const CATEGORIES: { id: Category; label: string; Icon: typeof Camera }[] = [
 const CREDIT_VALUE_CENTS = 7500; // 1 credit = $75 baseline
 const DEPOSIT_PERCENT = 0.30;    // 30% deposit to begin
 const DEPOSIT_MIN_CENTS = 5000;  // Stripe min
+const SCOPE_CALL_URL = "https://calendar.app.google/cXfhA8SeNLXeBYNdA";
 
 export default function StartPage() {
   const [step, setStep] = useState<"intro" | "build" | "review" | "checkout">("intro");
@@ -116,7 +117,7 @@ export default function StartPage() {
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 max-w-md mx-auto">
-            1 credit ≈ {fmt(CREDIT_VALUE_CENTS)} of work. Final scope is confirmed on a kickoff call before any non-deposit payment.
+            1 credit = {fmt(CREDIT_VALUE_CENTS)} = one focused creative session. Final scope is confirmed on a kickoff call before any non-deposit payment.
           </div>
         </div>
       </div>
@@ -137,7 +138,7 @@ export default function StartPage() {
               </h1>
               {path === "project" && (
                 <div className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{totalCredits}</span> credits · est. <span className="font-medium text-foreground">{fmt(estimateCents)}</span>
+                  <span className="font-medium text-foreground">{totalCredits}</span> {totalCredits === 1 ? "credit" : "credits"} · est. <span className="font-medium text-foreground">{fmt(estimateCents)}</span>
                 </div>
               )}
             </div>
@@ -146,6 +147,22 @@ export default function StartPage() {
                 ? "Each tier grants monthly credits you spend on any service in the catalog below. Unused credits roll over while your subscription is active — pick the size that matches your output."
                 : "Select what you'd like delivered. We'll quote it in credits — you can convert to a subscription on the next step if you'd save money."}
             </p>
+
+            {/* Credit anchor — make the unit unmistakable */}
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 mt-2">
+              <div className="text-sm">
+                <span className="font-semibold text-foreground">1 credit = {fmt(CREDIT_VALUE_CENTS)}</span>
+                <span className="text-muted-foreground"> · one focused creative session (≈ a half-day of work, one deliverable)</span>
+              </div>
+              <a
+                href={SCOPE_CALL_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-medium underline underline-offset-4 hover:text-primary"
+              >
+                <CalendarClock size={13} /> Not sure? Book a free 15-min scope call
+              </a>
+            </div>
           </header>
 
           {/* Subscription tiers (for subscribe path) */}
@@ -193,20 +210,35 @@ export default function StartPage() {
             </div>
 
             {/* Service chips */}
-            <div className="flex flex-wrap justify-center gap-2 pt-2">
+            <div className="grid sm:grid-cols-2 gap-2 pt-2">
               {inCat.map(s => {
                 const qty = cart[s.id] ?? 0;
                 const active = qty > 0;
+                const creditLabel = `${s.credits_cost} ${s.credits_cost === 1 ? "credit" : "credits"}`;
                 return (
                   <button
                     key={s.id}
                     onClick={() => addToCart(s)}
-                    className={`rounded-full px-4 py-2 text-sm border transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card hover:border-primary/50"}`}
+                    className={`text-left rounded-xl px-4 py-3 border transition-colors ${active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
                   >
-                    {s.name} <span className={`ml-1.5 text-xs ${active ? "opacity-80" : "text-muted-foreground"}`}>· {s.credits_cost} cr</span>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="text-sm font-medium">{s.name}</span>
+                      <span className={`text-xs tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>{creditLabel}</span>
+                    </div>
+                    {s.description && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.description}</p>
+                    )}
+                    {s.min_quantity > 1 && (
+                      <p className="text-[11px] text-muted-foreground mt-1">Sold in packs of {s.min_quantity}+</p>
+                    )}
                   </button>
                 );
               })}
+              {inCat.length === 0 && (
+                <div className="col-span-full text-center text-sm text-muted-foreground py-6">
+                  More services coming to this category soon.
+                </div>
+              )}
             </div>
           </div>
 
@@ -220,13 +252,13 @@ export default function StartPage() {
                   <div key={s.id} className="flex items-center justify-between gap-3 border border-border rounded-lg px-4 py-3 bg-card">
                     <div className="min-w-0">
                       <div className="text-sm font-medium truncate">{s.name}</div>
-                      <div className="text-xs text-muted-foreground">{s.credits_cost} credits each{s.min_quantity > 1 ? ` · min ${s.min_quantity}` : ""}</div>
+                      <div className="text-xs text-muted-foreground">{s.credits_cost} {s.credits_cost === 1 ? "credit" : "credits"} each{s.min_quantity > 1 ? ` · min ${s.min_quantity}` : ""}</div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => changeQty(s, -1)}><Minus size={14} /></Button>
                       <div className="w-6 text-center text-sm tabular-nums">{qty}</div>
                       <Button size="icon" variant="outline" className="h-8 w-8" onClick={() => changeQty(s, 1)}><Plus size={14} /></Button>
-                      <div className="w-16 text-right text-sm tabular-nums text-muted-foreground">{qty * s.credits_cost} cr</div>
+                      <div className="w-20 text-right text-sm tabular-nums text-muted-foreground">{qty * s.credits_cost} {qty * s.credits_cost === 1 ? "credit" : "credits"}</div>
                     </div>
                   </div>
                 );
@@ -275,12 +307,12 @@ export default function StartPage() {
                 {selected.map(s => (
                   <div key={s.id} className="flex justify-between text-sm">
                     <span>{s.name} × {cart[s.id]}</span>
-                    <span className="text-muted-foreground tabular-nums">{(cart[s.id] ?? 0) * s.credits_cost} cr</span>
+                    <span className="text-muted-foreground tabular-nums">{(cart[s.id] ?? 0) * s.credits_cost} {(cart[s.id] ?? 0) * s.credits_cost === 1 ? "credit" : "credits"}</span>
                   </div>
                 ))}
                 <div className="border-t border-border pt-3 flex justify-between text-sm">
                   <span className="font-medium">Estimate</span>
-                  <span className="font-medium">{totalCredits} credits · {fmt(estimateCents)}</span>
+                  <span className="font-medium">{totalCredits} {totalCredits === 1 ? "credit" : "credits"} · {fmt(estimateCents)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Deposit to begin (30%, refundable 7 days)</span>

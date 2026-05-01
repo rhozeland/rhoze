@@ -3217,119 +3217,42 @@
     }
   </script>
   <script>
-    // Featured-On strip: scroll-position based marquee.
-    // Uses native scrollLeft so trackpad wheel, touch swipe, and click-drag
-    // all share the same coordinate system across browsers.
+    // Featured-On strip: pure CSS marquee.
+    // We just duplicate the original items once so a `translateX(-50%)`
+    // animation produces a seamless infinite loop. CSS handles the actual
+    // motion, so it can never be killed by stray scroll/pointer state.
     (function () {
       var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
       if (!scroller || !track) return;
 
-      // Build 3 segments so we can sit in the middle and wrap either direction.
+      // The static markup already contains a duplicated set for the loop.
+      // Strip those duplicates first, then re-duplicate exactly once so
+      // the track is precisely 2× the unique width (required for -50%).
       try {
-        var original = Array.prototype.slice.call(track.children);
-        var frag = document.createDocumentFragment();
-        for (var i = 0; i < original.length; i++) frag.appendChild(original[i].cloneNode(true));
-        for (var j = 0; j < original.length; j++) frag.appendChild(original[j].cloneNode(true));
-        track.appendChild(frag);
-      } catch (e) { /* keep existing */ }
+        var seen = Object.create(null);
+        var unique = [];
+        Array.prototype.forEach.call(track.children, function (el) {
+          var key = (el.getAttribute('href') || '') + '|' + (el.textContent || '').trim();
+          if (!seen[key]) { seen[key] = 1; unique.push(el); }
+        });
+        track.innerHTML = '';
+        unique.forEach(function (el) { track.appendChild(el); });
+        unique.forEach(function (el) {
+          var c = el.cloneNode(true);
+          c.setAttribute('aria-hidden', 'true');
+          c.setAttribute('tabindex', '-1');
+          track.appendChild(c);
+        });
+      } catch (e) { /* ignore */ }
 
-      function segmentWidth() { return track.scrollWidth / 3; }
-
-      function normalize() {
-        var seg = segmentWidth();
-        if (!seg) return;
-        var max = scroller.scrollWidth - scroller.clientWidth;
-        if (max <= 0) return;
-        if (scroller.scrollLeft <= 1) scroller.scrollLeft += seg;
-        else if (scroller.scrollLeft >= max - 1) scroller.scrollLeft -= seg;
+      // Enable the CSS animation only if the content actually overflows.
+      function syncMarquee() {
+        var overflows = track.scrollWidth > scroller.clientWidth + 4;
+        scroller.classList.toggle('auto-marquee', overflows);
       }
-
-      // Start in the middle segment.
-      requestAnimationFrame(function () {
-        var seg = segmentWidth();
-        if (seg) scroller.scrollLeft = seg;
-      });
-
-      var paused = false;
-      var dragging = false;
-      var moved = false;
-      var startX = 0;
-      var startScroll = 0;
-      var pauseUntil = 0;
-
-      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var SPEED = 30; // px/sec
-      var last = performance.now();
-
-      function tick(now) {
-        var dt = (now - last) / 1000;
-        last = now;
-        if (!prefersReduced && !paused && !dragging && now > pauseUntil) {
-          var seg = segmentWidth();
-          var next = scroller.scrollLeft + SPEED * dt;
-          if (seg && next >= seg * 2) next -= seg;
-          scroller.scrollLeft = next;
-        }
-        requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-
-      scroller.addEventListener('scroll', normalize, { passive: true });
-
-      // Hover / focus / touch pause auto-drift
-      scroller.addEventListener('mouseenter', function () { paused = true; });
-      scroller.addEventListener('mouseleave', function () { paused = false; });
-      scroller.addEventListener('focusin', function () { paused = true; });
-      scroller.addEventListener('focusout', function () { paused = false; });
-      scroller.addEventListener('touchstart', function () { paused = true; }, { passive: true });
-      scroller.addEventListener('touchend', function () { paused = false; });
-
-      // Wheel: translate vertical trackpad/mousewheel into horizontal scroll.
-      // Use the larger of |deltaX|, |deltaY| so two-finger swipes in either
-      // axis advance the strip. Only intercept when the gesture is meaningful.
-      scroller.addEventListener('wheel', function (e) {
-        var dx = e.deltaX;
-        var dy = e.deltaY;
-        var delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
-        if (Math.abs(delta) < 1) return;
-        // Convert line/page deltas to pixels.
-        if (e.deltaMode === 1) delta *= 16;
-        else if (e.deltaMode === 2) delta *= scroller.clientWidth;
-        e.preventDefault();
-        scroller.scrollLeft += delta;
-        pauseUntil = performance.now() + 800;
-        normalize();
-      }, { passive: false });
-
-      // Click-and-drag (mouse + pen)
-      scroller.addEventListener('pointerdown', function (e) {
-        if (e.pointerType === 'touch') return;
-        dragging = true;
-        moved = false;
-        startX = e.clientX;
-        startScroll = scroller.scrollLeft;
-        scroller.classList.add('is-dragging');
-        try { scroller.setPointerCapture(e.pointerId); } catch (err) {}
-      });
-      scroller.addEventListener('pointermove', function (e) {
-        if (!dragging || e.pointerType === 'touch') return;
-        var dx = e.clientX - startX;
-        if (Math.abs(dx) > 4) moved = true;
-        scroller.scrollLeft = startScroll - dx;
-        normalize();
-      });
-      function endDrag() {
-        if (!dragging) return;
-        dragging = false;
-        scroller.classList.remove('is-dragging');
-      }
-      scroller.addEventListener('pointerup', endDrag);
-      scroller.addEventListener('pointercancel', endDrag);
-      scroller.addEventListener('lostpointercapture', endDrag);
-      scroller.addEventListener('click', function (e) {
-        if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
-      }, true);
+      syncMarquee();
+      window.addEventListener('resize', syncMarquee);
     })();
   </script>
 </body>

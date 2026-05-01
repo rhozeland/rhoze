@@ -3233,10 +3233,11 @@
       var speed = 34;
 
       function halfWidth() { return Math.max(1, track.scrollWidth / 2); }
+      function centerLoop() { scroller.scrollLeft = halfWidth(); }
       function normalize() {
         var half = halfWidth();
-        if (scroller.scrollLeft >= half) scroller.scrollLeft -= half;
-        if (scroller.scrollLeft < 0) scroller.scrollLeft += half;
+        if (scroller.scrollLeft >= half * 1.5) scroller.scrollLeft -= half;
+        if (scroller.scrollLeft <= half * 0.5) scroller.scrollLeft += half;
       }
       function step(now) {
         var dt = Math.min(64, now - last);
@@ -3282,6 +3283,8 @@
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);
 
+      centerLoop();
+      window.addEventListener('resize', centerLoop);
       requestAnimationFrame(step);
     })();
   </script>

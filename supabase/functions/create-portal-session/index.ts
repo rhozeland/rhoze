@@ -32,12 +32,36 @@ Deno.serve(async (req) => {
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (!sub?.stripe_customer_id) {
+    let customerId = sub?.stripe_customer_id as string | undefined;
+
+    // Fallback: anonymous subscription that was linked via project_clients
+    // (e.g. buyer subscribed before signing up, then redeemed a project code).
+    if (!customerId) {
+      const { data: memberships } = await supabase
+        .from("project_clients")
+        .select("project_id")
+        .eq("user_id", user.id);
+      const projectIds = (memberships ?? []).map((m: any) => m.project_id);
+      if (projectIds.length > 0) {
+        const { data: linked } = await supabase
+          .from("subscriptions")
+          .select("stripe_customer_id")
+          .eq("environment", env)
+          .in("project_id", projectIds)
+          .not("stripe_customer_id", "is", null)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        customerId = linked?.stripe_customer_id as string | undefined;
+      }
+    }
+
+    if (!customerId) {
       return new Response(JSON.stringify({ error: "no subscription found" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     const stripe = createStripeClient(env);
     const portal = await stripe.billingPortal.sessions.create({
-      customer: sub.stripe_customer_id,
+      customer: customerId,
       ...(returnUrl && { return_url: returnUrl }),
     });
     return new Response(JSON.stringify({ url: portal.url }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });

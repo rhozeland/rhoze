@@ -524,10 +524,7 @@
       gap: var(--proof-gap);
       width: max-content;
       user-select: none;
-      will-change: contents;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .proof-track { will-change: auto; }
+      will-change: transform;
     }
 
     .proof-link {
@@ -3201,8 +3198,7 @@
     }
   </script>
   <script>
-    // Featured-On strip: native horizontal scroll + continuous auto-scroll.
-    // Hover/focus/drag pauses it; users can drag or wheel it in either direction.
+    // Featured-On strip: one transform loop, with hover pause and manual direction control.
     (function () {
       var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
@@ -3228,25 +3224,29 @@
       var paused = false;
       var dragging = false;
       var dragStartX = 0;
-      var dragStartScroll = 0;
-      var last = performance.now();
+      var dragStartOffset = 0;
+      var offset = 0;
+      var direction = -1;
       var speed = 34;
+      var last = performance.now();
 
-      function halfWidth() { return Math.max(1, track.scrollWidth / 2); }
-      function centerLoop() { scroller.scrollLeft = halfWidth(); }
+      function loopWidth() { return Math.max(1, track.scrollWidth / 2); }
       function normalize() {
-        var half = halfWidth();
-        if (scroller.scrollLeft >= half * 1.5) scroller.scrollLeft -= half;
-        if (scroller.scrollLeft <= half * 0.5) scroller.scrollLeft += half;
+        var width = loopWidth();
+        offset = ((offset % width) + width) % width;
       }
-      function step(now) {
-        var dt = Math.min(64, now - last);
+      function render() {
+        track.style.transform = 'translate3d(' + (-offset) + 'px,0,0)';
+      }
+      function animate(now) {
+        var dt = Math.min(64, now - last) / 1000;
         last = now;
-        if (!paused && !dragging && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          scroller.scrollLeft += speed * (dt / 1000);
+        if (!paused && !dragging) {
+          offset += direction * speed * dt;
           normalize();
+          render();
         }
-        requestAnimationFrame(step);
+        requestAnimationFrame(animate);
       }
 
       scroller.addEventListener('mouseenter', function () { paused = true; });
@@ -3254,38 +3254,38 @@
       scroller.addEventListener('focusin', function () { paused = true; });
       scroller.addEventListener('focusout', function () { paused = false; });
       scroller.addEventListener('wheel', function (event) {
-        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-          scroller.scrollLeft += event.deltaY;
-          event.preventDefault();
-        }
+        var delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        direction = delta > 0 ? 1 : -1;
+        offset += delta;
         normalize();
+        render();
+        event.preventDefault();
       }, { passive: false });
       scroller.addEventListener('pointerdown', function (event) {
         dragging = true;
-        paused = true;
         dragStartX = event.clientX;
-        dragStartScroll = scroller.scrollLeft;
+        dragStartOffset = offset;
         scroller.classList.add('is-dragging');
         scroller.setPointerCapture(event.pointerId);
       });
       scroller.addEventListener('pointermove', function (event) {
         if (!dragging) return;
-        scroller.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+        var dx = event.clientX - dragStartX;
+        direction = dx > 0 ? -1 : 1;
+        offset = dragStartOffset - dx;
         normalize();
+        render();
       });
       function endDrag(event) {
         if (!dragging) return;
         dragging = false;
-        paused = scroller.matches(':hover') || scroller.contains(document.activeElement);
         scroller.classList.remove('is-dragging');
         try { scroller.releasePointerCapture(event.pointerId); } catch (e) { /* ignore */ }
       }
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);
-
-      centerLoop();
-      window.addEventListener('resize', centerLoop);
-      requestAnimationFrame(step);
+      render();
+      requestAnimationFrame(animate);
     })();
   </script>
 </body>

@@ -559,33 +559,91 @@ export default function StartPage() {
           <h1 className="text-2xl md:text-3xl font-semibold">Your details</h1>
 
           {/* Summary */}
-          <div className="border border-border rounded-2xl p-5 bg-card space-y-3">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Summary</div>
+          <div className="border border-border rounded-2xl bg-card overflow-hidden">
+            <div className="px-5 py-3 border-b border-border flex items-center justify-between">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">Order summary</div>
+              <div className="text-[11px] text-muted-foreground">1 credit = {fmt(CREDIT_VALUE_CENTS)}</div>
+            </div>
+
             {path === "subscribe" && selectedTier && (
-              <div className="flex justify-between text-sm">
-                <span>{selectedTier.name} subscription</span>
-                <span className="font-medium">{fmt(selectedTier.price_cents)}/mo · {selectedTier.credits} credits</span>
+              <div className="p-5 space-y-3">
+                <div className="flex justify-between items-baseline text-sm">
+                  <div>
+                    <div className="font-medium">{selectedTier.name} subscription</div>
+                    {selectedTier.description && (
+                      <div className="text-xs text-muted-foreground mt-0.5">{selectedTier.description}</div>
+                    )}
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-medium">{fmt(selectedTier.price_cents)}/mo</div>
+                    <div className="text-xs text-muted-foreground">{selectedTier.credits} credits / month</div>
+                  </div>
+                </div>
+                <div className="border-t border-border pt-3 text-xs text-muted-foreground">
+                  Spend credits on any service in the catalog. Unused credits roll over while your subscription stays active.
+                </div>
               </div>
             )}
+
             {path === "project" && (
               <>
-                {selected.map(s => (
-                  <div key={s.id} className="flex justify-between text-sm">
-                    <span>{s.name} × {cart[s.id]}</span>
-                    <span className="text-muted-foreground tabular-nums">{(cart[s.id] ?? 0) * s.credits_cost} {(cart[s.id] ?? 0) * s.credits_cost === 1 ? "credit" : "credits"}</span>
+                {/* Itemized deliverables */}
+                <ul className="divide-y divide-border">
+                  {selected.map(s => {
+                    const qty = cart[s.id] ?? 0;
+                    const lineCredits = qty * s.credits_cost;
+                    const lineCents = lineCredits * CREDIT_VALUE_CENTS;
+                    return (
+                      <li key={s.id} className="px-5 py-3 flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium">{s.name} <span className="text-muted-foreground font-normal">× {qty}</span></div>
+                          {s.description && (
+                            <div className="text-xs text-muted-foreground mt-0.5">{s.description}</div>
+                          )}
+                          <div className="text-[11px] text-muted-foreground mt-1 tabular-nums">
+                            {qty} × {s.credits_cost} {s.credits_cost === 1 ? "credit" : "credits"} = {lineCredits} {lineCredits === 1 ? "credit" : "credits"}
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-medium tabular-nums">{lineCredits}</div>
+                          <div className="text-[11px] text-muted-foreground tabular-nums">{fmt(lineCents)}</div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                {/* Conversion + totals */}
+                <div className="px-5 py-4 border-t border-border bg-muted/20 space-y-2">
+                  <div className="flex justify-between items-baseline text-sm">
+                    <span className="text-muted-foreground">Total credits</span>
+                    <span className="font-medium tabular-nums">{totalCredits} {totalCredits === 1 ? "credit" : "credits"}</span>
                   </div>
-                ))}
-                <div className="border-t border-border pt-3 flex justify-between text-sm">
-                  <span className="font-medium">Estimate</span>
-                  <span className="font-medium">{totalCredits} {totalCredits === 1 ? "credit" : "credits"} · {fmt(estimateCents)}</span>
+                  <div className="flex justify-between items-baseline text-sm">
+                    <span className="text-muted-foreground">Conversion ({totalCredits} × {fmt(CREDIT_VALUE_CENTS)})</span>
+                    <span className="font-medium tabular-nums">{fmt(estimateCents)}</span>
+                  </div>
+                  <div className="flex justify-between items-baseline text-base pt-2 border-t border-border">
+                    <span className="font-semibold">Estimated total</span>
+                    <span className="font-semibold tabular-nums">{fmt(estimateCents)}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span>Deposit to begin (30%, refundable 7 days)</span>
-                  <span className="font-medium">{fmt(depositCents)}</span>
+
+                {/* Deposit */}
+                <div className="px-5 py-3 border-t border-border flex justify-between items-baseline text-sm bg-primary/5">
+                  <div>
+                    <div className="font-medium">Deposit due today</div>
+                    <div className="text-[11px] text-muted-foreground">30% to begin · refundable within 7 days</div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-semibold tabular-nums">{fmt(depositCents)}</div>
+                    <div className="text-[11px] text-muted-foreground tabular-nums">balance {fmt(estimateCents - depositCents)} at milestones</div>
+                  </div>
                 </div>
+
                 {tiers.length > 0 && tierCreditValue && subscriberSavings > 0 && (
-                  <div className="text-xs text-muted-foreground bg-muted/30 rounded-lg p-3 mt-2">
-                    💡 As a subscriber on the cheapest qualifying tier, the same scope would cost about <span className="text-foreground font-medium">{fmt(totalCredits * tierCreditValue)}</span> — save {fmt(subscriberSavings)}.
+                  <div className="px-5 py-3 border-t border-border text-xs text-muted-foreground bg-card">
+                    💡 Subscribers on the cheapest qualifying tier would pay about <span className="text-foreground font-medium">{fmt(totalCredits * tierCreditValue)}</span> for the same scope — save {fmt(subscriberSavings)}.
                   </div>
                 )}
               </>

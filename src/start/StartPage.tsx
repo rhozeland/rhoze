@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -150,6 +150,7 @@ export default function StartPage() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [tierSlug, setTierSlug] = useState<string>("");
   const [detailsFor, setDetailsFor] = useState<Pkg | null>(null);
+  const [search, setSearch] = useState("");
   const [contact, setContact] = useState({
     name: "", email: "", phone: "", scope: "",
     region: "US" as "US" | "International",
@@ -168,6 +169,24 @@ export default function StartPage() {
   const tiers = useMemo(() => (pkgs ?? []).filter(p => p.kind === "subscription"), [pkgs]);
   const services = useMemo(() => (pkgs ?? []).filter(p => p.kind === "a_la_carte"), [pkgs]);
   const inCat = useMemo(() => services.filter(s => s.category === activeCat), [services, activeCat]);
+
+  const trimmedSearch = search.trim().toLowerCase();
+  const isSearching = trimmedSearch.length > 0;
+  const visibleServices = useMemo(() => {
+    if (!isSearching) return inCat;
+    return services.filter(s => {
+      const hay = `${s.name} ${s.description ?? ""} ${s.category ?? ""}`.toLowerCase();
+      return hay.includes(trimmedSearch);
+    });
+  }, [services, inCat, isSearching, trimmedSearch]);
+  const matchCountByCat = useMemo(() => {
+    if (!isSearching) return {} as Record<string, number>;
+    return visibleServices.reduce<Record<string, number>>((acc, s) => {
+      const k = s.category ?? "other";
+      acc[k] = (acc[k] ?? 0) + 1;
+      return acc;
+    }, {});
+  }, [visibleServices, isSearching]);
 
   const selected = useMemo(() => services.filter(s => (cart[s.id] ?? 0) > 0), [services, cart]);
   const totalCredits = useMemo(() => selected.reduce((sum, s) => sum + s.credits_cost * (cart[s.id] ?? 0), 0), [selected, cart]);
@@ -309,23 +328,57 @@ export default function StartPage() {
             <div className="text-xs uppercase tracking-wider text-muted-foreground">
               {path === "subscribe" ? "What you can spend credits on" : "Services"}
             </div>
-            <div className="flex justify-center">
-              <div className="inline-flex items-center gap-1 rounded-full bg-muted/40 p-1 border border-border">
-                {CATEGORIES.map(({ id, label, Icon }) => (
-                  <button
-                    key={id}
-                    onClick={() => setActiveCat(id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-colors ${activeCat === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                  >
-                    <Icon size={14} /> {label}
-                  </button>
-                ))}
-              </div>
+
+            {/* Search */}
+            <div className="relative max-w-md mx-auto">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search services — e.g. mixing, reels, web, podcast"
+                className="pl-9 pr-9 h-10"
+              />
+              {isSearching && (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                >
+                  <X size={14} />
+                </button>
+              )}
             </div>
+
+            {/* Category pills (hidden while searching across all) */}
+            {!isSearching && (
+              <div className="flex justify-center">
+                <div className="inline-flex items-center gap-1 rounded-full bg-muted/40 p-1 border border-border">
+                  {CATEGORIES.map(({ id, label, Icon }) => (
+                    <button
+                      key={id}
+                      onClick={() => setActiveCat(id)}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition-colors ${activeCat === id ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                    >
+                      <Icon size={14} /> {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {isSearching && (
+              <div className="text-center text-xs text-muted-foreground">
+                {visibleServices.length === 0
+                  ? <>No matches for <span className="text-foreground font-medium">"{search}"</span></>
+                  : <>{visibleServices.length} {visibleServices.length === 1 ? "match" : "matches"} across {Object.keys(matchCountByCat).length} {Object.keys(matchCountByCat).length === 1 ? "category" : "categories"}</>
+                }
+              </div>
+            )}
 
             {/* Service chips */}
             <div className="grid sm:grid-cols-2 gap-2 pt-2">
-              {inCat.map(s => {
+              {visibleServices.map(s => {
                 const qty = cart[s.id] ?? 0;
                 const active = qty > 0;
                 const creditLabel = `${s.credits_cost} ${s.credits_cost === 1 ? "credit" : "credits"}`;
@@ -339,11 +392,18 @@ export default function StartPage() {
                     className={`relative text-left rounded-xl px-4 py-3 border transition-colors cursor-pointer ${active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
                   >
                     <div className="flex items-baseline justify-between gap-3 pr-7">
-                      <span className="text-sm font-medium">{s.name}</span>
+                      <span className="text-sm font-medium">
+                        {s.name}
+                        {isSearching && s.category && (
+                          <span className="ml-2 text-[10px] uppercase tracking-wider text-muted-foreground font-normal">
+                            {s.category}
+                          </span>
+                        )}
+                      </span>
                       <span className={`text-xs tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>{creditLabel}</span>
                     </div>
                     {s.description && (
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2 pr-7">{s.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1 pr-7">{s.description}</p>
                     )}
                     {s.min_quantity > 1 && (
                       <p className="text-[11px] text-muted-foreground mt-1">Sold in packs of {s.min_quantity}+</p>
@@ -359,7 +419,7 @@ export default function StartPage() {
                   </div>
                 );
               })}
-              {inCat.length === 0 && (
+              {visibleServices.length === 0 && !isSearching && (
                 <div className="col-span-full text-center text-sm text-muted-foreground py-6">
                   More services coming to this category soon.
                 </div>

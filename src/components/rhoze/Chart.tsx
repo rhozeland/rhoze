@@ -18,7 +18,7 @@ const Chart = () => {
             Live Chart
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto font-body">
-            Track $RHOZE in real-time on Pump.fun.
+            Track $RHOZE in real-time on Birdeye.
           </p>
         </motion.div>
 
@@ -29,22 +29,23 @@ const Chart = () => {
           className="rounded-2xl overflow-hidden border border-border shadow-lift"
         >
           <iframe
-            src="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump"
+            src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light"
             className="w-full"
             style={{ height: "500px", border: "none" }}
-            title="Pump.fun $RHOZE Chart"
+            title="Birdeye $RHOZE Chart"
             loading="lazy"
+            allowFullScreen
           />
         </motion.div>
 
         <div className="mt-6 text-center">
           <a
-            href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump"
+            href="https://birdeye.so/token/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-primary transition-colors font-body underline underline-offset-4"
           >
-            View full chart on Pump.fun →
+            View full chart on Birdeye →
           </a>
         </div>
       </div>

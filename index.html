@@ -526,6 +526,26 @@
       will-change: scroll-position;
     }
 
+    /* CSS-driven marquee fallback. Active when the wrap has the
+       `auto-marquee` class (added by JS only when the content actually
+       overflows). Pauses on hover / focus / drag. */
+    @keyframes proof-marquee {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-50%, 0, 0); }
+    }
+    .hero-proof-track-wrap.auto-marquee { overflow: hidden; }
+    .hero-proof-track-wrap.auto-marquee .proof-track {
+      animation: proof-marquee 45s linear infinite;
+    }
+    .hero-proof-track-wrap.auto-marquee:hover .proof-track,
+    .hero-proof-track-wrap.auto-marquee:focus-within .proof-track,
+    .hero-proof-track-wrap.auto-marquee.is-dragging .proof-track {
+      animation-play-state: paused;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-proof-track-wrap.auto-marquee .proof-track { animation: none; }
+    }
+
     .proof-link {
       display: inline-flex;
       align-items: center;

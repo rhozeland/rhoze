@@ -330,22 +330,33 @@ export default function StartPage() {
                 const active = qty > 0;
                 const creditLabel = `${s.credits_cost} ${s.credits_cost === 1 ? "credit" : "credits"}`;
                 return (
-                  <button
+                  <div
                     key={s.id}
                     onClick={() => addToCart(s)}
-                    className={`text-left rounded-xl px-4 py-3 border transition-colors ${active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); addToCart(s); } }}
+                    className={`relative text-left rounded-xl px-4 py-3 border transition-colors cursor-pointer ${active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
                   >
-                    <div className="flex items-baseline justify-between gap-3">
+                    <div className="flex items-baseline justify-between gap-3 pr-7">
                       <span className="text-sm font-medium">{s.name}</span>
                       <span className={`text-xs tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>{creditLabel}</span>
                     </div>
                     {s.description && (
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2 pr-7">{s.description}</p>
                     )}
                     {s.min_quantity > 1 && (
                       <p className="text-[11px] text-muted-foreground mt-1">Sold in packs of {s.min_quantity}+</p>
                     )}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setDetailsFor(s); }}
+                      aria-label={`What this credit includes for ${s.name}`}
+                      className="absolute top-2 right-2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                    >
+                      <Info size={14} />
+                    </button>
+                  </div>
                 );
               })}
               {inCat.length === 0 && (
@@ -393,6 +404,7 @@ export default function StartPage() {
             </Button>
           </div>
         </div>
+        <ServiceDetailsDialog pkg={detailsFor} onClose={() => setDetailsFor(null)} onAdd={(p) => { addToCart(p); setDetailsFor(null); }} fmt={fmt} />
       </div>
     );
   }

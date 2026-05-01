@@ -490,6 +490,14 @@ export default function StartPage() {
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); setDetailsFor(s); }}
+                      aria-label={`See what you get for ${s.name}`}
+                      className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline underline-offset-2"
+                    >
+                      <Info size={11} /> See what you get
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setDetailsFor(s); }}
                       aria-label={`What this credit includes for ${s.name}`}
                       className="absolute top-2 right-2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
                     >

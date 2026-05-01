@@ -1319,6 +1319,15 @@ export type Database = {
         Args: { _intake_id: string }
         Returns: string
       }
+      get_checkout_outcome: {
+        Args: { _session_id: string }
+        Returns: {
+          contact_email: string
+          kind: string
+          project_code: string
+          project_id: string
+        }[]
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean

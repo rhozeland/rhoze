@@ -163,8 +163,18 @@ function PeriodForm({ form, setForm, onCreated }: any) {
 
 /* ---------- MY TIMESHEET ---------- */
 
-function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string; userId: string; filter: Filter; setFilter: (f: Filter) => void }) {
+function MyTimesheet({ periodId, userId }: { periodId: string; userId: string }) {
   const qc = useQueryClient();
+
+  // Per-person rate from the role mastersheet (used for "Hourly" rows)
+  const { data: profile } = useQuery({
+    queryKey: ["my_rate", userId],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("hourly_rate_cents").eq("id", userId).maybeSingle();
+      return data;
+    },
+  });
+  const myHourlyCents = (profile as any)?.hourly_rate_cents ?? 0;
 
   const { data: timesheet } = useQuery({
     queryKey: ["timesheet", periodId, userId],
@@ -201,13 +211,14 @@ function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string
     return t;
   }, [entries]);
 
-  const visible = useMemo(() => filter === "all" ? (entries ?? []) : (entries ?? []).filter((e: any) => e.work_type === filter), [entries, filter]);
+  const visible = entries ?? [];
 
   const addEntry = useMutation({
     mutationFn: async () => {
       if (!timesheet?.id) throw new Error("No timesheet");
       const { error } = await supabase.from("timesheet_entries").insert({
-        timesheet_id: timesheet.id, deliverable: "", work_type: filter === "all" ? "standard" : filter, rate_amount_cents: 0, hours: 0, expense_cents: 0,
+        timesheet_id: timesheet.id, deliverable: "", work_type: "standard",
+        rate_amount_cents: myHourlyCents, hours: 0, expense_cents: 0,
       });
       if (error) throw error;
     },

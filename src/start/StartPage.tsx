@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -150,6 +150,7 @@ export default function StartPage() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [tierSlug, setTierSlug] = useState<string>("");
   const [detailsFor, setDetailsFor] = useState<Pkg | null>(null);
+  const [search, setSearch] = useState("");
   const [contact, setContact] = useState({
     name: "", email: "", phone: "", scope: "",
     region: "US" as "US" | "International",

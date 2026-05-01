@@ -281,13 +281,8 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
         </div>
       </div>
 
-      {/* Filter chips + actions */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>All</FilterChip>
-          {WORK_TYPES.map((w) => <FilterChip key={w.value} active={filter === w.value} onClick={() => setFilter(w.value)}>{w.label}</FilterChip>)}
-        </div>
-        <div className="flex items-center gap-2">
+      {/* Actions */}
+      <div className="flex items-center justify-end flex-wrap gap-2">
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
@@ -296,7 +291,6 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
               Submit for approval
             </Button>
           )}
-        </div>
       </div>
 
       {/* Spreadsheet table */}
@@ -318,24 +312,24 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
           </thead>
           <tbody className="divide-y divide-border">
             {visible.length === 0 && (
-              <tr><td colSpan={10} className="px-3 py-8 text-center text-muted-foreground italic">No entries{filter !== "all" ? ` for ${labelFor(filter)}` : ""} yet. Click below to add one.</td></tr>
+              <tr><td colSpan={10} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
-              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} />
+              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} />
             ))}
           </tbody>
         </table>
         {!isLocked && (
           <div className="border-t border-border p-2">
             <button onClick={() => addEntry.mutate()} className="w-full text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded py-2 flex items-center justify-center gap-1.5 transition">
-              <Plus size={14} /> Add row{filter !== "all" ? ` (${labelFor(filter)})` : ""}
+              <Plus size={14} /> Add row
             </button>
           </div>
         )}
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Tip: enter <strong>start &amp; end times</strong> and hours auto-calculate. Reimbursement rows count expenses without hourly pay; project / specialist / hourly rows compute as <strong>rate × hours</strong>. Total payroll adds expenses on top.
+        Rates auto-fill by type — <strong>Hourly</strong> uses your role rate, <strong>Specialist</strong> is $30/hr fixed, <strong>Project</strong> is a flat amount you enter, <strong>Reimbursement</strong> uses the expense column. Enter start &amp; end times to auto-calculate hours.
       </p>
     </div>
   );

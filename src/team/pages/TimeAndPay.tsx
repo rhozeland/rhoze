@@ -545,11 +545,12 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
       </td>
       <td className="px-2 py-1">
         <input disabled={rateLocked} type="number" step="0.01" min="0"
-          value={isReimburse ? "" : local.rate}
+          value={isReimburse ? "" : isSpecialist ? "30.00" : local.rate}
           placeholder={isReimburse ? "—" : isProject ? "flat $" : "0.00"}
+          title={isSpecialist ? "Specialist rate is locked at $30/hr" : undefined}
           onChange={(e) => setLocal({ ...local, rate: e.target.value })}
           onBlur={() => commit({ rate_amount_cents: toCents(local.rate || "0") })}
-          className={cn(cellNum, "max-w-[90px]")} />
+          className={cn(cellNum, "max-w-[90px]", isSpecialist && "font-semibold opacity-90")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked} type="date" value={local.day}

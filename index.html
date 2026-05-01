@@ -3202,18 +3202,13 @@
     }
   </script>
   <script>
-    // Featured-On strip: pure CSS marquee.
-    // We just duplicate the original items once so a `translateX(-50%)`
-    // animation produces a seamless infinite loop. CSS handles the actual
-    // motion, so it can never be killed by stray scroll/pointer state.
+    // Featured-On strip: keep exactly two identical sets of links.
+    // CSS handles all motion so the ticker does not depend on scrollWidth,
+    // pointer state, or resize timing on the published page.
     (function () {
-      var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
-      if (!scroller || !track) return;
+      if (!track) return;
 
-      // The static markup already contains a duplicated set for the loop.
-      // Strip those duplicates first, then re-duplicate exactly once so
-      // the track is precisely 2× the unique width (required for -50%).
       try {
         var seen = Object.create(null);
         var unique = [];
@@ -3230,14 +3225,6 @@
           track.appendChild(c);
         });
       } catch (e) { /* ignore */ }
-
-      // Enable the CSS animation only if the content actually overflows.
-      function syncMarquee() {
-        var overflows = track.scrollWidth > scroller.clientWidth + 4;
-        scroller.classList.toggle('auto-marquee', overflows);
-      }
-      syncMarquee();
-      window.addEventListener('resize', syncMarquee);
     })();
   </script>
 </body>

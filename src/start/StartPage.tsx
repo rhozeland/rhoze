@@ -528,3 +528,99 @@ export default function StartPage() {
     </div>
   );
 }
+
+function ServiceDetailsDialog({
+  pkg,
+  onClose,
+  onAdd,
+  fmt,
+}: {
+  pkg: Pkg | null;
+  onClose: () => void;
+  onAdd: (p: Pkg) => void;
+  fmt: (c: number) => string;
+}) {
+  const open = !!pkg;
+  const detail = pkg ? SERVICE_DETAILS[pkg.slug] : undefined;
+  const creditLabel = pkg ? `${pkg.credits_cost} ${pkg.credits_cost === 1 ? "credit" : "credits"}` : "";
+  const dollarLabel = pkg ? fmt(pkg.credits_cost * CREDIT_VALUE_CENTS) : "";
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent className="max-w-lg">
+        {pkg && (
+          <>
+            <DialogHeader>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">{pkg.category}</div>
+              <DialogTitle className="text-xl">{pkg.name}</DialogTitle>
+              <DialogDescription className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-medium">
+                  {creditLabel} · {dollarLabel}
+                </span>
+                {pkg.min_quantity > 1 && (
+                  <span className="text-xs text-muted-foreground">Sold in packs of {pkg.min_quantity}+</span>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-5 pt-2 text-sm">
+              {detail ? (
+                <>
+                  <Section label="Scope">
+                    <p className="text-muted-foreground">{detail.scope}</p>
+                  </Section>
+                  <Section label="What you get">
+                    <ul className="space-y-1 text-muted-foreground">
+                      {detail.deliverables.map((d, i) => (
+                        <li key={i} className="flex gap-2">
+                          <span className="text-primary">·</span>
+                          <span>{d}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Section>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Section label="Revisions">
+                      <p className="text-muted-foreground">{detail.revisions}</p>
+                    </Section>
+                    <Section label="Turnaround">
+                      <p className="text-muted-foreground">{detail.turnaround}</p>
+                    </Section>
+                  </div>
+                  {detail.notIncluded && detail.notIncluded.length > 0 && (
+                    <Section label="Not included">
+                      <ul className="space-y-1 text-muted-foreground">
+                        {detail.notIncluded.map((d, i) => (
+                          <li key={i} className="flex gap-2">
+                            <span className="text-muted-foreground/60">×</span>
+                            <span>{d}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </Section>
+                  )}
+                </>
+              ) : (
+                <p className="text-muted-foreground">{pkg.description ?? "Details coming soon — book a free scope call and we'll walk through it."}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end pt-4 border-t border-border">
+              <Button variant="outline" onClick={onClose}>Close</Button>
+              <Button onClick={() => onAdd(pkg)}>Add to estimate</Button>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Section({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground/80 font-medium">{label}</div>
+      {children}
+    </div>
+  );
+}

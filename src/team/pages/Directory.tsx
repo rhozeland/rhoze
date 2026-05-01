@@ -1,11 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { useAuth } from "../lib/auth";
+import { toast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Eraser, Save, Pencil } from "lucide-react";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 
+const cellKey = (d: string, b: string) => `${d}|${b}`;
+
 export default function Directory() {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+
   const { data: people } = useQuery({
     queryKey: ["team-directory"],
     queryFn: async () => {
@@ -18,7 +28,7 @@ export default function Directory() {
   const { data: availability } = useQuery({
     queryKey: ["team-availability-all"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("team_availability").select("user_id, days, time_blocks, notes");
+      const { data, error } = await supabase.from("team_availability").select("user_id, days, time_blocks, slots, notes");
       if (error) throw error;
       const map: Record<string, any> = {};
       (data ?? []).forEach((r: any) => { map[r.user_id] = r; });
@@ -32,27 +42,38 @@ export default function Directory() {
     return m;
   }, [people]);
 
-  // grid[day][block] = array of user ids available in that day AND that block
+  // Build per-user slot set: prefer explicit `slots` array (precise cells); fall back to days × blocks crossproduct.
+  const userSlots = useMemo(() => {
+    const map: Record<string, Set<string>> = {};
+    Object.values(availability ?? {}).forEach((av: any) => {
+      const set = new Set<string>();
+      if (Array.isArray(av.slots) && av.slots.length) {
+        av.slots.forEach((s: string) => set.add(s));
+      } else {
+        const days: string[] = av.days ?? [];
+        const blocks: string[] = av.time_blocks ?? [];
+        days.forEach((d) => blocks.forEach((b) => set.add(cellKey(d, b))));
+      }
+      map[av.user_id] = set;
+    });
+    return map;
+  }, [availability]);
+
+  // grid[day][block] = array of user ids available in that cell
   const grid = useMemo(() => {
     const g: Record<string, Record<string, string[]>> = {};
     DAYS.forEach((d) => {
       g[d] = {};
       TIME_BLOCKS.forEach((b) => { g[d][b] = []; });
     });
-    Object.values(availability ?? {}).forEach((av: any) => {
-      const days: string[] = av.days ?? [];
-      const blocks: string[] = av.time_blocks ?? [];
-      if (!days.length || !blocks.length) return;
-      days.forEach((d) => {
-        if (!g[d]) return;
-        blocks.forEach((b) => {
-          if (!g[d][b]) return;
-          g[d][b].push(av.user_id);
-        });
+    Object.entries(userSlots).forEach(([uid, set]) => {
+      set.forEach((k) => {
+        const [d, b] = k.split("|");
+        if (g[d]?.[b]) g[d][b].push(uid);
       });
     });
     return g;
-  }, [availability]);
+  }, [userSlots]);
 
   const [active, setActive] = useState<{ day: string; block: string } | null>(null);
   const activeIds = active ? grid[active.day]?.[active.block] ?? [] : [];
@@ -71,12 +92,156 @@ export default function Directory() {
     return m;
   }, [grid]);
 
+  /* ───────── Personal availability editor (current user) ───────── */
+  const myAv = user ? availability?.[user.id] : null;
+  const [mySlots, setMySlots] = useState<Set<string>>(new Set());
+  const [myNotes, setMyNotes] = useState("");
+  const [dirty, setDirty] = useState(false);
+
+  // Hydrate from server when availability loads / changes for me
+  useEffect(() => {
+    if (!user) return;
+    const set = new Set<string>();
+    if (myAv) {
+      if (Array.isArray(myAv.slots) && myAv.slots.length) {
+        myAv.slots.forEach((s: string) => set.add(s));
+      } else {
+        (myAv.days ?? []).forEach((d: string) =>
+          (myAv.time_blocks ?? []).forEach((b: string) => set.add(cellKey(d, b))),
+        );
+      }
+    }
+    setMySlots(set);
+    setMyNotes(myAv?.notes ?? "");
+    setDirty(false);
+  }, [user, myAv]);
+
+  // Drag-paint state
+  const dragMode = useRef<"add" | "remove" | null>(null);
+  const onCellPointerDown = (k: string) => {
+    const next = new Set(mySlots);
+    if (next.has(k)) { next.delete(k); dragMode.current = "remove"; }
+    else { next.add(k); dragMode.current = "add"; }
+    setMySlots(next); setDirty(true);
+  };
+  const onCellPointerEnter = (k: string) => {
+    if (!dragMode.current) return;
+    setMySlots((prev) => {
+      const next = new Set(prev);
+      if (dragMode.current === "add") next.add(k); else next.delete(k);
+      return next;
+    });
+    setDirty(true);
+  };
+  useEffect(() => {
+    const stop = () => { dragMode.current = null; };
+    window.addEventListener("pointerup", stop);
+    return () => window.removeEventListener("pointerup", stop);
+  }, []);
+
+  // Save / clear
+  const saveMine = useMutation({
+    mutationFn: async () => {
+      if (!user) throw new Error("Not signed in");
+      const slotsArr = Array.from(mySlots);
+      const days = Array.from(new Set(slotsArr.map((s) => s.split("|")[0])));
+      const blocks = Array.from(new Set(slotsArr.map((s) => s.split("|")[1])));
+      const { error } = await supabase
+        .from("team_availability")
+        .upsert(
+          { user_id: user.id, slots: slotsArr, days, time_blocks: blocks, notes: myNotes || null },
+          { onConflict: "user_id" },
+        );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setDirty(false);
+      qc.invalidateQueries({ queryKey: ["team-availability-all"] });
+      toast({ title: "Availability saved" });
+    },
+    onError: (e: any) => toast({ title: "Save failed", description: e.message, variant: "destructive" }),
+  });
+
+  const clearMine = useCallback(() => {
+    setMySlots(new Set()); setDirty(true);
+  }, []);
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Team directory</h1>
-        <p className="text-sm text-muted-foreground">Who's who at Rhozeland.</p>
+        <p className="text-sm text-muted-foreground">Who's who — and when everyone's free.</p>
       </div>
+
+      {/* My availability editor */}
+      {user && (
+        <div className="border border-border rounded-lg p-5 bg-card space-y-3">
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Pencil size={12} /> Your availability
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Click or drag across cells to mark when you're free. Saves to the shared grid below.
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" onClick={clearMine}><Eraser size={14} /> Clear all</Button>
+              <Button size="sm" onClick={() => saveMine.mutate()} disabled={!dirty || saveMine.isPending}>
+                <Save size={14} /> {saveMine.isPending ? "Saving…" : dirty ? "Save" : "Saved"}
+              </Button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto select-none">
+            <table className="w-full text-xs border-separate border-spacing-1 min-w-[560px]">
+              <thead>
+                <tr>
+                  <th className="text-left font-medium text-muted-foreground px-2 py-1 w-20"> </th>
+                  {DAYS.map((d) => (
+                    <th key={d} className="text-center font-medium text-muted-foreground px-2 py-1">{d.slice(0, 3)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {TIME_BLOCKS.map((b) => (
+                  <tr key={b}>
+                    <td className="text-left text-muted-foreground px-2 py-1 align-middle">{b}</td>
+                    {DAYS.map((d) => {
+                      const k = cellKey(d, b);
+                      const on = mySlots.has(k);
+                      return (
+                        <td key={d} className="p-0">
+                          <button
+                            type="button"
+                            onPointerDown={() => onCellPointerDown(k)}
+                            onPointerEnter={() => onCellPointerEnter(k)}
+                            className={`w-full h-10 rounded text-xs font-medium transition-all touch-none ${
+                              on
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                            }`}
+                            title={`${d} · ${b}`}
+                          >
+                            {on ? "✓" : ""}
+                          </button>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Textarea
+            value={myNotes}
+            onChange={(e) => { setMyNotes(e.target.value); setDirty(true); }}
+            placeholder="Notes (timezone, exceptions, preferred booking style…)"
+            className="min-h-[60px] text-sm"
+          />
+        </div>
+      )}
 
       <div className="border border-border rounded-lg p-5 bg-card space-y-3">
         <div className="flex items-end justify-between gap-4 flex-wrap">

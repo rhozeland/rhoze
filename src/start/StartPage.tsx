@@ -170,6 +170,24 @@ export default function StartPage() {
   const services = useMemo(() => (pkgs ?? []).filter(p => p.kind === "a_la_carte"), [pkgs]);
   const inCat = useMemo(() => services.filter(s => s.category === activeCat), [services, activeCat]);
 
+  const trimmedSearch = search.trim().toLowerCase();
+  const isSearching = trimmedSearch.length > 0;
+  const visibleServices = useMemo(() => {
+    if (!isSearching) return inCat;
+    return services.filter(s => {
+      const hay = `${s.name} ${s.description ?? ""} ${s.category ?? ""}`.toLowerCase();
+      return hay.includes(trimmedSearch);
+    });
+  }, [services, inCat, isSearching, trimmedSearch]);
+  const matchCountByCat = useMemo(() => {
+    if (!isSearching) return {} as Record<string, number>;
+    return visibleServices.reduce<Record<string, number>>((acc, s) => {
+      const k = s.category ?? "other";
+      acc[k] = (acc[k] ?? 0) + 1;
+      return acc;
+    }, {});
+  }, [visibleServices, isSearching]);
+
   const selected = useMemo(() => services.filter(s => (cart[s.id] ?? 0) > 0), [services, cart]);
   const totalCredits = useMemo(() => selected.reduce((sum, s) => sum + s.credits_cost * (cart[s.id] ?? 0), 0), [selected, cart]);
   const estimateCents = totalCredits * CREDIT_VALUE_CENTS;

@@ -948,6 +948,154 @@
       box-shadow: none;
     }
 
+    /* Real-screenshot showcase inside the Creator OS card */
+    .os-shot-stage {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid hsl(var(--line));
+      background: hsl(var(--surface-card));
+      box-shadow: 0 30px 60px -38px hsl(var(--shadow) / 0.45);
+      aspect-ratio: 16 / 9;
+    }
+    .os-shot-stage .os-chrome {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 10px;
+      background: hsl(var(--surface-alt) / 0.95);
+      border-bottom: 1px solid hsl(var(--line));
+      z-index: 2;
+    }
+    .os-shot-stage .os-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: hsl(var(--muted) / 0.4);
+    }
+    .os-shot-stage .os-dot:nth-child(1) { background: #ff5f57; }
+    .os-shot-stage .os-dot:nth-child(2) { background: #febc2e; }
+    .os-shot-stage .os-dot:nth-child(3) { background: #28c840; }
+    .os-shot-stage .os-url {
+      margin-left: 8px;
+      font-size: 0.55rem;
+      color: hsl(var(--muted));
+      letter-spacing: 0.02em;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .os-shot-stage .os-frame {
+      position: absolute;
+      top: 22px; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+    }
+    .os-shot-stage .os-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+    .os-shot-stage .os-frame img.is-active { opacity: 1; }
+    .os-shot-stage .os-live {
+      position: absolute;
+      top: 30px; right: 12px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: hsl(var(--surface-card) / 0.92);
+      border: 1px solid hsl(var(--line));
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: hsl(var(--ink));
+      backdrop-filter: blur(6px);
+    }
+    .os-shot-stage .os-live::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: os-live-pulse 2s ease-out infinite;
+    }
+    @keyframes os-live-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .os-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+    .os-thumb {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid hsl(var(--line));
+      background: hsl(var(--surface-card));
+      cursor: pointer;
+      padding: 0;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .os-thumb img {
+       width: 100%;
+       height: 100%;
+       object-fit: cover;
+       object-position: top center;
+       display: block;
+       opacity: 0.78;
+       transition: opacity 0.2s ease;
+    }
+    .os-thumb:hover img { opacity: 1; }
+    .os-thumb.is-active {
+      border-color: hsl(var(--ink));
+      box-shadow: 0 0 0 1px hsl(var(--ink));
+    }
+    .os-thumb.is-active img { opacity: 1; }
+    .os-thumb-label {
+      position: absolute;
+      left: 5px; bottom: 4px;
+      font-size: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    }
+    .os-steps-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.9rem;
+    }
+    .os-steps-mini > span {
+      font-size: 0.6rem;
+      font-weight: 600;
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid hsl(var(--line));
+      background: hsl(var(--surface-card) / 0.7);
+      color: hsl(var(--ink));
+      letter-spacing: 0.01em;
+    }
+    .os-steps-mini > span b {
+      font-weight: 700;
+      color: hsl(var(--muted));
+      margin-right: 4px;
+      font-size: 0.55rem;
+    }
+
     .card {
       min-height: 290px;
       padding: 1.7rem;
@@ -2487,59 +2635,46 @@
               Try something new
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
             </span>
+            <div class="os-steps-mini" aria-hidden="true">
+              <span><b>01</b>Create &amp; Contribute</span>
+              <span><b>02</b>Build Reputation</span>
+              <span><b>03</b>Spend &amp; Unlock</span>
+              <span><b>04</b>Revenue Sharing</span>
+            </div>
           </div>
-          <div class="creator-os-preview" style="position:relative; padding:1.2rem; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:auto auto auto; gap:0.45rem; overflow:hidden; background:hsl(var(--surface-alt) / 0.5);">
-            <!-- Row 1: Studios + Projects + Creators as compact pills -->
-            <div style="grid-column:1/-1; display:flex; gap:0.4rem; flex-wrap:wrap;">
-              <div style="flex:1; min-width:0; display:flex; align-items:center; gap:0.5rem; border:1px solid hsl(var(--line)); border-radius:10px; padding:0.45rem 0.65rem; background:hsl(var(--surface-card));">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--foreground))" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:0.85rem; height:0.85rem; flex-shrink:0;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                <div><div style="font-size:0.68rem; font-weight:600;">Studios</div><div style="font-size:0.55rem; color:hsl(var(--muted));">Book spaces</div></div>
+          <div class="creator-os-preview" id="osShotcase" style="position:relative; padding:1.2rem; display:flex; flex-direction:column; gap:0.4rem; overflow:hidden; background:hsl(var(--surface-alt) / 0.5);">
+            <div class="os-shot-stage">
+              <div class="os-chrome">
+                <span class="os-dot"></span>
+                <span class="os-dot"></span>
+                <span class="os-dot"></span>
+                <span class="os-url" id="osShotUrl">rhozeland.app</span>
               </div>
-              <div style="flex:1; min-width:0; display:flex; align-items:center; gap:0.5rem; border:1px solid hsl(var(--line)); border-radius:10px; padding:0.45rem 0.65rem; background:hsl(var(--surface-card));">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--foreground))" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:0.85rem; height:0.85rem; flex-shrink:0;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                <div><div style="font-size:0.68rem; font-weight:600;">Projects</div><div style="font-size:0.55rem; color:hsl(var(--muted));">Manage work</div></div>
-              </div>
-              <div style="flex:1; min-width:0; display:flex; align-items:center; gap:0.5rem; border:1px solid hsl(var(--line)); border-radius:10px; padding:0.45rem 0.65rem; background:hsl(var(--surface-card));">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--foreground))" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:0.85rem; height:0.85rem; flex-shrink:0;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <div><div style="font-size:0.68rem; font-weight:600;">Creators</div><div style="font-size:0.55rem; color:hsl(var(--muted));">Hire talent</div></div>
+              <span class="os-live">Live app</span>
+              <div class="os-frame" id="osShotFrame">
+                <img class="is-active" src="/images/creator-os-landing.png" alt="Rhozeland Creator OS — landing" loading="lazy" />
+                <img src="/images/creator-os-spaces.png" alt="Rhozeland Creator OS — Spaces" loading="lazy" />
+                <img src="/images/creator-os-hub.png" alt="Rhozeland Creator OS — The Hub" loading="lazy" />
+                <img src="/images/creator-os-studios.png" alt="Rhozeland Creator OS — Studios" loading="lazy" />
               </div>
             </div>
-            <!-- Row 2-3: How it works 2x2 grid -->
-            <div style="border:1px solid hsl(var(--line)); border-radius:12px; background:hsl(var(--surface-card)); padding:0.6rem; position:relative; overflow:hidden;">
-              <div style="position:absolute; top:-8px; right:-8px; width:40px; height:40px; border-radius:50%; background:hsl(var(--accent-blue) / 0.12); filter:blur(8px);"></div>
-              <div style="display:flex; align-items:center; gap:0.35rem; margin-bottom:0.25rem;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--accent-blue))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:0.75rem; height:0.75rem;"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                <span style="font-size:0.52rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Step 01</span>
-              </div>
-              <div style="font-size:0.68rem; font-weight:700; line-height:1.15;">Create & Contribute</div>
-              <div style="font-size:0.52rem; color:hsl(var(--muted)); line-height:1.35; margin-top:0.1rem;">Post to Flow, earn $RHOZE rewards.</div>
-            </div>
-            <div style="border:1px solid hsl(var(--line)); border-radius:12px; background:hsl(var(--surface-card)); padding:0.6rem; position:relative; overflow:hidden;">
-              <div style="position:absolute; top:-8px; right:-8px; width:40px; height:40px; border-radius:50%; background:hsl(var(--accent-pink) / 0.12); filter:blur(8px);"></div>
-              <div style="display:flex; align-items:center; gap:0.35rem; margin-bottom:0.25rem;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--accent-pink))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:0.75rem; height:0.75rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span style="font-size:0.52rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Step 02</span>
-              </div>
-              <div style="font-size:0.68rem; font-weight:700; line-height:1.15;">Build Reputation</div>
-              <div style="font-size:0.52rem; color:hsl(var(--muted)); line-height:1.35; margin-top:0.1rem;">Contribution Proofs on Solana.</div>
-            </div>
-            <div style="border:1px solid hsl(var(--line)); border-radius:12px; background:hsl(var(--surface-card)); padding:0.6rem; position:relative; overflow:hidden;">
-              <div style="position:absolute; top:-8px; right:-8px; width:40px; height:40px; border-radius:50%; background:hsl(var(--accent-gold) / 0.12); filter:blur(8px);"></div>
-              <div style="display:flex; align-items:center; gap:0.35rem; margin-bottom:0.25rem;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--accent-gold))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:0.75rem; height:0.75rem;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                <span style="font-size:0.52rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Step 03</span>
-              </div>
-              <div style="font-size:0.68rem; font-weight:700; line-height:1.15;">Spend & Unlock</div>
-              <div style="font-size:0.52rem; color:hsl(var(--muted)); line-height:1.35; margin-top:0.1rem;">Studios, marketplace, Creator Pass.</div>
-            </div>
-            <div style="border:1px solid hsl(var(--line)); border-radius:12px; background:hsl(var(--surface-card)); padding:0.6rem; position:relative; overflow:hidden;">
-              <div style="position:absolute; top:-8px; right:-8px; width:40px; height:40px; border-radius:50%; background:hsl(var(--accent-green) / 0.12); filter:blur(8px);"></div>
-              <div style="display:flex; align-items:center; gap:0.35rem; margin-bottom:0.25rem;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="hsl(var(--accent-green))" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:0.75rem; height:0.75rem;"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-                <span style="font-size:0.52rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Step 04</span>
-              </div>
-              <div style="font-size:0.68rem; font-weight:700; line-height:1.15;">Revenue Sharing</div>
-              <div style="font-size:0.52rem; color:hsl(var(--muted)); line-height:1.35; margin-top:0.1rem;">10% buyback pool for creators.</div>
+            <div class="os-thumbs" id="osShotThumbs">
+              <button type="button" class="os-thumb is-active" data-index="0" data-url="rhozeland.app" aria-label="Show landing">
+                <img src="/images/creator-os-landing.png" alt="" loading="lazy" />
+                <span class="os-thumb-label">Home</span>
+              </button>
+              <button type="button" class="os-thumb" data-index="1" data-url="rhozeland.app/spaces" aria-label="Show Spaces">
+                <img src="/images/creator-os-spaces.png" alt="" loading="lazy" />
+                <span class="os-thumb-label">Spaces</span>
+              </button>
+              <button type="button" class="os-thumb" data-index="2" data-url="rhozeland.app/hub" aria-label="Show Hub">
+                <img src="/images/creator-os-hub.png" alt="" loading="lazy" />
+                <span class="os-thumb-label">Hub</span>
+              </button>
+              <button type="button" class="os-thumb" data-index="3" data-url="rhozeland.app/explore/studios" aria-label="Show Studios">
+                <img src="/images/creator-os-studios.png" alt="" loading="lazy" />
+                <span class="os-thumb-label">Studios</span>
+              </button>
             </div>
           </div>
         </a>
@@ -3307,6 +3442,53 @@
       measure();
       render();
       requestAnimationFrame(animate);
+    })();
+  </script>
+  <script>
+    // Creator OS shotcase: auto-cycle hero screenshot, click thumbnails to switch.
+    (function () {
+      var stage = document.getElementById('osShotcase');
+      if (!stage) return;
+      var frame = document.getElementById('osShotFrame');
+      var thumbs = document.getElementById('osShotThumbs');
+      var urlEl = document.getElementById('osShotUrl');
+      if (!frame || !thumbs) return;
+      var imgs = frame.querySelectorAll('img');
+      var btns = thumbs.querySelectorAll('.os-thumb');
+      var i = 0;
+      var paused = false;
+      var timer = null;
+      function show(idx) {
+        i = ((idx % imgs.length) + imgs.length) % imgs.length;
+        for (var k = 0; k < imgs.length; k++) imgs[k].classList.toggle('is-active', k === i);
+        for (var j = 0; j < btns.length; j++) btns[j].classList.toggle('is-active', j === i);
+        if (urlEl) {
+          var u = btns[i] && btns[i].getAttribute('data-url');
+          if (u) urlEl.textContent = u;
+        }
+      }
+      function tick() { if (!paused) show(i + 1); }
+      function start() { stop(); timer = setInterval(tick, 3800); }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      btns.forEach(function (b) {
+        b.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          show(parseInt(b.getAttribute('data-index'), 10) || 0);
+          start();
+        });
+      });
+      stage.addEventListener('mouseenter', function () { paused = true; });
+      stage.addEventListener('mouseleave', function () { paused = false; });
+      // Pause when offscreen, resume when visible
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { paused = !en.isIntersecting; });
+        }, { threshold: 0.2 });
+        io.observe(stage);
+      }
+      show(0);
+      start();
     })();
   </script>
 </body>

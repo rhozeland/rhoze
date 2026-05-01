@@ -3198,7 +3198,7 @@
     }
   </script>
   <script>
-    // Featured-On strip: CSS handles continuous motion; JS only enables manual drag/wheel control.
+    // Featured-On strip: one transform loop, with hover pause and manual direction control.
     (function () {
       var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
@@ -3221,26 +3221,60 @@
         });
       } catch (e) { /* ignore */ }
 
+      var paused = false;
       var dragging = false;
       var dragStartX = 0;
-      var dragStartScroll = 0;
+      var dragStartOffset = 0;
+      var offset = 0;
+      var direction = -1;
+      var speed = 34;
+      var last = performance.now();
 
-      scroller.addEventListener('wheel', function (event) {
-        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-          scroller.scrollLeft += event.deltaY;
-          event.preventDefault();
+      function loopWidth() { return Math.max(1, track.scrollWidth / 2); }
+      function normalize() {
+        var width = loopWidth();
+        offset = ((offset % width) + width) % width;
+      }
+      function render() {
+        track.style.transform = 'translate3d(' + (-offset) + 'px,0,0)';
+      }
+      function animate(now) {
+        var dt = Math.min(64, now - last) / 1000;
+        last = now;
+        if (!paused && !dragging) {
+          offset += direction * speed * dt;
+          normalize();
+          render();
         }
+        requestAnimationFrame(animate);
+      }
+
+      scroller.addEventListener('mouseenter', function () { paused = true; });
+      scroller.addEventListener('mouseleave', function () { paused = false; });
+      scroller.addEventListener('focusin', function () { paused = true; });
+      scroller.addEventListener('focusout', function () { paused = false; });
+      scroller.addEventListener('wheel', function (event) {
+        var delta = Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        direction = delta > 0 ? 1 : -1;
+        offset += delta;
+        normalize();
+        render();
+        event.preventDefault();
       }, { passive: false });
       scroller.addEventListener('pointerdown', function (event) {
         dragging = true;
         dragStartX = event.clientX;
-        dragStartScroll = scroller.scrollLeft;
+        dragStartOffset = offset;
         scroller.classList.add('is-dragging');
         scroller.setPointerCapture(event.pointerId);
       });
       scroller.addEventListener('pointermove', function (event) {
         if (!dragging) return;
-        scroller.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+        var dx = event.clientX - dragStartX;
+        direction = dx > 0 ? -1 : 1;
+        offset = dragStartOffset - dx;
+        normalize();
+        render();
       });
       function endDrag(event) {
         if (!dragging) return;
@@ -3250,6 +3284,8 @@
       }
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);
+      render();
+      requestAnimationFrame(animate);
     })();
   </script>
 </body>

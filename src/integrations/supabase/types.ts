@@ -1078,6 +1078,7 @@ export type Database = {
           notes: string | null
           slots: string[]
           time_blocks: string[]
+          timezone: string
           updated_at: string
           user_id: string
         }
@@ -1088,6 +1089,7 @@ export type Database = {
           notes?: string | null
           slots?: string[]
           time_blocks?: string[]
+          timezone?: string
           updated_at?: string
           user_id: string
         }
@@ -1098,6 +1100,7 @@ export type Database = {
           notes?: string | null
           slots?: string[]
           time_blocks?: string[]
+          timezone?: string
           updated_at?: string
           user_id?: string
         }

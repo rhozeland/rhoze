@@ -143,7 +143,7 @@ export default function StartPage() {
             </div>
             <p className="text-sm text-muted-foreground max-w-2xl">
               {path === "subscribe"
-                ? "Each tier grants monthly credits you spend on any service in the catalog below. Unused credits don't roll over — pick the size that matches your output."
+                ? "Each tier grants monthly credits you spend on any service in the catalog below. Unused credits roll over while your subscription is active — pick the size that matches your output."
                 : "Select what you'd like delivered. We'll quote it in credits — you can convert to a subscription on the next step if you'd save money."}
             </p>
           </header>
@@ -330,7 +330,7 @@ export default function StartPage() {
               <span>
                 I understand this is an initial estimate. {path === "project"
                   ? "The deposit secures the kickoff slot and is refundable within 7 days if we can't agree on scope. Remaining payments are due at agreed milestones."
-                  : "Subscriptions renew monthly until canceled, and unused credits don't roll over."}
+                  : "Subscriptions renew monthly until canceled. Unused credits roll over while your subscription stays active."}
               </span>
             </label>
 

@@ -195,6 +195,16 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   }).select("id").single();
 
   console.log("intake created from checkout", intake?.id, "session", session.id);
+
+  // Auto-convert paid intake into a project so the buyer gets a project_code immediately.
+  if (intake?.id) {
+    const { data: projectId, error: convErr } = await sb.rpc("create_project_from_intake", { _intake_id: intake.id });
+    if (convErr) {
+      console.error("create_project_from_intake failed", convErr);
+    } else {
+      console.log("project auto-created from intake", projectId);
+    }
+  }
 }
 
 Deno.serve(async (req) => {

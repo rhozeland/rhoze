@@ -44,6 +44,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const { error } = await supabase.rpc("consume_referral_code", { _code: pending });
             if (!error) localStorage.removeItem("pending_referral_code");
           }
+          // If a project code was stored during the client signup flow, redeem it now.
+          const pendingProject = localStorage.getItem("pending_project_code");
+          if (pendingProject) {
+            const { error } = await supabase.rpc("redeem_project_code", { _code: pendingProject });
+            if (!error) localStorage.removeItem("pending_project_code");
+          }
           loadRoles(s.user.id);
         }, 0);
       } else {

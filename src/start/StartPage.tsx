@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
@@ -30,12 +31,125 @@ const DEPOSIT_PERCENT = 0.30;    // 30% deposit to begin
 const DEPOSIT_MIN_CENTS = 5000;  // Stripe min
 const SCOPE_CALL_URL = "https://calendar.app.google/cXfhA8SeNLXeBYNdA";
 
+type ServiceDetail = {
+  scope: string;
+  deliverables: string[];
+  revisions: string;
+  turnaround: string;
+  notIncluded?: string[];
+};
+
+const SERVICE_DETAILS: Record<string, ServiceDetail> = {
+  // ---- Visual ----
+  "photo-shoot": {
+    scope: "Half-day shoot, ~3 hours on location or in our studio. One creative direction, one outfit/setup family.",
+    deliverables: ["Up to 40 color-graded stills (web + print res)", "Online gallery for selects", "Lifestyle, portrait, or product framing"],
+    revisions: "One round of re-edits on selected images (color, crop, light retouch).",
+    turnaround: "5–7 business days from shoot date.",
+    notIncluded: ["Travel beyond 25 mi", "Heavy retouching / compositing", "Hair, makeup, or talent"],
+  },
+  "content-edit": {
+    scope: "One polished long-form edit (3–8 minutes) from your supplied footage.",
+    deliverables: ["Edited master in 4K or 1080p", "Color pass + sound balance", "Royalty-safe music if needed"],
+    revisions: "Two rounds of timed revisions.",
+    turnaround: "7–10 business days after footage delivery.",
+    notIncluded: ["Original shooting", "Motion graphics beyond title cards", "Licensed music clearance"],
+  },
+  "commercial-edit": {
+    scope: "One commercial-grade cut, 15–60 seconds, agency-ready.",
+    deliverables: ["Master + 9:16 and 1:1 reframes", "Full color grade + sound design", "Logo / endcard treatment"],
+    revisions: "Two revision rounds before final lock.",
+    turnaround: "7–10 business days.",
+    notIncluded: ["Concept board / storyboard from scratch (add Strategy consult)", "VFX-heavy compositing"],
+  },
+  "short-form-edit": {
+    scope: "One vertical edit for Reels / TikTok / Shorts, ≤90 seconds.",
+    deliverables: ["9:16 master with captions", "Hook variant for A/B testing", "Trend-aware pacing"],
+    revisions: "Two revision rounds.",
+    turnaround: "3–5 business days.",
+    notIncluded: ["Account posting / scheduling", "Original shooting"],
+  },
+  "mv-edit": {
+    scope: "One full music-video edit synced to a single track from your footage.",
+    deliverables: ["Edited master in 4K or 1080p", "Color grade + transition design", "Mixdown sync to provided audio"],
+    revisions: "Two revision rounds.",
+    turnaround: "10–14 business days.",
+    notIncluded: ["VFX / 3D shots", "On-set direction (book Photo shoot for capture)"],
+  },
+  // ---- Audio ----
+  "audio-recording": {
+    scope: "Two-hour tracking session in our room with engineer. Sold in 2-credit blocks; book more for longer sessions.",
+    deliverables: ["Multi-track session files", "Rough monitor mix for reference", "Up to 3 vocalists / one band setup"],
+    revisions: "Re-tracking inside the booked window is included; additional time is billed at the same rate.",
+    turnaround: "Same-day session export; raw files within 48 hrs.",
+    notIncluded: ["Mixing or mastering (separate credits)", "Beat / instrumental production"],
+  },
+  "mixing": {
+    scope: "Mix one song to release standard. Stems in, mix-bus out.",
+    deliverables: ["Stereo mix (WAV 24-bit)", "Instrumental + acapella stems", "Reference-matched balance"],
+    revisions: "Two recall / revision rounds.",
+    turnaround: "5–7 business days from stem delivery.",
+    notIncluded: ["Mastering", "Vocal tuning beyond standard correction (add a credit for heavy comping)"],
+  },
+  "mastering": {
+    scope: "Master one track for streaming + DSP delivery, loudness-matched per platform.",
+    deliverables: ["Mastered WAV + MP3", "DDP / streaming-ready file", "LUFS-matched for Spotify / Apple"],
+    revisions: "One revision round.",
+    turnaround: "2–3 business days.",
+    notIncluded: ["Stem mastering (counts as 2 credits)", "Mix corrections"],
+  },
+  "podcast": {
+    scope: "Two-hour multi-mic podcast session, in-room or remote-coordinated.",
+    deliverables: ["One edited episode (≤60 min)", "Level + noise pass per speaker", "Intro / outro stitch from your assets"],
+    revisions: "One revision round per episode.",
+    turnaround: "3–5 business days post-session.",
+    notIncluded: ["Show artwork / branding (see Graphic design)", "Distribution upload"],
+  },
+  // ---- Development ----
+  "design": {
+    scope: "One hour of flexible design work — tweaks, layouts, or a small request.",
+    deliverables: ["Editable source file (Figma / PSD / AI)", "Exported assets for web or print"],
+    revisions: "Iterations within the booked hour are included.",
+    turnaround: "Same or next business day.",
+    notIncluded: ["Net-new brand identity (book a multi-credit block)"],
+  },
+  "graphic-design": {
+    scope: "One social-asset graphic — cover art, flyer, or a single carousel slide.",
+    deliverables: ["Final PNG / JPG at platform spec", "Editable source file on request"],
+    revisions: "Two revision rounds.",
+    turnaround: "2–3 business days.",
+    notIncluded: ["Multi-slide carousels (1 credit per slide)", "Animated assets"],
+  },
+  "web-development": {
+    scope: "Full small-site build, ≈4–6 pages, responsive and deployed.",
+    deliverables: ["Live deployed site", "CMS-light content blocks", "Basic SEO + analytics setup"],
+    revisions: "Two structured revision rounds before launch; copy edits welcomed throughout.",
+    turnaround: "3–4 weeks from kickoff.",
+    notIncluded: ["Custom backend / auth (scope separately)", "Logo or brand identity work", "Ongoing maintenance retainer"],
+  },
+  "uiux-development": {
+    scope: "Two-week UI/UX sprint focused on one product surface.",
+    deliverables: ["User flow map", "Wireframes for key screens", "Clickable Figma prototype"],
+    revisions: "Two structured review rounds during the sprint.",
+    turnaround: "Two weeks from kickoff.",
+    notIncluded: ["Production front-end build (see Web development)", "User research recruitment"],
+  },
+  "consult": {
+    scope: "One-hour strategy call — brand, roadmap, or release planning.",
+    deliverables: ["Recorded session", "Written follow-up with priorities + next steps"],
+    revisions: "Async follow-up questions for 7 days after the call.",
+    turnaround: "Booked within 3 business days.",
+    notIncluded: ["Execution work — pair with relevant service credits"],
+  },
+};
+
 export default function StartPage() {
   const [step, setStep] = useState<"intro" | "build" | "review" | "checkout">("intro");
   const [path, setPath] = useState<"subscribe" | "project" | null>(null);
   const [activeCat, setActiveCat] = useState<Category>("visual");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [tierSlug, setTierSlug] = useState<string>("");
+  const [detailsFor, setDetailsFor] = useState<Pkg | null>(null);
   const [contact, setContact] = useState({
     name: "", email: "", phone: "", scope: "",
     region: "US" as "US" | "International",

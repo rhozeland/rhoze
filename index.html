@@ -505,12 +505,18 @@
     .hero-proof-track-wrap {
       mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
       -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
-      overflow: hidden;
+      overflow-x: auto;
       overflow-y: hidden;
       scrollbar-width: none;
       -ms-overflow-style: none;
+      cursor: grab;
+      touch-action: pan-x;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: auto;
     }
     .hero-proof-track-wrap::-webkit-scrollbar { display: none; }
+    .hero-proof-track-wrap.is-dragging { cursor: grabbing; }
+    .hero-proof-track-wrap.is-dragging .proof-link { pointer-events: none; }
 
     .proof-track {
       --proof-gap: 0.75rem;
@@ -518,17 +524,10 @@
       gap: var(--proof-gap);
       width: max-content;
       user-select: none;
-      will-change: transform;
-      animation: proof-marquee 38s linear infinite;
-    }
-
-    /* CSS-driven marquee. The duplicated links make translateX(-50%) loop forever. */
-    @keyframes proof-marquee {
-      from { transform: translate3d(0, 0, 0); }
-      to   { transform: translate3d(calc(-50% - (var(--proof-gap) / 2)), 0, 0); }
+      will-change: contents;
     }
     @media (prefers-reduced-motion: reduce) {
-      .proof-track { animation: none; }
+      .proof-track { will-change: auto; }
     }
 
     .proof-link {
@@ -3202,12 +3201,12 @@
     }
   </script>
   <script>
-    // Featured-On strip: keep exactly two identical sets of links.
-    // CSS handles all motion so the ticker does not depend on scrollWidth,
-    // pointer state, or resize timing on the published page.
+    // Featured-On strip: native horizontal scroll + continuous auto-scroll.
+    // Hover/focus/drag pauses it; users can drag or wheel it in either direction.
     (function () {
+      var scroller = document.getElementById('proof-scroller');
       var track = document.getElementById('proof-track');
-      if (!track) return;
+      if (!scroller || !track) return;
 
       try {
         var seen = Object.create(null);
@@ -3225,6 +3224,68 @@
           track.appendChild(c);
         });
       } catch (e) { /* ignore */ }
+
+      var paused = false;
+      var dragging = false;
+      var dragStartX = 0;
+      var dragStartScroll = 0;
+      var last = performance.now();
+      var speed = 34;
+
+      function halfWidth() { return Math.max(1, track.scrollWidth / 2); }
+      function centerLoop() { scroller.scrollLeft = halfWidth(); }
+      function normalize() {
+        var half = halfWidth();
+        if (scroller.scrollLeft >= half * 1.5) scroller.scrollLeft -= half;
+        if (scroller.scrollLeft <= half * 0.5) scroller.scrollLeft += half;
+      }
+      function step(now) {
+        var dt = Math.min(64, now - last);
+        last = now;
+        if (!paused && !dragging && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          scroller.scrollLeft += speed * (dt / 1000);
+          normalize();
+        }
+        requestAnimationFrame(step);
+      }
+
+      scroller.addEventListener('mouseenter', function () { paused = true; });
+      scroller.addEventListener('mouseleave', function () { paused = false; });
+      scroller.addEventListener('focusin', function () { paused = true; });
+      scroller.addEventListener('focusout', function () { paused = false; });
+      scroller.addEventListener('wheel', function (event) {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+          scroller.scrollLeft += event.deltaY;
+          event.preventDefault();
+        }
+        normalize();
+      }, { passive: false });
+      scroller.addEventListener('pointerdown', function (event) {
+        dragging = true;
+        paused = true;
+        dragStartX = event.clientX;
+        dragStartScroll = scroller.scrollLeft;
+        scroller.classList.add('is-dragging');
+        scroller.setPointerCapture(event.pointerId);
+      });
+      scroller.addEventListener('pointermove', function (event) {
+        if (!dragging) return;
+        scroller.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+        normalize();
+      });
+      function endDrag(event) {
+        if (!dragging) return;
+        dragging = false;
+        paused = scroller.matches(':hover') || scroller.contains(document.activeElement);
+        scroller.classList.remove('is-dragging');
+        try { scroller.releasePointerCapture(event.pointerId); } catch (e) { /* ignore */ }
+      }
+      scroller.addEventListener('pointerup', endDrag);
+      scroller.addEventListener('pointercancel', endDrag);
+
+      centerLoop();
+      window.addEventListener('resize', centerLoop);
+      requestAnimationFrame(step);
     })();
   </script>
 </body>

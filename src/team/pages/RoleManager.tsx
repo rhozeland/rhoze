@@ -533,7 +533,7 @@ function MastersheetPanel({ userId }: { userId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone, wage, payment_method, work_type, stage_name, program, internal_notes")
+        .select("phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone, wage, hourly_rate_cents, payment_method, work_type, stage_name, program, internal_notes")
         .eq("id", userId)
         .maybeSingle();
       if (error) throw error;

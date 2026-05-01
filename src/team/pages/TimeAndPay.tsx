@@ -496,7 +496,7 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
   const lineTotal = isReimburse
     ? toCents(local.expense || "0")
     : isProject
-      ? toCents(local.rate || "0") + toCents(local.expense || "0")
+      ? toCents(local.rate || "0")
       : isSpecialist
         ? Math.round((parseFloat(local.hours) || 0) * SPECIALIST_RATE_CENTS) + toCents(local.expense || "0")
         : Math.round((parseFloat(local.hours) || 0) * (parseFloat(local.rate) || 0) * 100) + toCents(local.expense || "0");

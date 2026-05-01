@@ -533,7 +533,7 @@ function MastersheetPanel({ userId }: { userId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone, wage, payment_method, work_type, stage_name, program, internal_notes")
+        .select("phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone, wage, hourly_rate_cents, payment_method, work_type, stage_name, program, internal_notes")
         .eq("id", userId)
         .maybeSingle();
       if (error) throw error;
@@ -569,7 +569,14 @@ function MastersheetPanel({ userId }: { userId: string }) {
         throw new Error(first ?? "Please fix the highlighted fields");
       }
       const patch: Record<string, any> = {};
-      Object.keys(draft).forEach((k) => { patch[k] = draft[k] === "" ? null : draft[k]; });
+      Object.keys(draft).forEach((k) => {
+        if (k === "hourly_rate_cents") {
+          const n = parseFloat(draft[k] || "0");
+          patch[k] = Number.isFinite(n) ? Math.round(n * 100) : 0;
+        } else {
+          patch[k] = draft[k] === "" ? null : draft[k];
+        }
+      });
       if (Object.keys(patch).length === 0) return;
       const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
       if (error) throw error;
@@ -694,7 +701,22 @@ function MastersheetPanel({ userId }: { userId: string }) {
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Wage"><Input className="h-8" placeholder="$19.50/hour, Equity…" value={val("wage")} onChange={(e) => setDraft({ ...draft, wage: e.target.value })} /></Field>
+        <Field label="Wage (notes)"><Input className="h-8" placeholder="$19.50/hour, Equity…" value={val("wage")} onChange={(e) => setDraft({ ...draft, wage: e.target.value })} /></Field>
+        <Field label="Hourly rate ($/hr)">
+          <Input
+            className="h-8"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            value={
+              "hourly_rate_cents" in draft
+                ? draft.hourly_rate_cents
+                : (((profile as any)?.hourly_rate_cents ?? 0) / 100).toString()
+            }
+            onChange={(e) => setDraft({ ...draft, hourly_rate_cents: e.target.value })}
+          />
+        </Field>
         <Field label="Payment method">
           <Select value={val("payment_method") || "__none"} onValueChange={(v) => setDraft({ ...draft, payment_method: v === "__none" ? "" : v })}>
             <SelectTrigger className="h-8"><SelectValue placeholder="—" /></SelectTrigger>

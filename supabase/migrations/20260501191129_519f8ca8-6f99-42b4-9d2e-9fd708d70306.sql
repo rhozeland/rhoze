@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS hourly_rate_cents integer NOT NULL DEFAULT 0;

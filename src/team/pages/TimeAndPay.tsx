@@ -12,7 +12,8 @@ import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
 
 type WorkType = "project" | "specialist" | "standard" | "reimbursement";
-type Filter = "all" | WorkType;
+
+const SPECIALIST_RATE_CENTS = 3000; // $30/hr fixed
 
 const WORK_TYPES: { value: WorkType; label: string; short: string; tone: string }[] = [
   { value: "project",       label: "Project rate",     short: "Project",    tone: "bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/30" },
@@ -38,7 +39,6 @@ export default function TimeAndPay() {
   const { user, isAdmin } = useAuth();
   const [view, setView] = useState<"mine" | "admin">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
-  const [filter, setFilter] = useState<Filter>("all");
   const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
 
@@ -110,7 +110,7 @@ export default function TimeAndPay() {
       ) : view === "admin" && isAdmin ? (
         <ApprovalQueue periodId={periodId} />
       ) : (
-        <MyTimesheet periodId={periodId} userId={user!.id} filter={filter} setFilter={setFilter} />
+        <MyTimesheet periodId={periodId} userId={user!.id} />
       )}
     </div>
   );
@@ -163,8 +163,18 @@ function PeriodForm({ form, setForm, onCreated }: any) {
 
 /* ---------- MY TIMESHEET ---------- */
 
-function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string; userId: string; filter: Filter; setFilter: (f: Filter) => void }) {
+function MyTimesheet({ periodId, userId }: { periodId: string; userId: string }) {
   const qc = useQueryClient();
+
+  // Per-person rate from the role mastersheet (used for "Hourly" rows)
+  const { data: profile } = useQuery({
+    queryKey: ["my_rate", userId],
+    queryFn: async () => {
+      const { data } = await supabase.from("profiles").select("hourly_rate_cents").eq("id", userId).maybeSingle();
+      return data;
+    },
+  });
+  const myHourlyCents = (profile as any)?.hourly_rate_cents ?? 0;
 
   const { data: timesheet } = useQuery({
     queryKey: ["timesheet", periodId, userId],
@@ -187,27 +197,28 @@ function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string
   });
 
   const totals = useMemo(() => {
-    const t = { project: 0, specialist: 0, standard: 0, reimbursement: 0, expenses: 0, payroll: 0 };
+    const t = { project: 0, specialist: 0, standard: 0, expenses: 0, payroll: 0 };
     (entries ?? []).forEach((e: any) => {
       const h = Number(e.hours) || 0;
-      if (e.work_type === "project") t.project += h;
-      else if (e.work_type === "specialist") t.specialist += h;
-      else if (e.work_type === "reimbursement") t.reimbursement += h;
-      else t.standard += h;
+      const rate = e.rate_amount_cents || 0;
+      if (e.work_type === "specialist") { t.specialist += h; t.payroll += h * SPECIALIST_RATE_CENTS; }
+      else if (e.work_type === "project") { t.project += 1; t.payroll += rate; } // flat
+      else if (e.work_type === "reimbursement") { /* expense-only */ }
+      else { t.standard += h; t.payroll += h * rate; }
       t.expenses += e.expense_cents || 0;
-      if (e.work_type !== "reimbursement") t.payroll += h * (e.rate_amount_cents || 0);
     });
     t.payroll = Math.round(t.payroll) + t.expenses;
     return t;
   }, [entries]);
 
-  const visible = useMemo(() => filter === "all" ? (entries ?? []) : (entries ?? []).filter((e: any) => e.work_type === filter), [entries, filter]);
+  const visible = entries ?? [];
 
   const addEntry = useMutation({
     mutationFn: async () => {
       if (!timesheet?.id) throw new Error("No timesheet");
       const { error } = await supabase.from("timesheet_entries").insert({
-        timesheet_id: timesheet.id, deliverable: "", work_type: filter === "all" ? "standard" : filter, rate_amount_cents: 0, hours: 0, expense_cents: 0,
+        timesheet_id: timesheet.id, deliverable: "", work_type: "standard",
+        rate_amount_cents: myHourlyCents, hours: 0, expense_cents: 0,
       });
       if (error) throw error;
     },
@@ -270,13 +281,8 @@ function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string
         </div>
       </div>
 
-      {/* Filter chips + actions */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>All</FilterChip>
-          {WORK_TYPES.map((w) => <FilterChip key={w.value} active={filter === w.value} onClick={() => setFilter(w.value)}>{w.label}</FilterChip>)}
-        </div>
-        <div className="flex items-center gap-2">
+      {/* Actions */}
+      <div className="flex items-center justify-end flex-wrap gap-2">
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
@@ -285,7 +291,6 @@ function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string
               Submit for approval
             </Button>
           )}
-        </div>
       </div>
 
       {/* Spreadsheet table */}
@@ -307,24 +312,24 @@ function MyTimesheet({ periodId, userId, filter, setFilter }: { periodId: string
           </thead>
           <tbody className="divide-y divide-border">
             {visible.length === 0 && (
-              <tr><td colSpan={10} className="px-3 py-8 text-center text-muted-foreground italic">No entries{filter !== "all" ? ` for ${labelFor(filter)}` : ""} yet. Click below to add one.</td></tr>
+              <tr><td colSpan={10} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
-              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} />
+              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} />
             ))}
           </tbody>
         </table>
         {!isLocked && (
           <div className="border-t border-border p-2">
             <button onClick={() => addEntry.mutate()} className="w-full text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded py-2 flex items-center justify-center gap-1.5 transition">
-              <Plus size={14} /> Add row{filter !== "all" ? ` (${labelFor(filter)})` : ""}
+              <Plus size={14} /> Add row
             </button>
           </div>
         )}
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Tip: enter <strong>start &amp; end times</strong> and hours auto-calculate. Reimbursement rows count expenses without hourly pay; project / specialist / hourly rows compute as <strong>rate × hours</strong>. Total payroll adds expenses on top.
+        Rates auto-fill by type — <strong>Hourly</strong> uses your role rate, <strong>Specialist</strong> is $30/hr fixed, <strong>Project</strong> is a flat amount you enter, <strong>Reimbursement</strong> uses the expense column. Enter start &amp; end times to auto-calculate hours.
       </p>
     </div>
   );
@@ -464,7 +469,7 @@ function Th({ children, className, icon }: any) {
 
 /* ---------- entry row ---------- */
 
-function EntryRow({ entry, stripe, locked, onChange, onDelete }: { entry: any; stripe: boolean; locked: boolean; onChange: (p: any) => void; onDelete: () => void }) {
+function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; onChange: (p: any) => void; onDelete: () => void }) {
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",
@@ -477,11 +482,37 @@ function EntryRow({ entry, stripe, locked, onChange, onDelete }: { entry: any; s
   });
 
   const isReimburse = local.work_type === "reimbursement";
+  const isProject   = local.work_type === "project";
+  const isSpecialist = local.work_type === "specialist";
+  const isHourly    = local.work_type === "standard";
+
+  // Rate column behavior:
+  //  - Hourly     → editable, defaults to user's role rate
+  //  - Specialist → locked at $30/hr
+  //  - Project    → editable flat amount (rate = total)
+  //  - Reimburse  → N/A
+  const rateLocked = locked || isReimburse || isSpecialist;
+
   const lineTotal = isReimburse
     ? toCents(local.expense || "0")
-    : Math.round((parseFloat(local.hours) || 0) * (parseFloat(local.rate) || 0) * 100) + toCents(local.expense || "0");
+    : isProject
+      ? toCents(local.rate || "0") + toCents(local.expense || "0")
+      : isSpecialist
+        ? Math.round((parseFloat(local.hours) || 0) * SPECIALIST_RATE_CENTS) + toCents(local.expense || "0")
+        : Math.round((parseFloat(local.hours) || 0) * (parseFloat(local.rate) || 0) * 100) + toCents(local.expense || "0");
 
   const commit = (patch: any) => { if (!locked) onChange(patch); };
+
+  // When the work type changes, snap the rate to the right default
+  const handleTypeChange = (next: string) => {
+    let nextRateCents = entry.rate_amount_cents ?? 0;
+    if (next === "specialist") nextRateCents = SPECIALIST_RATE_CENTS;
+    else if (next === "standard") nextRateCents = myHourlyCents || 0;
+    else if (next === "reimbursement") nextRateCents = 0;
+    // project keeps whatever was there (user-entered flat)
+    setLocal({ ...local, work_type: next, rate: (nextRateCents / 100).toString() });
+    commit({ work_type: next, rate_amount_cents: nextRateCents });
+  };
 
   // when start+end change, auto-fill hours
   const recalcHours = (start: string, end: string) => {
@@ -507,15 +538,15 @@ function EntryRow({ entry, stripe, locked, onChange, onDelete }: { entry: any; s
       </td>
       <td className="px-2 py-1">
         <select disabled={locked} value={local.work_type}
-          onChange={(e) => { setLocal({ ...local, work_type: e.target.value }); commit({ work_type: e.target.value }); }}
+          onChange={(e) => handleTypeChange(e.target.value)}
           className={cn("text-xs px-2 py-1 rounded-full border outline-none cursor-pointer font-medium", toneFor(local.work_type))}>
           {WORK_TYPES.map((w) => <option key={w.value} value={w.value} className="bg-background text-foreground">{w.short}</option>)}
         </select>
       </td>
       <td className="px-2 py-1">
-        <input disabled={locked || isReimburse} type="number" step="0.01" min="0"
+        <input disabled={rateLocked} type="number" step="0.01" min="0"
           value={isReimburse ? "" : local.rate}
-          placeholder={isReimburse ? "—" : "0.00"}
+          placeholder={isReimburse ? "—" : isProject ? "flat $" : "0.00"}
           onChange={(e) => setLocal({ ...local, rate: e.target.value })}
           onBlur={() => commit({ rate_amount_cents: toCents(local.rate || "0") })}
           className={cn(cellNum, "max-w-[90px]")} />

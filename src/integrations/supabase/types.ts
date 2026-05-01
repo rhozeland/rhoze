@@ -567,6 +567,7 @@ export type Database = {
           employment_notes: string | null
           employment_status: string
           ended_at: string | null
+          hourly_rate_cents: number
           id: string
           internal_notes: string | null
           job_title: string | null
@@ -597,6 +598,7 @@ export type Database = {
           employment_notes?: string | null
           employment_status?: string
           ended_at?: string | null
+          hourly_rate_cents?: number
           id: string
           internal_notes?: string | null
           job_title?: string | null
@@ -627,6 +629,7 @@ export type Database = {
           employment_notes?: string | null
           employment_status?: string
           ended_at?: string | null
+          hourly_rate_cents?: number
           id?: string
           internal_notes?: string | null
           job_title?: string | null

@@ -18,7 +18,7 @@ const Chart = () => {
             Live Chart
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto font-body">
-            Track $RHOZE in real-time on DexScreener.
+            Track $RHOZE in real-time on Pump.fun.
           </p>
         </motion.div>
 
@@ -29,22 +29,22 @@ const Chart = () => {
           className="rounded-2xl overflow-hidden border border-border shadow-lift"
         >
           <iframe
-            src="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf?embed=1&theme=light&info=0"
+            src="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump"
             className="w-full"
             style={{ height: "500px", border: "none" }}
-            title="DexScreener $RHOZE Chart"
+            title="Pump.fun $RHOZE Chart"
             loading="lazy"
           />
         </motion.div>
 
         <div className="mt-6 text-center">
           <a
-            href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"
+            href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-muted-foreground hover:text-primary transition-colors font-body underline underline-offset-4"
           >
-            View full chart on DexScreener →
+            View full chart on Pump.fun →
           </a>
         </div>
       </div>

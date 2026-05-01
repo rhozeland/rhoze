@@ -5,10 +5,92 @@ import { useAuth } from "../lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Eraser, Save, Pencil } from "lucide-react";
+import { Eraser, Save, Pencil, Globe } from "lucide-react";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
+// Hour anchors (in author's local time) used to convert "block" labels into
+// concrete instants so we can shift them across timezones safely.
+const BLOCK_HOUR: Record<string, number> = {
+  Morning: 9,     // 09:00
+  Afternoon: 13,  // 13:00
+  Evening: 18,    // 18:00
+  Overnight: 23,  // 23:00
+};
+const HOUR_TO_BLOCK = (h: number): string => {
+  if (h >= 5 && h < 12) return "Morning";
+  if (h >= 12 && h < 17) return "Afternoon";
+  if (h >= 17 && h < 22) return "Evening";
+  return "Overnight";
+};
+
+const VIEWER_TZ = (() => {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+  catch { return "UTC"; }
+})();
+
+/**
+ * Given a (day, block) authored in `fromTz`, return the corresponding
+ * (day, block) as it lands in `toTz`. The conversion uses the canonical
+ * hour anchor for the block. We anchor on a known reference week so DST
+ * ambiguity is resolved consistently.
+ */
+const REFERENCE_SUNDAY = new Date(Date.UTC(2026, 0, 4)); // Sun Jan 4 2026 (UTC)
+
+function convertCell(
+  day: string,
+  block: string,
+  fromTz: string,
+  toTz: string,
+): { day: string; block: string } {
+  if (fromTz === toTz) return { day, block };
+  const dayIdx = DAYS.indexOf(day);
+  const hour = BLOCK_HOUR[block];
+  if (dayIdx < 0 || hour == null) return { day, block };
+
+  // Build "wall clock" date in fromTz: reference Sunday + dayIdx, at `hour:00`.
+  // We need the UTC instant whose representation in fromTz is exactly that
+  // wall clock. Approach: take the reference UTC instant, format it in fromTz,
+  // measure the offset, and adjust.
+  const wallUtc = new Date(REFERENCE_SUNDAY);
+  wallUtc.setUTCDate(wallUtc.getUTCDate() + dayIdx);
+  wallUtc.setUTCHours(hour, 0, 0, 0);
+
+  const offsetMin = (tz: string, instant: Date) => {
+    // Use Intl to read the wall clock in the target tz, then compute delta.
+    const dtf = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz, hourCycle: "h23",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit",
+    });
+    const parts = dtf.formatToParts(instant).reduce<Record<string, string>>((acc, p) => {
+      if (p.type !== "literal") acc[p.type] = p.value;
+      return acc;
+    }, {});
+    const asUtc = Date.UTC(
+      Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+      Number(parts.hour), Number(parts.minute), Number(parts.second),
+    );
+    return (asUtc - instant.getTime()) / 60000;
+  };
+
+  // Find the UTC instant matching the desired wall clock in fromTz.
+  const fromOffset = offsetMin(fromTz, wallUtc);
+  const utcInstant = new Date(wallUtc.getTime() - fromOffset * 60000);
+
+  // Read that instant in toTz to get the viewer's wall clock.
+  const dtfTo = new Intl.DateTimeFormat("en-US", {
+    timeZone: toTz, hourCycle: "h23", weekday: "long", hour: "2-digit",
+  });
+  const partsTo = dtfTo.formatToParts(utcInstant).reduce<Record<string, string>>((acc, p) => {
+    if (p.type !== "literal") acc[p.type] = p.value;
+    return acc;
+  }, {});
+  const newDay = partsTo.weekday;
+  const newHour = Number(partsTo.hour);
+  if (!DAYS.includes(newDay) || Number.isNaN(newHour)) return { day, block };
+  return { day: newDay, block: HOUR_TO_BLOCK(newHour) };
+}
 
 const cellKey = (d: string, b: string) => `${d}|${b}`;
 
@@ -28,7 +110,7 @@ export default function Directory() {
   const { data: availability } = useQuery({
     queryKey: ["team-availability-all"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("team_availability").select("user_id, days, time_blocks, slots, notes");
+      const { data, error } = await supabase.from("team_availability").select("user_id, days, time_blocks, slots, notes, timezone");
       if (error) throw error;
       const map: Record<string, any> = {};
       (data ?? []).forEach((r: any) => { map[r.user_id] = r; });
@@ -42,18 +124,24 @@ export default function Directory() {
     return m;
   }, [people]);
 
-  // Build per-user slot set: prefer explicit `slots` array (precise cells); fall back to days × blocks crossproduct.
+  // Build per-user slot set, converted into the VIEWER's timezone so that
+  // "Tuesday Evening" always means Tuesday Evening in the local week of the
+  // person looking at the screen.
   const userSlots = useMemo(() => {
     const map: Record<string, Set<string>> = {};
     Object.values(availability ?? {}).forEach((av: any) => {
+      const fromTz = av.timezone || "UTC";
       const set = new Set<string>();
-      if (Array.isArray(av.slots) && av.slots.length) {
-        av.slots.forEach((s: string) => set.add(s));
-      } else {
-        const days: string[] = av.days ?? [];
-        const blocks: string[] = av.time_blocks ?? [];
-        days.forEach((d) => blocks.forEach((b) => set.add(cellKey(d, b))));
-      }
+      const raw: string[] = Array.isArray(av.slots) && av.slots.length
+        ? av.slots
+        : ((av.days ?? []) as string[]).flatMap((d) =>
+            ((av.time_blocks ?? []) as string[]).map((b) => cellKey(d, b)),
+          );
+      raw.forEach((s) => {
+        const [d, b] = s.split("|");
+        const { day, block } = convertCell(d, b, fromTz, VIEWER_TZ);
+        set.add(cellKey(day, block));
+      });
       map[av.user_id] = set;
     });
     return map;
@@ -98,18 +186,24 @@ export default function Directory() {
   const [myNotes, setMyNotes] = useState("");
   const [dirty, setDirty] = useState(false);
 
-  // Hydrate from server when availability loads / changes for me
+  // Hydrate the editor from MY stored slots, converting from my saved
+  // timezone into MY current viewing timezone (so editing always feels
+  // like my local week even if I traveled).
   useEffect(() => {
     if (!user) return;
+    const storedTz = myAv?.timezone || VIEWER_TZ;
     const set = new Set<string>();
     if (myAv) {
-      if (Array.isArray(myAv.slots) && myAv.slots.length) {
-        myAv.slots.forEach((s: string) => set.add(s));
-      } else {
-        (myAv.days ?? []).forEach((d: string) =>
-          (myAv.time_blocks ?? []).forEach((b: string) => set.add(cellKey(d, b))),
-        );
-      }
+      const raw: string[] = Array.isArray(myAv.slots) && myAv.slots.length
+        ? myAv.slots
+        : ((myAv.days ?? []) as string[]).flatMap((d: string) =>
+            ((myAv.time_blocks ?? []) as string[]).map((b: string) => cellKey(d, b)),
+          );
+      raw.forEach((s: string) => {
+        const [d, b] = s.split("|");
+        const { day, block } = convertCell(d, b, storedTz, VIEWER_TZ);
+        set.add(cellKey(day, block));
+      });
     }
     setMySlots(set);
     setMyNotes(myAv?.notes ?? "");
@@ -143,13 +237,15 @@ export default function Directory() {
   const saveMine = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
+      // Slots are in viewer-local terms; persist them as-is, anchored to
+      // the viewer's timezone. Conversion happens at read-time for everyone.
       const slotsArr = Array.from(mySlots);
       const days = Array.from(new Set(slotsArr.map((s) => s.split("|")[0])));
       const blocks = Array.from(new Set(slotsArr.map((s) => s.split("|")[1])));
       const { error } = await supabase
         .from("team_availability")
         .upsert(
-          { user_id: user.id, slots: slotsArr, days, time_blocks: blocks, notes: myNotes || null },
+          { user_id: user.id, slots: slotsArr, days, time_blocks: blocks, notes: myNotes || null, timezone: VIEWER_TZ },
           { onConflict: "user_id" },
         );
       if (error) throw error;
@@ -170,7 +266,12 @@ export default function Directory() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Team directory</h1>
-        <p className="text-sm text-muted-foreground">Who's who — and when everyone's free.</p>
+        <p className="text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
+          Who's who — and when everyone's free.
+          <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border border-border bg-muted/40 text-muted-foreground">
+            <Globe size={11} /> Showing in your local time · {VIEWER_TZ}
+          </span>
+        </p>
       </div>
 
       {/* My availability editor */}

@@ -12,7 +12,8 @@ import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
 
 type WorkType = "project" | "specialist" | "standard" | "reimbursement";
-type Filter = "all" | WorkType;
+
+const SPECIALIST_RATE_CENTS = 3000; // $30/hr fixed
 
 const WORK_TYPES: { value: WorkType; label: string; short: string; tone: string }[] = [
   { value: "project",       label: "Project rate",     short: "Project",    tone: "bg-violet-500/15 text-violet-700 dark:text-violet-300 border-violet-500/30" },
@@ -38,7 +39,6 @@ export default function TimeAndPay() {
   const { user, isAdmin } = useAuth();
   const [view, setView] = useState<"mine" | "admin">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
-  const [filter, setFilter] = useState<Filter>("all");
   const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
 
@@ -110,7 +110,7 @@ export default function TimeAndPay() {
       ) : view === "admin" && isAdmin ? (
         <ApprovalQueue periodId={periodId} />
       ) : (
-        <MyTimesheet periodId={periodId} userId={user!.id} filter={filter} setFilter={setFilter} />
+        <MyTimesheet periodId={periodId} userId={user!.id} />
       )}
     </div>
   );

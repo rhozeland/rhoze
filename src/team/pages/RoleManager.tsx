@@ -569,7 +569,14 @@ function MastersheetPanel({ userId }: { userId: string }) {
         throw new Error(first ?? "Please fix the highlighted fields");
       }
       const patch: Record<string, any> = {};
-      Object.keys(draft).forEach((k) => { patch[k] = draft[k] === "" ? null : draft[k]; });
+      Object.keys(draft).forEach((k) => {
+        if (k === "hourly_rate_cents") {
+          const n = parseFloat(draft[k] || "0");
+          patch[k] = Number.isFinite(n) ? Math.round(n * 100) : 0;
+        } else {
+          patch[k] = draft[k] === "" ? null : draft[k];
+        }
+      });
       if (Object.keys(patch).length === 0) return;
       const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
       if (error) throw error;

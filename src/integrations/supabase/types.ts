@@ -1076,6 +1076,7 @@ export type Database = {
           days: string[]
           id: string
           notes: string | null
+          slots: string[]
           time_blocks: string[]
           updated_at: string
           user_id: string
@@ -1085,6 +1086,7 @@ export type Database = {
           days?: string[]
           id?: string
           notes?: string | null
+          slots?: string[]
           time_blocks?: string[]
           updated_at?: string
           user_id: string
@@ -1094,6 +1096,7 @@ export type Database = {
           days?: string[]
           id?: string
           notes?: string | null
+          slots?: string[]
           time_blocks?: string[]
           updated_at?: string
           user_id?: string

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import {
   Search, Plus, X, Instagram, DollarSign, Users as UsersIcon,
-  MessageCircle, ExternalLink, Tag, Trash2, ChevronDown, Check,
+  MessageCircle, ExternalLink, Tag, Trash2, ChevronDown, Check, BarChart3,
 } from "lucide-react";
 
 type Contact = {
@@ -50,16 +50,14 @@ type Thread = {
 };
 
 type View =
-  | "all-clients"
-  | "square"
+  | "people"
   | "ig-active"
   | "ig-inbound"
   | "ig-cold"
   | "ig-leads";
 
 const VIEWS: { id: View; label: string; hint: string }[] = [
-  { id: "all-clients", label: "All people", hint: "Square + manual" },
-  { id: "square", label: "Square clients", hint: "Paying customers" },
+  { id: "people", label: "People", hint: "Clients & contacts" },
   { id: "ig-active", label: "IG · active", hint: "Live conversations" },
   { id: "ig-inbound", label: "IG · inbound", hint: "They reached out" },
   { id: "ig-cold", label: "IG · cold", hint: "Sent, no reply" },
@@ -81,10 +79,13 @@ function fmtDate(d: string | null) {
 export default function CRM() {
   const qc = useQueryClient();
   const { user } = useAuth();
-  const [view, setView] = useState<View>("square");
+  const [view, setView] = useState<View>("people");
   const [search, setSearch] = useState("");
   const [openThread, setOpenThread] = useState<Thread | null>(null);
   const [adding, setAdding] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  // People view: source filter
+  const [peopleSource, setPeopleSource] = useState<"all" | "paying" | "manual">("all");
   // Live toggle filters (IG views only)
   const [flagFilters, setFlagFilters] = useState<{
     follower: boolean; mutual: boolean; pending: boolean; commenter: boolean; dm: boolean;
@@ -138,7 +139,8 @@ export default function CRM() {
   const filteredContacts = useMemo(() => {
     const q = search.trim().toLowerCase();
     let list = contactsQ.data ?? [];
-    if (view === "square") list = list.filter((c) => c.source === "square");
+    if (peopleSource === "paying") list = list.filter((c) => (c.lifetime_spend_cents || 0) > 0);
+    else if (peopleSource === "manual") list = list.filter((c) => c.source !== "square");
     if (q)
       list = list.filter(
         (c) =>
@@ -147,7 +149,7 @@ export default function CRM() {
           (c.email ?? "").toLowerCase().includes(q),
       );
     return list;
-  }, [contactsQ.data, view, search]);
+  }, [contactsQ.data, peopleSource, search]);
 
   // Stats strip
   const stats = useMemo(() => {
@@ -232,6 +234,9 @@ export default function CRM() {
               className="pl-9 w-72"
             />
           </div>
+          <Button size="sm" variant="ghost" onClick={() => setShowStats((s) => !s)} title="Toggle stats">
+            <BarChart3 size={14} /> {showStats ? "Hide stats" : "Stats"}
+          </Button>
           {!showThreads && (
             <Button size="sm" onClick={() => setAdding(true)}>
               <Plus size={14} /> New
@@ -240,14 +245,16 @@ export default function CRM() {
         </div>
       </div>
 
-      {/* Stats strip */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Stat icon={<UsersIcon size={14} />} label="Clients" value={String(stats.clients)} />
-        <Stat icon={<DollarSign size={14} />} label="Lifetime spend" value={fmtMoney(stats.totalSpend)} />
-        <Stat icon={<Instagram size={14} />} label="IG records" value={String(stats.igLeads)} />
-        <Stat icon={<MessageCircle size={14} />} label="Active chats" value={String(stats.active)} accent />
-        <Stat icon={<MessageCircle size={14} />} label="Inbound waiting" value={String(stats.inbound)} accent />
-      </div>
+      {/* Stats strip — collapsed by default */}
+      {showStats && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <Stat icon={<UsersIcon size={14} />} label="Clients" value={String(stats.clients)} />
+          <Stat icon={<DollarSign size={14} />} label="Lifetime spend" value={fmtMoney(stats.totalSpend)} />
+          <Stat icon={<Instagram size={14} />} label="IG records" value={String(stats.igLeads)} />
+          <Stat icon={<MessageCircle size={14} />} label="Active chats" value={String(stats.active)} accent />
+          <Stat icon={<MessageCircle size={14} />} label="Inbound waiting" value={String(stats.inbound)} accent />
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-1 border-b border-border overflow-x-auto -mx-1 px-1">
@@ -267,6 +274,17 @@ export default function CRM() {
           </button>
         ))}
       </div>
+
+      {/* People sub-filter */}
+      {!showThreads && (
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          <span className="text-muted-foreground mr-1">Show:</span>
+          <Chip on={peopleSource === "all"} onClick={() => setPeopleSource("all")}>All</Chip>
+          <Chip on={peopleSource === "paying"} onClick={() => setPeopleSource("paying")}>Paying customers</Chip>
+          <Chip on={peopleSource === "manual"} onClick={() => setPeopleSource("manual")}>Manual / leads</Chip>
+          <span className="ml-auto text-muted-foreground tabular-nums">{filteredContacts.length} shown</span>
+        </div>
+      )}
 
       {/* Live filter chips (IG views only) */}
       {showThreads && (

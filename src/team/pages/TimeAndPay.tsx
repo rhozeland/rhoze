@@ -39,7 +39,7 @@ export default function TimeAndPay() {
   const [view, setView] = useState<"mine" | "admin">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
   const [filter, setFilter] = useState<Filter>("all");
-  const [periodForm, setPeriodForm] = useState({ label: "", start_date: "", end_date: "", pay_date: "" });
+  const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
 
   const { data: periods } = useQuery({
@@ -91,13 +91,22 @@ export default function TimeAndPay() {
       </div>
 
       {showPeriodForm && isAdmin && (
-        <PeriodForm form={periodForm} setForm={setPeriodForm} onCreated={() => { setShowPeriodForm(false); setPeriodForm({ label: "", start_date: "", end_date: "", pay_date: "" }); qc.invalidateQueries({ queryKey: ["timesheet_periods"] }); }} />
+        <PeriodForm form={periodForm} setForm={setPeriodForm} onCreated={() => { setShowPeriodForm(false); setPeriodForm(defaultBiweeklyPeriod()); qc.invalidateQueries({ queryKey: ["timesheet_periods"] }); }} />
       )}
 
       {!periodId ? (
-        <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">
-          No pay periods yet. {isAdmin ? "Add one to get started." : "Ask an admin to create the first period."}
-        </div>
+        isAdmin ? (
+          <div className="space-y-3">
+            <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-4 text-center">
+              No pay periods yet — we pre-filled the current biweekly window. Edit if needed and click <strong>Create period</strong> to open the timesheet.
+            </div>
+            <PeriodForm form={periodForm} setForm={setPeriodForm} onCreated={() => { setPeriodForm(defaultBiweeklyPeriod()); qc.invalidateQueries({ queryKey: ["timesheet_periods"] }); }} />
+          </div>
+        ) : (
+          <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">
+            No pay periods yet. Ask an admin to create the first period.
+          </div>
+        )
       ) : view === "admin" && isAdmin ? (
         <ApprovalQueue periodId={periodId} />
       ) : (
@@ -105,6 +114,24 @@ export default function TimeAndPay() {
       )}
     </div>
   );
+}
+
+// Pre-fill a sensible biweekly period: Monday→Sunday(+13d), pay date = end + 5d
+function defaultBiweeklyPeriod() {
+  const today = new Date();
+  const day = today.getDay(); // 0=Sun..6=Sat
+  const offsetToMonday = (day === 0 ? -6 : 1 - day);
+  const start = new Date(today); start.setDate(today.getDate() + offsetToMonday);
+  const end = new Date(start); end.setDate(start.getDate() + 13);
+  const pay = new Date(end); pay.setDate(end.getDate() + 5);
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const fmt = (d: Date) => d.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
+  return {
+    label: `${fmt(start)} – ${fmt(end)}, ${end.getFullYear()}`,
+    start_date: iso(start),
+    end_date: iso(end),
+    pay_date: iso(pay),
+  };
 }
 
 function PeriodForm({ form, setForm, onCreated }: any) {

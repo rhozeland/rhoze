@@ -616,7 +616,7 @@ function ServiceDetailsDialog({
   );
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function Section({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="space-y-1.5">
       <div className="text-[11px] uppercase tracking-wider text-muted-foreground/80 font-medium">{label}</div>

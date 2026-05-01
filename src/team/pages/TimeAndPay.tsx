@@ -469,7 +469,7 @@ function Th({ children, className, icon }: any) {
 
 /* ---------- entry row ---------- */
 
-function EntryRow({ entry, stripe, locked, onChange, onDelete }: { entry: any; stripe: boolean; locked: boolean; onChange: (p: any) => void; onDelete: () => void }) {
+function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; onChange: (p: any) => void; onDelete: () => void }) {
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",
@@ -482,11 +482,37 @@ function EntryRow({ entry, stripe, locked, onChange, onDelete }: { entry: any; s
   });
 
   const isReimburse = local.work_type === "reimbursement";
+  const isProject   = local.work_type === "project";
+  const isSpecialist = local.work_type === "specialist";
+  const isHourly    = local.work_type === "standard";
+
+  // Rate column behavior:
+  //  - Hourly     → editable, defaults to user's role rate
+  //  - Specialist → locked at $30/hr
+  //  - Project    → editable flat amount (rate = total)
+  //  - Reimburse  → N/A
+  const rateLocked = locked || isReimburse || isSpecialist;
+
   const lineTotal = isReimburse
     ? toCents(local.expense || "0")
-    : Math.round((parseFloat(local.hours) || 0) * (parseFloat(local.rate) || 0) * 100) + toCents(local.expense || "0");
+    : isProject
+      ? toCents(local.rate || "0") + toCents(local.expense || "0")
+      : isSpecialist
+        ? Math.round((parseFloat(local.hours) || 0) * SPECIALIST_RATE_CENTS) + toCents(local.expense || "0")
+        : Math.round((parseFloat(local.hours) || 0) * (parseFloat(local.rate) || 0) * 100) + toCents(local.expense || "0");
 
   const commit = (patch: any) => { if (!locked) onChange(patch); };
+
+  // When the work type changes, snap the rate to the right default
+  const handleTypeChange = (next: string) => {
+    let nextRateCents = entry.rate_amount_cents ?? 0;
+    if (next === "specialist") nextRateCents = SPECIALIST_RATE_CENTS;
+    else if (next === "standard") nextRateCents = myHourlyCents || 0;
+    else if (next === "reimbursement") nextRateCents = 0;
+    // project keeps whatever was there (user-entered flat)
+    setLocal({ ...local, work_type: next, rate: (nextRateCents / 100).toString() });
+    commit({ work_type: next, rate_amount_cents: nextRateCents });
+  };
 
   // when start+end change, auto-fill hours
   const recalcHours = (start: string, end: string) => {
@@ -512,15 +538,15 @@ function EntryRow({ entry, stripe, locked, onChange, onDelete }: { entry: any; s
       </td>
       <td className="px-2 py-1">
         <select disabled={locked} value={local.work_type}
-          onChange={(e) => { setLocal({ ...local, work_type: e.target.value }); commit({ work_type: e.target.value }); }}
+          onChange={(e) => handleTypeChange(e.target.value)}
           className={cn("text-xs px-2 py-1 rounded-full border outline-none cursor-pointer font-medium", toneFor(local.work_type))}>
           {WORK_TYPES.map((w) => <option key={w.value} value={w.value} className="bg-background text-foreground">{w.short}</option>)}
         </select>
       </td>
       <td className="px-2 py-1">
-        <input disabled={locked || isReimburse} type="number" step="0.01" min="0"
+        <input disabled={rateLocked} type="number" step="0.01" min="0"
           value={isReimburse ? "" : local.rate}
-          placeholder={isReimburse ? "—" : "0.00"}
+          placeholder={isReimburse ? "—" : isProject ? "flat $" : "0.00"}
           onChange={(e) => setLocal({ ...local, rate: e.target.value })}
           onBlur={() => commit({ rate_amount_cents: toCents(local.rate || "0") })}
           className={cn(cellNum, "max-w-[90px]")} />

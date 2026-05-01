@@ -197,15 +197,15 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
   });
 
   const totals = useMemo(() => {
-    const t = { project: 0, specialist: 0, standard: 0, reimbursement: 0, expenses: 0, payroll: 0 };
+    const t = { project: 0, specialist: 0, standard: 0, expenses: 0, payroll: 0 };
     (entries ?? []).forEach((e: any) => {
       const h = Number(e.hours) || 0;
-      if (e.work_type === "project") t.project += h;
-      else if (e.work_type === "specialist") t.specialist += h;
-      else if (e.work_type === "reimbursement") t.reimbursement += h;
-      else t.standard += h;
+      const rate = e.rate_amount_cents || 0;
+      if (e.work_type === "specialist") { t.specialist += h; t.payroll += h * SPECIALIST_RATE_CENTS; }
+      else if (e.work_type === "project") { t.project += 1; t.payroll += rate; } // flat
+      else if (e.work_type === "reimbursement") { /* expense-only */ }
+      else { t.standard += h; t.payroll += h * rate; }
       t.expenses += e.expense_cents || 0;
-      if (e.work_type !== "reimbursement") t.payroll += h * (e.rate_amount_cents || 0);
     });
     t.payroll = Math.round(t.payroll) + t.expenses;
     return t;

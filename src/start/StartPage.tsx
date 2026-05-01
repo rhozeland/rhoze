@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -37,6 +37,85 @@ type ServiceDetail = {
   revisions: string;
   turnaround: string;
   notIncluded?: string[];
+};
+
+type ServiceExample = { title: string; artist: string };
+
+// Curated samples drawn from /projects.html — real client work, no asset hosting needed.
+const SERVICE_EXAMPLES: Record<string, ServiceExample[]> = {
+  // ---- Visual ----
+  "photo-shoot": [
+    { title: "Photoshoot", artist: "YOUNG $TEELO" },
+    { title: "Salar Gholami", artist: "BK Whiskey" },
+    { title: "Milad Zareian", artist: "BK Whiskey" },
+  ],
+  "content-edit": [
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey" },
+  ],
+  "commercial-edit": [
+    { title: "United MMA Sponsorship", artist: "BK Whiskey" },
+    { title: "True North Transparency", artist: "True North Transparency" },
+    { title: "Bet The House", artist: "Lex Carter" },
+  ],
+  "short-form-edit": [
+    { title: "Telephone", artist: "Runner's Club" },
+    { title: "Who Runs The World II", artist: "Runner's Club" },
+    { title: "Bombaaa", artist: "MONEE FINGAZ" },
+  ],
+  "mv-edit": [
+    { title: "The Mask", artist: "Ooak" },
+    { title: "Mansa Musa", artist: "MONEE FINGAZ" },
+    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ" },
+  ],
+  // ---- Audio ----
+  "audio-recording": [
+    { title: "Saint Flair West", artist: "Ooak" },
+    { title: "Surfin'", artist: "Straightdizzy" },
+    { title: "Dead 2 Me", artist: "Maizy F" },
+  ],
+  "mixing": [
+    { title: "Blue", artist: "MARV" },
+    { title: "GTTB", artist: "MARV" },
+    { title: "Envy", artist: "Luckz" },
+  ],
+  "mastering": [
+    { title: "Bank", artist: "MARV" },
+    { title: "60 Seconds", artist: "Luckz" },
+    { title: "Baby Blue", artist: "Godfrey Noir" },
+  ],
+  "podcast": [
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds" },
+    { title: "Sonic Boy", artist: "Sonicrealm" },
+    { title: "FUS", artist: "Rhozeland" },
+  ],
+  // ---- Development ----
+  "design": [
+    { title: "Indo LeLongLegs", artist: "Indoléstic" },
+    { title: "Server Incognito", artist: "Indoléstic" },
+    { title: "Hacking The Tower", artist: "Indoléstic" },
+  ],
+  "graphic-design": [
+    { title: "FUS", artist: "Rhozeland" },
+    { title: "Saint Flair West", artist: "Ooak" },
+    { title: "Sensimelia", artist: "JulzMadeThisOne" },
+  ],
+  "web-development": [
+    { title: "2025/2026 Development", artist: "Toronto Palapa Tours" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media" },
+    { title: "Server Incognito", artist: "Indoléstic" },
+  ],
+  "uiux-development": [
+    { title: "Indo LeLongLegs", artist: "Indoléstic" },
+    { title: "Hacking The Tower", artist: "Indoléstic" },
+    { title: "2025/2026 Development", artist: "Toronto Palapa Tours" },
+  ],
+  "consult": [
+    { title: "Global Masterminds", artist: "Songwriting Camp" },
+    { title: "True North Transparency", artist: "True North" },
+    { title: "BK Whiskey", artist: "MMA Sponsorship Series" },
+  ],
 };
 
 const SERVICE_DETAILS: Record<string, ServiceDetail> = {
@@ -602,6 +681,8 @@ function ServiceDetailsDialog({
 }) {
   const open = !!pkg;
   const detail = pkg ? SERVICE_DETAILS[pkg.slug] : undefined;
+  const examples = pkg ? SERVICE_EXAMPLES[pkg.slug] : undefined;
+  const projectsHref = pkg?.category ? `/projects.html#${pkg.category}` : "/projects.html";
   const creditLabel = pkg ? `${pkg.credits_cost} ${pkg.credits_cost === 1 ? "credit" : "credits"}` : "";
   const dollarLabel = pkg ? fmt(pkg.credits_cost * CREDIT_VALUE_CENTS) : "";
 
@@ -662,6 +743,30 @@ function ServiceDetailsDialog({
                 </>
               ) : (
                 <p className="text-muted-foreground">{pkg.description ?? "Details coming soon — book a free scope call and we'll walk through it."}</p>
+              )}
+
+              {examples && examples.length > 0 && (
+                <Section label="Recent work">
+                  <div className="flex flex-wrap gap-1.5">
+                    {examples.map((ex, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-baseline gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-[11px] text-foreground"
+                      >
+                        <span className="font-medium">{ex.title}</span>
+                        <span className="text-muted-foreground">— {ex.artist}</span>
+                      </span>
+                    ))}
+                  </div>
+                  <a
+                    href={projectsHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary hover:underline underline-offset-4"
+                  >
+                    See more in our work <ExternalLink size={11} />
+                  </a>
+                </Section>
               )}
             </div>
 

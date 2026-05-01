@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
@@ -30,12 +31,125 @@ const DEPOSIT_PERCENT = 0.30;    // 30% deposit to begin
 const DEPOSIT_MIN_CENTS = 5000;  // Stripe min
 const SCOPE_CALL_URL = "https://calendar.app.google/cXfhA8SeNLXeBYNdA";
 
+type ServiceDetail = {
+  scope: string;
+  deliverables: string[];
+  revisions: string;
+  turnaround: string;
+  notIncluded?: string[];
+};
+
+const SERVICE_DETAILS: Record<string, ServiceDetail> = {
+  // ---- Visual ----
+  "photo-shoot": {
+    scope: "Half-day shoot, ~3 hours on location or in our studio. One creative direction, one outfit/setup family.",
+    deliverables: ["Up to 40 color-graded stills (web + print res)", "Online gallery for selects", "Lifestyle, portrait, or product framing"],
+    revisions: "One round of re-edits on selected images (color, crop, light retouch).",
+    turnaround: "5–7 business days from shoot date.",
+    notIncluded: ["Travel beyond 25 mi", "Heavy retouching / compositing", "Hair, makeup, or talent"],
+  },
+  "content-edit": {
+    scope: "One polished long-form edit (3–8 minutes) from your supplied footage.",
+    deliverables: ["Edited master in 4K or 1080p", "Color pass + sound balance", "Royalty-safe music if needed"],
+    revisions: "Two rounds of timed revisions.",
+    turnaround: "7–10 business days after footage delivery.",
+    notIncluded: ["Original shooting", "Motion graphics beyond title cards", "Licensed music clearance"],
+  },
+  "commercial-edit": {
+    scope: "One commercial-grade cut, 15–60 seconds, agency-ready.",
+    deliverables: ["Master + 9:16 and 1:1 reframes", "Full color grade + sound design", "Logo / endcard treatment"],
+    revisions: "Two revision rounds before final lock.",
+    turnaround: "7–10 business days.",
+    notIncluded: ["Concept board / storyboard from scratch (add Strategy consult)", "VFX-heavy compositing"],
+  },
+  "short-form-edit": {
+    scope: "One vertical edit for Reels / TikTok / Shorts, ≤90 seconds.",
+    deliverables: ["9:16 master with captions", "Hook variant for A/B testing", "Trend-aware pacing"],
+    revisions: "Two revision rounds.",
+    turnaround: "3–5 business days.",
+    notIncluded: ["Account posting / scheduling", "Original shooting"],
+  },
+  "mv-edit": {
+    scope: "One full music-video edit synced to a single track from your footage.",
+    deliverables: ["Edited master in 4K or 1080p", "Color grade + transition design", "Mixdown sync to provided audio"],
+    revisions: "Two revision rounds.",
+    turnaround: "10–14 business days.",
+    notIncluded: ["VFX / 3D shots", "On-set direction (book Photo shoot for capture)"],
+  },
+  // ---- Audio ----
+  "audio-recording": {
+    scope: "Two-hour tracking session in our room with engineer. Sold in 2-credit blocks; book more for longer sessions.",
+    deliverables: ["Multi-track session files", "Rough monitor mix for reference", "Up to 3 vocalists / one band setup"],
+    revisions: "Re-tracking inside the booked window is included; additional time is billed at the same rate.",
+    turnaround: "Same-day session export; raw files within 48 hrs.",
+    notIncluded: ["Mixing or mastering (separate credits)", "Beat / instrumental production"],
+  },
+  "mixing": {
+    scope: "Mix one song to release standard. Stems in, mix-bus out.",
+    deliverables: ["Stereo mix (WAV 24-bit)", "Instrumental + acapella stems", "Reference-matched balance"],
+    revisions: "Two recall / revision rounds.",
+    turnaround: "5–7 business days from stem delivery.",
+    notIncluded: ["Mastering", "Vocal tuning beyond standard correction (add a credit for heavy comping)"],
+  },
+  "mastering": {
+    scope: "Master one track for streaming + DSP delivery, loudness-matched per platform.",
+    deliverables: ["Mastered WAV + MP3", "DDP / streaming-ready file", "LUFS-matched for Spotify / Apple"],
+    revisions: "One revision round.",
+    turnaround: "2–3 business days.",
+    notIncluded: ["Stem mastering (counts as 2 credits)", "Mix corrections"],
+  },
+  "podcast": {
+    scope: "Two-hour multi-mic podcast session, in-room or remote-coordinated.",
+    deliverables: ["One edited episode (≤60 min)", "Level + noise pass per speaker", "Intro / outro stitch from your assets"],
+    revisions: "One revision round per episode.",
+    turnaround: "3–5 business days post-session.",
+    notIncluded: ["Show artwork / branding (see Graphic design)", "Distribution upload"],
+  },
+  // ---- Development ----
+  "design": {
+    scope: "One hour of flexible design work — tweaks, layouts, or a small request.",
+    deliverables: ["Editable source file (Figma / PSD / AI)", "Exported assets for web or print"],
+    revisions: "Iterations within the booked hour are included.",
+    turnaround: "Same or next business day.",
+    notIncluded: ["Net-new brand identity (book a multi-credit block)"],
+  },
+  "graphic-design": {
+    scope: "One social-asset graphic — cover art, flyer, or a single carousel slide.",
+    deliverables: ["Final PNG / JPG at platform spec", "Editable source file on request"],
+    revisions: "Two revision rounds.",
+    turnaround: "2–3 business days.",
+    notIncluded: ["Multi-slide carousels (1 credit per slide)", "Animated assets"],
+  },
+  "web-development": {
+    scope: "Full small-site build, ≈4–6 pages, responsive and deployed.",
+    deliverables: ["Live deployed site", "CMS-light content blocks", "Basic SEO + analytics setup"],
+    revisions: "Two structured revision rounds before launch; copy edits welcomed throughout.",
+    turnaround: "3–4 weeks from kickoff.",
+    notIncluded: ["Custom backend / auth (scope separately)", "Logo or brand identity work", "Ongoing maintenance retainer"],
+  },
+  "uiux-development": {
+    scope: "Two-week UI/UX sprint focused on one product surface.",
+    deliverables: ["User flow map", "Wireframes for key screens", "Clickable Figma prototype"],
+    revisions: "Two structured review rounds during the sprint.",
+    turnaround: "Two weeks from kickoff.",
+    notIncluded: ["Production front-end build (see Web development)", "User research recruitment"],
+  },
+  "consult": {
+    scope: "One-hour strategy call — brand, roadmap, or release planning.",
+    deliverables: ["Recorded session", "Written follow-up with priorities + next steps"],
+    revisions: "Async follow-up questions for 7 days after the call.",
+    turnaround: "Booked within 3 business days.",
+    notIncluded: ["Execution work — pair with relevant service credits"],
+  },
+};
+
 export default function StartPage() {
   const [step, setStep] = useState<"intro" | "build" | "review" | "checkout">("intro");
   const [path, setPath] = useState<"subscribe" | "project" | null>(null);
   const [activeCat, setActiveCat] = useState<Category>("visual");
   const [cart, setCart] = useState<Record<string, number>>({});
   const [tierSlug, setTierSlug] = useState<string>("");
+  const [detailsFor, setDetailsFor] = useState<Pkg | null>(null);
   const [contact, setContact] = useState({
     name: "", email: "", phone: "", scope: "",
     region: "US" as "US" | "International",
@@ -216,22 +330,33 @@ export default function StartPage() {
                 const active = qty > 0;
                 const creditLabel = `${s.credits_cost} ${s.credits_cost === 1 ? "credit" : "credits"}`;
                 return (
-                  <button
+                  <div
                     key={s.id}
                     onClick={() => addToCart(s)}
-                    className={`text-left rounded-xl px-4 py-3 border transition-colors ${active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); addToCart(s); } }}
+                    className={`relative text-left rounded-xl px-4 py-3 border transition-colors cursor-pointer ${active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
                   >
-                    <div className="flex items-baseline justify-between gap-3">
+                    <div className="flex items-baseline justify-between gap-3 pr-7">
                       <span className="text-sm font-medium">{s.name}</span>
                       <span className={`text-xs tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>{creditLabel}</span>
                     </div>
                     {s.description && (
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{s.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2 pr-7">{s.description}</p>
                     )}
                     {s.min_quantity > 1 && (
                       <p className="text-[11px] text-muted-foreground mt-1">Sold in packs of {s.min_quantity}+</p>
                     )}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setDetailsFor(s); }}
+                      aria-label={`What this credit includes for ${s.name}`}
+                      className="absolute top-2 right-2 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
+                    >
+                      <Info size={14} />
+                    </button>
+                  </div>
                 );
               })}
               {inCat.length === 0 && (
@@ -279,6 +404,7 @@ export default function StartPage() {
             </Button>
           </div>
         </div>
+        <ServiceDetailsDialog pkg={detailsFor} onClose={() => setDetailsFor(null)} onAdd={(p) => { addToCart(p); setDetailsFor(null); }} fmt={fmt} />
       </div>
     );
   }
@@ -399,6 +525,102 @@ export default function StartPage() {
           returnUrl={`${window.location.origin}/start.html#/return?session_id={CHECKOUT_SESSION_ID}`}
         />
       </div>
+    </div>
+  );
+}
+
+function ServiceDetailsDialog({
+  pkg,
+  onClose,
+  onAdd,
+  fmt,
+}: {
+  pkg: Pkg | null;
+  onClose: () => void;
+  onAdd: (p: Pkg) => void;
+  fmt: (c: number) => string;
+}) {
+  const open = !!pkg;
+  const detail = pkg ? SERVICE_DETAILS[pkg.slug] : undefined;
+  const creditLabel = pkg ? `${pkg.credits_cost} ${pkg.credits_cost === 1 ? "credit" : "credits"}` : "";
+  const dollarLabel = pkg ? fmt(pkg.credits_cost * CREDIT_VALUE_CENTS) : "";
+
+  return (
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent className="max-w-lg">
+        {pkg && (
+          <>
+            <DialogHeader>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">{pkg.category}</div>
+              <DialogTitle className="text-xl">{pkg.name}</DialogTitle>
+              <DialogDescription className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-xs font-medium">
+                  {creditLabel} · {dollarLabel}
+                </span>
+                {pkg.min_quantity > 1 && (
+                  <span className="text-xs text-muted-foreground">Sold in packs of {pkg.min_quantity}+</span>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-5 pt-2 text-sm">
+              {detail ? (
+                <>
+                  <Section label="Scope">
+                    <p className="text-muted-foreground">{detail.scope}</p>
+                  </Section>
+                  <Section label="What you get">
+                    <ul className="space-y-1 text-muted-foreground">
+                      {detail.deliverables.map((d, i) => (
+                        <li key={i} className="flex gap-2">
+                          <span className="text-primary">·</span>
+                          <span>{d}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Section>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Section label="Revisions">
+                      <p className="text-muted-foreground">{detail.revisions}</p>
+                    </Section>
+                    <Section label="Turnaround">
+                      <p className="text-muted-foreground">{detail.turnaround}</p>
+                    </Section>
+                  </div>
+                  {detail.notIncluded && detail.notIncluded.length > 0 && (
+                    <Section label="Not included">
+                      <ul className="space-y-1 text-muted-foreground">
+                        {detail.notIncluded.map((d, i) => (
+                          <li key={i} className="flex gap-2">
+                            <span className="text-muted-foreground/60">×</span>
+                            <span>{d}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </Section>
+                  )}
+                </>
+              ) : (
+                <p className="text-muted-foreground">{pkg.description ?? "Details coming soon — book a free scope call and we'll walk through it."}</p>
+              )}
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end pt-4 border-t border-border">
+              <Button variant="outline" onClick={onClose}>Close</Button>
+              <Button onClick={() => onAdd(pkg)}>Add to estimate</Button>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function Section({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground/80 font-medium">{label}</div>
+      {children}
     </div>
   );
 }

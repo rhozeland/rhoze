@@ -694,7 +694,22 @@ function MastersheetPanel({ userId }: { userId: string }) {
             </SelectContent>
           </Select>
         </Field>
-        <Field label="Wage"><Input className="h-8" placeholder="$19.50/hour, Equity…" value={val("wage")} onChange={(e) => setDraft({ ...draft, wage: e.target.value })} /></Field>
+        <Field label="Wage (notes)"><Input className="h-8" placeholder="$19.50/hour, Equity…" value={val("wage")} onChange={(e) => setDraft({ ...draft, wage: e.target.value })} /></Field>
+        <Field label="Hourly rate ($/hr)">
+          <Input
+            className="h-8"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            value={
+              "hourly_rate_cents" in draft
+                ? draft.hourly_rate_cents
+                : (((profile as any)?.hourly_rate_cents ?? 0) / 100).toString()
+            }
+            onChange={(e) => setDraft({ ...draft, hourly_rate_cents: e.target.value })}
+          />
+        </Field>
         <Field label="Payment method">
           <Select value={val("payment_method") || "__none"} onValueChange={(v) => setDraft({ ...draft, payment_method: v === "__none" ? "" : v })}>
             <SelectTrigger className="h-8"><SelectValue placeholder="—" /></SelectTrigger>

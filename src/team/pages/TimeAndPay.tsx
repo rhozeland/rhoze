@@ -116,14 +116,20 @@ export default function TimeAndPay() {
   );
 }
 
-// Pre-fill a sensible biweekly period: Monday→Sunday(+13d), pay date = end + 5d
+// Biweekly schedule anchored on Apr 22 – May 5, 2026 (payday May 8).
+// All future periods step forward in 14-day windows; payday = end + 3 days.
+const ANCHOR_START = new Date("2026-04-22T00:00:00");
+const PAYDAY_OFFSET_DAYS = 3; // end (Tue) + 3 = Fri payday
+
 function defaultBiweeklyPeriod() {
   const today = new Date();
-  const day = today.getDay(); // 0=Sun..6=Sat
-  const offsetToMonday = (day === 0 ? -6 : 1 - day);
-  const start = new Date(today); start.setDate(today.getDate() + offsetToMonday);
+  const msPerDay = 86400000;
+  const daysSinceAnchor = Math.floor((today.getTime() - ANCHOR_START.getTime()) / msPerDay);
+  const cyclesAhead = Math.floor(daysSinceAnchor / 14);
+  const start = new Date(ANCHOR_START);
+  start.setDate(ANCHOR_START.getDate() + cyclesAhead * 14);
   const end = new Date(start); end.setDate(start.getDate() + 13);
-  const pay = new Date(end); pay.setDate(end.getDate() + 5);
+  const pay = new Date(end); pay.setDate(end.getDate() + PAYDAY_OFFSET_DAYS);
   const iso = (d: Date) => d.toISOString().slice(0, 10);
   const fmt = (d: Date) => d.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
   return {

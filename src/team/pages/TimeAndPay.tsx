@@ -285,6 +285,55 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
         </div>
       </div>
 
+      {/* Live breakdown table */}
+      <div className="border border-border rounded-lg overflow-hidden bg-card">
+        <div className="px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground bg-muted/40 border-b border-border">
+          Pay breakdown
+        </div>
+        <table className="w-full text-sm">
+          <thead className="text-[11px] uppercase tracking-wider text-muted-foreground bg-muted/20">
+            <tr>
+              <th className="text-left px-4 py-2 font-medium">Category</th>
+              <th className="text-right px-4 py-2 font-medium">Hours</th>
+              <th className="text-right px-4 py-2 font-medium">Rate</th>
+              <th className="text-right px-4 py-2 font-medium">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            <tr>
+              <td className="px-4 py-2">Standard (hourly)</td>
+              <td className="px-4 py-2 text-right tabular-nums">{totals.standard.toFixed(2)}</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">per row</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(Math.round(totals.standardPay))}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Specialist</td>
+              <td className="px-4 py-2 text-right tabular-nums">{totals.specialist.toFixed(2)}</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">$30.00/hr</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(Math.round(totals.specialistPay))}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Project (flat)</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">—</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">flat</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(Math.round(totals.projectPay))}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Reimbursements / expenses</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">—</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">—</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(totals.expenses)}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr className="bg-orange-500/10 border-t border-border">
+              <td className="px-4 py-2.5 font-semibold uppercase tracking-wider text-[11px]" colSpan={3}>Payroll total</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-bold">{formatCents(totals.payroll)}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
           {isLocked && timesheet.status === "submitted" && (

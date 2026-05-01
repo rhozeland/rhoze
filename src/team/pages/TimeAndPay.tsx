@@ -197,17 +197,21 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
   });
 
   const totals = useMemo(() => {
-    const t = { project: 0, specialist: 0, standard: 0, expenses: 0, payroll: 0 };
+    const t = {
+      project: 0, specialist: 0, standard: 0,
+      standardPay: 0, specialistPay: 0, projectPay: 0,
+      expenses: 0, payroll: 0,
+    };
     (entries ?? []).forEach((e: any) => {
       const h = Number(e.hours) || 0;
       const rate = e.rate_amount_cents || 0;
-      if (e.work_type === "specialist") { t.specialist += h; t.payroll += h * SPECIALIST_RATE_CENTS; }
-      else if (e.work_type === "project") { t.project += 1; t.payroll += rate; } // flat
+      if (e.work_type === "specialist") { t.specialist += h; t.specialistPay += h * SPECIALIST_RATE_CENTS; }
+      else if (e.work_type === "project") { t.project += 1; t.projectPay += rate; } // flat
       else if (e.work_type === "reimbursement") { /* expense-only */ }
-      else { t.standard += h; t.payroll += h * rate; }
+      else { t.standard += h; t.standardPay += h * rate; }
       t.expenses += e.expense_cents || 0;
     });
-    t.payroll = Math.round(t.payroll) + t.expenses;
+    t.payroll = Math.round(t.standardPay + t.specialistPay + t.projectPay) + t.expenses;
     return t;
   }, [entries]);
 
@@ -279,6 +283,55 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
           <SummaryCell icon={<Receipt size={13} />} label="Total expenses" value={formatCents(totals.expenses)} />
           <SummaryCell icon={<DollarSign size={13} />} label="Payroll total" value={formatCents(totals.payroll)} highlight />
         </div>
+      </div>
+
+      {/* Live breakdown table */}
+      <div className="border border-border rounded-lg overflow-hidden bg-card">
+        <div className="px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground bg-muted/40 border-b border-border">
+          Pay breakdown
+        </div>
+        <table className="w-full text-sm">
+          <thead className="text-[11px] uppercase tracking-wider text-muted-foreground bg-muted/20">
+            <tr>
+              <th className="text-left px-4 py-2 font-medium">Category</th>
+              <th className="text-right px-4 py-2 font-medium">Hours</th>
+              <th className="text-right px-4 py-2 font-medium">Rate</th>
+              <th className="text-right px-4 py-2 font-medium">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            <tr>
+              <td className="px-4 py-2">Standard (hourly)</td>
+              <td className="px-4 py-2 text-right tabular-nums">{totals.standard.toFixed(2)}</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">per row</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(Math.round(totals.standardPay))}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Specialist</td>
+              <td className="px-4 py-2 text-right tabular-nums">{totals.specialist.toFixed(2)}</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">$30.00/hr</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(Math.round(totals.specialistPay))}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Project (flat)</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">—</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">flat</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(Math.round(totals.projectPay))}</td>
+            </tr>
+            <tr>
+              <td className="px-4 py-2">Reimbursements / expenses</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">—</td>
+              <td className="px-4 py-2 text-right tabular-nums text-muted-foreground">—</td>
+              <td className="px-4 py-2 text-right tabular-nums font-medium">{formatCents(totals.expenses)}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr className="bg-orange-500/10 border-t border-border">
+              <td className="px-4 py-2.5 font-semibold uppercase tracking-wider text-[11px]" colSpan={3}>Payroll total</td>
+              <td className="px-4 py-2.5 text-right tabular-nums font-bold">{formatCents(totals.payroll)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
 
       {/* Actions */}

@@ -8,6 +8,13 @@
       var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add('dark');
     })();
   </script>
+  <script>
+    (function(){
+      if(location.pathname.replace(/\/$/,'')==='/book'){
+        location.replace('/book.html'+location.search+location.hash);
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rhozeland | The Creative Ecosystem</title>

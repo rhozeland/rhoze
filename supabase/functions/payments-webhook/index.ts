@@ -221,6 +221,31 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   // We only act on one-time payment sessions here — subscription sessions are handled
   // by customer.subscription.created.
   if (session.mode !== "payment") return;
+
+  // Project top-up → credit the existing project's balance, do NOT create a new intake.
+  if (session.metadata?.flow === "project_topup") {
+    const sb = getSupabase();
+    const projectId = session.metadata?.project_id;
+    if (!projectId) {
+      console.error("project_topup missing project_id", session.id);
+      return;
+    }
+    const dollarCents = Number(session.metadata?.topup_dollars_cents ?? 0);
+    const credits = Number(session.metadata?.topup_credits ?? 0);
+    const label = session.metadata?.label || "Top-up";
+    const { error } = await sb.rpc("apply_project_topup", {
+      _project_id: projectId,
+      _dollar_cents: dollarCents,
+      _credits: credits,
+      _label: label,
+      _stripe_session_id: session.id,
+      _stripe_payment_intent_id: session.payment_intent ?? null,
+    });
+    if (error) console.error("apply_project_topup failed", error);
+    else console.log("project top-up applied", projectId, label);
+    return;
+  }
+
   if (session.metadata?.flow !== "intake_one_time") return;
 
   const sb = getSupabase();

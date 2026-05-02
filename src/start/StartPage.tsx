@@ -29,7 +29,7 @@ const CATEGORIES: { id: Category; label: string; Icon: typeof Camera }[] = [
 const CREDIT_VALUE_CENTS = 7500; // 1 credit = $75 baseline
 const DEPOSIT_PERCENT = 0.30;    // 30% deposit to begin
 const DEPOSIT_MIN_CENTS = 5000;  // Stripe min
-const SCOPE_CALL_URL = "https://calendar.app.google/cXfhA8SeNLXeBYNdA";
+const SCOPE_CALL_URL = "https://calendar.app.google/gDmXPpVmzy1VRBFH6";
 
 type ServiceDetail = {
   scope: string;

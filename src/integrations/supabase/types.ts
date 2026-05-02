@@ -555,12 +555,14 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          alias: string | null
           avatar_url: string | null
           bio: string | null
           created_at: string
           date_of_birth: string | null
           department: Database["public"]["Enums"]["department"] | null
           display_name: string | null
+          email: string | null
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
           emergency_contact_relation: string | null
@@ -586,12 +588,14 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          alias?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           date_of_birth?: string | null
           department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
+          email?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
           emergency_contact_relation?: string | null
@@ -617,12 +621,14 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          alias?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           date_of_birth?: string | null
           department?: Database["public"]["Enums"]["department"] | null
           display_name?: string | null
+          email?: string | null
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
           emergency_contact_relation?: string | null

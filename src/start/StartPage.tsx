@@ -232,7 +232,7 @@ export default function StartPage() {
   const [search, setSearch] = useState("");
   const [contact, setContact] = useState({
     name: "", email: "", phone: "", scope: "",
-    region: "US" as "US" | "International",
+    region: "North America" as "North America" | "International",
     agree: false,
   });
 
@@ -329,7 +329,7 @@ export default function StartPage() {
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)} = one focused creative session. Final scope is confirmed on a kickoff call before any non-deposit payment.
+            1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope is confirmed on a kickoff call before any non-deposit payment.
           </div>
         </div>
       </div>
@@ -364,7 +364,6 @@ export default function StartPage() {
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 mt-2">
               <div className="text-sm">
                 <span className="font-semibold text-foreground">1 credit = {fmt(CREDIT_VALUE_CENTS)}</span>
-                <span className="text-muted-foreground"> · one focused creative session (≈ a half-day of work, one deliverable)</span>
               </div>
               <a
                 href={SCOPE_CALL_URL}
@@ -377,35 +376,78 @@ export default function StartPage() {
             </div>
           </header>
 
-          {/* Subscription tiers (for subscribe path) */}
+          {/* SUBSCRIBE: tiers are the primary focus, services are a reference list */}
           {path === "subscribe" && (
-            <div className="grid gap-3 md:grid-cols-3">
-              {tiers.map(t => {
-                const perCredit = t.credits > 0 ? t.price_cents / t.credits : 0;
-                const isPicked = tierSlug === t.slug;
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => setTierSlug(t.slug)}
-                    className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"}`}
-                  >
-                    <div className="text-xs uppercase tracking-wider text-muted-foreground">{t.name}</div>
-                    <div className="mt-2 flex items-baseline gap-1">
-                      <span className="text-2xl font-semibold">{fmt(t.price_cents)}</span>
-                      <span className="text-xs text-muted-foreground">/mo</span>
+            <>
+              <div className="grid gap-3 md:grid-cols-3">
+                {tiers.map(t => {
+                  const perCredit = t.credits > 0 ? t.price_cents / t.credits : 0;
+                  const isPicked = tierSlug === t.slug;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setTierSlug(t.slug)}
+                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border bg-card hover:border-primary/40"}`}
+                    >
+                      <div className="text-xs uppercase tracking-wider text-muted-foreground">{t.name}</div>
+                      <div className="mt-2 flex items-baseline gap-1">
+                        <span className="text-2xl font-semibold">{fmt(t.price_cents)}</span>
+                        <span className="text-xs text-muted-foreground">/mo</span>
+                      </div>
+                      <div className="mt-1 text-sm">{t.credits} credits / month</div>
+                      <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
+                      {t.description && (
+                        <div className="text-xs text-muted-foreground mt-3 leading-relaxed">{t.description}</div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Read-only service catalog — what credits unlock */}
+              <div className="space-y-3 border-t border-border pt-6">
+                <div className="flex items-baseline justify-between gap-3">
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">What you can spend credits on</div>
+                  <div className="text-[11px] text-muted-foreground">Tap any service for details</div>
+                </div>
+                {CATEGORIES.map(({ id, label, Icon }) => {
+                  const items = services.filter(s => s.category === id);
+                  if (items.length === 0) return null;
+                  return (
+                    <div key={id} className="space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground pt-2">
+                        <Icon size={13} /> {label}
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-1.5">
+                        {items.map(s => (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => setDetailsFor(s)}
+                            className="text-left rounded-lg px-3 py-2 border border-border bg-card hover:border-primary/40 transition-colors flex items-baseline justify-between gap-3"
+                          >
+                            <span className="text-sm font-medium truncate">{s.name}</span>
+                            <span className="text-[11px] tabular-nums text-muted-foreground shrink-0">
+                              {s.credits_cost} {s.credits_cost === 1 ? "cr" : "cr"}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="mt-1 text-sm">{t.credits} credits</div>
-                    <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
-                  </button>
-                );
-              })}
-            </div>
+                  );
+                })}
+                <p className="text-[11px] text-muted-foreground pt-2">
+                  Spend your monthly credits on any combination of these services. Unused credits roll over while your subscription stays active.
+                </p>
+              </div>
+            </>
           )}
 
-          {/* Funnel: category pills */}
+          {/* SCOPE A PROJECT: selectable services with live estimate */}
+          {path === "project" && (
           <div className="space-y-5">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">
-              {path === "subscribe" ? "What you can spend credits on" : "Services"}
+              Services
             </div>
 
             {/* Search */}
@@ -513,6 +555,7 @@ export default function StartPage() {
               )}
             </div>
           </div>
+          )}
 
           {/* Selected list (à la carte path mainly, but visible always) */}
           {selected.length > 0 && path === "project" && (
@@ -666,7 +709,7 @@ export default function StartPage() {
               <div className="space-y-1.5">
                 <Label>Region</Label>
                 <div className="inline-flex rounded-lg border border-border p-1 bg-muted/30 w-full">
-                  {(["US", "International"] as const).map(r => (
+                  {(["North America", "International"] as const).map(r => (
                     <button
                       key={r}
                       type="button"
@@ -691,9 +734,9 @@ export default function StartPage() {
             <label className="flex items-start gap-2 text-xs text-muted-foreground">
               <Checkbox checked={contact.agree} onCheckedChange={v => setContact({ ...contact, agree: !!v })} />
               <span>
-                I understand this is an initial estimate. {path === "project"
-                  ? "The deposit secures the kickoff slot and is refundable within 7 days if we can't agree on scope. Remaining payments are due at agreed milestones."
-                  : "Subscriptions renew monthly until canceled. Unused credits roll over while your subscription stays active."}
+                {path === "project"
+                  ? "I understand this is an initial estimate. The deposit secures the kickoff slot and is refundable within 7 days if we can't agree on scope. Remaining payments are due at agreed milestones. The more detail I share, the more accurate the follow-up estimate will be."
+                  : "I understand my subscription renews monthly until I cancel. Unused credits roll over while my subscription stays active."}
               </span>
             </label>
 
@@ -721,7 +764,7 @@ export default function StartPage() {
           customerEmail={contact.email}
           customerName={contact.name}
           customerPhone={contact.phone || undefined}
-          customerCountry={contact.region === "US" ? "US" : undefined}
+          customerCountry={undefined}
           message={
             path === "project"
               ? `Estimate: ${totalCredits} credits / ${fmt(estimateCents)}. Selection: ${selected.map(s => `${s.name} x${cart[s.id]}`).join(", ")}. Scope: ${contact.scope}`

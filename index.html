@@ -1342,9 +1342,35 @@
       fill: none;
     }
 
+    .story-doc-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+      align-items: start;
+      margin-bottom: 0.75rem;
+    }
+
+    .story-doc-column {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      align-self: start;
+    }
+
+    .story-doc-column > .section-kicker {
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .story-copy-column h3,
+    .story-copy-column p {
+      margin: 0;
+    }
+
     @media (min-width: 640px) {
       .story-doc-row {
         grid-template-columns: 1.3fr 1fr;
+        gap: 1rem;
       }
     }
 

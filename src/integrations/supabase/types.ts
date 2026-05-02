@@ -62,6 +62,48 @@ export type Database = {
           },
         ]
       }
+      bookings: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          slot_end: string
+          slot_start: string
+          status: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          slot_end: string
+          slot_start: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          slot_end?: string
+          slot_start?: string
+          status?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           company: string | null

@@ -17,6 +17,9 @@ import TimeAndPay from "./pages/TimeAndPay";
 import ClientPortal from "./pages/ClientPortal";
 import ClientAccess from "./pages/ClientAccess";
 import PortalLanding from "./pages/PortalLanding";
+import ClientLayout from "./components/ClientLayout";
+import ClientHome from "./pages/ClientHome";
+import ClientProfile from "./pages/ClientProfile";
 import { useAuth } from "./lib/auth";
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
@@ -37,6 +40,13 @@ function RequireTeam({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function RequireClient({ children }: { children: React.ReactNode }) {
+  const { loading, session } = useAuth();
+  if (loading) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
+  if (!session) return <Navigate to="/client" replace />;
+  return <>{children}</>;
+}
+
 export default function TeamApp() {
   return (
     <Routes>
@@ -45,8 +55,19 @@ export default function TeamApp() {
       <Route path="/portal" element={<PortalLanding />} />
       {/* Client-facing entry — sign up / sign in / redeem project code. No referral required. */}
       <Route path="/client" element={<ClientAccess />} />
-      {/* Client-facing portal — accessible to any signed-in user; RLS gates project access */}
-      <Route path="/portal/:id" element={<ClientPortal />} />
+      {/* Client-facing portal — wrapped in ClientLayout so signed-in clients
+          stay inside the client surface and never land in team pages. */}
+      <Route
+        element={
+          <RequireClient>
+            <ClientLayout />
+          </RequireClient>
+        }
+      >
+        <Route path="/client/home" element={<ClientHome />} />
+        <Route path="/client/profile" element={<ClientProfile />} />
+        <Route path="/portal/:id" element={<ClientPortal />} />
+      </Route>
       <Route
         path="/"
         element={

@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Trash2, ArrowUpDown, ExternalLink } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, ArrowUpDown, ExternalLink, Pencil, Save, X } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
@@ -24,6 +24,15 @@ export default function ProjectDetail() {
   const [itemOpen, setItemOpen] = useState(false);
   const [tierOpen, setTierOpen] = useState(false);
   const [tierForm, setTierForm] = useState({ newTierSlug: "gold", immediate: false, topUpCredits: false });
+
+  // Inline edit state for ledger rows
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editItemForm, setEditItemForm] = useState<{ deliverable: string; description: string; session_hours: string; base_amount: string; debit_kind: string; credits_used: string }>({
+    deliverable: "", description: "", session_hours: "0", base_amount: "0", debit_kind: "dollar", credits_used: "0",
+  });
+
+  // Notes editing
+  const [notesDraft, setNotesDraft] = useState<string | null>(null);
 
   const [payForm, setPayForm] = useState({ label: "", amount: "", due_date: "", paid_date: "", method: "e-transfer", notes: "" });
   const [itemForm, setItemForm] = useState({
@@ -162,6 +171,69 @@ export default function ProjectDetail() {
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
+
+  const updateItem = useMutation({
+    mutationFn: async (itemId: string) => {
+      const amount = toCents(editItemForm.base_amount);
+      const credits = parseInt(editItemForm.credits_used || "0", 10) || 0;
+      const { error } = await supabase
+        .from("project_line_items")
+        .update({
+          deliverable: editItemForm.deliverable.trim(),
+          description: editItemForm.description.trim() || null,
+          session_hours: parseFloat(editItemForm.session_hours) || 0,
+          base_amount_cents: amount,
+          grand_total_cents: amount,
+          debit_kind: editItemForm.debit_kind,
+          credits_used: editItemForm.debit_kind === "credit" ? credits : 0,
+        })
+        .eq("id", itemId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Deliverable updated" });
+      setEditingItemId(null);
+      qc.invalidateQueries({ queryKey: ["project_line_items", id] });
+    },
+    onError: (e: any) => toast({ title: "Update failed", description: e.message, variant: "destructive" }),
+  });
+
+  const deleteItem = useMutation({
+    mutationFn: async (itemId: string) => {
+      const { error } = await supabase.from("project_line_items").delete().eq("id", itemId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Deliverable deleted" });
+      qc.invalidateQueries({ queryKey: ["project_line_items", id] });
+    },
+    onError: (e: any) => toast({ title: "Delete failed", description: e.message, variant: "destructive" }),
+  });
+
+  const saveNotes = useMutation({
+    mutationFn: async (next: string) => {
+      const { error } = await supabase.from("projects").update({ notes: next }).eq("id", id!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Notes saved" });
+      setNotesDraft(null);
+      qc.invalidateQueries({ queryKey: ["project", id] });
+    },
+    onError: (e: any) => toast({ title: "Save failed", description: e.message, variant: "destructive" }),
+  });
+
+  const startEditItem = (i: any) => {
+    setEditingItemId(i.id);
+    setEditItemForm({
+      deliverable: i.deliverable ?? "",
+      description: i.description ?? "",
+      session_hours: String(i.session_hours ?? 0),
+      base_amount: ((i.grand_total_cents ?? 0) / 100).toString(),
+      debit_kind: i.debit_kind ?? "dollar",
+      credits_used: String(i.credits_used ?? 0),
+    });
+  };
 
   if (isLoading) return <div className="text-sm text-muted-foreground">Loading…</div>;
   if (!project) return <div>Not found.</div>;
@@ -302,14 +374,58 @@ export default function ProjectDetail() {
                   <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No deliverables yet.</td></tr>
                 )}
                 {(items ?? []).map((i: any) => (
-                  <tr key={i.id}>
-                    <td className="px-3 py-2 whitespace-nowrap">{formatDate(i.booking_date)}</td>
-                    <td className="px-3 py-2">{i.deliverable}</td>
-                    <td className="px-3 py-2 text-muted-foreground">{i.description ?? "—"}</td>
-                    <td className="px-3 py-2 text-right">{i.session_hours ?? 0}</td>
-                    <td className="px-3 py-2 text-right">{formatCents(i.grand_total_cents)}</td>
-                    <td className="px-3 py-2 text-right text-xs">{i.debit_kind === "credit" ? `${i.credits_used} cr` : "$"}</td>
-                  </tr>
+                  editingItemId === i.id ? (
+                    <tr key={i.id} className="bg-muted/30">
+                      <td className="px-3 py-2 whitespace-nowrap text-xs">{formatDate(i.booking_date)}</td>
+                      <td className="px-3 py-2">
+                        <Input value={editItemForm.deliverable} onChange={(e) => setEditItemForm({ ...editItemForm, deliverable: e.target.value })} className="h-8" />
+                      </td>
+                      <td className="px-3 py-2">
+                        <Input value={editItemForm.description} onChange={(e) => setEditItemForm({ ...editItemForm, description: e.target.value })} className="h-8" />
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <Input type="number" step="0.25" value={editItemForm.session_hours} onChange={(e) => setEditItemForm({ ...editItemForm, session_hours: e.target.value })} className="h-8 w-16 text-right ml-auto" />
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <Input type="number" step="0.01" value={editItemForm.base_amount} onChange={(e) => setEditItemForm({ ...editItemForm, base_amount: e.target.value })} className="h-8 w-24 text-right ml-auto" />
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Select value={editItemForm.debit_kind} onValueChange={(v) => setEditItemForm({ ...editItemForm, debit_kind: v })}>
+                            <SelectTrigger className="h-8 w-20"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="dollar">$</SelectItem>
+                              <SelectItem value="credit">cr</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {editItemForm.debit_kind === "credit" && (
+                            <Input type="number" value={editItemForm.credits_used} onChange={(e) => setEditItemForm({ ...editItemForm, credits_used: e.target.value })} className="h-8 w-14 text-right" />
+                          )}
+                          <Button size="icon" variant="ghost" onClick={() => updateItem.mutate(i.id)} disabled={updateItem.isPending} title="Save"><Save size={14} /></Button>
+                          <Button size="icon" variant="ghost" onClick={() => setEditingItemId(null)} title="Cancel"><X size={14} /></Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={i.id} className="group">
+                      <td className="px-3 py-2 whitespace-nowrap">{formatDate(i.booking_date)}</td>
+                      <td className="px-3 py-2">{i.deliverable}</td>
+                      <td className="px-3 py-2 text-muted-foreground">{i.description ?? "—"}</td>
+                      <td className="px-3 py-2 text-right">{i.session_hours ?? 0}</td>
+                      <td className="px-3 py-2 text-right">{formatCents(i.grand_total_cents)}</td>
+                      <td className="px-3 py-2 text-right text-xs">
+                        <div className="flex items-center justify-end gap-1">
+                          <span>{i.debit_kind === "credit" ? `${i.credits_used} cr` : "$"}</span>
+                          {isAdmin && (
+                            <>
+                              <Button size="icon" variant="ghost" className="opacity-0 group-hover:opacity-100 h-7 w-7" onClick={() => startEditItem(i)} title="Edit"><Pencil size={12} /></Button>
+                              <Button size="icon" variant="ghost" className="opacity-0 group-hover:opacity-100 h-7 w-7" onClick={() => { if (confirm("Delete this deliverable?")) deleteItem.mutate(i.id); }} title="Delete"><Trash2 size={12} /></Button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
                 ))}
               </tbody>
             </table>
@@ -383,9 +499,28 @@ export default function ProjectDetail() {
         </TabsContent>
 
         <TabsContent value="notes" className="space-y-3 mt-4">
-          <div className="text-sm whitespace-pre-wrap text-muted-foreground border border-border rounded-lg p-4 bg-card">
-            {project.notes || "No notes yet."}
-          </div>
+          {notesDraft === null ? (
+            <div className="space-y-2">
+              <div className="text-sm whitespace-pre-wrap text-muted-foreground border border-border rounded-lg p-4 bg-card min-h-[6rem]">
+                {project.notes || <span className="italic">No notes yet.</span>}
+              </div>
+              {isAdmin && (
+                <Button size="sm" variant="outline" onClick={() => setNotesDraft(project.notes ?? "")}>
+                  <Pencil size={12} /> Edit notes
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Textarea rows={8} value={notesDraft} onChange={(e) => setNotesDraft(e.target.value)} placeholder="Internal project notes…" />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={() => saveNotes.mutate(notesDraft)} disabled={saveNotes.isPending}>
+                  <Save size={12} /> Save
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setNotesDraft(null)}>Cancel</Button>
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="roadmap" className="space-y-3 mt-4">

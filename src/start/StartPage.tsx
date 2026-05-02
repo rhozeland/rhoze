@@ -232,7 +232,7 @@ export default function StartPage() {
   const [search, setSearch] = useState("");
   const [contact, setContact] = useState({
     name: "", email: "", phone: "", scope: "",
-    region: "US" as "US" | "International",
+    region: "North America" as "North America" | "International",
     agree: false,
   });
 
@@ -329,7 +329,7 @@ export default function StartPage() {
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)} = one focused creative session. Final scope is confirmed on a kickoff call before any non-deposit payment.
+            1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope is confirmed on a kickoff call before any non-deposit payment.
           </div>
         </div>
       </div>

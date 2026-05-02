@@ -709,7 +709,7 @@ export default function StartPage() {
               <div className="space-y-1.5">
                 <Label>Region</Label>
                 <div className="inline-flex rounded-lg border border-border p-1 bg-muted/30 w-full">
-                  {(["US", "International"] as const).map(r => (
+                  {(["North America", "International"] as const).map(r => (
                     <button
                       key={r}
                       type="button"
@@ -734,9 +734,9 @@ export default function StartPage() {
             <label className="flex items-start gap-2 text-xs text-muted-foreground">
               <Checkbox checked={contact.agree} onCheckedChange={v => setContact({ ...contact, agree: !!v })} />
               <span>
-                I understand this is an initial estimate. {path === "project"
-                  ? "The deposit secures the kickoff slot and is refundable within 7 days if we can't agree on scope. Remaining payments are due at agreed milestones."
-                  : "Subscriptions renew monthly until canceled. Unused credits roll over while your subscription stays active."}
+                {path === "project"
+                  ? "I understand this is an initial estimate. The deposit secures the kickoff slot and is refundable within 7 days if we can't agree on scope. Remaining payments are due at agreed milestones. The more detail I share, the more accurate the follow-up estimate will be."
+                  : "I understand my subscription renews monthly until I cancel. Unused credits roll over while my subscription stays active."}
               </span>
             </label>
 
@@ -764,7 +764,7 @@ export default function StartPage() {
           customerEmail={contact.email}
           customerName={contact.name}
           customerPhone={contact.phone || undefined}
-          customerCountry={contact.region === "US" ? "US" : undefined}
+          customerCountry={undefined}
           message={
             path === "project"
               ? `Estimate: ${totalCredits} credits / ${fmt(estimateCents)}. Selection: ${selected.map(s => `${s.name} x${cart[s.id]}`).join(", ")}. Scope: ${contact.scope}`

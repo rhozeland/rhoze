@@ -397,6 +397,7 @@ export default function StartPage() {
                       </div>
                       <div className="mt-1 text-sm">{t.credits} credits / month</div>
                       <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
+                      <div className="text-[11px] text-muted-foreground mt-1">Unused credits roll over while your subscription stays active.</div>
                       {t.description && (
                         <div className="text-xs text-muted-foreground mt-3 leading-relaxed">{t.description}</div>
                       )}
@@ -737,7 +738,7 @@ export default function StartPage() {
               <span>
                 {path === "project"
                   ? "I understand this is an initial estimate. The deposit secures the kickoff slot and is refundable within 7 days if we can't agree on scope. Remaining payments are due at agreed milestones. The more detail I share, the more accurate the follow-up estimate will be."
-                  : "I understand my subscription renews monthly until I cancel. Unused credits roll over while my subscription stays active."}
+                  : "I understand my subscription renews monthly until I cancel. Unused credits roll over month-to-month while my subscription stays active, and expire if I cancel or my subscription lapses."}
               </span>
             </label>
 

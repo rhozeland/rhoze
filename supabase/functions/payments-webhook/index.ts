@@ -25,6 +25,39 @@ function genProjectCode(): string {
   return `RHZ-${block()}-${block()}`;
 }
 
+const PORTAL_URL = "https://www.rhozeland.com/team.html#/client";
+
+async function sendProjectCodeEmail(opts: {
+  recipientEmail: string;
+  name: string | null;
+  projectCode: string;
+  projectId: string;
+  kind: "subscription" | "one_time";
+}) {
+  if (!opts.recipientEmail) {
+    console.log("skip project-code email — no recipient", opts.projectId);
+    return;
+  }
+  try {
+    const { error } = await getSupabase().functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "project-code-delivery",
+        recipientEmail: opts.recipientEmail,
+        idempotencyKey: `project-code-${opts.projectId}`,
+        templateData: {
+          name: opts.name ?? undefined,
+          projectCode: opts.projectCode,
+          portalUrl: PORTAL_URL,
+          kind: opts.kind,
+        },
+      },
+    });
+    if (error) console.error("send project-code email failed", error);
+  } catch (e) {
+    console.error("send project-code email threw", e);
+  }
+}
+
 async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
   const item = subscription.items?.data?.[0];
   const stripePriceId = item?.price?.id;
@@ -41,6 +74,9 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
 
   // Find or create the project for this subscription
   let projectId: string | null = subscription.metadata?.project_id ?? null;
+  let createdProjectCode: string | null = null;
+  let createdClientName: string | null = null;
+  let createdClientEmail: string | null = null;
   if (!projectId) {
     const code = genProjectCode();
     const clientName = subscription.metadata?.customer_name ?? "New client";
@@ -60,6 +96,9 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
       console.error("project insert failed", error);
     } else {
       projectId = project.id;
+      createdProjectCode = code;
+      createdClientName = clientName;
+      createdClientEmail = subscription.metadata?.customer_email ?? null;
       if (tierSlug && projectId) {
         await sb.rpc("apply_tier_credits", { _project_id: projectId, _tier_slug: tierSlug });
       }
@@ -80,6 +119,17 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
     cancel_at_period_end: subscription.cancel_at_period_end ?? false,
     updated_at: new Date().toISOString(),
   }, { onConflict: "stripe_subscription_id" });
+
+  // Deliver project code via email — only on first creation, not on every webhook retry.
+  if (createdProjectCode && projectId && createdClientEmail) {
+    await sendProjectCodeEmail({
+      recipientEmail: createdClientEmail,
+      name: createdClientName,
+      projectCode: createdProjectCode,
+      projectId,
+      kind: "subscription",
+    });
+  }
 }
 
 async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
@@ -203,6 +253,23 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
       console.error("create_project_from_intake failed", convErr);
     } else {
       console.log("project auto-created from intake", projectId);
+      // Look up the freshly-generated project_code and email it to the buyer.
+      if (projectId) {
+        const { data: proj } = await sb
+          .from("projects")
+          .select("project_code, client_email, client_name")
+          .eq("id", projectId as string)
+          .maybeSingle();
+        if (proj?.project_code && proj?.client_email) {
+          await sendProjectCodeEmail({
+            recipientEmail: proj.client_email as string,
+            name: (proj.client_name as string) ?? null,
+            projectCode: proj.project_code as string,
+            projectId: projectId as string,
+            kind: "one_time",
+          });
+        }
+      }
     }
   }
 }

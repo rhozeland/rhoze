@@ -1588,6 +1588,17 @@ export type Database = {
         Args: { _subscription_id: string }
         Returns: undefined
       }
+      apply_project_topup: {
+        Args: {
+          _credits: number
+          _dollar_cents: number
+          _label: string
+          _project_id: string
+          _stripe_payment_intent_id?: string
+          _stripe_session_id: string
+        }
+        Returns: undefined
+      }
       apply_tier_credits: {
         Args: { _project_id: string; _tier_slug: string }
         Returns: undefined

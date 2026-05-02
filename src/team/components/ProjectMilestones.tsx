@@ -33,10 +33,13 @@ export default function ProjectMilestones({
   projectId,
   canEdit,
   canApprove,
+  canSubmit = false,
 }: {
   projectId: string;
   canEdit: boolean;
   canApprove: boolean;
+  /** Allow non-editors (clients) to flip pending → submitted (request review). */
+  canSubmit?: boolean;
 }) {
   const qc = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
@@ -195,17 +198,20 @@ export default function ProjectMilestones({
                 {m.approved_at && <span>Approved {formatDate(m.approved_at)}</span>}
               </div>
 
-              {(canEdit || canApprove) && (
+              {(canEdit || canApprove || canSubmit) && (
                 <div className="flex flex-wrap items-center gap-1 mt-2">
-                  {canEdit && m.status === "pending" && (
+                  {(canEdit || canSubmit) && m.status === "pending" && (
                     <Button size="sm" variant="outline" onClick={() => updateStatus.mutate({ id: m.id, next: "submitted" })}>
-                      Mark submitted
+                      {canEdit ? "Mark submitted" : "Request review"}
                     </Button>
                   )}
-                  {(canEdit || canApprove) && m.status === "submitted" && (
+                  {canApprove && m.status === "submitted" && (
                     <Button size="sm" onClick={() => updateStatus.mutate({ id: m.id, next: "approved" })}>
                       Approve
                     </Button>
+                  )}
+                  {!canApprove && !canEdit && m.status === "submitted" && (
+                    <span className="text-[11px] text-muted-foreground italic">Awaiting team approval</span>
                   )}
                   {canEdit && m.status === "approved" && (
                     <Button size="sm" variant="ghost" onClick={() => updateStatus.mutate({ id: m.id, next: "pending" })}>

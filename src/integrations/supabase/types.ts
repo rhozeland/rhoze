@@ -880,6 +880,54 @@ export type Database = {
           },
         ]
       }
+      project_milestones: {
+        Row: {
+          approved_at: string | null
+          created_at: string
+          created_by: string | null
+          credit_cost: number
+          description: string | null
+          due_date: string | null
+          id: string
+          project_id: string
+          sort_order: number
+          status: Database["public"]["Enums"]["milestone_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          credit_cost?: number
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          project_id: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["milestone_status"]
+          submitted_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          credit_cost?: number
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          project_id?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["milestone_status"]
+          submitted_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_payments: {
         Row: {
           amount_cents: number
@@ -947,6 +995,7 @@ export type Database = {
           credit_balance: number
           dollar_balance_cents: number
           id: string
+          intake_estimate_cents: number
           notes: string | null
           owner_id: string | null
           package_id: string | null
@@ -970,6 +1019,7 @@ export type Database = {
           credit_balance?: number
           dollar_balance_cents?: number
           id?: string
+          intake_estimate_cents?: number
           notes?: string | null
           owner_id?: string | null
           package_id?: string | null
@@ -993,6 +1043,7 @@ export type Database = {
           credit_balance?: number
           dollar_balance_cents?: number
           id?: string
+          intake_estimate_cents?: number
           notes?: string | null
           owner_id?: string | null
           package_id?: string | null
@@ -1556,6 +1607,7 @@ export type Database = {
         | "lost"
       department: "marketing" | "hr" | "development" | "sales" | "operations"
       invite_status: "pending" | "accepted" | "revoked"
+      milestone_status: "pending" | "submitted" | "approved" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1696,6 +1748,7 @@ export const Constants = {
       ],
       department: ["marketing", "hr", "development", "sales", "operations"],
       invite_status: ["pending", "accepted", "revoked"],
+      milestone_status: ["pending", "submitted", "approved", "cancelled"],
     },
   },
 } as const

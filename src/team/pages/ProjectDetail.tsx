@@ -15,6 +15,7 @@ import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
 import ProjectMilestones from "../components/ProjectMilestones";
+import ProjectAllocations from "../components/ProjectAllocations";
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -313,6 +314,7 @@ export default function ProjectDetail() {
           <TabsTrigger value="ledger">Ledger</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
           <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
+          <TabsTrigger value="payroll">Payroll</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 
@@ -525,6 +527,13 @@ export default function ProjectDetail() {
 
         <TabsContent value="roadmap" className="space-y-3 mt-4">
           <ProjectMilestones projectId={id!} canEdit={true} canApprove={isAdmin} />
+        </TabsContent>
+
+        <TabsContent value="payroll" className="space-y-3 mt-4">
+          <ProjectAllocations projectId={id!} />
+          <p className="text-xs text-muted-foreground">
+            When admin runs payroll for a pay period, each member earns their <strong>share %</strong> of payments collected on this project during that window.
+          </p>
         </TabsContent>
       </Tabs>
     </div>

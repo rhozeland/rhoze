@@ -329,7 +329,7 @@ export default function StartPage() {
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)} — roughly 2 hours of focused work or one small deliverable. Final scope is confirmed on a kickoff call before any non-deposit payment.
+            1 credit = {fmt(CREDIT_VALUE_CENTS)} — roughly 1 hour of focused work or one small deliverable. Final scope is confirmed on a kickoff call before any non-deposit payment.
           </div>
         </div>
       </div>
@@ -364,7 +364,7 @@ export default function StartPage() {
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 mt-2">
               <div className="text-sm">
                 <span className="font-semibold text-foreground">1 credit = {fmt(CREDIT_VALUE_CENTS)}</span>
-                <span className="text-muted-foreground"> · ~2 hrs of focused work or one small deliverable</span>
+                <span className="text-muted-foreground"> · ~1 hr of focused work or one small deliverable</span>
               </div>
               <a
                 href={SCOPE_CALL_URL}

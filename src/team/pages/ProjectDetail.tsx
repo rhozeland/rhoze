@@ -14,6 +14,7 @@ import { ArrowLeft, Plus, Trash2, ArrowUpDown, ExternalLink } from "lucide-react
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
+import ProjectMilestones from "../components/ProjectMilestones";
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -239,6 +240,7 @@ export default function ProjectDetail() {
         <TabsList>
           <TabsTrigger value="ledger">Ledger</TabsTrigger>
           <TabsTrigger value="payments">Payments</TabsTrigger>
+          <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
         </TabsList>
 

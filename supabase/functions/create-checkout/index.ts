@@ -17,6 +17,11 @@ interface Body {
   cart?: CartLine[];
   // Custom-amount deposit (one-time)
   depositCents?: number;
+  // Project top-up: credits this project's balance instead of creating a new intake.
+  // Use either `topupDollarCents` (custom dollar amount) or `topupCreditPack`
+  // (predefined number of session credits at a fixed per-credit price).
+  topupDollarCents?: number;
+  topupCreditPack?: number; // number of session credits to buy
   // Buyer info
   customerEmail?: string;
   customerName?: string;
@@ -65,6 +70,74 @@ async function handle(req: Request) {
   const useManaged = shouldUseManagedPayments(body.customerCountry);
 
   try {
+    // ----- Project top-up checkout (credits an existing project) -----
+    if (body.topupDollarCents || body.topupCreditPack) {
+      if (!body.projectId) return jsonError("projectId required for top-up", 400);
+
+      const lineItems: any[] = [];
+      let labelParts: string[] = [];
+      let creditsToAdd = 0;
+      let dollarsToAdd = 0;
+
+      if (body.topupCreditPack && body.topupCreditPack > 0) {
+        const credits = Math.floor(body.topupCreditPack);
+        if (credits < 1 || credits > 100) return jsonError("Credit pack must be 1–100 credits", 400);
+        // À-la-carte credit pricing: $60/credit (mirrors Bronze tier ~$60/credit avg).
+        const PER_CREDIT_CENTS = 6000;
+        const amount = credits * PER_CREDIT_CENTS;
+        lineItems.push({
+          price_data: {
+            currency: "usd",
+            product_data: { name: `${credits} session credit${credits === 1 ? "" : "s"}`, tax_code: "txcd_10103001" },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        });
+        creditsToAdd = credits;
+        labelParts.push(`${credits} credit${credits === 1 ? "" : "s"}`);
+      }
+
+      if (body.topupDollarCents && body.topupDollarCents > 0) {
+        if (body.topupDollarCents < 5000) return jsonError("Top-up must be at least $50", 400);
+        const amount = Math.floor(body.topupDollarCents);
+        lineItems.push({
+          price_data: {
+            currency: "usd",
+            product_data: { name: "Project top-up", tax_code: "txcd_10103001" },
+            unit_amount: amount,
+          },
+          quantity: 1,
+        });
+        dollarsToAdd = amount;
+        labelParts.push(`$${(amount / 100).toFixed(2)}`);
+      }
+
+      if (!lineItems.length) return jsonError("Nothing to charge", 400);
+
+      const metadata: Record<string, string> = {
+        flow: "project_topup",
+        project_id: body.projectId,
+        topup_credits: String(creditsToAdd),
+        topup_dollars_cents: String(dollarsToAdd),
+        label: labelParts.join(" + "),
+      };
+      if (body.userId) metadata.userId = body.userId;
+      metadata.managed_payments = useManaged ? "true" : "false";
+
+      const session = await stripe.checkout.sessions.create({
+        line_items: lineItems,
+        mode: "payment",
+        ui_mode: "embedded_page",
+        return_url: body.returnUrl,
+        ...(body.customerEmail && { customer_email: body.customerEmail }),
+        metadata,
+        ...(useManaged
+          ? { managed_payments: { enabled: true } }
+          : { automatic_tax: { enabled: true } }),
+      } as any);
+      return jsonOk({ clientSecret: session.client_secret });
+    }
+
     // ----- Subscription checkout -----
     if (body.subscriptionPriceId) {
       if (!isSafeId(body.subscriptionPriceId)) return jsonError("Invalid subscriptionPriceId", 400);

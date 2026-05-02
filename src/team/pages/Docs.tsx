@@ -11,6 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Search, CheckCircle2, Circle } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
+import GoogleDriveBrowser from "../components/GoogleDriveBrowser";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function Docs() {
   const qc = useQueryClient();
@@ -98,7 +100,17 @@ export default function Docs() {
                 <div className="space-y-1.5"><Label>Title *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
                 <div className="space-y-1.5"><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></div>
                 <div className="space-y-1.5"><Label>Content (markdown)</Label><Textarea rows={5} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} /></div>
-                <div className="space-y-1.5"><Label>File URL (optional)</Label><Input value={form.file_url} onChange={(e) => setForm({ ...form, file_url: e.target.value })} /></div>
+                <div className="space-y-1.5">
+                  <Label>File URL (optional)</Label>
+                  <Input
+                    value={form.file_url}
+                    onChange={(e) => setForm({ ...form, file_url: e.target.value })}
+                    placeholder="Paste a Google Doc / Sheet / Slides / Drive link"
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    Google Docs, Sheets, Slides, Drive files & folders, YouTube and Loom links auto-embed.
+                  </p>
+                </div>
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: !!v })} />
                   Required for all team members
@@ -110,15 +122,22 @@ export default function Docs() {
         )}
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
-        <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
-      </div>
+      <Tabs defaultValue="docs">
+        <TabsList>
+          <TabsTrigger value="docs">Internal docs</TabsTrigger>
+          <TabsTrigger value="drive">Shared Drive</TabsTrigger>
+        </TabsList>
 
-      {Object.entries(grouped).length === 0 && (
-        <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">No docs yet.</div>
-      )}
-      {Object.entries(grouped).map(([cat, list]) => (
+        <TabsContent value="docs" className="space-y-4 mt-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+            <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
+          </div>
+
+          {Object.entries(grouped).length === 0 && (
+            <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">No docs yet.</div>
+          )}
+          {Object.entries(grouped).map(([cat, list]) => (
         <div key={cat}>
           <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{cat}</div>
           <div className="space-y-2">
@@ -156,7 +175,17 @@ export default function Docs() {
             })}
           </div>
         </div>
-      ))}
+          ))}
+        </TabsContent>
+
+        <TabsContent value="drive" className="mt-4">
+          <p className="text-xs text-muted-foreground mb-3">
+            Browse the shared Google Drive linked to the workspace. Click a file to preview it inline; click the
+            external icon to open it in Google Drive. Anyone with team access can read this view.
+          </p>
+          <GoogleDriveBrowser />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

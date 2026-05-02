@@ -442,9 +442,17 @@ export default function Directory() {
               )}
               <div className="min-w-0 flex-1">
                 <div className="font-medium truncate">{p.display_name ?? "Unnamed"}</div>
+                {p.alias && (
+                  <div className="text-xs text-muted-foreground truncate">aka {p.alias}</div>
+                )}
                 <div className="text-xs text-muted-foreground truncate">
                   {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
                 </div>
+                {p.email && (
+                  <a href={`mailto:${p.email}`} className="text-xs text-primary hover:underline truncate block mt-0.5">
+                    {p.email}
+                  </a>
+                )}
                 {p.specialty && <div className="text-xs text-primary mt-1">{p.specialty}</div>}
               </div>
             </div>

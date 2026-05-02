@@ -87,10 +87,30 @@ export default function Intake() {
       }
       // Mark intake as converted
       await supabase.from("intake_requests").update({ status: "converted", project_id: project.id }).eq("id", req.id);
+      // Fire project-code delivery email (template already registered).
+      if (project?.client_email && project?.project_code) {
+        try {
+          await supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "project-code-delivery",
+              recipientEmail: project.client_email,
+              idempotencyKey: `project-code-${project.id}`,
+              templateData: {
+                name: project.client_name ?? undefined,
+                projectCode: project.project_code,
+                portalUrl: `${window.location.origin}/team.html#/client`,
+                kind: req.subscribe_monthly || req.package_id ? "subscription" : "one_time",
+              },
+            },
+          });
+        } catch (e) {
+          console.error("project-code email failed", e);
+        }
+      }
       return project;
     },
     onSuccess: (project: any) => {
-      toast({ title: "Project created", description: `Code: ${project.project_code}` });
+      toast({ title: "Project created", description: `Code: ${project.project_code} — code emailed to client` });
       qc.invalidateQueries({ queryKey: ["intake_requests"] });
       qc.invalidateQueries({ queryKey: ["projects"] });
     },
@@ -116,9 +136,41 @@ export default function Intake() {
         .update({ status: "paid", paid_at: new Date().toISOString() })
         .eq("id", id);
       if (error) throw error;
+      // If this intake already has a converted project, re-send the project code.
+      const { data: intake } = await supabase
+        .from("intake_requests")
+        .select("project_id, contact_email, contact_name, subscribe_monthly, package_id")
+        .eq("id", id)
+        .maybeSingle();
+      if (intake?.project_id) {
+        const { data: proj } = await supabase
+          .from("projects")
+          .select("project_code, client_email, client_name, id")
+          .eq("id", intake.project_id)
+          .maybeSingle();
+        if (proj?.project_code && (proj.client_email || intake.contact_email)) {
+          try {
+            await supabase.functions.invoke("send-transactional-email", {
+              body: {
+                templateName: "project-code-delivery",
+                recipientEmail: proj.client_email ?? intake.contact_email,
+                idempotencyKey: `project-code-${proj.id}`,
+                templateData: {
+                  name: proj.client_name ?? intake.contact_name ?? undefined,
+                  projectCode: proj.project_code,
+                  portalUrl: `${window.location.origin}/team.html#/client`,
+                  kind: intake.subscribe_monthly || intake.package_id ? "subscription" : "one_time",
+                },
+              },
+            });
+          } catch (e) {
+            console.error("project-code email failed", e);
+          }
+        }
+      }
     },
     onSuccess: () => {
-      toast({ title: "Marked as paid" });
+      toast({ title: "Marked as paid", description: "Project code emailed if a project is linked." });
       qc.invalidateQueries({ queryKey: ["intake_requests"] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),

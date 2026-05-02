@@ -118,7 +118,7 @@ async function handle(req: Request) {
       lineItems.push({
         price_data: {
           currency: "usd",
-          product_data: { name: "Project deposit" },
+          product_data: { name: "Project deposit", tax_code: "txcd_20030000" },
           unit_amount: Math.floor(body.depositCents),
         },
         quantity: 1,

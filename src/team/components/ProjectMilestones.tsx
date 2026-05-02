@@ -82,13 +82,12 @@ export default function ProjectMilestones({
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, next }: { id: string; next: Status }) => {
-      const patch: Record<string, any> = { status: next };
-      if (next === "submitted") patch.submitted_at = new Date().toISOString();
-      if (next === "approved") patch.approved_at = new Date().toISOString();
-      if (next === "pending") {
-        patch.submitted_at = null;
-        patch.approved_at = null;
-      }
+      const now = new Date().toISOString();
+      const patch =
+        next === "submitted" ? { status: next, submitted_at: now }
+        : next === "approved" ? { status: next, approved_at: now }
+        : next === "pending" ? { status: next, submitted_at: null, approved_at: null }
+        : { status: next };
       const { error } = await supabase.from("project_milestones").update(patch).eq("id", id);
       if (error) throw error;
     },

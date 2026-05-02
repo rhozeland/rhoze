@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { ExternalLink, CreditCard, DollarSign } from "lucide-react";
+import { ExternalLink, CreditCard, DollarSign, Sparkles } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
@@ -19,6 +19,8 @@ export default function ClientPortal() {
   const { loading, session, user } = useAuth();
   const [depositOpen, setDepositOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("250");
+  const [creditsOpen, setCreditsOpen] = useState(false);
+  const [creditPack, setCreditPack] = useState<number>(4);
 
   const { data: project, isLoading, error } = useQuery({
     queryKey: ["portal_project", id],
@@ -264,17 +266,17 @@ export default function ClientPortal() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground">Top up</div>
-              <div className="text-base font-semibold mt-0.5">Pay a deposit by card</div>
+              <div className="text-base font-semibold mt-0.5">Add dollars to this project</div>
               <p className="text-xs text-muted-foreground mt-1">
-                Adds funds to this project's dollar balance. Settles instantly via Stripe.
+                Funds your project's dollar balance — used as deliverables get billed. Settles instantly by card.
               </p>
             </div>
             <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
               <DialogTrigger asChild>
-                <Button size="lg"><DollarSign size={16} className="mr-1" /> Pay a deposit</Button>
+                <Button size="lg"><DollarSign size={16} className="mr-1" /> Add funds</Button>
               </DialogTrigger>
               <DialogContent className="max-w-lg">
-                <DialogHeader><DialogTitle>Pay a deposit</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>Add funds to {project.title}</DialogTitle></DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-1.5">
                     <Label>Amount (USD, min $50)</Label>
@@ -285,15 +287,84 @@ export default function ClientPortal() {
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
                     />
+                    <p className="text-[11px] text-muted-foreground">
+                      Added directly to this project's dollar balance after payment.
+                    </p>
                   </div>
                   {Number(depositAmount) >= 50 && (
                     <div className="border border-border rounded-lg overflow-hidden">
                       <StripeEmbeddedCheckout
-                        depositCents={Math.floor(Number(depositAmount) * 100)}
+                        topupDollarCents={Math.floor(Number(depositAmount) * 100)}
                         customerEmail={user?.email}
                         userId={user?.id}
                         projectId={id!}
-                        returnUrl={`${window.location.origin}/team.html#/portal/${id}?deposit=success`}
+                        returnUrl={`${window.location.origin}/team.html#/portal/${id}?topup=success`}
+                      />
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </section>
+
+        {/* Buy session credits */}
+        <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">Session credits</div>
+              <div className="text-base font-semibold mt-0.5">Buy more credits</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Each credit covers one studio session ($60/credit, à la carte).
+                Subscribe to a retainer for better pricing.
+              </p>
+            </div>
+            <Dialog open={creditsOpen} onOpenChange={setCreditsOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg" variant="outline"><Sparkles size={16} className="mr-1" /> Buy credits</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader><DialogTitle>Buy session credits</DialogTitle></DialogHeader>
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label>How many credits?</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {[2, 4, 8, 12].map((n) => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => setCreditPack(n)}
+                          className={`text-sm px-3 py-2 rounded-lg border transition ${
+                            creditPack === n
+                              ? "border-foreground bg-foreground text-background"
+                              : "border-border hover:border-foreground/40"
+                          }`}
+                        >
+                          {n} credits · ${n * 60}
+                        </button>
+                      ))}
+                    </div>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="100"
+                      step="1"
+                      value={creditPack}
+                      onChange={(e) => setCreditPack(Math.max(1, Math.min(100, parseInt(e.target.value || "1"))))}
+                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      Total <strong>${creditPack * 60}</strong> for <strong>{creditPack} credit{creditPack === 1 ? "" : "s"}</strong>.
+                      Added to your balance instantly after payment.
+                    </p>
+                  </div>
+                  {creditPack >= 1 && (
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <StripeEmbeddedCheckout
+                        topupCreditPack={creditPack}
+                        customerEmail={user?.email}
+                        userId={user?.id}
+                        projectId={id!}
+                        returnUrl={`${window.location.origin}/team.html#/portal/${id}?topup=success`}
                       />
                     </div>
                   )}

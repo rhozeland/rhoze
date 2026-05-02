@@ -528,6 +528,13 @@ export default function ProjectDetail() {
         <TabsContent value="roadmap" className="space-y-3 mt-4">
           <ProjectMilestones projectId={id!} canEdit={true} canApprove={isAdmin} />
         </TabsContent>
+
+        <TabsContent value="payroll" className="space-y-3 mt-4">
+          <ProjectAllocations projectId={id!} />
+          <p className="text-xs text-muted-foreground">
+            When admin runs payroll for a pay period, each member earns their <strong>share %</strong> of payments collected on this project during that window.
+          </p>
+        </TabsContent>
       </Tabs>
     </div>
   );

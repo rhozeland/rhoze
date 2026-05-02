@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.submit-public-lead]
 verify_jwt = false
 
+[functions.google-drive-list]
+verify_jwt = true
+
 [functions.payments-webhook]
 verify_jwt = false
 

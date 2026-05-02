@@ -30,6 +30,12 @@ const TAX_CODES: Record<string, string> = {
   alc_design: "txcd_20030000",
   alc_consult: "txcd_20030000",
   project_deposit: "txcd_20030000",
+  alc_content_edit: "txcd_20030000",
+  alc_commercial_edit: "txcd_20030000",
+  alc_short_form_edit: "txcd_20030000",
+  alc_graphic_design: "txcd_20030000",
+  alc_web_development: "txcd_20030000",
+  alc_uiux_development: "txcd_20030000",
 };
 
 Deno.serve(async (req) => {

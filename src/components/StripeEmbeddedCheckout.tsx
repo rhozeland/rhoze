@@ -6,6 +6,8 @@ interface Props {
   subscriptionPriceId?: string;
   cart?: { priceId: string; quantity?: number }[];
   depositCents?: number;
+  topupDollarCents?: number;
+  topupCreditPack?: number;
   customerEmail?: string;
   customerName?: string;
   customerPhone?: string;

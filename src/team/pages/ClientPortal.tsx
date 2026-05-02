@@ -7,6 +7,7 @@ import { ExternalLink, ArrowLeft, CreditCard } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
+import ProjectMilestones from "../components/ProjectMilestones";
 
 export default function ClientPortal() {
   const { id } = useParams<{ id: string }>();
@@ -18,7 +19,7 @@ export default function ClientPortal() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("projects")
-        .select("id,title,client_name,status,credit_balance,dollar_balance_cents,active_tier_slug,pending_tier_slug,pending_change_at,archived_at,stripe_subscription_id,created_at")
+        .select("id,title,client_name,status,credit_balance,dollar_balance_cents,active_tier_slug,pending_tier_slug,pending_change_at,archived_at,stripe_subscription_id,created_at,intake_estimate_cents")
         .eq("id", id!)
         .maybeSingle();
       if (error) throw error;
@@ -36,6 +37,30 @@ export default function ClientPortal() {
         .eq("project_id", id!)
         .order("paid_date", { ascending: false, nullsFirst: false })
         .limit(10);
+      return data ?? [];
+    },
+  });
+
+  const { data: lineItems } = useQuery({
+    queryKey: ["portal_line_items", id],
+    enabled: !!id && !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("project_line_items")
+        .select("grand_total_cents,debit_kind")
+        .eq("project_id", id!);
+      return data ?? [];
+    },
+  });
+
+  const { data: milestones } = useQuery({
+    queryKey: ["portal_milestones_summary", id],
+    enabled: !!id && !!session,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("project_milestones")
+        .select("status")
+        .eq("project_id", id!);
       return data ?? [];
     },
   });
@@ -96,6 +121,20 @@ export default function ClientPortal() {
   const tier = project.active_tier_slug;
   const pending = project.pending_tier_slug;
 
+  // Estimate vs current
+  const intakeEstimate = (project as any).intake_estimate_cents ?? 0;
+  const currentTotalCents = (lineItems ?? [])
+    .filter((i: any) => i.debit_kind === "dollar")
+    .reduce((s: number, i: any) => s + (i.grand_total_cents ?? 0), 0);
+  const deltaCents = currentTotalCents - intakeEstimate;
+
+  // Pipeline status derived from milestones + project state
+  const pipelineStage = derivePipelineStage({
+    projectStatus: project.status,
+    archived: !!project.archived_at,
+    milestones: milestones ?? [],
+  });
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-3xl mx-auto p-6 md:p-10 space-y-8">
@@ -115,6 +154,9 @@ export default function ClientPortal() {
             </Link>
           )}
         </header>
+
+        {/* Pipeline pills */}
+        <PipelineStrip current={pipelineStage} />
 
         {/* Hero CTA — Manage subscription */}
         <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">
@@ -178,6 +220,39 @@ export default function ClientPortal() {
           </div>
         </section>
 
+        {/* Estimate vs current */}
+        {(intakeEstimate > 0 || currentTotalCents > 0) && (
+          <section className="rounded-2xl border border-border bg-card p-5 space-y-3">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Estimate</div>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Original</div>
+                <div className="text-lg font-semibold mt-0.5">{formatCents(intakeEstimate)}</div>
+              </div>
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Current</div>
+                <div className="text-lg font-semibold mt-0.5">{formatCents(currentTotalCents)}</div>
+              </div>
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Delta</div>
+                <div className={`text-lg font-semibold mt-0.5 ${deltaCents > 0 ? "text-amber-600 dark:text-amber-400" : deltaCents < 0 ? "text-emerald-600 dark:text-emerald-400" : ""}`}>
+                  {deltaCents > 0 ? "+" : ""}{formatCents(deltaCents)}
+                </div>
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              "Original" is the estimate from your intake. "Current" is the live total of approved deliverables on
+              this project. Delta shows how the scope has shifted.
+            </p>
+          </section>
+        )}
+
+        {/* Roadmap */}
+        <section className="space-y-2">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">Project roadmap</div>
+          <ProjectMilestones projectId={id!} canEdit={isTeam} canApprove={true} />
+        </section>
+
         {/* Recent payments */}
         <section className="space-y-2">
           <div className="text-xs uppercase tracking-wider text-muted-foreground">Recent payments</div>
@@ -232,5 +307,67 @@ function SubscriptionBadge({ sub, hasStripeSub }: { sub: any; hasStripeSub: bool
     <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${cls}`}>
       {label}
     </span>
+  );
+}
+type PipelineStage = "intake" | "scoped" | "in_production" | "review" | "delivered" | "archived";
+
+function derivePipelineStage(opts: {
+  projectStatus: string;
+  archived: boolean;
+  milestones: { status: string }[];
+}): PipelineStage {
+  if (opts.archived || opts.projectStatus === "archived") return "archived";
+  const total = opts.milestones.length;
+  if (total === 0) return "intake";
+  const approved = opts.milestones.filter((m) => m.status === "approved").length;
+  const submitted = opts.milestones.filter((m) => m.status === "submitted").length;
+  if (approved === total) return "delivered";
+  if (submitted > 0) return "review";
+  if (approved > 0) return "in_production";
+  return "scoped";
+}
+
+function PipelineStrip({ current }: { current: PipelineStage }) {
+  const stages: { key: PipelineStage; label: string }[] = [
+    { key: "intake", label: "Intake" },
+    { key: "scoped", label: "Scoped" },
+    { key: "in_production", label: "In production" },
+    { key: "review", label: "Review" },
+    { key: "delivered", label: "Delivered" },
+  ];
+  const currentIdx = stages.findIndex((s) => s.key === current);
+  const isArchived = current === "archived";
+  return (
+    <section className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        {stages.map((s, i) => {
+          const reached = !isArchived && i <= currentIdx;
+          const isCurrent = !isArchived && i === currentIdx;
+          return (
+            <div key={s.key} className="flex items-center gap-2">
+              <span
+                className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-full border ${
+                  isCurrent
+                    ? "bg-foreground text-background border-foreground"
+                    : reached
+                    ? "bg-muted text-foreground border-border"
+                    : "bg-transparent text-muted-foreground border-border"
+                }`}
+              >
+                {s.label}
+              </span>
+              {i < stages.length - 1 && (
+                <span className={`h-px w-4 sm:w-6 ${reached && i < currentIdx ? "bg-foreground" : "bg-border"}`} />
+              )}
+            </div>
+          );
+        })}
+        {isArchived && (
+          <span className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-full border bg-muted text-muted-foreground border-border ml-auto">
+            Archived
+          </span>
+        )}
+      </div>
+    </section>
   );
 }

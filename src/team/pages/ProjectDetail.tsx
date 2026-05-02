@@ -387,6 +387,10 @@ export default function ProjectDetail() {
             {project.notes || "No notes yet."}
           </div>
         </TabsContent>
+
+        <TabsContent value="roadmap" className="space-y-3 mt-4">
+          <ProjectMilestones projectId={id!} canEdit={true} canApprove={isAdmin} />
+        </TabsContent>
       </Tabs>
     </div>
   );

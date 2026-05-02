@@ -16,6 +16,7 @@ import Intake from "./pages/Intake";
 import TimeAndPay from "./pages/TimeAndPay";
 import ClientPortal from "./pages/ClientPortal";
 import ClientAccess from "./pages/ClientAccess";
+import PortalLanding from "./pages/PortalLanding";
 import { useAuth } from "./lib/auth";
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
@@ -40,6 +41,8 @@ export default function TeamApp() {
   return (
     <Routes>
       <Route path="/login" element={<TeamLogin />} />
+      {/* Unified portal entry — two cards (Client Portal / Team Access) */}
+      <Route path="/portal" element={<PortalLanding />} />
       {/* Client-facing entry — sign up / sign in / redeem project code. No referral required. */}
       <Route path="/client" element={<ClientAccess />} />
       {/* Client-facing portal — accessible to any signed-in user; RLS gates project access */}

@@ -25,11 +25,11 @@ const Footer = () => {
         </p>
         <div className="flex items-center gap-6">
           <a
-            href="/team.html"
+            href="/team.html#/portal"
             className="text-xs text-muted-foreground/60 hover:text-foreground transition-colors font-body"
-            title="Team Portal"
+            title="Portal"
           >
-            Team Access
+            Portal
           </a>
           <a
             href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"

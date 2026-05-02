@@ -29,6 +29,10 @@ export default function ClientAccess() {
     if (!loading && session && code) {
       void redeem();
     }
+    // Signed in without a pending code → send to projects list.
+    if (!loading && session && !code) {
+      navigate("/client/home", { replace: true });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session]);
 

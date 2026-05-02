@@ -37,7 +37,7 @@ export default function ClientLayout() {
             <span className="text-xs font-medium">Client portal</span>
           </Link>
           <nav className="flex items-center gap-1">
-            <NavLink to="/client" end className={linkCls}>
+            <NavLink to="/client/home" end className={linkCls}>
               <FolderOpen size={12} /> Projects
             </NavLink>
             <NavLink to="/client/profile" className={linkCls}>

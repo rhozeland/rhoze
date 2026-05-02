@@ -226,6 +226,17 @@ export default function Settings() {
             <Label>Pronouns</Label>
             <Input placeholder="they/them" value={form.pronouns} onChange={(e) => setForm({ ...form, pronouns: e.target.value })} />
           </div>
+          <div className="space-y-1.5">
+            <Label>Alias</Label>
+            <Input placeholder="Short handle teammates know you by" value={personal.alias}
+              onChange={(e) => setPersonal({ ...personal, alias: e.target.value })} />
+            <div className="text-[11px] text-muted-foreground">Shown on your card in the team directory.</div>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Email</Label>
+            <Input value={user?.email ?? ""} disabled readOnly />
+            <div className="text-[11px] text-muted-foreground">From your sign-in account. Visible to teammates.</div>
+          </div>
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Bio</Label>
             <Textarea rows={4} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />

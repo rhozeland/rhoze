@@ -309,3 +309,65 @@ function SubscriptionBadge({ sub, hasStripeSub }: { sub: any; hasStripeSub: bool
     </span>
   );
 }
+type PipelineStage = "intake" | "scoped" | "in_production" | "review" | "delivered" | "archived";
+
+function derivePipelineStage(opts: {
+  projectStatus: string;
+  archived: boolean;
+  milestones: { status: string }[];
+}): PipelineStage {
+  if (opts.archived || opts.projectStatus === "archived") return "archived";
+  const total = opts.milestones.length;
+  if (total === 0) return "intake";
+  const approved = opts.milestones.filter((m) => m.status === "approved").length;
+  const submitted = opts.milestones.filter((m) => m.status === "submitted").length;
+  if (approved === total) return "delivered";
+  if (submitted > 0) return "review";
+  if (approved > 0) return "in_production";
+  return "scoped";
+}
+
+function PipelineStrip({ current }: { current: PipelineStage }) {
+  const stages: { key: PipelineStage; label: string }[] = [
+    { key: "intake", label: "Intake" },
+    { key: "scoped", label: "Scoped" },
+    { key: "in_production", label: "In production" },
+    { key: "review", label: "Review" },
+    { key: "delivered", label: "Delivered" },
+  ];
+  const currentIdx = stages.findIndex((s) => s.key === current);
+  const isArchived = current === "archived";
+  return (
+    <section className="rounded-2xl border border-border bg-card p-4">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        {stages.map((s, i) => {
+          const reached = !isArchived && i <= currentIdx;
+          const isCurrent = !isArchived && i === currentIdx;
+          return (
+            <div key={s.key} className="flex items-center gap-2">
+              <span
+                className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-full border ${
+                  isCurrent
+                    ? "bg-foreground text-background border-foreground"
+                    : reached
+                    ? "bg-muted text-foreground border-border"
+                    : "bg-transparent text-muted-foreground border-border"
+                }`}
+              >
+                {s.label}
+              </span>
+              {i < stages.length - 1 && (
+                <span className={`h-px w-4 sm:w-6 ${reached && i < currentIdx ? "bg-foreground" : "bg-border"}`} />
+              )}
+            </div>
+          );
+        })}
+        {isArchived && (
+          <span className="text-[10px] uppercase tracking-wider px-2 py-1 rounded-full border bg-muted text-muted-foreground border-border ml-auto">
+            Archived
+          </span>
+        )}
+      </div>
+    </section>
+  );
+}

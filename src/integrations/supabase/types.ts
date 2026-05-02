@@ -600,33 +600,60 @@ export type Database = {
       }
       pay_stubs: {
         Row: {
+          breakdown: Json
           created_at: string
+          expense_cents: number
           file_url: string | null
+          flat_cents: number
           gross_amount: number
+          hourly_cents: number
           id: string
           net_amount: number
           notes: string | null
-          pay_period_id: string
+          paid_at: string | null
+          paid_method: string | null
+          paid_reference: string | null
+          pay_period_id: string | null
+          revshare_cents: number
+          timesheet_period_id: string | null
           user_id: string
         }
         Insert: {
+          breakdown?: Json
           created_at?: string
+          expense_cents?: number
           file_url?: string | null
+          flat_cents?: number
           gross_amount?: number
+          hourly_cents?: number
           id?: string
           net_amount?: number
           notes?: string | null
-          pay_period_id: string
+          paid_at?: string | null
+          paid_method?: string | null
+          paid_reference?: string | null
+          pay_period_id?: string | null
+          revshare_cents?: number
+          timesheet_period_id?: string | null
           user_id: string
         }
         Update: {
+          breakdown?: Json
           created_at?: string
+          expense_cents?: number
           file_url?: string | null
+          flat_cents?: number
           gross_amount?: number
+          hourly_cents?: number
           id?: string
           net_amount?: number
           notes?: string | null
-          pay_period_id?: string
+          paid_at?: string | null
+          paid_method?: string | null
+          paid_reference?: string | null
+          pay_period_id?: string | null
+          revshare_cents?: number
+          timesheet_period_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -780,6 +807,42 @@ export type Database = {
           wage?: string | null
           website?: string | null
           work_type?: string | null
+        }
+        Relationships: []
+      }
+      project_allocations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          project_id: string
+          role_label: string | null
+          share_pct: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          project_id: string
+          role_label?: string | null
+          share_pct?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string
+          role_label?: string | null
+          share_pct?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

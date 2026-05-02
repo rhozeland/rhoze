@@ -3,6 +3,9 @@ project_id = "hdlpvcsxyxirywjkhsui"
 [functions.create-checkout]
 verify_jwt = false
 
+[functions.submit-public-lead]
+verify_jwt = false
+
 [functions.payments-webhook]
 verify_jwt = false
 

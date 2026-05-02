@@ -743,7 +743,45 @@ export default function StartPage() {
             </label>
 
             <div className="flex justify-end">
-              <Button onClick={() => setStep("checkout")} disabled={!canProceed}>
+              <Button
+                onClick={async () => {
+                  // Capture as a CRM lead before payment so we keep the contact
+                  // even if the visitor abandons checkout.
+                  try {
+                    await supabase.functions.invoke("submit-public-lead", {
+                      body: {
+                        source: "start",
+                        name: contact.name,
+                        email: contact.email,
+                        phone: contact.phone || undefined,
+                        region: contact.region,
+                        message: contact.scope,
+                        tags: [path === "subscribe" ? "intent:subscription" : "intent:project"],
+                        fields:
+                          path === "project"
+                            ? {
+                                "Total credits": totalCredits,
+                                "Estimate": fmt(estimateCents),
+                                "Deposit": fmt(depositCents),
+                                "Selection": selected
+                                  .map((s) => `${s.name} x${cart[s.id]}`)
+                                  .join(", "),
+                              }
+                            : {
+                                "Tier": selectedTier?.name,
+                                "Monthly": selectedTier
+                                  ? `${fmt(selectedTier.price_cents)}/mo`
+                                  : undefined,
+                              },
+                      },
+                    });
+                  } catch (err) {
+                    console.warn("lead capture failed (non-blocking)", err);
+                  }
+                  setStep("checkout");
+                }}
+                disabled={!canProceed}
+              >
                 {path === "subscribe" ? "Continue to payment" : `Pay deposit ${fmt(depositCents)}`}
               </Button>
             </div>

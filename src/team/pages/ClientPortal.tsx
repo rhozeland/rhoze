@@ -1,17 +1,24 @@
 import { useParams, Link, Navigate } from "react-router-dom";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { ExternalLink, ArrowLeft, CreditCard } from "lucide-react";
+import { ExternalLink, CreditCard, DollarSign } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
 import ProjectMilestones from "../components/ProjectMilestones";
+import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 
 export default function ClientPortal() {
   const { id } = useParams<{ id: string }>();
-  const { loading, session, isTeam } = useAuth();
+  const { loading, session, user } = useAuth();
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("250");
 
   const { data: project, isLoading, error } = useQuery({
     queryKey: ["portal_project", id],
@@ -140,7 +147,7 @@ export default function ClientPortal() {
       <div className="max-w-3xl mx-auto p-6 md:p-10 space-y-8">
         <header className="flex items-center justify-between gap-4">
           <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Rhozeland · Client portal</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Project</div>
             <h1 className="text-2xl md:text-3xl font-semibold mt-1">{project.title}</h1>
             <div className="text-xs text-muted-foreground mt-1">
               For {project.client_name} · Status:{" "}
@@ -148,11 +155,9 @@ export default function ClientPortal() {
               {project.archived_at && <> · archived {formatDate(project.archived_at)}</>}
             </div>
           </div>
-          {isTeam && (
-            <Link to={`/projects/${id}`} className="text-xs underline text-muted-foreground inline-flex items-center gap-1">
-              <ArrowLeft size={12} /> Team view
-            </Link>
-          )}
+          <Link to="/client/home" className="text-xs underline text-muted-foreground">
+            All projects
+          </Link>
         </header>
 
         {/* Pipeline pills */}
@@ -247,10 +252,55 @@ export default function ClientPortal() {
           </section>
         )}
 
-        {/* Roadmap */}
+        {/* Roadmap — clients can request review (pending → submitted),
+            only the team can mark items approved. */}
         <section className="space-y-2">
           <div className="text-xs uppercase tracking-wider text-muted-foreground">Project roadmap</div>
-          <ProjectMilestones projectId={id!} canEdit={isTeam} canApprove={true} />
+          <ProjectMilestones projectId={id!} canEdit={false} canApprove={false} canSubmit={true} />
+        </section>
+
+        {/* Pay a deposit */}
+        <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground">Top up</div>
+              <div className="text-base font-semibold mt-0.5">Pay a deposit by card</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Adds funds to this project's dollar balance. Settles instantly via Stripe.
+              </p>
+            </div>
+            <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
+              <DialogTrigger asChild>
+                <Button size="lg"><DollarSign size={16} className="mr-1" /> Pay a deposit</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-lg">
+                <DialogHeader><DialogTitle>Pay a deposit</DialogTitle></DialogHeader>
+                <div className="space-y-3">
+                  <div className="space-y-1.5">
+                    <Label>Amount (USD, min $50)</Label>
+                    <Input
+                      type="number"
+                      min="50"
+                      step="1"
+                      value={depositAmount}
+                      onChange={(e) => setDepositAmount(e.target.value)}
+                    />
+                  </div>
+                  {Number(depositAmount) >= 50 && (
+                    <div className="border border-border rounded-lg overflow-hidden">
+                      <StripeEmbeddedCheckout
+                        depositCents={Math.floor(Number(depositAmount) * 100)}
+                        customerEmail={user?.email}
+                        userId={user?.id}
+                        projectId={id!}
+                        returnUrl={`${window.location.origin}/team.html#/portal/${id}?deposit=success`}
+                      />
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </section>
 
         {/* Recent payments */}

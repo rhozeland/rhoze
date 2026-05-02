@@ -38,7 +38,7 @@ export default function Settings() {
   });
 
   const [form, setForm] = useState({ display_name: "", pronouns: "", bio: "" });
-  const [personal, setPersonal] = useState({ phone: "", address: "", date_of_birth: "", emergency_contact_name: "", emergency_contact_relation: "", emergency_contact_phone: "", stage_name: "" });
+  const [personal, setPersonal] = useState({ phone: "", address: "", date_of_birth: "", emergency_contact_name: "", emergency_contact_relation: "", emergency_contact_phone: "", stage_name: "", alias: "" });
 
   const personalErrors = validateAll({
     phone: personal.phone,
@@ -64,6 +64,7 @@ export default function Settings() {
         emergency_contact_relation: (profile as any).emergency_contact_relation ?? "",
         emergency_contact_phone: (profile as any).emergency_contact_phone ?? "",
         stage_name: (profile as any).stage_name ?? "",
+        alias: (profile as any).alias ?? "",
       });
     }
   }, [profile]);
@@ -85,6 +86,7 @@ export default function Settings() {
         emergency_contact_relation: personal.emergency_contact_relation.trim() || null,
         emergency_contact_phone: personal.emergency_contact_phone.trim() || null,
         stage_name: personal.stage_name.trim() || null,
+        alias: personal.alias.trim() || null,
       }).eq("id", user!.id);
       if (error) throw error;
     },

@@ -10,6 +10,7 @@ import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as Calend
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
+import PayrollRun from "../components/PayrollRun";
 
 type WorkType = "project" | "specialist" | "standard" | "reimbursement";
 
@@ -37,7 +38,7 @@ function hoursBetween(start: string, end: string): number {
 export default function TimeAndPay() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();
-  const [view, setView] = useState<"mine" | "admin">("mine");
+  const [view, setView] = useState<"mine" | "admin" | "payroll">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
   const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
@@ -65,6 +66,7 @@ export default function TimeAndPay() {
           <div className="flex items-center gap-1 border border-border rounded-lg p-1 bg-muted/30">
             <button onClick={() => setView("mine")} className={cn("text-xs px-3 py-1.5 rounded-md font-medium transition", view === "mine" ? "bg-background shadow-sm" : "text-muted-foreground")}>My timesheet</button>
             <button onClick={() => setView("admin")} className={cn("text-xs px-3 py-1.5 rounded-md font-medium transition", view === "admin" ? "bg-background shadow-sm" : "text-muted-foreground")}>Approval queue</button>
+            <button onClick={() => setView("payroll")} className={cn("text-xs px-3 py-1.5 rounded-md font-medium transition", view === "payroll" ? "bg-background shadow-sm" : "text-muted-foreground")}>Run payroll</button>
           </div>
         )}
       </div>
@@ -109,6 +111,8 @@ export default function TimeAndPay() {
         )
       ) : view === "admin" && isAdmin ? (
         <ApprovalQueue periodId={periodId} />
+      ) : view === "payroll" && isAdmin && activePeriod ? (
+        <PayrollRun period={activePeriod} />
       ) : (
         <MyTimesheet periodId={periodId} userId={user!.id} />
       )}

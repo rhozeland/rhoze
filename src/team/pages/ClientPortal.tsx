@@ -13,6 +13,7 @@ import { formatCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
 import ProjectMilestones from "../components/ProjectMilestones";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
+import { RhozePanel } from "../components/RhozePanel";
 
 export default function ClientPortal() {
   const { id } = useParams<{ id: string }>();
@@ -226,6 +227,9 @@ export default function ClientPortal() {
             <div className="text-2xl font-semibold mt-1">{formatCents(project.dollar_balance_cents ?? 0)}</div>
           </div>
         </section>
+
+        {/* $RHOZE rewards */}
+        <RhozePanel projectId={id!} mode="client" />
 
         {/* Estimate vs current */}
         {(intakeEstimate > 0 || currentTotalCents > 0) && (

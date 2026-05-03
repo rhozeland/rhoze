@@ -1169,6 +1169,165 @@ export type Database = {
         }
         Relationships: []
       }
+      rhoze_airdrops: {
+        Row: {
+          amount: number
+          created_by: string | null
+          id: string
+          notes: string | null
+          project_id: string
+          queued_at: string
+          sent_at: string | null
+          status: string
+          tx_signature: string | null
+          wallet: string
+        }
+        Insert: {
+          amount: number
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          project_id: string
+          queued_at?: string
+          sent_at?: string | null
+          status?: string
+          tx_signature?: string | null
+          wallet: string
+        }
+        Update: {
+          amount?: number
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          project_id?: string
+          queued_at?: string
+          sent_at?: string | null
+          status?: string
+          tx_signature?: string | null
+          wallet?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rhoze_airdrops_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rhoze_balances: {
+        Row: {
+          balance: number
+          lifetime_earned: number
+          lifetime_spent: number
+          project_id: string
+          solana_wallet: string | null
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          lifetime_earned?: number
+          lifetime_spent?: number
+          project_id: string
+          solana_wallet?: string | null
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          lifetime_earned?: number
+          lifetime_spent?: number
+          project_id?: string
+          solana_wallet?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rhoze_balances_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rhoze_ledger: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          delta: number
+          id: string
+          kind: Database["public"]["Enums"]["rhoze_kind"]
+          project_id: string
+          reason: string | null
+          related_credits: number | null
+          related_payment_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          delta: number
+          id?: string
+          kind: Database["public"]["Enums"]["rhoze_kind"]
+          project_id: string
+          reason?: string | null
+          related_credits?: number | null
+          related_payment_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          delta?: number
+          id?: string
+          kind?: Database["public"]["Enums"]["rhoze_kind"]
+          project_id?: string
+          reason?: string | null
+          related_credits?: number | null
+          related_payment_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rhoze_ledger_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rhoze_settings: {
+        Row: {
+          bonus_first_project: number
+          credit_cost_rhoze: number
+          earn_per_dollar: number
+          id: number
+          max_discount_pct: number
+          reward_event_attended: number
+          reward_referral: number
+          updated_at: string
+        }
+        Insert: {
+          bonus_first_project?: number
+          credit_cost_rhoze?: number
+          earn_per_dollar?: number
+          id?: number
+          max_discount_pct?: number
+          reward_event_attended?: number
+          reward_referral?: number
+          updated_at?: string
+        }
+        Update: {
+          bonus_first_project?: number
+          credit_cost_rhoze?: number
+          earn_per_dollar?: number
+          id?: number
+          max_discount_pct?: number
+          reward_event_attended?: number
+          reward_referral?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       service_packages: {
         Row: {
           billing_interval: string | null
@@ -1584,6 +1743,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _rhoze_ensure_balance: {
+        Args: { _project_id: string }
+        Returns: undefined
+      }
       apply_pending_tier_change: {
         Args: { _subscription_id: string }
         Returns: undefined
@@ -1663,6 +1826,24 @@ export type Database = {
         }[]
       }
       redeem_project_code: { Args: { _code: string }; Returns: string }
+      rhoze_award: {
+        Args: {
+          _amount: number
+          _kind: Database["public"]["Enums"]["rhoze_kind"]
+          _project_id: string
+          _reason?: string
+          _related_payment_id?: string
+        }
+        Returns: number
+      }
+      rhoze_queue_airdrop: {
+        Args: { _amount: number; _notes?: string; _project_id: string }
+        Returns: string
+      }
+      rhoze_redeem_for_credits: {
+        Args: { _credits: number; _project_id: string }
+        Returns: number
+      }
       validate_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -1682,6 +1863,15 @@ export type Database = {
       department: "marketing" | "hr" | "development" | "sales" | "operations"
       invite_status: "pending" | "accepted" | "revoked"
       milestone_status: "pending" | "submitted" | "approved" | "cancelled"
+      rhoze_kind:
+        | "earn_payment"
+        | "earn_first_project"
+        | "earn_event"
+        | "earn_referral"
+        | "earn_adjust"
+        | "spend_credits"
+        | "airdrop_queued"
+        | "airdrop_sent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1823,6 +2013,16 @@ export const Constants = {
       department: ["marketing", "hr", "development", "sales", "operations"],
       invite_status: ["pending", "accepted", "revoked"],
       milestone_status: ["pending", "submitted", "approved", "cancelled"],
+      rhoze_kind: [
+        "earn_payment",
+        "earn_first_project",
+        "earn_event",
+        "earn_referral",
+        "earn_adjust",
+        "spend_credits",
+        "airdrop_queued",
+        "airdrop_sent",
+      ],
     },
   },
 } as const

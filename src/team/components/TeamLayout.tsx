@@ -4,6 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Settings, Shield, UserPlus, KeyRound, LogOut,
   FolderKanban, Inbox, Package, Clock,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ const nav = [
   { to: "/crm", label: "CRM", icon: Users },
   { to: "/docs", label: "Docs & Training", icon: BookOpen },
   { to: "/directory", label: "Directory", icon: UserCircle2 },
+  { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 

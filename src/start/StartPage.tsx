@@ -526,9 +526,6 @@ export default function StartPage() {
                       </span>
                       <span className={`text-xs tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>{creditLabel}</span>
                     </div>
-                    {s.description && (
-                      <p className="text-xs text-muted-foreground mt-1 pr-7">{s.description}</p>
-                    )}
                     {s.min_quantity > 1 && (
                       <p className="text-[11px] text-muted-foreground mt-1">Sold in packs of {s.min_quantity}+</p>
                     )}

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Upload, Trash2, Sparkles, ExternalLink, BadgePercent, Gift, Wallet } from "lucide-react";
+import { Upload, Trash2, Sparkles, ExternalLink } from "lucide-react";
 
 /**
  * Minimal client profile page — name + password change. Keeps the client

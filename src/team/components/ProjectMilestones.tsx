@@ -86,6 +86,9 @@ export default function ProjectMilestones({
       setShowAdd(false);
       invalidate();
     },
+    onError: (e: any) => toast({ title: "Could not add milestone", description: e.message, variant: "destructive" }),
+  });
+
   const markPaid = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -96,9 +99,6 @@ export default function ProjectMilestones({
     },
     onSuccess: invalidate,
     onError: (e: any) => toast({ title: "Mark paid failed", description: e.message, variant: "destructive" }),
-  });
-
-    onError: (e: any) => toast({ title: "Could not add milestone", description: e.message, variant: "destructive" }),
   });
 
   const updateStatus = useMutation({

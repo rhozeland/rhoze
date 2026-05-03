@@ -259,7 +259,7 @@ export function RhozePanel({ projectId, mode }: { projectId: string; mode: "clie
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={() => award.mutate({ amount: parseInt(awardAmount || "0"), kind: awardKind, reason: awardReason || undefined }, { onSuccess: () => setAwardOpen(false) })} disabled={award.isPending}>
+                  <Button onClick={() => award.mutate({ amount: parseInt(awardAmount || "0"), kind: awardKind as "earn_event" | "earn_referral" | "earn_adjust", reason: awardReason || undefined }, { onSuccess: () => setAwardOpen(false) })} disabled={award.isPending}>
                     Award
                   </Button>
                 </DialogFooter>

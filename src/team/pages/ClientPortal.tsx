@@ -91,19 +91,6 @@ export default function ClientPortal() {
     },
   });
 
-  const { data: rhozeBal } = useQuery({
-    queryKey: ["portal_rhoze_balance", id],
-    enabled: !!id && !!session,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("rhoze_balances")
-        .select("balance")
-        .eq("project_id", id!)
-        .maybeSingle();
-      return data;
-    },
-  });
-
   const openPortal = async () => {
     const t = toast({ title: "Opening billing portal…" });
     const { data, error } = await supabase.functions.invoke("create-portal-session", {
@@ -172,13 +159,6 @@ export default function ClientPortal() {
             </div>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
-            <a
-              href="#rhoze-rewards"
-              className="inline-flex items-center gap-1.5 text-xs tabular-nums px-2.5 py-1.5 rounded-md bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300 hover:bg-fuchsia-500/20 transition-colors"
-              title="Jump to $RHOZE rewards"
-            >
-              <Sparkles size={12} /> {Number(rhozeBal?.balance ?? 0).toLocaleString()} $RHOZE
-            </a>
             <Link to="/client/home" className="text-xs underline text-muted-foreground">
               All projects
             </Link>

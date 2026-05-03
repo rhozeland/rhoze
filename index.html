@@ -2847,6 +2847,27 @@
                   <stop offset="0%"  stop-color="hsl(225 70% 8%)" stop-opacity="0" />
                   <stop offset="100%" stop-color="hsl(225 70% 8%)" stop-opacity="0.55" />
                 </radialGradient>
+                <!-- Iridescent texture overlay -->
+                <linearGradient id="hg-irid" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"   stop-color="hsl(320 80% 70%)" stop-opacity="0.55" />
+                  <stop offset="35%"  stop-color="hsl(30 85% 65%)"  stop-opacity="0.5" />
+                  <stop offset="70%"  stop-color="hsl(175 80% 60%)" stop-opacity="0.55" />
+                  <stop offset="100%" stop-color="hsl(280 70% 65%)" stop-opacity="0.5" />
+                </linearGradient>
+                <filter id="hg-noise" x="0" y="0" width="100%" height="100%">
+                  <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="7" result="t"/>
+                  <feColorMatrix in="t" type="matrix"
+                    values="0 0 0 0 1
+                            0 0 0 0 1
+                            0 0 0 0 1
+                            0 0 0 0.55 0"/>
+                </filter>
+                <filter id="hg-warp" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.025 0.04" numOctaves="2" seed="3" result="warp">
+                    <animate attributeName="seed" from="0" to="20" dur="22s" repeatCount="indefinite" />
+                  </feTurbulence>
+                  <feDisplacementMap in="SourceGraphic" in2="warp" scale="6" />
+                </filter>
                 <clipPath id="hg-clip"><circle cx="50" cy="50" r="36" /></clipPath>
               </defs>
               <ellipse cx="50" cy="88" rx="24" ry="5" fill="hsl(225 60% 12% / 0.35)" />
@@ -2855,6 +2876,12 @@
               <g clip-path="url(#hg-clip)">
                 <g id="hg-continents"></g>
                 <g id="hg-grid" stroke="hsl(0 0% 100% / 0.12)" stroke-width="0.26" fill="none"></g>
+                <!-- Animated iridescent sheen layer -->
+                <g filter="url(#hg-warp)" opacity="0.7" style="mix-blend-mode: overlay;">
+                  <circle cx="50" cy="50" r="36" fill="url(#hg-irid)" />
+                </g>
+                <!-- Subtle film grain -->
+                <circle cx="50" cy="50" r="36" fill="hsl(0 0% 100%)" filter="url(#hg-noise)" opacity="0.18" style="mix-blend-mode: soft-light;" />
                 <circle cx="50" cy="50" r="36" fill="url(#hg-shadow)" />
                 <circle cx="50" cy="50" r="36" fill="url(#hg-hi)" />
               </g>

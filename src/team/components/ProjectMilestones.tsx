@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2, ChevronUp, ChevronDown, CheckCircle2, Circle, Clock } from "lucide-react";
+import { Plus, Trash2, ChevronUp, ChevronDown, CheckCircle2, Circle, Clock, DollarSign } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { formatDate } from "../lib/format";
+import { formatDate, formatCents } from "../lib/format";
 
 type Status = "pending" | "submitted" | "approved" | "cancelled";
 
@@ -19,6 +19,8 @@ interface Milestone {
   sort_order: number;
   status: Status;
   credit_cost: number;
+  price_cents: number;
+  paid_at: string | null;
   due_date: string | null;
   submitted_at: string | null;
   approved_at: string | null;
@@ -34,16 +36,19 @@ export default function ProjectMilestones({
   canEdit,
   canApprove,
   canSubmit = false,
+  onPay,
 }: {
   projectId: string;
   canEdit: boolean;
   canApprove: boolean;
   /** Allow non-editors (clients) to flip pending → submitted (request review). */
   canSubmit?: boolean;
+  /** Client-side hook — open Add funds prefilled to the milestone's price. */
+  onPay?: (m: { id: string; price_cents: number; title: string }) => void;
 }) {
   const qc = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", credit_cost: "0", due_date: "" });
+  const [form, setForm] = useState({ title: "", description: "", credit_cost: "0", price_cents: "0", due_date: "" });
 
   const { data: milestones = [], isLoading } = useQuery({
     queryKey: ["project_milestones", projectId],
@@ -70,16 +75,29 @@ export default function ProjectMilestones({
         title: form.title.trim(),
         description: form.description.trim() || null,
         credit_cost: Math.max(0, parseInt(form.credit_cost || "0", 10)),
+        price_cents: Math.max(0, Math.floor(Number(form.price_cents || "0") * 100)),
         due_date: form.due_date || null,
         sort_order: nextSort,
       });
       if (error) throw error;
     },
     onSuccess: () => {
-      setForm({ title: "", description: "", credit_cost: "0", due_date: "" });
+      setForm({ title: "", description: "", credit_cost: "0", price_cents: "0", due_date: "" });
       setShowAdd(false);
       invalidate();
     },
+  const markPaid = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("project_milestones")
+        .update({ paid_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: invalidate,
+    onError: (e: any) => toast({ title: "Mark paid failed", description: e.message, variant: "destructive" }),
+  });
+
     onError: (e: any) => toast({ title: "Could not add milestone", description: e.message, variant: "destructive" }),
   });
 
@@ -162,6 +180,11 @@ export default function ProjectMilestones({
               <Input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} />
             </div>
           </div>
+          <div className="space-y-1.5">
+            <Label>Stage price (USD)</Label>
+            <Input type="number" min="0" step="1" value={form.price_cents} onChange={(e) => setForm({ ...form, price_cents: e.target.value })} placeholder="e.g. 500" />
+            <p className="text-[11px] text-muted-foreground">What the client owes when this stage is approved. Leave 0 if covered by retainer/credits.</p>
+          </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="ghost" size="sm" onClick={() => setShowAdd(false)}>Cancel</Button>
             <Button type="submit" size="sm" disabled={add.isPending}>Add</Button>
@@ -190,6 +213,17 @@ export default function ProjectMilestones({
                     {m.credit_cost} cr
                   </span>
                 )}
+                {m.price_cents > 0 && (
+                  <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                    m.paid_at
+                      ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                      : m.status === "approved"
+                      ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                      : "bg-muted text-muted-foreground border-border"
+                  }`}>
+                    {formatCents(m.price_cents)} {m.paid_at ? "paid" : m.status === "approved" ? "due" : ""}
+                  </span>
+                )}
               </div>
               {m.description && <p className="text-xs text-muted-foreground mt-0.5">{m.description}</p>}
               <div className="text-[11px] text-muted-foreground mt-1 flex flex-wrap gap-x-3">
@@ -198,7 +232,7 @@ export default function ProjectMilestones({
                 {m.approved_at && <span>Approved {formatDate(m.approved_at)}</span>}
               </div>
 
-              {(canEdit || canApprove || canSubmit) && (
+              {(canEdit || canApprove || canSubmit || onPay) && (
                 <div className="flex flex-wrap items-center gap-1 mt-2">
                   {(canEdit || canSubmit) && m.status === "pending" && (
                     <Button size="sm" variant="outline" onClick={() => updateStatus.mutate({ id: m.id, next: "submitted" })}>
@@ -208,6 +242,18 @@ export default function ProjectMilestones({
                   {canApprove && m.status === "submitted" && (
                     <Button size="sm" onClick={() => updateStatus.mutate({ id: m.id, next: "approved" })}>
                       Approve
+                    </Button>
+                  )}
+                  {/* Client pay-now button when stage is approved and unpaid */}
+                  {onPay && m.status === "approved" && m.price_cents > 0 && !m.paid_at && (
+                    <Button size="sm" onClick={() => onPay({ id: m.id, price_cents: m.price_cents, title: m.title })}>
+                      <DollarSign size={14} className="mr-1" /> Pay {formatCents(m.price_cents)}
+                    </Button>
+                  )}
+                  {/* Team mark-paid (e.g. paid offline / Square / etc.) */}
+                  {canApprove && m.status === "approved" && m.price_cents > 0 && !m.paid_at && (
+                    <Button size="sm" variant="outline" onClick={() => markPaid.mutate(m.id)}>
+                      Mark paid
                     </Button>
                   )}
                   {!canApprove && !canEdit && m.status === "submitted" && (

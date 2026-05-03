@@ -10,6 +10,7 @@ import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock,
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import logoWhite from "@/assets/logo-white.png";
 
 type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
@@ -39,82 +40,82 @@ type ServiceDetail = {
   notIncluded?: string[];
 };
 
-type ServiceExample = { title: string; artist: string };
+type ServiceExample = { title: string; artist: string; thumb?: string; href?: string };
 
 // Curated samples drawn from /projects.html — real client work, no asset hosting needed.
 const SERVICE_EXAMPLES: Record<string, ServiceExample[]> = {
   // ---- Visual ----
   "photo-shoot": [
-    { title: "Photoshoot", artist: "YOUNG $TEELO" },
-    { title: "Salar Gholami", artist: "BK Whiskey" },
-    { title: "Milad Zareian", artist: "BK Whiskey" },
+    { title: "U Outta Know", artist: "YOUNG $TEELO", thumb: "/images/steelo-u-outta-know-thumb.jpg" },
+    { title: "Salar Gholami", artist: "BK Whiskey", thumb: "/images/bk-salar-thumb.jpg" },
+    { title: "Milad Zareian", artist: "BK Whiskey", thumb: "/images/bk-milad-thumb.jpg" },
   ],
   "content-edit": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media" },
-    { title: "United MMA Sponsorship", artist: "BK Whiskey" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
   ],
   "commercial-edit": [
-    { title: "United MMA Sponsorship", artist: "BK Whiskey" },
-    { title: "True North Transparency", artist: "True North Transparency" },
-    { title: "Bet The House", artist: "Lex Carter" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "Documentary", artist: "Rhozeland", thumb: "/images/documentary-thumbnail.png" },
   ],
   "short-form-edit": [
-    { title: "Telephone", artist: "Runner's Club" },
-    { title: "Who Runs The World II", artist: "Runner's Club" },
-    { title: "Bombaaa", artist: "MONEE FINGAZ" },
+    { title: "Runner's Club Vol. 1", artist: "Runner's Club", thumb: "/images/rc1-thumb.jpg" },
+    { title: "Runner's Club Vol. 2", artist: "Runner's Club", thumb: "/images/rc2-thumb.jpg" },
+    { title: "Bombaaa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-bombaaa-thumb.jpg" },
   ],
   "mv-edit": [
-    { title: "The Mask", artist: "Ooak" },
-    { title: "Mansa Musa", artist: "MONEE FINGAZ" },
-    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ" },
+    { title: "The Mask", artist: "Ooak", thumb: "/images/ooak-the-mask-thumb.png", href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg" },
+    { title: "Mansa Musa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-mansa-musa-thumb.png" },
+    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ", thumb: "/images/fingaz-superhero-thumb.png" },
   ],
   // ---- Audio ----
   "audio-recording": [
-    { title: "Saint Flair West", artist: "Ooak" },
-    { title: "Surfin'", artist: "Straightdizzy" },
-    { title: "Dead 2 Me", artist: "Maizy F" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png" },
+    { title: "Surfin'", artist: "Straightdizzy", thumb: "/images/surfin-thumb.png" },
+    { title: "Gotta Go", artist: "Straightdizzy", thumb: "/images/straightdizzy-gotta-go-thumb.jpg" },
   ],
   "mixing": [
-    { title: "Blue", artist: "MARV" },
-    { title: "GTTB", artist: "MARV" },
-    { title: "Envy", artist: "Luckz" },
+    { title: "Holy Water", artist: "Cozal", thumb: "/images/cozal-holy-water-thumb.png" },
+    { title: "Night Come", artist: "Luckz", thumb: "/images/luckz-night-come-thumb.png" },
+    { title: "Withdrawals", artist: "Semiah", thumb: "/images/semiah-withdrawals-thumb.png" },
   ],
   "mastering": [
-    { title: "Bank", artist: "MARV" },
-    { title: "60 Seconds", artist: "Luckz" },
-    { title: "Baby Blue", artist: "Godfrey Noir" },
+    { title: "For The Dot", artist: "Luckz", thumb: "/images/luckz-forthedot-thumb.jpg" },
+    { title: "Figure It Out", artist: "Meesch", thumb: "/images/meesch-figure-it-out-thumb.jpg" },
+    { title: "Privilege", artist: "Jevy", thumb: "/images/jevy-privilege-thumb.png" },
   ],
   "podcast": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds" },
-    { title: "Sonic Boy", artist: "Sonicrealm" },
-    { title: "FUS", artist: "Rhozeland" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png" },
   ],
   // ---- Development ----
   "design": [
-    { title: "Indo LeLongLegs", artist: "Indoléstic" },
-    { title: "Server Incognito", artist: "Indoléstic" },
-    { title: "Hacking The Tower", artist: "Indoléstic" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
   ],
   "graphic-design": [
-    { title: "FUS", artist: "Rhozeland" },
-    { title: "Saint Flair West", artist: "Ooak" },
-    { title: "Sensimelia", artist: "JulzMadeThisOne" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png" },
   ],
   "web-development": [
-    { title: "2025/2026 Development", artist: "Toronto Palapa Tours" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media" },
-    { title: "Server Incognito", artist: "Indoléstic" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
   ],
   "uiux-development": [
-    { title: "Indo LeLongLegs", artist: "Indoléstic" },
-    { title: "Hacking The Tower", artist: "Indoléstic" },
-    { title: "2025/2026 Development", artist: "Toronto Palapa Tours" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
   ],
   "consult": [
-    { title: "Global Masterminds", artist: "Songwriting Camp" },
-    { title: "True North Transparency", artist: "True North" },
-    { title: "BK Whiskey", artist: "MMA Sponsorship Series" },
+    { title: "Songwriting Camp", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
+    { title: "MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
   ],
 };
 
@@ -295,41 +296,41 @@ export default function StartPage() {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <PaymentTestModeBanner />
-        <div className="max-w-3xl mx-auto px-6 py-16 md:py-24 text-center space-y-8">
-          <div className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Rhozeland</div>
+        <div className="max-w-3xl mx-auto px-6 pt-6">
+          <a href="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowRight size={12} className="rotate-180" /> Back to Rhozeland
+          </a>
+        </div>
+        <div className="max-w-3xl mx-auto px-6 py-12 md:py-20 text-center space-y-7">
+          <img src={logoWhite} alt="Rhozeland" className="h-12 md:h-14 mx-auto opacity-90 dark:opacity-100" />
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight">Start a project</h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
-            Two ways to work with us. Subscribe to a monthly retainer for ongoing creative output,
-            or scope a single project and pay a deposit to kick it off.
+          <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
+            Subscribe monthly for ongoing output, or scope a one-off and put down a deposit.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-4 pt-6 text-left">
+          <div className="grid md:grid-cols-2 gap-4 pt-4 text-left">
             <button
               onClick={() => { setPath("subscribe"); setStep("build"); }}
-              className="border border-border rounded-2xl p-6 bg-card hover:border-primary/60 transition-colors space-y-3"
+              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-primary/15 via-primary/5 to-transparent hover:border-primary/60 hover:from-primary/20 transition-all space-y-3"
             >
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Best value</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Best value</div>
               <div className="text-xl font-semibold">Subscribe</div>
-              <p className="text-sm text-muted-foreground">
-                Get a credit allowance every month — spend it on any service. Cheaper per credit than buying à la carte.
-              </p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2">Choose a plan <ArrowRight size={14} /></div>
+              <p className="text-sm text-muted-foreground">Monthly credits to spend on anything — cheaper per credit.</p>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-primary">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
             <button
               onClick={() => { setPath("project"); setStep("build"); }}
-              className="border border-border rounded-2xl p-6 bg-card hover:border-primary/60 transition-colors space-y-3"
+              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-fuchsia-500/15 via-orange-400/5 to-transparent hover:border-fuchsia-400/60 transition-all space-y-3"
             >
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">One-off</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-fuchsia-500 dark:text-fuchsia-400 font-semibold">One-off</div>
               <div className="text-xl font-semibold">Scope a project</div>
-              <p className="text-sm text-muted-foreground">
-                Pick the services you need, get a credit-based estimate, and put down a refundable deposit to begin.
-              </p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2">Build estimate <ArrowRight size={14} /></div>
+              <p className="text-sm text-muted-foreground">Pick services, get an instant estimate, leave a refundable deposit.</p>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-fuchsia-500 dark:text-fuchsia-400">Build estimate <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
           </div>
 
-          <div className="text-xs text-muted-foreground pt-4 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)} — roughly 1 hour of focused work or one small deliverable. Final scope is confirmed on a kickoff call before any non-deposit payment.
+          <div className="text-xs text-muted-foreground pt-2 max-w-md mx-auto">
+            1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.
           </div>
         </div>
       </div>
@@ -525,9 +526,6 @@ export default function StartPage() {
                       </span>
                       <span className={`text-xs tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>{creditLabel}</span>
                     </div>
-                    {s.description && (
-                      <p className="text-xs text-muted-foreground mt-1 pr-7">{s.description}</p>
-                    )}
                     {s.min_quantity > 1 && (
                       <p className="text-[11px] text-muted-foreground mt-1">Sold in packs of {s.min_quantity}+</p>
                     )}
@@ -854,64 +852,47 @@ function ServiceDetailsDialog({
             </DialogHeader>
 
             <div className="space-y-5 pt-2 text-sm">
-              {detail ? (
-                <>
-                  <Section label="Scope">
-                    <p className="text-muted-foreground">{detail.scope}</p>
-                  </Section>
-                  <Section label="What you get">
-                    <ul className="space-y-1 text-muted-foreground">
-                      {detail.deliverables.map((d, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span className="text-primary">·</span>
-                          <span>{d}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </Section>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Section label="Revisions">
-                      <p className="text-muted-foreground">{detail.revisions}</p>
-                    </Section>
-                    <Section label="Turnaround">
-                      <p className="text-muted-foreground">{detail.turnaround}</p>
-                    </Section>
-                  </div>
-                  {detail.notIncluded && detail.notIncluded.length > 0 && (
-                    <Section label="Not included">
-                      <ul className="space-y-1 text-muted-foreground">
-                        {detail.notIncluded.map((d, i) => (
-                          <li key={i} className="flex gap-2">
-                            <span className="text-muted-foreground/60">×</span>
-                            <span>{d}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </Section>
-                  )}
-                </>
-              ) : (
-                <p className="text-muted-foreground">{pkg.description ?? "Details coming soon — book a free scope call and we'll walk through it."}</p>
+              {detail && (
+                <Section label="Turnaround">
+                  <p className="text-muted-foreground">{detail.turnaround}</p>
+                </Section>
               )}
 
               {examples && examples.length > 0 && (
                 <Section label="Recent work">
-                  <div className="flex flex-wrap gap-1.5">
-                    {examples.map((ex, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-baseline gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-[11px] text-foreground"
-                      >
-                        <span className="font-medium">{ex.title}</span>
-                        <span className="text-muted-foreground">— {ex.artist}</span>
-                      </span>
-                    ))}
+                  <div className="grid grid-cols-3 gap-2">
+                    {examples.map((ex, i) => {
+                      const Wrap: any = ex.href ? "a" : "div";
+                      const wrapProps = ex.href ? { href: ex.href, target: "_blank", rel: "noopener noreferrer" } : {};
+                      return (
+                        <Wrap
+                          key={i}
+                          {...wrapProps}
+                          className="group block overflow-hidden rounded-lg border border-border bg-muted/40 hover:border-primary/40 transition-colors"
+                        >
+                          {ex.thumb && (
+                            <div className="aspect-[4/3] overflow-hidden bg-muted">
+                              <img
+                                src={ex.thumb}
+                                alt={`${ex.title} — ${ex.artist}`}
+                                loading="lazy"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            </div>
+                          )}
+                          <div className="px-2 py-1.5">
+                            <div className="text-[11px] font-medium leading-tight truncate">{ex.title}</div>
+                            <div className="text-[10px] text-muted-foreground truncate">{ex.artist}</div>
+                          </div>
+                        </Wrap>
+                      );
+                    })}
                   </div>
                   <a
                     href={projectsHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary hover:underline underline-offset-4"
+                    className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-primary hover:underline underline-offset-4"
                   >
                     See more in our work <ExternalLink size={11} />
                   </a>

@@ -855,64 +855,47 @@ function ServiceDetailsDialog({
             </DialogHeader>
 
             <div className="space-y-5 pt-2 text-sm">
-              {detail ? (
-                <>
-                  <Section label="Scope">
-                    <p className="text-muted-foreground">{detail.scope}</p>
-                  </Section>
-                  <Section label="What you get">
-                    <ul className="space-y-1 text-muted-foreground">
-                      {detail.deliverables.map((d, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span className="text-primary">·</span>
-                          <span>{d}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </Section>
-                  <div className="grid grid-cols-2 gap-4">
-                    <Section label="Revisions">
-                      <p className="text-muted-foreground">{detail.revisions}</p>
-                    </Section>
-                    <Section label="Turnaround">
-                      <p className="text-muted-foreground">{detail.turnaround}</p>
-                    </Section>
-                  </div>
-                  {detail.notIncluded && detail.notIncluded.length > 0 && (
-                    <Section label="Not included">
-                      <ul className="space-y-1 text-muted-foreground">
-                        {detail.notIncluded.map((d, i) => (
-                          <li key={i} className="flex gap-2">
-                            <span className="text-muted-foreground/60">×</span>
-                            <span>{d}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </Section>
-                  )}
-                </>
-              ) : (
-                <p className="text-muted-foreground">{pkg.description ?? "Details coming soon — book a free scope call and we'll walk through it."}</p>
+              {detail && (
+                <Section label="Turnaround">
+                  <p className="text-muted-foreground">{detail.turnaround}</p>
+                </Section>
               )}
 
               {examples && examples.length > 0 && (
                 <Section label="Recent work">
-                  <div className="flex flex-wrap gap-1.5">
-                    {examples.map((ex, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-baseline gap-1 rounded-md border border-border bg-muted/40 px-2 py-1 text-[11px] text-foreground"
-                      >
-                        <span className="font-medium">{ex.title}</span>
-                        <span className="text-muted-foreground">— {ex.artist}</span>
-                      </span>
-                    ))}
+                  <div className="grid grid-cols-3 gap-2">
+                    {examples.map((ex, i) => {
+                      const Wrap: any = ex.href ? "a" : "div";
+                      const wrapProps = ex.href ? { href: ex.href, target: "_blank", rel: "noopener noreferrer" } : {};
+                      return (
+                        <Wrap
+                          key={i}
+                          {...wrapProps}
+                          className="group block overflow-hidden rounded-lg border border-border bg-muted/40 hover:border-primary/40 transition-colors"
+                        >
+                          {ex.thumb && (
+                            <div className="aspect-[4/3] overflow-hidden bg-muted">
+                              <img
+                                src={ex.thumb}
+                                alt={`${ex.title} — ${ex.artist}`}
+                                loading="lazy"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            </div>
+                          )}
+                          <div className="px-2 py-1.5">
+                            <div className="text-[11px] font-medium leading-tight truncate">{ex.title}</div>
+                            <div className="text-[10px] text-muted-foreground truncate">{ex.artist}</div>
+                          </div>
+                        </Wrap>
+                      );
+                    })}
                   </div>
                   <a
                     href={projectsHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary hover:underline underline-offset-4"
+                    className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-primary hover:underline underline-offset-4"
                   >
                     See more in our work <ExternalLink size={11} />
                   </a>

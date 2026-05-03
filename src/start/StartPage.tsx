@@ -10,6 +10,7 @@ import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock,
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import logoWhite from "@/assets/logo-white.png";
 
 type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
@@ -39,82 +40,82 @@ type ServiceDetail = {
   notIncluded?: string[];
 };
 
-type ServiceExample = { title: string; artist: string };
+type ServiceExample = { title: string; artist: string; thumb?: string; href?: string };
 
 // Curated samples drawn from /projects.html — real client work, no asset hosting needed.
 const SERVICE_EXAMPLES: Record<string, ServiceExample[]> = {
   // ---- Visual ----
   "photo-shoot": [
-    { title: "Photoshoot", artist: "YOUNG $TEELO" },
-    { title: "Salar Gholami", artist: "BK Whiskey" },
-    { title: "Milad Zareian", artist: "BK Whiskey" },
+    { title: "U Outta Know", artist: "YOUNG $TEELO", thumb: "/images/steelo-u-outta-know-thumb.jpg" },
+    { title: "Salar Gholami", artist: "BK Whiskey", thumb: "/images/bk-salar-thumb.jpg" },
+    { title: "Milad Zareian", artist: "BK Whiskey", thumb: "/images/bk-milad-thumb.jpg" },
   ],
   "content-edit": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media" },
-    { title: "United MMA Sponsorship", artist: "BK Whiskey" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
   ],
   "commercial-edit": [
-    { title: "United MMA Sponsorship", artist: "BK Whiskey" },
-    { title: "True North Transparency", artist: "True North Transparency" },
-    { title: "Bet The House", artist: "Lex Carter" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "Documentary", artist: "Rhozeland", thumb: "/images/documentary-thumbnail.png" },
   ],
   "short-form-edit": [
-    { title: "Telephone", artist: "Runner's Club" },
-    { title: "Who Runs The World II", artist: "Runner's Club" },
-    { title: "Bombaaa", artist: "MONEE FINGAZ" },
+    { title: "Runner's Club Vol. 1", artist: "Runner's Club", thumb: "/images/rc1-thumb.jpg" },
+    { title: "Runner's Club Vol. 2", artist: "Runner's Club", thumb: "/images/rc2-thumb.jpg" },
+    { title: "Bombaaa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-bombaaa-thumb.jpg" },
   ],
   "mv-edit": [
-    { title: "The Mask", artist: "Ooak" },
-    { title: "Mansa Musa", artist: "MONEE FINGAZ" },
-    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ" },
+    { title: "The Mask", artist: "Ooak", thumb: "/images/ooak-the-mask-thumb.png", href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg" },
+    { title: "Mansa Musa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-mansa-musa-thumb.png" },
+    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ", thumb: "/images/fingaz-superhero-thumb.png" },
   ],
   // ---- Audio ----
   "audio-recording": [
-    { title: "Saint Flair West", artist: "Ooak" },
-    { title: "Surfin'", artist: "Straightdizzy" },
-    { title: "Dead 2 Me", artist: "Maizy F" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png" },
+    { title: "Surfin'", artist: "Straightdizzy", thumb: "/images/surfin-thumb.png" },
+    { title: "Gotta Go", artist: "Straightdizzy", thumb: "/images/straightdizzy-gotta-go-thumb.jpg" },
   ],
   "mixing": [
-    { title: "Blue", artist: "MARV" },
-    { title: "GTTB", artist: "MARV" },
-    { title: "Envy", artist: "Luckz" },
+    { title: "Holy Water", artist: "Cozal", thumb: "/images/cozal-holy-water-thumb.png" },
+    { title: "Night Come", artist: "Luckz", thumb: "/images/luckz-night-come-thumb.png" },
+    { title: "Withdrawals", artist: "Semiah", thumb: "/images/semiah-withdrawals-thumb.png" },
   ],
   "mastering": [
-    { title: "Bank", artist: "MARV" },
-    { title: "60 Seconds", artist: "Luckz" },
-    { title: "Baby Blue", artist: "Godfrey Noir" },
+    { title: "For The Dot", artist: "Luckz", thumb: "/images/luckz-forthedot-thumb.jpg" },
+    { title: "Figure It Out", artist: "Meesch", thumb: "/images/meesch-figure-it-out-thumb.jpg" },
+    { title: "Privilege", artist: "Jevy", thumb: "/images/jevy-privilege-thumb.png" },
   ],
   "podcast": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds" },
-    { title: "Sonic Boy", artist: "Sonicrealm" },
-    { title: "FUS", artist: "Rhozeland" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png" },
   ],
   // ---- Development ----
   "design": [
-    { title: "Indo LeLongLegs", artist: "Indoléstic" },
-    { title: "Server Incognito", artist: "Indoléstic" },
-    { title: "Hacking The Tower", artist: "Indoléstic" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
   ],
   "graphic-design": [
-    { title: "FUS", artist: "Rhozeland" },
-    { title: "Saint Flair West", artist: "Ooak" },
-    { title: "Sensimelia", artist: "JulzMadeThisOne" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png" },
   ],
   "web-development": [
-    { title: "2025/2026 Development", artist: "Toronto Palapa Tours" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media" },
-    { title: "Server Incognito", artist: "Indoléstic" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
   ],
   "uiux-development": [
-    { title: "Indo LeLongLegs", artist: "Indoléstic" },
-    { title: "Hacking The Tower", artist: "Indoléstic" },
-    { title: "2025/2026 Development", artist: "Toronto Palapa Tours" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
   ],
   "consult": [
-    { title: "Global Masterminds", artist: "Songwriting Camp" },
-    { title: "True North Transparency", artist: "True North" },
-    { title: "BK Whiskey", artist: "MMA Sponsorship Series" },
+    { title: "Songwriting Camp", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
+    { title: "MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
   ],
 };
 

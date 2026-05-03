@@ -352,9 +352,9 @@
     /* Globe block — anchored top-right of hero, out of flow */
     .hero-globe-wrap {
       position: absolute;
-      top: clamp(1rem, 3vw, 2rem);
-      right: clamp(1rem, 3vw, 2.5rem);
-      width: clamp(180px, 22vw, 280px);
+      top: clamp(0.5rem, 2vw, 1.5rem);
+      right: clamp(0.5rem, 2vw, 2rem);
+      width: clamp(280px, 36vw, 460px);
       aspect-ratio: 1 / 1;
       z-index: 4;
       touch-action: none;
@@ -362,7 +362,7 @@
     }
     @media (max-width: 720px) {
       .hero-globe-wrap {
-        width: 140px;
+        width: 180px;
         top: 0.75rem;
         right: 0.75rem;
       }

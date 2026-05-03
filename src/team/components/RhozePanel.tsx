@@ -105,7 +105,7 @@ export function RhozePanel({ projectId, mode }: { projectId: string; mode: "clie
   });
 
   const award = useMutation({
-    mutationFn: async (vars: { amount: number; kind: string; reason?: string }) => {
+    mutationFn: async (vars: { amount: number; kind: "earn_event" | "earn_referral" | "earn_adjust"; reason?: string }) => {
       const { error } = await supabase.rpc("rhoze_award", {
         _project_id: projectId,
         _amount: vars.amount,

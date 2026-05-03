@@ -798,11 +798,18 @@ export default function StartPage() {
                   } catch (err) {
                     console.warn("lead capture failed (non-blocking)", err);
                   }
+                  // Spark = free pay-as-you-go: skip Stripe checkout
+                  if (path === "subscribe" && selectedTier?.price_cents === 0) {
+                    window.location.href = "/start.html#/return?free=1";
+                    return;
+                  }
                   setStep("checkout");
                 }}
                 disabled={!canProceed}
               >
-                {path === "subscribe" ? "Continue to payment" : `Pay deposit ${fmt(depositCents)}`}
+                {path === "subscribe"
+                  ? (selectedTier?.price_cents === 0 ? "Create free account" : "Continue to payment")
+                  : `Pay deposit ${fmt(depositCents)}`}
               </Button>
             </div>
           </div>

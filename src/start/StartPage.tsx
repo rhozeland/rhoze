@@ -896,3 +896,83 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
     </div>
   );
 }
+
+function RecentWorkCard({ ex }: { ex: ServiceExample }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const hostLabel = useMemo(() => {
+    if (!ex.href) return null;
+    try {
+      const h = new URL(ex.href, window.location.origin).hostname.replace(/^www\./, "");
+      if (h.includes("youtube") || h.includes("youtu.be")) return "YouTube";
+      if (h.includes("instagram")) return "Instagram";
+      if (h.includes("spotify")) return "Spotify";
+      if (h.includes("music.apple")) return "Apple Music";
+      if (h.includes("soundcloud")) return "SoundCloud";
+      if (h.includes("rhozeland")) return "Rhozeland";
+      return h;
+    } catch {
+      return null;
+    }
+  }, [ex.href]);
+
+  const handleEnter = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  };
+  const handleLeave = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    try { v.currentTime = 0; } catch {}
+  };
+
+  const Wrap: any = ex.href ? "a" : "div";
+  const wrapProps = ex.href ? { href: ex.href, target: "_blank", rel: "noopener noreferrer" } : {};
+
+  return (
+    <Wrap
+      {...wrapProps}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="group relative block overflow-hidden rounded-lg border border-border bg-muted/40 hover:border-primary/40 transition-colors"
+      title={ex.href ? `Opens ${hostLabel ?? "external link"} in a new tab` : undefined}
+    >
+      {ex.thumb && (
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+          <img
+            src={ex.thumb}
+            alt={`${ex.title} — ${ex.artist}`}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {ex.video && (
+            <video
+              ref={videoRef}
+              src={ex.video}
+              muted
+              playsInline
+              loop
+              preload="none"
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            />
+          )}
+          {ex.href && (
+            <div className="pointer-events-none absolute inset-0 flex items-end justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="m-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur-sm border border-border px-1.5 py-0.5 text-[9px] font-medium text-foreground shadow-sm">
+                {ex.video ? <Play size={9} className="fill-current" /> : <ExternalLink size={9} />}
+                <span>{hostLabel ?? "Open"}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      <div className="px-2 py-1.5">
+        <div className="text-[11px] font-medium leading-tight truncate">{ex.title}</div>
+        <div className="text-[10px] text-muted-foreground truncate">{ex.artist}</div>
+      </div>
+    </Wrap>
+  );
+}

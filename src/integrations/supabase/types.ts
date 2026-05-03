@@ -952,6 +952,8 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          paid_at: string | null
+          price_cents: number
           project_id: string
           sort_order: number
           status: Database["public"]["Enums"]["milestone_status"]
@@ -967,6 +969,8 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          paid_at?: string | null
+          price_cents?: number
           project_id: string
           sort_order?: number
           status?: Database["public"]["Enums"]["milestone_status"]
@@ -982,6 +986,8 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          paid_at?: string | null
+          price_cents?: number
           project_id?: string
           sort_order?: number
           status?: Database["public"]["Enums"]["milestone_status"]
@@ -1000,6 +1006,7 @@ export type Database = {
           kind: string
           label: string
           method: string | null
+          milestone_id: string | null
           notes: string | null
           paid_date: string | null
           project_id: string
@@ -1015,6 +1022,7 @@ export type Database = {
           kind?: string
           label: string
           method?: string | null
+          milestone_id?: string | null
           notes?: string | null
           paid_date?: string | null
           project_id: string
@@ -1030,6 +1038,7 @@ export type Database = {
           kind?: string
           label?: string
           method?: string | null
+          milestone_id?: string | null
           notes?: string | null
           paid_date?: string | null
           project_id?: string
@@ -1038,6 +1047,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "project_payments_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "project_milestones"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "project_payments_project_id_fkey"
             columns: ["project_id"]

@@ -55,6 +55,19 @@ function shouldUseManagedPayments(country?: string): boolean {
   return MANAGED_PAYMENTS_COUNTRIES.has(country.toUpperCase());
 }
 
+// Only attach a tax-automation block when we actually have a buyer country.
+// Stripe's `automatic_tax` requires the seller to have a head office address
+// configured (test mode or live). Embedded checkouts with no address up front
+// (e.g. the in-portal "Add funds" flow) would otherwise 400 with
+// "valid head office address" — so we skip tax automation entirely in that
+// case and let Stripe handle taxes manually.
+function taxBlock(country: string | undefined, useManaged: boolean) {
+  if (!country) return {};
+  return useManaged
+    ? { managed_payments: { enabled: true } }
+    : { automatic_tax: { enabled: true } };
+}
+
 async function handle(req: Request) {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405, headers: corsHeaders });
@@ -131,9 +144,7 @@ async function handle(req: Request) {
         return_url: body.returnUrl,
         ...(body.customerEmail && { customer_email: body.customerEmail }),
         metadata,
-        ...(useManaged
-          ? { managed_payments: { enabled: true } }
-          : { automatic_tax: { enabled: true } }),
+        ...taxBlock(body.customerCountry, useManaged),
       } as any);
       return jsonOk({ clientSecret: session.client_secret });
     }
@@ -166,9 +177,7 @@ async function handle(req: Request) {
         ...(body.customerEmail && { customer_email: body.customerEmail }),
         metadata,
         subscription_data: { metadata },
-        ...(useManaged
-          ? { managed_payments: { enabled: true } }
-          : { automatic_tax: { enabled: true } }),
+        ...taxBlock(body.customerCountry, useManaged),
       } as any);
       return jsonOk({ clientSecret: session.client_secret });
     }
@@ -222,9 +231,7 @@ async function handle(req: Request) {
       return_url: body.returnUrl,
       ...(body.customerEmail && { customer_email: body.customerEmail }),
       metadata,
-      ...(useManaged
-        ? { managed_payments: { enabled: true } }
-        : { automatic_tax: { enabled: true } }),
+      ...taxBlock(body.customerCountry, useManaged),
     } as any);
     return jsonOk({ clientSecret: session.client_secret });
   } catch (e) {

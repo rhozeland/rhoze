@@ -2766,6 +2766,43 @@
             </div>
           </div>
 
+          <div class="hero-globe-wrap" aria-hidden="true">
+            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroGlobeSvg">
+              <defs>
+                <radialGradient id="hg-ocean" cx="38%" cy="30%" r="78%">
+                  <stop offset="0%"  stop-color="hsl(200 85% 72%)" />
+                  <stop offset="40%" stop-color="hsl(210 75% 52%)" />
+                  <stop offset="78%" stop-color="hsl(220 70% 32%)" />
+                  <stop offset="100%" stop-color="hsl(225 65% 18%)" />
+                </radialGradient>
+                <radialGradient id="hg-land" cx="42%" cy="32%" r="80%">
+                  <stop offset="0%"  stop-color="hsl(85 55% 62%)" />
+                  <stop offset="55%" stop-color="hsl(120 40% 42%)" />
+                  <stop offset="100%" stop-color="hsl(150 45% 22%)" />
+                </radialGradient>
+                <radialGradient id="hg-hi" cx="38%" cy="28%" r="55%">
+                  <stop offset="0%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.35" />
+                  <stop offset="60%" stop-color="hsl(0 0% 100%)" stop-opacity="0.05" />
+                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="hg-shadow" cx="70%" cy="78%" r="60%">
+                  <stop offset="0%"  stop-color="hsl(225 70% 8%)" stop-opacity="0" />
+                  <stop offset="100%" stop-color="hsl(225 70% 8%)" stop-opacity="0.55" />
+                </radialGradient>
+                <clipPath id="hg-clip"><circle cx="50" cy="50" r="36" /></clipPath>
+              </defs>
+              <ellipse cx="50" cy="88" rx="24" ry="5" fill="hsl(225 60% 12% / 0.35)" />
+              <circle cx="50" cy="50" r="37.2" fill="hsl(200 85% 70% / 0.18)" />
+              <circle cx="50" cy="50" r="36" fill="url(#hg-ocean)" stroke="hsl(225 65% 22%)" stroke-width="0.5" />
+              <g clip-path="url(#hg-clip)">
+                <g id="hg-continents"></g>
+                <g id="hg-grid" stroke="hsl(0 0% 100% / 0.12)" stroke-width="0.26" fill="none"></g>
+                <circle cx="50" cy="50" r="36" fill="url(#hg-shadow)" />
+                <circle cx="50" cy="50" r="36" fill="url(#hg-hi)" />
+              </g>
+            </svg>
+          </div>
+
         </div>
       </section>
 

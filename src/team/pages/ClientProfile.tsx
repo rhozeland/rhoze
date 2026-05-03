@@ -186,14 +186,16 @@ export default function ClientProfile() {
           productions and campaigns come to life. <strong className="text-foreground">Rhozeland Creator OS</strong>{" "}
           is where the community showcases work and gets rewarded. $RHOZE flows between both.
         </div>
-        <a
-          href="https://rhozeland-creator-os.lovable.app"
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity"
-        >
-          <ExternalLink size={12} /> Open Rhozeland Creator OS
-        </a>
+        <div className="flex justify-center">
+          <a
+            href="https://rhozeland-creator-os.lovable.app"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity"
+          >
+            <ExternalLink size={12} /> Open Rhozeland Creator OS
+          </a>
+        </div>
       </section>
     </div>
   );

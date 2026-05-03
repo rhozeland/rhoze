@@ -342,32 +342,30 @@
     .hero-inner {
       position: relative;
       z-index: 3;
-      display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
-      align-items: start;
-      gap: clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      flex-direction: column;
       max-width: 78rem;
       margin-inline: auto;
       padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
     }
 
-    @media (max-width: 880px) {
-      .hero-inner {
-        grid-template-columns: 1fr;
-      }
-      .hero-globe-wrap { order: -1; max-width: 320px; margin-inline: auto; }
-    }
-
-    /* Globe block — ported from Creator OS DiscoverGlobe (simplified) */
+    /* Globe block — anchored top-right of hero, out of flow */
     .hero-globe-wrap {
-      position: relative;
+      position: absolute;
+      top: clamp(1rem, 3vw, 2rem);
+      right: clamp(1rem, 3vw, 2.5rem);
+      width: clamp(180px, 22vw, 280px);
       aspect-ratio: 1 / 1;
-      width: 100%;
-      max-width: 360px;
-      justify-self: end;
-      margin-top: -0.5rem;
+      z-index: 4;
       touch-action: none;
       user-select: none;
+    }
+    @media (max-width: 720px) {
+      .hero-globe-wrap {
+        width: 140px;
+        top: 0.75rem;
+        right: 0.75rem;
+      }
     }
     .hero-globe-wrap::before {
       content: "";

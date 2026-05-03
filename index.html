@@ -342,11 +342,59 @@
     .hero-inner {
       position: relative;
       z-index: 3;
-      display: flex;
-      flex-direction: column;
-      max-width: 52rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      align-items: center;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      max-width: 78rem;
+      margin-inline: auto;
       padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
     }
+
+    @media (max-width: 880px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-globe-wrap { order: -1; max-width: 320px; margin-inline: auto; }
+    }
+
+    /* Globe block — ported from Creator OS DiscoverGlobe (simplified) */
+    .hero-globe-wrap {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 460px;
+      justify-self: end;
+      touch-action: none;
+      user-select: none;
+    }
+    .hero-globe-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 6%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 22%, hsl(var(--accent-blue) / 0.28), transparent 55%),
+                  radial-gradient(circle at 70% 78%, hsl(var(--accent-purple) / 0.22), transparent 55%);
+      filter: blur(28px);
+      pointer-events: none;
+    }
+    .hero-globe-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 2%;
+      border-radius: 50%;
+      border: 1px solid hsl(var(--line) / 0.6);
+      pointer-events: none;
+    }
+    .hero-globe-svg {
+      position: absolute;
+      inset: 8%;
+      width: 84%;
+      height: 84%;
+      overflow: visible;
+      cursor: grab;
+    }
+    .hero-globe-svg:active { cursor: grabbing; }
 
     .hero-copy {
       max-width: 44rem;
@@ -2718,6 +2766,43 @@
             </div>
           </div>
 
+          <div class="hero-globe-wrap" aria-hidden="true">
+            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroGlobeSvg">
+              <defs>
+                <radialGradient id="hg-ocean" cx="38%" cy="30%" r="78%">
+                  <stop offset="0%"  stop-color="hsl(200 85% 72%)" />
+                  <stop offset="40%" stop-color="hsl(210 75% 52%)" />
+                  <stop offset="78%" stop-color="hsl(220 70% 32%)" />
+                  <stop offset="100%" stop-color="hsl(225 65% 18%)" />
+                </radialGradient>
+                <radialGradient id="hg-land" cx="42%" cy="32%" r="80%">
+                  <stop offset="0%"  stop-color="hsl(85 55% 62%)" />
+                  <stop offset="55%" stop-color="hsl(120 40% 42%)" />
+                  <stop offset="100%" stop-color="hsl(150 45% 22%)" />
+                </radialGradient>
+                <radialGradient id="hg-hi" cx="38%" cy="28%" r="55%">
+                  <stop offset="0%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.35" />
+                  <stop offset="60%" stop-color="hsl(0 0% 100%)" stop-opacity="0.05" />
+                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="hg-shadow" cx="70%" cy="78%" r="60%">
+                  <stop offset="0%"  stop-color="hsl(225 70% 8%)" stop-opacity="0" />
+                  <stop offset="100%" stop-color="hsl(225 70% 8%)" stop-opacity="0.55" />
+                </radialGradient>
+                <clipPath id="hg-clip"><circle cx="50" cy="50" r="36" /></clipPath>
+              </defs>
+              <ellipse cx="50" cy="88" rx="24" ry="5" fill="hsl(225 60% 12% / 0.35)" />
+              <circle cx="50" cy="50" r="37.2" fill="hsl(200 85% 70% / 0.18)" />
+              <circle cx="50" cy="50" r="36" fill="url(#hg-ocean)" stroke="hsl(225 65% 22%)" stroke-width="0.5" />
+              <g clip-path="url(#hg-clip)">
+                <g id="hg-continents"></g>
+                <g id="hg-grid" stroke="hsl(0 0% 100% / 0.12)" stroke-width="0.26" fill="none"></g>
+                <circle cx="50" cy="50" r="36" fill="url(#hg-shadow)" />
+                <circle cx="50" cy="50" r="36" fill="url(#hg-hi)" />
+              </g>
+            </svg>
+          </div>
+
         </div>
       </section>
 
@@ -3635,6 +3720,101 @@
       }
       show(0);
       start();
+    })();
+  </script>
+  <script>
+    // Hero SVG globe — drag to spin, idle auto-rotate.
+    (function(){
+      var svg = document.getElementById('heroGlobeSvg');
+      if (!svg) return;
+      var contG = document.getElementById('hg-continents');
+      var gridG = document.getElementById('hg-grid');
+      var cx = 50, cy = 50, r = 36;
+      var rotation = -22, isDragging = false, dragStart = null;
+
+      var CONTINENTS = [
+        {p:[[70,-168],[72,-140],[74,-110],[70,-82],[62,-64],[50,-56],[44,-64],[42,-72],[32,-80],[25,-80],[18,-92],[15,-98],[22,-106],[30,-116],[40,-124],[49,-125],[55,-132],[60,-148],[66,-162]]},
+        {p:[[12,-72],[10,-62],[5,-52],[-2,-48],[-12,-38],[-22,-40],[-32,-52],[-42,-64],[-52,-70],[-54,-72],[-46,-74],[-36,-72],[-22,-70],[-10,-78],[0,-80],[8,-78]]},
+        {p:[[70,-8],[70,24],[68,40],[60,50],[54,38],[44,40],[38,28],[36,14],[38,-2],[44,-10],[50,-4],[58,-6],[64,-10]]},
+        {p:[[36,-8],[36,12],[32,24],[30,34],[16,42],[10,50],[-4,42],[-18,38],[-30,32],[-34,22],[-32,18],[-26,14],[-20,12],[-12,12],[-2,8],[4,-2],[10,-14],[16,-16],[22,-16],[28,-10]]},
+        {p:[[78,60],[80,100],[76,140],[70,170],[60,168],[54,156],[50,142],[42,132],[34,134],[22,120],[10,108],[4,100],[10,92],[22,88],[22,72],[30,60],[38,50],[44,46],[54,44],[60,50],[70,56]]},
+        {p:[[-12,130],[-10,140],[-12,152],[-22,154],[-32,152],[-38,146],[-36,138],[-32,128],[-26,120],[-18,122]]},
+        {p:[[82,-32],[80,-18],[70,-22],[62,-42],[70,-52],[78,-50]]}
+      ];
+
+      function project(lat, lng, rot) {
+        var lr = lat * Math.PI/180, gr = (lng + rot) * Math.PI/180;
+        var c = Math.cos(lr);
+        return { x: cx + r * c * Math.sin(gr), y: cy - r * Math.sin(lr), d: c * Math.cos(gr) };
+      }
+
+      function continentPath(pts, rot) {
+        var pj = pts.map(function(p){ return project(p[0], p[1], rot); });
+        if (!pj.some(function(p){return p.d > 0;})) return '';
+        var path = '', drawing = false;
+        pj.forEach(function(p){
+          if (p.d > -0.05) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
+          else drawing = false;
+        });
+        if (drawing) path += ' Z';
+        return path;
+      }
+
+      function latPath(lat, rot) {
+        var path = '', drawing = false;
+        for (var lng = -180; lng <= 180; lng += 5) {
+          var p = project(lat, lng, rot);
+          if (p.d > 0.02) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
+          else drawing = false;
+        }
+        return path;
+      }
+      function lngPath(lng, rot) {
+        var path = '', drawing = false;
+        for (var lat = -88; lat <= 88; lat += 4) {
+          var p = project(lat, lng, rot);
+          if (p.d > 0.02) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
+          else drawing = false;
+        }
+        return path;
+      }
+
+      function render() {
+        var ch = '';
+        CONTINENTS.forEach(function(c){
+          var d = continentPath(c.p, rotation);
+          if (d) ch += '<path d="'+d+'" fill="url(#hg-land)" stroke="hsl(150 50% 18% / 0.6)" stroke-width="0.25" stroke-linejoin="round" />';
+        });
+        contG.innerHTML = ch;
+
+        var gh = '';
+        [-52,-24,0,24,52].forEach(function(l){ var d=latPath(l,rotation); if(d) gh += '<path d="'+d+'" />'; });
+        [-90,-45,0,45,90].forEach(function(l){ var d=lngPath(l,rotation); if(d) gh += '<path d="'+d+'" />'; });
+        gridG.innerHTML = gh;
+      }
+
+      function tick() {
+        if (!isDragging) { rotation = (rotation + 0.18) % 360; render(); }
+        requestAnimationFrame(tick);
+      }
+
+      svg.addEventListener('pointerdown', function(e){
+        isDragging = true;
+        dragStart = { x: e.clientX, rot: rotation };
+        try { svg.setPointerCapture(e.pointerId); } catch(_){}
+      });
+      svg.addEventListener('pointermove', function(e){
+        if (!isDragging || !dragStart) return;
+        rotation = dragStart.rot + (e.clientX - dragStart.x) * 0.38;
+        render();
+      });
+      function endDrag(e){ isDragging = false; dragStart = null; try { svg.releasePointerCapture(e.pointerId); } catch(_){} }
+      svg.addEventListener('pointerup', endDrag);
+      svg.addEventListener('pointercancel', endDrag);
+      svg.addEventListener('pointerleave', endDrag);
+
+      render();
+      tick();
     })();
   </script>
 </body>

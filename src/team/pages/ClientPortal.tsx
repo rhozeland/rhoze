@@ -247,35 +247,30 @@ export default function ClientPortal() {
           <div className="rounded-lg border border-border bg-card p-4">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">Dollar balance</div>
             <div className="text-2xl font-semibold mt-1">{formatCents(project.dollar_balance_cents ?? 0)}</div>
+            {(intakeEstimate > 0 || currentTotalCents > 0) && (
+              <div className="mt-2 pt-2 border-t border-border/60 text-[11px] text-muted-foreground flex items-center justify-between gap-2">
+                <span>
+                  Est. <span className="text-foreground/80 tabular-nums">{formatCents(intakeEstimate)}</span>
+                  <span className="opacity-50"> → </span>
+                  <span className="text-foreground/80 tabular-nums">{formatCents(currentTotalCents)}</span>
+                </span>
+                {intakeEstimate > 0 && currentTotalCents !== intakeEstimate && (
+                  <span
+                    className={
+                      deltaCents > 0
+                        ? "text-amber-600 dark:text-amber-400 tabular-nums"
+                        : "text-emerald-600 dark:text-emerald-400 tabular-nums"
+                    }
+                    title="Change vs. your original intake estimate"
+                  >
+                    {deltaCents > 0 ? "+" : ""}
+                    {Math.round((deltaCents / Math.max(intakeEstimate, 1)) * 100)}%
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </section>
-
-        {/* Estimate vs current */}
-        {(intakeEstimate > 0 || currentTotalCents > 0) && (
-          <section className="rounded-2xl border border-border bg-card p-5 space-y-3">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Estimate</div>
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Original</div>
-                <div className="text-lg font-semibold mt-0.5">{formatCents(intakeEstimate)}</div>
-              </div>
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Current</div>
-                <div className="text-lg font-semibold mt-0.5">{formatCents(currentTotalCents)}</div>
-              </div>
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Delta</div>
-                <div className={`text-lg font-semibold mt-0.5 ${deltaCents > 0 ? "text-amber-600 dark:text-amber-400" : deltaCents < 0 ? "text-emerald-600 dark:text-emerald-400" : ""}`}>
-                  {deltaCents > 0 ? "+" : ""}{formatCents(deltaCents)}
-                </div>
-              </div>
-            </div>
-            <p className="text-[11px] text-muted-foreground">
-              "Original" is the estimate from your intake. "Current" is the live total of approved deliverables on
-              this project. Delta shows how the scope has shifted.
-            </p>
-          </section>
-        )}
 
         {/* Roadmap — clients can request review (pending → submitted),
             only the team can mark items approved. */}

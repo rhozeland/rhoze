@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Sparkles, ExternalLink, BadgePercent, Gift, Wallet } from "lucide-react";
 
 /**
  * Minimal client profile page — name + password change. Keeps the client
@@ -168,6 +168,44 @@ export default function ClientProfile() {
         </div>
         <Button type="submit" disabled={saving}>{saving ? "Saving…" : "Save changes"}</Button>
       </form>
+
+      {/* About $RHOZE */}
+      <section className="rounded-2xl border border-border bg-gradient-to-br from-fuchsia-500/10 via-primary/5 to-transparent p-5 space-y-3">
+        <div className="flex items-center gap-2">
+          <Sparkles size={14} className="text-fuchsia-500 dark:text-fuchsia-400" />
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">About $RHOZE</div>
+        </div>
+        <h2 className="text-lg font-semibold">A token that pays you back — and pays for your work.</h2>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Every dollar you spend with Rhozeland earns you <strong className="text-foreground">$RHOZE</strong>, our
+          Solana-based community token. You can hold it, trade it on Pump.fun, or spend it back on services here —
+          full or partial invoices in $RHOZE get a steep discount on the listed price.
+        </p>
+        <ul className="space-y-2 text-sm">
+          <li className="flex gap-2"><Gift size={14} className="mt-0.5 shrink-0 text-fuchsia-500 dark:text-fuchsia-400" />
+            <span><strong className="text-foreground">Earn it.</strong> Auto-credited on paid invoices, plus bonuses for events, referrals, and milestones.</span>
+          </li>
+          <li className="flex gap-2"><BadgePercent size={14} className="mt-0.5 shrink-0 text-fuchsia-500 dark:text-fuchsia-400" />
+            <span><strong className="text-foreground">Spend it.</strong> Pay future invoices in $RHOZE for a discount — token price floats with the market, the discount is applied at checkout.</span>
+          </li>
+          <li className="flex gap-2"><Wallet size={14} className="mt-0.5 shrink-0 text-fuchsia-500 dark:text-fuchsia-400" />
+            <span><strong className="text-foreground">Withdraw it.</strong> Link a Solana wallet (Phantom, Solflare) on any project to receive on-chain payouts.</span>
+          </li>
+        </ul>
+        <div className="rounded-xl border border-border/60 bg-background/40 p-3 text-xs text-muted-foreground leading-relaxed">
+          <strong className="text-foreground">Two sides of Rhozeland.</strong> This site (rhozeland.com) is where productions, campaigns,
+          and ideas come to life. The <strong className="text-foreground">Rhozeland Creator OS</strong> app is where the
+          community showcases work, attends events, and gets rewarded. $RHOZE is the gateway between them — earn on either side, spend on either side.
+        </div>
+        <a
+          href="https://rhozeland-creator-os.lovable.app"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity"
+        >
+          <ExternalLink size={12} /> Open Rhozeland Creator OS
+        </a>
+      </section>
     </div>
   );
 }

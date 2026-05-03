@@ -170,32 +170,21 @@ export default function ClientProfile() {
       </form>
 
       {/* About $RHOZE */}
-      <section className="rounded-2xl border border-border bg-gradient-to-br from-fuchsia-500/10 via-primary/5 to-transparent p-5 space-y-3">
+      <section className="rounded-2xl border border-border bg-gradient-to-br from-fuchsia-500/10 via-primary/5 to-transparent p-5 space-y-4">
         <div className="flex items-center gap-2">
           <Sparkles size={14} className="text-fuchsia-500 dark:text-fuchsia-400" />
           <div className="text-xs uppercase tracking-wider text-muted-foreground">About $RHOZE</div>
         </div>
-        <h2 className="text-lg font-semibold">A token that pays you back — and pays for your work.</h2>
+        <h2 className="text-lg font-semibold">A token that pays you back.</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Every dollar you spend with Rhozeland earns you <strong className="text-foreground">$RHOZE</strong>, our
-          Solana-based community token. You can hold it, trade it on Pump.fun, or spend it back on services here —
-          full or partial invoices in $RHOZE get a steep discount on the listed price.
+          Every dollar you spend earns <strong className="text-foreground">$RHOZE</strong>, our Solana
+          community token. Hold it, trade it on Pump.fun, or pay future invoices with it for a discount.
         </p>
-        <ul className="space-y-2 text-sm">
-          <li className="flex gap-2"><Gift size={14} className="mt-0.5 shrink-0 text-fuchsia-500 dark:text-fuchsia-400" />
-            <span><strong className="text-foreground">Earn it.</strong> Auto-credited on paid invoices, plus bonuses for events, referrals, and milestones.</span>
-          </li>
-          <li className="flex gap-2"><BadgePercent size={14} className="mt-0.5 shrink-0 text-fuchsia-500 dark:text-fuchsia-400" />
-            <span><strong className="text-foreground">Spend it.</strong> Pay future invoices in $RHOZE for a discount — token price floats with the market, the discount is applied at checkout.</span>
-          </li>
-          <li className="flex gap-2"><Wallet size={14} className="mt-0.5 shrink-0 text-fuchsia-500 dark:text-fuchsia-400" />
-            <span><strong className="text-foreground">Withdraw it.</strong> Link a Solana wallet (Phantom, Solflare) on any project to receive on-chain payouts.</span>
-          </li>
-        </ul>
+        <RhozeFlywheel />
         <div className="rounded-xl border border-border/60 bg-background/40 p-3 text-xs text-muted-foreground leading-relaxed">
-          <strong className="text-foreground">Two sides of Rhozeland.</strong> This site (rhozeland.com) is where productions, campaigns,
-          and ideas come to life. The <strong className="text-foreground">Rhozeland Creator OS</strong> app is where the
-          community showcases work, attends events, and gets rewarded. $RHOZE is the gateway between them — earn on either side, spend on either side.
+          <strong className="text-foreground">Two sides of Rhozeland.</strong> This site is where
+          productions and campaigns come to life. <strong className="text-foreground">Rhozeland Creator OS</strong>{" "}
+          is where the community showcases work and gets rewarded. $RHOZE flows between both.
         </div>
         <a
           href="https://rhozeland-creator-os.lovable.app"
@@ -206,6 +195,48 @@ export default function ClientProfile() {
           <ExternalLink size={12} /> Open Rhozeland Creator OS
         </a>
       </section>
+    </div>
+  );
+}
+
+function RhozeFlywheel() {
+  const steps = [
+    { label: "Spend", sub: "on services", icon: "$" },
+    { label: "Earn", sub: "$RHOZE back", icon: "✦" },
+    { label: "Hold or trade", sub: "on Pump.fun", icon: "◎" },
+    { label: "Redeem", sub: "for a discount", icon: "%" },
+  ];
+  return (
+    <div className="relative mx-auto my-2 aspect-square w-full max-w-[280px]">
+      <div className="absolute inset-0 rounded-full border border-fuchsia-500/30 dark:border-fuchsia-400/25" />
+      <div className="absolute inset-4 rounded-full border border-dashed border-border" />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Flywheel</div>
+          <div className="mt-1 text-base font-semibold">$RHOZE</div>
+        </div>
+      </div>
+      {steps.map((s, i) => {
+        const angle = (i / steps.length) * Math.PI * 2 - Math.PI / 2;
+        const r = 42;
+        const x = 50 + Math.cos(angle) * r;
+        const y = 50 + Math.sin(angle) * r;
+        return (
+          <div
+            key={s.label}
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            style={{ left: `${x}%`, top: `${y}%` }}
+          >
+            <div className="flex flex-col items-center gap-1 text-center">
+              <div className="h-9 w-9 rounded-full bg-background border border-fuchsia-500/40 dark:border-fuchsia-400/40 flex items-center justify-center text-sm text-fuchsia-600 dark:text-fuchsia-300 shadow-sm">
+                {s.icon}
+              </div>
+              <div className="text-[11px] font-medium leading-tight">{s.label}</div>
+              <div className="text-[10px] text-muted-foreground leading-tight">{s.sub}</div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

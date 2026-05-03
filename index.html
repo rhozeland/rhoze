@@ -362,9 +362,12 @@
     }
     @media (max-width: 720px) {
       .hero-globe-wrap {
-        width: 180px;
-        top: 0.75rem;
-        right: 0.75rem;
+        position: relative;
+        top: auto;
+        right: auto;
+        width: min(70vw, 280px);
+        margin: 0 auto 1.25rem;
+        align-self: center;
       }
     }
     .hero-globe-wrap::before {

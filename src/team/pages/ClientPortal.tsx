@@ -20,6 +20,7 @@ export default function ClientPortal() {
   const { loading, session, user } = useAuth();
   const [depositOpen, setDepositOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("250");
+  const [depositLabel, setDepositLabel] = useState<string | null>(null);
   const [creditsOpen, setCreditsOpen] = useState(false);
   const [creditPack, setCreditPack] = useState<number>(4);
 
@@ -256,7 +257,17 @@ export default function ClientPortal() {
             only the team can mark items approved. */}
         <section className="space-y-2">
           <div className="text-xs uppercase tracking-wider text-muted-foreground">Project roadmap</div>
-          <ProjectMilestones projectId={id!} canEdit={false} canApprove={false} canSubmit={true} />
+          <ProjectMilestones
+            projectId={id!}
+            canEdit={false}
+            canApprove={false}
+            canSubmit={true}
+            onPay={(m) => {
+              setDepositAmount(String(Math.round(m.price_cents / 100)));
+              setDepositLabel(m.title);
+              setDepositOpen(true);
+            }}
+          />
         </section>
 
         {/* Pay a deposit */}
@@ -269,12 +280,16 @@ export default function ClientPortal() {
                 Funds your project's dollar balance — used as deliverables get billed. Settles instantly by card.
               </p>
             </div>
-            <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
+            <Dialog open={depositOpen} onOpenChange={(o) => { setDepositOpen(o); if (!o) setDepositLabel(null); }}>
               <DialogTrigger asChild>
                 <Button size="lg"><DollarSign size={16} className="mr-1" /> Add funds</Button>
               </DialogTrigger>
               <DialogContent className="max-w-lg">
-                <DialogHeader><DialogTitle>Add funds to {project.title}</DialogTitle></DialogHeader>
+                <DialogHeader>
+                  <DialogTitle>
+                    {depositLabel ? `Pay for "${depositLabel}"` : `Add funds to ${project.title}`}
+                  </DialogTitle>
+                </DialogHeader>
                 <div className="space-y-3">
                   <div className="space-y-1.5">
                     <Label>Amount (USD, min $50)</Label>

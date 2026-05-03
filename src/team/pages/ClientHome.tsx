@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
 import { formatCents } from "../lib/format";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Sparkles } from "lucide-react";
 
 /**
  * Client landing — lists every project the signed-in user has been linked
@@ -27,6 +27,19 @@ export default function ClientHome() {
     },
   });
 
+  const ids = (projects ?? []).map((p: any) => p.id);
+  const { data: balances } = useQuery({
+    queryKey: ["client_rhoze_balances", ids.join(",")],
+    enabled: ids.length > 0,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("rhoze_balances")
+        .select("project_id,balance,lifetime_earned")
+        .in("project_id", ids);
+      return Object.fromEntries((data ?? []).map((r: any) => [r.project_id, r]));
+    },
+  });
+
   if (loading) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
   if (!session) return <Navigate to="/client" replace />;
 
@@ -45,7 +58,9 @@ export default function ClientHome() {
         </div>
       ) : (
         <ul className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden">
-          {(projects ?? []).map((p: any) => (
+          {(projects ?? []).map((p: any) => {
+            const rb = balances?.[p.id];
+            return (
             <li key={p.id}>
               <Link
                 to={`/portal/${p.id}`}
@@ -57,10 +72,16 @@ export default function ClientHome() {
                     {p.client_name} · {p.status} · {formatCents(p.dollar_balance_cents)} · {p.credit_balance ?? 0} cr
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-muted-foreground shrink-0" />
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="hidden sm:flex items-center gap-1 text-[11px] tabular-nums px-2 py-1 rounded-md bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
+                    <Sparkles size={11} /> {Number(rb?.balance ?? 0).toLocaleString()} $RHOZE
+                  </div>
+                  <ChevronRight size={16} className="text-muted-foreground" />
+                </div>
               </Link>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>

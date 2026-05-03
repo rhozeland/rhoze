@@ -1,4 +1,4 @@
-import { useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo, useRef, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink, Play } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -40,82 +40,82 @@ type ServiceDetail = {
   notIncluded?: string[];
 };
 
-type ServiceExample = { title: string; artist: string; thumb?: string; href?: string };
+type ServiceExample = { title: string; artist: string; thumb?: string; href?: string; video?: string };
 
 // Curated samples drawn from /projects.html — real client work, no asset hosting needed.
 const SERVICE_EXAMPLES: Record<string, ServiceExample[]> = {
   // ---- Visual ----
   "photo-shoot": [
-    { title: "U Outta Know", artist: "YOUNG $TEELO", thumb: "/images/steelo-u-outta-know-thumb.jpg" },
-    { title: "Salar Gholami", artist: "BK Whiskey", thumb: "/images/bk-salar-thumb.jpg" },
-    { title: "Milad Zareian", artist: "BK Whiskey", thumb: "/images/bk-milad-thumb.jpg" },
+    { title: "U Outta Know", artist: "YOUNG $TEELO", thumb: "/images/steelo-u-outta-know-thumb.jpg", video: "/videos/steelo-u-outta-know.mp4", href: "https://www.youtube.com/watch?v=JL85Aej4Je4" },
+    { title: "Salar Gholami", artist: "BK Whiskey", thumb: "/images/bk-salar-thumb.jpg", video: "/videos/bk-salar.mp4", href: "https://www.instagram.com/p/DDr6K4fJTOJ/" },
+    { title: "Milad Zareian", artist: "BK Whiskey", thumb: "/images/bk-milad-thumb.jpg", video: "/videos/bk-milad.mp4", href: "https://www.instagram.com/p/DINIm3lMhZj/" },
   ],
   "content-edit": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
-    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
   ],
   "commercial-edit": [
-    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
-    { title: "Documentary", artist: "Rhozeland", thumb: "/images/documentary-thumbnail.png" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
   ],
   "short-form-edit": [
-    { title: "Runner's Club Vol. 1", artist: "Runner's Club", thumb: "/images/rc1-thumb.jpg" },
-    { title: "Runner's Club Vol. 2", artist: "Runner's Club", thumb: "/images/rc2-thumb.jpg" },
-    { title: "Bombaaa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-bombaaa-thumb.jpg" },
+    { title: "Runner's Club Vol. 1", artist: "Runner's Club", thumb: "/images/rc1-thumb.jpg", video: "/videos/rc1.mp4", href: "https://www.instagram.com/p/DJ90KlZIg3r/" },
+    { title: "Runner's Club Vol. 2", artist: "Runner's Club", thumb: "/images/rc2-thumb.jpg", video: "/videos/rc2.mp4", href: "https://www.instagram.com/p/DS0oshoASn1/" },
+    { title: "Bombaaa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-bombaaa-thumb.jpg", video: "/videos/fingaz-bombaaa.mp4", href: "https://www.youtube.com/watch?v=QSFF9jI8f4g" },
   ],
   "mv-edit": [
-    { title: "The Mask", artist: "Ooak", thumb: "/images/ooak-the-mask-thumb.png", href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg" },
-    { title: "Mansa Musa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-mansa-musa-thumb.png" },
-    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ", thumb: "/images/fingaz-superhero-thumb.png" },
+    { title: "The Mask", artist: "Ooak", thumb: "/images/ooak-the-mask-thumb.png", video: "/videos/ooak-the-mask.mp4", href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg" },
+    { title: "Mansa Musa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-mansa-musa-thumb.png", video: "/videos/fingaz-mansa-musa.mp4", href: "https://www.youtube.com/watch?v=w9dYE595cBw" },
+    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ", thumb: "/images/fingaz-superhero-thumb.png", video: "/videos/fingaz-superhero.mp4", href: "https://www.youtube.com/watch?v=_4FotFv6VWc" },
   ],
   // ---- Audio ----
   "audio-recording": [
-    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png" },
-    { title: "Surfin'", artist: "Straightdizzy", thumb: "/images/surfin-thumb.png" },
-    { title: "Gotta Go", artist: "Straightdizzy", thumb: "/images/straightdizzy-gotta-go-thumb.jpg" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png", href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" },
+    { title: "Surfin'", artist: "Straightdizzy", thumb: "/images/surfin-thumb.png", href: "https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63?si=157021a0c33e4a8f" },
+    { title: "Gotta Go", artist: "Straightdizzy", thumb: "/images/straightdizzy-gotta-go-thumb.jpg", video: "/videos/straightdizzy-gotta-go.mp4", href: "https://www.youtube.com/watch?v=nLlh8k-Uwdg" },
   ],
   "mixing": [
-    { title: "Holy Water", artist: "Cozal", thumb: "/images/cozal-holy-water-thumb.png" },
-    { title: "Night Come", artist: "Luckz", thumb: "/images/luckz-night-come-thumb.png" },
-    { title: "Withdrawals", artist: "Semiah", thumb: "/images/semiah-withdrawals-thumb.png" },
+    { title: "Holy Water", artist: "Cozal", thumb: "/images/cozal-holy-water-thumb.png", video: "/videos/cozal-holy-water.mp4", href: "https://www.youtube.com/watch?v=VPLyATcs7fE" },
+    { title: "Night Come", artist: "Luckz", thumb: "/images/luckz-night-come-thumb.png", video: "/videos/luckz-night-come.mp4", href: "https://www.youtube.com/watch?v=pDO4sTpWKng" },
+    { title: "Withdrawals", artist: "Semiah", thumb: "/images/semiah-withdrawals-thumb.png", video: "/videos/semiah-withdrawals.mp4", href: "https://www.youtube.com/watch?v=Y1v-IBb2aIA" },
   ],
   "mastering": [
-    { title: "For The Dot", artist: "Luckz", thumb: "/images/luckz-forthedot-thumb.jpg" },
-    { title: "Figure It Out", artist: "Meesch", thumb: "/images/meesch-figure-it-out-thumb.jpg" },
-    { title: "Privilege", artist: "Jevy", thumb: "/images/jevy-privilege-thumb.png" },
+    { title: "For The Dot", artist: "Luckz", thumb: "/images/luckz-forthedot-thumb.jpg", video: "/videos/luckz-forthedot.mp4", href: "https://www.youtube.com/watch?v=VKzcwcNTlaU" },
+    { title: "Figure It Out", artist: "Meesch", thumb: "/images/meesch-figure-it-out-thumb.jpg", video: "/videos/meesch-figure-it-out.mp4", href: "https://music.apple.com/ca/album/figure-it-out-single/1750641530" },
+    { title: "Privilege", artist: "Jevy", thumb: "/images/jevy-privilege-thumb.png", href: "https://open.spotify.com/track/48FdIGtXonO8Wll38PUIi0" },
   ],
   "podcast": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
-    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png", href: "/projects.html" },
   ],
   // ---- Development ----
   "design": [
-    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg", href: "/projects.html" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
   ],
   "graphic-design": [
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
-    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png" },
-    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png", href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png", href: "/projects.html" },
   ],
   "web-development": [
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
-    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "Toronto Palapa Tours", artist: "Toronto Palapa Tours", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e962a828465eeb8dcd60e_admin-ajax%20(7).webp", href: "https://torontopalapa.tours/" },
+    { title: "Indo LeLongLegs", artist: "Indoléstic", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png", href: "https://www.lelonglegs.lol/" },
   ],
   "uiux-development": [
-    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png" },
+    { title: "Server Incognito", artist: "Indoléstic", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif", href: "https://vectorfestival.org/window-activation" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "Toronto Palapa Tours", artist: "Toronto Palapa Tours", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e962a828465eeb8dcd60e_admin-ajax%20(7).webp", href: "https://torontopalapa.tours/" },
   ],
   "consult": [
-    { title: "Songwriting Camp", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg" },
-    { title: "MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png" },
+    { title: "Songwriting Camp", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
   ],
 };
 
@@ -862,30 +862,7 @@ function ServiceDetailsDialog({
                 <Section label="Recent work">
                   <div className="grid grid-cols-3 gap-2">
                     {examples.map((ex, i) => {
-                      const Wrap: any = ex.href ? "a" : "div";
-                      const wrapProps = ex.href ? { href: ex.href, target: "_blank", rel: "noopener noreferrer" } : {};
-                      return (
-                        <Wrap
-                          key={i}
-                          {...wrapProps}
-                          className="group block overflow-hidden rounded-lg border border-border bg-muted/40 hover:border-primary/40 transition-colors"
-                        >
-                          {ex.thumb && (
-                            <div className="aspect-[4/3] overflow-hidden bg-muted">
-                              <img
-                                src={ex.thumb}
-                                alt={`${ex.title} — ${ex.artist}`}
-                                loading="lazy"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            </div>
-                          )}
-                          <div className="px-2 py-1.5">
-                            <div className="text-[11px] font-medium leading-tight truncate">{ex.title}</div>
-                            <div className="text-[10px] text-muted-foreground truncate">{ex.artist}</div>
-                          </div>
-                        </Wrap>
-                      );
+                      return <RecentWorkCard key={i} ex={ex} />;
                     })}
                   </div>
                   <a
@@ -917,5 +894,85 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
       <div className="text-[11px] uppercase tracking-wider text-muted-foreground/80 font-medium">{label}</div>
       {children}
     </div>
+  );
+}
+
+function RecentWorkCard({ ex }: { ex: ServiceExample }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const hostLabel = useMemo(() => {
+    if (!ex.href) return null;
+    try {
+      const h = new URL(ex.href, window.location.origin).hostname.replace(/^www\./, "");
+      if (h.includes("youtube") || h.includes("youtu.be")) return "YouTube";
+      if (h.includes("instagram")) return "Instagram";
+      if (h.includes("spotify")) return "Spotify";
+      if (h.includes("music.apple")) return "Apple Music";
+      if (h.includes("soundcloud")) return "SoundCloud";
+      if (h.includes("rhozeland")) return "Rhozeland";
+      return h;
+    } catch {
+      return null;
+    }
+  }, [ex.href]);
+
+  const handleEnter = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  };
+  const handleLeave = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    try { v.currentTime = 0; } catch {}
+  };
+
+  const Wrap: any = ex.href ? "a" : "div";
+  const wrapProps = ex.href ? { href: ex.href, target: "_blank", rel: "noopener noreferrer" } : {};
+
+  return (
+    <Wrap
+      {...wrapProps}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="group relative block overflow-hidden rounded-lg border border-border bg-muted/40 hover:border-primary/40 transition-colors"
+      title={ex.href ? `Opens ${hostLabel ?? "external link"} in a new tab` : undefined}
+    >
+      {ex.thumb && (
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+          <img
+            src={ex.thumb}
+            alt={`${ex.title} — ${ex.artist}`}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {ex.video && (
+            <video
+              ref={videoRef}
+              src={ex.video}
+              muted
+              playsInline
+              loop
+              preload="none"
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            />
+          )}
+          {ex.href && (
+            <div className="pointer-events-none absolute inset-0 flex items-end justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="m-1.5 inline-flex items-center gap-1 rounded-full bg-background/90 backdrop-blur-sm border border-border px-1.5 py-0.5 text-[9px] font-medium text-foreground shadow-sm">
+                {ex.video ? <Play size={9} className="fill-current" /> : <ExternalLink size={9} />}
+                <span>{hostLabel ?? "Open"}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      <div className="px-2 py-1.5">
+        <div className="text-[11px] font-medium leading-tight truncate">{ex.title}</div>
+        <div className="text-[10px] text-muted-foreground truncate">{ex.artist}</div>
+      </div>
+    </Wrap>
   );
 }

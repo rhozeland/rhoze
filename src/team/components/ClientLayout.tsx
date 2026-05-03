@@ -1,7 +1,7 @@
-import { Outlet, Link, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCircle2, FolderOpen, ExternalLink } from "lucide-react";
+import { LogOut, UserCircle2, FolderOpen, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,6 +13,9 @@ import { cn } from "@/lib/utils";
 export default function ClientLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const portalMatch = location.pathname.match(/^\/portal\/([^/]+)/);
+  const currentProjectId = portalMatch?.[1];
 
   const handleSignOut = async () => {
     await signOut();
@@ -31,26 +34,42 @@ export default function ClientLayout() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="border-b border-border bg-card/60 backdrop-blur sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
-          <Link to="/client" className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Rhozeland</span>
+          <a
+            href="https://www.rhozeland.com"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 group"
+            title="Visit rhozeland.com"
+          >
+            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">Rhozeland</span>
             <span className="text-xs text-muted-foreground">·</span>
             <span className="text-xs font-medium">Client portal</span>
-          </Link>
+          </a>
           <nav className="flex items-center gap-1">
             <NavLink to="/client/home" end className={linkCls}>
               <FolderOpen size={12} /> Projects
             </NavLink>
+            {currentProjectId ? (
+              <a
+                href={`#rhoze-rewards`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("rhoze-rewards")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+                className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+              >
+                <Sparkles size={12} /> $RHOZE rewards
+              </a>
+            ) : (
+              <NavLink to="/client/home" className={linkCls} end>
+                <Sparkles size={12} /> $RHOZE rewards
+              </NavLink>
+            )}
             <NavLink to="/client/profile" className={linkCls}>
               <UserCircle2 size={12} /> Profile
             </NavLink>
-            <a
-              href="https://www.rhozeland.com"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-            >
-              <ExternalLink size={12} /> Rhozeland.com
-            </a>
             <Button onClick={handleSignOut} variant="ghost" size="sm" className="h-7 px-2 text-xs">
               <LogOut size={12} /> Sign out
             </Button>

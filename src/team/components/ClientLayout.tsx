@@ -1,7 +1,7 @@
 import { Outlet, Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCircle2, FolderOpen } from "lucide-react";
+import { LogOut, UserCircle2, FolderOpen, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -43,6 +43,14 @@ export default function ClientLayout() {
             <NavLink to="/client/profile" className={linkCls}>
               <UserCircle2 size={12} /> Profile
             </NavLink>
+            <a
+              href="https://www.rhozeland.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              <ExternalLink size={12} /> Rhozeland.com
+            </a>
             <Button onClick={handleSignOut} variant="ghost" size="sm" className="h-7 px-2 text-xs">
               <LogOut size={12} /> Sign out
             </Button>

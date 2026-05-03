@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Sparkles, Save, Send, Check } from "lucide-react";
+import { Sparkles, Save } from "lucide-react";
 import { useAuth } from "../lib/auth";
 
 const fmt = (n: number) => Number(n).toLocaleString();
@@ -62,30 +62,6 @@ export default function Rewards() {
       const byId = Object.fromEntries((projects ?? []).map((p: any) => [p.id, p]));
       return (data ?? []).map((r: any) => ({ ...r, project: byId[r.project_id] }));
     },
-  });
-
-  const { data: airdrops } = useQuery({
-    queryKey: ["rhoze_airdrops"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("rhoze_airdrops")
-        .select("id,project_id,amount,wallet,status,tx_signature,notes,queued_at,sent_at")
-        .order("queued_at", { ascending: false })
-        .limit(50);
-      return data ?? [];
-    },
-  });
-
-  const markSent = useMutation({
-    mutationFn: async ({ id, tx }: { id: string; tx: string }) => {
-      const { error } = await supabase
-        .from("rhoze_airdrops")
-        .update({ status: "sent", tx_signature: tx, sent_at: new Date().toISOString() })
-        .eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => { toast({ title: "Marked sent" }); qc.invalidateQueries({ queryKey: ["rhoze_airdrops"] }); },
-    onError: (e: any) => toast({ title: "Update failed", description: e.message, variant: "destructive" }),
   });
 
   return (
@@ -146,19 +122,6 @@ export default function Rewards() {
           ))}
         </div>
       </section>
-
-      {/* Airdrop queue */}
-      <section className="space-y-3">
-        <div className="text-sm font-semibold">Airdrop queue</div>
-        <div className="rounded-lg border border-border bg-card divide-y divide-border">
-          {(airdrops ?? []).length === 0 && (
-            <div className="p-4 text-sm text-muted-foreground">No pending airdrops. Queue one from a project page.</div>
-          )}
-          {(airdrops ?? []).map((a: any) => (
-            <AirdropRow key={a.id} a={a} onMarkSent={(tx) => markSent.mutate({ id: a.id, tx })} canEdit={isAdmin} />
-          ))}
-        </div>
-      </section>
     </div>
   );
 }
@@ -169,42 +132,6 @@ function Field({ label, value, onChange, hint, disabled }: { label: string; valu
       <Label className="text-xs">{label}</Label>
       <Input type="number" value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled} />
       {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
-    </div>
-  );
-}
-
-function AirdropRow({ a, onMarkSent, canEdit }: { a: any; onMarkSent: (tx: string) => void; canEdit: boolean }) {
-  const [tx, setTx] = useState("");
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="p-3 text-sm">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <div className="font-medium tabular-nums">{fmt(a.amount)} $RHOZE → <code className="text-xs">{a.wallet.slice(0,6)}…{a.wallet.slice(-4)}</code></div>
-          <div className="text-[11px] text-muted-foreground">
-            {a.status} · queued {new Date(a.queued_at).toLocaleString()}
-            {a.sent_at && <> · sent {new Date(a.sent_at).toLocaleString()}</>}
-          </div>
-        </div>
-        {canEdit && a.status === "queued" && (
-          <Button size="sm" variant="outline" onClick={() => setOpen((v) => !v)}>
-            <Send size={14} /> Mark sent
-          </Button>
-        )}
-        {a.status === "sent" && a.tx_signature && (
-          <a href={`https://solscan.io/tx/${a.tx_signature}`} target="_blank" rel="noreferrer" className="text-xs text-primary underline">
-            View tx
-          </a>
-        )}
-      </div>
-      {open && (
-        <div className="mt-2 flex gap-2">
-          <Input placeholder="Solana tx signature" value={tx} onChange={(e) => setTx(e.target.value)} />
-          <Button size="sm" onClick={() => { if (tx.trim()) { onMarkSent(tx.trim()); setOpen(false); } }}>
-            <Check size={14} /> Confirm
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

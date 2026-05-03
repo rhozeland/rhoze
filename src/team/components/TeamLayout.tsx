@@ -16,13 +16,13 @@ const nav = [
   { to: "/crm", label: "CRM", icon: Users },
   { to: "/docs", label: "Docs & Training", icon: BookOpen },
   { to: "/directory", label: "Directory", icon: UserCircle2 },
-  { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 const adminNav = [
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/catalog", label: "Catalog", icon: Package },
+  { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
   { to: "/roles", label: "Roles", icon: Shield },
   { to: "/invites", label: "Invites", icon: UserPlus },
   { to: "/referral-codes", label: "Referral codes", icon: KeyRound },

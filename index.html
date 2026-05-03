@@ -1290,6 +1290,65 @@
       .os-phone { width: min(240px, 75%); }
     }
 
+    /* Minimal squares grid for The Rhozeland App */
+    .creator-os-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    .creator-os-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .creator-os-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.7rem;
+    }
+    .creator-os-tile {
+      border: 1px solid hsl(var(--line));
+      border-radius: var(--radius-md);
+      background: hsl(var(--surface-card) / 0.55);
+      padding: 1.1rem 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .creator-os-tile:hover {
+      border-color: hsl(var(--line-strong));
+      background: hsl(var(--surface-card) / 0.85);
+    }
+    .creator-os-num {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: hsl(var(--muted));
+    }
+    .creator-os-tile h4 {
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 0.98rem;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      color: hsl(var(--ink));
+      margin: 0;
+    }
+    .creator-os-tile p {
+      font-size: 0.83rem;
+      line-height: 1.5;
+      color: hsl(var(--muted));
+      margin: 0;
+    }
+    @media (max-width: 880px) {
+      .creator-os-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .creator-os-grid { grid-template-columns: 1fr; }
+    }
+
     .card {
       min-height: 290px;
       padding: 1.7rem;

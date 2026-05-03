@@ -381,24 +381,37 @@ export default function StartPage() {
           {/* SUBSCRIBE: tiers are the primary focus, services are a reference list */}
           {path === "subscribe" && (
             <>
-              <div className="grid gap-3 md:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                 {tiers.map(t => {
                   const perCredit = t.credits > 0 ? t.price_cents / t.credits : 0;
                   const isPicked = tierSlug === t.slug;
+                  const accent = TIER_ACCENTS[t.slug] ?? TIER_ACCENTS.default;
+                  const isFree = t.price_cents === 0;
                   return (
                     <button
                       key={t.id}
                       onClick={() => setTierSlug(t.slug)}
-                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border bg-card hover:border-primary/40"}`}
+                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "ring-1" : "hover:border-foreground/40"}`}
+                      style={isPicked
+                        ? { borderColor: accent, boxShadow: `inset 0 0 0 1px ${accent}`, background: `${accent}14` }
+                        : undefined}
                     >
-                      <div className="text-xs uppercase tracking-wider text-muted-foreground">{t.name}</div>
+                      <div className="text-[11px] uppercase tracking-[0.18em] font-semibold" style={{ color: accent }}>{t.name}</div>
                       <div className="mt-2 flex items-baseline gap-1">
-                        <span className="text-2xl font-semibold">{fmt(t.price_cents)}</span>
-                        <span className="text-xs text-muted-foreground">/mo</span>
+                        <span className="text-2xl font-semibold">{isFree ? "Free" : fmt(t.price_cents)}</span>
+                        {!isFree && <span className="text-xs text-muted-foreground">/mo</span>}
                       </div>
-                      <div className="mt-1 text-sm">{t.credits} credits / month</div>
-                      <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
-                      <div className="text-[11px] text-muted-foreground mt-1">Unused credits roll over while your subscription stays active.</div>
+                      <div className="mt-1 text-sm">
+                        {isFree ? "Pay-as-you-go" : `${t.credits} credits / month`}
+                      </div>
+                      {!isFree && (
+                        <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
+                      )}
+                      <div className="text-[11px] text-muted-foreground mt-1">
+                        {isFree
+                          ? "No commitment. Buy credits or scope a project anytime."
+                          : "Unused credits roll over while your subscription stays active."}
+                      </div>
                       {t.description && (
                         <div className="text-xs text-muted-foreground mt-3 leading-relaxed">{t.description}</div>
                       )}

@@ -2777,58 +2777,53 @@
           </div>
         </div>
 
-        <!-- Creator OS (full width with visual) -->
-        <a class="card creator-os-card" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" style="min-height:auto; padding:0; overflow:hidden; display:grid; grid-template-columns:1fr 1.1fr; cursor:pointer;">
-          <div style="padding:clamp(1.5rem,3vw,2.2rem); display:flex; flex-direction:column; justify-content:center; gap:0.5rem;">
-            <h3 style="font-size:1.5rem;">Presenting Rhozeland's <br/>All-In-One Digital Studio</h3>
-            <p class="card-copy">Manage projects, releases, and collaborations from one platform.</p>
-            <span class="section-link" style="margin-top:0.6rem;">
-              Try something new
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-            </span>
-            <div class="os-steps-mini" aria-hidden="true">
+        <!-- Creator OS — iPhone-style live demo -->
+        <div class="card creator-os-card" id="osShotcase" style="min-height:auto; padding:0; overflow:hidden; display:grid; grid-template-columns:1fr 1.05fr; gap:0;">
+          <div style="padding:clamp(1.6rem,3vw,2.4rem); display:flex; flex-direction:column; justify-content:center; gap:0.7rem;">
+            <span class="section-kicker">The Rhozeland App</span>
+            <h3 style="font-size:1.85rem; line-height:1.05;">Your studio, network, and rewards in one app.</h3>
+            <p class="card-copy">Book studio time, find collaborators, run releases, and earn $RHOZE for every move you make. Try it live, right from here.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:0.4rem;">
+              <a class="hero-primary" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
+                Open the live app
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+              </a>
+              <a class="hero-secondary" href="/about.html">How it works</a>
+            </div>
+            <div class="os-steps-mini" aria-hidden="true" style="margin-top:1rem;">
               <span><b>01</b>Create &amp; Contribute</span>
               <span><b>02</b>Build Reputation</span>
               <span><b>03</b>Spend &amp; Unlock</span>
               <span><b>04</b>Revenue Sharing</span>
             </div>
           </div>
-          <div class="creator-os-preview" id="osShotcase" style="position:relative; padding:1.2rem; display:flex; flex-direction:column; gap:0.4rem; overflow:hidden; background:hsl(var(--surface-alt) / 0.5);">
-            <div class="os-shot-stage">
-              <div class="os-chrome">
-                <span class="os-dot"></span>
-                <span class="os-dot"></span>
-                <span class="os-dot"></span>
-                <span class="os-url" id="osShotUrl">rhozeland.app</span>
+          <div class="creator-os-preview" style="position:relative; padding:1.6rem 1.2rem 1.4rem; display:flex; flex-direction:column; align-items:center; gap:1rem; overflow:hidden; background:hsl(var(--surface-alt) / 0.5);">
+            <div class="os-phone-wrap">
+              <div class="os-phone">
+                <div class="os-phone-glow" aria-hidden="true"></div>
+                <div class="os-phone-screen">
+                  <div class="os-phone-status">
+                    <span>9:41</span>
+                    <span id="osShotUrl" style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight:600;">rhozeland.app</span>
+                  </div>
+                  <span class="os-phone-live">Live</span>
+                  <div class="os-frame" id="osShotFrame">
+                    <img class="is-active" src="/images/creator-os-landing.png" alt="Rhozeland app — Home" loading="lazy" />
+                    <img src="/images/creator-os-spaces.png" alt="Rhozeland app — Spaces" loading="lazy" />
+                    <img src="/images/creator-os-hub.png" alt="Rhozeland app — Hub" loading="lazy" />
+                    <img src="/images/creator-os-studios.png" alt="Rhozeland app — Studios" loading="lazy" />
+                  </div>
+                </div>
               </div>
-              <span class="os-live">Live app</span>
-              <div class="os-frame" id="osShotFrame">
-                <img class="is-active" src="/images/creator-os-landing.png" alt="Rhozeland Creator OS — landing" loading="lazy" />
-                <img src="/images/creator-os-spaces.png" alt="Rhozeland Creator OS — Spaces" loading="lazy" />
-                <img src="/images/creator-os-hub.png" alt="Rhozeland Creator OS — The Hub" loading="lazy" />
-                <img src="/images/creator-os-studios.png" alt="Rhozeland Creator OS — Studios" loading="lazy" />
+              <div class="os-tab-pills" id="osShotThumbs" role="tablist" aria-label="App screens">
+                <button type="button" class="os-tab-pill is-active" data-index="0" data-url="rhozeland.app" aria-label="Show Home">Home</button>
+                <button type="button" class="os-tab-pill" data-index="1" data-url="rhozeland.app/spaces" aria-label="Show Spaces">Spaces</button>
+                <button type="button" class="os-tab-pill" data-index="2" data-url="rhozeland.app/hub" aria-label="Show Hub">Hub</button>
+                <button type="button" class="os-tab-pill" data-index="3" data-url="rhozeland.app/explore/studios" aria-label="Show Studios">Studios</button>
               </div>
-            </div>
-            <div class="os-thumbs" id="osShotThumbs">
-              <button type="button" class="os-thumb is-active" data-index="0" data-url="rhozeland.app" aria-label="Show landing">
-                <img src="/images/creator-os-landing.png" alt="" loading="lazy" />
-                <span class="os-thumb-label">Home</span>
-              </button>
-              <button type="button" class="os-thumb" data-index="1" data-url="rhozeland.app/spaces" aria-label="Show Spaces">
-                <img src="/images/creator-os-spaces.png" alt="" loading="lazy" />
-                <span class="os-thumb-label">Spaces</span>
-              </button>
-              <button type="button" class="os-thumb" data-index="2" data-url="rhozeland.app/hub" aria-label="Show Hub">
-                <img src="/images/creator-os-hub.png" alt="" loading="lazy" />
-                <span class="os-thumb-label">Hub</span>
-              </button>
-              <button type="button" class="os-thumb" data-index="3" data-url="rhozeland.app/explore/studios" aria-label="Show Studios">
-                <img src="/images/creator-os-studios.png" alt="" loading="lazy" />
-                <span class="os-thumb-label">Studios</span>
-              </button>
             </div>
           </div>
-        </a>
+        </div>
       </section>
 
       <section class="section reveal" style="padding-top:2rem;">

@@ -91,19 +91,6 @@ export default function ClientPortal() {
     },
   });
 
-  const { data: rhozeBal } = useQuery({
-    queryKey: ["portal_rhoze_balance", id],
-    enabled: !!id && !!session,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("rhoze_balances")
-        .select("balance")
-        .eq("project_id", id!)
-        .maybeSingle();
-      return data;
-    },
-  });
-
   const openPortal = async () => {
     const t = toast({ title: "Opening billing portal…" });
     const { data, error } = await supabase.functions.invoke("create-portal-session", {

@@ -311,21 +311,21 @@ export default function StartPage() {
           <div className="grid md:grid-cols-2 gap-4 pt-4 text-left">
             <button
               onClick={() => { setPath("subscribe"); setStep("build"); }}
-              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-primary/15 via-primary/5 to-transparent hover:border-primary/60 hover:from-primary/20 transition-all space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
             >
-              <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Best value</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Best value</div>
               <div className="text-xl font-semibold">Subscribe</div>
               <p className="text-sm text-muted-foreground">Monthly credits to spend on anything — cheaper per credit.</p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-primary">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
             <button
               onClick={() => { setPath("project"); setStep("build"); }}
-              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-fuchsia-500/15 via-orange-400/5 to-transparent hover:border-fuchsia-400/60 transition-all space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
             >
-              <div className="text-[10px] uppercase tracking-[0.2em] text-fuchsia-500 dark:text-fuchsia-400 font-semibold">One-off</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">One-off</div>
               <div className="text-xl font-semibold">Scope a project</div>
               <p className="text-sm text-muted-foreground">Pick services, get an instant estimate, leave a refundable deposit.</p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-fuchsia-500 dark:text-fuchsia-400">Build estimate <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2">Build estimate <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
           </div>
 

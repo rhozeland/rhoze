@@ -1103,6 +1103,144 @@
       font-size: 0.55rem;
     }
 
+    /* iPhone-style frame for the Creator OS showcase */
+    .os-phone-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.5rem 0;
+    }
+    .os-phone {
+      position: relative;
+      width: min(280px, 80%);
+      aspect-ratio: 9 / 19.5;
+      border-radius: 38px;
+      padding: 9px;
+      background: linear-gradient(160deg, hsl(var(--ink) / 0.95), hsl(var(--ink) / 0.75));
+      box-shadow:
+        0 40px 70px -30px hsl(var(--shadow) / 0.55),
+        0 0 0 1px hsl(var(--line)) inset;
+    }
+    .os-phone::before {
+      /* Notch */
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 22px;
+      border-radius: 999px;
+      background: hsl(var(--ink));
+      z-index: 4;
+    }
+    .os-phone-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 30px;
+      overflow: hidden;
+      background: hsl(var(--surface-card));
+    }
+    .os-phone-screen .os-frame {
+      position: absolute;
+      inset: 0;
+    }
+    .os-phone-screen .os-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+    .os-phone-screen .os-frame img.is-active { opacity: 1; }
+    .os-phone-status {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 44px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 14px 26px 0;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+      z-index: 3;
+      pointer-events: none;
+      mix-blend-mode: difference;
+    }
+    .os-phone-live {
+      position: absolute;
+      top: 50px; right: 12px;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: hsl(var(--surface-card) / 0.92);
+      border: 1px solid hsl(var(--line));
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: hsl(var(--ink));
+      backdrop-filter: blur(6px);
+    }
+    .os-phone-live::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: os-live-pulse 2s ease-out infinite;
+    }
+    .os-phone-glow {
+      position: absolute;
+      inset: -40px;
+      z-index: -1;
+      background: radial-gradient(ellipse at 50% 40%, hsl(var(--accent) / 0.28), transparent 65%);
+      filter: blur(30px);
+      pointer-events: none;
+    }
+    .os-tab-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .os-tab-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid hsl(var(--line));
+      background: hsl(var(--surface-card) / 0.7);
+      color: hsl(var(--muted));
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .os-tab-pill:hover { border-color: hsl(var(--line-strong)); color: hsl(var(--ink)); }
+    .os-tab-pill.is-active {
+      background: hsl(var(--ink));
+      border-color: hsl(var(--ink));
+      color: hsl(var(--surface-card));
+    }
+    @media (max-width: 720px) {
+      .os-phone { width: min(240px, 75%); }
+    }
+
     .card {
       min-height: 290px;
       padding: 1.7rem;

@@ -1,8 +1,10 @@
-import { Outlet, Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
 import { LogOut, UserCircle2, FolderOpen, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Lightweight client-portal chrome. Deliberately separate from the team
@@ -13,9 +15,24 @@ import { cn } from "@/lib/utils";
 export default function ClientLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const portalMatch = location.pathname.match(/^\/portal\/([^/]+)/);
-  const currentProjectId = portalMatch?.[1];
+
+  const { data: totalRhoze = 0 } = useQuery({
+    queryKey: ["client_layout_rhoze_total", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data: pcs } = await supabase
+        .from("project_clients")
+        .select("project_id")
+        .eq("user_id", user!.id);
+      const ids = (pcs ?? []).map((r: any) => r.project_id);
+      if (!ids.length) return 0;
+      const { data: bals } = await supabase
+        .from("rhoze_balances")
+        .select("balance")
+        .in("project_id", ids);
+      return (bals ?? []).reduce((s: number, r: any) => s + Number(r.balance ?? 0), 0);
+    },
+  });
 
   const handleSignOut = async () => {
     await signOut();
@@ -49,24 +66,12 @@ export default function ClientLayout() {
             <NavLink to="/client/home" end className={linkCls}>
               <FolderOpen size={12} /> Projects
             </NavLink>
-            {currentProjectId ? (
-              <a
-                href={`#rhoze-rewards`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("rhoze-rewards")
-                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }}
-                className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-              >
-                <Sparkles size={12} /> $RHOZE rewards
-              </a>
-            ) : (
-              <NavLink to="/client/home" className={linkCls} end>
-                <Sparkles size={12} /> $RHOZE rewards
-              </NavLink>
-            )}
+            <span
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-accent/40 text-foreground"
+              title="Your total $RHOZE balance across all projects"
+            >
+              <Sparkles size={12} /> {Number(totalRhoze).toLocaleString()} $RHOZE
+            </span>
             <NavLink to="/client/profile" className={linkCls}>
               <UserCircle2 size={12} /> Profile
             </NavLink>

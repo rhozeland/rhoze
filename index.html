@@ -342,11 +342,59 @@
     .hero-inner {
       position: relative;
       z-index: 3;
-      display: flex;
-      flex-direction: column;
-      max-width: 52rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+      align-items: center;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      max-width: 78rem;
+      margin-inline: auto;
       padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem) clamp(2.5rem, 5vw, 4rem);
     }
+
+    @media (max-width: 880px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-globe-wrap { order: -1; max-width: 320px; margin-inline: auto; }
+    }
+
+    /* Globe block — ported from Creator OS DiscoverGlobe (simplified) */
+    .hero-globe-wrap {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 460px;
+      justify-self: end;
+      touch-action: none;
+      user-select: none;
+    }
+    .hero-globe-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 6%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 22%, hsl(var(--accent-blue) / 0.28), transparent 55%),
+                  radial-gradient(circle at 70% 78%, hsl(var(--accent-purple) / 0.22), transparent 55%);
+      filter: blur(28px);
+      pointer-events: none;
+    }
+    .hero-globe-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 2%;
+      border-radius: 50%;
+      border: 1px solid hsl(var(--line) / 0.6);
+      pointer-events: none;
+    }
+    .hero-globe-svg {
+      position: absolute;
+      inset: 8%;
+      width: 84%;
+      height: 84%;
+      overflow: visible;
+      cursor: grab;
+    }
+    .hero-globe-svg:active { cursor: grabbing; }
 
     .hero-copy {
       max-width: 44rem;

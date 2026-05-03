@@ -32,6 +32,15 @@ const DEPOSIT_PERCENT = 0.30;    // 30% deposit to begin
 const DEPOSIT_MIN_CENTS = 5000;  // Stripe min
 const SCOPE_CALL_URL = "/book.html";
 
+// Tier accent colors — match the Spark/Bloom/Glow/Play chips on the homepage
+const TIER_ACCENTS: Record<string, string> = {
+  spark: "hsl(212 80% 55%)",
+  bloom: "hsl(335 78% 56%)",
+  glow:  "hsl(24 90% 52%)",
+  play:  "hsl(42 88% 48%)",
+  default: "hsl(var(--primary))",
+};
+
 type ServiceDetail = {
   scope: string;
   deliverables: string[];

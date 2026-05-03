@@ -862,30 +862,7 @@ function ServiceDetailsDialog({
                 <Section label="Recent work">
                   <div className="grid grid-cols-3 gap-2">
                     {examples.map((ex, i) => {
-                      const Wrap: any = ex.href ? "a" : "div";
-                      const wrapProps = ex.href ? { href: ex.href, target: "_blank", rel: "noopener noreferrer" } : {};
-                      return (
-                        <Wrap
-                          key={i}
-                          {...wrapProps}
-                          className="group block overflow-hidden rounded-lg border border-border bg-muted/40 hover:border-primary/40 transition-colors"
-                        >
-                          {ex.thumb && (
-                            <div className="aspect-[4/3] overflow-hidden bg-muted">
-                              <img
-                                src={ex.thumb}
-                                alt={`${ex.title} — ${ex.artist}`}
-                                loading="lazy"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            </div>
-                          )}
-                          <div className="px-2 py-1.5">
-                            <div className="text-[11px] font-medium leading-tight truncate">{ex.title}</div>
-                            <div className="text-[10px] text-muted-foreground truncate">{ex.artist}</div>
-                          </div>
-                        </Wrap>
-                      );
+                      return <RecentWorkCard key={i} ex={ex} />;
                     })}
                   </div>
                   <a

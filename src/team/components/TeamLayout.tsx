@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Settings, Shield, UserPlus, KeyRound, LogOut,
   FolderKanban, Inbox, Package, Clock,
-  Sparkles,
+  Sparkles, ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -72,6 +72,14 @@ export default function TeamLayout() {
         </nav>
         <div className="p-3 border-t border-border space-y-2">
           <div className="text-xs text-muted-foreground truncate px-1">{user?.email}</div>
+          <a
+            href="https://www.rhozeland.com"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground px-1"
+          >
+            <ExternalLink size={12} /> Rhozeland.com
+          </a>
           <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full">
             <LogOut size={14} /> Sign out
           </Button>

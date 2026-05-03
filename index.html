@@ -1304,10 +1304,20 @@
       gap: 1rem;
       flex-wrap: wrap;
     }
+    .creator-os-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: stretch;
+    }
+    @media (max-width: 880px) {
+      .creator-os-body { grid-template-columns: 1fr; }
+    }
     .creator-os-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 0.7rem;
+      align-content: start;
     }
     .creator-os-tile {
       border: 1px solid hsl(var(--line));
@@ -1348,6 +1358,144 @@
     }
     @media (max-width: 480px) {
       .creator-os-grid { grid-template-columns: 1fr; }
+    }
+
+    /* App demo preview — browser frame mock of Rhozeland Creator OS */
+    .app-demo {
+      position: relative;
+      border: 1px solid hsl(var(--line));
+      border-radius: var(--radius-md);
+      background:
+        radial-gradient(120% 80% at 100% 0%, hsl(var(--accent-purple) / 0.10), transparent 55%),
+        radial-gradient(120% 80% at 0% 100%, hsl(var(--accent-blue) / 0.10), transparent 55%),
+        hsl(var(--surface-card) / 0.7);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+    .app-demo-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.8rem;
+      border-bottom: 1px solid hsl(var(--line));
+      background: hsl(var(--surface-card) / 0.6);
+    }
+    .app-demo-dot {
+      width: 0.55rem; height: 0.55rem; border-radius: 50%;
+      background: hsl(var(--line-strong));
+      display: inline-block;
+    }
+    .app-demo-url {
+      margin-left: 0.4rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.7rem;
+      color: hsl(var(--muted));
+      letter-spacing: 0.02em;
+    }
+    .app-demo-body {
+      padding: 0.9rem 1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      flex: 1;
+    }
+    .app-demo-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .app-demo-brand {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: hsl(var(--ink));
+    }
+    .app-demo-brand img { width: 1.1rem; height: 1.1rem; border-radius: 0.25rem; }
+    .app-demo-pill {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid hsl(var(--line));
+      color: hsl(var(--muted));
+      background: hsl(var(--surface-card) / 0.6);
+    }
+    .app-demo-tiers {
+      display: flex; gap: 0.35rem; flex-wrap: wrap;
+    }
+    .app-demo-chip {
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      letter-spacing: 0.04em;
+    }
+    .app-demo-chip.spark { color: hsl(212 80% 55%); background: hsl(212 80% 55% / 0.08); }
+    .app-demo-chip.bloom { color: hsl(335 78% 56%); background: hsl(335 78% 56% / 0.08); }
+    .app-demo-chip.glow  { color: hsl(24 90% 52%);  background: hsl(24 90% 52% / 0.08); }
+    .app-demo-chip.play  { color: hsl(42 88% 48%);  background: hsl(42 88% 48% / 0.08); }
+    .app-demo-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    .app-demo-card {
+      border: 1px solid hsl(var(--line));
+      border-radius: 0.6rem;
+      padding: 0.55rem 0.6rem 0.6rem;
+      background: hsl(var(--surface-card) / 0.55);
+      display: flex; flex-direction: column; gap: 0.35rem;
+      min-height: 92px;
+    }
+    .app-demo-thumb {
+      height: 38px;
+      border-radius: 0.4rem;
+      background: linear-gradient(135deg, hsl(var(--accent-blue) / 0.45), hsl(var(--accent-purple) / 0.45));
+    }
+    .app-demo-thumb.b { background: linear-gradient(135deg, hsl(335 78% 60% / 0.5), hsl(24 90% 55% / 0.5)); }
+    .app-demo-thumb.c { background: linear-gradient(135deg, hsl(160 60% 50% / 0.5), hsl(212 80% 55% / 0.5)); }
+    .app-demo-card .name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: hsl(var(--ink));
+      line-height: 1.1;
+    }
+    .app-demo-card .role {
+      font-size: 0.62rem;
+      color: hsl(var(--muted));
+      letter-spacing: 0.02em;
+    }
+    .app-demo-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+      padding-top: 0.2rem;
+      border-top: 1px dashed hsl(var(--line));
+      margin-top: auto;
+    }
+    .app-demo-stat .v {
+      font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: hsl(var(--ink));
+      line-height: 1;
+    }
+    .app-demo-stat .l {
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: hsl(var(--muted));
+      margin-top: 0.15rem;
+    }
+    @media (max-width: 480px) {
+      .app-demo-cards { grid-template-columns: repeat(2, 1fr); }
+      .app-demo-cards > :nth-child(3) { display: none; }
     }
 
     .card {
@@ -2962,7 +3110,8 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:0.85rem;height:0.85rem;"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
             </a>
           </div>
-          <div class="creator-os-grid">
+          <div class="creator-os-body">
+            <div class="creator-os-grid">
             <div class="creator-os-tile">
               <span class="creator-os-num">01</span>
               <h4>Create &amp; Contribute</h4>
@@ -2983,6 +3132,52 @@
               <h4>Revenue Sharing</h4>
               <p>The flywheel pays creators back.</p>
             </div>
+            </div>
+            <a class="app-demo" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" aria-label="Open the Rhozeland Creator OS live app" style="text-decoration:none;color:inherit;">
+              <div class="app-demo-bar">
+                <span class="app-demo-dot"></span>
+                <span class="app-demo-dot"></span>
+                <span class="app-demo-dot"></span>
+                <span class="app-demo-url">rhozeland.app / discover</span>
+              </div>
+              <div class="app-demo-body">
+                <div class="app-demo-head">
+                  <div class="app-demo-brand">
+                    <img src="/images/rhozeland-app-logo.png" alt="" />
+                    Creator OS
+                  </div>
+                  <span class="app-demo-pill">Live preview</span>
+                </div>
+                <div class="app-demo-tiers" aria-hidden="true">
+                  <span class="app-demo-chip spark">Spark</span>
+                  <span class="app-demo-chip bloom">Bloom</span>
+                  <span class="app-demo-chip glow">Glow</span>
+                  <span class="app-demo-chip play">Play</span>
+                </div>
+                <div class="app-demo-cards" aria-hidden="true">
+                  <div class="app-demo-card">
+                    <div class="app-demo-thumb"></div>
+                    <span class="name">Verified Studio</span>
+                    <span class="role">Spaces · Toronto</span>
+                  </div>
+                  <div class="app-demo-card">
+                    <div class="app-demo-thumb b"></div>
+                    <span class="name">Open Drop</span>
+                    <span class="role">Launchpad · 24h</span>
+                  </div>
+                  <div class="app-demo-card">
+                    <div class="app-demo-thumb c"></div>
+                    <span class="name">Creator Hub</span>
+                    <span class="role">Network · 1.2k</span>
+                  </div>
+                </div>
+                <div class="app-demo-stats" aria-hidden="true">
+                  <div class="app-demo-stat"><div class="v">1,284</div><div class="l">Creators</div></div>
+                  <div class="app-demo-stat"><div class="v">312</div><div class="l">Studios</div></div>
+                  <div class="app-demo-stat"><div class="v">$RHOZE</div><div class="l">Rewards</div></div>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </section>

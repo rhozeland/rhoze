@@ -9,6 +9,7 @@ import Settings from "./pages/Settings";
 import RoleManager from "./pages/RoleManager";
 import Invites from "./pages/Invites";
 import ReferralCodes from "./pages/ReferralCodes";
+import Rewards from "./pages/Rewards";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Catalog from "./pages/Catalog";
@@ -94,6 +95,7 @@ export default function TeamApp() {
         <Route path="roles" element={<RoleManager />} />
         <Route path="invites" element={<Invites />} />
         <Route path="referral-codes" element={<ReferralCodes />} />
+        <Route path="rewards" element={<Rewards />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

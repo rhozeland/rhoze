@@ -1,7 +1,6 @@
 import Navbar from "@/components/rhoze/Navbar";
 import Hero from "@/components/rhoze/Hero";
 import About from "@/components/rhoze/About";
-import StudioShowcase from "@/components/rhoze/StudioShowcase";
 import Ecosystem from "@/components/rhoze/Ecosystem";
 import SelectedWork from "@/components/rhoze/SelectedWork";
 import Tokenomics from "@/components/rhoze/Tokenomics";
@@ -24,7 +23,6 @@ const Index = () => {
       />
       <Navbar />
       <Hero />
-      <StudioShowcase />
       <About />
       <Ecosystem />
       <SelectedWork />

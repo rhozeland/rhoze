@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Sparkles, Wallet, Plus, ArrowRight, Send, Gift } from "lucide-react";
+import { Sparkles, Wallet, Send, Gift, BadgePercent } from "lucide-react";
 import { useAuth } from "../lib/auth";
 
 type Settings = {
@@ -133,12 +133,13 @@ export function RhozePanel({ projectId, mode }: { projectId: string; mode: "clie
   });
 
   const bal = balance?.balance ?? 0;
-  const per = settings?.credit_cost_rhoze ?? 600;
-  const maxRedeemable = Math.floor(bal / per);
-  const [credits, setCredits] = useState<number>(1);
+  const discountPct = settings?.max_discount_pct ?? 40;
   const [walletInput, setWalletInput] = useState<string>(balance?.solana_wallet ?? "");
   const [walletOpen, setWalletOpen] = useState(false);
   const [redeemOpen, setRedeemOpen] = useState(false);
+  const [redeemCredits, setRedeemCredits] = useState<number>(1);
+  const perCredit = settings?.credit_cost_rhoze ?? 600;
+  const maxRedeemable = Math.floor(bal / perCredit);
   const [awardOpen, setAwardOpen] = useState(false);
   const [airdropOpen, setAirdropOpen] = useState(false);
 
@@ -164,47 +165,28 @@ export function RhozePanel({ projectId, mode }: { projectId: string; mode: "clie
         </div>
         <div className="text-right text-[11px] text-muted-foreground space-y-0.5 shrink-0">
           <div>Earn <span className="text-foreground font-medium">{settings?.earn_per_dollar ?? 10}</span>/$1 spent</div>
-          <div>{per} $RHOZE = 1 credit</div>
+          <div>Pay in $RHOZE → up to <span className="text-foreground font-medium">{discountPct}%</span> off</div>
         </div>
       </div>
 
+      {/* How $RHOZE works (client) */}
+      {mode === "client" && (
+        <div className="rounded-xl border border-border/60 bg-background/40 p-3 text-[11px] text-muted-foreground leading-relaxed">
+          <div className="flex items-center gap-1.5 text-foreground text-xs font-medium mb-1">
+            <BadgePercent size={12} className="text-fuchsia-500 dark:text-fuchsia-400" />
+            Use $RHOZE as payment
+          </div>
+          Settle invoices fully or partially in $RHOZE — get up to <span className="text-foreground font-medium">{discountPct}%</span> off the listed price.
+          Token value floats with the market on Pump.fun, so we apply the discount on the dollar invoice at the time of payment.
+          Want to pay this way? Link your wallet, then ask your producer to issue a $RHOZE invoice.
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
-        <Dialog open={redeemOpen} onOpenChange={setRedeemOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm" disabled={maxRedeemable < 1}>
-              <ArrowRight size={14} /> Redeem for credits
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Redeem $RHOZE for credits</DialogTitle></DialogHeader>
-            <div className="space-y-3 text-sm">
-              <div className="text-muted-foreground">
-                Each credit costs <strong className="text-foreground">{per} $RHOZE</strong>. Your balance covers up to <strong className="text-foreground">{maxRedeemable}</strong> credits.
-              </div>
-              <div className="space-y-1.5">
-                <Label>Credits</Label>
-                <Input
-                  type="number" min={1} max={maxRedeemable || 1}
-                  value={credits}
-                  onChange={(e) => setCredits(Math.max(1, Math.min(maxRedeemable || 1, parseInt(e.target.value || "1"))))}
-                />
-                <div className="text-xs text-muted-foreground">
-                  Cost: <strong className="text-foreground">{fmt(credits * per)} $RHOZE</strong> → {credits} credit{credits === 1 ? "" : "s"}
-                </div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => redeem.mutate(credits, { onSuccess: () => setRedeemOpen(false) })} disabled={redeem.isPending || credits < 1 || credits > maxRedeemable}>
-                Redeem
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
         <Dialog open={walletOpen} onOpenChange={(v) => { setWalletOpen(v); if (v) setWalletInput(balance?.solana_wallet ?? ""); }}>
           <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
+            <Button size="sm">
               <Wallet size={14} /> {balance?.solana_wallet ? "Update wallet" : "Link wallet"}
             </Button>
           </DialogTrigger>
@@ -227,6 +209,33 @@ export function RhozePanel({ projectId, mode }: { projectId: string; mode: "clie
 
         {mode === "team" && (
           <>
+            {/* Team-only legacy redemption (kept as escape hatch for manual credit grants) */}
+            <Dialog open={redeemOpen} onOpenChange={setRedeemOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" variant="outline" disabled={maxRedeemable < 1}>
+                  <BadgePercent size={14} /> Redeem → credits
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader><DialogTitle>Redeem $RHOZE for session credits</DialogTitle></DialogHeader>
+                <div className="space-y-3 text-sm">
+                  <div className="text-muted-foreground">
+                    Manual conversion at <strong className="text-foreground">{perCredit} $RHOZE</strong> per credit. Covers up to <strong className="text-foreground">{maxRedeemable}</strong> credits.
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Credits</Label>
+                    <Input type="number" min={1} max={maxRedeemable || 1} value={redeemCredits}
+                      onChange={(e) => setRedeemCredits(Math.max(1, Math.min(maxRedeemable || 1, parseInt(e.target.value || "1"))))} />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={() => redeem.mutate(redeemCredits, { onSuccess: () => setRedeemOpen(false) })} disabled={redeem.isPending || redeemCredits < 1 || redeemCredits > maxRedeemable}>
+                    Redeem
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
             <Dialog open={awardOpen} onOpenChange={setAwardOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" variant="outline"><Gift size={14} /> Award</Button>

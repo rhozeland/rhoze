@@ -16,6 +16,7 @@ import { formatCents, toCents, formatDate } from "../lib/format";
 import { getStripeEnvironment } from "@/lib/stripe";
 import ProjectMilestones from "../components/ProjectMilestones";
 import ProjectAllocations from "../components/ProjectAllocations";
+import { RhozePanel } from "../components/RhozePanel";
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -308,6 +309,8 @@ export default function ProjectDetail() {
         <Stat label="Total paid" value={formatCents(totalPaid)} />
         <Stat label="Total spent" value={`${formatCents(totalSpent)} · ${creditsSpent} cr`} />
       </div>
+
+      <RhozePanel projectId={project.id} mode="team" />
 
       <Tabs defaultValue="ledger">
         <TabsList>

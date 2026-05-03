@@ -32,6 +32,15 @@ const DEPOSIT_PERCENT = 0.30;    // 30% deposit to begin
 const DEPOSIT_MIN_CENTS = 5000;  // Stripe min
 const SCOPE_CALL_URL = "/book.html";
 
+// Tier accent colors — match the Spark/Bloom/Glow/Play chips on the homepage
+const TIER_ACCENTS: Record<string, string> = {
+  spark: "hsl(212 80% 55%)",
+  bloom: "hsl(335 78% 56%)",
+  glow:  "hsl(24 90% 52%)",
+  play:  "hsl(42 88% 48%)",
+  default: "hsl(var(--primary))",
+};
+
 type ServiceDetail = {
   scope: string;
   deliverables: string[];
@@ -311,21 +320,21 @@ export default function StartPage() {
           <div className="grid md:grid-cols-2 gap-4 pt-4 text-left">
             <button
               onClick={() => { setPath("subscribe"); setStep("build"); }}
-              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-primary/15 via-primary/5 to-transparent hover:border-primary/60 hover:from-primary/20 transition-all space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
             >
-              <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Best value</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Best value</div>
               <div className="text-xl font-semibold">Subscribe</div>
               <p className="text-sm text-muted-foreground">Monthly credits to spend on anything — cheaper per credit.</p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-primary">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
             <button
               onClick={() => { setPath("project"); setStep("build"); }}
-              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-fuchsia-500/15 via-orange-400/5 to-transparent hover:border-fuchsia-400/60 transition-all space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
             >
-              <div className="text-[10px] uppercase tracking-[0.2em] text-fuchsia-500 dark:text-fuchsia-400 font-semibold">One-off</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">One-off</div>
               <div className="text-xl font-semibold">Scope a project</div>
               <p className="text-sm text-muted-foreground">Pick services, get an instant estimate, leave a refundable deposit.</p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-fuchsia-500 dark:text-fuchsia-400">Build estimate <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2">Build estimate <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
           </div>
 
@@ -381,24 +390,37 @@ export default function StartPage() {
           {/* SUBSCRIBE: tiers are the primary focus, services are a reference list */}
           {path === "subscribe" && (
             <>
-              <div className="grid gap-3 md:grid-cols-3">
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                 {tiers.map(t => {
                   const perCredit = t.credits > 0 ? t.price_cents / t.credits : 0;
                   const isPicked = tierSlug === t.slug;
+                  const accent = TIER_ACCENTS[t.slug] ?? TIER_ACCENTS.default;
+                  const isFree = t.price_cents === 0;
                   return (
                     <button
                       key={t.id}
                       onClick={() => setTierSlug(t.slug)}
-                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border bg-card hover:border-primary/40"}`}
+                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "ring-1" : "hover:border-foreground/40"}`}
+                      style={isPicked
+                        ? { borderColor: accent, boxShadow: `inset 0 0 0 1px ${accent}`, background: `${accent}14` }
+                        : undefined}
                     >
-                      <div className="text-xs uppercase tracking-wider text-muted-foreground">{t.name}</div>
+                      <div className="text-[11px] uppercase tracking-[0.18em] font-semibold" style={{ color: accent }}>{t.name}</div>
                       <div className="mt-2 flex items-baseline gap-1">
-                        <span className="text-2xl font-semibold">{fmt(t.price_cents)}</span>
-                        <span className="text-xs text-muted-foreground">/mo</span>
+                        <span className="text-2xl font-semibold">{isFree ? "Free" : fmt(t.price_cents)}</span>
+                        {!isFree && <span className="text-xs text-muted-foreground">/mo</span>}
                       </div>
-                      <div className="mt-1 text-sm">{t.credits} credits / month</div>
-                      <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
-                      <div className="text-[11px] text-muted-foreground mt-1">Unused credits roll over while your subscription stays active.</div>
+                      <div className="mt-1 text-sm">
+                        {isFree ? "Pay-as-you-go" : `${t.credits} credits / month`}
+                      </div>
+                      {!isFree && (
+                        <div className="text-xs text-muted-foreground">{fmt(perCredit)}/credit</div>
+                      )}
+                      <div className="text-[11px] text-muted-foreground mt-1">
+                        {isFree
+                          ? "No commitment. Buy credits or scope a project anytime."
+                          : "Unused credits roll over while your subscription stays active."}
+                      </div>
                       {t.description && (
                         <div className="text-xs text-muted-foreground mt-3 leading-relaxed">{t.description}</div>
                       )}
@@ -776,11 +798,18 @@ export default function StartPage() {
                   } catch (err) {
                     console.warn("lead capture failed (non-blocking)", err);
                   }
+                  // Spark = free pay-as-you-go: skip Stripe checkout
+                  if (path === "subscribe" && selectedTier?.price_cents === 0) {
+                    window.location.href = "/start.html#/return?free=1";
+                    return;
+                  }
                   setStep("checkout");
                 }}
                 disabled={!canProceed}
               >
-                {path === "subscribe" ? "Continue to payment" : `Pay deposit ${fmt(depositCents)}`}
+                {path === "subscribe"
+                  ? (selectedTier?.price_cents === 0 ? "Create free account" : "Continue to payment")
+                  : `Pay deposit ${fmt(depositCents)}`}
               </Button>
             </div>
           </div>

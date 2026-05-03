@@ -296,41 +296,41 @@ export default function StartPage() {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <PaymentTestModeBanner />
-        <div className="max-w-3xl mx-auto px-6 py-16 md:py-24 text-center space-y-8">
-          <div className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Rhozeland</div>
+        <div className="max-w-3xl mx-auto px-6 pt-6">
+          <a href="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowRight size={12} className="rotate-180" /> Back to Rhozeland
+          </a>
+        </div>
+        <div className="max-w-3xl mx-auto px-6 py-12 md:py-20 text-center space-y-7">
+          <img src={logoWhite} alt="Rhozeland" className="h-12 md:h-14 mx-auto opacity-90 dark:opacity-100" />
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight">Start a project</h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
-            Two ways to work with us. Subscribe to a monthly retainer for ongoing creative output,
-            or scope a single project and pay a deposit to kick it off.
+          <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
+            Subscribe monthly for ongoing output, or scope a one-off and put down a deposit.
           </p>
 
-          <div className="grid md:grid-cols-2 gap-4 pt-6 text-left">
+          <div className="grid md:grid-cols-2 gap-4 pt-4 text-left">
             <button
               onClick={() => { setPath("subscribe"); setStep("build"); }}
-              className="border border-border rounded-2xl p-6 bg-card hover:border-primary/60 transition-colors space-y-3"
+              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-primary/15 via-primary/5 to-transparent hover:border-primary/60 hover:from-primary/20 transition-all space-y-3"
             >
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">Best value</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Best value</div>
               <div className="text-xl font-semibold">Subscribe</div>
-              <p className="text-sm text-muted-foreground">
-                Get a credit allowance every month — spend it on any service. Cheaper per credit than buying à la carte.
-              </p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2">Choose a plan <ArrowRight size={14} /></div>
+              <p className="text-sm text-muted-foreground">Monthly credits to spend on anything — cheaper per credit.</p>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-primary">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
             <button
               onClick={() => { setPath("project"); setStep("build"); }}
-              className="border border-border rounded-2xl p-6 bg-card hover:border-primary/60 transition-colors space-y-3"
+              className="group relative overflow-hidden rounded-2xl p-6 border border-border bg-gradient-to-br from-fuchsia-500/15 via-orange-400/5 to-transparent hover:border-fuchsia-400/60 transition-all space-y-3"
             >
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">One-off</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-fuchsia-500 dark:text-fuchsia-400 font-semibold">One-off</div>
               <div className="text-xl font-semibold">Scope a project</div>
-              <p className="text-sm text-muted-foreground">
-                Pick the services you need, get a credit-based estimate, and put down a refundable deposit to begin.
-              </p>
-              <div className="flex items-center gap-1 text-sm font-medium pt-2">Build estimate <ArrowRight size={14} /></div>
+              <p className="text-sm text-muted-foreground">Pick services, get an instant estimate, leave a refundable deposit.</p>
+              <div className="flex items-center gap-1 text-sm font-medium pt-2 text-fuchsia-500 dark:text-fuchsia-400">Build estimate <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
           </div>
 
-          <div className="text-xs text-muted-foreground pt-4 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)} — roughly 1 hour of focused work or one small deliverable. Final scope is confirmed on a kickoff call before any non-deposit payment.
+          <div className="text-xs text-muted-foreground pt-2 max-w-md mx-auto">
+            1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.
           </div>
         </div>
       </div>

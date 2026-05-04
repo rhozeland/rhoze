@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Eraser, Save, Pencil, Globe } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
@@ -411,8 +411,8 @@ export default function Directory() {
                   if (!p) return null;
                   const av = availability?.[uid];
                   return (
-                    <HoverCard key={uid} openDelay={120} closeDelay={80}>
-                      <HoverCardTrigger asChild>
+                    <Popover key={uid}>
+                      <PopoverTrigger asChild>
                         <button
                           type="button"
                           className="flex items-center gap-2 border border-border rounded-full pl-1 pr-3 py-1 bg-background hover:bg-muted/50 transition-colors cursor-pointer"
@@ -426,8 +426,8 @@ export default function Directory() {
                           )}
                           <span className="text-xs">{p.display_name ?? "Unnamed"}</span>
                         </button>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-72 p-4" side="top" align="start">
+                      </PopoverTrigger>
+                      <PopoverContent className="w-72 p-4" side="top" align="start">
                         <div className="flex items-start gap-3">
                           {p.avatar_url ? (
                             <img src={p.avatar_url} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
@@ -457,8 +457,8 @@ export default function Directory() {
                             {av.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
                           </div>
                         )}
-                      </HoverCardContent>
-                    </HoverCard>
+                      </PopoverContent>
+                    </Popover>
                   );
                 })}
               </div>

@@ -93,7 +93,6 @@ function convertCell(
 const cellKey = (d: string, b: string) => `${d}|${b}`;
 
 export default function Directory() {
-  const qc = useQueryClient();
   const { user } = useAuth();
 
   const { data: people } = useQuery({

@@ -12,6 +12,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import type { ReactNode } from "react";
 
 const nav = [
   { to: "/directory", label: "Directory", icon: UserCircle2 },
@@ -40,6 +42,17 @@ function collapsedNavClass({ isActive }: { isActive: boolean }) {
   return cn(
     "flex items-center justify-center h-9 w-9 mx-auto rounded-md transition-colors",
     isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent",
+  );
+}
+
+function CollapsedTip({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right" sideOffset={8}>
+        {label}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -84,6 +97,7 @@ export default function TeamLayout() {
   };
 
   return (
+    <TooltipProvider delayDuration={0}>
     <div className="min-h-screen bg-background text-foreground flex">
       <aside
         className={cn(
@@ -115,31 +129,50 @@ export default function TeamLayout() {
           </Button>
         </div>
         <nav className={cn("flex-1 space-y-1 overflow-y-auto", collapsed ? "p-2" : "p-3")}>
-          <NavLink to="/settings" className={collapsed ? collapsedNavClass : navClass} title={collapsed ? accountLabel : undefined}>
-            <Avatar className="h-5 w-5">
-              {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
-              <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
-            </Avatar>
-            {!collapsed && accountLabel}
-          </NavLink>
-          {nav.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
-              <n.icon size={16} />
-              {!collapsed && n.label}
-            </NavLink>
-          ))}
+          {(() => {
+            const settingsLink = (
+              <NavLink to="/settings" className={collapsed ? collapsedNavClass : navClass}>
+                <Avatar className="h-5 w-5">
+                  {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
+                  <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
+                </Avatar>
+                {!collapsed && accountLabel}
+              </NavLink>
+            );
+            return collapsed ? <CollapsedTip label={accountLabel}>{settingsLink}</CollapsedTip> : settingsLink;
+          })()}
+          {nav.map((n) => {
+            const link = (
+              <NavLink to={n.to} end={n.end} className={collapsed ? collapsedNavClass : navClass}>
+                <n.icon size={16} />
+                {!collapsed && n.label}
+              </NavLink>
+            );
+            return collapsed ? (
+              <CollapsedTip key={n.to} label={n.label}>{link}</CollapsedTip>
+            ) : (
+              <span key={n.to}>{link}</span>
+            );
+          })}
           {isAdmin && (
             <>
               {!collapsed && (
                 <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>
               )}
               {collapsed && <div className="my-2 mx-auto w-6 border-t border-border" />}
-              {adminNav.map((n) => (
-                <NavLink key={n.to} to={n.to} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
-                  <n.icon size={16} />
-                  {!collapsed && n.label}
-                </NavLink>
-              ))}
+              {adminNav.map((n) => {
+                const link = (
+                  <NavLink to={n.to} className={collapsed ? collapsedNavClass : navClass}>
+                    <n.icon size={16} />
+                    {!collapsed && n.label}
+                  </NavLink>
+                );
+                return collapsed ? (
+                  <CollapsedTip key={n.to} label={n.label}>{link}</CollapsedTip>
+                ) : (
+                  <span key={n.to}>{link}</span>
+                );
+              })}
             </>
           )}
         </nav>
@@ -157,16 +190,23 @@ export default function TeamLayout() {
               </a>
             </>
           )}
-          <Button
-            onClick={handleSignOut}
-            variant="outline"
-            size={collapsed ? "icon" : "sm"}
-            className={collapsed ? "h-9 w-9 mx-auto" : "w-full"}
-            aria-label="Sign out"
-            title={collapsed ? "Sign out" : undefined}
-          >
-            <LogOut size={14} /> {!collapsed && "Sign out"}
-          </Button>
+          {collapsed ? (
+            <CollapsedTip label="Sign out">
+              <Button
+                onClick={handleSignOut}
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 mx-auto"
+                aria-label="Sign out"
+              >
+                <LogOut size={14} />
+              </Button>
+            </CollapsedTip>
+          ) : (
+            <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full">
+              <LogOut size={14} /> Sign out
+            </Button>
+          )}
         </div>
       </aside>
       <main className="flex-1 overflow-auto">
@@ -175,5 +215,6 @@ export default function TeamLayout() {
         </div>
       </main>
     </div>
+    </TooltipProvider>
   );
 }

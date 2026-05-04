@@ -22,7 +22,7 @@ const nav = [
 ];
 
 const adminNav = [
-  { to: "/team-admin", label: "Team admin", icon: Shield },
+  { to: "/team-admin", label: "Team Members", icon: Shield },
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/catalog", label: "Catalog", icon: Package },
   { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },

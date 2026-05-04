@@ -4,13 +4,14 @@ import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Shield, LogOut,
   FolderKanban, Inbox, Package, Clock,
-  Sparkles, ExternalLink,
+  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useEffect, useState } from "react";
 
 const nav = [
   { to: "/directory", label: "Directory", icon: UserCircle2 },
@@ -35,9 +36,23 @@ function navClass({ isActive }: { isActive: boolean }) {
   );
 }
 
+function collapsedNavClass({ isActive }: { isActive: boolean }) {
+  return cn(
+    "flex items-center justify-center h-9 w-9 mx-auto rounded-md transition-colors",
+    isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent",
+  );
+}
+
 export default function TeamLayout() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("team-sidebar-collapsed") === "1";
+  });
+  useEffect(() => {
+    localStorage.setItem("team-sidebar-collapsed", collapsed ? "1" : "0");
+  }, [collapsed]);
 
   const { data: profile } = useQuery({
     queryKey: ["my-profile-nav", user?.id],
@@ -70,49 +85,87 @@ export default function TeamLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex">
-      <aside className="w-60 border-r border-border bg-card flex flex-col">
-        <div className="px-5 py-5 border-b border-border">
-          <div className="text-sm font-semibold tracking-wider uppercase">Rhozeland</div>
-          <div className="text-xs text-muted-foreground">Team Portal</div>
+      <aside
+        className={cn(
+          "border-r border-border bg-card flex flex-col transition-[width] duration-200",
+          collapsed ? "w-14" : "w-60",
+        )}
+      >
+        <div
+          className={cn(
+            "border-b border-border flex items-center",
+            collapsed ? "px-2 py-3 justify-center" : "px-5 py-5 justify-between",
+          )}
+        >
+          {!collapsed && (
+            <div>
+              <div className="text-sm font-semibold tracking-wider uppercase">Rhozeland</div>
+              <div className="text-xs text-muted-foreground">Team Portal</div>
+            </div>
+          )}
+          <Button
+            onClick={() => setCollapsed((c) => !c)}
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+          </Button>
         </div>
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          <NavLink to="/settings" className={navClass}>
+        <nav className={cn("flex-1 space-y-1 overflow-y-auto", collapsed ? "p-2" : "p-3")}>
+          <NavLink to="/settings" className={collapsed ? collapsedNavClass : navClass} title={collapsed ? accountLabel : undefined}>
             <Avatar className="h-5 w-5">
               {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
               <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
             </Avatar>
-            {accountLabel}
+            {!collapsed && accountLabel}
           </NavLink>
           {nav.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={navClass}>
+            <NavLink key={n.to} to={n.to} end={n.end} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
               <n.icon size={16} />
-              {n.label}
+              {!collapsed && n.label}
             </NavLink>
           ))}
           {isAdmin && (
             <>
-              <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>
+              {!collapsed && (
+                <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>
+              )}
+              {collapsed && <div className="my-2 mx-auto w-6 border-t border-border" />}
               {adminNav.map((n) => (
-                <NavLink key={n.to} to={n.to} className={navClass}>
+                <NavLink key={n.to} to={n.to} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
                   <n.icon size={16} />
-                  {n.label}
+                  {!collapsed && n.label}
                 </NavLink>
               ))}
             </>
           )}
         </nav>
-        <div className="p-3 border-t border-border space-y-2">
-          <div className="text-xs text-muted-foreground truncate px-1">{user?.email}</div>
-          <a
-            href="https://www.rhozeland.com"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground px-1"
+        <div className={cn("border-t border-border space-y-2", collapsed ? "p-2" : "p-3")}>
+          {!collapsed && (
+            <>
+              <div className="text-xs text-muted-foreground truncate px-1">{user?.email}</div>
+              <a
+                href="https://www.rhozeland.com"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground px-1"
+              >
+                <ExternalLink size={12} /> Rhozeland.com
+              </a>
+            </>
+          )}
+          <Button
+            onClick={handleSignOut}
+            variant="outline"
+            size={collapsed ? "icon" : "sm"}
+            className={collapsed ? "h-9 w-9 mx-auto" : "w-full"}
+            aria-label="Sign out"
+            title={collapsed ? "Sign out" : undefined}
           >
-            <ExternalLink size={12} /> Rhozeland.com
-          </a>
-          <Button onClick={handleSignOut} variant="outline" size="sm" className="w-full">
-            <LogOut size={14} /> Sign out
+            <LogOut size={14} /> {!collapsed && "Sign out"}
           </Button>
         </div>
       </aside>

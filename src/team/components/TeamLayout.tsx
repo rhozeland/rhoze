@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import {
   LayoutDashboard, Users, BookOpen,
-  UserCircle2, Shield, UserPlus, KeyRound, LogOut,
+  UserCircle2, Shield, LogOut,
   FolderKanban, Inbox, Package, Clock,
   Sparkles, ExternalLink,
 } from "lucide-react";
@@ -22,9 +22,7 @@ const nav = [
 ];
 
 const adminNav = [
-  { to: "/roles", label: "Roles", icon: Shield },
-  { to: "/invites", label: "Invites", icon: UserPlus },
-  { to: "/referral-codes", label: "Referral codes", icon: KeyRound },
+  { to: "/team-admin", label: "Team admin", icon: Shield },
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/catalog", label: "Catalog", icon: Package },
   { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },

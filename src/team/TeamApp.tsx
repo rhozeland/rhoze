@@ -6,9 +6,7 @@ import CRM from "./pages/CRM";
 import Docs from "./pages/Docs";
 import Directory from "./pages/Directory";
 import Settings from "./pages/Settings";
-import RoleManager from "./pages/RoleManager";
-import Invites from "./pages/Invites";
-import ReferralCodes from "./pages/ReferralCodes";
+import TeamAdmin from "./pages/TeamAdmin";
 import Rewards from "./pages/Rewards";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -92,9 +90,10 @@ export default function TeamApp() {
         <Route path="docs" element={<Docs />} />
         <Route path="directory" element={<Directory />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="roles" element={<RoleManager />} />
-        <Route path="invites" element={<Invites />} />
-        <Route path="referral-codes" element={<ReferralCodes />} />
+        <Route path="team-admin" element={<TeamAdmin />} />
+        <Route path="roles" element={<Navigate to="/team-admin" replace />} />
+        <Route path="invites" element={<Navigate to="/team-admin" replace />} />
+        <Route path="referral-codes" element={<Navigate to="/team-admin" replace />} />
         <Route path="rewards" element={<Rewards />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

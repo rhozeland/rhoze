@@ -862,13 +862,13 @@ function MastersheetPanel({ userId }: { userId: string }) {
           variant="secondary"
           className="bg-muted text-muted-foreground hover:bg-muted/80"
           onClick={() => {
-            if (!confirm("Mark this employee as Former and set their end date to today? This will revoke active access on next sign-in.")) return;
+            if (!confirm("Mark this employee as Former and set their end date to today?")) return;
             const today = new Date().toISOString().slice(0, 10);
-            setEmp.mutate({ userId, patch: { employment_status: "former", ended_at: today } });
+            removeEmployee.mutate({ employment_status: "former", ended_at: today });
           }}
-          disabled={setEmp.isPending}
+          disabled={removeEmployee.isPending}
         >
-          Remove
+          {removeEmployee.isPending ? "Removing…" : "Remove"}
         </Button>
         <div className="flex items-center gap-3">
           {hasErrors && <span className="text-[11px] text-destructive">Fix the highlighted fields</span>}

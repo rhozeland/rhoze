@@ -169,6 +169,7 @@ export default function Directory() {
   const activeIds = active ? grid[active.day]?.[active.block] ?? [] : [];
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
   useEffect(() => { setSelectedUid(null); }, [active?.day, active?.block]);
+  const [hoverKey, setHoverKey] = useState<string | null>(null);
 
   const heatColor = (n: number, max: number) => {
     if (n === 0) return "bg-muted/40 text-muted-foreground";
@@ -384,11 +385,19 @@ export default function Directory() {
                     return (
                       <td key={d} className="p-0">
                         {ids.length > 0 ? (
-                          <HoverCard openDelay={120} closeDelay={60}>
+                          <HoverCard
+                            openDelay={120}
+                            closeDelay={60}
+                            open={hoverKey === cellKey(d, b)}
+                            onOpenChange={(o) => setHoverKey(o ? cellKey(d, b) : (hoverKey === cellKey(d, b) ? null : hoverKey))}
+                          >
                             <HoverCardTrigger asChild>
                               <button
                                 type="button"
-                                onClick={() => setActive(isActive ? null : { day: d, block: b })}
+                                onClick={() => {
+                                  setHoverKey(null);
+                                  setActive(isActive ? null : { day: d, block: b });
+                                }}
                                 className={`w-full h-10 rounded text-xs font-medium transition-all ${heatColor(ids.length, maxCount)} ${isActive ? "ring-2 ring-foreground" : "hover:opacity-80"}`}
                               >
                                 {ids.length}

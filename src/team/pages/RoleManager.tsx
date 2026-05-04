@@ -701,6 +701,19 @@ function MastersheetPanel({ userId }: { userId: string }) {
     onError: (e: any) => toast({ title: "Clear failed", description: e.message, variant: "destructive" }),
   });
 
+  const removeEmployee = useMutation({
+    mutationFn: async (patch: { employment_status: string; ended_at: string }) => {
+      const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Employee removed" });
+      qc.invalidateQueries({ queryKey: ["mastersheet", userId] });
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    },
+    onError: (e: any) => toast({ title: "Remove failed", description: e.message, variant: "destructive" }),
+  });
+
   if (isLoading) return <div className="p-4 text-xs text-muted-foreground">Loading mastersheet…</div>;
 
   const dirty = Object.keys(draft).length > 0;

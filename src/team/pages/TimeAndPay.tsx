@@ -25,14 +25,14 @@ const WORK_TYPES: { value: WorkType; label: string; short: string; tone: string 
 const toneFor = (wt: string) => WORK_TYPES.find((w) => w.value === wt)?.tone ?? "bg-muted text-muted-foreground border-border";
 const labelFor = (wt: string) => WORK_TYPES.find((w) => w.value === wt)?.short ?? wt;
 
-// Diff in hours between "HH:MM" strings (handles overnight)
-function hoursBetween(start: string, end: string): number {
+// Diff in hours between two ISO-ish datetime-local strings ("YYYY-MM-DDTHH:MM").
+// Each side carries its own day, so all-nighters and same-day tasks both work.
+function hoursBetweenDT(start: string, end: string): number {
   if (!start || !end) return 0;
-  const [sh, sm] = start.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-  let mins = eh * 60 + em - (sh * 60 + sm);
-  if (mins < 0) mins += 24 * 60;
-  return Math.round((mins / 60) * 100) / 100;
+  const s = new Date(start).getTime();
+  const e = new Date(end).getTime();
+  if (Number.isNaN(s) || Number.isNaN(e) || e <= s) return 0;
+  return Math.round(((e - s) / 3600000) * 100) / 100;
 }
 
 export default function TimeAndPay() {

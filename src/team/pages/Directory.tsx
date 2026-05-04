@@ -3,7 +3,6 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo, useState, useEffect } from "react";
-import { useAuth } from "../lib/auth";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
@@ -93,8 +92,6 @@ function convertCell(
 const cellKey = (d: string, b: string) => `${d}|${b}`;
 
 export default function Directory() {
-  const { user } = useAuth();
-
   const { data: people } = useQuery({
     queryKey: ["team-directory"],
     queryFn: async () => {

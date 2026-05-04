@@ -35,6 +35,14 @@ function hoursBetweenDT(start: string, end: string): number {
   return Math.round(((e - s) / 3600000) * 100) / 100;
 }
 
+// Convert an ISO timestamp to a local "YYYY-MM-DDTHH:MM" string for <input type="datetime-local">.
+function toLocalDT(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export default function TimeAndPay() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();

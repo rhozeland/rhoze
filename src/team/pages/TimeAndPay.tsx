@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
@@ -549,6 +550,15 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
   const isSpecialist = local.work_type === "specialist";
   const isHourly    = local.work_type === "standard";
 
+  // Inline validation: end must be strictly after start.
+  // When invalid, we don't commit hours/times to the DB, force hours to 0,
+  // and surface an explanatory message under the row.
+  const rangeInvalid =
+    !isReimburse &&
+    !!local.start_time &&
+    !!local.end_time &&
+    new Date(local.end_time).getTime() <= new Date(local.start_time).getTime();
+
   // Rate column behavior:
   //  - Hourly     → editable, defaults to user's role rate
   //  - Specialist → locked at $30/hr
@@ -580,10 +590,19 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
   // When start/end (each carrying their own date) change, auto-fill hours.
   // Also stamp `day` from the start side for backward compatibility.
   const recalcHours = (start: string, end: string) => {
-    const h = hoursBetweenDT(start, end);
     const startISO = start ? new Date(start).toISOString() : null;
     const endISO = end ? new Date(end).toISOString() : null;
     const day = start ? start.slice(0, 10) : null;
+    const bothFilled = !!start && !!end;
+    const invalid = bothFilled && new Date(end).getTime() <= new Date(start).getTime();
+    if (invalid) {
+      // Zero hours, keep what the user typed locally for editing,
+      // but don't persist the bad time range.
+      setLocal((s) => ({ ...s, hours: "0" }));
+      commit({ hours: 0, day });
+      return;
+    }
+    const h = hoursBetweenDT(start, end);
     if (h > 0) {
       setLocal((s) => ({ ...s, hours: h.toString() }));
       commit({ hours: h, start_time: startISO, end_time: endISO, day });
@@ -594,6 +613,7 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
 
   const cell = "w-full bg-transparent text-sm py-1 px-1.5 outline-none focus:bg-accent/40 rounded transition disabled:opacity-60";
   const cellNum = cn(cell, "text-right tabular-nums");
+  const invalidCell = "ring-1 ring-destructive/60 bg-destructive/5";
 
   return (
     <tr className={cn("hover:bg-accent/20", stripe && "bg-muted/20")}>
@@ -623,21 +643,29 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
         <input disabled={locked || isReimburse} type="datetime-local" value={local.start_time}
           onChange={(e) => setLocal({ ...local, start_time: e.target.value })}
           onBlur={() => recalcHours(local.start_time, local.end_time)}
-          className={cn(cell, "min-w-[170px]")} />
+          className={cn(cell, "min-w-[170px]", rangeInvalid && invalidCell)} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="datetime-local" value={local.end_time}
           onChange={(e) => setLocal({ ...local, end_time: e.target.value })}
           onBlur={() => recalcHours(local.start_time, local.end_time)}
-          className={cn(cell, "min-w-[170px]")} />
+          aria-invalid={rangeInvalid}
+          title={rangeInvalid ? "End must be after start" : undefined}
+          className={cn(cell, "min-w-[170px]", rangeInvalid && invalidCell)} />
+        {rangeInvalid && (
+          <div className="mt-1 flex items-center gap-1 text-[11px] text-destructive">
+            <AlertTriangle size={11} />
+            <span>End must be after start — hours set to 0 and time range not saved.</span>
+          </div>
+        )}
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="number" step="0.25" min="0"
-          value={isReimburse ? "" : local.hours}
+          value={isReimburse ? "" : rangeInvalid ? "0" : local.hours}
           placeholder={isReimburse ? "—" : "0.00"}
           onChange={(e) => setLocal({ ...local, hours: e.target.value })}
-          onBlur={() => commit({ hours: parseFloat(local.hours) || 0 })}
-          className={cn(cellNum, "max-w-[70px]")} />
+          onBlur={() => commit({ hours: rangeInvalid ? 0 : (parseFloat(local.hours) || 0) })}
+          className={cn(cellNum, "max-w-[70px]", rangeInvalid && invalidCell)} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked} type="number" step="0.01" min="0"

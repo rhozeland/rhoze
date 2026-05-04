@@ -137,6 +137,37 @@ export default function AvailabilityEditor({ showHeader = true }: { showHeader?:
 
   return (
     <div className="border border-border rounded-lg p-5 bg-card space-y-3">
+      {(() => {
+        const slotsArr = Array.from(mySlots);
+        const daysSet = new Set(slotsArr.map((s) => s.split("|")[0]));
+        const blocksSet = new Set(slotsArr.map((s) => s.split("|")[1]));
+        const daysOrdered = DAYS.filter((d) => daysSet.has(d)).map((d) => d.slice(0, 3));
+        const blocksOrdered = TIME_BLOCKS.filter((b) => blocksSet.has(b));
+        const hasAny = slotsArr.length > 0 || (myNotes && myNotes.trim());
+        return (
+          <div className="border border-border rounded-md bg-muted/30 px-3 py-2 space-y-1 text-[11px]">
+            <div className="uppercase tracking-wide text-muted-foreground flex items-center justify-between">
+              <span>Preview {dirty && <span className="text-foreground/70 normal-case">· unsaved</span>}</span>
+            </div>
+            {hasAny ? (
+              <>
+                {daysOrdered.length > 0 && (
+                  <div><span className="text-muted-foreground">Days:</span> {daysOrdered.join(", ")}</div>
+                )}
+                {blocksOrdered.length > 0 && (
+                  <div><span className="text-muted-foreground">When:</span> {blocksOrdered.join(", ")}</div>
+                )}
+                {myNotes && myNotes.trim() && (
+                  <div className="text-muted-foreground italic">{myNotes}</div>
+                )}
+              </>
+            ) : (
+              <div className="text-muted-foreground italic">No availability marked yet.</div>
+            )}
+          </div>
+        );
+      })()}
+
       <div className="flex items-end justify-between gap-4 flex-wrap">
         {showHeader && (
           <div>

@@ -2,7 +2,8 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
-import { Plus, Check, Trash2, GripVertical, Search, X } from "lucide-react";
+import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -198,7 +199,8 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* Desktop: horizontal badges */}
+      <div className="hidden sm:flex items-center gap-2 flex-wrap">
         <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Departments</span>
         {DEPARTMENTS.map((d) => {
           const active = deptFilter.has(d);
@@ -221,6 +223,56 @@ export default function Dashboard() {
             Clear
           </button>
         )}
+      </div>
+
+      {/* Mobile: compact multi-select dropdown */}
+      <div className="sm:hidden">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-border text-xs text-foreground hover:border-foreground/30 transition">
+              <span className="flex items-center gap-1.5 min-w-0">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Departments</span>
+                {deptFilter.size === 0 ? (
+                  <span className="text-muted-foreground">All</span>
+                ) : (
+                  <span className="flex items-center gap-1 flex-wrap">
+                    {Array.from(deptFilter).map((d) => (
+                      <span key={d} className={cn("px-1.5 py-0.5 rounded border text-[9px] uppercase font-medium", DEPARTMENT_STYLES[d])}>{d}</span>
+                    ))}
+                  </span>
+                )}
+              </span>
+              <ChevronDown size={14} className="text-muted-foreground shrink-0" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-[--radix-popover-trigger-width] p-1.5">
+            <div className="space-y-0.5">
+              {DEPARTMENTS.map((d) => {
+                const active = deptFilter.has(d);
+                return (
+                  <button
+                    key={d}
+                    onClick={() => toggleDept(d)}
+                    className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm hover:bg-muted/60 transition text-left"
+                  >
+                    <span className={cn("inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide", DEPARTMENT_STYLES[d])}>
+                      {d}
+                    </span>
+                    {active && <Check size={14} className="text-primary shrink-0" />}
+                  </button>
+                );
+              })}
+              {deptFilter.size > 0 && (
+                <button
+                  onClick={() => setDeptFilter(new Set())}
+                  className="w-full text-left px-2 py-1.5 text-[11px] text-muted-foreground hover:text-foreground border-t border-border mt-1 pt-2"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

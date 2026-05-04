@@ -297,6 +297,10 @@ export default function Settings() {
             <div className="text-[11px] text-muted-foreground">Shown on your card in the team directory.</div>
           </div>
           <div className="space-y-1.5">
+            <Label>Stage / artist name</Label>
+            <Input value={personal.stage_name} onChange={(e) => setPersonal({ ...personal, stage_name: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
             <Label>Email</Label>
             <Input value={user?.email ?? ""} disabled readOnly />
             <div className="text-[11px] text-muted-foreground">Change in the Account tab.</div>
@@ -331,8 +335,6 @@ export default function Settings() {
             {personalErrors.date_of_birth && <div className="text-[11px] text-destructive">{personalErrors.date_of_birth}</div>}
           </div>
           <div className="space-y-1.5 sm:col-span-2"><Label>Address</Label><Textarea rows={2} value={personal.address} onChange={(e) => setPersonal({ ...personal, address: e.target.value })} /></div>
-          <div className="space-y-1.5"><Label>Stage / artist name</Label><Input value={personal.stage_name} onChange={(e) => setPersonal({ ...personal, stage_name: e.target.value })} /></div>
-          <div /> 
           <div className="space-y-1.5">
             <Label>Emergency contact name</Label>
             <Input maxLength={80} value={personal.emergency_contact_name}

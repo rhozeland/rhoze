@@ -707,22 +707,17 @@ function MastersheetPanel({ userId }: { userId: string }) {
 
   const dirty = Object.keys(draft).length > 0;
 
-  // Locking is contingent on Personal & emergency completion. When all required
-  // fields are filled, the mastersheet is locked into a read-only preview.
-  const requiredPersonalKeys = [
-    "phone", "date_of_birth",
+  // Preview is contingent on the Personal & emergency block being filled in.
+  const personalEmergencyKeys = [
+    "phone", "address", "date_of_birth",
     "emergency_contact_name", "emergency_contact_relation", "emergency_contact_phone",
   ] as const;
-  const personalComplete = requiredPersonalKeys.every((k) => {
+  const personalFilled = personalEmergencyKeys.some((k) => {
     const v = (profile as any)?.[k];
     return v !== null && v !== undefined && String(v).trim() !== "";
   });
-  const missingPersonal = requiredPersonalKeys.filter((k) => {
-    const v = (profile as any)?.[k];
-    return v === null || v === undefined || String(v).trim() === "";
-  });
 
-  if (mode === "preview" && personalComplete && !dirty) {
+  if (mode === "preview" && personalFilled && !dirty) {
     const p: any = profile ?? {};
     const Row = ({ label, value }: { label: string; value: any }) => {
       const display = value === null || value === undefined || value === "" ? "—" : String(value);
@@ -761,15 +756,10 @@ function MastersheetPanel({ userId }: { userId: string }) {
           <Row label="Internal notes" value={p.internal_notes} />
         </section>
         <div className="lg:col-span-3 flex justify-end">
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] text-muted-foreground">
-              Locked — Personal & emergency complete
-            </span>
-            <Button size="sm" variant="outline" onClick={() => setMode("edit")}>
-              <Pencil size={12} className="mr-1.5" />
-              Unlock to edit
-            </Button>
-          </div>
+          <Button size="sm" variant="outline" onClick={() => setMode("edit")}>
+            <Pencil size={12} className="mr-1.5" />
+            Edit mastersheet
+          </Button>
         </div>
       </div>
     );
@@ -928,15 +918,10 @@ function MastersheetPanel({ userId }: { userId: string }) {
 
       <div className="lg:col-span-3 flex justify-end">
         <div className="flex items-center gap-3">
-          {!personalComplete && (
-            <span className="text-[11px] text-muted-foreground">
-              Missing: {missingPersonal.join(", ")}
-            </span>
-          )}
-          {personalComplete && (
+          {personalFilled && (
             <Button size="sm" variant="ghost" onClick={() => { setDraft({}); setMode("preview"); }}>
               <Eye size={12} className="mr-1.5" />
-              Lock & preview
+              Preview
             </Button>
           )}
           {hasErrors && <span className="text-[11px] text-destructive">Fix the highlighted fields</span>}

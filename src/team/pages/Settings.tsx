@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
-import { Upload, Eye, Pencil, Lock } from "lucide-react";
+import { Upload } from "lucide-react";
 import { formatPhone, validateAll, type MastersheetField } from "../lib/validation";
 import AvatarEditor from "../components/AvatarEditor";
 import AvailabilityEditor from "../components/AvailabilityEditor";
@@ -30,7 +30,6 @@ export default function Settings() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [editorFile, setEditorFile] = useState<File | null>(null);
-  const [personalMode, setPersonalMode] = useState<"edit" | "preview">("preview");
 
   const { data: profile } = useQuery({
     queryKey: ["my-profile", user?.id],
@@ -97,7 +96,6 @@ export default function Settings() {
       toast({ title: "Profile saved" });
       qc.invalidateQueries({ queryKey: ["my-profile"] });
       qc.invalidateQueries({ queryKey: ["team-directory"] });
-      setPersonalMode("preview");
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
@@ -316,46 +314,6 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="personal" className="space-y-4">
-        {(() => {
-          const required = [
-            { key: "phone", label: "Phone", value: personal.phone },
-            { key: "date_of_birth", label: "Date of birth", value: personal.date_of_birth },
-            { key: "emergency_contact_name", label: "Emergency contact name", value: personal.emergency_contact_name },
-            { key: "emergency_contact_relation", label: "Relation", value: personal.emergency_contact_relation },
-            { key: "emergency_contact_phone", label: "Emergency phone", value: personal.emergency_contact_phone },
-          ];
-          const missing = required.filter((r) => !String(r.value ?? "").trim()).map((r) => r.label);
-          const complete = missing.length === 0;
-          if (complete && personalMode === "preview") {
-            const Row = ({ label, value }: { label: string; value: string }) => (
-              <div className="flex justify-between gap-3 py-1.5 border-b border-border/50 last:border-0">
-                <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
-                <span className="text-sm text-right">{value || "—"}</span>
-              </div>
-            );
-            return (
-              <div className="border border-border rounded-lg p-5 bg-card space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <Lock size={12} /> Personal & emergency · locked preview
-                  </div>
-                  <Button size="sm" variant="outline" onClick={() => setPersonalMode("edit")}>
-                    <Pencil size={12} className="mr-1.5" /> Unlock to edit
-                  </Button>
-                </div>
-                <Row label="Phone" value={personal.phone} />
-                <Row label="Date of birth" value={personal.date_of_birth} />
-                <Row label="Address" value={personal.address} />
-                <Row label="Emergency contact" value={personal.emergency_contact_name} />
-                <Row label="Relation" value={personal.emergency_contact_relation} />
-                <Row label="Emergency phone" value={personal.emergency_contact_phone} />
-                <p className="text-[11px] text-muted-foreground pt-1">
-                  Fields are locked because your Personal & emergency information is complete. Click "Unlock to edit" to make changes.
-                </p>
-              </div>
-            );
-          }
-          return (
         <div className="border border-border rounded-lg p-5 bg-card space-y-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Personal & emergency</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -394,20 +352,10 @@ export default function Settings() {
         </div>
         <div className="pt-1 flex items-center gap-3">
           <Button onClick={() => save.mutate()} disabled={save.isPending || hasPersonalErrors}>Save details</Button>
-          {complete && (
-            <Button variant="ghost" onClick={() => setPersonalMode("preview")}>
-              <Eye size={14} className="mr-1.5" /> Lock & preview
-            </Button>
-          )}
-          {!complete && (
-            <span className="text-[11px] text-muted-foreground">Missing: {missing.join(", ")}</span>
-          )}
           {hasPersonalErrors && <span className="text-xs text-destructive">Fix the highlighted fields above.</span>}
         </div>
         <p className="text-[11px] text-muted-foreground">Wage, payment method, department and program are managed by an admin in Role Manager.</p>
         </div>
-          );
-        })()}
         </TabsContent>
 
         <TabsContent value="availability" className="space-y-4">

@@ -237,7 +237,9 @@ export default function Settings() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-semibold">Settings</h1>
+        <h1 className="text-2xl font-semibold">
+          Welcome, {(form.display_name || user?.email?.split("@")[0] || "there").trim()}!
+        </h1>
         <p className="text-sm text-muted-foreground">Your team profile. Visible to other team members.</p>
       </div>
 

@@ -1,11 +1,9 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Globe } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "../lib/auth";
-import { toast } from "@/hooks/use-toast";
-import { Globe } from "lucide-react";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];

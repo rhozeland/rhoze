@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
 import { Upload } from "lucide-react";
@@ -170,6 +171,55 @@ export default function Settings() {
   const dept = profile?.department ? DEPT_LABEL[profile.department] : "Unassigned";
   const initial = (form.display_name || user?.email || "?").slice(0, 1).toUpperCase();
 
+  // Account: change email / password
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingEmail, setSavingEmail] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+
+  async function changeEmail() {
+    const email = newEmail.trim();
+    if (!email || email === user?.email) {
+      toast({ title: "Enter a different email", variant: "destructive" });
+      return;
+    }
+    setSavingEmail(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ email });
+      if (error) throw error;
+      toast({ title: "Check your inbox", description: "Confirm the change from a link sent to your new email." });
+      setNewEmail("");
+    } catch (e: any) {
+      toast({ title: "Failed", description: e.message, variant: "destructive" });
+    } finally {
+      setSavingEmail(false);
+    }
+  }
+
+  async function changePassword() {
+    if (newPassword.length < 8) {
+      toast({ title: "Password too short", description: "Use at least 8 characters.", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast({ title: "Passwords don't match", variant: "destructive" });
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast({ title: "Password updated" });
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (e: any) {
+      toast({ title: "Failed", description: e.message, variant: "destructive" });
+    } finally {
+      setSavingPassword(false);
+    }
+  }
+
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
@@ -177,16 +227,16 @@ export default function Settings() {
         <p className="text-sm text-muted-foreground">Your team profile. Visible to other team members.</p>
       </div>
 
-      <div className="border border-border rounded-lg p-5 bg-card space-y-3">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Account</div>
-        <div className="text-sm"><span className="text-muted-foreground">Email:</span> {user?.email}</div>
-        <div className="text-sm"><span className="text-muted-foreground">Roles:</span> {roles.join(", ") || "—"}</div>
-        <div className="text-sm"><span className="text-muted-foreground">Department:</span> {dept}</div>
-        <div className="text-sm"><span className="text-muted-foreground">Job title:</span> {profile?.job_title || "—"}</div>
-        <p className="text-xs text-muted-foreground pt-1">Department and job title are assigned by an admin.</p>
-      </div>
+      <Tabs defaultValue="profile" className="space-y-4">
+        <TabsList className="flex flex-wrap">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="personal">Personal & emergency</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
+        </TabsList>
 
-      <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+        <TabsContent value="profile" className="space-y-4">
+        <div className="border border-border rounded-lg p-5 bg-card space-y-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Profile</div>
 
         <div className="flex items-center gap-4">
@@ -235,7 +285,7 @@ export default function Settings() {
           <div className="space-y-1.5">
             <Label>Email</Label>
             <Input value={user?.email ?? ""} disabled readOnly />
-            <div className="text-[11px] text-muted-foreground">From your sign-in account. Visible to teammates.</div>
+            <div className="text-[11px] text-muted-foreground">Change in the Account tab.</div>
           </div>
           <div className="space-y-1.5 sm:col-span-2">
             <Label>Bio</Label>
@@ -246,9 +296,11 @@ export default function Settings() {
         <div className="pt-2">
           <Button onClick={() => save.mutate()} disabled={save.isPending}>Save profile</Button>
         </div>
-      </div>
+        </div>
+        </TabsContent>
 
-      <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+        <TabsContent value="personal" className="space-y-4">
+        <div className="border border-border rounded-lg p-5 bg-card space-y-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Personal & emergency</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
@@ -291,9 +343,11 @@ export default function Settings() {
           {hasPersonalErrors && <span className="text-xs text-destructive">Fix the highlighted fields above.</span>}
         </div>
         <p className="text-[11px] text-muted-foreground">Wage, payment method, department and program are managed by an admin in Role Manager.</p>
-      </div>
+        </div>
+        </TabsContent>
 
-      <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+        <TabsContent value="availability" className="space-y-4">
+        <div className="border border-border rounded-lg p-5 bg-card space-y-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Weekly availability</div>
         <p className="text-xs text-muted-foreground -mt-2">Pick the days and times you're typically available. Other team members can see this.</p>
         <div>
@@ -329,7 +383,53 @@ export default function Settings() {
           <Textarea rows={2} placeholder="e.g. Sundays 12:30 AM – 4:00 PM" value={avail.notes} onChange={(e) => setAvail({ ...avail, notes: e.target.value })} />
         </div>
         <div><Button onClick={() => saveAvail.mutate()} disabled={saveAvail.isPending}>Save availability</Button></div>
-      </div>
+        </div>
+        </TabsContent>
+
+        <TabsContent value="account" className="space-y-4">
+          <div className="border border-border rounded-lg p-5 bg-card space-y-3">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Account</div>
+            <div className="text-sm"><span className="text-muted-foreground">Email:</span> {user?.email}</div>
+            <div className="text-sm"><span className="text-muted-foreground">Roles:</span> {roles.join(", ") || "—"}</div>
+            <div className="text-sm"><span className="text-muted-foreground">Department:</span> {dept}</div>
+            <div className="text-sm"><span className="text-muted-foreground">Job title:</span> {profile?.job_title || "—"}</div>
+            <p className="text-xs text-muted-foreground pt-1">Department and job title are assigned by an admin.</p>
+          </div>
+
+          <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Change email</div>
+            <div className="space-y-1.5">
+              <Label>New email</Label>
+              <Input type="email" placeholder="you@example.com" value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)} />
+              <div className="text-[11px] text-muted-foreground">We'll send a confirmation link to the new address before the change takes effect.</div>
+            </div>
+            <Button onClick={changeEmail} disabled={savingEmail || !newEmail.trim()}>
+              {savingEmail ? "Sending…" : "Update email"}
+            </Button>
+          </div>
+
+          <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Change password</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>New password</Label>
+                <Input type="password" autoComplete="new-password" value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Confirm password</Label>
+                <Input type="password" autoComplete="new-password" value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)} />
+              </div>
+            </div>
+            <div className="text-[11px] text-muted-foreground">Minimum 8 characters.</div>
+            <Button onClick={changePassword} disabled={savingPassword || !newPassword || !confirmPassword}>
+              {savingPassword ? "Saving…" : "Update password"}
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

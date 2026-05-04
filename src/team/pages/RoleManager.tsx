@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Search, Trash2, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "../lib/auth";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
 
@@ -85,7 +86,7 @@ export default function RoleManager() {
   const [titleDrafts, setTitleDrafts] = useState<Record<string, string>>({});
   const [notesDrafts, setNotesDrafts] = useState<Record<string, string>>({});
   const [view, setView] = useState<"current" | "former" | "all">("current");
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [editingUid, setEditingUid] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState<Dept | "all" | "unassigned">("all");
@@ -98,10 +99,25 @@ export default function RoleManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, display_name, department, job_title, employment_status, started_at, ended_at, employment_notes")
+        .select("id, display_name, alias, pronouns, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes")
         .order("display_name");
       if (error) throw error;
       return data;
+    },
+  });
+
+  const { data: availabilityMap } = useQuery({
+    queryKey: ["team-availability-all"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_availability")
+        .select("user_id, days, time_blocks, notes");
+      if (error) throw error;
+      const map: Record<string, { days: string[]; time_blocks: string[]; notes: string | null }> = {};
+      (data ?? []).forEach((r: any) => {
+        map[r.user_id] = { days: r.days ?? [], time_blocks: r.time_blocks ?? [], notes: r.notes ?? null };
+      });
+      return map;
     },
   });
 
@@ -317,206 +333,246 @@ export default function RoleManager() {
 
       <CoveragePanel profiles={profiles ?? []} />
 
-      <div className="border border-border rounded-lg overflow-x-auto">
-        <table className="w-full text-sm min-w-[1500px]">
-          <thead className="bg-muted/40 text-left">
-            <tr>
-              <th className="px-2 py-3 w-8"></th>
-              <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3 w-44">Department</th>
-              <th className="px-4 py-3 w-56">Job title</th>
-              <th className="px-4 py-3 w-40">Status</th>
-              <th className="px-4 py-3 w-36">Started</th>
-              <th className="px-4 py-3 w-36">Ended</th>
-              <th className="px-4 py-3 w-24">Tenure</th>
-              <th className="px-4 py-3 w-56">Notes</th>
-              <th className="px-4 py-3">Current roles</th>
-              <th className="px-4 py-3 w-72">Add role</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((p: any) => {
-              const cur = rolesByUser?.[p.id] ?? [];
-              const titleVal = titleDrafts[p.id] ?? p.job_title ?? "";
-              const notesVal = notesDrafts[p.id] ?? p.employment_notes ?? "";
-              const isFormer = p.employment_status === "former";
-              const isOpen = !!expanded[p.id];
-              return (
-                <Fragment key={p.id}>
-                <tr className={`border-t border-border align-top ${isFormer ? "opacity-70" : ""}`}>
-                  <td className="px-2 py-3">
-                    <button
-                      onClick={() => setExpanded({ ...expanded, [p.id]: !isOpen })}
-                      className="text-muted-foreground hover:text-foreground"
-                      title={isOpen ? "Collapse history" : "Expand history"}
-                    >
-                      {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                    </button>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{p.display_name ?? "—"}</div>
-                    <div className="text-xs text-muted-foreground">{p.id.slice(0, 8)}…</div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Select
-                      value={p.department ?? "__none"}
-                      onValueChange={(v) => setDept.mutate({ userId: p.id, department: v === "__none" ? null : (v as Dept) })}
-                    >
-                      <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="__none">Unassigned</SelectItem>
-                        {DEPTS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Input
-                      className="h-9"
-                      placeholder="e.g. Lead Designer"
-                      value={titleVal}
-                      onChange={(e) => setTitleDrafts({ ...titleDrafts, [p.id]: e.target.value })}
-                      onBlur={() => {
-                        const next = (titleDrafts[p.id] ?? "").trim();
-                        if (next !== (p.job_title ?? "")) {
-                          setTitle.mutate({ userId: p.id, job_title: next || null });
-                        }
-                      }}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <Select
-                      value={p.employment_status ?? "active"}
-                      onValueChange={(v) => setEmp.mutate({ userId: p.id, patch: { employment_status: v } })}
-                    >
-                      <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {EMP_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Input
-                      type="date"
-                      className="h-9"
-                      value={p.started_at ?? ""}
-                      onChange={(e) => setEmp.mutate({ userId: p.id, patch: { started_at: e.target.value || null } })}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <Input
-                      type="date"
-                      className="h-9"
-                      value={p.ended_at ?? ""}
-                      onChange={(e) => setEmp.mutate({ userId: p.id, patch: { ended_at: e.target.value || null } })}
-                    />
-                  </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{tenure(p.started_at, p.ended_at)}</td>
-                  <td className="px-4 py-3">
-                    <Input
-                      className="h-9"
-                      placeholder="e.g. promoted Q2, left amicably"
-                      value={notesVal}
-                      onChange={(e) => setNotesDrafts({ ...notesDrafts, [p.id]: e.target.value })}
-                      onBlur={() => {
-                        const next = (notesDrafts[p.id] ?? "").trim();
-                        if (next !== (p.employment_notes ?? "")) {
-                          setEmp.mutate({ userId: p.id, patch: { employment_notes: next || null } });
-                        }
-                      }}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1.5">
-                      {cur.length === 0 && <span className="text-xs text-muted-foreground">none</span>}
-                      {cur.map((r) => {
-                        const invalid = !allowedRoles(p.department as Dept | null).includes(r.role);
-                        return (
-                          <span
-                            key={r.id}
-                            title={invalid ? `'${r.role}' is not allowed in this department` : undefined}
-                            className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
-                              invalid
-                                ? "bg-destructive/10 text-destructive border border-destructive/40"
-                                : "bg-muted"
-                            }`}
-                          >
-                            {r.role}
-                            {invalid && <span className="text-[10px] uppercase">invalid</span>}
-                            <button onClick={() => revoke.mutate(r.id)} className="hover:text-destructive"><Trash2 size={12} /></button>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    {(() => {
-                      const dept = (p.department ?? null) as Dept | null;
-                      const allowed = allowedRoles(dept);
-                      const pick = picks[p.id] ?? allowed[0] ?? "employee";
-                      const err = errors[p.id] ?? validateRoleForDept(pick as Role, dept);
-                      const hasAllowed = allowed.length > 0;
-                      return (
-                        <div className="space-y-1">
-                          <div className="flex gap-2">
-                            <Select
-                              value={pick}
-                              onValueChange={(v) => {
-                                setPicks({ ...picks, [p.id]: v as Role });
-                                setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
-                              }}
-                            >
-                              <SelectTrigger className={`h-9 ${err ? "border-destructive" : ""}`}><SelectValue /></SelectTrigger>
-                              <SelectContent>
-                                {ROLES.map((r) => {
-                                  const disabled = !allowed.includes(r);
-                                  return (
-                                    <SelectItem key={r} value={r} disabled={disabled}>
-                                      {r}{disabled ? " — not allowed" : ""}
-                                    </SelectItem>
-                                  );
-                                })}
-                              </SelectContent>
-                            </Select>
-                            <Button
-                              size="sm"
-                              disabled={!!err || !hasAllowed}
-                              onClick={() => {
-                                const v = validateRoleForDept(pick as Role, dept);
-                                if (v) {
-                                  setErrors({ ...errors, [p.id]: v });
-                                  toast({ title: "Role not allowed", description: v, variant: "destructive" });
-                                  return;
-                                }
-                                grant.mutate({ userId: p.id, role: pick as Role });
-                              }}
-                            >
-                              Add
-                            </Button>
-                          </div>
-                          {err && <div className="text-[11px] text-destructive">{err}</div>}
-                          {!err && (
-                            <div className="text-[10px] text-muted-foreground">
-                              Allowed: {allowed.join(", ") || "none"}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </td>
-                </tr>
-                {isOpen && (
-                  <tr className="border-t border-border bg-muted/10">
-                    <td colSpan={11} className="p-0">
-                      <MastersheetPanel userId={p.id} />
-                    </td>
-                  </tr>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {filtered.map((p: any) => {
+          const cur = rolesByUser?.[p.id] ?? [];
+          const isFormer = p.employment_status === "former";
+          const av = availabilityMap?.[p.id];
+          const hasAvail = av && ((av.days?.length ?? 0) > 0 || (av.time_blocks?.length ?? 0) > 0 || av.notes);
+          return (
+            <div
+              key={p.id}
+              className={`border border-border rounded-lg p-4 bg-card ${isFormer ? "opacity-70" : ""}`}
+            >
+              <div className="flex items-start gap-3">
+                {p.avatar_url ? (
+                  <img src={p.avatar_url} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-sm font-medium shrink-0">
+                    {(p.display_name ?? p.email ?? "?").slice(0, 1).toUpperCase()}
+                  </div>
                 )}
-                </Fragment>
-              );
-            })}
-          </tbody>
-        </table>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium truncate">{p.display_name ?? "Unnamed"}</div>
+                  {p.alias && <div className="text-xs text-muted-foreground truncate">aka {p.alias}</div>}
+                  <div className="text-xs text-muted-foreground truncate">
+                    {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
+                  </div>
+                  {p.email && (
+                    <a href={`mailto:${p.email}`} className="text-xs text-primary hover:underline truncate block mt-0.5">
+                      {p.email}
+                    </a>
+                  )}
+                </div>
+                <Button size="sm" onClick={() => setEditingUid(p.id)}>Edit User Profile</Button>
+              </div>
+              {(hasAvail || cur.length > 0) && (
+                <div className="mt-3 pt-3 border-t border-border space-y-1 text-[11px]">
+                  {cur.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="uppercase tracking-wide text-muted-foreground">Roles:</span>
+                      {cur.map((r) => (
+                        <span key={r.id} className="text-[10px] px-1.5 py-0.5 rounded bg-muted">{r.role}</span>
+                      ))}
+                    </div>
+                  )}
+                  {hasAvail && (
+                    <>
+                      <div className="uppercase tracking-wide text-muted-foreground pt-1">Availability</div>
+                      {av!.days.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av!.days.map((d) => d.slice(0,3)).join(", ")}</div>}
+                      {av!.time_blocks.length > 0 && <div><span className="text-muted-foreground">When:</span> {av!.time_blocks.join(", ")}</div>}
+                      {av!.notes && <div className="text-muted-foreground italic">{av!.notes}</div>}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {filtered.length === 0 && (
+          <div className="text-sm text-muted-foreground italic col-span-full text-center py-8">No members match your filters.</div>
+        )}
       </div>
+
+      <Dialog open={!!editingUid} onOpenChange={(o) => !o && setEditingUid(null)}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Edit profile{editingUid && (() => {
+                const p = (profiles ?? []).find((x: any) => x.id === editingUid);
+                return p ? ` — ${p.display_name ?? p.email ?? ""}` : "";
+              })()}
+            </DialogTitle>
+          </DialogHeader>
+          {editingUid && (
+            <EditMemberDialogBody
+              userId={editingUid}
+              profile={(profiles ?? []).find((x: any) => x.id === editingUid)}
+              roles={rolesByUser?.[editingUid] ?? []}
+              picks={picks}
+              setPicks={setPicks}
+              errors={errors}
+              setErrors={setErrors}
+              titleDrafts={titleDrafts}
+              setTitleDrafts={setTitleDrafts}
+              notesDrafts={notesDrafts}
+              setNotesDrafts={setNotesDrafts}
+              setDept={setDept}
+              setTitle={setTitle}
+              setEmp={setEmp}
+              grant={grant}
+              revoke={revoke}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function EditMemberDialogBody({
+  userId, profile: p, roles: cur, picks, setPicks, errors, setErrors,
+  titleDrafts, setTitleDrafts, notesDrafts, setNotesDrafts,
+  setDept, setTitle, setEmp, grant, revoke,
+}: any) {
+  if (!p) return null;
+  const titleVal = titleDrafts[p.id] ?? p.job_title ?? "";
+  const notesVal = notesDrafts[p.id] ?? p.employment_notes ?? "";
+  const dept = (p.department ?? null) as Dept | null;
+  const allowed = allowedRoles(dept);
+  const pick = picks[p.id] ?? allowed[0] ?? "employee";
+  const err = errors[p.id] ?? validateRoleForDept(pick as Role, dept);
+  const hasAllowed = allowed.length > 0;
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+        <div>
+          <label className="text-[10px] uppercase text-muted-foreground">Department</label>
+          <Select
+            value={p.department ?? "__none"}
+            onValueChange={(v) => setDept.mutate({ userId: p.id, department: v === "__none" ? null : (v as Dept) })}
+          >
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none">Unassigned</SelectItem>
+              {DEPTS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="text-[10px] uppercase text-muted-foreground">Job title</label>
+          <Input
+            className="h-9"
+            placeholder="e.g. Lead Designer"
+            value={titleVal}
+            onChange={(e) => setTitleDrafts({ ...titleDrafts, [p.id]: e.target.value })}
+            onBlur={() => {
+              const next = (titleDrafts[p.id] ?? "").trim();
+              if (next !== (p.job_title ?? "")) setTitle.mutate({ userId: p.id, job_title: next || null });
+            }}
+          />
+        </div>
+        <div>
+          <label className="text-[10px] uppercase text-muted-foreground">Status</label>
+          <Select
+            value={p.employment_status ?? "active"}
+            onValueChange={(v) => setEmp.mutate({ userId: p.id, patch: { employment_status: v } })}
+          >
+            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {EMP_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="text-[10px] uppercase text-muted-foreground">Tenure</label>
+          <div className="h-9 flex items-center text-xs text-muted-foreground">{tenure(p.started_at, p.ended_at)}</div>
+        </div>
+        <div>
+          <label className="text-[10px] uppercase text-muted-foreground">Started</label>
+          <Input type="date" className="h-9" value={p.started_at ?? ""}
+            onChange={(e) => setEmp.mutate({ userId: p.id, patch: { started_at: e.target.value || null } })} />
+        </div>
+        <div>
+          <label className="text-[10px] uppercase text-muted-foreground">Ended</label>
+          <Input type="date" className="h-9" value={p.ended_at ?? ""}
+            onChange={(e) => setEmp.mutate({ userId: p.id, patch: { ended_at: e.target.value || null } })} />
+        </div>
+        <div className="md:col-span-2">
+          <label className="text-[10px] uppercase text-muted-foreground">Employment notes</label>
+          <Input
+            className="h-9"
+            placeholder="e.g. promoted Q2, left amicably"
+            value={notesVal}
+            onChange={(e) => setNotesDrafts({ ...notesDrafts, [p.id]: e.target.value })}
+            onBlur={() => {
+              const next = (notesDrafts[p.id] ?? "").trim();
+              if (next !== (p.employment_notes ?? "")) setEmp.mutate({ userId: p.id, patch: { employment_notes: next || null } });
+            }}
+          />
+        </div>
+      </div>
+
+      <div className="border border-border rounded p-3 space-y-2">
+        <div className="text-[10px] uppercase text-muted-foreground">Roles</div>
+        <div className="flex flex-wrap gap-1.5">
+          {cur.length === 0 && <span className="text-xs text-muted-foreground">none</span>}
+          {cur.map((r: any) => {
+            const invalid = !allowedRoles(p.department as Dept | null).includes(r.role);
+            return (
+              <span key={r.id}
+                className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
+                  invalid ? "bg-destructive/10 text-destructive border border-destructive/40" : "bg-muted"
+                }`}>
+                {r.role}
+                {invalid && <span className="text-[10px] uppercase">invalid</span>}
+                <button onClick={() => revoke.mutate(r.id)} className="hover:text-destructive"><Trash2 size={12} /></button>
+              </span>
+            );
+          })}
+        </div>
+        <div className="flex gap-2 items-start">
+          <Select
+            value={pick}
+            onValueChange={(v) => {
+              setPicks({ ...picks, [p.id]: v as Role });
+              setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
+            }}
+          >
+            <SelectTrigger className={`h-9 w-48 ${err ? "border-destructive" : ""}`}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {ROLES.map((r) => {
+                const disabled = !allowed.includes(r);
+                return (
+                  <SelectItem key={r} value={r} disabled={disabled}>
+                    {r}{disabled ? " — not allowed" : ""}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+          <Button
+            size="sm"
+            disabled={!!err || !hasAllowed}
+            onClick={() => {
+              const v = validateRoleForDept(pick as Role, dept);
+              if (v) {
+                setErrors({ ...errors, [p.id]: v });
+                toast({ title: "Role not allowed", description: v, variant: "destructive" });
+                return;
+              }
+              grant.mutate({ userId: p.id, role: pick as Role });
+            }}
+          >
+            Add role
+          </Button>
+        </div>
+        {err
+          ? <div className="text-[11px] text-destructive">{err}</div>
+          : <div className="text-[10px] text-muted-foreground">Allowed: {allowed.join(", ") || "none"}</div>}
+      </div>
+
+      <MastersheetPanel userId={userId} />
     </div>
   );
 }

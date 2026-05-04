@@ -45,8 +45,8 @@ export default function Dashboard() {
   const { data: profiles } = useQuery({
     queryKey: ["profiles-min"],
     queryFn: async () => {
-      const { data } = await supabase.from("profiles").select("id, display_name");
-      return new Map((data ?? []).map((p) => [p.id, p.display_name]));
+      const { data } = await supabase.from("profiles").select("id, display_name, department");
+      return new Map((data ?? []).map((p) => [p.id, { name: p.display_name, department: p.department as string | null }]));
     },
   });
 

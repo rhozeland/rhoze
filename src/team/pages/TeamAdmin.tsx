@@ -7,7 +7,7 @@ export default function TeamAdmin() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold">Team admin</h1>
+        <h1 className="text-2xl font-semibold">Team Members</h1>
         <p className="text-sm text-muted-foreground">Manage roles, invitations, and referral codes.</p>
       </div>
       <Tabs defaultValue="roles" className="space-y-4">

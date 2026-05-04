@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
@@ -382,14 +383,49 @@ export default function Directory() {
                     const isActive = active?.day === d && active?.block === b;
                     return (
                       <td key={d} className="p-0">
-                        <button
-                          type="button"
-                          onClick={() => setActive(isActive ? null : { day: d, block: b })}
-                          className={`w-full h-10 rounded text-xs font-medium transition-all ${heatColor(ids.length, maxCount)} ${isActive ? "ring-2 ring-foreground" : "hover:opacity-80"}`}
-                          title={`${d} · ${b}: ${ids.length} available`}
-                        >
-                          {ids.length > 0 ? ids.length : ""}
-                        </button>
+                        {ids.length > 0 ? (
+                          <HoverCard openDelay={120} closeDelay={60}>
+                            <HoverCardTrigger asChild>
+                              <button
+                                type="button"
+                                onClick={() => setActive(isActive ? null : { day: d, block: b })}
+                                className={`w-full h-10 rounded text-xs font-medium transition-all ${heatColor(ids.length, maxCount)} ${isActive ? "ring-2 ring-foreground" : "hover:opacity-80"}`}
+                              >
+                                {ids.length}
+                              </button>
+                            </HoverCardTrigger>
+                            <HoverCardContent className="w-56 p-2" side="top" align="center">
+                              <div className="text-[10px] uppercase tracking-wide text-muted-foreground px-1 pb-1.5">
+                                {d} · {b} — {ids.length} available
+                              </div>
+                              <div className="flex flex-wrap gap-1.5">
+                                {ids.map((uid) => {
+                                  const p = profileMap[uid];
+                                  if (!p) return null;
+                                  return (
+                                    <div key={uid} className="flex items-center gap-1.5 border border-border rounded-full pl-0.5 pr-2 py-0.5 bg-background">
+                                      {p.avatar_url ? (
+                                        <img src={p.avatar_url} alt="" className="h-5 w-5 rounded-full object-cover" />
+                                      ) : (
+                                        <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-medium">
+                                          {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
+                                        </div>
+                                      )}
+                                      <span className="text-[11px]">{p.display_name ?? "Unnamed"}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground px-1 pt-1.5">Click cell for details</div>
+                            </HoverCardContent>
+                          </HoverCard>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setActive(isActive ? null : { day: d, block: b })}
+                            className={`w-full h-10 rounded text-xs font-medium transition-all ${heatColor(0, maxCount)} ${isActive ? "ring-2 ring-foreground" : "hover:opacity-80"}`}
+                          />
+                        )}
                       </td>
                     );
                   })}

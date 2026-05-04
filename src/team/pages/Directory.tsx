@@ -1,4 +1,3 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ChevronDown } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -415,28 +414,24 @@ export default function Directory() {
                   if (!p) return null;
                   const isOpen = selectedUid === uid;
                   return (
-                    <Popover key={uid} open={false}>
-                      <PopoverTrigger asChild>
-                        <button
-                          type="button"
-                          onClick={() => setSelectedUid(isOpen ? null : uid)}
-                          className={`flex items-center gap-2 border rounded-full pl-1 pr-2 py-1 transition-colors cursor-pointer ${
-                            isOpen ? "border-foreground bg-muted" : "border-border bg-background hover:bg-muted/50"
-                          }`}
-                        >
-                          {p.avatar_url ? (
-                            <img src={p.avatar_url} alt="" className="h-6 w-6 rounded-full object-cover" />
-                          ) : (
-                            <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-medium">
-                              {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
-                            </div>
-                          )}
-                          <span className="text-xs">{p.display_name ?? "Unnamed"}</span>
-                          <ChevronDown size={12} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="hidden" />
-                    </Popover>
+                    <button
+                      key={uid}
+                      type="button"
+                      onClick={() => setSelectedUid(isOpen ? null : uid)}
+                      className={`flex items-center gap-2 border rounded-full pl-1 pr-2 py-1 transition-colors cursor-pointer ${
+                        isOpen ? "border-foreground bg-muted" : "border-border bg-background hover:bg-muted/50"
+                      }`}
+                    >
+                      {p.avatar_url ? (
+                        <img src={p.avatar_url} alt="" className="h-6 w-6 rounded-full object-cover" />
+                      ) : (
+                        <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-medium">
+                          {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
+                        </div>
+                      )}
+                      <span className="text-xs">{p.display_name ?? "Unnamed"}</span>
+                      <ChevronDown size={12} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                    </button>
                   );
                 })}
               </div>

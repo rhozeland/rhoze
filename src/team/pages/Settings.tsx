@@ -42,7 +42,7 @@ export default function Settings() {
   });
 
   const [form, setForm] = useState({ display_name: "", pronouns: "", bio: "" });
-  const [personal, setPersonal] = useState({ phone: "", address: "", date_of_birth: "", emergency_contact_name: "", emergency_contact_relation: "", emergency_contact_phone: "", stage_name: "", alias: "" });
+  const [personal, setPersonal] = useState({ phone: "", address: "", date_of_birth: "", emergency_contact_name: "", emergency_contact_relation: "", emergency_contact_phone: "", alias: "" });
 
   const personalErrors = validateAll({
     phone: personal.phone,

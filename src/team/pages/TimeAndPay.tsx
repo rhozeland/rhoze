@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt } from "lucide-react";
+import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
@@ -48,6 +48,8 @@ export default function TimeAndPay() {
   const { user, isAdmin } = useAuth();
   const [view, setView] = useState<"mine" | "admin" | "payroll">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editingUserName, setEditingUserName] = useState<string>("");
   const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
 
@@ -118,11 +120,26 @@ export default function TimeAndPay() {
           </div>
         )
       ) : view === "admin" && isAdmin ? (
-        <ApprovalQueue periodId={periodId} />
+        <ApprovalQueue
+          periodId={periodId}
+          onEditDraft={(sheet) => {
+            setEditingUserId(sheet.user_id);
+            setEditingUserName(sheet.profile?.full_name || sheet.profile?.email || "Team member");
+            setView("mine");
+          }}
+        />
       ) : view === "payroll" && isAdmin && activePeriod ? (
         <PayrollRun period={activePeriod} />
       ) : (
-        <MyTimesheet periodId={periodId} userId={user!.id} />
+        <MyTimesheet
+          periodId={periodId}
+          userId={editingUserId || user!.id}
+          editorName={editingUserId ? editingUserName : undefined}
+          onExitEdit={editingUserId ? () => {
+            setEditingUserId(null);
+            setEditingUserName("");
+          } : undefined}
+        />
       )}
     </div>
   );
@@ -175,7 +192,7 @@ function PeriodForm({ form, setForm, onCreated }: any) {
 
 /* ---------- MY TIMESHEET ---------- */
 
-function MyTimesheet({ periodId, userId }: { periodId: string; userId: string }) {
+function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: string; userId: string; editorName?: string; onExitEdit?: () => void }) {
   const qc = useQueryClient();
 
   // Per-person rate from the role mastersheet (used for "Hourly" rows)
@@ -264,6 +281,20 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
     onSuccess: () => { toast({ title: "Submitted for approval" }); qc.invalidateQueries({ queryKey: ["timesheet", periodId, userId] }); },
   });
 
+  const saveDraft = useMutation({
+    mutationFn: async () => {
+      if (!timesheet?.id) throw new Error("No timesheet");
+      const { error } = await supabase.from("timesheets").update({ status: "draft", submitted_at: null }).eq("id", timesheet.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Draft saved" });
+      qc.invalidateQueries({ queryKey: ["timesheet", periodId, userId] });
+      qc.invalidateQueries({ queryKey: ["admin_timesheets", periodId] });
+    },
+    onError: (e: any) => toast({ title: "Couldn't save draft", description: e.message, variant: "destructive" }),
+  });
+
   const recall = useMutation({
     mutationFn: async () => {
       if (!timesheet?.id) throw new Error("No timesheet");
@@ -278,6 +309,16 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
 
   return (
     <div className="space-y-4">
+      {editorName && (
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
+          <div>
+            <div className="text-sm font-medium">Editing saved draft</div>
+            <div className="text-xs text-muted-foreground">{editorName}&rsquo;s timesheet for this pay period</div>
+          </div>
+          {onExitEdit && <Button size="sm" variant="outline" onClick={onExitEdit}>Done</Button>}
+        </div>
+      )}
+
       {/* Spreadsheet-style header banner */}
       <div className="rounded-lg overflow-hidden border border-border bg-card">
         <div className="bg-orange-500 text-white px-5 py-4 flex items-end justify-between flex-wrap gap-4">
@@ -348,6 +389,11 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
 
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
+          {!isLocked && (
+            <Button size="sm" variant="outline" onClick={() => saveDraft.mutate()} disabled={saveDraft.isPending}>
+              Save draft
+            </Button>
+          )}
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
@@ -401,7 +447,7 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
 
 /* ---------- ADMIN APPROVAL QUEUE ---------- */
 
-function ApprovalQueue({ periodId }: { periodId: string }) {
+function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraft: (sheet: any) => void }) {
   const qc = useQueryClient();
   const { data: sheets } = useQuery({
     queryKey: ["admin_timesheets", periodId],
@@ -437,6 +483,20 @@ function ApprovalQueue({ periodId }: { periodId: string }) {
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
 
+  const deleteDraft = useMutation({
+    mutationFn: async (id: string) => {
+      const { error: entriesError } = await supabase.from("timesheet_entries").delete().eq("timesheet_id", id);
+      if (entriesError) throw entriesError;
+      const { error } = await supabase.from("timesheets").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Draft deleted" });
+      qc.invalidateQueries({ queryKey: ["admin_timesheets", periodId] });
+    },
+    onError: (e: any) => toast({ title: "Couldn't delete draft", description: e.message, variant: "destructive" }),
+  });
+
   const submitted = (sheets ?? []).filter((s: any) => s.status === "submitted");
   const approved  = (sheets ?? []).filter((s: any) => s.status === "approved");
   const drafts    = (sheets ?? []).filter((s: any) => s.status === "draft");
@@ -459,7 +519,35 @@ function ApprovalQueue({ periodId }: { periodId: string }) {
         ))}
       </Section>
       <Section title="In progress (drafts)" count={drafts.length} muted>
-        {drafts.length === 0 ? <Empty>Nobody in draft.</Empty> : drafts.map((s: any) => <SheetRow key={s.id} sheet={s} />)}
+        {drafts.length === 0 ? <Empty>Nobody in draft.</Empty> : drafts.map((s: any) => (
+          <SheetRow
+            key={s.id}
+            sheet={s}
+            actions={
+              <>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-9 w-9 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-300"
+                  onClick={() => onEditDraft(s)}
+                  aria-label={`Edit saved draft for ${s.profile?.full_name || s.profile?.email || "team member"}`}
+                >
+                  <Pencil size={14} />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="h-9 w-9 border-destructive/40 text-destructive hover:bg-destructive/10"
+                  onClick={() => deleteDraft.mutate(s.id)}
+                  disabled={deleteDraft.isPending}
+                  aria-label={`Delete draft for ${s.profile?.full_name || s.profile?.email || "team member"}`}
+                >
+                  <X size={14} />
+                </Button>
+              </>
+            }
+          />
+        ))}
       </Section>
     </div>
   );

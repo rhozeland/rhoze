@@ -1,8 +1,8 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
-import { Plus, Check, Trash2, GripVertical } from "lucide-react";
+import { Plus, Check, Trash2, GripVertical, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -49,6 +49,13 @@ export default function Dashboard() {
   const [scope, setScope] = useState<"mine" | "team">("mine");
   const [dragId, setDragId] = useState<string | null>(null);
   const [deptFilter, setDeptFilter] = useState<Set<string>>(new Set());
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (searchOpen) searchRef.current?.focus();
+  }, [searchOpen]);
   const name = user?.email?.split("@")[0] ?? "team";
 
   const { data: tasks } = useQuery({
@@ -103,12 +110,18 @@ export default function Dashboard() {
   });
 
   const filteredTasks = useMemo(() => {
-    if (deptFilter.size === 0) return tasks ?? [];
+    const q = search.trim().toLowerCase();
     return (tasks ?? []).filter((t) => {
       const dept = profiles?.get(t.owner_id)?.department;
-      return dept && deptFilter.has(dept);
+      if (deptFilter.size > 0 && !(dept && deptFilter.has(dept))) return false;
+      if (q) {
+        const owner = profiles?.get(t.owner_id);
+        const hay = `${t.title ?? ""} ${owner?.name ?? ""} ${dept ?? ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
     });
-  }, [tasks, profiles, deptFilter]);
+  }, [tasks, profiles, deptFilter, search]);
 
   const counts = useMemo(() => {
     const c = { do: 0, schedule: 0, delegate: 0, delete: 0, total: 0 };
@@ -152,6 +165,36 @@ export default function Dashboard() {
             <button onClick={() => setScope("team")} className={cn("px-3 py-1.5 rounded-sm transition", scope === "team" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>Team</button>
           </div>
           <div className="text-xs text-muted-foreground tabular-nums">{counts.total} open</div>
+          <div className="flex items-center">
+            {searchOpen ? (
+              <div className="flex items-center gap-1 border border-border rounded-md px-2 py-1 bg-card">
+                <Search size={12} className="text-muted-foreground shrink-0" />
+                <input
+                  ref={searchRef}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Escape") { setSearch(""); setSearchOpen(false); } }}
+                  placeholder="Search title or assignee…"
+                  className="bg-transparent text-xs outline-none w-48 placeholder:text-muted-foreground/60"
+                />
+                <button
+                  onClick={() => { setSearch(""); setSearchOpen(false); }}
+                  className="text-muted-foreground hover:text-foreground"
+                  title="Close search"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="p-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition"
+                title="Search tasks"
+              >
+                <Search size={14} />
+              </button>
+            )}
+          </div>
         </div>
       </header>
 

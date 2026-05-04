@@ -148,7 +148,7 @@ function Quadrant({
   tasks: Task[];
   scope: "mine" | "team";
   currentUserId?: string;
-  profiles?: Map<string, string | null>;
+  profiles?: Map<string, { name: string | null; department: string | null }>;
   dragId: string | null;
   setDragId: (id: string | null) => void;
   onDrop: (urgent: boolean, important: boolean) => void;
@@ -186,7 +186,8 @@ function Quadrant({
             key={t.id}
             task={t}
             isOwn={t.owner_id === currentUserId}
-            ownerName={scope === "team" ? profiles?.get(t.owner_id) ?? "—" : null}
+            ownerName={scope === "team" ? profiles?.get(t.owner_id)?.name ?? "—" : null}
+            ownerDepartment={profiles?.get(t.owner_id)?.department ?? null}
             onDragStart={() => setDragId(t.id)}
             onDragEnd={() => setDragId(null)}
             onUpdate={(patch) => onUpdate(t.id, patch)}
@@ -218,10 +219,11 @@ function Quadrant({
   );
 }
 
-function TaskCard({ task, isOwn, ownerName, onDragStart, onDragEnd, onUpdate, onDelete }: {
+function TaskCard({ task, isOwn, ownerName, ownerDepartment, onDragStart, onDragEnd, onUpdate, onDelete }: {
   task: Task;
   isOwn: boolean;
   ownerName: string | null;
+  ownerDepartment: string | null;
   onDragStart: () => void;
   onDragEnd: () => void;
   onUpdate: (patch: Partial<Task>) => void;
@@ -269,7 +271,8 @@ function TaskCard({ task, isOwn, ownerName, onDragStart, onDragEnd, onUpdate, on
           )}
           <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground">
             {task.due_date && <span>Due {new Date(task.due_date).toLocaleDateString()}</span>}
-            {ownerName && <span>· {ownerName}</span>}
+            {ownerName && <span>· {ownerName}{ownerDepartment ? ` — ${ownerDepartment}` : ""}</span>}
+            {!ownerName && ownerDepartment && <span>· {ownerDepartment}</span>}
           </div>
         </div>
         {isOwn && (

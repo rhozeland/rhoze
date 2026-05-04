@@ -584,6 +584,7 @@ const PROGRAMS = ["In-House", "Signed", "Ambassador", "Partner", "Affiliate"];
 function MastersheetPanel({ userId }: { userId: string }) {
   const qc = useQueryClient();
   const { isAdmin } = useAuth();
+  const [mode, setMode] = useState<"edit" | "preview">("preview");
   const { data: profile, isLoading } = useQuery({
     queryKey: ["mastersheet", userId],
     queryFn: async () => {
@@ -640,6 +641,7 @@ function MastersheetPanel({ userId }: { userId: string }) {
     onSuccess: () => {
       toast({ title: "Mastersheet saved" });
       setDraft({});
+      setMode("preview");
       qc.invalidateQueries({ queryKey: ["mastersheet", userId] });
       qc.invalidateQueries({ queryKey: ["all-profiles"] });
     },
@@ -704,6 +706,64 @@ function MastersheetPanel({ userId }: { userId: string }) {
   if (isLoading) return <div className="p-4 text-xs text-muted-foreground">Loading mastersheet…</div>;
 
   const dirty = Object.keys(draft).length > 0;
+
+  // Preview is contingent on the Personal & emergency block being filled in.
+  const personalEmergencyKeys = [
+    "phone", "address", "date_of_birth",
+    "emergency_contact_name", "emergency_contact_relation", "emergency_contact_phone",
+  ] as const;
+  const personalFilled = personalEmergencyKeys.some((k) => {
+    const v = (profile as any)?.[k];
+    return v !== null && v !== undefined && String(v).trim() !== "";
+  });
+
+  if (mode === "preview" && personalFilled && !dirty) {
+    const p: any = profile ?? {};
+    const Row = ({ label, value }: { label: string; value: any }) => {
+      const display = value === null || value === undefined || value === "" ? "—" : String(value);
+      return (
+        <div className="flex justify-between gap-3 py-1 border-b border-border/50 last:border-0">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
+          <span className="text-xs text-right">{display}</span>
+        </div>
+      );
+    };
+    const rate = p.hourly_rate_cents ? `$${(p.hourly_rate_cents / 100).toFixed(2)}/hr` : "—";
+    return (
+      <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
+        <section className="border border-border rounded p-3 bg-background">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Contact</div>
+            <Eye size={12} className="text-muted-foreground" />
+          </div>
+          <Row label="Phone" value={p.phone} />
+          <Row label="Address" value={p.address} />
+          <Row label="Date of birth" value={p.date_of_birth} />
+        </section>
+        <section className="border border-border rounded p-3 bg-background">
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Emergency contact</div>
+          <Row label="Name" value={p.emergency_contact_name} />
+          <Row label="Relation" value={p.emergency_contact_relation} />
+          <Row label="Phone" value={p.emergency_contact_phone} />
+          <Row label="Program" value={p.program} />
+        </section>
+        <section className="border border-border rounded p-3 bg-background">
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payroll</div>
+          <Row label="Work type" value={p.work_type} />
+          <Row label="Wage" value={p.wage} />
+          <Row label="Hourly rate" value={rate} />
+          <Row label="Payment method" value={p.payment_method} />
+          <Row label="Internal notes" value={p.internal_notes} />
+        </section>
+        <div className="lg:col-span-3 flex justify-end">
+          <Button size="sm" variant="outline" onClick={() => setMode("edit")}>
+            <Pencil size={12} className="mr-1.5" />
+            Edit mastersheet
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 grid grid-cols-1 lg:grid-cols-3 gap-4 text-sm">
@@ -858,6 +918,12 @@ function MastersheetPanel({ userId }: { userId: string }) {
 
       <div className="lg:col-span-3 flex justify-end">
         <div className="flex items-center gap-3">
+          {personalFilled && (
+            <Button size="sm" variant="ghost" onClick={() => { setDraft({}); setMode("preview"); }}>
+              <Eye size={12} className="mr-1.5" />
+              Preview
+            </Button>
+          )}
           {hasErrors && <span className="text-[11px] text-destructive">Fix the highlighted fields</span>}
           <Button size="sm" disabled={!dirty || hasErrors || save.isPending} onClick={() => save.mutate()}>
             {save.isPending ? "Saving…" : dirty ? "Save mastersheet" : "Saved"}

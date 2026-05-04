@@ -13,12 +13,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const nav = [
+  { to: "/directory", label: "Directory", icon: UserCircle2 },
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/time", label: "Time & Pay", icon: Clock },
+  { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/crm", label: "CRM", icon: Users },
   { to: "/docs", label: "Docs & Training", icon: BookOpen },
-  { to: "/directory", label: "Directory", icon: UserCircle2 },
 ];
 
 const adminNav = [
@@ -78,12 +78,6 @@ export default function TeamLayout() {
           <div className="text-xs text-muted-foreground">Team Portal</div>
         </div>
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {nav.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={navClass}>
-              <n.icon size={16} />
-              {n.label}
-            </NavLink>
-          ))}
           <NavLink to="/settings" className={navClass}>
             <Avatar className="h-5 w-5">
               {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
@@ -91,6 +85,12 @@ export default function TeamLayout() {
             </Avatar>
             {accountLabel}
           </NavLink>
+          {nav.map((n) => (
+            <NavLink key={n.to} to={n.to} end={n.end} className={navClass}>
+              <n.icon size={16} />
+              {n.label}
+            </NavLink>
+          ))}
           {isAdmin && (
             <>
               <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>

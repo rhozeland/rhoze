@@ -24,6 +24,8 @@ const QUADRANTS = [
   { key: "delete", label: "Delete", subtitle: "Neither — drop or backlog", urgent: false, important: false, tone: "border-muted bg-muted/10" },
 ] as const;
 
+const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
+
 const DEPARTMENT_STYLES: Record<string, string> = {
   marketing: "bg-pink-500/15 text-pink-600 dark:text-pink-300 border-pink-500/30",
   hr: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
@@ -46,6 +48,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [scope, setScope] = useState<"mine" | "team">("mine");
   const [dragId, setDragId] = useState<string | null>(null);
+  const [deptFilter, setDeptFilter] = useState<Set<string>>(new Set());
   const name = user?.email?.split("@")[0] ?? "team";
 
   const { data: tasks } = useQuery({
@@ -99,9 +102,17 @@ export default function Dashboard() {
     onError: (e: any) => toast({ title: "Couldn't add", description: e.message, variant: "destructive" }),
   });
 
+  const filteredTasks = useMemo(() => {
+    if (deptFilter.size === 0) return tasks ?? [];
+    return (tasks ?? []).filter((t) => {
+      const dept = profiles?.get(t.owner_id)?.department;
+      return dept && deptFilter.has(dept);
+    });
+  }, [tasks, profiles, deptFilter]);
+
   const counts = useMemo(() => {
     const c = { do: 0, schedule: 0, delegate: 0, delete: 0, total: 0 };
-    (tasks ?? []).forEach((t) => {
+    filteredTasks.forEach((t) => {
       c.total++;
       if (t.urgent && t.important) c.do++;
       else if (!t.urgent && t.important) c.schedule++;
@@ -109,7 +120,15 @@ export default function Dashboard() {
       else c.delete++;
     });
     return c;
-  }, [tasks]);
+  }, [filteredTasks]);
+
+  const toggleDept = (d: string) => {
+    setDeptFilter((prev) => {
+      const next = new Set(prev);
+      if (next.has(d)) next.delete(d); else next.add(d);
+      return next;
+    });
+  };
 
   const handleDrop = (urgent: boolean, important: boolean) => {
     if (!dragId) return;
@@ -136,12 +155,37 @@ export default function Dashboard() {
         </div>
       </header>
 
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Departments</span>
+        {DEPARTMENTS.map((d) => {
+          const active = deptFilter.has(d);
+          const style = DEPARTMENT_STYLES[d];
+          return (
+            <button
+              key={d}
+              onClick={() => toggleDept(d)}
+              className={cn(
+                "inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide transition",
+                active ? style : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30",
+              )}
+            >
+              {d}
+            </button>
+          );
+        })}
+        {deptFilter.size > 0 && (
+          <button onClick={() => setDeptFilter(new Set())} className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1">
+            Clear
+          </button>
+        )}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {QUADRANTS.map((q) => (
           <Quadrant
             key={q.key}
             quadrant={q}
-            tasks={(tasks ?? []).filter((t) => t.urgent === q.urgent && t.important === q.important)}
+            tasks={filteredTasks.filter((t) => t.urgent === q.urgent && t.important === q.important)}
             scope={scope}
             currentUserId={user?.id}
             profiles={profiles}

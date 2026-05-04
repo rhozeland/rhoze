@@ -22,12 +22,12 @@ const nav = [
 ];
 
 const adminNav = [
-  { to: "/intake", label: "Intake", icon: Inbox },
-  { to: "/catalog", label: "Catalog", icon: Package },
-  { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
   { to: "/roles", label: "Roles", icon: Shield },
   { to: "/invites", label: "Invites", icon: UserPlus },
   { to: "/referral-codes", label: "Referral codes", icon: KeyRound },
+  { to: "/intake", label: "Intake", icon: Inbox },
+  { to: "/catalog", label: "Catalog", icon: Package },
+  { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
 ];
 
 function navClass({ isActive }: { isActive: boolean }) {

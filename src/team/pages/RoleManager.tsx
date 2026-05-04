@@ -856,7 +856,20 @@ function MastersheetPanel({ userId }: { userId: string }) {
         )}
       </section>
 
-      <div className="lg:col-span-3 flex justify-end">
+      <div className="lg:col-span-3 flex justify-between items-center gap-3">
+        <Button
+          size="sm"
+          variant="secondary"
+          className="bg-muted text-muted-foreground hover:bg-muted/80"
+          onClick={() => {
+            if (!confirm("Mark this employee as Former and set their end date to today? This will revoke active access on next sign-in.")) return;
+            const today = new Date().toISOString().slice(0, 10);
+            setEmp.mutate({ userId, patch: { employment_status: "former", ended_at: today } });
+          }}
+          disabled={setEmp.isPending}
+        >
+          Remove
+        </Button>
         <div className="flex items-center gap-3">
           {hasErrors && <span className="text-[11px] text-destructive">Fix the highlighted fields</span>}
           <Button size="sm" disabled={!dirty || hasErrors || save.isPending} onClick={() => save.mutate()}>

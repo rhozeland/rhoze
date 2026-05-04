@@ -718,7 +718,6 @@ function MastersheetPanel({ userId }: { userId: string }) {
           <Input type="date" className="h-8" max={new Date().toISOString().slice(0, 10)} min="1900-01-01"
             value={val("date_of_birth")} onChange={(e) => setField("date_of_birth", e.target.value)} />
         </Field>
-        <Field label="Stage name"><Input className="h-8" value={val("stage_name")} onChange={(e) => setDraft({ ...draft, stage_name: e.target.value })} /></Field>
       </section>
 
       <section className="border border-border rounded p-3 bg-background space-y-2">

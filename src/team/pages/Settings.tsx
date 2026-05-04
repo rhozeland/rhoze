@@ -11,6 +11,7 @@ import { useAuth } from "../lib/auth";
 import { Upload } from "lucide-react";
 import { formatPhone, validateAll, type MastersheetField } from "../lib/validation";
 import AvatarEditor from "../components/AvatarEditor";
+import AvailabilityEditor from "../components/AvailabilityEditor";
 
 const DEPT_LABEL: Record<string, string> = {
   marketing: "Marketing",
@@ -360,43 +361,7 @@ export default function Settings() {
         </TabsContent>
 
         <TabsContent value="availability" className="space-y-4">
-        <div className="border border-border rounded-lg p-5 bg-card space-y-4">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Weekly availability</div>
-        <p className="text-xs text-muted-foreground -mt-2">Pick the days and times you're typically available. Other team members can see this.</p>
-        <div>
-          <Label className="text-xs">Days of the week</Label>
-          <div className="flex flex-wrap gap-1.5 mt-1.5">
-            {DAYS.map((d) => {
-              const on = avail.days.includes(d);
-              return (
-                <button key={d} type="button" onClick={() => setAvail({ ...avail, days: toggle(avail.days, d) })}
-                  className={`px-2.5 py-1 rounded text-xs border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
-                  {d}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div>
-          <Label className="text-xs">Time of day</Label>
-          <div className="flex flex-wrap gap-1.5 mt-1.5">
-            {TIME_BLOCKS.map((t) => {
-              const on = avail.time_blocks.includes(t);
-              return (
-                <button key={t} type="button" onClick={() => setAvail({ ...avail, time_blocks: toggle(avail.time_blocks, t) })}
-                  className={`px-2.5 py-1 rounded text-xs border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
-                  {t}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs">Extra notes</Label>
-          <Textarea rows={2} placeholder="e.g. Sundays 12:30 AM – 4:00 PM" value={avail.notes} onChange={(e) => setAvail({ ...avail, notes: e.target.value })} />
-        </div>
-        <div><Button onClick={() => saveAvail.mutate()} disabled={saveAvail.isPending}>Save availability</Button></div>
-        </div>
+          <AvailabilityEditor />
         </TabsContent>
 
         <TabsContent value="account" className="space-y-4">

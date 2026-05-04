@@ -701,6 +701,19 @@ function MastersheetPanel({ userId }: { userId: string }) {
     onError: (e: any) => toast({ title: "Clear failed", description: e.message, variant: "destructive" }),
   });
 
+  const removeEmployee = useMutation({
+    mutationFn: async (patch: { employment_status: string; ended_at: string }) => {
+      const { error } = await supabase.from("profiles").update(patch as any).eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Employee removed" });
+      qc.invalidateQueries({ queryKey: ["mastersheet", userId] });
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+    },
+    onError: (e: any) => toast({ title: "Remove failed", description: e.message, variant: "destructive" }),
+  });
+
   if (isLoading) return <div className="p-4 text-xs text-muted-foreground">Loading mastersheet…</div>;
 
   const dirty = Object.keys(draft).length > 0;
@@ -856,7 +869,20 @@ function MastersheetPanel({ userId }: { userId: string }) {
         )}
       </section>
 
-      <div className="lg:col-span-3 flex justify-end">
+      <div className="lg:col-span-3 flex justify-between items-center gap-3">
+        <Button
+          size="sm"
+          variant="secondary"
+          className="bg-muted text-muted-foreground hover:bg-muted/80"
+          onClick={() => {
+            if (!confirm("Mark this employee as Former and set their end date to today?")) return;
+            const today = new Date().toISOString().slice(0, 10);
+            removeEmployee.mutate({ employment_status: "former", ended_at: today });
+          }}
+          disabled={removeEmployee.isPending}
+        >
+          {removeEmployee.isPending ? "Removing…" : "Remove"}
+        </Button>
         <div className="flex items-center gap-3">
           {hasErrors && <span className="text-[11px] text-destructive">Fix the highlighted fields</span>}
           <Button size="sm" disabled={!dirty || hasErrors || save.isPending} onClick={() => save.mutate()}>

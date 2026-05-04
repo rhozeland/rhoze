@@ -735,7 +735,6 @@ export type Database = {
           program: string | null
           pronouns: string | null
           specialty: string | null
-          stage_name: string | null
           started_at: string | null
           updated_at: string
           wage: string | null
@@ -768,7 +767,6 @@ export type Database = {
           program?: string | null
           pronouns?: string | null
           specialty?: string | null
-          stage_name?: string | null
           started_at?: string | null
           updated_at?: string
           wage?: string | null
@@ -801,7 +799,6 @@ export type Database = {
           program?: string | null
           pronouns?: string | null
           specialty?: string | null
-          stage_name?: string | null
           started_at?: string | null
           updated_at?: string
           wage?: string | null

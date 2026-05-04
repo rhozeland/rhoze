@@ -107,8 +107,8 @@ export default function Dashboard() {
     <div className="space-y-6">
       <header className="flex items-end justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-3xl font-semibold">Welcome, {name}</h1>
-          <p className="text-sm text-muted-foreground mt-1">Today's responsibilities — drag tasks between quadrants, edit inline.</p>
+          <h1 className="text-3xl font-semibold">Your Dashboard</h1>
+          <p className="text-sm text-muted-foreground mt-1">Drag tasks between quadrants of your matrix to organize responsibilities.</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex rounded-md border border-border p-0.5 text-xs">

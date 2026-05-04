@@ -182,7 +182,7 @@ export default function Directory() {
       <div>
         <h1 className="text-2xl font-semibold">Team Directory</h1>
         <p className="text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
-          Click or drag across cells to mark when you and everyone else is free.
+          Click a cell to see when you or anyone else is free.
           <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border border-border bg-muted/40 text-muted-foreground">
             <Globe size={11} /> Showing in your local time · {VIEWER_TZ}
           </span>

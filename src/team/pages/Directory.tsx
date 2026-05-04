@@ -6,7 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Eraser, Save, Pencil, Globe } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
@@ -411,8 +411,8 @@ export default function Directory() {
                   if (!p) return null;
                   const av = availability?.[uid];
                   return (
-                    <HoverCard key={uid} openDelay={120} closeDelay={80}>
-                      <HoverCardTrigger asChild>
+                    <Popover key={uid}>
+                      <PopoverTrigger asChild>
                         <button
                           type="button"
                           className="flex items-center gap-2 border border-border rounded-full pl-1 pr-3 py-1 bg-background hover:bg-muted/50 transition-colors cursor-pointer"
@@ -426,8 +426,8 @@ export default function Directory() {
                           )}
                           <span className="text-xs">{p.display_name ?? "Unnamed"}</span>
                         </button>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-72 p-4" side="top" align="start">
+                      </PopoverTrigger>
+                      <PopoverContent className="w-72 p-4" side="top" align="start">
                         <div className="flex items-start gap-3">
                           {p.avatar_url ? (
                             <img src={p.avatar_url} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
@@ -457,61 +457,14 @@ export default function Directory() {
                             {av.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
                           </div>
                         )}
-                      </HoverCardContent>
-                    </HoverCard>
+                      </PopoverContent>
+                    </Popover>
                   );
                 })}
               </div>
             )}
           </div>
         )}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(people ?? []).map((p: any) => {
-          const av = availability?.[p.id];
-          return (
-          <div key={p.id} className="border border-border rounded-lg p-4 bg-card">
-            <div className="flex items-start gap-3">
-              {p.avatar_url ? (
-                <img src={p.avatar_url} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
-              ) : (
-                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-                  {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="font-medium truncate">{p.display_name ?? "Unnamed"}</div>
-                {p.alias && (
-                  <div className="text-xs text-muted-foreground truncate">aka {p.alias}</div>
-                )}
-                <div className="text-xs text-muted-foreground truncate">
-                  {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
-                </div>
-                {p.email && (
-                  <a href={`mailto:${p.email}`} className="text-xs text-primary hover:underline truncate block mt-0.5">
-                    {p.email}
-                  </a>
-                )}
-                {p.specialty && <div className="text-xs text-primary mt-1">{p.specialty}</div>}
-              </div>
-            </div>
-            {p.bio && <div className="text-sm text-muted-foreground mt-3 line-clamp-3">{p.bio}</div>}
-            <div className="flex gap-3 mt-3 text-xs">
-              {p.website && <a href={p.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">Website</a>}
-              {p.portfolio_url && <a href={p.portfolio_url} target="_blank" rel="noreferrer" className="text-primary hover:underline">Portfolio</a>}
-            </div>
-            {av && ((av.days?.length ?? 0) > 0 || (av.time_blocks?.length ?? 0) > 0 || av.notes) && (
-              <div className="mt-3 pt-3 border-t border-border space-y-1 text-[11px]">
-                <div className="uppercase tracking-wide text-muted-foreground">Availability</div>
-                {av.days?.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av.days.map((d: string) => d.slice(0,3)).join(", ")}</div>}
-                {av.time_blocks?.length > 0 && <div><span className="text-muted-foreground">When:</span> {av.time_blocks.join(", ")}</div>}
-                {av.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
-              </div>
-            )}
-          </div>
-          );
-        })}
       </div>
     </div>
   );

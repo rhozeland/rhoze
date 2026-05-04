@@ -395,27 +395,62 @@ export default function Directory() {
                               </button>
                             </HoverCardTrigger>
                             <HoverCardContent className="w-56 p-2" side="top" align="center">
-                              <div className="text-[10px] uppercase tracking-wide text-muted-foreground px-1 pb-1.5">
-                                {d} · {b} — {ids.length} available
+                              <div className="text-[10px] uppercase tracking-wide text-muted-foreground px-1 pb-1.5 flex items-center justify-between">
+                                <span>{d.slice(0,3)} · {b}</span>
+                                <span>{ids.length} avail</span>
                               </div>
-                              <div className="flex flex-wrap gap-1.5">
-                                {ids.map((uid) => {
-                                  const p = profileMap[uid];
-                                  if (!p) return null;
-                                  return (
-                                    <div key={uid} className="flex items-center gap-1.5 border border-border rounded-full pl-0.5 pr-2 py-0.5 bg-background">
-                                      {p.avatar_url ? (
-                                        <img src={p.avatar_url} alt="" className="h-5 w-5 rounded-full object-cover" />
-                                      ) : (
-                                        <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-medium">
-                                          {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
-                                        </div>
-                                      )}
-                                      <span className="text-[11px]">{p.display_name ?? "Unnamed"}</span>
+                              {(() => {
+                                const PREVIEW = 3;
+                                const preview = ids.slice(0, PREVIEW);
+                                const rest = ids.slice(PREVIEW);
+                                return (
+                                  <>
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {preview.map((uid) => {
+                                        const p = profileMap[uid];
+                                        if (!p) return null;
+                                        return (
+                                          <div key={uid} className="flex items-center gap-1.5 border border-border rounded-full pl-0.5 pr-2 py-0.5 bg-background">
+                                            {p.avatar_url ? (
+                                              <img src={p.avatar_url} alt="" className="h-5 w-5 rounded-full object-cover" />
+                                            ) : (
+                                              <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-medium">
+                                                {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
+                                              </div>
+                                            )}
+                                            <span className="text-[11px]">{p.display_name ?? "Unnamed"}</span>
+                                          </div>
+                                        );
+                                      })}
                                     </div>
-                                  );
-                                })}
-                              </div>
+                                    {rest.length > 0 && (
+                                      <details className="mt-1.5 group">
+                                        <summary className="text-[10px] text-muted-foreground hover:text-foreground cursor-pointer list-none px-1 select-none">
+                                          + {rest.length} more <span className="group-open:hidden">▾</span><span className="hidden group-open:inline">▴</span>
+                                        </summary>
+                                        <div className="mt-1.5 max-h-32 overflow-y-auto pr-1 flex flex-wrap gap-1.5">
+                                          {rest.map((uid) => {
+                                            const p = profileMap[uid];
+                                            if (!p) return null;
+                                            return (
+                                              <div key={uid} className="flex items-center gap-1.5 border border-border rounded-full pl-0.5 pr-2 py-0.5 bg-background">
+                                                {p.avatar_url ? (
+                                                  <img src={p.avatar_url} alt="" className="h-5 w-5 rounded-full object-cover" />
+                                                ) : (
+                                                  <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-medium">
+                                                    {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
+                                                  </div>
+                                                )}
+                                                <span className="text-[11px]">{p.display_name ?? "Unnamed"}</span>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </details>
+                                    )}
+                                  </>
+                                );
+                              })()}
                               <div className="text-[10px] text-muted-foreground px-1 pt-1.5">Click cell for details</div>
                             </HoverCardContent>
                           </HoverCard>

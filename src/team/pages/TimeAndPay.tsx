@@ -25,14 +25,22 @@ const WORK_TYPES: { value: WorkType; label: string; short: string; tone: string 
 const toneFor = (wt: string) => WORK_TYPES.find((w) => w.value === wt)?.tone ?? "bg-muted text-muted-foreground border-border";
 const labelFor = (wt: string) => WORK_TYPES.find((w) => w.value === wt)?.short ?? wt;
 
-// Diff in hours between "HH:MM" strings (handles overnight)
-function hoursBetween(start: string, end: string): number {
+// Diff in hours between two ISO-ish datetime-local strings ("YYYY-MM-DDTHH:MM").
+// Each side carries its own day, so all-nighters and same-day tasks both work.
+function hoursBetweenDT(start: string, end: string): number {
   if (!start || !end) return 0;
-  const [sh, sm] = start.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-  let mins = eh * 60 + em - (sh * 60 + sm);
-  if (mins < 0) mins += 24 * 60;
-  return Math.round((mins / 60) * 100) / 100;
+  const s = new Date(start).getTime();
+  const e = new Date(end).getTime();
+  if (Number.isNaN(s) || Number.isNaN(e) || e <= s) return 0;
+  return Math.round(((e - s) / 3600000) * 100) / 100;
+}
+
+// Convert an ISO timestamp to a local "YYYY-MM-DDTHH:MM" string for <input type="datetime-local">.
+function toLocalDT(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 export default function TimeAndPay() {
@@ -358,7 +366,6 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
               <Th icon={<FileText size={12} />} className="text-left min-w-[220px]">Deliverable</Th>
               <Th className="text-left">Type</Th>
               <Th icon={<DollarSign size={12} />} className="text-right">Rate</Th>
-              <Th icon={<CalendarIcon size={12} />} className="text-left">Day</Th>
               <Th icon={<Clock size={12} />} className="text-left">Start</Th>
               <Th icon={<Clock size={12} />} className="text-left">End</Th>
               <Th className="text-right">Hours</Th>
@@ -369,7 +376,7 @@ function MyTimesheet({ periodId, userId }: { periodId: string; userId: string })
           </thead>
           <tbody className="divide-y divide-border">
             {visible.length === 0 && (
-              <tr><td colSpan={10} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
+              <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
               <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} />
@@ -530,9 +537,8 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",
-    day: entry.day ?? "",
-    start_time: entry.start_time ? new Date(entry.start_time).toISOString().slice(11, 16) : "",
-    end_time: entry.end_time ? new Date(entry.end_time).toISOString().slice(11, 16) : "",
+    start_time: entry.start_time ? toLocalDT(entry.start_time) : "",
+    end_time: entry.end_time ? toLocalDT(entry.end_time) : "",
     rate: ((entry.rate_amount_cents ?? 0) / 100).toString(),
     hours: (Number(entry.hours) || 0).toString(),
     expense: ((entry.expense_cents ?? 0) / 100).toString(),
@@ -571,14 +577,18 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
     commit({ work_type: next, rate_amount_cents: nextRateCents });
   };
 
-  // when start+end change, auto-fill hours
+  // When start/end (each carrying their own date) change, auto-fill hours.
+  // Also stamp `day` from the start side for backward compatibility.
   const recalcHours = (start: string, end: string) => {
-    const h = hoursBetween(start, end);
+    const h = hoursBetweenDT(start, end);
+    const startISO = start ? new Date(start).toISOString() : null;
+    const endISO = end ? new Date(end).toISOString() : null;
+    const day = start ? start.slice(0, 10) : null;
     if (h > 0) {
       setLocal((s) => ({ ...s, hours: h.toString() }));
-      commit({ hours: h, start_time: start && local.day ? `${local.day}T${start}:00` : null, end_time: end && local.day ? `${local.day}T${end}:00` : null });
+      commit({ hours: h, start_time: startISO, end_time: endISO, day });
     } else {
-      commit({ start_time: start && local.day ? `${local.day}T${start}:00` : null, end_time: end && local.day ? `${local.day}T${end}:00` : null });
+      commit({ start_time: startISO, end_time: endISO, day });
     }
   };
 
@@ -610,21 +620,16 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
           className={cn(cellNum, "max-w-[90px]", isSpecialist && "font-semibold opacity-90")} />
       </td>
       <td className="px-2 py-1">
-        <input disabled={locked} type="date" value={local.day}
-          onChange={(e) => { setLocal({ ...local, day: e.target.value }); commit({ day: e.target.value || null }); }}
-          className={cn(cell, "min-w-[130px]")} />
-      </td>
-      <td className="px-2 py-1">
-        <input disabled={locked || isReimburse} type="time" value={local.start_time}
+        <input disabled={locked || isReimburse} type="datetime-local" value={local.start_time}
           onChange={(e) => setLocal({ ...local, start_time: e.target.value })}
           onBlur={() => recalcHours(local.start_time, local.end_time)}
-          className={cn(cell, "min-w-[90px]")} />
+          className={cn(cell, "min-w-[170px]")} />
       </td>
       <td className="px-2 py-1">
-        <input disabled={locked || isReimburse} type="time" value={local.end_time}
+        <input disabled={locked || isReimburse} type="datetime-local" value={local.end_time}
           onChange={(e) => setLocal({ ...local, end_time: e.target.value })}
           onBlur={() => recalcHours(local.start_time, local.end_time)}
-          className={cn(cell, "min-w-[90px]")} />
+          className={cn(cell, "min-w-[170px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="number" step="0.25" min="0"

@@ -246,7 +246,7 @@ export default function Settings() {
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="personal">Personal & emergency</TabsTrigger>
           <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="account">Account Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4">

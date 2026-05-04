@@ -270,9 +270,9 @@ export default function Directory() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Team directory</h1>
+        <h1 className="text-2xl font-semibold">Team Directory</h1>
         <p className="text-sm text-muted-foreground flex items-center gap-1.5 flex-wrap">
-          Who's who — and when everyone's free.
+          Click or drag across cells to mark when you and everyone else is free.
           <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full border border-border bg-muted/40 text-muted-foreground">
             <Globe size={11} /> Showing in your local time · {VIEWER_TZ}
           </span>

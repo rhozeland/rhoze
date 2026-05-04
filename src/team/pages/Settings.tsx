@@ -10,6 +10,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
 import { Upload } from "lucide-react";
 import { formatPhone, validateAll, type MastersheetField } from "../lib/validation";
+import AvatarEditor from "../components/AvatarEditor";
 
 const DEPT_LABEL: Record<string, string> = {
   marketing: "Marketing",
@@ -27,6 +28,7 @@ export default function Settings() {
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [editorFile, setEditorFile] = useState<File | null>(null);
 
   const { data: profile } = useQuery({
     queryKey: ["my-profile", user?.id],
@@ -139,20 +141,31 @@ export default function Settings() {
   async function handleFile(file: File) {
     if (!user) return;
     if (!file.type.startsWith("image/")) {
-      toast({ title: "Pick an image file", variant: "destructive" });
+      toast({ title: "Pick an image or GIF file", variant: "destructive" });
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
       toast({ title: "Image too large (max 5MB)", variant: "destructive" });
       return;
     }
+    // GIFs: upload as-is so the animation is preserved.
+    if (file.type === "image/gif") {
+      await uploadAvatarBlob(file, "gif");
+      return;
+    }
+    // Static images: open the crop/zoom editor first.
+    setEditorFile(file);
+  }
+
+  async function uploadAvatarBlob(blob: Blob, ext: string) {
+    if (!user) return;
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
       const path = `${user.id}/avatar-${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, {
+      const contentType = ext === "gif" ? "image/gif" : "image/png";
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, blob, {
         upsert: true,
-        contentType: file.type,
+        contentType,
       });
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
@@ -251,7 +264,7 @@ export default function Settings() {
             <input
               ref={fileRef}
               type="file"
-              accept="image/*"
+              accept="image/*,image/gif"
               className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0];
@@ -263,7 +276,7 @@ export default function Settings() {
               <Upload size={14} className="mr-1.5" />
               {uploading ? "Uploading…" : profile?.avatar_url ? "Change photo" : "Upload photo"}
             </Button>
-            <div className="text-xs text-muted-foreground mt-1">PNG or JPG, up to 5MB.</div>
+            <div className="text-xs text-muted-foreground mt-1">PNG, JPG or GIF, up to 5MB.</div>
           </div>
         </div>
 
@@ -430,6 +443,16 @@ export default function Settings() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <AvatarEditor
+        open={!!editorFile}
+        file={editorFile}
+        onCancel={() => setEditorFile(null)}
+        onApply={async (blob) => {
+          setEditorFile(null);
+          await uploadAvatarBlob(blob, "png");
+        }}
+      />
     </div>
   );
 }

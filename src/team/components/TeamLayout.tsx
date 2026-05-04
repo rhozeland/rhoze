@@ -2,12 +2,15 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import {
   LayoutDashboard, Users, BookOpen,
-  UserCircle2, Settings, Shield, UserPlus, KeyRound, LogOut,
+  UserCircle2, Shield, UserPlus, KeyRound, LogOut,
   FolderKanban, Inbox, Package, Clock,
   Sparkles, ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
@@ -16,7 +19,6 @@ const nav = [
   { to: "/crm", label: "CRM", icon: Users },
   { to: "/docs", label: "Docs & Training", icon: BookOpen },
   { to: "/directory", label: "Directory", icon: UserCircle2 },
-  { to: "/settings", label: "Settings", icon: Settings },
 ];
 
 const adminNav = [
@@ -39,6 +41,30 @@ export default function TeamLayout() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
+  const { data: profile } = useQuery({
+    queryKey: ["my-profile-nav", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("avatar_url, display_name")
+        .eq("id", user!.id)
+        .maybeSingle();
+      return data;
+    },
+  });
+
+  const accountLabel = (() => {
+    const name = (profile?.display_name || user?.email || "").trim();
+    if (!name) return "Account";
+    const first = name.split(/[\s@]/)[0];
+    return `${first}'s Account`;
+  })();
+  const initials = (profile?.display_name || user?.email || "?")
+    .trim()
+    .charAt(0)
+    .toUpperCase();
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/login");
@@ -58,6 +84,13 @@ export default function TeamLayout() {
               {n.label}
             </NavLink>
           ))}
+          <NavLink to="/settings" className={navClass}>
+            <Avatar className="h-5 w-5">
+              {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
+              <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
+            </Avatar>
+            {accountLabel}
+          </NavLink>
           {isAdmin && (
             <>
               <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>

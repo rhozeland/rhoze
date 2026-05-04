@@ -1,3 +1,5 @@
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronDown } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
@@ -165,6 +167,8 @@ export default function Directory() {
 
   const [active, setActive] = useState<{ day: string; block: string } | null>(null);
   const activeIds = active ? grid[active.day]?.[active.block] ?? [] : [];
+  const [selectedUid, setSelectedUid] = useState<string | null>(null);
+  useEffect(() => { setSelectedUid(null); }, [active?.day, active?.block]);
 
   const heatColor = (n: number, max: number) => {
     if (n === 0) return "bg-muted/40 text-muted-foreground";
@@ -404,17 +408,21 @@ export default function Directory() {
             {activeIds.length === 0 ? (
               <div className="text-sm text-muted-foreground italic">No one is marked available.</div>
             ) : (
+              <>
               <div className="flex flex-wrap gap-2">
                 {activeIds.map((uid) => {
                   const p = profileMap[uid];
                   if (!p) return null;
-                  const av = availability?.[uid];
+                  const isOpen = selectedUid === uid;
                   return (
-                    <Popover key={uid}>
+                    <Popover key={uid} open={false}>
                       <PopoverTrigger asChild>
                         <button
                           type="button"
-                          className="flex items-center gap-2 border border-border rounded-full pl-1 pr-3 py-1 bg-background hover:bg-muted/50 transition-colors cursor-pointer"
+                          onClick={() => setSelectedUid(isOpen ? null : uid)}
+                          className={`flex items-center gap-2 border rounded-full pl-1 pr-2 py-1 transition-colors cursor-pointer ${
+                            isOpen ? "border-foreground bg-muted" : "border-border bg-background hover:bg-muted/50"
+                          }`}
                         >
                           {p.avatar_url ? (
                             <img src={p.avatar_url} alt="" className="h-6 w-6 rounded-full object-cover" />
@@ -424,43 +432,53 @@ export default function Directory() {
                             </div>
                           )}
                           <span className="text-xs">{p.display_name ?? "Unnamed"}</span>
+                          <ChevronDown size={12} className={`text-muted-foreground transition-transform ${isOpen ? "rotate-180" : ""}`} />
                         </button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-72 p-4" side="top" align="start">
-                        <div className="flex items-start gap-3">
-                          {p.avatar_url ? (
-                            <img src={p.avatar_url} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
-                          ) : (
-                            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-                              {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
-                            </div>
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <div className="font-medium truncate">{p.display_name ?? "Unnamed"}</div>
-                            {p.alias && <div className="text-xs text-muted-foreground truncate">aka {p.alias}</div>}
-                            <div className="text-xs text-muted-foreground truncate">
-                              {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
-                            </div>
-                            {p.email && (
-                              <a href={`mailto:${p.email}`} className="text-xs text-primary hover:underline truncate block mt-0.5">
-                                {p.email}
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                        {av && ((av.days?.length ?? 0) > 0 || (av.time_blocks?.length ?? 0) > 0 || av.notes) && (
-                          <div className="mt-3 pt-3 border-t border-border space-y-1 text-[11px]">
-                            <div className="uppercase tracking-wide text-muted-foreground">Availability</div>
-                            {av.days?.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av.days.map((d: string) => d.slice(0,3)).join(", ")}</div>}
-                            {av.time_blocks?.length > 0 && <div><span className="text-muted-foreground">When:</span> {av.time_blocks.join(", ")}</div>}
-                            {av.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
-                          </div>
-                        )}
-                      </PopoverContent>
+                      <PopoverContent className="hidden" />
                     </Popover>
                   );
                 })}
               </div>
+              {selectedUid && (() => {
+                const p = profileMap[selectedUid];
+                if (!p) return null;
+                const av = availability?.[selectedUid];
+                return (
+                  <div className="mt-3 border border-border rounded-lg p-4 bg-card animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="flex items-start gap-3">
+                      {p.avatar_url ? (
+                        <img src={p.avatar_url} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
+                      ) : (
+                        <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+                          {(p.display_name ?? "?").slice(0, 1).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium truncate">{p.display_name ?? "Unnamed"}</div>
+                        {p.alias && <div className="text-xs text-muted-foreground truncate">aka {p.alias}</div>}
+                        <div className="text-xs text-muted-foreground truncate">
+                          {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
+                        </div>
+                        {p.email && (
+                          <a href={`mailto:${p.email}`} className="text-xs text-primary hover:underline truncate block mt-0.5">
+                            {p.email}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    {av && ((av.days?.length ?? 0) > 0 || (av.time_blocks?.length ?? 0) > 0 || av.notes) && (
+                      <div className="mt-3 pt-3 border-t border-border space-y-1 text-[11px]">
+                        <div className="uppercase tracking-wide text-muted-foreground">Availability</div>
+                        {av.days?.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av.days.map((d: string) => d.slice(0,3)).join(", ")}</div>}
+                        {av.time_blocks?.length > 0 && <div><span className="text-muted-foreground">When:</span> {av.time_blocks.join(", ")}</div>}
+                        {av.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+              </>
             )}
           </div>
         )}

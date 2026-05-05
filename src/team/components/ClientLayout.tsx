@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCircle2, FolderOpen, Sparkles } from "lucide-react";
+import { LogOut, UserCircle2, FolderOpen, Sparkles, Coins, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,8 +16,8 @@ export default function ClientLayout() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const { data: totalRhoze = 0 } = useQuery({
-    queryKey: ["client_layout_rhoze_total", user?.id],
+  const { data: totals } = useQuery({
+    queryKey: ["client_layout_totals", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
       const { data: pcs } = await supabase
@@ -25,14 +25,19 @@ export default function ClientLayout() {
         .select("project_id")
         .eq("user_id", user!.id);
       const ids = (pcs ?? []).map((r: any) => r.project_id);
-      if (!ids.length) return 0;
-      const { data: bals } = await supabase
-        .from("rhoze_balances")
-        .select("balance")
-        .in("project_id", ids);
-      return (bals ?? []).reduce((s: number, r: any) => s + Number(r.balance ?? 0), 0);
+      if (!ids.length) return { rhoze: 0, credits: 0 };
+      const [{ data: bals }, { data: projs }] = await Promise.all([
+        supabase.from("rhoze_balances").select("balance").in("project_id", ids),
+        supabase.from("projects").select("credit_balance").in("id", ids),
+      ]);
+      return {
+        rhoze: (bals ?? []).reduce((s: number, r: any) => s + Number(r.balance ?? 0), 0),
+        credits: (projs ?? []).reduce((s: number, r: any) => s + Number(r.credit_balance ?? 0), 0),
+      };
     },
   });
+  const totalRhoze = totals?.rhoze ?? 0;
+  const totalCredits = totals?.credits ?? 0;
 
   const handleSignOut = async () => {
     await signOut();
@@ -50,7 +55,7 @@ export default function ClientLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="border-b border-border bg-card/60 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+        <div className="max-w-4xl mx-auto px-6 py-2.5 flex items-center justify-between gap-4 flex-wrap">
           <a
             href="https://www.rhozeland.com"
             target="_blank"
@@ -66,6 +71,15 @@ export default function ClientLayout() {
             <NavLink to="/client/home" end className={linkCls}>
               <FolderOpen size={12} /> Projects
             </NavLink>
+            <NavLink to="/client/requests" className={linkCls}>
+              <Plus size={12} /> Requests
+            </NavLink>
+            <span
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-foreground text-background tabular-nums"
+              title="Your total credit balance across all projects"
+            >
+              <Coins size={12} /> {totalCredits} cr
+            </span>
             <span
               className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-accent/40 text-foreground"
               title="Your total $RHOZE balance across all projects"
@@ -80,11 +94,6 @@ export default function ClientLayout() {
             </Button>
           </nav>
         </div>
-        {user?.email && (
-          <div className="max-w-3xl mx-auto px-6 pb-2 text-[11px] text-muted-foreground">
-            Signed in as {user.email}
-          </div>
-        )}
       </header>
       <main className="flex-1">
         <Outlet />

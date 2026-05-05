@@ -374,7 +374,7 @@ export default function StartPage() {
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 mt-2">
               <div className="text-sm">
                 <span className="font-semibold text-foreground">1 credit = {fmt(CREDIT_VALUE_CENTS)}</span>
-                <span className="text-muted-foreground"> · ~1 hr of focused work or one small deliverable</span>
+                <span className="text-muted-foreground"> · 1 hr of focused work or one deliverable</span>
               </div>
               <a
                 href={SCOPE_CALL_URL}

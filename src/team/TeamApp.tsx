@@ -20,6 +20,7 @@ import PortalLanding from "./pages/PortalLanding";
 import ClientLayout from "./components/ClientLayout";
 import ClientHome from "./pages/ClientHome";
 import ClientProfile from "./pages/ClientProfile";
+import ClientRequests from "./pages/ClientRequests";
 import { useAuth } from "./lib/auth";
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
@@ -65,6 +66,7 @@ export default function TeamApp() {
         }
       >
         <Route path="/client/home" element={<ClientHome />} />
+        <Route path="/client/requests" element={<ClientRequests />} />
         <Route path="/client/profile" element={<ClientProfile />} />
         <Route path="/portal/:id" element={<ClientPortal />} />
       </Route>

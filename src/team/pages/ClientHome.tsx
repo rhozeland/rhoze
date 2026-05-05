@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
 import { formatCents } from "../lib/format";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Sparkles, Plus, ChevronDown } from "lucide-react";
+import CreditRequestsPanel from "../components/CreditRequestsPanel";
 
 /**
  * Client landing — lists every project the signed-in user has been linked
@@ -11,6 +13,7 @@ import { ChevronRight, Sparkles } from "lucide-react";
  */
 export default function ClientHome() {
   const { loading, session, user } = useAuth();
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const { data: projects, isLoading } = useQuery({
     queryKey: ["client_projects", user?.id],
@@ -60,25 +63,42 @@ export default function ClientHome() {
         <ul className="rounded-2xl border border-border bg-card divide-y divide-border overflow-hidden">
           {(projects ?? []).map((p: any) => {
             const rb = balances?.[p.id];
+            const isOpen = expanded === p.id;
             return (
             <li key={p.id}>
-              <Link
-                to={`/portal/${p.id}`}
-                className="flex items-center justify-between gap-3 p-4 hover:bg-accent/40 transition-colors"
-              >
-                <div className="min-w-0">
+              <div className="flex items-center justify-between gap-3 p-4 hover:bg-accent/40 transition-colors">
+                <Link to={`/portal/${p.id}`} className="min-w-0 flex-1">
                   <div className="text-sm font-medium truncate">{p.title}</div>
                   <div className="text-[11px] text-muted-foreground mt-0.5">
                     {p.client_name} · {p.status} · {formatCents(p.dollar_balance_cents)} · {p.credit_balance ?? 0} cr
                   </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
+                </Link>
+                <div className="flex items-center gap-2 shrink-0">
                   <div className="hidden sm:flex items-center gap-1 text-[11px] tabular-nums px-2 py-1 rounded-md bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300">
                     <Sparkles size={11} /> {Number(rb?.balance ?? 0).toLocaleString()} $RHOZE
                   </div>
-                  <ChevronRight size={16} className="text-muted-foreground" />
+                  <button
+                    type="button"
+                    onClick={() => setExpanded(isOpen ? null : p.id)}
+                    className="text-[11px] inline-flex items-center gap-1 px-2 py-1 rounded-md border border-border hover:bg-accent transition"
+                  >
+                    <Plus size={11} /> Request work
+                    <ChevronDown size={11} className={`transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  <Link to={`/portal/${p.id}`} aria-label="Open project">
+                    <ChevronRight size={16} className="text-muted-foreground" />
+                  </Link>
                 </div>
-              </Link>
+              </div>
+              {isOpen && (
+                <div className="px-4 pb-4 pt-1 bg-muted/30">
+                  <CreditRequestsPanel
+                    projectId={p.id}
+                    creditBalance={p.credit_balance ?? 0}
+                    mode="client"
+                  />
+                </div>
+              )}
             </li>
             );
           })}

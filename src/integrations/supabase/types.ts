@@ -180,7 +180,8 @@ export type Database = {
           id: string
           kind: string
           package_id: string | null
-          project_id: string
+          project_id: string | null
+          proposed_project_title: string | null
           requested_by: string
           requested_credits: number
           status: Database["public"]["Enums"]["credit_request_status"]
@@ -201,7 +202,8 @@ export type Database = {
           id?: string
           kind?: string
           package_id?: string | null
-          project_id: string
+          project_id?: string | null
+          proposed_project_title?: string | null
           requested_by: string
           requested_credits?: number
           status?: Database["public"]["Enums"]["credit_request_status"]
@@ -222,7 +224,8 @@ export type Database = {
           id?: string
           kind?: string
           package_id?: string | null
-          project_id?: string
+          project_id?: string | null
+          proposed_project_title?: string | null
           requested_by?: string
           requested_credits?: number
           status?: Database["public"]["Enums"]["credit_request_status"]

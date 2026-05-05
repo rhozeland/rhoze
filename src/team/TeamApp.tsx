@@ -12,6 +12,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Catalog from "./pages/Catalog";
 import Intake from "./pages/Intake";
+import Requests from "./pages/Requests";
 import TimeAndPay from "./pages/TimeAndPay";
 import ClientPortal from "./pages/ClientPortal";
 import ClientAccess from "./pages/ClientAccess";
@@ -83,6 +84,7 @@ export default function TeamApp() {
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="catalog" element={<Catalog />} />
         <Route path="intake" element={<Intake />} />
+        <Route path="requests" element={<Requests />} />
         <Route path="time" element={<TimeAndPay />} />
         {/* Legacy URLs */}
         <Route path="timesheets" element={<Navigate to="/time" replace />} />

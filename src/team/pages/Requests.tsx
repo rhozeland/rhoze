@@ -199,13 +199,19 @@ function Section({
                     <Pill status={r.status} />
                   </div>
                   <div className="text-[11px] text-muted-foreground">
-                    <Link to={`/projects/${r.project_id}`} className="underline inline-flex items-center gap-1">
-                      {r.projects?.title || "project"} <ExternalLink size={10} />
-                    </Link>
-                    {" · "}{r.projects?.client_name}
+                    {r.project_id ? (
+                      <Link to={`/projects/${r.project_id}`} className="underline inline-flex items-center gap-1">
+                        {r.projects?.title || "project"} <ExternalLink size={10} />
+                      </Link>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 uppercase tracking-wider text-[9px]">
+                        New project: {r.proposed_project_title || r.title}
+                      </span>
+                    )}
+                    {r.projects?.client_name && <>{" · "}{r.projects.client_name}</>}
                     {" · "}requested {formatDate(r.created_at)}
                     {" · "}<span className="tabular-nums">{r.estimated_credits ?? r.requested_credits} cr</span>
-                    {" · balance "}<span className="tabular-nums">{r.projects?.credit_balance ?? 0} cr</span>
+                    {r.project_id && <>{" · balance "}<span className="tabular-nums">{r.projects?.credit_balance ?? 0} cr</span></>}
                   </div>
                 </div>
               </div>

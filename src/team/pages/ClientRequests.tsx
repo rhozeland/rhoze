@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Check, X as XIcon, Calendar, Sparkles, FolderOpen, FilePlus2, ExternalLink, Camera, Music2, Activity } from "lucide-react";
+import { Plus, Check, X as XIcon, Calendar, Sparkles, FolderOpen, FilePlus2, Camera, Music2, Activity } from "lucide-react";
 import { formatDate } from "../lib/format";
 
 /**
@@ -28,6 +28,7 @@ export default function ClientRequests() {
   const [activeCat, setActiveCat] = useState<"visual" | "audio" | "development">("visual");
   const [form, setForm] = useState({
     project_id: "",
+    new_project_title: "",
     kind: "custom" as "custom" | "catalog",
     package_id: "",
     title: "",
@@ -46,16 +47,15 @@ export default function ClientRequests() {
     },
   });
 
-  const ids = (projects ?? []).map((p: any) => p.id);
-
   const { data: requests } = useQuery({
-    queryKey: ["client_all_requests", ids.join(",")],
-    enabled: ids.length > 0,
+    queryKey: ["client_all_requests", user?.id],
+    enabled: !!user,
     queryFn: async () => {
+      // RLS lets the requester see their own rows even when project_id is NULL.
       const { data } = await supabase
         .from("credit_requests")
         .select("*")
-        .in("project_id", ids)
+        .eq("requested_by", user!.id)
         .order("created_at", { ascending: false });
       return data ?? [];
     },
@@ -82,7 +82,8 @@ export default function ClientRequests() {
 
   const submit = useMutation({
     mutationFn: async () => {
-      if (!form.project_id) throw new Error("Pick a project");
+      if (scope === "existing" && !form.project_id) throw new Error("Pick a project");
+      if (scope === "new" && !form.new_project_title.trim()) throw new Error("Name the new project");
       if (!form.title.trim()) throw new Error("Title required");
       // Client doesn't estimate credits — team confirms scope and credit cost.
       // For catalog picks we still seed `requested_credits` from the package
@@ -92,7 +93,8 @@ export default function ClientRequests() {
           ? (packages ?? []).find((p: any) => p.id === form.package_id)?.credits_cost ?? 1
           : 1;
       const { error } = await supabase.from("credit_requests").insert({
-        project_id: form.project_id,
+        project_id: scope === "existing" ? form.project_id : null,
+        proposed_project_title: scope === "new" ? form.new_project_title.trim() : null,
         requested_by: user!.id,
         kind: form.kind,
         package_id: form.kind === "catalog" && form.package_id ? form.package_id : null,
@@ -103,11 +105,18 @@ export default function ClientRequests() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: "Request submitted", description: "The team will review and confirm scope." });
+      toast({
+        title: "Request submitted",
+        description:
+          scope === "new"
+            ? "The team will review and open the project once approved."
+            : "The team will review and confirm scope.",
+      });
       setOpen(false);
-      setForm({ project_id: "", kind: "custom", package_id: "", title: "", description: "" });
+      setForm({ project_id: "", new_project_title: "", kind: "custom", package_id: "", title: "", description: "" });
       setScope("existing");
       qc.invalidateQueries({ queryKey: ["client_all_requests"] });
+      qc.invalidateQueries({ queryKey: ["client_requests_projects"] });
     },
     onError: (e: any) => toast({ title: "Could not submit", description: e.message, variant: "destructive" }),
   });

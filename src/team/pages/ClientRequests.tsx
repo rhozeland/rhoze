@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Check, X as XIcon, Calendar, Sparkles } from "lucide-react";
+import { Plus, Check, X as XIcon, Calendar, Sparkles, FolderOpen, FilePlus2, ExternalLink, Camera, Music2, Activity } from "lucide-react";
 import { formatDate } from "../lib/format";
 
 /**
@@ -24,13 +24,14 @@ export default function ClientRequests() {
   const { loading, session, user } = useAuth();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [scope, setScope] = useState<"existing" | "new">("existing");
+  const [activeCat, setActiveCat] = useState<"visual" | "audio" | "development">("visual");
   const [form, setForm] = useState({
     project_id: "",
     kind: "custom" as "custom" | "catalog",
     package_id: "",
     title: "",
     description: "",
-    requested_credits: "1",
   });
 
   const { data: projects } = useQuery({
@@ -65,7 +66,7 @@ export default function ClientRequests() {
     queryFn: async () => {
       const { data } = await supabase
         .from("service_packages")
-        .select("id,name,description,credits_cost,kind")
+        .select("id,name,description,credits_cost,kind,category,sort_order")
         .eq("is_active", true)
         .eq("kind", "a_la_carte")
         .order("sort_order");
@@ -83,7 +84,13 @@ export default function ClientRequests() {
     mutationFn: async () => {
       if (!form.project_id) throw new Error("Pick a project");
       if (!form.title.trim()) throw new Error("Title required");
-      const credits = Math.max(1, parseInt(form.requested_credits || "1", 10));
+      // Client doesn't estimate credits — team confirms scope and credit cost.
+      // For catalog picks we still seed `requested_credits` from the package
+      // so the team has a starting point; for custom requests it's just 1.
+      const seedCredits =
+        form.kind === "catalog" && form.package_id
+          ? (packages ?? []).find((p: any) => p.id === form.package_id)?.credits_cost ?? 1
+          : 1;
       const { error } = await supabase.from("credit_requests").insert({
         project_id: form.project_id,
         requested_by: user!.id,
@@ -91,14 +98,15 @@ export default function ClientRequests() {
         package_id: form.kind === "catalog" && form.package_id ? form.package_id : null,
         title: form.title.trim(),
         description: form.description.trim() || null,
-        requested_credits: credits,
+        requested_credits: seedCredits,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast({ title: "Request submitted", description: "The team will review and confirm scope." });
       setOpen(false);
-      setForm({ project_id: "", kind: "custom", package_id: "", title: "", description: "", requested_credits: "1" });
+      setForm({ project_id: "", kind: "custom", package_id: "", title: "", description: "" });
+      setScope("existing");
       qc.invalidateQueries({ queryKey: ["client_all_requests"] });
     },
     onError: (e: any) => toast({ title: "Could not submit", description: e.message, variant: "destructive" }),
@@ -134,9 +142,15 @@ export default function ClientRequests() {
       package_id: id,
       title: p?.name || f.title,
       description: p?.description || f.description,
-      requested_credits: String(p?.credits_cost ?? 1),
     }));
   };
+
+  const CATS: { id: "visual" | "audio" | "development"; label: string; Icon: typeof Camera }[] = [
+    { id: "visual", label: "Visual", Icon: Camera },
+    { id: "audio", label: "Audio", Icon: Music2 },
+    { id: "development", label: "Development", Icon: Activity },
+  ];
+  const catalogInCat = (packages ?? []).filter((p: any) => (p.category ?? "visual") === activeCat);
 
   if (loading) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
   if (!session) return <Navigate to="/client" replace />;
@@ -158,41 +172,123 @@ export default function ClientRequests() {
           </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader><DialogTitle>New credit request</DialogTitle></DialogHeader>
-            <div className="space-y-3">
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+              {/* Scope: existing project vs. new project */}
               <div className="space-y-1.5">
-                <Label>Project *</Label>
-                <Select value={form.project_id} onValueChange={(v) => setForm({ ...form, project_id: v })}>
-                  <SelectTrigger><SelectValue placeholder="Choose project…" /></SelectTrigger>
-                  <SelectContent>
-                    {(projects ?? []).map((p: any) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.title} · {p.credit_balance ?? 0} cr available
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground">For</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setScope("existing")}
+                    className={`text-left rounded-lg px-3 py-2.5 border transition-colors ${
+                      scope === "existing" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 text-sm font-medium">
+                      <FolderOpen size={13} /> Existing project
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">Add work to a project you already have.</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setScope("new")}
+                    className={`text-left rounded-lg px-3 py-2.5 border transition-colors ${
+                      scope === "new" ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 text-sm font-medium">
+                      <FilePlus2 size={13} /> New project
+                    </div>
+                    <div className="text-[11px] text-muted-foreground mt-0.5">Start something fresh — we'll scope and quote it.</div>
+                  </button>
+                </div>
               </div>
+
+              {scope === "new" ? (
+                <div className="rounded-lg border border-dashed border-border p-4 text-sm space-y-3">
+                  <p className="text-muted-foreground">
+                    New projects use the full intake flow so we can confirm scope, deposit and timeline together.
+                  </p>
+                  <Button asChild size="sm">
+                    <a href="/start.html" target="_blank" rel="noreferrer">
+                      Start a new project <ExternalLink size={12} className="ml-1.5" />
+                    </a>
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <Label>Project *</Label>
+                    <Select value={form.project_id} onValueChange={(v) => setForm({ ...form, project_id: v })}>
+                      <SelectTrigger><SelectValue placeholder="Choose project…" /></SelectTrigger>
+                      <SelectContent>
+                        {(projects ?? []).map((p: any) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.title} · {p.credit_balance ?? 0} cr available
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
               <div className="space-y-1.5">
                 <Label>Type</Label>
                 <Select value={form.kind} onValueChange={(v) => setForm({ ...form, kind: v as any, package_id: "" })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="custom">Custom request (variable credits)</SelectItem>
-                    <SelectItem value="catalog">From catalog</SelectItem>
+                    <SelectItem value="catalog">Pick from catalog</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               {form.kind === "catalog" && (
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <Label>Service</Label>
-                  <Select value={form.package_id} onValueChange={onPickPackage}>
-                    <SelectTrigger><SelectValue placeholder="Choose a service…" /></SelectTrigger>
-                    <SelectContent>
-                      {(packages ?? []).map((p: any) => (
-                        <SelectItem key={p.id} value={p.id}>{p.name} · {p.credits_cost} cr</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="inline-flex items-center gap-1 rounded-full bg-muted/40 p-1 border border-border">
+                    {CATS.map(({ id, label, Icon }) => (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => setActiveCat(id)}
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs transition-colors ${
+                          activeCat === id
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <Icon size={12} /> {label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-2 pt-1">
+                    {catalogInCat.map((p: any) => {
+                      const active = form.package_id === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => onPickPackage(p.id)}
+                          className={`text-left rounded-lg px-3 py-2 border transition-colors ${
+                            active ? "border-primary bg-primary/5" : "border-border bg-card hover:border-primary/40"
+                          }`}
+                        >
+                          <div className="flex items-baseline justify-between gap-2">
+                            <span className="text-sm font-medium truncate">{p.name}</span>
+                            <span className={`text-[11px] tabular-nums shrink-0 ${active ? "text-primary font-medium" : "text-muted-foreground"}`}>
+                              {p.credits_cost} cr
+                            </span>
+                          </div>
+                          {p.description && (
+                            <div className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{p.description}</div>
+                          )}
+                        </button>
+                      );
+                    })}
+                    {catalogInCat.length === 0 && (
+                      <div className="col-span-full text-center text-xs text-muted-foreground py-4">
+                        Nothing in this category yet.
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               <div className="space-y-1.5">
@@ -203,20 +299,20 @@ export default function ClientRequests() {
                 <Label>Details</Label>
                 <Textarea rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What you need, deadlines, references…" />
               </div>
-              <div className="space-y-1.5">
-                <Label>Estimated credits</Label>
-                <Input type="number" min={1} value={form.requested_credits} onChange={(e) => setForm({ ...form, requested_credits: e.target.value })} />
-                <p className="text-[11px] text-muted-foreground">
-                  Starting estimate. Team will confirm before any credits are deducted.
-                  {selectedProject && <> Available: <strong>{selectedProject.credit_balance ?? 0} cr</strong>.</>}
-                </p>
-              </div>
+              <p className="text-[11px] text-muted-foreground">
+                The team will scope this and send back a credit estimate for you to approve — no credits are deducted until then.
+                {selectedProject && <> Available on this project: <strong>{selectedProject.credit_balance ?? 0} cr</strong>.</>}
+              </p>
               <a href="https://calendar.app.google/MWxuv9pVT4Y2P3kx9" target="_blank" rel="noreferrer" className="text-[11px] inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
                 <Calendar size={11} /> Or book a call to scope this together
               </a>
+                </>
+              )}
             </div>
             <DialogFooter>
-              <Button onClick={() => submit.mutate()} disabled={submit.isPending}>Submit request</Button>
+              {scope === "existing" && (
+                <Button onClick={() => submit.mutate()} disabled={submit.isPending}>Submit request</Button>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>

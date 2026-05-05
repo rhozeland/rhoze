@@ -213,32 +213,34 @@ export default function ClientRequests() {
                 </div>
               </div>
 
-              {scope === "new" ? (
-                <div className="rounded-lg border border-dashed border-border p-4 text-sm space-y-3">
-                  <p className="text-muted-foreground">
-                    New projects use the full intake flow so we can confirm scope, deposit and timeline together.
-                  </p>
-                  <Button asChild size="sm">
-                    <a href="/start.html" target="_blank" rel="noreferrer">
-                      Start a new project <ExternalLink size={12} className="ml-1.5" />
-                    </a>
-                  </Button>
+              {scope === "existing" ? (
+                <div className="space-y-1.5">
+                  <Label>Project *</Label>
+                  <Select value={form.project_id} onValueChange={(v) => setForm({ ...form, project_id: v })}>
+                    <SelectTrigger><SelectValue placeholder="Choose project…" /></SelectTrigger>
+                    <SelectContent>
+                      {(projects ?? []).map((p: any) => (
+                        <SelectItem key={p.id} value={p.id}>
+                          {p.title} · {p.credit_balance ?? 0} cr available
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               ) : (
-                <>
-                  <div className="space-y-1.5">
-                    <Label>Project *</Label>
-                    <Select value={form.project_id} onValueChange={(v) => setForm({ ...form, project_id: v })}>
-                      <SelectTrigger><SelectValue placeholder="Choose project…" /></SelectTrigger>
-                      <SelectContent>
-                        {(projects ?? []).map((p: any) => (
-                          <SelectItem key={p.id} value={p.id}>
-                            {p.title} · {p.credit_balance ?? 0} cr available
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-1.5">
+                  <Label>New project name *</Label>
+                  <Input
+                    value={form.new_project_title}
+                    onChange={(e) => setForm({ ...form, new_project_title: e.target.value })}
+                    placeholder="e.g. Album rollout — Spring '26"
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    Submitting opens a new project in <strong className="text-foreground">pending approval</strong>. It activates as soon as the team confirms scope and you approve the credit estimate.
+                  </p>
+                </div>
+              )}
+
               <div className="space-y-1.5">
                 <Label>Type</Label>
                 <Select value={form.kind} onValueChange={(v) => setForm({ ...form, kind: v as any, package_id: "" })}>
@@ -315,13 +317,9 @@ export default function ClientRequests() {
               <a href="https://calendar.app.google/MWxuv9pVT4Y2P3kx9" target="_blank" rel="noreferrer" className="text-[11px] inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
                 <Calendar size={11} /> Or book a call to scope this together
               </a>
-                </>
-              )}
             </div>
             <DialogFooter>
-              {scope === "existing" && (
-                <Button onClick={() => submit.mutate()} disabled={submit.isPending}>Submit request</Button>
-              )}
+              <Button onClick={() => submit.mutate()} disabled={submit.isPending}>Submit request</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

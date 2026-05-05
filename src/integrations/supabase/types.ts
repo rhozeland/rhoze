@@ -167,6 +167,72 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_requests: {
+        Row: {
+          client_decided_at: string | null
+          client_notes: string | null
+          completed_at: string | null
+          created_at: string
+          decided_by: string | null
+          description: string | null
+          estimated_credits: number | null
+          final_credits: number | null
+          id: string
+          kind: string
+          package_id: string | null
+          project_id: string
+          requested_by: string
+          requested_credits: number
+          status: Database["public"]["Enums"]["credit_request_status"]
+          team_decided_at: string | null
+          team_notes: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          client_decided_at?: string | null
+          client_notes?: string | null
+          completed_at?: string | null
+          created_at?: string
+          decided_by?: string | null
+          description?: string | null
+          estimated_credits?: number | null
+          final_credits?: number | null
+          id?: string
+          kind?: string
+          package_id?: string | null
+          project_id: string
+          requested_by: string
+          requested_credits?: number
+          status?: Database["public"]["Enums"]["credit_request_status"]
+          team_decided_at?: string | null
+          team_notes?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          client_decided_at?: string | null
+          client_notes?: string | null
+          completed_at?: string | null
+          created_at?: string
+          decided_by?: string | null
+          description?: string | null
+          estimated_credits?: number | null
+          final_credits?: number | null
+          id?: string
+          kind?: string
+          package_id?: string | null
+          project_id?: string
+          requested_by?: string
+          requested_credits?: number
+          status?: Database["public"]["Enums"]["credit_request_status"]
+          team_decided_at?: string | null
+          team_notes?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       deals: {
         Row: {
           contact_id: string | null
@@ -1788,6 +1854,30 @@ export type Database = {
         Args: { _intake_id: string }
         Returns: string
       }
+      credit_request_cancel: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
+      credit_request_client_approve: {
+        Args: { _client_notes?: string; _request_id: string }
+        Returns: undefined
+      }
+      credit_request_complete: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
+      credit_request_team_accept: {
+        Args: {
+          _estimated_credits: number
+          _request_id: string
+          _team_notes?: string
+        }
+        Returns: undefined
+      }
+      credit_request_team_reject: {
+        Args: { _request_id: string; _team_notes?: string }
+        Returns: undefined
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1866,6 +1956,13 @@ export type Database = {
       activity_type: "call" | "email" | "meeting" | "note" | "task"
       app_role: "admin" | "employee" | "client"
       contact_type: "lead" | "client" | "partner" | "vendor"
+      credit_request_status:
+        | "pending_team"
+        | "client_review"
+        | "accepted"
+        | "rejected"
+        | "cancelled"
+        | "completed"
       deal_stage:
         | "lead"
         | "qualified"
@@ -2015,6 +2112,14 @@ export const Constants = {
       activity_type: ["call", "email", "meeting", "note", "task"],
       app_role: ["admin", "employee", "client"],
       contact_type: ["lead", "client", "partner", "vendor"],
+      credit_request_status: [
+        "pending_team",
+        "client_review",
+        "accepted",
+        "rejected",
+        "cancelled",
+        "completed",
+      ],
       deal_stage: [
         "lead",
         "qualified",

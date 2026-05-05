@@ -14,6 +14,7 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import ProjectMilestones from "../components/ProjectMilestones";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { RhozePanel } from "../components/RhozePanel";
+import CreditRequestsPanel from "../components/CreditRequestsPanel";
 
 export default function ClientPortal() {
   const { id } = useParams<{ id: string }>();
@@ -149,25 +150,30 @@ export default function ClientPortal() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-3xl mx-auto p-6 md:p-10 space-y-8">
-        <header className="flex items-center justify-between gap-4">
-          <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Project</div>
-            <h1 className="text-2xl md:text-3xl font-semibold mt-1">{project.title}</h1>
-            <div className="text-xs text-muted-foreground mt-1">
-              For {project.client_name} · Status:{" "}
-              <span className="font-medium text-foreground">{project.status}</span>
-              {project.archived_at && <> · archived {formatDate(project.archived_at)}</>}
-            </div>
+        <header className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3 min-w-0">
+            <h1 className="text-xl md:text-2xl font-semibold truncate">{project.title}</h1>
+            <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border bg-muted text-muted-foreground border-border">
+              {project.status}
+            </span>
+            <span className="hidden sm:inline text-xs tabular-nums text-muted-foreground">
+              {project.credit_balance ?? 0} cr · {formatCents(project.dollar_balance_cents ?? 0)}
+            </span>
           </div>
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            <Link to="/client/home" className="text-xs underline text-muted-foreground">
-              All projects
-            </Link>
-          </div>
+          <Link to="/client/home" className="text-xs underline text-muted-foreground shrink-0">
+            All projects
+          </Link>
         </header>
 
         {/* Pipeline pills */}
         <PipelineStrip current={pipelineStage} />
+
+        {/* Credit requests — clients spend credits on one-off work */}
+        <CreditRequestsPanel
+          projectId={id!}
+          creditBalance={project.credit_balance ?? 0}
+          mode="client"
+        />
 
         {/* Hero CTA — Manage subscription */}
         <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-4">

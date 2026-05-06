@@ -457,7 +457,7 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
       const userIds = Array.from(new Set(rows.map((r: any) => r.user_id)));
       const sheetIds = rows.map((r: any) => r.id);
       const [{ data: profs }, { data: ents }] = await Promise.all([
-        userIds.length ? supabase.from("profiles").select("id, full_name, email").in("id", userIds) : Promise.resolve({ data: [] }) as any,
+        userIds.length ? supabase.from("profiles").select("id, display_name, alias, email").in("id", userIds) : Promise.resolve({ data: [] }) as any,
         sheetIds.length ? supabase.from("timesheet_entries").select("timesheet_id, work_type, hours, rate_amount_cents, expense_cents").in("timesheet_id", sheetIds) : Promise.resolve({ data: [] }) as any,
       ]);
       const pmap = new Map((profs ?? []).map((p: any) => [p.id, p]));

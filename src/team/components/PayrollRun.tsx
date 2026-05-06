@@ -351,6 +351,14 @@ function PayrollRow({ row, profile, stub, periodId, onChanged }: any) {
             <span>·</span><span>Revshare {formatCents(row.revshare_cents)}</span>
             <span>·</span><span>Expenses {formatCents(row.expense_cents)}</span>
           </div>
+          {(row.specialist_hours + row.hourly_hours + row.flat_hours) > 0 && (
+            <div className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">
+              {(row.specialist_hours + row.hourly_hours + row.flat_hours).toLocaleString("en-CA", { maximumFractionDigits: 2 })}h total
+              {row.hourly_hours > 0 && ` · ${row.hourly_hours.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h hourly`}
+              {row.specialist_hours > 0 && ` · ${row.specialist_hours.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h specialist`}
+              {row.flat_hours > 0 && ` · ${row.flat_hours.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h on flat-fee work`}
+            </div>
+          )}
         </div>
         <div className="text-right">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</div>

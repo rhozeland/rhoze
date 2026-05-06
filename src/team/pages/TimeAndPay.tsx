@@ -124,7 +124,7 @@ export default function TimeAndPay() {
           periodId={periodId}
           onEditDraft={(sheet) => {
             setEditingUserId(sheet.user_id);
-            setEditingUserName(sheet.profile?.full_name || sheet.profile?.email || "Team member");
+            setEditingUserName(sheet.profile?.display_name || sheet.profile?.alias || sheet.profile?.email || "Team member");
             setView("mine");
           }}
         />
@@ -530,7 +530,7 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
                   variant="outline"
                   className="h-9 w-9 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-300"
                   onClick={() => onEditDraft(s)}
-                  aria-label={`Edit saved draft for ${s.profile?.full_name || s.profile?.email || "team member"}`}
+                  aria-label={`Edit saved draft for ${s.profile?.display_name || s.profile?.alias || s.profile?.email || "team member"}`}
                 >
                   <Pencil size={14} />
                 </Button>
@@ -540,7 +540,7 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
                   className="h-9 w-9 border-destructive/40 text-destructive hover:bg-destructive/10"
                   onClick={() => deleteDraft.mutate(s.id)}
                   disabled={deleteDraft.isPending}
-                  aria-label={`Delete draft for ${s.profile?.full_name || s.profile?.email || "team member"}`}
+                  aria-label={`Delete draft for ${s.profile?.display_name || s.profile?.alias || s.profile?.email || "team member"}`}
                 >
                   <X size={14} />
                 </Button>
@@ -570,7 +570,7 @@ function SheetRow({ sheet, actions }: { sheet: any; actions?: React.ReactNode })
   return (
     <div className="border border-border rounded-lg bg-card p-3 flex items-center gap-4 flex-wrap">
       <div className="flex-1 min-w-[200px]">
-        <div className="font-medium text-sm">{sheet.profile?.full_name || sheet.profile?.email || "Team member"}</div>
+        <div className="font-medium text-sm">{sheet.profile?.display_name || sheet.profile?.alias || sheet.profile?.email || "Team member"}</div>
         <div className="text-xs text-muted-foreground">
           {sheet.entry_count} {sheet.entry_count === 1 ? "row" : "rows"} · {Number(sheet.total_hours).toFixed(2)} hrs
           {sheet.submitted_at && ` · submitted ${formatDate(sheet.submitted_at)}`}

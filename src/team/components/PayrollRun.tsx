@@ -107,6 +107,9 @@ export default function PayrollRun({ period }: { period: any }) {
       expense_cents: number;
       revshare_cents: number;
       total_cents: number;
+      specialist_hours: number;
+      hourly_hours: number;
+      flat_hours: number;
       breakdown: any;
     };
     const rows: Record<string, Row> = {};
@@ -114,6 +117,7 @@ export default function PayrollRun({ period }: { period: any }) {
     const ensure = (uid: string): Row => {
       if (!rows[uid]) {
         rows[uid] = { user_id: uid, hourly_cents: 0, flat_cents: 0, expense_cents: 0, revshare_cents: 0, total_cents: 0,
+          specialist_hours: 0, hourly_hours: 0, flat_hours: 0,
           breakdown: { hourly_lines: [], flat_lines: [], expense_lines: [], revshare_lines: [] } };
       }
       return rows[uid];
@@ -131,10 +135,12 @@ export default function PayrollRun({ period }: { period: any }) {
       if (e.work_type === "specialist") {
         const amt = Math.round(h * SPECIALIST_RATE_CENTS);
         r.hourly_cents += amt;
+        r.specialist_hours += h;
         r.breakdown.hourly_lines.push({ deliverable: e.deliverable, type: "specialist", hours: h, rate_cents: SPECIALIST_RATE_CENTS, amount_cents: amt });
       } else if (e.work_type === "project") {
         const amt = e.rate_amount_cents || 0;
         r.flat_cents += amt;
+        r.flat_hours += h;
         r.breakdown.flat_lines.push({ deliverable: e.deliverable, amount_cents: amt });
       } else if (e.work_type === "reimbursement") {
         // expense-only; handled below
@@ -142,6 +148,7 @@ export default function PayrollRun({ period }: { period: any }) {
         // standard hourly
         const amt = Math.round(h * (e.rate_amount_cents || 0));
         r.hourly_cents += amt;
+        r.hourly_hours += h;
         r.breakdown.hourly_lines.push({ deliverable: e.deliverable, type: "hourly", hours: h, rate_cents: e.rate_amount_cents, amount_cents: amt });
       }
       if (exp > 0) {

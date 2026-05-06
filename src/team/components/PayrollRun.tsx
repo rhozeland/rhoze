@@ -240,6 +240,11 @@ export default function PayrollRun({ period }: { period: any }) {
   });
 
   const grandTotal = computed.reduce((s, r) => s + r.total_cents, 0);
+  const grandSpecHours = computed.reduce((s, r) => s + r.specialist_hours, 0);
+  const grandHourlyHours = computed.reduce((s, r) => s + r.hourly_hours, 0);
+  const grandFlatHours = computed.reduce((s, r) => s + r.flat_hours, 0);
+  const grandTotalHours = grandSpecHours + grandHourlyHours + grandFlatHours;
+  const fmtHrs = (n: number) => `${n.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h`;
 
   return (
     <div className="space-y-5">
@@ -253,6 +258,9 @@ export default function PayrollRun({ period }: { period: any }) {
           <div className="text-right">
             <div className="text-[11px] uppercase tracking-wider opacity-80">Grand total</div>
             <div className="text-2xl font-bold tabular-nums">{formatCents(grandTotal)}</div>
+            <div className="text-[11px] opacity-80 mt-0.5 tabular-nums">
+              {fmtHrs(grandTotalHours)} total · {fmtHrs(grandHourlyHours)} hourly · {fmtHrs(grandSpecHours)} specialist · {fmtHrs(grandFlatHours)} flat
+            </div>
           </div>
         </div>
         <div className="px-5 py-3 border-t border-border flex items-center justify-between flex-wrap gap-3 bg-muted/20">

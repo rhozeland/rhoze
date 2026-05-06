@@ -107,6 +107,9 @@ export default function PayrollRun({ period }: { period: any }) {
       expense_cents: number;
       revshare_cents: number;
       total_cents: number;
+      specialist_hours: number;
+      hourly_hours: number;
+      flat_hours: number;
       breakdown: any;
     };
     const rows: Record<string, Row> = {};
@@ -114,6 +117,7 @@ export default function PayrollRun({ period }: { period: any }) {
     const ensure = (uid: string): Row => {
       if (!rows[uid]) {
         rows[uid] = { user_id: uid, hourly_cents: 0, flat_cents: 0, expense_cents: 0, revshare_cents: 0, total_cents: 0,
+          specialist_hours: 0, hourly_hours: 0, flat_hours: 0,
           breakdown: { hourly_lines: [], flat_lines: [], expense_lines: [], revshare_lines: [] } };
       }
       return rows[uid];
@@ -131,10 +135,12 @@ export default function PayrollRun({ period }: { period: any }) {
       if (e.work_type === "specialist") {
         const amt = Math.round(h * SPECIALIST_RATE_CENTS);
         r.hourly_cents += amt;
+        r.specialist_hours += h;
         r.breakdown.hourly_lines.push({ deliverable: e.deliverable, type: "specialist", hours: h, rate_cents: SPECIALIST_RATE_CENTS, amount_cents: amt });
       } else if (e.work_type === "project") {
         const amt = e.rate_amount_cents || 0;
         r.flat_cents += amt;
+        r.flat_hours += h;
         r.breakdown.flat_lines.push({ deliverable: e.deliverable, amount_cents: amt });
       } else if (e.work_type === "reimbursement") {
         // expense-only; handled below
@@ -142,6 +148,7 @@ export default function PayrollRun({ period }: { period: any }) {
         // standard hourly
         const amt = Math.round(h * (e.rate_amount_cents || 0));
         r.hourly_cents += amt;
+        r.hourly_hours += h;
         r.breakdown.hourly_lines.push({ deliverable: e.deliverable, type: "hourly", hours: h, rate_cents: e.rate_amount_cents, amount_cents: amt });
       }
       if (exp > 0) {
@@ -233,6 +240,11 @@ export default function PayrollRun({ period }: { period: any }) {
   });
 
   const grandTotal = computed.reduce((s, r) => s + r.total_cents, 0);
+  const grandSpecHours = computed.reduce((s, r) => s + r.specialist_hours, 0);
+  const grandHourlyHours = computed.reduce((s, r) => s + r.hourly_hours, 0);
+  const grandFlatHours = computed.reduce((s, r) => s + r.flat_hours, 0);
+  const grandTotalHours = grandSpecHours + grandHourlyHours + grandFlatHours;
+  const fmtHrs = (n: number) => `${n.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h`;
 
   return (
     <div className="space-y-5">
@@ -246,6 +258,9 @@ export default function PayrollRun({ period }: { period: any }) {
           <div className="text-right">
             <div className="text-[11px] uppercase tracking-wider opacity-80">Grand total</div>
             <div className="text-2xl font-bold tabular-nums">{formatCents(grandTotal)}</div>
+            <div className="text-[11px] opacity-80 mt-0.5 tabular-nums">
+              {fmtHrs(grandTotalHours)} total · {fmtHrs(grandHourlyHours)} hourly · {fmtHrs(grandSpecHours)} specialist · {fmtHrs(grandFlatHours)} flat
+            </div>
           </div>
         </div>
         <div className="px-5 py-3 border-t border-border flex items-center justify-between flex-wrap gap-3 bg-muted/20">
@@ -336,6 +351,14 @@ function PayrollRow({ row, profile, stub, periodId, onChanged }: any) {
             <span>·</span><span>Revshare {formatCents(row.revshare_cents)}</span>
             <span>·</span><span>Expenses {formatCents(row.expense_cents)}</span>
           </div>
+          {(row.specialist_hours + row.hourly_hours + row.flat_hours) > 0 && (
+            <div className="text-[11px] text-muted-foreground mt-0.5 tabular-nums">
+              {(row.specialist_hours + row.hourly_hours + row.flat_hours).toLocaleString("en-CA", { maximumFractionDigits: 2 })}h total
+              {row.hourly_hours > 0 && ` · ${row.hourly_hours.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h hourly`}
+              {row.specialist_hours > 0 && ` · ${row.specialist_hours.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h specialist`}
+              {row.flat_hours > 0 && ` · ${row.flat_hours.toLocaleString("en-CA", { maximumFractionDigits: 2 })}h on flat-fee work`}
+            </div>
+          )}
         </div>
         <div className="text-right">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</div>

@@ -657,7 +657,7 @@ function TaskActivityLog({ taskId, profiles }: { taskId: string; profiles: Map<s
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data ?? []) as Array<{ id: string; actor_id: string | null; action: string; details: any; created_at: string }>;
+      return (data ?? []) as unknown as Array<{ id: string; actor_id: string | null; action: string; details: any; created_at: string }>;
     },
   });
 

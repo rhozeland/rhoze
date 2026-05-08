@@ -279,7 +279,7 @@ export default function ProjectDetail() {
                         <SelectContent>
                           <SelectItem value="bronze">Bronze ($240/mo · 4 credits)</SelectItem>
                           <SelectItem value="gold">Gold ($560/mo · 10 credits)</SelectItem>
-                          <SelectItem value="diamond">Diamond ($1500/mo · 25 credits)</SelectItem>
+                          <SelectItem value="diamond">Play ($1250/mo · 25 credits)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
-import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown, UserCircle2, ArrowLeft, BellRing, Calendar, FileText, Users, User, Shield } from "lucide-react";
+import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown, UserCircle2, ArrowLeft, BellRing, Calendar, FileText, Users, User, Shield, History } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -94,7 +94,7 @@ export default function Dashboard() {
       if (tab === "mine" && user?.id) {
         q = q.eq("scope", "personal").or(`owner_id.eq.${user.id},assigned_to.eq.${user.id}`);
       } else if (tab === "team" && teamDept) {
-        q = q.eq("scope", "team").eq("department", teamDept);
+        q = q.eq("scope", "team").eq("department", teamDept as any);
       } else if (tab === "manage") {
         q = q.eq("scope", "personal");
         if (focusedUserId) q = q.or(`owner_id.eq.${focusedUserId},assigned_to.eq.${focusedUserId}`);
@@ -123,7 +123,7 @@ export default function Dashboard() {
 
   const update = useMutation({
     mutationFn: async ({ id, patch, notify }: { id: string; patch: Partial<Task>; notify?: boolean }) => {
-      const { error } = await supabase.from("tasks").update(patch).eq("id", id);
+      const { error } = await supabase.from("tasks").update(patch as any).eq("id", id);
       if (error) throw error;
       if (notify) {
         try { await supabase.functions.invoke("notify-task-completed", { body: { taskId: id } }); } catch (e) { console.warn(e); }
@@ -621,6 +621,7 @@ function TaskDetailDialog({ task, open, onClose, canEdit, onSave, onDelete, onCo
               {assignee && task.scope === "personal" && <div>Assignee: <span className="text-foreground">{assignee.name ?? assignee.email ?? "—"}</span></div>}
             </div>
           )}
+          <TaskActivityLog taskId={task.id} profiles={profiles} />
         </div>
         <DialogFooter className="flex sm:justify-between gap-2">
           {canEdit ? (
@@ -642,5 +643,86 @@ function TaskDetailDialog({ task, open, onClose, canEdit, onSave, onDelete, onCo
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function TaskActivityLog({ taskId, profiles }: { taskId: string; profiles: Map<string, Profile> }) {
+  const { data: events, isLoading } = useQuery({
+    queryKey: ["task-activity", taskId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("task_activity" as any)
+        .select("id, actor_id, action, details, created_at")
+        .eq("task_id", taskId)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<{ id: string; actor_id: string | null; action: string; details: any; created_at: string }>;
+    },
+  });
+
+  const fmtActor = (id: string | null) => {
+    if (!id) return "System";
+    const p = profiles.get(id);
+    return p?.name ?? p?.email ?? "Someone";
+  };
+
+  const quadrantLabel = (u: boolean, i: boolean) =>
+    u && i ? "Do" : !u && i ? "Schedule" : u && !i ? "Delegate" : "Delete";
+
+  const describe = (e: { action: string; details: any }) => {
+    const d = e.details ?? {};
+    switch (e.action) {
+      case "created": return "created this task";
+      case "completed": return "marked as complete";
+      case "reopened": return "reopened the task";
+      case "deleted": return "deleted the task";
+      case "acknowledged": return "acknowledged the assignment";
+      case "assigned": {
+        const to = d.to ? fmtActor(d.to) : "no one";
+        return d.from ? `reassigned to ${to}` : `assigned to ${to}`;
+      }
+      case "moved": {
+        const f = d.from ?? {}; const t = d.to ?? {};
+        return `moved from ${quadrantLabel(!!f.urgent, !!f.important)} to ${quadrantLabel(!!t.urgent, !!t.important)}`;
+      }
+      case "edited": {
+        const parts: string[] = [];
+        if (d.title) parts.push(`renamed to "${d.title.to}"`);
+        if (d.due_date) parts.push(d.due_date.to ? `set due date to ${new Date(d.due_date.to).toLocaleDateString()}` : "cleared due date");
+        if (d.notes) parts.push("updated notes");
+        return parts.length ? parts.join(", ") : "edited the task";
+      }
+      default: return e.action;
+    }
+  };
+
+  return (
+    <div className="border-t border-border pt-3">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+        <History size={10} /> Activity
+      </div>
+      {isLoading ? (
+        <div className="text-[11px] text-muted-foreground italic">Loading…</div>
+      ) : !events || events.length === 0 ? (
+        <div className="text-[11px] text-muted-foreground italic">No activity yet.</div>
+      ) : (
+        <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+          {events.map((e) => (
+            <li key={e.id} className="text-[11px] flex items-start gap-2">
+              <span className="text-muted-foreground/60 tabular-nums shrink-0 w-20">
+                {new Date(e.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                {" · "}
+                {new Date(e.created_at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+              </span>
+              <span className="flex-1">
+                <span className="text-foreground font-medium">{fmtActor(e.actor_id)}</span>{" "}
+                <span className="text-muted-foreground">{describe(e)}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

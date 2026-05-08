@@ -1547,6 +1547,9 @@ export type Database = {
       }
       tasks: {
         Row: {
+          acknowledged_at: string | null
+          assigned_by: string | null
+          assigned_to: string | null
           created_at: string
           done: boolean
           due_date: string | null
@@ -1559,6 +1562,9 @@ export type Database = {
           urgent: boolean
         }
         Insert: {
+          acknowledged_at?: string | null
+          assigned_by?: string | null
+          assigned_to?: string | null
           created_at?: string
           done?: boolean
           due_date?: string | null
@@ -1571,6 +1577,9 @@ export type Database = {
           urgent?: boolean
         }
         Update: {
+          acknowledged_at?: string | null
+          assigned_by?: string | null
+          assigned_to?: string | null
           created_at?: string
           done?: boolean
           due_date?: string | null

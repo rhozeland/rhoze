@@ -621,6 +621,7 @@ function TaskDetailDialog({ task, open, onClose, canEdit, onSave, onDelete, onCo
               {assignee && task.scope === "personal" && <div>Assignee: <span className="text-foreground">{assignee.name ?? assignee.email ?? "—"}</span></div>}
             </div>
           )}
+          <TaskActivityLog taskId={task.id} profiles={profiles} />
         </div>
         <DialogFooter className="flex sm:justify-between gap-2">
           {canEdit ? (

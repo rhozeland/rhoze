@@ -1551,12 +1551,14 @@ export type Database = {
           assigned_by: string | null
           assigned_to: string | null
           created_at: string
+          department: Database["public"]["Enums"]["department"] | null
           done: boolean
           due_date: string | null
           id: string
           important: boolean
           notes: string | null
           owner_id: string
+          scope: string
           title: string
           updated_at: string
           urgent: boolean
@@ -1566,12 +1568,14 @@ export type Database = {
           assigned_by?: string | null
           assigned_to?: string | null
           created_at?: string
+          department?: Database["public"]["Enums"]["department"] | null
           done?: boolean
           due_date?: string | null
           id?: string
           important?: boolean
           notes?: string | null
           owner_id: string
+          scope?: string
           title: string
           updated_at?: string
           urgent?: boolean
@@ -1581,12 +1585,14 @@ export type Database = {
           assigned_by?: string | null
           assigned_to?: string | null
           created_at?: string
+          department?: Database["public"]["Enums"]["department"] | null
           done?: boolean
           due_date?: string | null
           id?: string
           important?: boolean
           notes?: string | null
           owner_id?: string
+          scope?: string
           title?: string
           updated_at?: string
           urgent?: boolean

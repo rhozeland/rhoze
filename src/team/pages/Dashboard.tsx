@@ -94,7 +94,7 @@ export default function Dashboard() {
       if (tab === "mine" && user?.id) {
         q = q.eq("scope", "personal").or(`owner_id.eq.${user.id},assigned_to.eq.${user.id}`);
       } else if (tab === "team" && teamDept) {
-        q = q.eq("scope", "team").eq("department", teamDept);
+        q = q.eq("scope", "team").eq("department", teamDept as any);
       } else if (tab === "manage") {
         q = q.eq("scope", "personal");
         if (focusedUserId) q = q.or(`owner_id.eq.${focusedUserId},assigned_to.eq.${focusedUserId}`);
@@ -123,7 +123,7 @@ export default function Dashboard() {
 
   const update = useMutation({
     mutationFn: async ({ id, patch, notify }: { id: string; patch: Partial<Task>; notify?: boolean }) => {
-      const { error } = await supabase.from("tasks").update(patch).eq("id", id);
+      const { error } = await supabase.from("tasks").update(patch as any).eq("id", id);
       if (error) throw error;
       if (notify) {
         try { await supabase.functions.invoke("notify-task-completed", { body: { taskId: id } }); } catch (e) { console.warn(e); }

@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
-import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown, UserCircle2, ArrowLeft, BellRing, Calendar, FileText, Users, User, Shield } from "lucide-react";
+import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown, UserCircle2, ArrowLeft, BellRing, Calendar, FileText, Users, User, Shield, History } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";

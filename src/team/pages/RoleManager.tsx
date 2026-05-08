@@ -47,17 +47,13 @@ const DEPT_ROLE_MATRIX: Record<Dept, Role[]> = {
 };
 const UNASSIGNED_ROLES: Role[] = ["client"];
 
-function allowedRoles(dept: Dept | null | undefined): Role[] {
-  if (!dept) return UNASSIGNED_ROLES;
-  return DEPT_ROLE_MATRIX[dept] ?? [];
+// Admins have absolute control: any role can be granted to any user regardless
+// of department. The DEPT_ROLE_MATRIX above is kept only for reference.
+function allowedRoles(_dept: Dept | null | undefined): Role[] {
+  return ROLES;
 }
 
-function validateRoleForDept(role: Role, dept: Dept | null | undefined): string | null {
-  const allowed = allowedRoles(dept);
-  if (!allowed.includes(role)) {
-    const deptLabel = dept ? (DEPTS.find((d) => d.value === dept)?.label ?? dept) : "Unassigned";
-    return `'${role}' is not allowed in ${deptLabel}. Allowed: ${allowed.join(", ") || "none"}.`;
-  }
+function validateRoleForDept(_role: Role, _dept: Dept | null | undefined): string | null {
   return null;
 }
 

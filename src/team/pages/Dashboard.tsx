@@ -2,8 +2,9 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "../lib/auth";
-import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown, UserCircle2, ArrowLeft, BellRing } from "lucide-react";
+import { Plus, Check, Trash2, GripVertical, Search, X, ChevronDown, UserCircle2, ArrowLeft, BellRing, Calendar, FileText, Users, User, Shield } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 
@@ -19,6 +20,8 @@ type Task = {
   assigned_to: string | null;
   assigned_by: string | null;
   acknowledged_at: string | null;
+  scope: "personal" | "team";
+  department: string | null;
 };
 
 const QUADRANTS = [
@@ -48,36 +51,25 @@ function DepartmentBadge({ department }: { department: string }) {
 }
 
 type Profile = { name: string | null; department: string | null; email: string | null };
+type Tab = "mine" | "team" | "manage";
 
 export default function Dashboard() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();
-  const [scope, setScope] = useState<"mine" | "team">("mine");
-  const [focusedUserId, setFocusedUserId] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>("mine");
+  const [teamDept, setTeamDept] = useState<string | null>(null); // selected dept for Team tab
+  const [focusedUserId, setFocusedUserId] = useState<string | null>(null); // Manage tab drill-in
+  const [manageDeptFilter, setManageDeptFilter] = useState<Set<string>>(new Set());
   const [dragId, setDragId] = useState<string | null>(null);
-  const [deptFilter, setDeptFilter] = useState<Set<string>>(new Set());
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [detailTaskId, setDetailTaskId] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { if (searchOpen) searchRef.current?.focus(); }, [searchOpen]);
-  useEffect(() => { if (scope === "mine") { setFocusedUserId(null); setDeptFilter(new Set()); } }, [scope]);
+  useEffect(() => { setFocusedUserId(null); setSearch(""); }, [tab]);
 
-  const { data: tasks } = useQuery({
-    queryKey: ["tasks", scope, focusedUserId, user?.id],
-    queryFn: async () => {
-      let q = supabase.from("tasks").select("*").eq("done", false).order("created_at", { ascending: false });
-      if (scope === "mine" && user?.id) {
-        q = q.or(`owner_id.eq.${user.id},assigned_to.eq.${user.id}`);
-      } else if (scope === "team" && focusedUserId) {
-        q = q.or(`owner_id.eq.${focusedUserId},assigned_to.eq.${focusedUserId}`);
-      }
-      const { data, error } = await q;
-      if (error) throw error;
-      return data as Task[];
-    },
-  });
-
+  // Profiles
   const { data: profilesArr } = useQuery({
     queryKey: ["profiles-team-min"],
     queryFn: async () => {
@@ -85,14 +77,49 @@ export default function Dashboard() {
       return (data ?? []) as Array<{ id: string; display_name: string | null; email: string | null; department: string | null }>;
     },
   });
+  const profiles = useMemo(() => new Map<string, Profile>((profilesArr ?? []).map((p) => [p.id, { name: p.display_name, department: p.department, email: p.email }])), [profilesArr]);
+  const myProfile = user?.id ? profiles.get(user.id) : null;
+  const myDepartment = myProfile?.department ?? null;
 
-  const profiles = useMemo(() => {
-    return new Map<string, Profile>((profilesArr ?? []).map((p) => [p.id, { name: p.display_name, department: p.department, email: p.email }]));
-  }, [profilesArr]);
+  // Default Team dept = my dept
+  useEffect(() => {
+    if (tab === "team" && !teamDept && myDepartment) setTeamDept(myDepartment);
+  }, [tab, teamDept, myDepartment]);
 
-  const focusedProfile = focusedUserId ? profiles.get(focusedUserId) : null;
-  const focusedIsMe = focusedUserId === user?.id;
-  const canEditFocused = focusedIsMe || isAdmin;
+  // Tasks query: depends on tab
+  const { data: tasks } = useQuery({
+    queryKey: ["tasks", tab, teamDept, focusedUserId, user?.id],
+    queryFn: async () => {
+      let q = supabase.from("tasks").select("*").eq("done", false).order("created_at", { ascending: false });
+      if (tab === "mine" && user?.id) {
+        q = q.eq("scope", "personal").or(`owner_id.eq.${user.id},assigned_to.eq.${user.id}`);
+      } else if (tab === "team" && teamDept) {
+        q = q.eq("scope", "team").eq("department", teamDept);
+      } else if (tab === "manage") {
+        q = q.eq("scope", "personal");
+        if (focusedUserId) q = q.or(`owner_id.eq.${focusedUserId},assigned_to.eq.${focusedUserId}`);
+      }
+      const { data, error } = await q;
+      if (error) throw error;
+      return data as Task[];
+    },
+    enabled: !!user?.id && (tab !== "team" || !!teamDept),
+  });
+
+  // Inbox banner — assigned to me, unack
+  const { data: assignedToMe } = useQuery({
+    queryKey: ["tasks-assigned-to-me", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data } = await supabase.from("tasks").select("id, acknowledged_at").eq("done", false).eq("assigned_to", user.id);
+      return data ?? [];
+    },
+    enabled: !!user?.id,
+  });
+  const unackCount = (assignedToMe ?? []).filter((t: any) => !t.acknowledged_at).length;
+  const assignedCount = (assignedToMe ?? []).length;
+
+  const detailTask = useMemo(() => (tasks ?? []).find((t) => t.id === detailTaskId) ?? null, [tasks, detailTaskId]);
 
   const update = useMutation({
     mutationFn: async ({ id, patch, notify }: { id: string; patch: Partial<Task>; notify?: boolean }) => {
@@ -102,7 +129,7 @@ export default function Dashboard() {
         try { await supabase.functions.invoke("notify-task-completed", { body: { taskId: id } }); } catch (e) { console.warn(e); }
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["tasks"] }); qc.invalidateQueries({ queryKey: ["tasks-assigned-to-me"] }); },
     onError: (e: any) => toast({ title: "Couldn't save", description: e.message, variant: "destructive" }),
   });
 
@@ -111,16 +138,27 @@ export default function Dashboard() {
       const { error } = await supabase.from("tasks").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["tasks"] }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["tasks"] }); setDetailTaskId(null); },
   });
 
   const create = useMutation({
-    mutationFn: async ({ title, urgent, important, ownerId, assign }: { title: string; urgent: boolean; important: boolean; ownerId: string; assign: boolean }) => {
-      if (!title.trim()) throw new Error("Title required");
-      const row: any = { owner_id: ownerId, title: title.trim(), urgent, important };
-      if (assign && user?.id && ownerId !== user.id) {
-        row.assigned_to = ownerId;
-        row.assigned_by = user.id;
+    mutationFn: async (input: { title: string; urgent: boolean; important: boolean }) => {
+      if (!input.title.trim() || !user?.id) throw new Error("Title required");
+      const row: any = { title: input.title.trim(), urgent: input.urgent, important: input.important };
+      if (tab === "team" && teamDept) {
+        row.scope = "team";
+        row.department = teamDept;
+        row.owner_id = user.id;
+      } else if (tab === "manage" && focusedUserId) {
+        row.scope = "personal";
+        row.owner_id = focusedUserId;
+        if (focusedUserId !== user.id) {
+          row.assigned_to = focusedUserId;
+          row.assigned_by = user.id;
+        }
+      } else {
+        row.scope = "personal";
+        row.owner_id = user.id;
       }
       const { error } = await supabase.from("tasks").insert(row);
       if (error) throw error;
@@ -129,27 +167,18 @@ export default function Dashboard() {
     onError: (e: any) => toast({ title: "Couldn't add", description: e.message, variant: "destructive" }),
   });
 
-  // Filtering
   const filteredTasks = useMemo(() => {
     const q = search.trim().toLowerCase();
+    if (!q) return tasks ?? [];
     return (tasks ?? []).filter((t) => {
-      const ownerProf = profiles.get(t.owner_id);
-      const dept = ownerProf?.department;
-      if (scope === "team" && !focusedUserId && deptFilter.size > 0 && !(dept && deptFilter.has(dept))) return false;
-      if (q) {
-        const hay = `${t.title ?? ""} ${ownerProf?.name ?? ""} ${dept ?? ""}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
+      const owner = profiles.get(t.owner_id);
+      const hay = `${t.title ?? ""} ${owner?.name ?? ""} ${t.notes ?? ""}`.toLowerCase();
+      return hay.includes(q);
     });
-  }, [tasks, profiles, deptFilter, search, scope, focusedUserId]);
+  }, [tasks, search, profiles]);
 
   const counts = useMemo(() => {
-    const c = { do: 0, schedule: 0, delegate: 0, delete: 0, total: 0, assignedToMe: 0, unack: 0 };
-    (tasks ?? []).forEach((t) => {
-      if (scope === "mine" && t.assigned_to === user?.id && !t.acknowledged_at) c.unack++;
-      if (t.assigned_to === user?.id) c.assignedToMe++;
-    });
+    const c = { do: 0, schedule: 0, delegate: 0, delete: 0, total: 0 };
     filteredTasks.forEach((t) => {
       c.total++;
       if (t.urgent && t.important) c.do++;
@@ -158,15 +187,7 @@ export default function Dashboard() {
       else c.delete++;
     });
     return c;
-  }, [filteredTasks, tasks, scope, user?.id]);
-
-  const toggleDept = (d: string) => {
-    setDeptFilter((prev) => {
-      const next = new Set(prev);
-      if (next.has(d)) next.delete(d); else next.add(d);
-      return next;
-    });
-  };
+  }, [filteredTasks]);
 
   const handleDrop = (urgent: boolean, important: boolean) => {
     if (!dragId) return;
@@ -177,223 +198,210 @@ export default function Dashboard() {
     setDragId(null);
   };
 
-  // Team unfocused — group tasks by owner department
-  const teamGroups = useMemo(() => {
-    if (scope !== "team" || focusedUserId) return null;
-    const visibleDepts = DEPARTMENTS.filter((d) => deptFilter.size === 0 || deptFilter.has(d));
-    return visibleDepts.map((dept) => {
-      const people = (profilesArr ?? []).filter((p) => p.department === dept);
-      const peopleWithCounts = people.map((p) => ({
-        ...p,
-        openCount: (tasks ?? []).filter((t) => t.owner_id === p.id || t.assigned_to === p.id).length,
-      }));
-      return { dept, people: peopleWithCounts };
-    });
-  }, [scope, focusedUserId, profilesArr, tasks, deptFilter]);
+  // Manage roster
+  const manageRoster = useMemo(() => {
+    if (tab !== "manage" || focusedUserId) return null;
+    const visibleDepts = DEPARTMENTS.filter((d) => manageDeptFilter.size === 0 || manageDeptFilter.has(d));
+    return visibleDepts.map((dept) => ({
+      dept,
+      people: (profilesArr ?? []).filter((p) => p.department === dept),
+    }));
+  }, [tab, focusedUserId, profilesArr, manageDeptFilter]);
+
+  const focusedProfile = focusedUserId ? profiles.get(focusedUserId) : null;
+  const showMatrix = tab === "mine" || (tab === "team" && !!teamDept) || (tab === "manage" && !!focusedUserId);
+  const canEditMatrix = tab === "mine" || tab === "team" || (tab === "manage" && (focusedUserId === user?.id || isAdmin));
 
   return (
     <div className="space-y-6">
       <header className="flex items-end justify-between flex-wrap gap-3">
         <div className="min-w-0">
-          {scope === "team" && focusedUserId ? (
+          {tab === "manage" && focusedUserId ? (
             <>
               <button onClick={() => setFocusedUserId(null)} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1">
-                <ArrowLeft size={12} /> Back to team board
+                <ArrowLeft size={12} /> Back to roster
               </button>
-              <h1 className="text-3xl font-semibold flex items-center gap-2">
+              <h1 className="text-3xl font-semibold flex items-center gap-2 flex-wrap">
                 {focusedProfile?.name ?? focusedProfile?.email ?? "Teammate"}
                 {focusedProfile?.department && <DepartmentBadge department={focusedProfile.department} />}
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {canEditFocused
-                  ? (focusedIsMe ? "Your priority matrix." : "Drag or add tasks to assign — they'll be notified.")
-                  : "Read-only view of this teammate's matrix."}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">Personal matrix. Adding tasks here assigns them.</p>
+            </>
+          ) : tab === "team" ? (
+            <>
+              <h1 className="text-3xl font-semibold">Team Board</h1>
+              <p className="text-sm text-muted-foreground mt-1">Shared priority matrix for the selected department. Anyone in the department can edit.</p>
+            </>
+          ) : tab === "manage" ? (
+            <>
+              <h1 className="text-3xl font-semibold">Manage</h1>
+              <p className="text-sm text-muted-foreground mt-1">Click a teammate to view their personal matrix and assign tasks.</p>
             </>
           ) : (
             <>
-              <h1 className="text-3xl font-semibold">{scope === "mine" ? "Your Dashboard" : "Team Board"}</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {scope === "mine"
-                  ? "Drag tasks between quadrants of your matrix to organize responsibilities."
-                  : "Each department's people. Click anyone to view their matrix."}
-              </p>
+              <h1 className="text-3xl font-semibold">Your Dashboard</h1>
+              <p className="text-sm text-muted-foreground mt-1">Drag tasks between quadrants of your matrix to organize responsibilities.</p>
             </>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex rounded-md border border-border p-0.5 text-xs">
-            <button onClick={() => setScope("mine")} className={cn("px-3 py-1.5 rounded-sm transition relative", scope === "mine" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
-              Mine
-              {counts.unack > 0 && scope !== "mine" && (
-                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[14px] h-[14px] text-[9px] font-bold rounded-full bg-red-500 text-white px-0.5">{counts.unack}</span>
+            <button onClick={() => setTab("mine")} className={cn("inline-flex items-center gap-1 px-3 py-1.5 rounded-sm transition relative", tab === "mine" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+              <User size={11} /> Mine
+              {unackCount > 0 && tab !== "mine" && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[14px] h-[14px] text-[9px] font-bold rounded-full bg-red-500 text-white px-0.5">{unackCount}</span>
               )}
             </button>
-            <button onClick={() => setScope("team")} className={cn("px-3 py-1.5 rounded-sm transition", scope === "team" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>Team</button>
+            <button onClick={() => setTab("team")} className={cn("inline-flex items-center gap-1 px-3 py-1.5 rounded-sm transition", tab === "team" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+              <Users size={11} /> Team
+            </button>
+            {isAdmin && (
+              <button onClick={() => setTab("manage")} className={cn("inline-flex items-center gap-1 px-3 py-1.5 rounded-sm transition", tab === "manage" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground")}>
+                <Shield size={11} /> Manage
+              </button>
+            )}
           </div>
-          {(scope === "mine" || focusedUserId) && (
-            <div className="text-xs text-muted-foreground tabular-nums">{counts.total} open</div>
-          )}
+          {showMatrix && <div className="text-xs text-muted-foreground tabular-nums">{counts.total} open</div>}
           <div className="flex items-center">
             {searchOpen ? (
               <div className="flex items-center gap-1 border border-border rounded-md px-2 py-1 bg-card">
                 <Search size={12} className="text-muted-foreground shrink-0" />
-                <input
-                  ref={searchRef}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Escape") { setSearch(""); setSearchOpen(false); } }}
-                  placeholder="Search…"
-                  className="bg-transparent text-xs outline-none w-48 placeholder:text-muted-foreground/60"
-                />
-                <button onClick={() => { setSearch(""); setSearchOpen(false); }} className="text-muted-foreground hover:text-foreground" title="Close">
-                  <X size={12} />
-                </button>
+                <input ref={searchRef} value={search} onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { if (e.key === "Escape") { setSearch(""); setSearchOpen(false); } }} placeholder="Search…" className="bg-transparent text-xs outline-none w-48 placeholder:text-muted-foreground/60" />
+                <button onClick={() => { setSearch(""); setSearchOpen(false); }} className="text-muted-foreground hover:text-foreground"><X size={12} /></button>
               </div>
             ) : (
-              <button onClick={() => setSearchOpen(true)} className="p-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition" title="Search">
-                <Search size={14} />
-              </button>
+              <button onClick={() => setSearchOpen(true)} className="p-1.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition" title="Search"><Search size={14} /></button>
             )}
           </div>
         </div>
       </header>
 
-      {/* Assigned-to-me banner (Mine view) */}
-      {scope === "mine" && counts.assignedToMe > 0 && (
+      {/* Mine: assigned-to-me banner */}
+      {tab === "mine" && assignedCount > 0 && (
         <div className="flex items-start gap-2 px-3 py-2 rounded-md border border-amber-500/40 bg-amber-500/[0.05] text-xs">
           <BellRing size={14} className="text-amber-500 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <span className="font-medium">{counts.assignedToMe} task{counts.assignedToMe === 1 ? "" : "s"} assigned to you by an admin.</span>
-            <span className="text-muted-foreground"> Marking them done notifies the admin who assigned it.</span>
+            <span className="font-medium">{assignedCount} task{assignedCount === 1 ? "" : "s"} assigned to you{unackCount > 0 ? ` (${unackCount} new)` : ""}.</span>
+            <span className="text-muted-foreground"> Marking them done notifies the assigner.</span>
           </div>
         </div>
       )}
 
-      {/* Department filter — only Team unfocused */}
-      {scope === "team" && !focusedUserId && (
-        <>
-          <div className="hidden sm:flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Departments</span>
-            {DEPARTMENTS.map((d) => {
-              const active = deptFilter.has(d);
-              const style = DEPARTMENT_STYLES[d];
-              return (
-                <button key={d} onClick={() => toggleDept(d)} className={cn(
-                  "inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide transition",
-                  active ? style : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30",
-                )}>{d}</button>
-              );
-            })}
-            {deptFilter.size > 0 && (
-              <button onClick={() => setDeptFilter(new Set())} className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1">Clear</button>
-            )}
-          </div>
-          <div className="sm:hidden">
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-md border border-border text-xs text-foreground hover:border-foreground/30 transition">
-                  <span className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Departments</span>
-                    {deptFilter.size === 0 ? <span className="text-muted-foreground">All</span> : (
-                      <span className="flex items-center gap-1 flex-wrap">
-                        {Array.from(deptFilter).map((d) => (
-                          <span key={d} className={cn("px-1.5 py-0.5 rounded border text-[9px] uppercase font-medium", DEPARTMENT_STYLES[d])}>{d}</span>
-                        ))}
-                      </span>
-                    )}
-                  </span>
-                  <ChevronDown size={14} className="text-muted-foreground shrink-0" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent align="start" className="w-[--radix-popover-trigger-width] p-1.5">
-                <div className="space-y-0.5">
-                  {DEPARTMENTS.map((d) => {
-                    const active = deptFilter.has(d);
-                    return (
-                      <button key={d} onClick={() => toggleDept(d)} className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-sm hover:bg-muted/60 transition text-left">
-                        <span className={cn("inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide", DEPARTMENT_STYLES[d])}>{d}</span>
-                        {active && <Check size={14} className="text-primary shrink-0" />}
-                      </button>
-                    );
-                  })}
-                  {deptFilter.size > 0 && (
-                    <button onClick={() => setDeptFilter(new Set())} className="w-full text-left px-2 py-1.5 text-[11px] text-muted-foreground hover:text-foreground border-t border-border mt-1 pt-2">Clear all</button>
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-        </>
+      {/* Team: department selector */}
+      {tab === "team" && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Department</span>
+          {DEPARTMENTS.map((d) => {
+            const active = teamDept === d;
+            const style = DEPARTMENT_STYLES[d];
+            return (
+              <button key={d} onClick={() => setTeamDept(d)} className={cn(
+                "inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide transition",
+                active ? style : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30",
+              )}>{d}</button>
+            );
+          })}
+          {teamDept && (
+            <span className="text-[10px] text-muted-foreground ml-1">
+              {(profilesArr ?? []).filter((p) => p.department === teamDept).length} member{(profilesArr ?? []).filter((p) => p.department === teamDept).length === 1 ? "" : "s"} share this board
+            </span>
+          )}
+        </div>
       )}
 
-      {/* TEAM unfocused: people-by-department board */}
-      {scope === "team" && !focusedUserId && teamGroups && (
+      {/* Manage: dept filter */}
+      {tab === "manage" && !focusedUserId && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Filter</span>
+          {DEPARTMENTS.map((d) => {
+            const active = manageDeptFilter.has(d);
+            const style = DEPARTMENT_STYLES[d];
+            return (
+              <button key={d} onClick={() => {
+                setManageDeptFilter((prev) => {
+                  const n = new Set(prev); if (n.has(d)) n.delete(d); else n.add(d); return n;
+                });
+              }} className={cn(
+                "inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide transition",
+                active ? style : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30",
+              )}>{d}</button>
+            );
+          })}
+          {manageDeptFilter.size > 0 && <button onClick={() => setManageDeptFilter(new Set())} className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1">Clear</button>}
+        </div>
+      )}
+
+      {/* Manage roster */}
+      {tab === "manage" && !focusedUserId && manageRoster && (
         <div className="space-y-6">
-          {teamGroups.every((g) => g.people.length === 0) && (
-            <div className="text-sm text-muted-foreground italic px-1">No teammates match this filter.</div>
-          )}
-          {teamGroups.map((g) => (
-            g.people.length === 0 ? null : (
-              <section key={g.dept}>
-                <div className="flex items-center gap-2 mb-2">
-                  <DepartmentBadge department={g.dept} />
-                  <span className="text-xs text-muted-foreground">{g.people.length} {g.people.length === 1 ? "person" : "people"}</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                  {g.people.map((p) => (
-                    <button key={p.id} onClick={() => setFocusedUserId(p.id)} className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover:border-foreground/30 hover:bg-muted/40 transition text-left">
-                      <UserCircle2 size={20} className="text-muted-foreground shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{p.display_name ?? p.email ?? "—"}</div>
-                        <div className="text-[10px] text-muted-foreground tabular-nums">{p.openCount} open</div>
-                      </div>
-                      {!isAdmin && p.id !== user?.id && <span className="text-[9px] uppercase text-muted-foreground">view</span>}
-                    </button>
-                  ))}
-                </div>
-              </section>
-            )
+          {manageRoster.every((g) => g.people.length === 0) && <div className="text-sm text-muted-foreground italic px-1">No teammates match.</div>}
+          {manageRoster.map((g) => g.people.length === 0 ? null : (
+            <section key={g.dept}>
+              <div className="flex items-center gap-2 mb-2"><DepartmentBadge department={g.dept} /><span className="text-xs text-muted-foreground">{g.people.length} {g.people.length === 1 ? "person" : "people"}</span></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {g.people.map((p) => (
+                  <button key={p.id} onClick={() => setFocusedUserId(p.id)} className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover:border-foreground/30 hover:bg-muted/40 transition text-left">
+                    <UserCircle2 size={20} className="text-muted-foreground shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">{p.display_name ?? p.email ?? "—"}</div>
+                      <div className="text-[10px] text-muted-foreground">View matrix · assign tasks</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       )}
 
-      {/* Matrix view — Mine OR Team focused */}
-      {(scope === "mine" || focusedUserId) && (
+      {/* Team needs dept selected */}
+      {tab === "team" && !teamDept && (
+        <div className="text-sm text-muted-foreground italic px-1">Select a department above to view its shared matrix.</div>
+      )}
+
+      {/* Matrix */}
+      {showMatrix && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {QUADRANTS.map((q) => {
-            const targetOwnerId = scope === "mine" ? user?.id : focusedUserId;
-            const canEdit = scope === "mine" ? true : canEditFocused;
-            return (
-              <Quadrant
-                key={q.key}
-                quadrant={q}
-                tasks={filteredTasks.filter((t) => t.urgent === q.urgent && t.important === q.important)}
-                currentUserId={user?.id}
-                isAdmin={isAdmin}
-                canEdit={canEdit}
-                profiles={profiles}
-                dragId={dragId}
-                setDragId={setDragId}
-                onDrop={handleDrop}
-                onUpdate={(id, patch, opts) => update.mutate({ id, patch, notify: opts?.notify })}
-                onDelete={(id) => remove.mutate(id)}
-                onCreate={(title) => {
-                  if (!targetOwnerId) return;
-                  const assign = scope === "team" && !focusedIsMe;
-                  create.mutate({ title, urgent: q.urgent, important: q.important, ownerId: targetOwnerId, assign });
-                }}
-              />
-            );
-          })}
+          {QUADRANTS.map((q) => (
+            <Quadrant
+              key={q.key}
+              quadrant={q}
+              tasks={filteredTasks.filter((t) => t.urgent === q.urgent && t.important === q.important)}
+              currentUserId={user?.id}
+              isAdmin={isAdmin}
+              canEdit={canEditMatrix}
+              profiles={profiles}
+              dragId={dragId}
+              setDragId={setDragId}
+              onDrop={handleDrop}
+              onUpdate={(id, patch, opts) => update.mutate({ id, patch, notify: opts?.notify })}
+              onOpen={(id) => setDetailTaskId(id)}
+              onCreate={(title) => create.mutate({ title, urgent: q.urgent, important: q.important })}
+            />
+          ))}
         </div>
       )}
+
+      <TaskDetailDialog
+        task={detailTask}
+        open={!!detailTask}
+        onClose={() => setDetailTaskId(null)}
+        canEdit={!!detailTask && (
+          isAdmin
+          || (detailTask.scope === "team")
+          || (detailTask.scope === "personal" && (detailTask.owner_id === user?.id || detailTask.assigned_to === user?.id))
+        )}
+        onSave={(patch) => detailTask && update.mutate({ id: detailTask.id, patch })}
+        onDelete={() => detailTask && remove.mutate(detailTask.id)}
+        onComplete={() => detailTask && update.mutate({ id: detailTask.id, patch: { done: true }, notify: !!detailTask.assigned_by })}
+        profiles={profiles}
+      />
     </div>
   );
 }
 
 function Quadrant({
-  quadrant, tasks, currentUserId, isAdmin, canEdit, profiles, dragId, setDragId, onDrop, onUpdate, onDelete, onCreate,
+  quadrant, tasks, currentUserId, isAdmin, canEdit, profiles, dragId, setDragId, onDrop, onUpdate, onOpen, onCreate,
 }: {
   quadrant: typeof QUADRANTS[number];
   tasks: Task[];
@@ -405,7 +413,7 @@ function Quadrant({
   setDragId: (id: string | null) => void;
   onDrop: (urgent: boolean, important: boolean) => void;
   onUpdate: (id: string, patch: Partial<Task>, opts?: { notify?: boolean }) => void;
-  onDelete: (id: string) => void;
+  onOpen: (id: string) => void;
   onCreate: (title: string) => void;
 }) {
   const [over, setOver] = useState(false);
@@ -428,51 +436,33 @@ function Quadrant({
       </div>
 
       <div className="space-y-2">
-        {tasks.length === 0 && (
-          <div className="text-xs text-muted-foreground italic px-1">{canEdit ? "Drop a task here, or add below." : "No tasks."}</div>
-        )}
+        {tasks.length === 0 && <div className="text-xs text-muted-foreground italic px-1">{canEdit ? "Drop a task here, or add below." : "No tasks."}</div>}
         {tasks.map((t) => {
           const isOwn = t.owner_id === currentUserId || t.assigned_to === currentUserId;
-          const draggable = canEdit && (isOwn || isAdmin);
-          const assignerName = t.assigned_by ? (profiles.get(t.assigned_by)?.name ?? null) : null;
-          const ownerName = t.owner_id !== currentUserId ? (profiles.get(t.owner_id)?.name ?? null) : null;
+          const draggable = canEdit && (isOwn || isAdmin || t.scope === "team");
+          const isAssigneeMe = t.assigned_to === currentUserId;
+          const ownerName = t.scope === "team" ? null : (t.owner_id !== currentUserId ? (profiles.get(t.owner_id)?.name ?? null) : null);
           return (
             <TaskCard
               key={t.id}
               task={t}
               draggable={draggable}
-              canEdit={canEdit && (isOwn || isAdmin)}
-              isAssigneeMe={t.assigned_to === currentUserId}
-              assignerName={assignerName}
+              canEdit={canEdit}
+              isAssigneeMe={isAssigneeMe}
               ownerName={ownerName}
-              ownerDepartment={profiles.get(t.owner_id)?.department ?? null}
               onDragStart={() => setDragId(t.id)}
               onDragEnd={() => setDragId(null)}
-              onUpdate={(patch, opts) => onUpdate(t.id, patch, opts)}
-              onDelete={() => onDelete(t.id)}
+              onOpen={() => onOpen(t.id)}
+              onMarkDone={() => onUpdate(t.id, { done: true }, { notify: !!t.assigned_by })}
+              onAck={() => onUpdate(t.id, { acknowledged_at: new Date().toISOString() })}
             />
           );
         })}
 
         {canEdit && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (!adding.trim()) return;
-              onCreate(adding);
-              setAdding("");
-              setTimeout(() => inputRef.current?.focus(), 50);
-            }}
-            className="flex items-center gap-1.5 mt-2"
-          >
+          <form onSubmit={(e) => { e.preventDefault(); if (!adding.trim()) return; onCreate(adding); setAdding(""); setTimeout(() => inputRef.current?.focus(), 50); }} className="flex items-center gap-1.5 mt-2">
             <Plus size={14} className="text-muted-foreground shrink-0" />
-            <input
-              ref={inputRef}
-              value={adding}
-              onChange={(e) => setAdding(e.target.value)}
-              placeholder="Add a task…"
-              className="flex-1 bg-transparent text-sm py-1.5 px-1 outline-none placeholder:text-muted-foreground/60 focus:bg-card/60 rounded"
-            />
+            <input ref={inputRef} value={adding} onChange={(e) => setAdding(e.target.value)} placeholder="Add a task…" className="flex-1 bg-transparent text-sm py-1.5 px-1 outline-none placeholder:text-muted-foreground/60 focus:bg-card/60 rounded" />
           </form>
         )}
       </div>
@@ -480,84 +470,177 @@ function Quadrant({
   );
 }
 
-function TaskCard({ task, draggable, canEdit, isAssigneeMe, assignerName, ownerName, ownerDepartment, onDragStart, onDragEnd, onUpdate, onDelete }: {
+function TaskCard({ task, draggable, canEdit, isAssigneeMe, ownerName, onDragStart, onDragEnd, onOpen, onMarkDone, onAck }: {
   task: Task;
   draggable: boolean;
   canEdit: boolean;
   isAssigneeMe: boolean;
-  assignerName: string | null;
   ownerName: string | null;
-  ownerDepartment: string | null;
   onDragStart: () => void;
   onDragEnd: () => void;
-  onUpdate: (patch: Partial<Task>, opts?: { notify?: boolean }) => void;
-  onDelete: () => void;
+  onOpen: () => void;
+  onMarkDone: () => void;
+  onAck: () => void;
 }) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(task.title);
-
-  const save = () => {
-    setEditing(false);
-    if (draft.trim() && draft.trim() !== task.title) onUpdate({ title: draft.trim() });
-    else setDraft(task.title);
-  };
-
   const isAssigned = !!task.assigned_by;
   const needsAck = isAssigneeMe && isAssigned && !task.acknowledged_at;
+  const dueSoon = task.due_date && new Date(task.due_date) < new Date(Date.now() + 1000 * 60 * 60 * 24 * 2);
+  const overdue = task.due_date && new Date(task.due_date) < new Date();
 
   return (
     <div
       draggable={draggable}
       onDragStart={(e) => { if (!draggable) { e.preventDefault(); return; } onDragStart(); e.dataTransfer.effectAllowed = "move"; }}
       onDragEnd={onDragEnd}
-      onClick={() => { if (needsAck) onUpdate({ acknowledged_at: new Date().toISOString() }); }}
+      onClick={() => { if (needsAck) onAck(); onOpen(); }}
       className={cn(
-        "bg-card border rounded-md p-2.5 text-sm group",
-        needsAck ? "border-amber-500/60 shadow-[0_0_0_1px_hsl(var(--ring)/0.1)]" : "border-border",
-        draggable ? "cursor-grab active:cursor-grabbing" : "cursor-default opacity-95",
+        "bg-card border rounded-md p-2.5 text-sm group cursor-pointer hover:border-foreground/30 transition",
+        needsAck ? "border-amber-500/60" : "border-border",
+        draggable ? "active:cursor-grabbing" : "",
       )}
     >
       <div className="flex items-start gap-2">
         {draggable && <GripVertical size={14} className="text-muted-foreground/40 mt-0.5 shrink-0" />}
         <div className="flex-1 min-w-0">
-          {editing ? (
-            <input
-              autoFocus
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onBlur={save}
-              onKeyDown={(e) => { if (e.key === "Enter") save(); if (e.key === "Escape") { setDraft(task.title); setEditing(false); } }}
-              className="w-full bg-transparent border-b border-primary/40 outline-none text-sm font-medium py-0.5"
-            />
-          ) : (
-            <div
-              onClick={(e) => { if (canEdit) { e.stopPropagation(); setEditing(true); } }}
-              className={cn("font-medium truncate", canEdit && "cursor-text hover:text-primary")}
-              title={task.title}
-            >
-              {task.title}
-            </div>
-          )}
+          <div className="font-medium truncate">{task.title}</div>
           <div className="flex items-center gap-2 mt-1 text-[10px] text-muted-foreground flex-wrap">
-            {task.due_date && <span>Due {new Date(task.due_date).toLocaleDateString()}</span>}
+            {task.due_date && (
+              <span className={cn("inline-flex items-center gap-0.5", overdue ? "text-red-500" : dueSoon ? "text-amber-500" : "")}>
+                <Calendar size={10} /> {new Date(task.due_date).toLocaleDateString()}
+              </span>
+            )}
+            {task.notes && <FileText size={10} className="text-muted-foreground/70" />}
             {ownerName && <span>· {ownerName}</span>}
-            {ownerDepartment && <DepartmentBadge department={ownerDepartment} />}
+            {task.scope === "team" && task.department && <DepartmentBadge department={task.department} />}
             {isAssigned && (
               <span className={cn("px-1.5 py-0.5 rounded border text-[9px] font-medium uppercase tracking-wide",
                 needsAck ? "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/40" : "bg-muted text-muted-foreground border-border"
               )}>
-                {needsAck ? "New · tap to ack" : `Assigned${assignerName ? ` by ${assignerName}` : ""}`}
+                {needsAck ? "New" : "Assigned"}
               </span>
             )}
           </div>
         </div>
         {canEdit && (
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition shrink-0">
-            <button title="Mark done" onClick={(e) => { e.stopPropagation(); onUpdate({ done: true }, { notify: isAssigned }); }} className="text-emerald-500 hover:text-emerald-400 p-0.5"><Check size={14} /></button>
-            <button title="Delete" onClick={(e) => { e.stopPropagation(); onDelete(); }} className="text-muted-foreground hover:text-destructive p-0.5"><Trash2 size={14} /></button>
+            <button title="Mark done" onClick={(e) => { e.stopPropagation(); onMarkDone(); }} className="text-emerald-500 hover:text-emerald-400 p-0.5"><Check size={14} /></button>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function TaskDetailDialog({ task, open, onClose, canEdit, onSave, onDelete, onComplete, profiles }: {
+  task: Task | null;
+  open: boolean;
+  onClose: () => void;
+  canEdit: boolean;
+  onSave: (patch: Partial<Task>) => void;
+  onDelete: () => void;
+  onComplete: () => void;
+  profiles: Map<string, Profile>;
+}) {
+  const [title, setTitle] = useState("");
+  const [notes, setNotes] = useState("");
+  const [due, setDue] = useState("");
+
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title ?? "");
+      setNotes(task.notes ?? "");
+      setDue(task.due_date ?? "");
+    }
+  }, [task?.id]);
+
+  if (!task) return null;
+
+  const dirty = title.trim() !== (task.title ?? "") || (notes ?? "") !== (task.notes ?? "") || (due ?? "") !== (task.due_date ?? "");
+  const owner = profiles.get(task.owner_id);
+  const assigner = task.assigned_by ? profiles.get(task.assigned_by) : null;
+  const assignee = task.assigned_to ? profiles.get(task.assigned_to) : null;
+
+  const save = () => {
+    if (!dirty) return;
+    onSave({
+      title: title.trim() || task.title,
+      notes: notes.trim() ? notes.trim() : null,
+      due_date: due ? due : null,
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="text-base">Task details</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Title</label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              disabled={!canEdit}
+              className="w-full mt-1 bg-transparent border border-border rounded-md px-2 py-1.5 text-sm outline-none focus:border-foreground/40 disabled:opacity-60"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Due date</label>
+              <input
+                type="date"
+                value={due ?? ""}
+                onChange={(e) => setDue(e.target.value)}
+                disabled={!canEdit}
+                className="w-full mt-1 bg-transparent border border-border rounded-md px-2 py-1.5 text-sm outline-none focus:border-foreground/40 disabled:opacity-60"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Scope</label>
+              <div className="mt-1 px-2 py-1.5 text-sm border border-border rounded-md flex items-center gap-2">
+                {task.scope === "team" ? <><Users size={12} /> Team{task.department ? ` · ${task.department}` : ""}</> : <><User size={12} /> Personal</>}
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="text-[10px] uppercase tracking-wider text-muted-foreground">Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              disabled={!canEdit}
+              rows={4}
+              placeholder="Acceptance criteria, links, context…"
+              className="w-full mt-1 bg-transparent border border-border rounded-md px-2 py-1.5 text-sm outline-none focus:border-foreground/40 disabled:opacity-60 resize-y"
+            />
+          </div>
+          {(owner || assigner || assignee) && (
+            <div className="text-[11px] text-muted-foreground space-y-0.5 border-t border-border pt-3">
+              {task.scope === "personal" && owner && <div>Owner: <span className="text-foreground">{owner.name ?? owner.email ?? "—"}</span></div>}
+              {assigner && <div>Assigned by: <span className="text-foreground">{assigner.name ?? assigner.email ?? "—"}</span></div>}
+              {assignee && task.scope === "personal" && <div>Assignee: <span className="text-foreground">{assignee.name ?? assignee.email ?? "—"}</span></div>}
+            </div>
+          )}
+        </div>
+        <DialogFooter className="flex sm:justify-between gap-2">
+          {canEdit ? (
+            <button onClick={() => onDelete()} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition">
+              <Trash2 size={12} /> Delete
+            </button>
+          ) : <div />}
+          <div className="flex items-center gap-2">
+            {canEdit && (
+              <button onClick={() => { onComplete(); onClose(); }} className="inline-flex items-center gap-1 text-xs px-2 py-1.5 rounded border border-border text-emerald-500 hover:border-emerald-500/40 transition">
+                <Check size={12} /> Complete
+              </button>
+            )}
+            <button onClick={onClose} className="text-xs px-2 py-1.5 rounded border border-border text-muted-foreground hover:text-foreground transition">Close</button>
+            {canEdit && (
+              <button disabled={!dirty} onClick={() => { save(); onClose(); }} className="text-xs px-3 py-1.5 rounded bg-primary text-primary-foreground disabled:opacity-40 disabled:cursor-not-allowed">Save</button>
+            )}
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

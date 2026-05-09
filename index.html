@@ -3879,6 +3879,7 @@
 
       var paused = false;
       var dragging = false;
+      var moved = false;
       var dragStartX = 0;
       var dragStartOffset = 0;
       var offset = 0;
@@ -3924,16 +3925,22 @@
       }, { passive: false });
       scroller.addEventListener('pointerdown', function (event) {
         if (event.button !== undefined && event.button !== 0) return;
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
         dragging = true;
+        moved = false;
         dragStartX = event.clientX;
         dragStartOffset = offset;
-        scroller.classList.add('is-dragging');
-        try { scroller.setPointerCapture(event.pointerId); } catch (e) {}
       });
       scroller.addEventListener('pointermove', function (event) {
         if (!dragging) return;
         var dx = event.clientX - dragStartX;
-        if (Math.abs(dx) > 2) direction = dx > 0 ? -1 : 1;
+        if (Math.abs(dx) < 5) return;
+        if (!moved) {
+          moved = true;
+          scroller.classList.add('is-dragging');
+          try { scroller.setPointerCapture(event.pointerId); } catch (e) {}
+        }
+        direction = dx > 0 ? -1 : 1;
         offset = dragStartOffset - dx;
         normalize();
         render();
@@ -3942,8 +3949,11 @@
       function endDrag(event) {
         if (!dragging) return;
         dragging = false;
-        scroller.classList.remove('is-dragging');
-        try { scroller.releasePointerCapture(event.pointerId); } catch (e) { /* ignore */ }
+        if (moved) {
+          // Keep is-dragging until after the click event so the click is suppressed.
+          try { scroller.releasePointerCapture(event.pointerId); } catch (e) { /* ignore */ }
+          setTimeout(function () { scroller.classList.remove('is-dragging'); }, 0);
+        }
       }
       scroller.addEventListener('pointerup', endDrag);
       scroller.addEventListener('pointercancel', endDrag);

@@ -422,20 +422,39 @@
         </div>
 
         <script>
-          function switchWalletTab(key){
+          function switchWalletTab(key, opts){
+            opts = opts || {};
             document.querySelectorAll('[data-wallet-tab]').forEach(function(b){
               var active = b.dataset.walletTab === key;
               b.classList.toggle('is-active', active);
               b.setAttribute('aria-selected', active ? 'true' : 'false');
+              b.setAttribute('tabindex', active ? '0' : '-1');
               b.style.background = active ? 'hsl(var(--surface-card))' : 'transparent';
               b.style.color = active ? 'hsl(var(--ink))' : 'hsl(var(--muted))';
               b.style.boxShadow = active ? '0 1px 3px hsl(var(--shadow) / 0.08)' : 'none';
+              if (active && opts.focus) { try { b.focus(); } catch(e){} }
             });
             document.querySelectorAll('[data-wallet-panel]').forEach(function(p){
               p.hidden = p.dataset.walletPanel !== key;
             });
           }
-          (function(){ var b=document.querySelector('[data-wallet-tab="main"]'); if(b){ b.style.background='hsl(var(--surface-card))'; b.style.boxShadow='0 1px 3px hsl(var(--shadow) / 0.08)'; } })();
+          (function(){
+            var b=document.querySelector('[data-wallet-tab="main"]');
+            if(b){ b.style.background='hsl(var(--surface-card))'; b.style.boxShadow='0 1px 3px hsl(var(--shadow) / 0.08)'; }
+            var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-wallet-tab]'));
+            tabs.forEach(function(tab, i){
+              tab.addEventListener('click', function(){ switchWalletTab(tab.dataset.walletTab); });
+              tab.addEventListener('keydown', function(e){
+                var key = e.key; var next = null;
+                if (key === 'ArrowRight' || key === 'ArrowDown') next = tabs[(i + 1) % tabs.length];
+                else if (key === 'ArrowLeft' || key === 'ArrowUp') next = tabs[(i - 1 + tabs.length) % tabs.length];
+                else if (key === 'Home') next = tabs[0];
+                else if (key === 'End') next = tabs[tabs.length - 1];
+                else if (key === 'Enter' || key === ' ') { e.preventDefault(); switchWalletTab(tab.dataset.walletTab); return; }
+                if (next) { e.preventDefault(); switchWalletTab(next.dataset.walletTab, { focus: true }); }
+              });
+            });
+          })();
           (function(){
             var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
             var URL = 'https://api.dexscreener.com/latest/dex/tokens/' + TOKEN;

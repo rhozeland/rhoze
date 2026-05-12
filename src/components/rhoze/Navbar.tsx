@@ -193,7 +193,7 @@ const Navbar = () => {
             <div className="p-6 sm:p-10">
               <div className="mb-6 flex items-center justify-between">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/80">
-                  <Sparkles size={12} /> Create
+                  <Sparkles size={12} /> Build
                 </span>
                 <button
                   type="button"

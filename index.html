@@ -4155,15 +4155,13 @@
     })();
   </script>
   <script>
-    // Hero abstract orb — morphs through textures, drag to spin.
+    // Hero abstract orb — stable full-sphere surface with subtle parallax.
     (function(){
       var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
-      var wrap = svg.parentElement;
-      var spin = document.getElementById('orb-spin');
       var caption = document.getElementById('orbCaption');
-      var textures = svg.querySelectorAll('.orb-tex');
-      var labels = ['Gradient mesh','Liquid chrome','Risograph','Topographic','Starfield'];
+      var skins = svg.querySelectorAll('.orb-skin');
+      var glint = document.getElementById('orbParallax');
 
       // Seed starfield once
       var starsG = document.getElementById('orb-stars');
@@ -4181,44 +4179,26 @@
         starsG.innerHTML = s;
       }
 
-      // Texture cycler
+      // Surface cycler
       var idx = 0;
       function setTex(i) {
         idx = i;
-        textures.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
-        if (caption) caption.textContent = labels[i] || '';
+        skins.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
+        if (caption) caption.textContent = skins[i] ? (skins[i].dataset.label || '') : '';
       }
       var cycleTimer = setInterval(function(){
-        setTex((idx + 1) % textures.length);
+        setTex((idx + 1) % skins.length);
       }, 5200);
 
-      // Drag-to-spin + idle auto-rotate (JS so drag releases don't jump).
-      var rotation = 0, isDragging = false, dragStart = null;
-      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      function apply(){ spin.setAttribute('transform', 'rotate(' + rotation.toFixed(2) + ' 50 50)'); }
-      function tick(){
-        if (!isDragging && !prefersReduced) { rotation = (rotation + 0.1) % 360; apply(); }
-        requestAnimationFrame(tick);
+      // Drag/hover shifts light only, so the globe never reveals missing texture edges.
+      function apply(dx, dy){
+        if (glint) glint.setAttribute('transform', 'translate(' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ')');
       }
-      svg.addEventListener('pointerdown', function(e){
-        isDragging = true;
-        dragStart = { x: e.clientX, base: rotation };
-        try { svg.setPointerCapture(e.pointerId); } catch(_){}
-      });
       svg.addEventListener('pointermove', function(e){
-        if (!isDragging || !dragStart) return;
-        rotation = dragStart.base + (e.clientX - dragStart.x) * 0.45;
-        apply();
+        var r = svg.getBoundingClientRect();
+        apply(((e.clientX - r.left) / r.width - 0.5) * 3, ((e.clientY - r.top) / r.height - 0.5) * 3);
       });
-      function endDrag(e){
-        isDragging = false; dragStart = null;
-        try { svg.releasePointerCapture(e.pointerId); } catch(_){}
-      }
-      svg.addEventListener('pointerup', endDrag);
-      svg.addEventListener('pointercancel', endDrag);
-      svg.addEventListener('pointerleave', endDrag);
-      apply();
-      tick();
+      svg.addEventListener('pointerleave', function(){ apply(0, 0); });
     })();
   </script>
 </body>

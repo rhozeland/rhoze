@@ -330,33 +330,19 @@ const Navbar = () => {
                       <div className="flex flex-1 flex-col p-2 min-h-0">
                         <div className="grid flex-1 grid-cols-[42px_1fr_auto] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] px-2 py-1.5 min-h-0">
                           <div className="relative h-[42px] w-[42px] overflow-hidden rounded-md" style={{ boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.12)" }}>
-                            <AnimatePresence mode="wait" initial={false}>
-                              <motion.div
-                                key={`cover-${distIdx}`}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.45 }}
-                                className="absolute inset-0 rounded-md"
-                                style={{ background: distributeSlides[distIdx].cover }}
-                              />
-                            </AnimatePresence>
+                            <div
+                              key={`cover-${distIdx}`}
+                              className="absolute inset-0 rounded-md animate-fade-in"
+                              style={{ background: distributeSlides[distIdx].cover }}
+                            />
                           </div>
                           <div className="relative flex min-w-0 flex-col gap-1">
-                            <AnimatePresence mode="wait" initial={false}>
-                              <motion.div
-                                key={`meta-${distIdx}`}
-                                initial={{ opacity: 0, y: 4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -4 }}
-                                transition={{ duration: 0.35 }}
-                                className="flex min-w-0 flex-col gap-1"
-                              >
+                            <div key={`meta-${distIdx}`} className="flex min-w-0 flex-col gap-1 animate-fade-in">
                                 <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">{distributeSlides[distIdx].tag}</span>
                                 <div className="truncate text-[0.7rem] font-bold leading-tight">{distributeSlides[distIdx].title}</div>
-                                <div className="flex h-[10px] items-center gap-1 text-[0.5rem] font-semibold text-white/70" aria-hidden="true">
+                                <div className="flex h-[10px] items-center gap-1.5 text-[0.5rem] font-semibold text-white/70" aria-hidden="true">
                                   {distributeSlides[distIdx].kind === "music" && (
-                                    <span className="flex h-[10px] items-end gap-[2px]">
+                                    <span className="flex h-full items-end gap-[2px]">
                                       {Array.from({ length: 10 }).map((_, i) => (
                                         <span
                                           key={i}
@@ -372,35 +358,29 @@ const Navbar = () => {
                                     </span>
                                   )}
                                   {distributeSlides[distIdx].kind === "drop" && (
-                                    <span className="tracking-[0.14em] uppercase text-white/85">Out now · Album</span>
+                                    <span className="leading-none tracking-[0.14em] uppercase text-white/85">Out now · Album</span>
                                   )}
                                   {distributeSlides[distIdx].kind === "space" && (
                                     <>
-                                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(135_80%_55%)]" />
-                                      <span className="tracking-[0.06em] text-white/85">12 in space</span>
+                                      <span className="h-[6px] w-[6px] shrink-0 animate-pulse rounded-full bg-[hsl(135_80%_55%)]" />
+                                      <span className="leading-none tracking-[0.06em] text-white/85">12 in space</span>
                                     </>
                                   )}
                                   {distributeSlides[distIdx].kind === "event" && (
-                                    <span className="tracking-[0.14em] uppercase text-white/85">Sat · 8 PM · RSVP</span>
+                                    <span className="leading-none tracking-[0.14em] uppercase text-white/85">Sat · 8 PM · RSVP</span>
                                   )}
                                   {distributeSlides[distIdx].kind === "rewards" && (
-                                    <span className="relative block h-[5px] w-full overflow-hidden rounded-full bg-white/15">
+                                    <span className="relative block h-[5px] w-full shrink overflow-hidden rounded-full bg-white/15">
                                       <span className="absolute inset-y-0 left-0 w-[62%] rounded-full" style={{ background: "linear-gradient(90deg, hsl(48 95% 60%), hsl(330 90% 60%))" }} />
                                     </span>
                                   )}
                                 </div>
-                              </motion.div>
-                            </AnimatePresence>
+                            </div>
                           </div>
-                          <AnimatePresence mode="wait" initial={false}>
-                            <motion.span
-                              key={`act-${distIdx}`}
-                              initial={{ opacity: 0, scale: 0.85 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              exit={{ opacity: 0, scale: 0.85 }}
-                              transition={{ duration: 0.3 }}
-                              className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-[hsl(240_18%_7%)] shadow-md"
-                            >
+                          <span
+                            key={`act-${distIdx}`}
+                            className="inline-flex h-[26px] w-[26px] shrink-0 animate-scale-in items-center justify-center rounded-full bg-white text-[hsl(240_18%_7%)] shadow-md"
+                          >
                               {distributeSlides[distIdx].kind === "music" && (
                                 <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                               )}
@@ -416,8 +396,7 @@ const Navbar = () => {
                               {distributeSlides[distIdx].kind === "rewards" && (
                                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M14.5 9.5h-4a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3h-4M12 7.5V9M12 15v1.5" /></svg>
                               )}
-                            </motion.span>
-                          </AnimatePresence>
+                          </span>
                         </div>
                       </div>
                     </div>

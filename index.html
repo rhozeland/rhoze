@@ -362,7 +362,7 @@
       position: absolute;
       top: clamp(0.5rem, 2vw, 1.5rem);
       right: clamp(0.5rem, 2vw, 2rem);
-      width: clamp(280px, 36vw, 460px);
+      width: clamp(320px, 40vw, 520px);
       aspect-ratio: 1 / 1;
       z-index: 4;
       touch-action: none;
@@ -373,7 +373,7 @@
         position: relative;
         top: auto;
         right: auto;
-        width: min(70vw, 280px);
+        width: min(74vw, 300px);
         margin: 0 auto 1.25rem;
         align-self: center;
       }
@@ -383,9 +383,9 @@
       position: absolute;
       inset: 6%;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 22%, hsl(var(--accent-blue) / 0.28), transparent 55%),
-                  radial-gradient(circle at 70% 78%, hsl(var(--accent-purple) / 0.22), transparent 55%);
-      filter: blur(28px);
+      background: radial-gradient(circle at 30% 22%, hsl(var(--accent-blue) / 0.32), transparent 55%),
+                  radial-gradient(circle at 70% 78%, hsl(var(--accent-purple) / 0.26), transparent 55%);
+      filter: blur(34px);
       pointer-events: none;
     }
     .hero-globe-wrap::after {
@@ -405,6 +405,32 @@
       cursor: grab;
     }
     .hero-globe-svg:active { cursor: grabbing; }
+
+    /* Morphing orb — texture layers crossfade on a slow loop */
+    .orb-tex { opacity: 0; transition: opacity 1.4s ease; }
+    .orb-tex.is-active { opacity: 1; }
+    @keyframes orb-spin-auto { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    #orb-spin { transform-origin: 50px 50px; animation: orb-spin-auto 60s linear infinite; }
+    .orb-dragging #orb-spin { animation: none; }
+    @media (prefers-reduced-motion: reduce) {
+      #orb-spin { animation: none; }
+      .orb-tex { transition: none; }
+    }
+    /* Texture caption */
+    .orb-caption {
+      position: absolute;
+      left: 50%;
+      bottom: -1.4rem;
+      transform: translateX(-50%);
+      font-family: 'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: hsl(var(--muted));
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
 
     .hero-copy {
       max-width: 44rem;

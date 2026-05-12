@@ -1,6 +1,6 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Menu, X, Sparkles, ArrowUpRight } from "lucide-react";
+import { Menu, X, Sparkles, ArrowUpRight, LayoutGrid, Radio } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
 import logoColor from "@/assets/logo-color.png";
@@ -12,19 +12,10 @@ const navLinks = [
   { label: "Contact", href: "/contact.html" },
 ];
 
-const produceShots = [
-  { src: "/images/ooak-the-mask-thumb.jpg",      title: "The Mask",     artist: "Ooak",         tag: "Music Video" },
-  { src: "/images/fingaz-mansa-musa-thumb.png",  title: "Mansa Musa",   artist: "MONEE FINGAZ", tag: "Music Video" },
-  { src: "/images/iimpct-media-thumb.png",       title: "iiMPCT Media", artist: "In Studio",    tag: "Web Series" },
-  { src: "/images/carina-lucky-charm-thumb.jpg", title: "Lucky Charm",  artist: "Carina",       tag: "Single" },
-  { src: "/images/cozal-holy-water-thumb.png",   title: "Holy Water",   artist: "Cozal",        tag: "Music Video" },
-];
-
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
-  const [slide, setSlide] = useState(0);
 
   useEffect(() => {
     if (!createOpen) return;
@@ -32,13 +23,9 @@ const Navbar = () => {
     document.addEventListener("keydown", onKey);
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    const timer = window.setInterval(() => {
-      setSlide((s) => (s + 1) % produceShots.length);
-    }, 3200);
     return () => {
       document.removeEventListener("keydown", onKey);
       document.documentElement.style.overflow = prev;
-      window.clearInterval(timer);
     };
   }, [createOpen]);
 

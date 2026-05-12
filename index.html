@@ -4160,43 +4160,14 @@
     })();
   </script>
   <script>
-    // Hero abstract orb — stable full-sphere surface with subtle parallax.
+    // Hero globe — stable full-sphere surface with drag-to-spin.
     (function(){
       var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
-      var caption = document.getElementById('orbCaption');
-      var skins = svg.querySelectorAll('.orb-skin');
       var glint = document.getElementById('orbParallax');
       var spin = document.getElementById('orbSpin');
 
-      // Seed starfield once
-      var starsG = document.getElementById('orb-stars');
-      if (starsG) {
-        var s = '';
-        for (var i = 0; i < 70; i++) {
-          var a = Math.random() * Math.PI * 2;
-          var rr = Math.sqrt(Math.random()) * 33;
-          var x = (50 + Math.cos(a) * rr).toFixed(2);
-          var y = (50 + Math.sin(a) * rr).toFixed(2);
-          var sz = (Math.random() * 0.5 + 0.18).toFixed(2);
-          var op = (Math.random() * 0.7 + 0.3).toFixed(2);
-          s += '<circle cx="'+x+'" cy="'+y+'" r="'+sz+'" opacity="'+op+'"/>';
-        }
-        starsG.innerHTML = s;
-      }
-
-      // Surface cycler — opacity cross-fade only, independent of rotation.
-      var idx = 0;
-      function setTex(i) {
-        idx = i;
-        skins.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
-        if (caption) caption.textContent = skins[i] ? (skins[i].dataset.label || '') : '';
-      }
-      var cycleTimer = setInterval(function(){
-        if (!dragging) setTex((idx + 1) % skins.length);
-      }, 5600);
-
-      // Rotation state lives on #orbSpin only — never touches skin DOM, so textures don't flicker.
+      // Rotation state lives on #orbSpin only — the surface never swaps, so textures don't flicker.
       var angle = 0;          // degrees
       var velocity = 0.08;    // baseline auto-spin
       var dragging = false;
@@ -4219,6 +4190,7 @@
       requestAnimationFrame(tick);
 
       svg.addEventListener('pointerdown', function(e){
+        e.preventDefault();
         dragging = true;
         pointerId = e.pointerId;
         lastX = e.clientX;

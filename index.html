@@ -365,9 +365,7 @@
       width: clamp(320px, 40vw, 520px);
       aspect-ratio: 1 / 1;
       z-index: 2;
-      touch-action: none;
-      user-select: none;
-      pointer-events: auto;
+      pointer-events: none;
     }
     @media (max-width: 720px) {
       .hero-globe-wrap {
@@ -403,23 +401,21 @@
       width: 84%;
       height: 84%;
       overflow: visible;
-      cursor: grab;
-      pointer-events: auto;
+      pointer-events: none;
     }
-    .hero-globe-svg * { pointer-events: none; }
-    .hero-globe-svg:active { cursor: grabbing; }
-
-    /* Stable full-sphere globe — one continuous surface, drag-to-spin without texture flicker */
-    .orb-spin { transform-box: view-box; transform-origin: 50px 50px; will-change: transform; }
-    .orb-surface-detail { transform-box: view-box; transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
-    .orb-glint { transform-box: view-box; transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
-    @keyframes orb-drift {
-      0%, 100% { transform: translate(-1px, 1px) scale(1); }
-      50% { transform: translate(1.5px, -1px) scale(1.025); }
+    /* Auto-spinning globe with crossfading skins. Rotation only on parent group; skins are static fills inside the clip so textures never go missing. */
+    .orb-spin {
+      transform-box: view-box;
+      transform-origin: 50px 50px;
+      will-change: transform;
+      animation: orb-rotate 38s linear infinite;
     }
+    @keyframes orb-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .orb-skin { opacity: 0; transition: opacity 1.2s ease; }
+    .orb-skin.is-active { opacity: 1; }
     @media (prefers-reduced-motion: reduce) {
-      .orb-surface-detail { animation: none; }
-      .orb-spin { transform: none !important; }
+      .orb-spin { animation: none; }
+      .orb-skin { transition: none; }
     }
     /* Texture caption */
     .orb-caption {

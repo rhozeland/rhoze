@@ -3161,7 +3161,7 @@
             .era-detail { grid-template-columns:1fr; max-width:420px; }
           }
         </style>
-        <div class="era-line reveal" id="eraLine">
+        <div class="era-line reveal has-detail" id="eraLine">
           <svg class="era-line-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
             <path class="era-line-stem" d="M 42 78 C 150 22, 230 42, 300 70 C 385 105, 470 104, 550 70 C 670 18, 800 30, 958 78" />
             <path class="era-line-path" d="M 58 80 C 130 66, 178 68, 242 80 M 315 72 C 378 58, 435 58, 498 72 M 570 72 C 638 56, 705 58, 770 72 M 828 80 C 875 66, 918 66, 958 80" />
@@ -3195,6 +3195,8 @@
             var title = document.getElementById('eraDetailTitle');
             var desc = document.getElementById('eraDetailDesc');
             var defaultNode = el.querySelector('.era-node[data-video]') || nodes[nodes.length - 1];
+            // Ensure the default detail panel is visible on load (no empty space pre-hover).
+            el.classList.add('has-detail');
             function render(node, playVideo) {
               nodes.forEach(function(n){ n.classList.toggle('is-active', n === node); });
               el.classList.add('has-detail');

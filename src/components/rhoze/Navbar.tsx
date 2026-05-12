@@ -21,30 +21,35 @@ const Navbar = () => {
 
   const distributeSlides = [
     {
+      kind: "music" as const,
       tag: "Now Playing",
       title: "FUS — Rhozeland",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))",
     },
     {
+      kind: "drop" as const,
       tag: "New Drop",
       title: "Saint Flair West · Ooak",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(20 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 85% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(340 70% 35%), hsl(10 80% 45%))",
     },
     {
+      kind: "space" as const,
       tag: "Live Space",
       title: "Creator Roundtable · 12",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(160 80% 55% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(190 70% 30%), hsl(150 70% 35%))",
     },
     {
+      kind: "event" as const,
       tag: "Upcoming Event",
       title: "Land Sessions · LA",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(48 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(20 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(30 80% 35%), hsl(48 80% 45%))",
     },
     {
+      kind: "rewards" as const,
       tag: "$Rhoze Rewards",
       title: "Tier 3 · Citizen +250",
       cover:
@@ -349,26 +354,70 @@ const Navbar = () => {
                               >
                                 <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">{distributeSlides[distIdx].tag}</span>
                                 <div className="truncate text-[0.7rem] font-bold leading-tight">{distributeSlides[distIdx].title}</div>
+                                <div className="flex h-[10px] items-center gap-1 text-[0.5rem] font-semibold text-white/70" aria-hidden="true">
+                                  {distributeSlides[distIdx].kind === "music" && (
+                                    <span className="flex h-[10px] items-end gap-[2px]">
+                                      {Array.from({ length: 10 }).map((_, i) => (
+                                        <span
+                                          key={i}
+                                          className="block w-[2px] rounded-[1px]"
+                                          style={{
+                                            background: "linear-gradient(180deg, hsl(330 90% 70%), hsl(200 90% 65%))",
+                                            animation: "cm-eq 1.1s ease-in-out infinite",
+                                            animationDelay: `${-(((i * 37) % 100) / 100).toFixed(2)}s`,
+                                            height: "60%",
+                                          }}
+                                        />
+                                      ))}
+                                    </span>
+                                  )}
+                                  {distributeSlides[distIdx].kind === "drop" && (
+                                    <span className="tracking-[0.14em] uppercase text-white/85">Out now · Album</span>
+                                  )}
+                                  {distributeSlides[distIdx].kind === "space" && (
+                                    <>
+                                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(135_80%_55%)]" />
+                                      <span className="tracking-[0.06em] text-white/85">12 in space</span>
+                                    </>
+                                  )}
+                                  {distributeSlides[distIdx].kind === "event" && (
+                                    <span className="tracking-[0.14em] uppercase text-white/85">Sat · 8 PM · RSVP</span>
+                                  )}
+                                  {distributeSlides[distIdx].kind === "rewards" && (
+                                    <span className="relative block h-[5px] w-full overflow-hidden rounded-full bg-white/15">
+                                      <span className="absolute inset-y-0 left-0 w-[62%] rounded-full" style={{ background: "linear-gradient(90deg, hsl(48 95% 60%), hsl(330 90% 60%))" }} />
+                                    </span>
+                                  )}
+                                </div>
                               </motion.div>
                             </AnimatePresence>
-                            <div className="flex h-[10px] items-end gap-[2px]" aria-hidden="true">
-                              {Array.from({ length: 10 }).map((_, i) => (
-                                <span
-                                  key={i}
-                                  className="block w-[2px] rounded-[1px]"
-                                  style={{
-                                    background: "linear-gradient(180deg, hsl(330 90% 70%), hsl(200 90% 65%))",
-                                    animation: "cm-eq 1.1s ease-in-out infinite",
-                                    animationDelay: `${-(((i * 37) % 100) / 100).toFixed(2)}s`,
-                                    height: "60%",
-                                  }}
-                                />
-                              ))}
-                            </div>
                           </div>
-                          <span className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-[hsl(240_18%_7%)] shadow-md">
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-                          </span>
+                          <AnimatePresence mode="wait" initial={false}>
+                            <motion.span
+                              key={`act-${distIdx}`}
+                              initial={{ opacity: 0, scale: 0.85 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.85 }}
+                              transition={{ duration: 0.3 }}
+                              className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-[hsl(240_18%_7%)] shadow-md"
+                            >
+                              {distributeSlides[distIdx].kind === "music" && (
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                              )}
+                              {distributeSlides[distIdx].kind === "drop" && (
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M7 17 17 7" /><path d="M7 7h10v10" /></svg>
+                              )}
+                              {distributeSlides[distIdx].kind === "space" && (
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0" /><path d="M12 18v3" /></svg>
+                              )}
+                              {distributeSlides[distIdx].kind === "event" && (
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                              )}
+                              {distributeSlides[distIdx].kind === "rewards" && (
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M14.5 9.5h-4a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3h-4M12 7.5V9M12 15v1.5" /></svg>
+                              )}
+                            </motion.span>
+                          </AnimatePresence>
                         </div>
                       </div>
                     </div>

@@ -3160,49 +3160,52 @@
       </section>
 
       <section class="section reveal" id="system" style="padding-bottom:1.5rem; padding-top:1.5rem;">
-        <!-- Documentary + metric (not a card) -->
-        <div class="story-doc-row">
-          <div class="story-doc-column">
+        <div class="story-compact-head">
+          <div>
             <span class="section-kicker">Our story</span>
-            <div class="card-video-wrap" style="border-radius:var(--radius-lg); overflow:hidden; border:1px solid hsl(var(--line));">
-              <iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&loop=1&playlist=9rxMdl_mQws&controls=0&showinfo=0&rel=0&modestbranding=1" title="The Rhozeland Documentary" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-            </div>
+            <h3>What began as a vision became a studio, and now stands as a launchpad for the boldest creators.</h3>
           </div>
-             <div class="story-doc-column story-copy-column">
-               <span class="section-kicker">Since 2016</span>
-               <h3 style="font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.35rem; font-weight:500; line-height:1.15; letter-spacing:-0.01em; margin:0;">What began as a vision became a studio, and now stands as a launchpad for the boldest creators.</h3>
-               <p style="color:hsl(var(--muted)); font-size:0.92rem; line-height:1.55; margin:0.85rem 0 0;">From a circle of friends in 2016 to a full studio and on-chain creator platform today — every chapter has been built with the community.</p>
-               <a class="section-link" href="/about.html" style="margin-top:auto; padding-top:1rem;">
-                 Learn more
-                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-               </a>
-            </div>
+          <a class="section-link" href="/about.html">
+            Learn more
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+          </a>
         </div>
 
-        <!-- Animated SVG era timeline (compact) -->
+        <!-- Animated story timeline (compact) -->
         <style>
-          .era-line { position:relative; margin:1.5rem auto 2.75rem; max-width:760px; padding:0 0.5rem; }
-          .era-line-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:0; }
-          .era-line-path { fill:none; stroke:hsl(var(--ink) / 0.55); stroke-width:1.25; stroke-linecap:round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.8s cubic-bezier(.22,.61,.36,1); }
+          .story-compact-head { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:1rem; max-width:920px; margin:0 auto 1rem; }
+          .story-compact-head h3 { font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:clamp(1.12rem,2vw,1.45rem); font-weight:500; line-height:1.14; letter-spacing:0; max-width:28ch; margin:0.55rem 0 0; }
+          .story-compact-head .section-link { margin:0 0 0.1rem; white-space:nowrap; }
+          .era-line { position:relative; margin:0.25rem auto 3.25rem; max-width:920px; padding:0.25rem 0.25rem 0; }
+          .era-line-svg { position:absolute; left:6%; right:6%; top:35px; width:88%; height:62px; pointer-events:none; overflow:visible; z-index:0; }
+          .era-line-path { fill:none; stroke:hsl(var(--ink) / 0.48); stroke-width:1.15; stroke-linecap:round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.8s cubic-bezier(.22,.61,.36,1); }
           .era-line.is-visible .era-line-path { stroke-dashoffset: 0; }
-          .era-line-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:0.75rem; }
-          .era-node { display:flex; flex-direction:column; align-items:center; text-align:center; gap:0.45rem; opacity:0; transform:translateY(8px); transition: opacity .6s ease, transform .6s ease; }
+          .era-line-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.55rem; }
+          .era-node { position:relative; min-height:218px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:0.36rem; padding:0.2rem 0.45rem 0.6rem; border-radius:var(--radius-md); opacity:0; transform:translateY(8px); transition: opacity .6s ease, transform .6s ease, background .35s ease; }
           .era-node:nth-child(1) { transition-delay:.15s; }
           .era-node:nth-child(2) { transition-delay:.55s; }
           .era-node:nth-child(3) { transition-delay:.95s; }
+          .era-node:nth-child(4) { transition-delay:1.35s; }
           .era-line.is-visible .era-node { opacity:1; transform:translateY(0); }
-          .era-avatar { position:relative; width:64px; height:64px; border-radius:50%; overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); box-shadow:0 4px 14px -6px hsl(0 0% 0% / 0.35); transition: transform .4s ease, box-shadow .4s ease; }
+          .era-node:hover, .era-node:focus-within { background:hsl(var(--surface) / 0.45); }
+          .era-avatar { position:relative; width:62px; height:62px; border-radius:50%; overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); box-shadow:0 4px 14px -6px hsl(0 0% 0% / 0.35); transition: transform .4s ease, box-shadow .4s ease; }
           .era-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-          .era-node:hover .era-avatar { transform:scale(1.06); box-shadow:0 8px 22px -8px hsl(0 0% 0% / 0.45); }
+          .era-node:hover .era-avatar, .era-node:focus-within .era-avatar { transform:scale(1.2); box-shadow:0 10px 24px -8px hsl(0 0% 0% / 0.48); }
           .era-avatar::after { content:""; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); width:7px; height:7px; border-radius:50%; background:hsl(var(--ink)); border:2px solid hsl(var(--bg)); }
-          .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:700; font-size:0.95rem; letter-spacing:-0.02em; color:hsl(var(--ink)); line-height:1; margin-top:0.35rem; }
-          .era-title-sm { font-size:0.78rem; font-weight:600; color:hsl(var(--ink)); margin:0; line-height:1.2; }
-          .era-desc-sm { color:hsl(var(--muted)); font-size:0.72rem; line-height:1.45; margin:0.15rem 0 0; max-width:20ch; }
+          .era-play { position:absolute; inset:auto 7px 7px auto; display:grid; place-items:center; width:22px; height:22px; border-radius:999px; background:hsl(var(--ink)); color:hsl(var(--bg)); }
+          .era-play svg { width:11px; height:11px; fill:currentColor; }
+          .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:750; font-size:0.9rem; letter-spacing:0; color:hsl(var(--ink)); line-height:1; margin-top:0.34rem; }
+          .era-title-sm { font-size:0.75rem; font-weight:650; color:hsl(var(--ink)); margin:0; line-height:1.2; }
+          .era-desc-sm { color:hsl(var(--muted)); font-size:0.68rem; line-height:1.38; margin:0.05rem 0 0; max-width:18ch; }
+          .era-link { color:hsl(var(--ink)); font-size:0.68rem; font-weight:650; margin-top:auto; text-decoration:underline; text-underline-offset:3px; }
           @media (max-width: 640px) {
-            .era-line { margin-bottom:2rem; }
-            .era-line-grid { gap:0.4rem; }
-            .era-avatar { width:52px; height:52px; }
-            .era-desc-sm { font-size:0.68rem; }
+            .story-compact-head { grid-template-columns:1fr; align-items:start; margin-bottom:0.85rem; }
+            .era-line { margin-bottom:2.25rem; }
+            .era-line-svg { display:none; }
+            .era-line-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.45rem; }
+            .era-node { min-height:188px; }
+            .era-avatar { width:54px; height:54px; }
+            .era-desc-sm { font-size:0.66rem; }
           }
         </style>
         <div class="era-line reveal" id="eraLine">

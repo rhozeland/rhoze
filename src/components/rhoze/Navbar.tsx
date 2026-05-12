@@ -18,14 +18,34 @@ const Navbar = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [produceIdx, setProduceIdx] = useState(0);
 
-  const produceSlides = [
+  const producePool = [
     { img: "/images/ooak-the-mask-thumb.png", tag: "Music Video", title: "The Mask", artist: "Ooak" },
     { img: "/images/fingaz-mansa-musa-thumb.png", tag: "Music Video", title: "Mansa Musa", artist: "MONEE FINGAZ" },
     { img: "/images/rhozeland-fus-thumb.png", tag: "EP", title: "FUS", artist: "Rhozeland" },
+    { img: "/images/holy-water-thumb.jpg", tag: "Music Video", title: "Holy Water", artist: "Cozal" },
+    { img: "/images/vampurp-2027-thumb.jpg", tag: "Music Video", title: "2027", artist: "Vampurp" },
+    { img: "/images/fingaz-superhero-thumb.png", tag: "Music Video", title: "Feel Like A Superhero", artist: "MONEE FINGAZ" },
+    { img: "/images/carina-lucky-charm-thumb.jpg", tag: "Music Video", title: "Lucky Charm", artist: "Carina" },
+    { img: "/images/steelo-u-outta-know-thumb.jpg", tag: "Music Video", title: "U Outta Know", artist: "YOUNG $TEELO" },
+    { img: "/images/rc1-thumb.jpg", tag: "Campaign", title: "Who Runs The World?", artist: "Runner's Club" },
+    { img: "/images/straightdizzy-the-only-reason-thumb.png", tag: "Music Video", title: "The Only Reason", artist: "Straightdizzy" },
+    { img: "/images/bk-whiskey-mma-thumb.png", tag: "Campaign", title: "United MMA", artist: "BK Whiskey" },
+    { img: "/images/ooak-saint-flair-west-thumb.png", tag: "Album", title: "Saint Flair West", artist: "Ooak" },
   ];
+  const [produceSlides, setProduceSlides] = useState(() => pickRandom(producePool, 3));
+
+  function pickRandom<T>(arr: T[], n: number): T[] {
+    const copy = arr.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy.slice(0, n);
+  }
 
   useEffect(() => {
     if (!createOpen) return;
+    setProduceSlides(pickRandom(producePool, 3));
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setCreateOpen(false); };
     document.addEventListener("keydown", onKey);
     const prev = document.documentElement.style.overflow;
@@ -172,7 +192,7 @@ const Navbar = () => {
               </div>
               <h2
                 id="create-modal-title"
-                className="mb-7 max-w-[12ch] text-3xl font-extrabold leading-[1.02] tracking-tight sm:text-4xl lg:text-5xl"
+                className="mb-6 whitespace-nowrap overflow-hidden text-ellipsis text-lg font-extrabold leading-[1.02] tracking-tight sm:text-2xl lg:text-3xl"
               >
                 What are we building next?
               </h2>
@@ -227,60 +247,49 @@ const Navbar = () => {
                   className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
                 >
                   <div
-                    className="relative h-[132px] overflow-hidden border-b border-white/[0.06] p-2"
+                    className="relative h-[132px] overflow-hidden border-b border-white/[0.06] p-2.5"
                     style={{
                       background:
                         "radial-gradient(60% 80% at 20% 0%, hsl(280 60% 30% / 0.35), transparent 70%), radial-gradient(60% 80% at 100% 100%, hsl(200 70% 35% / 0.35), transparent 70%), hsl(240 30% 4%)",
                     }}
                   >
                     <div className="flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[hsl(240_18%_7%)] shadow-2xl">
-                      <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-[hsl(240_18%_5%)] px-2 py-1 text-[0.6rem] text-white/60">
-                        <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
-                        <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
-                        <span className="ml-1.5 font-mono text-white/70">rhozeland.app / discover</span>
+                      <div className="flex items-center justify-between border-b border-white/[0.06] bg-[hsl(240_18%_5%)] px-2 py-1.5">
+                        <span className="inline-flex items-center gap-1.5 text-[0.7rem] font-bold">
+                          <span
+                            className="h-3 w-3 rounded"
+                            style={{ background: "linear-gradient(135deg, hsl(330 90% 65%), hsl(28 95% 60%) 40%, hsl(48 95% 60%) 65%, hsl(200 90% 60%))", boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.2)" }}
+                          />
+                          Creator OS
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-white/20 px-1.5 py-0.5 text-[0.5rem] font-bold tracking-[0.18em] text-white/90">
+                          <span className="h-1 w-1 animate-pulse rounded-full bg-[hsl(135_80%_55%)]" />
+                          LIVE
+                        </span>
                       </div>
-                      <div className="flex flex-1 flex-col gap-1.5 p-2">
-                        <div className="flex items-center justify-between">
-                          <span className="inline-flex items-center gap-1.5 text-[0.7rem] font-bold">
-                            <span
-                              className="h-3 w-3 rounded"
-                              style={{ background: "linear-gradient(135deg, hsl(330 90% 65%), hsl(28 95% 60%) 40%, hsl(48 95% 60%) 65%, hsl(200 90% 60%))", boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.2)" }}
-                            />
-                            Creator OS
-                          </span>
-                          <span className="inline-flex items-center gap-1 rounded-full border border-white/20 px-1.5 py-0.5 text-[0.5rem] font-bold tracking-[0.18em] text-white/90">
-                            <span className="h-1 w-1 animate-pulse rounded-full bg-[hsl(135_80%_55%)]" />
-                            LIVE
-                          </span>
+                      <div className="flex flex-1 flex-col gap-1.5 p-2 min-h-0">
+                        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] px-2 py-1.5">
+                          <span className="h-6 w-6 rounded-full" style={{ background: "conic-gradient(from 180deg, hsl(330 90% 65%), hsl(28 95% 60%), hsl(200 90% 60%), hsl(330 90% 65%))", boxShadow: "inset 0 0 0 2px hsl(240 18% 9%)" }} />
+                          <div className="min-w-0">
+                            <div className="text-[0.7rem] font-bold leading-tight">Rhozeland</div>
+                            <div className="text-[0.55rem] leading-tight text-white/55">@rhoze · 12.4k</div>
+                          </div>
+                          <span className="rounded-full bg-white px-2 py-0.5 text-[0.55rem] font-bold tracking-wider text-[hsl(240_18%_7%)]">Follow</span>
                         </div>
-                        <div className="flex gap-0.5 rounded-full border border-white/[0.06] bg-[hsl(240_18%_5%)] p-0.5">
-                          {[
-                            { l: "Spark", a: true },
-                            { l: "Bloom", a: false },
-                            { l: "Glow", a: false },
-                            { l: "Play", a: false },
-                          ].map((t) => (
-                            <span
-                              key={t.l}
-                              className={`flex-1 rounded-full px-1 py-0.5 text-center text-[0.55rem] font-semibold ${t.a ? "bg-white/10 text-white" : "text-white/55"}`}
-                            >
-                              {t.l}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="grid flex-1 grid-cols-3 gap-1">
-                          {[
-                            { t: "Verified Studio", m: "Spaces · Toronto", g: "linear-gradient(135deg, hsl(280 60% 45%), hsl(220 70% 38%))" },
-                            { t: "Open Drop", m: "Launchpad · 24h", g: "linear-gradient(135deg, hsl(345 70% 50%), hsl(20 80% 50%))" },
-                            { t: "Creator Hub", m: "Network · 1.2k", g: "linear-gradient(135deg, hsl(170 70% 42%), hsl(200 70% 38%))" },
-                          ].map((c) => (
-                            <div key={c.t} className="flex flex-col gap-1 rounded-md border border-white/[0.05] bg-[hsl(240_18%_9%)] p-1">
-                              <div className="h-4 rounded" style={{ background: c.g }} />
-                              <div className="text-[0.55rem] font-bold tracking-tight">{c.t}</div>
-                              <div className="text-[0.5rem] text-white/55">{c.m}</div>
-                            </div>
-                          ))}
+                        <div className="grid flex-1 grid-cols-[44px_1fr] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] p-1.5 min-h-0">
+                          <div
+                            className="h-full min-h-[34px] w-11 rounded-md"
+                            style={{
+                              background:
+                                "radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))",
+                              boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.12)",
+                            }}
+                          />
+                          <div className="flex min-w-0 flex-col gap-0.5">
+                            <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">Latest Drop</span>
+                            <div className="truncate text-[0.7rem] font-bold leading-tight">FUS — out now</div>
+                            <div className="flex gap-2 text-[0.5rem] text-white/55"><span>▶ 2.1k</span><span>♡ 318</span><span>↗ Share</span></div>
+                          </div>
                         </div>
                       </div>
                     </div>

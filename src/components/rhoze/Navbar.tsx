@@ -1,15 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Menu, X, Sparkles, ArrowUpRight, Info, Layers, ShoppingBag, Mail } from "lucide-react";
+import { Menu, X, Sparkles, ArrowUpRight, BookOpen, Layers, ShoppingBag, MessageCircle } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
 import logoColor from "@/assets/logo-color.png";
 
 const navLinks = [
-  { label: "About", href: "/about.html", icon: Info },
-  { label: "Services", href: "/projects.html", icon: Layers },
+  { label: "About", href: "/about.html", icon: BookOpen },
+  { label: "Work", href: "/projects.html", icon: Layers },
+  { label: "Connect", href: "/contact.html", icon: MessageCircle },
   { label: "Shop", href: "https://rhozeland.shop", external: true, icon: ShoppingBag },
-  { label: "Contact", href: "/contact.html", icon: Mail },
 ];
 
 const Navbar = () => {
@@ -237,10 +237,7 @@ const Navbar = () => {
               }}
             />
             <div className="p-6 sm:p-10">
-              <div className="mb-6 flex items-center justify-between">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/80">
-                  <Sparkles size={12} /> Build
-                </span>
+              <div className="mb-6 flex items-center justify-end">
                 <button
                   type="button"
                   onClick={() => setCreateOpen(false)}

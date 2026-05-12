@@ -5,7 +5,6 @@ import Ecosystem from "@/components/rhoze/Ecosystem";
 import SelectedWork from "@/components/rhoze/SelectedWork";
 import Tokenomics from "@/components/rhoze/Tokenomics";
 import Chart from "@/components/rhoze/Chart";
-import Support from "@/components/rhoze/Support";
 import Footer from "@/components/rhoze/Footer";
 
 const Index = () => {
@@ -28,7 +27,6 @@ const Index = () => {
       <SelectedWork />
       <Tokenomics />
       <Chart />
-      <Support />
       <Footer />
     </div>
   );

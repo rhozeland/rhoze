@@ -406,19 +406,16 @@
     }
     .hero-globe-svg:active { cursor: grabbing; }
 
-    /* Morphing orb — full-sphere skins, drag-to-spin without texture flicker */
+    /* Stable full-sphere globe — one continuous surface, drag-to-spin without texture flicker */
     .orb-spin { transform-box: view-box; transform-origin: 50px 50px; will-change: transform; }
-    .orb-skin { opacity: 0; transition: opacity 0.9s ease; }
-    .orb-skin.is-active { opacity: 1; }
-    .orb-drift { transform-box: view-box; transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
+    .orb-surface-detail { transform-box: view-box; transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
     .orb-glint { transform-box: view-box; transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
     @keyframes orb-drift {
       0%, 100% { transform: translate(-1px, 1px) scale(1); }
       50% { transform: translate(1.5px, -1px) scale(1.025); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .orb-skin { transition: none; }
-      .orb-drift { animation: none; }
+      .orb-surface-detail { animation: none; }
       .orb-spin { transform: none !important; }
     }
     /* Texture caption */
@@ -444,6 +441,10 @@
       align-items: flex-start;
       position: relative;
       z-index: 5;
+      pointer-events: none;
+    }
+    .hero-copy > * {
+      pointer-events: auto;
     }
 
     @media (min-width: 721px) {

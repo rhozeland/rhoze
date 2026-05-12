@@ -4121,98 +4121,86 @@
     })();
   </script>
   <script>
-    // Hero SVG globe — drag to spin, idle auto-rotate.
+    // Hero abstract orb — morphs through textures, drag to spin.
     (function(){
-      var svg = document.getElementById('heroGlobeSvg');
+      var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
-      var contG = document.getElementById('hg-continents');
-      var gridG = document.getElementById('hg-grid');
-      var cx = 50, cy = 50, r = 36;
-      var rotation = -22, isDragging = false, dragStart = null;
+      var wrap = svg.parentElement;
+      var spin = document.getElementById('orb-spin');
+      var caption = document.getElementById('orbCaption');
+      var textures = svg.querySelectorAll('.orb-tex');
+      var labels = ['Gradient mesh','Liquid chrome','Risograph','Topographic','Starfield'];
 
-      var CONTINENTS = [
-        {p:[[70,-168],[72,-140],[74,-110],[70,-82],[62,-64],[50,-56],[44,-64],[42,-72],[32,-80],[25,-80],[18,-92],[15,-98],[22,-106],[30,-116],[40,-124],[49,-125],[55,-132],[60,-148],[66,-162]]},
-        {p:[[12,-72],[10,-62],[5,-52],[-2,-48],[-12,-38],[-22,-40],[-32,-52],[-42,-64],[-52,-70],[-54,-72],[-46,-74],[-36,-72],[-22,-70],[-10,-78],[0,-80],[8,-78]]},
-        {p:[[70,-8],[70,24],[68,40],[60,50],[54,38],[44,40],[38,28],[36,14],[38,-2],[44,-10],[50,-4],[58,-6],[64,-10]]},
-        {p:[[36,-8],[36,12],[32,24],[30,34],[16,42],[10,50],[-4,42],[-18,38],[-30,32],[-34,22],[-32,18],[-26,14],[-20,12],[-12,12],[-2,8],[4,-2],[10,-14],[16,-16],[22,-16],[28,-10]]},
-        {p:[[78,60],[80,100],[76,140],[70,170],[60,168],[54,156],[50,142],[42,132],[34,134],[22,120],[10,108],[4,100],[10,92],[22,88],[22,72],[30,60],[38,50],[44,46],[54,44],[60,50],[70,56]]},
-        {p:[[-12,130],[-10,140],[-12,152],[-22,154],[-32,152],[-38,146],[-36,138],[-32,128],[-26,120],[-18,122]]},
-        {p:[[82,-32],[80,-18],[70,-22],[62,-42],[70,-52],[78,-50]]}
-      ];
-
-      function project(lat, lng, rot) {
-        var lr = lat * Math.PI/180, gr = (lng + rot) * Math.PI/180;
-        var c = Math.cos(lr);
-        return { x: cx + r * c * Math.sin(gr), y: cy - r * Math.sin(lr), d: c * Math.cos(gr) };
-      }
-
-      function continentPath(pts, rot) {
-        var pj = pts.map(function(p){ return project(p[0], p[1], rot); });
-        if (!pj.some(function(p){return p.d > 0;})) return '';
-        var path = '', drawing = false;
-        pj.forEach(function(p){
-          if (p.d > -0.05) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
-          else drawing = false;
-        });
-        if (drawing) path += ' Z';
-        return path;
-      }
-
-      function latPath(lat, rot) {
-        var path = '', drawing = false;
-        for (var lng = -180; lng <= 180; lng += 5) {
-          var p = project(lat, lng, rot);
-          if (p.d > 0.02) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
-          else drawing = false;
+      // Seed starfield once
+      var starsG = document.getElementById('orb-stars');
+      if (starsG) {
+        var s = '';
+        for (var i = 0; i < 70; i++) {
+          var a = Math.random() * Math.PI * 2;
+          var rr = Math.sqrt(Math.random()) * 33;
+          var x = (50 + Math.cos(a) * rr).toFixed(2);
+          var y = (50 + Math.sin(a) * rr).toFixed(2);
+          var sz = (Math.random() * 0.5 + 0.18).toFixed(2);
+          var op = (Math.random() * 0.7 + 0.3).toFixed(2);
+          s += '<circle cx="'+x+'" cy="'+y+'" r="'+sz+'" opacity="'+op+'"/>';
         }
-        return path;
-      }
-      function lngPath(lng, rot) {
-        var path = '', drawing = false;
-        for (var lat = -88; lat <= 88; lat += 4) {
-          var p = project(lat, lng, rot);
-          if (p.d > 0.02) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
-          else drawing = false;
-        }
-        return path;
+        starsG.innerHTML = s;
       }
 
-      function render() {
-        var ch = '';
-        CONTINENTS.forEach(function(c){
-          var d = continentPath(c.p, rotation);
-          if (d) ch += '<path d="'+d+'" fill="url(#hg-land)" stroke="hsl(150 50% 18% / 0.6)" stroke-width="0.25" stroke-linejoin="round" />';
-        });
-        contG.innerHTML = ch;
-
-        var gh = '';
-        [-52,-24,0,24,52].forEach(function(l){ var d=latPath(l,rotation); if(d) gh += '<path d="'+d+'" />'; });
-        [-90,-45,0,45,90].forEach(function(l){ var d=lngPath(l,rotation); if(d) gh += '<path d="'+d+'" />'; });
-        gridG.innerHTML = gh;
+      // Texture cycler
+      var idx = 0;
+      function setTex(i) {
+        idx = i;
+        textures.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
+        if (caption) caption.textContent = labels[i] || '';
       }
+      var cycleTimer = setInterval(function(){
+        setTex((idx + 1) % textures.length);
+      }, 5200);
 
-      function tick() {
-        if (!isDragging) { rotation = (rotation + 0.18) % 360; render(); }
-        requestAnimationFrame(tick);
+      // Drag to spin
+      var rotation = 0, manual = 0, isDragging = false, dragStart = null;
+      function applyRotation(){
+        spin.setAttribute('transform', 'rotate(' + (rotation + manual).toFixed(2) + ' 50 50)');
       }
-
       svg.addEventListener('pointerdown', function(e){
         isDragging = true;
-        dragStart = { x: e.clientX, rot: rotation };
+        wrap.classList.add('orb-dragging');
+        // Capture current visual angle so the orb doesn't jump.
+        var cs = getComputedStyle(spin);
+        var m = new DOMMatrixReadOnly(cs.transform === 'none' ? '' : cs.transform);
+        rotation = Math.atan2(m.b, m.a) * 180 / Math.PI;
+        manual = 0;
+        dragStart = { x: e.clientX, base: rotation };
         try { svg.setPointerCapture(e.pointerId); } catch(_){}
+        applyRotation();
       });
       svg.addEventListener('pointermove', function(e){
         if (!isDragging || !dragStart) return;
-        rotation = dragStart.rot + (e.clientX - dragStart.x) * 0.38;
-        render();
+        manual = (e.clientX - dragStart.x) * 0.5;
+        applyRotation();
       });
-      function endDrag(e){ isDragging = false; dragStart = null; try { svg.releasePointerCapture(e.pointerId); } catch(_){} }
+      function endDrag(e){
+        if (!isDragging) return;
+        isDragging = false;
+        rotation = rotation + manual;
+        manual = 0;
+        dragStart = null;
+        try { svg.releasePointerCapture(e.pointerId); } catch(_){}
+        // Resume CSS auto-spin from the new angle.
+        spin.style.animation = 'none';
+        spin.getBoundingClientRect();
+        applyRotation();
+        // Re-enable the auto animation on next frame.
+        requestAnimationFrame(function(){
+          spin.style.transform = '';
+          spin.style.animation = '';
+          wrap.classList.remove('orb-dragging');
+        });
+      }
       svg.addEventListener('pointerup', endDrag);
       svg.addEventListener('pointercancel', endDrag);
       svg.addEventListener('pointerleave', endDrag);
-
-      render();
-      tick();
     })();
   </script>
 </body>

@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Menu, X, Sparkles, ArrowUpRight } from "lucide-react";
+import { Menu, X, Sparkles, ArrowUpRight, Info, Layers, ShoppingBag, Mail } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
 import logoColor from "@/assets/logo-color.png";
 
 const navLinks = [
-  { label: "About", href: "/about.html" },
-  { label: "Projects", href: "/projects.html" },
-  { label: "Shop", href: "https://rhozeland.shop", external: true },
-  { label: "Contact", href: "/contact.html" },
+  { label: "About", href: "/about.html", icon: Info },
+  { label: "Services", href: "/projects.html", icon: Layers },
+  { label: "Shop", href: "https://rhozeland.shop", external: true, icon: ShoppingBag },
+  { label: "Contact", href: "/contact.html", icon: Mail },
 ];
 
 const Navbar = () => {
@@ -98,23 +98,32 @@ const Navbar = () => {
           <span className="font-display text-xl font-semibold text-foreground tracking-normal">Rhozeland</span>
         </a>
 
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="group flex items-center gap-0 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-transparent group-hover:border-border/60 group-hover:bg-muted/30 transition-all">
+                  <Icon size={18} strokeWidth={1.8} />
+                </span>
+                <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap text-xs font-medium group-hover:max-w-[60px] group-hover:opacity-100 group-hover:ml-1.5 transition-all duration-300 ease-out">
+                  {link.label}
+                </span>
+              </a>
+            );
+          })}
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
-            className="px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           >
-            Create
+            <Sparkles size={15} />
+            <span>Build</span>
           </button>
         </div>
 
@@ -129,23 +138,28 @@ const Navbar = () => {
           animate={{ opacity: 1, height: "auto" }}
           className="md:hidden bg-card border-t border-border px-6 pb-6"
         >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              onClick={() => setOpen(false)}
-              className="block py-3 text-muted-foreground hover:text-foreground transition-colors font-body"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 py-3 text-muted-foreground hover:text-foreground transition-colors font-body"
+              >
+                <Icon size={18} strokeWidth={1.8} />
+                {link.label}
+              </a>
+            );
+          })}
           <button
             type="button"
             onClick={() => { setOpen(false); setCreateOpen(true); }}
-            className="mt-3 inline-block px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
+            className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
           >
-            Create
+            <Sparkles size={15} />
+            Build
           </button>
         </motion.div>
       )}
@@ -179,7 +193,7 @@ const Navbar = () => {
             <div className="p-6 sm:p-10">
               <div className="mb-6 flex items-center justify-between">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/80">
-                  <Sparkles size={12} /> Create
+                  <Sparkles size={12} /> Build
                 </span>
                 <button
                   type="button"

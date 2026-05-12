@@ -28,13 +28,35 @@
   }
   function reshuffleProduce(){ produceSlides = pickRandom(producePool, 3); }
 
-  // Distribute card — Creator OS now-playing rotates through content types
+  // Distribute card — Creator OS preview rotates through content types
+  var EQ_HTML = (function(){
+    var bars = '';
+    for (var i = 0; i < 10; i++) {
+      var d = -((i * 37) % 100) / 100;
+      bars += '<span style="display:block;width:2px;height:60%;border-radius:1px;background:linear-gradient(180deg,hsl(330 90% 70%),hsl(200 90% 65%));animation:cm-eq 1.1s ease-in-out infinite;animation-delay:' + d.toFixed(2) + 's"></span>';
+    }
+    return '<span style="display:flex;align-items:flex-end;gap:2px;height:10px">' + bars + '</span>';
+  })();
+  var ICON = {
+    music: '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',
+    drop: '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>',
+    space: '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>',
+    event: '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+    rewards: '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5h-4a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3h-4M12 7.5V9M12 15v1.5"/></svg>'
+  };
+  var INDICATOR = {
+    music: EQ_HTML,
+    drop: '<span style="font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.85)">Out now · Album</span>',
+    space: '<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.5rem;font-weight:600;color:rgba(255,255,255,0.85)"><span style="width:6px;height:6px;border-radius:50%;background:hsl(135 80% 55%);animation:cm-eq 1.4s ease-in-out infinite"></span>12 in space</span>',
+    event: '<span style="font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.85)">Sat · 8 PM · RSVP</span>',
+    rewards: '<span style="position:relative;display:block;height:5px;width:100%;border-radius:999px;background:rgba(255,255,255,0.15);overflow:hidden"><span style="position:absolute;inset:0;width:62%;border-radius:999px;background:linear-gradient(90deg,hsl(48 95% 60%),hsl(330 90% 60%))"></span></span>'
+  };
   var distSlides = [
-    { tag: 'Now Playing', title: 'FUS — Rhozeland', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))' },
-    { tag: 'New Drop', title: 'Saint Flair West · Ooak', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(20 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 85% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(340 70% 35%), hsl(10 80% 45%))' },
-    { tag: 'Live Space', title: 'Creator Roundtable · 12', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(160 80% 55% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(190 70% 30%), hsl(150 70% 35%))' },
-    { tag: 'Upcoming Event', title: 'Land Sessions · LA', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(48 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(20 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(30 80% 35%), hsl(48 80% 45%))' },
-    { tag: '$Rhoze Rewards', title: 'Tier 3 · Citizen +250', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(48 95% 65% / 0.95), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(48 80% 40%), hsl(20 85% 45%))' }
+    { kind:'music',   tag: 'Now Playing',     title: 'FUS — Rhozeland',         cover: 'radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))' },
+    { kind:'drop',    tag: 'New Drop',        title: 'Saint Flair West · Ooak', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(20 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 85% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(340 70% 35%), hsl(10 80% 45%))' },
+    { kind:'space',   tag: 'Live Space',      title: 'Creator Roundtable · 12', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(160 80% 55% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(190 70% 30%), hsl(150 70% 35%))' },
+    { kind:'event',   tag: 'Upcoming Event',  title: 'Land Sessions · LA',      cover: 'radial-gradient(120% 80% at 0% 0%, hsl(48 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(20 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(30 80% 35%), hsl(48 80% 45%))' },
+    { kind:'rewards', tag: '$Rhoze Rewards',  title: 'Tier 3 · Citizen +250',   cover: 'radial-gradient(120% 80% at 0% 0%, hsl(48 95% 65% / 0.95), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(48 80% 40%), hsl(20 85% 45%))' }
   ];
   var distIdx = 0;
   var distTimer = null;
@@ -45,20 +67,27 @@
     var tag = modal.querySelector('.cm-app__tag');
     var title = modal.querySelector('.cm-app__drop-title');
     var meta = modal.querySelector('.cm-app__player-meta');
+    var eq = modal.querySelector('.cm-app__eq');
+    var play = modal.querySelector('.cm-app__play');
     if (!cover || !tag || !title || !meta) return;
     var s = distSlides[i % distSlides.length];
     meta.style.transition = 'opacity .28s ease, transform .28s ease';
     cover.style.transition = 'opacity .35s ease';
+    if (play) play.style.transition = 'opacity .28s ease';
     meta.style.opacity = '0';
     meta.style.transform = 'translateY(-3px)';
     cover.style.opacity = '0';
+    if (play) play.style.opacity = '0';
     setTimeout(function(){
       tag.textContent = s.tag;
       title.textContent = s.title;
       cover.style.background = s.cover;
+      if (eq) eq.innerHTML = INDICATOR[s.kind] || '';
+      if (play) play.innerHTML = ICON[s.kind] || ICON.music;
       meta.style.opacity = '1';
       meta.style.transform = 'translateY(0)';
       cover.style.opacity = '1';
+      if (play) play.style.opacity = '1';
     }, 200);
   }
   function startDistAuto(){

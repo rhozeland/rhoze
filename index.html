@@ -3194,9 +3194,8 @@
             var year = document.getElementById('eraDetailYear');
             var title = document.getElementById('eraDetailTitle');
             var desc = document.getElementById('eraDetailDesc');
-            var pinned = false;
-            function show(node, playVideo) {
-              pinned = !!playVideo;
+            var defaultNode = el.querySelector('.era-node[data-video]') || nodes[nodes.length - 1];
+            function render(node, playVideo) {
               nodes.forEach(function(n){ n.classList.toggle('is-active', n === node); });
               el.classList.add('has-detail');
               if (year) year.textContent = node.dataset.era || '';
@@ -3209,12 +3208,13 @@
                 media.innerHTML = '<img src="'+node.dataset.image+'" alt="'+(node.dataset.alt || '')+'" loading="lazy" />';
               }
             }
+            function restoreDefault() { if (defaultNode) render(defaultNode, true); }
             nodes.forEach(function(node){
-              node.addEventListener('mouseenter', function(){ show(node, false); });
-              node.addEventListener('focusin', function(){ show(node, false); });
-              node.addEventListener('click', function(){ show(node, !!node.dataset.video); });
+              node.addEventListener('mouseenter', function(){ if (node !== defaultNode) render(node, false); else render(node, true); });
+              node.addEventListener('focusin', function(){ if (node !== defaultNode) render(node, false); else render(node, true); });
+              node.addEventListener('click', function(){ render(node, !!node.dataset.video); });
             });
-            el.addEventListener('mouseleave', function(){ if (!pinned) el.classList.remove('has-detail'); });
+            el.addEventListener('mouseleave', restoreDefault);
             var io = new IntersectionObserver(function(entries){
               entries.forEach(function(e){ if (e.isIntersecting) { el.classList.add('is-visible'); io.disconnect(); } });
             }, { threshold: 0.35 });

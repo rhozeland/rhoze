@@ -180,23 +180,27 @@ const Navbar = () => {
               </div>
 
               <div className="relative z-10 mt-7 grid gap-4 sm:grid-cols-2">
-                {createPaths.map((path) => (
-                  <a
-                    key={path.label}
-                    href={path.href}
-                    {...(path.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className="group relative overflow-hidden rounded-[1.35rem] border border-border bg-background/65 p-5 transition-all hover:-translate-y-1 hover:bg-background"
-                  >
-                    <div className="mb-8 flex items-center justify-between">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
-                        <path.icon size={22} />
+                {createPaths.map((path) => {
+                  const PathIcon = path.icon;
+
+                  return (
+                    <a
+                      key={path.label}
+                      href={path.href}
+                      {...(path.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      className="group relative overflow-hidden rounded-[1.35rem] border border-border bg-background/65 p-5 transition-all hover:-translate-y-1 hover:bg-background"
+                    >
+                      <div className="mb-8 flex items-center justify-between">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                          <PathIcon size={22} />
+                        </div>
+                        <ArrowUpRight className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-foreground" size={18} />
                       </div>
-                      <ArrowUpRight className="text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-foreground" size={18} />
-                    </div>
-                    <h3 className="text-2xl font-semibold text-foreground">{path.label}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{path.description}</p>
-                  </a>
-                ))}
+                      <h3 className="text-2xl font-semibold text-foreground">{path.label}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{path.description}</p>
+                    </a>
+                  );
+                })}
               </div>
             </motion.div>
           </motion.div>

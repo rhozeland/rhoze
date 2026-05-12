@@ -32,10 +32,9 @@
   var EQ_HTML = (function(){
     var bars = '';
     for (var i = 0; i < 10; i++) {
-      var d = -((i * 37) % 100) / 100;
-      bars += '<span style="display:block;width:2px;height:60%;border-radius:1px;background:linear-gradient(180deg,hsl(330 90% 70%),hsl(200 90% 65%));animation:cm-eq 1.1s ease-in-out infinite;animation-delay:' + d.toFixed(2) + 's"></span>';
+      bars += '<span></span>';
     }
-    return '<span style="display:flex;align-items:flex-end;gap:2px;height:10px">' + bars + '</span>';
+    return bars;
   })();
   var ICON = {
     music: '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>',

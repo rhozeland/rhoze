@@ -138,23 +138,28 @@ const Navbar = () => {
           animate={{ opacity: 1, height: "auto" }}
           className="md:hidden bg-card border-t border-border px-6 pb-6"
         >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              onClick={() => setOpen(false)}
-              className="block py-3 text-muted-foreground hover:text-foreground transition-colors font-body"
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 py-3 text-muted-foreground hover:text-foreground transition-colors font-body"
+              >
+                <Icon size={18} strokeWidth={1.8} />
+                {link.label}
+              </a>
+            );
+          })}
           <button
             type="button"
             onClick={() => { setOpen(false); setCreateOpen(true); }}
-            className="mt-3 inline-block px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
+            className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
           >
-            Create
+            <Sparkles size={15} />
+            Build
           </button>
         </motion.div>
       )}

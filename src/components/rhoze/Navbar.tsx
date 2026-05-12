@@ -98,23 +98,32 @@ const Navbar = () => {
           <span className="font-display text-xl font-semibold text-foreground tracking-normal">Rhozeland</span>
         </a>
 
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+        <div className="hidden md:flex items-center gap-6">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="group flex items-center gap-0 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-transparent group-hover:border-border/60 group-hover:bg-muted/30 transition-all">
+                  <Icon size={18} strokeWidth={1.8} />
+                </span>
+                <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap text-xs font-medium group-hover:max-w-[60px] group-hover:opacity-100 group-hover:ml-1.5 transition-all duration-300 ease-out">
+                  {link.label}
+                </span>
+              </a>
+            );
+          })}
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
-            className="px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           >
-            Create
+            <Sparkles size={15} />
+            <span>Build</span>
           </button>
         </div>
 

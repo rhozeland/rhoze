@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Menu, X, Sparkles, ArrowUpRight, Info, Layers, ShoppingBag, Mail } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
@@ -17,6 +17,40 @@ const Navbar = () => {
   const [hovered, setHovered] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [produceIdx, setProduceIdx] = useState(0);
+  const [distIdx, setDistIdx] = useState(0);
+
+  const distributeSlides = [
+    {
+      tag: "Now Playing",
+      title: "FUS — Rhozeland",
+      cover:
+        "radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))",
+    },
+    {
+      tag: "New Drop",
+      title: "Saint Flair West · Ooak",
+      cover:
+        "radial-gradient(120% 80% at 0% 0%, hsl(20 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 85% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(340 70% 35%), hsl(10 80% 45%))",
+    },
+    {
+      tag: "Live Space",
+      title: "Creator Roundtable · 12",
+      cover:
+        "radial-gradient(120% 80% at 0% 0%, hsl(160 80% 55% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(190 70% 30%), hsl(150 70% 35%))",
+    },
+    {
+      tag: "Upcoming Event",
+      title: "Land Sessions · LA",
+      cover:
+        "radial-gradient(120% 80% at 0% 0%, hsl(48 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(20 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(30 80% 35%), hsl(48 80% 45%))",
+    },
+    {
+      tag: "$Rhoze Rewards",
+      title: "Tier 3 · Citizen +250",
+      cover:
+        "radial-gradient(120% 80% at 0% 0%, hsl(48 95% 65% / 0.95), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(48 80% 40%), hsl(20 85% 45%))",
+    },
+  ];
 
   const producePool = [
     { img: "/images/ooak-the-mask-thumb.png", tag: "Music Video", title: "The Mask", artist: "Ooak" },
@@ -58,6 +92,13 @@ const Navbar = () => {
       clearInterval(t);
     };
   }, [createOpen, produceSlides.length]);
+
+  useEffect(() => {
+    if (!createOpen) return;
+    setDistIdx(0);
+    const t = setInterval(() => setDistIdx((i) => (i + 1) % distributeSlides.length), 2800);
+    return () => clearInterval(t);
+  }, [createOpen, distributeSlides.length]);
 
   return (
     <motion.nav
@@ -283,17 +324,33 @@ const Navbar = () => {
                       </div>
                       <div className="flex flex-1 flex-col p-2 min-h-0">
                         <div className="grid flex-1 grid-cols-[42px_1fr_auto] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] px-2 py-1.5 min-h-0">
-                          <div
-                            className="h-[42px] w-[42px] rounded-md"
-                            style={{
-                              background:
-                                "radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))",
-                              boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.12)",
-                            }}
-                          />
-                          <div className="flex min-w-0 flex-col gap-1">
-                            <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">Now Playing</span>
-                            <div className="truncate text-[0.7rem] font-bold leading-tight">FUS — Rhozeland</div>
+                          <div className="relative h-[42px] w-[42px] overflow-hidden rounded-md" style={{ boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.12)" }}>
+                            <AnimatePresence mode="wait" initial={false}>
+                              <motion.div
+                                key={`cover-${distIdx}`}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.45 }}
+                                className="absolute inset-0 rounded-md"
+                                style={{ background: distributeSlides[distIdx].cover }}
+                              />
+                            </AnimatePresence>
+                          </div>
+                          <div className="relative flex min-w-0 flex-col gap-1">
+                            <AnimatePresence mode="wait" initial={false}>
+                              <motion.div
+                                key={`meta-${distIdx}`}
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -4 }}
+                                transition={{ duration: 0.35 }}
+                                className="flex min-w-0 flex-col gap-1"
+                              >
+                                <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">{distributeSlides[distIdx].tag}</span>
+                                <div className="truncate text-[0.7rem] font-bold leading-tight">{distributeSlides[distIdx].title}</div>
+                              </motion.div>
+                            </AnimatePresence>
                             <div className="flex h-[10px] items-end gap-[2px]" aria-hidden="true">
                               {Array.from({ length: 10 }).map((_, i) => (
                                 <span

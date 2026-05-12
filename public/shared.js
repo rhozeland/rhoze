@@ -28,6 +28,47 @@
   }
   function reshuffleProduce(){ produceSlides = pickRandom(producePool, 3); }
 
+  // Distribute card — Creator OS now-playing rotates through content types
+  var distSlides = [
+    { tag: 'Now Playing', title: 'FUS — Rhozeland', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))' },
+    { tag: 'New Drop', title: 'Saint Flair West · Ooak', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(20 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 85% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(340 70% 35%), hsl(10 80% 45%))' },
+    { tag: 'Live Space', title: 'Creator Roundtable · 12', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(160 80% 55% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(190 70% 30%), hsl(150 70% 35%))' },
+    { tag: 'Upcoming Event', title: 'Land Sessions · LA', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(48 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(20 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(30 80% 35%), hsl(48 80% 45%))' },
+    { tag: '$Rhoze Rewards', title: 'Tier 3 · Citizen +250', cover: 'radial-gradient(120% 80% at 0% 0%, hsl(48 95% 65% / 0.95), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(48 80% 40%), hsl(20 85% 45%))' }
+  ];
+  var distIdx = 0;
+  var distTimer = null;
+  function applyDistSlide(i){
+    var modal = document.getElementById('createModal');
+    if (!modal) return;
+    var cover = modal.querySelector('.cm-app__cover');
+    var tag = modal.querySelector('.cm-app__tag');
+    var title = modal.querySelector('.cm-app__drop-title');
+    var meta = modal.querySelector('.cm-app__player-meta');
+    if (!cover || !tag || !title || !meta) return;
+    var s = distSlides[i % distSlides.length];
+    meta.style.transition = 'opacity .28s ease, transform .28s ease';
+    cover.style.transition = 'opacity .35s ease';
+    meta.style.opacity = '0';
+    meta.style.transform = 'translateY(-3px)';
+    cover.style.opacity = '0';
+    setTimeout(function(){
+      tag.textContent = s.tag;
+      title.textContent = s.title;
+      cover.style.background = s.cover;
+      meta.style.opacity = '1';
+      meta.style.transform = 'translateY(0)';
+      cover.style.opacity = '1';
+    }, 200);
+  }
+  function startDistAuto(){
+    stopDistAuto();
+    distIdx = 0;
+    applyDistSlide(0);
+    distTimer = setInterval(function(){ distIdx = (distIdx + 1) % distSlides.length; applyDistSlide(distIdx); }, 2800);
+  }
+  function stopDistAuto(){ if (distTimer) { clearInterval(distTimer); distTimer = null; } }
+
   function ensureModal(){
     var existing = document.getElementById('createModal');
     if (existing) existing.parentNode.removeChild(existing);
@@ -151,6 +192,7 @@
     produceIdx = 0;
     setProduceSlide(0);
     startProduceAuto();
+    startDistAuto();
   }
   function close(){
     var m = document.getElementById('createModal');
@@ -158,6 +200,7 @@
     m.classList.remove('is-open');
     document.documentElement.style.overflow = '';
     stopProduceAuto();
+    stopDistAuto();
     setTimeout(function(){ if (!m.classList.contains('is-open')) m.hidden = true; }, 220);
   }
   window.openCreateModal = open;

@@ -2,78 +2,21 @@
 
 // Create modal — injected once on every page
 (function(){
-  var produceShots = [
-    { src: '/images/ooak-the-mask-thumb.jpg',       title: 'The Mask',     artist: 'Ooak',          tag: 'Music Video' },
-    { src: '/images/fingaz-mansa-musa-thumb.png',   title: 'Mansa Musa',   artist: 'MONEE FINGAZ',  tag: 'Music Video' },
-    { src: '/images/iimpct-media-thumb.png',        title: 'iiMPCT Media', artist: 'In Studio',     tag: 'Web Series' },
-    { src: '/images/carina-lucky-charm-thumb.jpg',  title: 'Lucky Charm',  artist: 'Carina',        tag: 'Single' },
-    { src: '/images/cozal-holy-water-thumb.png',    title: 'Holy Water',   artist: 'Cozal',         tag: 'Music Video' }
-  ];
-
-  function buildProducePreview(){
-    var slides = produceShots.map(function(s, i){
-      return ''
-        + '<div class="cm-slide' + (i === 0 ? ' is-active' : '') + '" data-cm-slide="' + i + '" aria-hidden="' + (i === 0 ? 'false' : 'true') + '">'
-        +   '<img src="' + s.src + '" alt="" loading="lazy" />'
-        +   '<div class="cm-slide__meta">'
-        +     '<span class="cm-slide__tag">' + s.tag + '</span>'
-        +     '<div class="cm-slide__title">' + s.title + '</div>'
-        +     '<div class="cm-slide__artist">' + s.artist + '</div>'
-        +   '</div>'
-        + '</div>';
-    }).join('');
-    var dots = produceShots.map(function(_, i){
-      return '<button type="button" class="cm-dot' + (i === 0 ? ' is-active' : '') + '" data-cm-dot="' + i + '" aria-label="Show project ' + (i + 1) + '"></button>';
-    }).join('');
-    return ''
-      + '<div class="cm-visual cm-visual--produce" data-cm-carousel>'
-      +   '<div class="cm-slides">' + slides + '</div>'
-      +   '<div class="cm-dots" role="tablist" aria-label="Featured projects">' + dots + '</div>'
-      + '</div>';
-  }
-
-  function buildDistributePreview(){
-    return ''
-      + '<div class="cm-visual cm-visual--distribute" aria-hidden="true">'
-      +   '<div class="cm-app">'
-      +     '<div class="cm-app__bar">'
-      +       '<span class="cm-app__dot"></span><span class="cm-app__dot"></span><span class="cm-app__dot"></span>'
-      +       '<span class="cm-app__url">rhozeland.app <span style="opacity:.55">/ creator</span></span>'
-      +     '</div>'
-      +     '<div class="cm-app__body">'
-      +       '<div class="cm-app__head">'
-      +         '<div class="cm-app__brand"><span class="cm-app__logo"></span><span class="cm-app__brand-text">Creator OS</span></div>'
-      +         '<span class="cm-app__live"><span class="cm-app__live-dot"></span>LIVE</span>'
-      +       '</div>'
-      +       '<div class="cm-app__profile">'
-      +         '<div class="cm-app__avatar"></div>'
-      +         '<div class="cm-app__profile-text">'
-      +           '<div class="cm-app__name">Your studio name</div>'
-      +           '<div class="cm-app__handle">@yourhandle · 12.4k network</div>'
-      +         '</div>'
-      +         '<span class="cm-app__cta">Go live</span>'
-      +       '</div>'
-      +       '<div class="cm-app__tabs">'
-      +         '<span class="cm-app__tab is-active">Drops</span>'
-      +         '<span class="cm-app__tab">Releases</span>'
-      +         '<span class="cm-app__tab">Earnings</span>'
-      +         '<span class="cm-app__tab">Network</span>'
-      +       '</div>'
-      +       '<div class="cm-app__cards">'
-      +         '<div class="cm-app__card cm-app__card--a"><div class="cm-app__thumb"></div><div class="cm-app__card-title">New Drop</div><div class="cm-app__card-meta">Live · 2.1k holders</div></div>'
-      +         '<div class="cm-app__card cm-app__card--b"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Single</div><div class="cm-app__card-meta">Stream · 48h boost</div></div>'
-      +         '<div class="cm-app__card cm-app__card--c"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Earnings</div><div class="cm-app__card-meta">+ $3,290 / wk</div></div>'
-      +       '</div>'
-      +       '<div class="cm-app__footer">'
-      +         '<span class="cm-app__chip">Publish</span>'
-      +         '<span class="cm-app__chip">Schedule</span>'
-      +         '<span class="cm-app__chip">Collab</span>'
-      +         '<span class="cm-app__chip cm-app__chip--accent">$RHOZE rewards</span>'
-      +       '</div>'
-      +     '</div>'
-      +   '</div>'
-      + '</div>';
-  }
+  var produceIcon = ''
+    + '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    +   '<rect x="3" y="3" width="18" height="18" rx="4"/>'
+    +   '<circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/>'
+    +   '<circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/>'
+    +   '<circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>'
+    +   '<circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/>'
+    +   '<circle cx="12" cy="12" r="1.1" fill="currentColor"/>'
+    + '</svg>';
+  var distributeIcon = ''
+    + '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    +   '<path d="M5 14a9 9 0 0 1 9 9"/>'
+    +   '<path d="M5 9a14 14 0 0 1 14 14"/>'
+    +   '<circle cx="5.5" cy="18.5" r="1.6" fill="currentColor"/>'
+    + '</svg>';
 
   function ensureModal(){
     if (document.getElementById('createModal')) return;
@@ -96,16 +39,18 @@
       +       '<h2 id="createModalTitle" class="create-modal__title">What are we building next?</h2>'
       +       '<div class="create-modal__grid">'
       +         '<a class="create-card" href="/start.html">'
-      +           buildProducePreview()
-      +           + '<div class="create-card__body">'
-      +             '<div class="create-card__row"><h3 class="create-card__title">Produce</h3><span class="create-card__arrow" aria-hidden="true">' + arrow + '</span></div>'
+      +           '<div class="create-card__body">'
+      +             '<span class="create-card__icon create-card__icon--produce">' + produceIcon + '</span>'
+      +             '<span class="create-card__arrow" aria-hidden="true">' + arrow + '</span>'
+      +             '<h3 class="create-card__title">Produce</h3>'
       +             '<p class="create-card__desc">Start a project with Rhozeland for studio, visuals, rollout support, and launch planning.</p>'
       +           '</div>'
       +         '</a>'
       +         '<a class="create-card" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">'
-      +           buildDistributePreview()
-      +           + '<div class="create-card__body">'
-      +             '<div class="create-card__row"><h3 class="create-card__title">Distribute</h3><span class="create-card__arrow" aria-hidden="true">' + arrow + '</span></div>'
+      +           '<div class="create-card__body">'
+      +             '<span class="create-card__icon create-card__icon--distribute">' + distributeIcon + '</span>'
+      +             '<span class="create-card__arrow" aria-hidden="true">' + arrow + '</span>'
+      +             '<h3 class="create-card__title">Distribute</h3>'
       +             '<p class="create-card__desc">Open the creator app to publish, connect, and keep your release moving through the network.</p>'
       +           '</div>'
       +         '</a>'
@@ -123,32 +68,6 @@
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape') closeCreateModal();
     });
-    // Carousel
-    var carousel = modal.querySelector('[data-cm-carousel]');
-    if (carousel) {
-      var slides = carousel.querySelectorAll('.cm-slide');
-      var dots = carousel.querySelectorAll('.cm-dot');
-      var idx = 0, timer = null;
-      function show(n){
-        idx = (n + slides.length) % slides.length;
-        slides.forEach(function(el, i){
-          el.classList.toggle('is-active', i === idx);
-          el.setAttribute('aria-hidden', i === idx ? 'false' : 'true');
-        });
-        dots.forEach(function(el, i){ el.classList.toggle('is-active', i === idx); });
-      }
-      function start(){ stop(); timer = setInterval(function(){ show(idx + 1); }, 3200); }
-      function stop(){ if (timer) { clearInterval(timer); timer = null; } }
-      dots.forEach(function(d, i){
-        d.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); show(i); start(); });
-      });
-      carousel.addEventListener('mouseenter', stop);
-      carousel.addEventListener('mouseleave', start);
-      var observer = new MutationObserver(function(){
-        if (modal.classList.contains('is-open')) start(); else stop();
-      });
-      observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
-    }
   }
   function open(){
     ensureModal();

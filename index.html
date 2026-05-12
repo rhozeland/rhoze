@@ -362,7 +362,7 @@
       position: absolute;
       top: clamp(0.5rem, 2vw, 1.5rem);
       right: clamp(0.5rem, 2vw, 2rem);
-      width: clamp(280px, 36vw, 460px);
+      width: clamp(320px, 40vw, 520px);
       aspect-ratio: 1 / 1;
       z-index: 4;
       touch-action: none;
@@ -373,7 +373,7 @@
         position: relative;
         top: auto;
         right: auto;
-        width: min(70vw, 280px);
+        width: min(74vw, 300px);
         margin: 0 auto 1.25rem;
         align-self: center;
       }
@@ -383,9 +383,9 @@
       position: absolute;
       inset: 6%;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 22%, hsl(var(--accent-blue) / 0.28), transparent 55%),
-                  radial-gradient(circle at 70% 78%, hsl(var(--accent-purple) / 0.22), transparent 55%);
-      filter: blur(28px);
+      background: radial-gradient(circle at 30% 22%, hsl(var(--accent-blue) / 0.32), transparent 55%),
+                  radial-gradient(circle at 70% 78%, hsl(var(--accent-purple) / 0.26), transparent 55%);
+      filter: blur(34px);
       pointer-events: none;
     }
     .hero-globe-wrap::after {
@@ -406,6 +406,29 @@
     }
     .hero-globe-svg:active { cursor: grabbing; }
 
+    /* Morphing orb — texture layers crossfade on a slow loop */
+    .orb-tex { opacity: 0; transition: opacity 1.4s ease; }
+    .orb-tex.is-active { opacity: 1; }
+    #orb-spin { transform-origin: 50px 50px; transform-box: fill-box; }
+    @media (prefers-reduced-motion: reduce) {
+      .orb-tex { transition: none; }
+    }
+    /* Texture caption */
+    .orb-caption {
+      position: absolute;
+      left: 50%;
+      bottom: -1.4rem;
+      transform: translateX(-50%);
+      font-family: 'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: hsl(var(--muted));
+      white-space: nowrap;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+
     .hero-copy {
       max-width: 44rem;
       display: flex;
@@ -415,7 +438,7 @@
 
     @media (min-width: 721px) {
       .hero-copy {
-        padding-right: clamp(300px, 38vw, 480px);
+        padding-right: clamp(340px, 42vw, 540px);
         max-width: 100%;
       }
       .hero-copy h1 { max-width: 12ch; }
@@ -2997,67 +3020,137 @@
           </div>
 
           <div class="hero-globe-wrap" aria-hidden="true">
-            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroGlobeSvg">
+            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroOrbSvg">
               <defs>
-                <radialGradient id="hg-ocean" cx="38%" cy="30%" r="78%">
-                  <stop offset="0%"  stop-color="hsl(200 85% 72%)" />
-                  <stop offset="40%" stop-color="hsl(210 75% 52%)" />
-                  <stop offset="78%" stop-color="hsl(220 70% 32%)" />
-                  <stop offset="100%" stop-color="hsl(225 65% 18%)" />
+                <clipPath id="orb-clip"><circle cx="50" cy="50" r="36" /></clipPath>
+
+                <!-- 1. Gradient mesh -->
+                <radialGradient id="orb-mesh-a" cx="32%" cy="28%" r="70%">
+                  <stop offset="0%"  stop-color="hsl(280 90% 72%)" />
+                  <stop offset="55%" stop-color="hsl(210 80% 48%)" />
+                  <stop offset="100%" stop-color="hsl(230 70% 18%)" />
                 </radialGradient>
-                <radialGradient id="hg-land" cx="42%" cy="32%" r="80%">
-                  <stop offset="0%"  stop-color="hsl(85 55% 62%)" />
-                  <stop offset="55%" stop-color="hsl(120 40% 42%)" />
-                  <stop offset="100%" stop-color="hsl(150 45% 22%)" />
+                <radialGradient id="orb-mesh-b" cx="78%" cy="72%" r="60%">
+                  <stop offset="0%"  stop-color="hsl(20 95% 65%)" stop-opacity="0.85" />
+                  <stop offset="100%" stop-color="hsl(330 80% 55%)" stop-opacity="0" />
                 </radialGradient>
-                <radialGradient id="hg-hi" cx="38%" cy="28%" r="55%">
-                  <stop offset="0%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.35" />
-                  <stop offset="60%" stop-color="hsl(0 0% 100%)" stop-opacity="0.05" />
-                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
+                <radialGradient id="orb-mesh-c" cx="20%" cy="80%" r="55%">
+                  <stop offset="0%"  stop-color="hsl(170 85% 60%)" stop-opacity="0.7" />
+                  <stop offset="100%" stop-color="hsl(170 85% 60%)" stop-opacity="0" />
                 </radialGradient>
-                <radialGradient id="hg-shadow" cx="70%" cy="78%" r="60%">
-                  <stop offset="0%"  stop-color="hsl(225 70% 8%)" stop-opacity="0" />
-                  <stop offset="100%" stop-color="hsl(225 70% 8%)" stop-opacity="0.55" />
-                </radialGradient>
-                <!-- Iridescent texture overlay -->
-                <linearGradient id="hg-irid" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%"   stop-color="hsl(320 80% 70%)" stop-opacity="0.55" />
-                  <stop offset="35%"  stop-color="hsl(30 85% 65%)"  stop-opacity="0.5" />
-                  <stop offset="70%"  stop-color="hsl(175 80% 60%)" stop-opacity="0.55" />
-                  <stop offset="100%" stop-color="hsl(280 70% 65%)" stop-opacity="0.5" />
+
+                <!-- 2. Liquid chrome -->
+                <linearGradient id="orb-chrome" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"   stop-color="hsl(220 15% 92%)" />
+                  <stop offset="22%"  stop-color="hsl(220 20% 38%)" />
+                  <stop offset="42%"  stop-color="hsl(220 18% 88%)" />
+                  <stop offset="58%"  stop-color="hsl(220 25% 22%)" />
+                  <stop offset="78%"  stop-color="hsl(220 18% 80%)" />
+                  <stop offset="100%" stop-color="hsl(220 25% 30%)" />
                 </linearGradient>
-                <filter id="hg-noise" x="0" y="0" width="100%" height="100%">
-                  <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="7" result="t"/>
-                  <feColorMatrix in="t" type="matrix"
+                <filter id="orb-chrome-warp" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.035" numOctaves="2" seed="4" result="w">
+                    <animate attributeName="seed" from="0" to="24" dur="28s" repeatCount="indefinite" />
+                  </feTurbulence>
+                  <feDisplacementMap in="SourceGraphic" in2="w" scale="9" />
+                </filter>
+
+                <!-- 3. Risograph grain -->
+                <filter id="orb-noise" x="0" y="0" width="100%" height="100%">
+                  <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="9" result="n"/>
+                  <feColorMatrix in="n" type="matrix"
                     values="0 0 0 0 1
                             0 0 0 0 1
                             0 0 0 0 1
-                            0 0 0 0.55 0"/>
+                            0 0 0 0.9 0"/>
                 </filter>
-                <filter id="hg-warp" x="-10%" y="-10%" width="120%" height="120%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.025 0.04" numOctaves="2" seed="3" result="warp">
-                    <animate attributeName="seed" from="0" to="20" dur="22s" repeatCount="indefinite" />
+
+                <!-- 4. Topographic lines via warped concentric circles -->
+                <filter id="orb-topo-warp" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="11" result="tw">
+                    <animate attributeName="seed" from="0" to="20" dur="40s" repeatCount="indefinite" />
                   </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" in2="warp" scale="6" />
+                  <feDisplacementMap in="SourceGraphic" in2="tw" scale="14" />
                 </filter>
-                <clipPath id="hg-clip"><circle cx="50" cy="50" r="36" /></clipPath>
+
+                <!-- Highlight + shadow shared across textures -->
+                <radialGradient id="orb-hi" cx="36%" cy="26%" r="55%">
+                  <stop offset="0%"   stop-color="hsl(0 0% 100%)" stop-opacity="0.42" />
+                  <stop offset="60%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.06" />
+                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-shadow" cx="72%" cy="78%" r="62%">
+                  <stop offset="0%"   stop-color="hsl(240 50% 6%)" stop-opacity="0" />
+                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.55" />
+                </radialGradient>
               </defs>
-              <ellipse cx="50" cy="88" rx="24" ry="5" fill="hsl(225 60% 12% / 0.35)" />
-              <circle cx="50" cy="50" r="37.2" fill="hsl(200 85% 70% / 0.18)" />
-              <circle cx="50" cy="50" r="36" fill="url(#hg-ocean)" stroke="hsl(225 65% 22%)" stroke-width="0.5" />
-              <g clip-path="url(#hg-clip)">
-                <g id="hg-continents"></g>
-                <g id="hg-grid" stroke="hsl(0 0% 100% / 0.12)" stroke-width="0.26" fill="none"></g>
-                <!-- Animated iridescent sheen layer -->
-                <g filter="url(#hg-warp)" opacity="0.7" style="mix-blend-mode: overlay;">
-                  <circle cx="50" cy="50" r="36" fill="url(#hg-irid)" />
+
+              <!-- Drop shadow under orb -->
+              <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.32)" />
+              <!-- Outer halo ring -->
+              <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
+
+              <g clip-path="url(#orb-clip)">
+                <!-- Drag-to-spin container -->
+                <g id="orb-spin">
+                  <!-- 1. GRADIENT MESH -->
+                  <g class="orb-tex is-active" data-tex="0">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-a)" />
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-b)" />
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-c)" />
+                  </g>
+
+                  <!-- 2. LIQUID CHROME -->
+                  <g class="orb-tex" data-tex="1">
+                    <circle cx="50" cy="50" r="36" fill="hsl(220 12% 14%)" />
+                    <g filter="url(#orb-chrome-warp)">
+                      <rect x="14" y="14" width="72" height="72" fill="url(#orb-chrome)" />
+                    </g>
+                  </g>
+
+                  <!-- 3. RISOGRAPH (two-color halftone) -->
+                  <g class="orb-tex" data-tex="2">
+                    <circle cx="50" cy="50" r="36" fill="hsl(38 85% 78%)" />
+                    <circle cx="50" cy="50" r="36" fill="hsl(0 80% 56%)" filter="url(#orb-noise)" opacity="0.85" style="mix-blend-mode: multiply;" />
+                    <circle cx="50" cy="50" r="36" fill="hsl(220 70% 30%)" filter="url(#orb-noise)" opacity="0.55" style="mix-blend-mode: multiply;" transform="translate(0.6 0.4)" />
+                  </g>
+
+                  <!-- 4. TOPOGRAPHIC LINES -->
+                  <g class="orb-tex" data-tex="3">
+                    <circle cx="50" cy="50" r="36" fill="hsl(150 35% 8%)" />
+                    <g filter="url(#orb-topo-warp)" stroke="hsl(140 60% 70% / 0.55)" stroke-width="0.35" fill="none">
+                      <circle cx="50" cy="50" r="4" />
+                      <circle cx="50" cy="50" r="7" />
+                      <circle cx="50" cy="50" r="10" />
+                      <circle cx="50" cy="50" r="13" />
+                      <circle cx="50" cy="50" r="16" />
+                      <circle cx="50" cy="50" r="19" />
+                      <circle cx="50" cy="50" r="22" />
+                      <circle cx="50" cy="50" r="25" />
+                      <circle cx="50" cy="50" r="28" />
+                      <circle cx="50" cy="50" r="31" />
+                      <circle cx="50" cy="50" r="34" />
+                    </g>
+                  </g>
+
+                  <!-- 5. STARFIELD -->
+                  <g class="orb-tex" data-tex="4">
+                    <radialGradient id="orb-night" cx="40%" cy="30%" r="80%">
+                      <stop offset="0%"   stop-color="hsl(250 60% 22%)" />
+                      <stop offset="60%"  stop-color="hsl(245 70% 10%)" />
+                      <stop offset="100%" stop-color="hsl(245 80% 4%)" />
+                    </radialGradient>
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-night)" />
+                    <g id="orb-stars" fill="hsl(0 0% 100%)"></g>
+                  </g>
                 </g>
-                <!-- Subtle film grain -->
-                <circle cx="50" cy="50" r="36" fill="hsl(0 0% 100%)" filter="url(#hg-noise)" opacity="0.18" style="mix-blend-mode: soft-light;" />
-                <circle cx="50" cy="50" r="36" fill="url(#hg-shadow)" />
-                <circle cx="50" cy="50" r="36" fill="url(#hg-hi)" />
+
+                <!-- Shared lighting -->
+                <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
+                <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
               </g>
             </svg>
+            <span class="orb-caption" id="orbCaption">Gradient mesh</span>
           </div>
 
         </div>
@@ -4025,97 +4118,69 @@
     })();
   </script>
   <script>
-    // Hero SVG globe — drag to spin, idle auto-rotate.
+    // Hero abstract orb — morphs through textures, drag to spin.
     (function(){
-      var svg = document.getElementById('heroGlobeSvg');
+      var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
-      var contG = document.getElementById('hg-continents');
-      var gridG = document.getElementById('hg-grid');
-      var cx = 50, cy = 50, r = 36;
-      var rotation = -22, isDragging = false, dragStart = null;
+      var wrap = svg.parentElement;
+      var spin = document.getElementById('orb-spin');
+      var caption = document.getElementById('orbCaption');
+      var textures = svg.querySelectorAll('.orb-tex');
+      var labels = ['Gradient mesh','Liquid chrome','Risograph','Topographic','Starfield'];
 
-      var CONTINENTS = [
-        {p:[[70,-168],[72,-140],[74,-110],[70,-82],[62,-64],[50,-56],[44,-64],[42,-72],[32,-80],[25,-80],[18,-92],[15,-98],[22,-106],[30,-116],[40,-124],[49,-125],[55,-132],[60,-148],[66,-162]]},
-        {p:[[12,-72],[10,-62],[5,-52],[-2,-48],[-12,-38],[-22,-40],[-32,-52],[-42,-64],[-52,-70],[-54,-72],[-46,-74],[-36,-72],[-22,-70],[-10,-78],[0,-80],[8,-78]]},
-        {p:[[70,-8],[70,24],[68,40],[60,50],[54,38],[44,40],[38,28],[36,14],[38,-2],[44,-10],[50,-4],[58,-6],[64,-10]]},
-        {p:[[36,-8],[36,12],[32,24],[30,34],[16,42],[10,50],[-4,42],[-18,38],[-30,32],[-34,22],[-32,18],[-26,14],[-20,12],[-12,12],[-2,8],[4,-2],[10,-14],[16,-16],[22,-16],[28,-10]]},
-        {p:[[78,60],[80,100],[76,140],[70,170],[60,168],[54,156],[50,142],[42,132],[34,134],[22,120],[10,108],[4,100],[10,92],[22,88],[22,72],[30,60],[38,50],[44,46],[54,44],[60,50],[70,56]]},
-        {p:[[-12,130],[-10,140],[-12,152],[-22,154],[-32,152],[-38,146],[-36,138],[-32,128],[-26,120],[-18,122]]},
-        {p:[[82,-32],[80,-18],[70,-22],[62,-42],[70,-52],[78,-50]]}
-      ];
-
-      function project(lat, lng, rot) {
-        var lr = lat * Math.PI/180, gr = (lng + rot) * Math.PI/180;
-        var c = Math.cos(lr);
-        return { x: cx + r * c * Math.sin(gr), y: cy - r * Math.sin(lr), d: c * Math.cos(gr) };
-      }
-
-      function continentPath(pts, rot) {
-        var pj = pts.map(function(p){ return project(p[0], p[1], rot); });
-        if (!pj.some(function(p){return p.d > 0;})) return '';
-        var path = '', drawing = false;
-        pj.forEach(function(p){
-          if (p.d > -0.05) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
-          else drawing = false;
-        });
-        if (drawing) path += ' Z';
-        return path;
-      }
-
-      function latPath(lat, rot) {
-        var path = '', drawing = false;
-        for (var lng = -180; lng <= 180; lng += 5) {
-          var p = project(lat, lng, rot);
-          if (p.d > 0.02) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
-          else drawing = false;
+      // Seed starfield once
+      var starsG = document.getElementById('orb-stars');
+      if (starsG) {
+        var s = '';
+        for (var i = 0; i < 70; i++) {
+          var a = Math.random() * Math.PI * 2;
+          var rr = Math.sqrt(Math.random()) * 33;
+          var x = (50 + Math.cos(a) * rr).toFixed(2);
+          var y = (50 + Math.sin(a) * rr).toFixed(2);
+          var sz = (Math.random() * 0.5 + 0.18).toFixed(2);
+          var op = (Math.random() * 0.7 + 0.3).toFixed(2);
+          s += '<circle cx="'+x+'" cy="'+y+'" r="'+sz+'" opacity="'+op+'"/>';
         }
-        return path;
-      }
-      function lngPath(lng, rot) {
-        var path = '', drawing = false;
-        for (var lat = -88; lat <= 88; lat += 4) {
-          var p = project(lat, lng, rot);
-          if (p.d > 0.02) { path += (drawing ? ' L' : 'M') + ' ' + p.x.toFixed(2) + ' ' + p.y.toFixed(2); drawing = true; }
-          else drawing = false;
-        }
-        return path;
+        starsG.innerHTML = s;
       }
 
-      function render() {
-        var ch = '';
-        CONTINENTS.forEach(function(c){
-          var d = continentPath(c.p, rotation);
-          if (d) ch += '<path d="'+d+'" fill="url(#hg-land)" stroke="hsl(150 50% 18% / 0.6)" stroke-width="0.25" stroke-linejoin="round" />';
-        });
-        contG.innerHTML = ch;
-
-        var gh = '';
-        [-52,-24,0,24,52].forEach(function(l){ var d=latPath(l,rotation); if(d) gh += '<path d="'+d+'" />'; });
-        [-90,-45,0,45,90].forEach(function(l){ var d=lngPath(l,rotation); if(d) gh += '<path d="'+d+'" />'; });
-        gridG.innerHTML = gh;
+      // Texture cycler
+      var idx = 0;
+      function setTex(i) {
+        idx = i;
+        textures.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
+        if (caption) caption.textContent = labels[i] || '';
       }
+      var cycleTimer = setInterval(function(){
+        setTex((idx + 1) % textures.length);
+      }, 5200);
 
-      function tick() {
-        if (!isDragging) { rotation = (rotation + 0.18) % 360; render(); }
+      // Drag-to-spin + idle auto-rotate (JS so drag releases don't jump).
+      var rotation = 0, isDragging = false, dragStart = null;
+      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function apply(){ spin.setAttribute('transform', 'rotate(' + rotation.toFixed(2) + ' 50 50)'); }
+      function tick(){
+        if (!isDragging && !prefersReduced) { rotation = (rotation + 0.1) % 360; apply(); }
         requestAnimationFrame(tick);
       }
-
       svg.addEventListener('pointerdown', function(e){
         isDragging = true;
-        dragStart = { x: e.clientX, rot: rotation };
+        dragStart = { x: e.clientX, base: rotation };
         try { svg.setPointerCapture(e.pointerId); } catch(_){}
       });
       svg.addEventListener('pointermove', function(e){
         if (!isDragging || !dragStart) return;
-        rotation = dragStart.rot + (e.clientX - dragStart.x) * 0.38;
-        render();
+        rotation = dragStart.base + (e.clientX - dragStart.x) * 0.45;
+        apply();
       });
-      function endDrag(e){ isDragging = false; dragStart = null; try { svg.releasePointerCapture(e.pointerId); } catch(_){} }
+      function endDrag(e){
+        isDragging = false; dragStart = null;
+        try { svg.releasePointerCapture(e.pointerId); } catch(_){}
+      }
       svg.addEventListener('pointerup', endDrag);
       svg.addEventListener('pointercancel', endDrag);
       svg.addEventListener('pointerleave', endDrag);
-
-      render();
+      apply();
       tick();
     })();
   </script>

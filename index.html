@@ -3038,25 +3038,44 @@
             <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroOrbSvg">
               <defs>
                 <clipPath id="orb-clip"><circle cx="50" cy="50" r="36" /></clipPath>
-                <radialGradient id="orb-sphere" cx="34%" cy="28%" r="82%">
-                  <stop offset="0%" stop-color="hsl(205 28% 92%)" stop-opacity="0.78" />
-                  <stop offset="38%" stop-color="hsl(214 42% 58%)" stop-opacity="0.72" />
-                  <stop offset="72%" stop-color="hsl(271 42% 35%)" stop-opacity="0.56" />
-                  <stop offset="100%" stop-color="hsl(232 45% 16%)" stop-opacity="0.94" />
+
+                <!-- Skin 1: Chrome / aurora -->
+                <radialGradient id="orb-chrome" cx="34%" cy="28%" r="82%">
+                  <stop offset="0%" stop-color="hsl(205 28% 95%)" />
+                  <stop offset="42%" stop-color="hsl(214 42% 60%)" />
+                  <stop offset="78%" stop-color="hsl(271 42% 32%)" />
+                  <stop offset="100%" stop-color="hsl(232 45% 12%)" />
                 </radialGradient>
-                <linearGradient id="orb-ribbon" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="hsl(48 100% 62%)" stop-opacity="0.74" />
-                  <stop offset="36%" stop-color="hsl(345 88% 62%)" stop-opacity="0.62" />
-                  <stop offset="72%" stop-color="hsl(203 94% 58%)" stop-opacity="0.58" />
-                  <stop offset="100%" stop-color="hsl(159 64% 48%)" stop-opacity="0.48" />
+                <linearGradient id="orb-aurora" x1="0" y1="14" x2="100" y2="86" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="hsl(48 100% 62%)" stop-opacity="0.55" />
+                  <stop offset="40%" stop-color="hsl(345 88% 62%)" stop-opacity="0.45" />
+                  <stop offset="75%" stop-color="hsl(203 94% 58%)" stop-opacity="0.45" />
+                  <stop offset="100%" stop-color="hsl(159 64% 48%)" stop-opacity="0.5" />
                 </linearGradient>
-                <pattern id="orb-pop-dots" x="0" y="0" width="3.6" height="3.6" patternUnits="userSpaceOnUse">
-                  <circle cx="1.8" cy="1.8" r="0.48" fill="hsl(0 0% 100% / 0.28)" />
+
+                <!-- Skin 2: Pop Rhozeland (halftone) -->
+                <linearGradient id="orb-pop-base" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="hsl(330 90% 64%)" />
+                  <stop offset="35%" stop-color="hsl(28 95% 60%)" />
+                  <stop offset="65%" stop-color="hsl(48 95% 58%)" />
+                  <stop offset="100%" stop-color="hsl(210 90% 56%)" />
+                </linearGradient>
+                <pattern id="orb-pop-dots" x="0" y="0" width="3.4" height="3.4" patternUnits="userSpaceOnUse">
+                  <circle cx="1.7" cy="1.7" r="0.55" fill="hsl(240 30% 8% / 0.32)" />
                 </pattern>
+
+                <!-- Skin 3: Earth -->
+                <radialGradient id="orb-ocean" cx="40%" cy="32%" r="80%">
+                  <stop offset="0%" stop-color="hsl(200 80% 55%)" />
+                  <stop offset="55%" stop-color="hsl(212 75% 38%)" />
+                  <stop offset="100%" stop-color="hsl(225 70% 14%)" />
+                </radialGradient>
+
+                <!-- Shared overlays -->
                 <filter id="orb-grain" x="0" y="0" width="100%" height="100%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="8" />
+                  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="6" />
                   <feColorMatrix type="saturate" values="0" />
-                  <feComponentTransfer><feFuncA type="table" tableValues="0 0.18" /></feComponentTransfer>
+                  <feComponentTransfer><feFuncA type="table" tableValues="0 0.16" /></feComponentTransfer>
                 </filter>
                 <radialGradient id="orb-hi" cx="35%" cy="27%" r="54%">
                   <stop offset="0%" stop-color="hsl(0 0% 100%)" stop-opacity="0.48" />
@@ -3065,32 +3084,57 @@
                 </radialGradient>
                 <radialGradient id="orb-shadow" cx="76%" cy="82%" r="70%">
                   <stop offset="0%" stop-color="hsl(240 50% 6%)" stop-opacity="0" />
-                  <stop offset="72%" stop-color="hsl(240 50% 6%)" stop-opacity="0.06" />
-                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.28" />
+                  <stop offset="70%" stop-color="hsl(240 50% 6%)" stop-opacity="0.1" />
+                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.36" />
                 </radialGradient>
               </defs>
+
               <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.28)" />
               <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
+
               <g clip-path="url(#orb-clip)">
                 <g id="orbSpin" class="orb-spin">
-                  <circle cx="50" cy="50" r="36" fill="url(#orb-sphere)" />
-                  <circle cx="50" cy="50" r="36" fill="url(#orb-pop-dots)" opacity="0.45" />
-                  <g class="orb-surface-detail">
-                    <path d="M13 45 C25 33 35 29 49 33 C61 36 70 32 88 20 L93 33 C74 44 62 50 48 45 C34 40 25 45 13 57 Z" fill="url(#orb-ribbon)" opacity="0.76" />
-                    <path d="M5 70 C22 59 36 56 51 62 C65 68 76 66 95 54 L98 71 C80 84 64 86 48 77 C33 69 20 73 5 84 Z" fill="hsl(159 64% 48% / 0.32)" />
-                    <path d="M18 22 C35 16 49 17 65 25 C75 31 84 30 95 23 L95 35 C82 43 70 42 58 35 C43 26 31 28 18 34 Z" fill="hsl(0 0% 100% / 0.22)" />
-                    <path d="M22 50 C34 43 43 42 55 48 C64 53 73 52 86 44" fill="none" stroke="hsl(0 0% 100% / 0.34)" stroke-width="0.7" />
-                    <path d="M15 62 C29 55 39 56 50 63 C62 70 75 68 91 58" fill="none" stroke="hsl(48 100% 62% / 0.38)" stroke-width="0.65" />
+                  <!-- Skin 1: Chrome / Aurora -->
+                  <g class="orb-skin is-active" data-skin="0">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-chrome)" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-aurora)" opacity="0.85" />
+                    <path d="M14 46 C26 36 38 34 50 38 C62 42 74 38 86 30" fill="none" stroke="hsl(0 0% 100% / 0.32)" stroke-width="0.7" />
+                    <path d="M14 60 C28 53 40 54 52 60 C64 66 76 64 86 56" fill="none" stroke="hsl(48 100% 62% / 0.4)" stroke-width="0.65" />
                   </g>
-                  <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.58" />
+
+                  <!-- Skin 2: Pop Rhozeland -->
+                  <g class="orb-skin" data-skin="1">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-pop-base)" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-pop-dots)" opacity="0.85" />
+                    <path d="M14 38 C28 30 42 30 56 36 C68 41 78 39 86 32" fill="none" stroke="hsl(0 0% 100% / 0.55)" stroke-width="0.9" />
+                    <path d="M14 64 C28 56 42 56 56 62 C68 67 78 65 86 58" fill="none" stroke="hsl(240 30% 8% / 0.4)" stroke-width="0.9" />
+                  </g>
+
+                  <!-- Skin 3: Earth -->
+                  <g class="orb-skin" data-skin="2">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-ocean)" />
+                    <!-- Continent shapes (stylized, kept inside r=36) -->
+                    <path d="M22 40 C28 34 36 33 42 36 C48 39 50 44 47 49 C44 54 36 55 30 51 C25 48 22 45 22 40 Z" fill="hsl(120 38% 42%)" opacity="0.85" />
+                    <path d="M52 32 C60 30 68 32 72 38 C75 43 72 48 66 49 C58 50 52 46 50 40 C49 36 50 33 52 32 Z" fill="hsl(110 35% 40%)" opacity="0.85" />
+                    <path d="M40 58 C48 56 56 58 62 62 C68 66 66 72 58 73 C50 74 42 70 40 64 Z" fill="hsl(100 32% 38%)" opacity="0.85" />
+                    <path d="M22 62 C28 60 32 62 32 66 C32 70 26 72 22 70 Z" fill="hsl(115 35% 40%)" opacity="0.8" />
+                    <!-- Cloud wisps -->
+                    <path d="M18 30 C30 26 42 28 54 26" fill="none" stroke="hsl(0 0% 100% / 0.55)" stroke-width="1.2" stroke-linecap="round" />
+                    <path d="M30 70 C42 67 54 70 70 67" fill="none" stroke="hsl(0 0% 100% / 0.45)" stroke-width="1" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Grain over all skins -->
+                  <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.5" />
                 </g>
-                <g id="orbParallax" class="orb-glint">
+
+                <!-- Lighting -->
+                <g class="orb-lighting">
                   <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
                   <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
                 </g>
               </g>
             </svg>
-            <span class="orb-caption" id="orbCaption">Drag to spin</span>
+            <span class="orb-caption" id="orbCaption">Chrome aurora</span>
           </div>
 
         </div>

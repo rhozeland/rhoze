@@ -357,14 +357,14 @@
       padding: clamp(2.5rem, 5vw, 3.5rem) 2rem clamp(2.5rem, 5vw, 4rem);
     }
 
-    /* Globe block — anchored top-right of hero, out of flow */
+    /* Globe block — anchored top-right, visually behind copy/proof links */
     .hero-globe-wrap {
       position: absolute;
       top: clamp(0.5rem, 2vw, 1.5rem);
       right: clamp(0.5rem, 2vw, 2rem);
       width: clamp(320px, 40vw, 520px);
       aspect-ratio: 1 / 1;
-      z-index: 4;
+      z-index: 2;
       touch-action: none;
       user-select: none;
     }
@@ -406,13 +406,18 @@
     }
     .hero-globe-svg:active { cursor: grabbing; }
 
-    /* Morphing orb — each texture fully covers the sphere before rotation */
-    .orb-tex { opacity: 0; visibility: hidden; transition: opacity 0.75s ease, visibility 0s linear 0.75s; }
-    .orb-tex.is-active { opacity: 1; visibility: visible; transition-delay: 0s; }
-    .orb-tex-bg { pointer-events:none; }
-    #orb-spin { transform-origin: 50px 50px; transform-box: view-box; will-change: transform; }
+    /* Stable morphing orb — no rotating clipped textures */
+    .orb-skin { opacity: 0; transition: opacity 1s ease; }
+    .orb-skin.is-active { opacity: 1; }
+    .orb-drift { transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
+    .orb-glint { transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
+    @keyframes orb-drift {
+      0%, 100% { transform: translate(-1px, 1px) scale(1); }
+      50% { transform: translate(1.5px, -1px) scale(1.025); }
+    }
     @media (prefers-reduced-motion: reduce) {
-      .orb-tex { transition: none; }
+      .orb-skin { transition: none; }
+      .orb-drift { animation: none; }
     }
     /* Texture caption */
     .orb-caption {
@@ -435,6 +440,8 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      position: relative;
+      z-index: 5;
     }
 
     @media (min-width: 721px) {
@@ -590,6 +597,7 @@
 
     .hero-proof-links {
       position: relative;
+      z-index: 6;
       overflow: hidden;
       margin-top: 1.3rem;
     }
@@ -605,6 +613,8 @@
     }
 
     .hero-proof-track-wrap {
+      position: relative;
+      z-index: 1;
       mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
       -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
       overflow: hidden;
@@ -3024,136 +3034,67 @@
             <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroOrbSvg">
               <defs>
                 <clipPath id="orb-clip"><circle cx="50" cy="50" r="36" /></clipPath>
-
-                <!-- 1. Gradient mesh -->
-                <radialGradient id="orb-mesh-a" cx="32%" cy="28%" r="70%">
-                  <stop offset="0%"  stop-color="hsl(280 90% 72%)" />
-                  <stop offset="55%" stop-color="hsl(210 80% 48%)" />
-                  <stop offset="100%" stop-color="hsl(230 70% 18%)" />
+                <radialGradient id="orb-base" cx="34%" cy="30%" r="78%">
+                  <stop offset="0%" stop-color="hsl(205 22% 88%)" stop-opacity="0.72" />
+                  <stop offset="44%" stop-color="hsl(215 18% 58%)" stop-opacity="0.78" />
+                  <stop offset="100%" stop-color="hsl(232 38% 19%)" stop-opacity="0.92" />
                 </radialGradient>
-                <radialGradient id="orb-mesh-b" cx="78%" cy="72%" r="60%">
-                  <stop offset="0%"  stop-color="hsl(20 95% 65%)" stop-opacity="0.85" />
-                  <stop offset="100%" stop-color="hsl(330 80% 55%)" stop-opacity="0" />
+                <radialGradient id="orb-rose-a" cx="25%" cy="28%" r="68%">
+                  <stop offset="0%" stop-color="hsl(330 62% 78%)" stop-opacity="0.62" />
+                  <stop offset="56%" stop-color="hsl(210 70% 58%)" stop-opacity="0.28" />
+                  <stop offset="100%" stop-color="hsl(170 52% 42%)" stop-opacity="0" />
                 </radialGradient>
-                <radialGradient id="orb-mesh-c" cx="20%" cy="80%" r="55%">
-                  <stop offset="0%"  stop-color="hsl(170 85% 60%)" stop-opacity="0.7" />
-                  <stop offset="100%" stop-color="hsl(170 85% 60%)" stop-opacity="0" />
-                </radialGradient>
-
-                <!-- 2. Liquid chrome -->
-                <linearGradient id="orb-chrome" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%"   stop-color="hsl(220 15% 92%)" />
-                  <stop offset="22%"  stop-color="hsl(220 20% 38%)" />
-                  <stop offset="42%"  stop-color="hsl(220 18% 88%)" />
-                  <stop offset="58%"  stop-color="hsl(220 25% 22%)" />
-                  <stop offset="78%"  stop-color="hsl(220 18% 80%)" />
-                  <stop offset="100%" stop-color="hsl(220 25% 30%)" />
+                <linearGradient id="orb-chrome-soft" x1="10%" y1="12%" x2="86%" y2="88%">
+                  <stop offset="0%" stop-color="hsl(220 16% 92%)" stop-opacity="0.62" />
+                  <stop offset="38%" stop-color="hsl(222 20% 35%)" stop-opacity="0.18" />
+                  <stop offset="64%" stop-color="hsl(0 0% 100%)" stop-opacity="0.36" />
+                  <stop offset="100%" stop-color="hsl(230 35% 20%)" stop-opacity="0.22" />
                 </linearGradient>
-                <filter id="orb-chrome-warp" x="-10%" y="-10%" width="120%" height="120%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.035" numOctaves="2" seed="4" result="w">
-                    <animate attributeName="seed" from="0" to="24" dur="28s" repeatCount="indefinite" />
-                  </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" in2="w" scale="9" />
+                <filter id="orb-grain" x="0" y="0" width="100%" height="100%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="2" seed="8" />
+                  <feColorMatrix type="saturate" values="0" />
+                  <feComponentTransfer><feFuncA type="table" tableValues="0 0.18" /></feComponentTransfer>
                 </filter>
-
-                <!-- 3. Risograph grain -->
-                <filter id="orb-noise" x="0" y="0" width="100%" height="100%">
-                  <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="9" result="n"/>
-                  <feColorMatrix in="n" type="matrix"
-                    values="0 0 0 0 1
-                            0 0 0 0 1
-                            0 0 0 0 1
-                            0 0 0 0.9 0"/>
-                </filter>
-
-                <!-- 4. Topographic lines via warped concentric circles -->
-                <filter id="orb-topo-warp" x="-10%" y="-10%" width="120%" height="120%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="11" result="tw">
-                    <animate attributeName="seed" from="0" to="20" dur="40s" repeatCount="indefinite" />
-                  </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" in2="tw" scale="14" />
-                </filter>
-
-                <!-- Highlight + shadow shared across textures -->
-                <radialGradient id="orb-hi" cx="36%" cy="26%" r="55%">
-                  <stop offset="0%"   stop-color="hsl(0 0% 100%)" stop-opacity="0.42" />
-                  <stop offset="60%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.06" />
+                <radialGradient id="orb-hi" cx="35%" cy="27%" r="54%">
+                  <stop offset="0%" stop-color="hsl(0 0% 100%)" stop-opacity="0.48" />
+                  <stop offset="58%" stop-color="hsl(0 0% 100%)" stop-opacity="0.07" />
                   <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
                 </radialGradient>
-                <radialGradient id="orb-shadow" cx="72%" cy="78%" r="62%">
-                  <stop offset="0%"   stop-color="hsl(240 50% 6%)" stop-opacity="0" />
-                  <stop offset="70%"  stop-color="hsl(240 50% 6%)" stop-opacity="0.05" />
-                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.18" />
+                <radialGradient id="orb-shadow" cx="76%" cy="82%" r="70%">
+                  <stop offset="0%" stop-color="hsl(240 50% 6%)" stop-opacity="0" />
+                  <stop offset="72%" stop-color="hsl(240 50% 6%)" stop-opacity="0.06" />
+                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.28" />
                 </radialGradient>
               </defs>
-
-              <!-- Drop shadow under orb -->
-              <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.32)" />
-              <!-- Outer halo ring -->
+              <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.28)" />
               <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
-
               <g clip-path="url(#orb-clip)">
-                <!-- Drag-to-spin container -->
-                <g id="orb-spin">
-                  <!-- 1. GRADIENT MESH -->
-                  <g class="orb-tex is-active" data-tex="0">
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="hsl(230 70% 18%)" />
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="url(#orb-mesh-a)" />
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="url(#orb-mesh-b)" />
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="url(#orb-mesh-c)" />
-                  </g>
-
-                  <!-- 2. LIQUID CHROME -->
-                  <g class="orb-tex" data-tex="1">
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="hsl(220 12% 14%)" />
-                    <g filter="url(#orb-chrome-warp)">
-                      <rect class="orb-tex-bg" x="-10" y="-10" width="120" height="120" fill="url(#orb-chrome)" />
-                    </g>
-                  </g>
-
-                  <!-- 3. RISOGRAPH (two-color halftone) -->
-                  <g class="orb-tex" data-tex="2">
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="hsl(38 85% 78%)" />
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="hsl(0 80% 56%)" filter="url(#orb-noise)" opacity="0.85" style="mix-blend-mode: multiply;" />
-                    <rect class="orb-tex-bg" x="-4" y="-4" width="108" height="108" fill="hsl(220 70% 30%)" filter="url(#orb-noise)" opacity="0.55" style="mix-blend-mode: multiply;" transform="translate(0.6 0.4)" />
-                  </g>
-
-                  <!-- 4. TOPOGRAPHIC LINES -->
-                  <g class="orb-tex" data-tex="3">
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="hsl(150 35% 8%)" />
-                    <g filter="url(#orb-topo-warp)" stroke="hsl(140 60% 70% / 0.55)" stroke-width="0.35" fill="none">
-                      <circle cx="50" cy="50" r="4" />
-                      <circle cx="50" cy="50" r="7" />
-                      <circle cx="50" cy="50" r="10" />
-                      <circle cx="50" cy="50" r="13" />
-                      <circle cx="50" cy="50" r="16" />
-                      <circle cx="50" cy="50" r="19" />
-                      <circle cx="50" cy="50" r="22" />
-                      <circle cx="50" cy="50" r="25" />
-                      <circle cx="50" cy="50" r="28" />
-                      <circle cx="50" cy="50" r="31" />
-                      <circle cx="50" cy="50" r="34" />
-                    </g>
-                  </g>
-
-                  <!-- 5. STARFIELD -->
-                  <g class="orb-tex" data-tex="4">
-                    <radialGradient id="orb-night" cx="40%" cy="30%" r="80%">
-                      <stop offset="0%"   stop-color="hsl(250 60% 22%)" />
-                      <stop offset="60%"  stop-color="hsl(245 70% 10%)" />
-                      <stop offset="100%" stop-color="hsl(245 80% 4%)" />
-                    </radialGradient>
-                    <rect class="orb-tex-bg" x="-2" y="-2" width="104" height="104" fill="url(#orb-night)" />
-                    <g id="orb-stars" fill="hsl(0 0% 100%)"></g>
-                  </g>
+                <circle cx="50" cy="50" r="36" fill="url(#orb-base)" />
+                <g class="orb-skin is-active" data-label="Living mesh">
+                  <circle cx="50" cy="50" r="36" fill="url(#orb-rose-a)" />
                 </g>
-
-                <!-- Shared lighting -->
-                <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
-                <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
+                <g class="orb-skin" data-label="Soft chrome">
+                  <circle cx="50" cy="50" r="36" fill="url(#orb-chrome-soft)" />
+                  <path class="orb-drift" d="M18 59 C30 43 38 36 50 22 C58 40 66 52 84 68 C65 72 43 70 18 59Z" fill="hsl(0 0% 100% / 0.22)" />
+                </g>
+                <g class="orb-skin" data-label="Rose grain">
+                  <circle cx="50" cy="50" r="36" fill="hsl(338 68% 52% / 0.18)" />
+                  <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.7" />
+                </g>
+                <g class="orb-skin" data-label="Growth rings" stroke="hsl(150 70% 72% / 0.4)" stroke-width="0.35" fill="none">
+                  <circle cx="50" cy="50" r="8" /><circle cx="50" cy="50" r="13" /><circle cx="50" cy="50" r="18" /><circle cx="50" cy="50" r="23" /><circle cx="50" cy="50" r="28" /><circle cx="50" cy="50" r="33" />
+                </g>
+                <g class="orb-skin" data-label="Starfield">
+                  <circle cx="50" cy="50" r="36" fill="hsl(244 70% 8% / 0.58)" />
+                  <g id="orb-stars" fill="hsl(0 0% 100%)"></g>
+                </g>
+                <g id="orbParallax" class="orb-glint">
+                  <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
+                  <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
+                </g>
               </g>
             </svg>
-            <span class="orb-caption" id="orbCaption">Gradient mesh</span>
+            <span class="orb-caption" id="orbCaption">Living mesh</span>
           </div>
 
         </div>
@@ -3176,77 +3117,99 @@
           .story-compact-head { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:1rem; max-width:920px; margin:0 auto 1rem; }
           .story-compact-head h3 { font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:clamp(1.12rem,2vw,1.45rem); font-weight:500; line-height:1.14; letter-spacing:0; max-width:28ch; margin:0.55rem 0 0; }
           .story-compact-head .section-link { margin:0 0 0.1rem; white-space:nowrap; }
-          .era-line { position:relative; margin:0.25rem auto 3.25rem; max-width:920px; padding:0.25rem 0.25rem 0; }
-          .era-line-svg { position:absolute; left:6%; right:6%; top:35px; width:88%; height:62px; pointer-events:none; overflow:visible; z-index:0; }
-          .era-line-path { fill:none; stroke:hsl(var(--ink) / 0.48); stroke-width:1.15; stroke-linecap:round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.8s cubic-bezier(.22,.61,.36,1); }
-          .era-line.is-visible .era-line-path { stroke-dashoffset: 0; }
-          .era-line-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.55rem; }
-          .era-node { position:relative; min-height:218px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:0.36rem; padding:0.2rem 0.45rem 0.6rem; border-radius:var(--radius-md); opacity:0; transform:translateY(8px); transition: opacity .6s ease, transform .6s ease, background .35s ease; }
+          .era-line { --active-x:12.5%; position:relative; margin:0.25rem auto 3.4rem; max-width:920px; padding:0.2rem 0.25rem 0; }
+          .era-line-svg { position:absolute; left:4%; right:4%; top:28px; width:92%; height:86px; pointer-events:none; overflow:visible; z-index:0; }
+          .era-line-path, .era-line-stem { fill:none; stroke:hsl(var(--ink) / 0.46); stroke-width:1.05; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.8s cubic-bezier(.22,.61,.36,1); }
+          .era-line-stem { stroke:hsl(var(--accent-green) / 0.5); stroke-width:0.75; }
+          .era-line.is-visible .era-line-path, .era-line.is-visible .era-line-stem { stroke-dashoffset: 0; }
+          .era-line-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.45rem; }
+          .era-node { position:relative; min-height:116px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; gap:0.28rem; padding:0.35rem 0.35rem 0.5rem; border-radius:var(--radius-md); opacity:0; transform:translateY(8px); transition: opacity .6s ease, transform .6s ease, background .35s ease; }
           .era-node:nth-child(1) { transition-delay:.15s; }
           .era-node:nth-child(2) { transition-delay:.55s; }
           .era-node:nth-child(3) { transition-delay:.95s; }
           .era-node:nth-child(4) { transition-delay:1.35s; }
           .era-line.is-visible .era-node { opacity:1; transform:translateY(0); }
-          .era-node:hover, .era-node:focus-within { background:hsl(var(--surface) / 0.45); }
-          .era-avatar { position:relative; width:62px; height:62px; border-radius:50%; overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); box-shadow:0 4px 14px -6px hsl(0 0% 0% / 0.35); transition: transform .4s ease, box-shadow .4s ease; }
-          .era-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
-          .era-node:hover .era-avatar, .era-node:focus-within .era-avatar { transform:scale(1.2); box-shadow:0 10px 24px -8px hsl(0 0% 0% / 0.48); }
-          .era-avatar::after { content:""; position:absolute; left:50%; bottom:-7px; transform:translateX(-50%); width:7px; height:7px; border-radius:50%; background:hsl(var(--ink)); border:2px solid hsl(var(--bg)); }
-          .era-play { position:absolute; inset:auto 7px 7px auto; display:grid; place-items:center; width:22px; height:22px; border-radius:999px; background:hsl(var(--ink)); color:hsl(var(--bg)); }
-          .era-play svg { width:11px; height:11px; fill:currentColor; }
-          .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:750; font-size:0.9rem; letter-spacing:0; color:hsl(var(--ink)); line-height:1; margin-top:0.34rem; }
-          .era-title-sm { font-size:0.75rem; font-weight:650; color:hsl(var(--ink)); margin:0; line-height:1.2; }
-          .era-desc-sm { color:hsl(var(--muted)); font-size:0.68rem; line-height:1.38; margin:0.05rem 0 0; max-width:18ch; }
-          .era-link { color:hsl(var(--ink)); font-size:0.68rem; font-weight:650; margin-top:auto; text-decoration:underline; text-underline-offset:3px; }
+          .era-node:hover, .era-node:focus-within, .era-node.is-active { background:hsl(var(--surface) / 0.32); }
+          .era-trigger { appearance:none; border:0; background:transparent; color:inherit; padding:0; display:flex; flex-direction:column; align-items:center; gap:0.3rem; cursor:pointer; }
+          .era-bloom { position:relative; width:26px; height:26px; margin-bottom:0.5rem; }
+          .era-bloom::before, .era-bloom::after { content:""; position:absolute; inset:7px 6px 5px 6px; border:1px solid hsl(var(--ink) / 0.75); border-radius:70% 30% 65% 35%; transform:rotate(-28deg) scale(0.82); background:hsl(var(--surface) / 0.25); transition:transform .35s ease, background .35s ease; }
+          .era-bloom::after { transform:rotate(32deg) scale(0.82); }
+          .era-node:hover .era-bloom::before, .era-node:focus-within .era-bloom::before, .era-node.is-active .era-bloom::before { transform:rotate(-38deg) translate(-2px,-1px) scale(1.04); background:hsl(var(--accent-pink) / 0.24); }
+          .era-node:hover .era-bloom::after, .era-node:focus-within .era-bloom::after, .era-node.is-active .era-bloom::after { transform:rotate(42deg) translate(2px,-1px) scale(1.04); background:hsl(var(--accent-green) / 0.18); }
+          .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1rem; letter-spacing:0; color:hsl(var(--ink)); line-height:1; }
+          .era-title-sm { font-size:0.78rem; font-weight:680; color:hsl(var(--ink)); margin:0; line-height:1.2; }
+          .era-detail { position:relative; z-index:2; display:grid; grid-template-columns:112px minmax(0,1fr); gap:0.9rem; align-items:center; min-height:126px; max-width:560px; margin:0.25rem auto 0; padding:0.8rem; border-top:1px solid hsl(var(--line)); opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .35s ease, transform .35s ease; }
+          .era-line.has-detail .era-detail { opacity:1; transform:translateY(0); pointer-events:auto; }
+          .era-detail-media { position:relative; aspect-ratio:4/3; border-radius:var(--radius-md); overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); }
+          .era-detail-media img, .era-detail-media iframe { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border:0; }
+          .era-detail-copy { text-align:left; }
+          .era-detail-year { display:block; font-size:0.68rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:hsl(var(--muted)); margin-bottom:0.28rem; }
+          .era-detail-copy h4 { margin:0; color:hsl(var(--ink)); font-size:0.9rem; line-height:1.15; }
+          .era-detail-copy p { margin:0.35rem 0 0; color:hsl(var(--muted)); font-size:0.74rem; line-height:1.45; max-width:42ch; }
+          .era-detail-watch { display:inline-flex; align-items:center; gap:0.35rem; margin-top:0.55rem; color:hsl(var(--ink)); font-size:0.72rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
           @media (max-width: 640px) {
             .story-compact-head { grid-template-columns:1fr; align-items:start; margin-bottom:0.85rem; }
-            .era-line { margin-bottom:2.25rem; }
-            .era-line-svg { display:none; }
+            .era-line { margin-bottom:2.4rem; }
+            .era-line-svg { top:20px; height:140px; }
             .era-line-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.45rem; }
-            .era-node { min-height:188px; }
-            .era-avatar { width:54px; height:54px; }
-            .era-desc-sm { font-size:0.66rem; }
+            .era-node { min-height:104px; }
+            .era-detail { grid-template-columns:1fr; max-width:360px; }
           }
         </style>
         <div class="era-line reveal" id="eraLine">
           <svg class="era-line-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
-            <path class="era-line-path" d="M 42 70 Q 205 22, 340 70 T 660 70 T 958 70" />
+            <path class="era-line-stem" d="M 42 78 C 150 22, 230 42, 300 70 C 385 105, 470 104, 550 70 C 670 18, 800 30, 958 78" />
+            <path class="era-line-path" d="M 58 80 C 130 66, 178 68, 242 80 M 315 72 C 378 58, 435 58, 498 72 M 570 72 C 638 56, 705 58, 770 72 M 828 80 C 875 66, 918 66, 958 80" />
           </svg>
           <div class="era-line-grid">
-            <div class="era-node">
-              <div class="era-avatar"><img src="/images/timeline-2016.png" alt="Rhozeland 2016" loading="lazy" /></div>
-              <span class="era-year-sm">2016</span>
-              <h4 class="era-title-sm">The origin story</h4>
-              <p class="era-desc-sm">A circle of friends sharing music, art, and culture.</p>
+            <div class="era-node is-active" data-era="2016" data-title="The origin story" data-desc="A circle of friends sharing music, art, and culture." data-image="/images/timeline-2016.png" data-alt="Rhozeland 2016">
+              <button class="era-trigger" type="button" aria-label="View 2016 story"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">2016</span><span class="era-title-sm">The origin story</span></button>
             </div>
-            <div class="era-node">
-              <div class="era-avatar"><img src="/images/timeline-2021.png" alt="Rhozeland 2021" loading="lazy" /></div>
-              <span class="era-year-sm">2021</span>
-              <h4 class="era-title-sm">Building the hub</h4>
-              <p class="era-desc-sm">A digital platform connecting creators and resources.</p>
+            <div class="era-node" data-era="2021" data-title="Building the hub" data-desc="A digital platform connecting creators and resources." data-image="/images/timeline-2021.png" data-alt="Rhozeland 2021">
+              <button class="era-trigger" type="button" aria-label="View 2021 story"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">2021</span><span class="era-title-sm">Building the hub</span></button>
             </div>
-            <div class="era-node">
-              <div class="era-avatar"><img src="/images/timeline-2023.png" alt="Rhozeland 2023" loading="lazy" /></div>
-              <span class="era-year-sm">2023</span>
-              <h4 class="era-title-sm">Studio launch</h4>
-              <p class="era-desc-sm">First physical studio — record, produce, collaborate.</p>
+            <div class="era-node" data-era="2023" data-title="Studio launch" data-desc="First physical studio — record, produce, collaborate." data-image="/images/timeline-2023.png" data-alt="Rhozeland 2023">
+              <button class="era-trigger" type="button" aria-label="View 2023 story"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">2023</span><span class="era-title-sm">Studio launch</span></button>
             </div>
-            <div class="era-node">
-              <a class="era-avatar" href="https://www.youtube.com/watch?v=9rxMdl_mQws" target="_blank" rel="noopener noreferrer" aria-label="Watch the Rhozeland documentary">
-                <img src="/images/documentary-thumbnail.png" alt="Rhozeland documentary" loading="lazy" />
-                <span class="era-play" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M4 2.2v7.6L9.4 6 4 2.2Z"></path></svg></span>
-              </a>
-              <span class="era-year-sm">Today</span>
-              <h4 class="era-title-sm">The documentary</h4>
-              <p class="era-desc-sm">A living record of the creators, space, and movement.</p>
-              <a class="era-link" href="https://www.youtube.com/watch?v=9rxMdl_mQws" target="_blank" rel="noopener noreferrer">Watch</a>
+            <div class="era-node" data-era="Today" data-title="The documentary" data-desc="A living record of the creators, space, and movement." data-image="/images/documentary-thumbnail.png" data-alt="Rhozeland documentary" data-video="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1">
+              <button class="era-trigger" type="button" aria-label="Preview the Rhozeland documentary"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">Today</span><span class="era-title-sm">The documentary</span></button>
             </div>
+          </div>
+          <div class="era-detail" id="eraDetail" aria-live="polite">
+            <div class="era-detail-media" id="eraDetailMedia"><img src="/images/timeline-2016.png" alt="Rhozeland 2016" loading="lazy" /></div>
+            <div class="era-detail-copy"><span class="era-detail-year" id="eraDetailYear">2016</span><h4 id="eraDetailTitle">The origin story</h4><p id="eraDetailDesc">A circle of friends sharing music, art, and culture.</p></div>
           </div>
         </div>
         <script>
           (function(){
             var el = document.getElementById('eraLine');
             if (!el) return;
+            var nodes = el.querySelectorAll('.era-node');
+            var media = document.getElementById('eraDetailMedia');
+            var year = document.getElementById('eraDetailYear');
+            var title = document.getElementById('eraDetailTitle');
+            var desc = document.getElementById('eraDetailDesc');
+            var pinned = false;
+            function show(node, playVideo) {
+              pinned = !!playVideo;
+              nodes.forEach(function(n){ n.classList.toggle('is-active', n === node); });
+              el.classList.add('has-detail');
+              if (year) year.textContent = node.dataset.era || '';
+              if (title) title.textContent = node.dataset.title || '';
+              if (desc) desc.textContent = node.dataset.desc || '';
+              if (!media) return;
+              if (playVideo && node.dataset.video) {
+                media.innerHTML = '<iframe src="'+node.dataset.video+'" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>';
+              } else {
+                media.innerHTML = '<img src="'+node.dataset.image+'" alt="'+(node.dataset.alt || '')+'" loading="lazy" />';
+              }
+            }
+            nodes.forEach(function(node){
+              node.addEventListener('mouseenter', function(){ show(node, false); });
+              node.addEventListener('focusin', function(){ show(node, false); });
+              node.addEventListener('click', function(){ show(node, !!node.dataset.video); });
+            });
+            el.addEventListener('mouseleave', function(){ if (!pinned) el.classList.remove('has-detail'); });
             var io = new IntersectionObserver(function(entries){
               entries.forEach(function(e){ if (e.isIntersecting) { el.classList.add('is-visible'); io.disconnect(); } });
             }, { threshold: 0.35 });
@@ -4195,15 +4158,13 @@
     })();
   </script>
   <script>
-    // Hero abstract orb — morphs through textures, drag to spin.
+    // Hero abstract orb — stable full-sphere surface with subtle parallax.
     (function(){
       var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
-      var wrap = svg.parentElement;
-      var spin = document.getElementById('orb-spin');
       var caption = document.getElementById('orbCaption');
-      var textures = svg.querySelectorAll('.orb-tex');
-      var labels = ['Gradient mesh','Liquid chrome','Risograph','Topographic','Starfield'];
+      var skins = svg.querySelectorAll('.orb-skin');
+      var glint = document.getElementById('orbParallax');
 
       // Seed starfield once
       var starsG = document.getElementById('orb-stars');
@@ -4221,44 +4182,26 @@
         starsG.innerHTML = s;
       }
 
-      // Texture cycler
+      // Surface cycler
       var idx = 0;
       function setTex(i) {
         idx = i;
-        textures.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
-        if (caption) caption.textContent = labels[i] || '';
+        skins.forEach(function(t, k){ t.classList.toggle('is-active', k === i); });
+        if (caption) caption.textContent = skins[i] ? (skins[i].dataset.label || '') : '';
       }
       var cycleTimer = setInterval(function(){
-        setTex((idx + 1) % textures.length);
+        setTex((idx + 1) % skins.length);
       }, 5200);
 
-      // Drag-to-spin + idle auto-rotate (JS so drag releases don't jump).
-      var rotation = 0, isDragging = false, dragStart = null;
-      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      function apply(){ spin.setAttribute('transform', 'rotate(' + rotation.toFixed(2) + ' 50 50)'); }
-      function tick(){
-        if (!isDragging && !prefersReduced) { rotation = (rotation + 0.1) % 360; apply(); }
-        requestAnimationFrame(tick);
+      // Drag/hover shifts light only, so the globe never reveals missing texture edges.
+      function apply(dx, dy){
+        if (glint) glint.setAttribute('transform', 'translate(' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ')');
       }
-      svg.addEventListener('pointerdown', function(e){
-        isDragging = true;
-        dragStart = { x: e.clientX, base: rotation };
-        try { svg.setPointerCapture(e.pointerId); } catch(_){}
-      });
       svg.addEventListener('pointermove', function(e){
-        if (!isDragging || !dragStart) return;
-        rotation = dragStart.base + (e.clientX - dragStart.x) * 0.45;
-        apply();
+        var r = svg.getBoundingClientRect();
+        apply(((e.clientX - r.left) / r.width - 0.5) * 3, ((e.clientY - r.top) / r.height - 0.5) * 3);
       });
-      function endDrag(e){
-        isDragging = false; dragStart = null;
-        try { svg.releasePointerCapture(e.pointerId); } catch(_){}
-      }
-      svg.addEventListener('pointerup', endDrag);
-      svg.addEventListener('pointercancel', endDrag);
-      svg.addEventListener('pointerleave', endDrag);
-      apply();
-      tick();
+      svg.addEventListener('pointerleave', function(){ apply(0, 0); });
     })();
   </script>
 </body>

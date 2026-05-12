@@ -2,25 +2,30 @@
 
 // Create modal — injected once on every page
 (function(){
-  var produceIcon = ''
-    + '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-    +   '<rect x="3" y="3" width="18" height="18" rx="4"/>'
-    +   '<circle cx="8.5" cy="8.5" r="1.1" fill="currentColor"/>'
-    +   '<circle cx="15.5" cy="8.5" r="1.1" fill="currentColor"/>'
-    +   '<circle cx="8.5" cy="15.5" r="1.1" fill="currentColor"/>'
-    +   '<circle cx="15.5" cy="15.5" r="1.1" fill="currentColor"/>'
-    +   '<circle cx="12" cy="12" r="1.1" fill="currentColor"/>'
-    + '</svg>';
-  var distributeIcon = ''
-    + '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
-    +   '<path d="M5 14a9 9 0 0 1 9 9"/>'
-    +   '<path d="M5 9a14 14 0 0 1 14 14"/>'
-    +   '<circle cx="5.5" cy="18.5" r="1.6" fill="currentColor"/>'
-    + '</svg>';
+  // Project thumbnails for the Produce showcase carousel
+  var produceSlides = [
+    { img: '/images/ooak-the-mask-thumb.png', tag: 'Music Video', title: 'The Mask', artist: 'Ooak' },
+    { img: '/images/fingaz-mansa-musa-thumb.png', tag: 'Music Video', title: 'Mansa Musa', artist: 'MONEE FINGAZ' },
+    { img: '/images/rhozeland-fus-thumb.png', tag: 'EP', title: 'FUS', artist: 'Rhozeland' }
+  ];
 
   function ensureModal(){
     if (document.getElementById('createModal')) return;
     var arrow = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>';
+    var slidesHtml = produceSlides.map(function(s, i){
+      return '<div class="cm-slide' + (i===0?' is-active':'') + '" data-cm-slide="' + i + '">'
+        + '<img src="' + s.img + '" alt="' + s.title + ' — ' + s.artist + '" loading="lazy" />'
+        + '<div class="cm-slide__meta">'
+        +   '<span class="cm-slide__tag">' + s.tag + '</span>'
+        +   '<div class="cm-slide__title">' + s.title + '</div>'
+        +   '<div class="cm-slide__artist">' + s.artist + '</div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+    var dotsHtml = produceSlides.map(function(_, i){
+      return '<button type="button" class="cm-dot' + (i===0?' is-active':'') + '" data-cm-dot="' + i + '" aria-label="Slide ' + (i+1) + '"></button>';
+    }).join('');
+
     var html = ''
       + '<div class="create-modal" id="createModal" role="dialog" aria-modal="true" aria-labelledby="createModalTitle" hidden>'
       +   '<div class="create-modal__overlay" data-create-close></div>'
@@ -38,20 +43,47 @@
       +       '</div>'
       +       '<h2 id="createModalTitle" class="create-modal__title">What are we building next?</h2>'
       +       '<div class="create-modal__grid">'
-      +         '<a class="create-card" href="/start.html">'
-      +           '<div class="create-card__body">'
-      +             '<span class="create-card__icon create-card__icon--produce">' + produceIcon + '</span>'
+      +         '<a class="create-card create-card--visual" href="/start.html">'
+      +           '<div class="cm-visual cm-visual--produce">'
+      +             '<div class="cm-slides" id="cmProduceSlides">' + slidesHtml + '</div>'
+      +             '<div class="cm-dots">' + dotsHtml + '</div>'
+      +           '</div>'
+      +           '<div class="create-card__body create-card__body--compact">'
       +             '<span class="create-card__arrow" aria-hidden="true">' + arrow + '</span>'
       +             '<h3 class="create-card__title">Produce</h3>'
-      +             '<p class="create-card__desc">Start a project with Rhozeland for studio, visuals, rollout support, and launch planning.</p>'
+      +             '<p class="create-card__desc create-card__desc--hover">Studio, visuals, rollout, launch planning.</p>'
       +           '</div>'
       +         '</a>'
-      +         '<a class="create-card" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">'
-      +           '<div class="create-card__body">'
-      +             '<span class="create-card__icon create-card__icon--distribute">' + distributeIcon + '</span>'
+      +         '<a class="create-card create-card--visual" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">'
+      +           '<div class="cm-visual cm-visual--distribute">'
+      +             '<div class="cm-app">'
+      +               '<div class="cm-app__bar">'
+      +                 '<span class="cm-app__dot"></span><span class="cm-app__dot"></span><span class="cm-app__dot"></span>'
+      +                 '<span class="cm-app__url">rhozeland.app / discover</span>'
+      +               '</div>'
+      +               '<div class="cm-app__body">'
+      +                 '<div class="cm-app__head">'
+      +                   '<span class="cm-app__brand"><span class="cm-app__logo"></span><span class="cm-app__brand-text">Creator OS</span></span>'
+      +                   '<span class="cm-app__live"><span class="cm-app__live-dot"></span>LIVE</span>'
+      +                 '</div>'
+      +                 '<div class="cm-app__tabs">'
+      +                   '<span class="cm-app__tab is-active">Spark</span>'
+      +                   '<span class="cm-app__tab">Bloom</span>'
+      +                   '<span class="cm-app__tab">Glow</span>'
+      +                   '<span class="cm-app__tab">Play</span>'
+      +                 '</div>'
+      +                 '<div class="cm-app__cards">'
+      +                   '<div class="cm-app__card cm-app__card--a"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Verified Studio</div><div class="cm-app__card-meta">Spaces · Toronto</div></div>'
+      +                   '<div class="cm-app__card cm-app__card--b"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Open Drop</div><div class="cm-app__card-meta">Launchpad · 24h</div></div>'
+      +                   '<div class="cm-app__card cm-app__card--c"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Creator Hub</div><div class="cm-app__card-meta">Network · 1.2k</div></div>'
+      +                 '</div>'
+      +               '</div>'
+      +             '</div>'
+      +           '</div>'
+      +           '<div class="create-card__body create-card__body--compact">'
       +             '<span class="create-card__arrow" aria-hidden="true">' + arrow + '</span>'
       +             '<h3 class="create-card__title">Distribute</h3>'
-      +             '<p class="create-card__desc">Open the creator app to publish, connect, and keep your release moving through the network.</p>'
+      +             '<p class="create-card__desc create-card__desc--hover">Publish, connect, and keep your release moving.</p>'
       +           '</div>'
       +         '</a>'
       +       '</div>'
@@ -63,12 +95,33 @@
     document.body.appendChild(wrap.firstChild);
     var modal = document.getElementById('createModal');
     modal.addEventListener('click', function(e){
+      var dot = e.target.closest('[data-cm-dot]');
+      if (dot) { e.preventDefault(); setProduceSlide(parseInt(dot.getAttribute('data-cm-dot'), 10)); return; }
       if (e.target.closest('[data-create-close]')) closeCreateModal();
     });
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape') closeCreateModal();
     });
   }
+
+  var produceIdx = 0;
+  var produceTimer = null;
+  function setProduceSlide(i){
+    var slides = document.querySelectorAll('#cmProduceSlides .cm-slide');
+    var dots = document.querySelectorAll('#createModal .cm-dot');
+    if (!slides.length) return;
+    produceIdx = ((i % slides.length) + slides.length) % slides.length;
+    slides.forEach(function(el, idx){ el.classList.toggle('is-active', idx === produceIdx); });
+    dots.forEach(function(el, idx){ el.classList.toggle('is-active', idx === produceIdx); });
+  }
+  function startProduceAuto(){
+    stopProduceAuto();
+    produceTimer = setInterval(function(){ setProduceSlide(produceIdx + 1); }, 3200);
+  }
+  function stopProduceAuto(){
+    if (produceTimer) { clearInterval(produceTimer); produceTimer = null; }
+  }
+
   function open(){
     ensureModal();
     var m = document.getElementById('createModal');
@@ -76,12 +129,16 @@
     m.hidden = false;
     requestAnimationFrame(function(){ m.classList.add('is-open'); });
     document.documentElement.style.overflow = 'hidden';
+    produceIdx = 0;
+    setProduceSlide(0);
+    startProduceAuto();
   }
   function close(){
     var m = document.getElementById('createModal');
     if (!m) return;
     m.classList.remove('is-open');
     document.documentElement.style.overflow = '';
+    stopProduceAuto();
     setTimeout(function(){ if (!m.classList.contains('is-open')) m.hidden = true; }, 220);
   }
   window.openCreateModal = open;

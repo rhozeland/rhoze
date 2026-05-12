@@ -365,8 +365,9 @@
       width: clamp(320px, 40vw, 520px);
       aspect-ratio: 1 / 1;
       z-index: 2;
+      touch-action: none;
       user-select: none;
-      pointer-events: none;
+      pointer-events: auto;
     }
     @media (max-width: 720px) {
       .hero-globe-wrap {
@@ -402,15 +403,23 @@
       width: 84%;
       height: 84%;
       overflow: visible;
-      pointer-events: none;
+      cursor: grab;
+      pointer-events: auto;
     }
     .hero-globe-svg * { pointer-events: none; }
+    .hero-globe-svg:active { cursor: grabbing; }
 
-    /* Stable full-sphere globe — fixed texture, no runtime transforms or skin swaps */
-    .orb-surface-detail,
-    .orb-glint { transform-box: view-box; transform-origin: 50px 50px; }
+    /* Stable full-sphere globe — one continuous surface, drag-to-spin without texture flicker */
+    .orb-spin { transform-box: view-box; transform-origin: 50px 50px; will-change: transform; }
+    .orb-surface-detail { transform-box: view-box; transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
+    .orb-glint { transform-box: view-box; transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
+    @keyframes orb-drift {
+      0%, 100% { transform: translate(-1px, 1px) scale(1); }
+      50% { transform: translate(1.5px, -1px) scale(1.025); }
+    }
     @media (prefers-reduced-motion: reduce) {
-      .orb-surface-detail { transform: none !important; }
+      .orb-surface-detail { animation: none; }
+      .orb-spin { transform: none !important; }
     }
     /* Texture caption */
     .orb-caption {
@@ -2965,14 +2974,15 @@
       <div class="nav-links">
         <a href="/about.html">About</a>
         <a href="/projects.html">Projects</a>
+        <a href="/events.html">Events</a>
         <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer">Shop</a>
         <a href="/contact.html">Contact</a>
       </div>
 
-      <button class="nav-cta" type="button" onclick="openCreateModal()">
-        Create
+      <a class="nav-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
+        Join Community
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-      </button>
+      </a>
 
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
@@ -2982,12 +2992,13 @@
     <div id="mobileMenu" class="mobile-menu">
       <a href="/about.html" onclick="closeMenu()">About</a>
       <a href="/projects.html" onclick="closeMenu()">Projects</a>
+      <a href="/events.html" onclick="closeMenu()">Events</a>
       <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">Shop</a>
       <a href="/contact.html" onclick="closeMenu()">Contact</a>
-      <button class="mobile-cta" type="button" onclick="closeMenu(); openCreateModal();">
-        Create
+      <a class="mobile-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">
+        Join Community
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-      </button>
+      </a>
     </div>
 
     <main>
@@ -3041,10 +3052,6 @@
                   <stop offset="72%" stop-color="hsl(203 94% 58%)" stop-opacity="0.58" />
                   <stop offset="100%" stop-color="hsl(159 64% 48%)" stop-opacity="0.48" />
                 </linearGradient>
-                <pattern id="orb-weave" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
-                  <path d="M-2 8 C4 2 10 2 20 8" fill="none" stroke="hsl(0 0% 100% / 0.18)" stroke-width="0.8" />
-                  <path d="M-2 16 C4 10 10 10 20 16" fill="none" stroke="hsl(48 100% 62% / 0.22)" stroke-width="0.65" />
-                </pattern>
                 <pattern id="orb-pop-dots" x="0" y="0" width="3.6" height="3.6" patternUnits="userSpaceOnUse">
                   <circle cx="1.8" cy="1.8" r="0.48" fill="hsl(0 0% 100% / 0.28)" />
                 </pattern>
@@ -3067,23 +3074,25 @@
               <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.28)" />
               <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
               <g clip-path="url(#orb-clip)">
-                <circle cx="50" cy="50" r="36" fill="url(#orb-sphere)" />
-                <rect x="14" y="14" width="72" height="72" fill="url(#orb-ribbon)" opacity="0.34" />
-                <circle cx="50" cy="50" r="36" fill="url(#orb-weave)" opacity="0.78" />
-                <circle cx="50" cy="50" r="36" fill="url(#orb-pop-dots)" opacity="0.42" />
-                <g class="orb-surface-detail">
-                  <path d="M14 43 C27 31 37 28 50 32 C62 35 72 31 86 22 L86 35 C73 43 62 48 49 44 C36 40 26 44 14 56 Z" fill="hsl(48 100% 62% / 0.42)" />
-                  <path d="M14 66 C28 58 40 57 52 63 C64 69 74 67 86 59 L86 73 C72 83 60 84 48 77 C36 70 27 72 14 80 Z" fill="hsl(159 64% 48% / 0.34)" />
-                  <path d="M18 24 C34 17 49 18 63 25 C72 30 80 30 86 26 L86 37 C76 43 66 41 56 35 C42 27 30 29 18 35 Z" fill="hsl(0 0% 100% / 0.2)" />
+                <g id="orbSpin" class="orb-spin">
+                  <circle cx="50" cy="50" r="36" fill="url(#orb-sphere)" />
+                  <circle cx="50" cy="50" r="36" fill="url(#orb-pop-dots)" opacity="0.45" />
+                  <g class="orb-surface-detail">
+                    <path d="M13 45 C25 33 35 29 49 33 C61 36 70 32 88 20 L93 33 C74 44 62 50 48 45 C34 40 25 45 13 57 Z" fill="url(#orb-ribbon)" opacity="0.76" />
+                    <path d="M5 70 C22 59 36 56 51 62 C65 68 76 66 95 54 L98 71 C80 84 64 86 48 77 C33 69 20 73 5 84 Z" fill="hsl(159 64% 48% / 0.32)" />
+                    <path d="M18 22 C35 16 49 17 65 25 C75 31 84 30 95 23 L95 35 C82 43 70 42 58 35 C43 26 31 28 18 34 Z" fill="hsl(0 0% 100% / 0.22)" />
+                    <path d="M22 50 C34 43 43 42 55 48 C64 53 73 52 86 44" fill="none" stroke="hsl(0 0% 100% / 0.34)" stroke-width="0.7" />
+                    <path d="M15 62 C29 55 39 56 50 63 C62 70 75 68 91 58" fill="none" stroke="hsl(48 100% 62% / 0.38)" stroke-width="0.65" />
+                  </g>
+                  <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.58" />
                 </g>
-                <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.48" />
-                <g class="orb-glint">
+                <g id="orbParallax" class="orb-glint">
                   <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
                   <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
                 </g>
               </g>
             </svg>
-            <span class="orb-caption">Rhozeland world</span>
+            <span class="orb-caption" id="orbCaption">Drag to spin</span>
           </div>
 
         </div>
@@ -3098,7 +3107,7 @@
           <a class="section-link" href="/about.html">
             Learn more
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-          </button>
+          </a>
         </div>
 
         <!-- Animated story timeline (compact) -->
@@ -3725,7 +3734,8 @@
           <h3 class="footer-heading">Explore</h3>
           <a href="/about.html">About us</a>
           <a href="/projects.html">Projects</a>
-            <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer">Shop</a>
+          <a href="/events.html">Events</a>
+          <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer">Shop</a>
           <a href="/contact.html">Contact us</a>
         </div>
 
@@ -3733,10 +3743,10 @@
           <h3 class="footer-heading">Contact</h3>
           <a href="tel:6478746743">647-874-6743</a>
           <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>
-          <button class="footer-link-inline" type="button" onclick="openCreateModal()">
-            Create
+          <a class="footer-link-inline" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
+            Join Community
             <svg class="footer-link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-          </button>
+          </a>
         </div>
       </div>
 
@@ -3772,39 +3782,6 @@
       menu.classList.remove("open");
       if (button) button.setAttribute("aria-expanded", "false");
     }
-
-    function ensureCreateModal() {
-      var existing = document.getElementById('createModal');
-      if (existing) return existing;
-      var modal = document.createElement('div');
-      modal.id = 'createModal';
-      modal.className = 'create-modal';
-      modal.setAttribute('role', 'dialog');
-      modal.setAttribute('aria-modal', 'true');
-      modal.setAttribute('aria-labelledby', 'createModalTitle');
-      modal.innerHTML = '<div class="create-modal-panel"><button class="create-modal-close" type="button" aria-label="Close create options" onclick="closeCreateModal()">&times;</button><div class="create-modal-art" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="create-modal-kicker">✦ Create</span><h2 class="create-modal-title" id="createModalTitle">What are we building next?</h2><div class="create-choice-grid"><a class="create-choice" href="/projects.html"><span class="create-choice-icon">🎛</span><svg class="create-choice-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg><h3>Produce</h3><p>Start a project with Rhozeland for studio, visuals, rollout support, and launch planning.</p></a><a class="create-choice" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer"><span class="create-choice-icon">📡</span><svg class="create-choice-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg><h3>Distribute</h3><p>Open the creator app to publish, connect, and keep your release moving through the network.</p></a></div></div>';
-      modal.addEventListener('click', function(event) { if (event.target === modal) closeCreateModal(); });
-      document.body.appendChild(modal);
-      return modal;
-    }
-
-    function openCreateModal() {
-      var modal = ensureCreateModal();
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      var closeBtn = modal.querySelector('.create-modal-close');
-      if (closeBtn) closeBtn.focus();
-    }
-
-    function closeCreateModal() {
-      var modal = document.getElementById('createModal');
-      if (modal) modal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') closeCreateModal();
-    });
 
     function copyContract(button) {
       var value = button.getAttribute("data-copy");
@@ -4183,6 +4160,69 @@
       }
       show(0);
       start();
+    })();
+  </script>
+  <script>
+    // Hero globe — stable full-sphere surface with drag-to-spin.
+    (function(){
+      var svg = document.getElementById('heroOrbSvg');
+      if (!svg) return;
+      var glint = document.getElementById('orbParallax');
+      var spin = document.getElementById('orbSpin');
+
+      // Rotation state lives on #orbSpin only — the surface never swaps, so textures don't flicker.
+      var angle = 0;          // degrees
+      var velocity = 0.08;    // baseline auto-spin
+      var dragging = false;
+      var lastX = 0;
+      var lastT = 0;
+      var pointerId = null;
+
+      function applySpin(){ if (spin) spin.setAttribute('transform', 'rotate(' + angle.toFixed(2) + ' 50 50)'); }
+      function applyGlint(dx, dy){ if (glint) glint.setAttribute('transform', 'translate(' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ')'); }
+
+      function tick(){
+        if (!dragging) {
+          angle = (angle + velocity) % 360;
+          // Ease velocity back toward gentle auto-spin
+          velocity += (0.08 - velocity) * 0.04;
+          applySpin();
+        }
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      svg.addEventListener('pointerdown', function(e){
+        e.preventDefault();
+        dragging = true;
+        pointerId = e.pointerId;
+        lastX = e.clientX;
+        lastT = performance.now();
+        try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+      svg.addEventListener('pointermove', function(e){
+        var r = svg.getBoundingClientRect();
+        applyGlint(((e.clientX - r.left) / r.width - 0.5) * 3, ((e.clientY - r.top) / r.height - 0.5) * 3);
+        if (!dragging || e.pointerId !== pointerId) return;
+        var now = performance.now();
+        var dx = e.clientX - lastX;
+        var dt = Math.max(1, now - lastT);
+        var deg = dx * 0.45;
+        angle = (angle + deg) % 360;
+        velocity = (deg / dt) * 16; // momentum on release
+        applySpin();
+        lastX = e.clientX;
+        lastT = now;
+      });
+      function endDrag(e){
+        if (!dragging) return;
+        dragging = false;
+        try { if (pointerId !== null) svg.releasePointerCapture(pointerId); } catch (_) {}
+        pointerId = null;
+      }
+      svg.addEventListener('pointerup', endDrag);
+      svg.addEventListener('pointercancel', endDrag);
+      svg.addEventListener('pointerleave', function(){ applyGlint(0, 0); });
     })();
   </script>
 </body>

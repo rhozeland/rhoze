@@ -273,10 +273,10 @@ const Hero = () => {
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <a
-                    href="/events.html"
+                    href="/events"
                     className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
                   >
-                    All events
+                    Explore events
                   </a>
                   <a
                     href="/contact"

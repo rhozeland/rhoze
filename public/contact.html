@@ -73,10 +73,12 @@
     .form-divider span{font-size:0.7rem;font-weight:500;color:hsl(var(--muted)/0.5);text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap}
     .form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:hsl(var(--border))}
 
-    /* Social pill */
-    .social-pill{display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.8rem;border:1px solid hsl(var(--border));border-radius:999px;font-size:0.75rem;font-weight:500;color:hsl(var(--fg));text-decoration:none;transition:all 0.25s}
-    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.2);transform:translateY(-1px)}
-    .social-pill svg{width:13px;height:13px}
+    /* Social pill — icon-only with hover tooltip */
+    .social-pill{position:relative;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid hsl(var(--border));border-radius:999px;color:hsl(var(--fg));text-decoration:none;transition:all 0.25s}
+    .social-pill:hover{background:hsl(var(--surface-alt));border-color:hsl(var(--fg)/0.25);transform:translateY(-1px)}
+    .social-pill svg{width:15px;height:15px}
+    .social-pill::after{content:attr(data-label);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);background:hsl(var(--fg));color:hsl(var(--bg));font-size:0.7rem;font-weight:600;padding:0.3rem 0.55rem;border-radius:0.4rem;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.18s ease, transform 0.18s ease;z-index:10}
+    .social-pill:hover::after,.social-pill:focus-visible::after{opacity:1;transform:translateX(-50%) translateY(0)}
 
     /* Hidden form sections */
     .form-section{display:none;animation:fadeIn 0.3s ease}

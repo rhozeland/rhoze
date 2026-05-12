@@ -2374,26 +2374,19 @@ button { background: none; border: 0; cursor: pointer; }
 }
 .cm-app__bar {
   display: flex; align-items: center; gap: 0.35rem;
+  justify-content: space-between;
   padding: 0.4rem 0.6rem;
   background: hsl(240 18% 5%);
   border-bottom: 1px solid hsl(0 0% 100% / 0.06);
   font-size: 0.62rem; color: hsl(0 0% 60%);
 }
-.cm-app__dot { width: 6px; height: 6px; border-radius: 999px; background: hsl(0 0% 100% / 0.18); }
-.cm-app__url {
-  margin-left: 0.55rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.02em;
-  color: hsl(0 0% 75%);
-}
 .cm-app__body {
   flex: 1; min-height: 0;
-  padding: 0.7rem 0.8rem;
+  padding: 0.55rem 0.6rem;
   display: flex; flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.45rem;
   color: hsl(0 0% 92%);
 }
-.cm-app__head { display: flex; align-items: center; justify-content: space-between; }
 .cm-app__brand { display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.78rem; }
 .cm-app__logo {
   width: 16px; height: 16px; border-radius: 4px;
@@ -2418,79 +2411,60 @@ button { background: none; border: 0; cursor: pointer; }
 }
 @keyframes cm-live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
 .cm-app__profile {
-  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.55rem;
-  padding: 0.5rem 0.6rem;
-  border-radius: 0.6rem;
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.55rem;
   background: hsl(240 18% 9%);
   border: 1px solid hsl(0 0% 100% / 0.06);
 }
 .cm-app__avatar {
-  width: 28px; height: 28px; border-radius: 999px;
+  width: 24px; height: 24px; border-radius: 999px;
   background: conic-gradient(from 180deg, hsl(330 90% 65%), hsl(28 95% 60%), hsl(200 90% 60%), hsl(330 90% 65%));
   box-shadow: inset 0 0 0 2px hsl(240 18% 9%);
 }
-.cm-app__name { font-size: 0.78rem; font-weight: 700; }
-.cm-app__handle { font-size: 0.62rem; color: hsl(0 0% 60%); }
+.cm-app__id { min-width: 0; }
+.cm-app__name { font-size: 0.72rem; font-weight: 700; line-height: 1.1; }
+.cm-app__handle { font-size: 0.58rem; color: hsl(0 0% 60%); line-height: 1.1; }
 .cm-app__cta {
   display: inline-flex; align-items: center; gap: 0.25rem;
-  padding: 0.3rem 0.6rem;
+  padding: 0.22rem 0.55rem;
   border-radius: 999px;
   background: hsl(0 0% 96%);
   color: hsl(240 18% 7%);
-  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em;
+  font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em;
 }
-.cm-app__tabs {
-  display: flex; gap: 0.25rem;
-  padding: 0.2rem;
-  border-radius: 999px;
-  background: hsl(240 18% 5%);
-  border: 1px solid hsl(0 0% 100% / 0.06);
-}
-.cm-app__tab {
-  flex: 1;
-  text-align: center;
-  padding: 0.28rem 0.4rem;
-  border-radius: 999px;
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: hsl(0 0% 60%);
-}
-.cm-app__tab.is-active { background: hsl(0 0% 100% / 0.08); color: hsl(0 0% 96%); }
-.cm-app__cards {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem;
-}
-.cm-app__card {
-  padding: 0.45rem;
+.cm-app__drop {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: 56px 1fr; gap: 0.5rem;
+  padding: 0.4rem;
   border-radius: 0.55rem;
   background: hsl(240 18% 9%);
-  border: 1px solid hsl(0 0% 100% / 0.05);
-  display: flex; flex-direction: column; gap: 0.3rem;
-  min-height: 0;
+  border: 1px solid hsl(0 0% 100% / 0.06);
+  align-items: center;
 }
-.cm-app__thumb {
-  height: 30px; border-radius: 0.35rem;
+.cm-app__cover {
+  width: 56px; height: 100%; min-height: 38px; border-radius: 0.4rem;
+  background:
+    radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%),
+    radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%),
+    linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%));
+  box-shadow: inset 0 0 0 1px hsl(0 0% 100% / 0.12);
 }
-.cm-app__card--a .cm-app__thumb { background: linear-gradient(135deg, hsl(280 60% 45%), hsl(220 70% 38%)); }
-.cm-app__card--b .cm-app__thumb { background: linear-gradient(135deg, hsl(345 70% 50%), hsl(20 80% 50%)); }
-.cm-app__card--c .cm-app__thumb { background: linear-gradient(135deg, hsl(170 70% 42%), hsl(200 70% 38%)); }
-.cm-app__card-title { font-size: 0.66rem; font-weight: 700; letter-spacing: -0.005em; }
-.cm-app__card-meta { font-size: 0.58rem; color: hsl(0 0% 58%); }
-.cm-app__footer {
-  display: flex; gap: 0.3rem; flex-wrap: wrap;
-  margin-top: auto;
+.cm-app__drop-meta { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.cm-app__tag {
+  align-self: flex-start;
+  padding: 0.1rem 0.4rem; border-radius: 999px;
+  background: hsl(0 0% 100% / 0.08);
+  font-size: 0.5rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: hsl(0 0% 88%);
 }
-.cm-app__chip {
-  padding: 0.22rem 0.55rem;
-  border-radius: 999px;
-  background: hsl(240 18% 5%);
-  border: 1px solid hsl(0 0% 100% / 0.08);
-  font-size: 0.6rem; font-weight: 600;
-  color: hsl(0 0% 78%);
+.cm-app__drop-title {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: -0.01em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.cm-app__chip--accent {
-  background: linear-gradient(135deg, hsl(280 60% 35%), hsl(330 70% 45%));
-  border-color: transparent;
-  color: hsl(0 0% 98%);
+.cm-app__drop-stats {
+  display: flex; gap: 0.5rem; font-size: 0.55rem; color: hsl(0 0% 65%);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 640px) {
@@ -2534,12 +2508,11 @@ button { background: none; border: 0; cursor: pointer; }
 }
 
 /* Tighten Distribute Creator OS preview to fit 132px */
-.cm-visual--distribute { padding: 0.55rem; }
-.cm-app__body { padding: 0.5rem 0.6rem; gap: 0.4rem; }
-.cm-app__cards { gap: 0.3rem; }
-.cm-app__thumb { height: 22px; }
-.cm-app__card { padding: 0.35rem; }
-.cm-app__profile { display: none; }
+  .cm-visual--distribute { padding: 0.5rem; }
+  .cm-app__body { padding: 0.45rem 0.5rem; gap: 0.35rem; }
+  .cm-app__cover { width: 44px; }
+  .cm-app__drop { grid-template-columns: 44px 1fr; padding: 0.35rem; }
+  .cm-app__drop-stats { gap: 0.35rem; }
 
 @media (max-width: 640px) {
   .create-card--visual .cm-visual { height: 120px; }

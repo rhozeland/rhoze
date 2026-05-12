@@ -82,7 +82,16 @@
       tag.textContent = s.tag;
       title.textContent = s.title;
       cover.style.background = s.cover;
-      if (eq) eq.innerHTML = INDICATOR[s.kind] || '';
+      if (eq) {
+        // Swap class so non-music slides don't inherit `.cm-app__eq span` height animation
+        eq.className = s.kind === 'music' ? 'cm-app__eq' : 'cm-app__indicator';
+        if (s.kind !== 'music') {
+          eq.style.cssText = 'display:flex;align-items:center;gap:6px;height:10px;margin-top:1px';
+        } else {
+          eq.style.cssText = '';
+        }
+        eq.innerHTML = INDICATOR[s.kind] || '';
+      }
       if (play) play.innerHTML = ICON[s.kind] || ICON.music;
       meta.style.opacity = '1';
       meta.style.transform = 'translateY(0)';

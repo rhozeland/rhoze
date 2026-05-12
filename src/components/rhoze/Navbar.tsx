@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Menu, X, Sparkles, ArrowUpRight, LayoutGrid, Radio } from "lucide-react";
+import { Menu, X, Sparkles, ArrowUpRight } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
 import logoColor from "@/assets/logo-color.png";
@@ -16,6 +16,13 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+  const [produceIdx, setProduceIdx] = useState(0);
+
+  const produceSlides = [
+    { img: "/images/ooak-the-mask-thumb.png", tag: "Music Video", title: "The Mask", artist: "Ooak" },
+    { img: "/images/fingaz-mansa-musa-thumb.png", tag: "Music Video", title: "Mansa Musa", artist: "MONEE FINGAZ" },
+    { img: "/images/rhozeland-fus-thumb.png", tag: "EP", title: "FUS", artist: "Rhozeland" },
+  ];
 
   useEffect(() => {
     if (!createOpen) return;
@@ -23,11 +30,14 @@ const Navbar = () => {
     document.addEventListener("keydown", onKey);
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
+    setProduceIdx(0);
+    const t = setInterval(() => setProduceIdx((i) => (i + 1) % produceSlides.length), 3200);
     return () => {
       document.removeEventListener("keydown", onKey);
       document.documentElement.style.overflow = prev;
+      clearInterval(t);
     };
-  }, [createOpen]);
+  }, [createOpen, produceSlides.length]);
 
   return (
     <motion.nav
@@ -167,39 +177,121 @@ const Navbar = () => {
                 What are we building next?
               </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {/* Produce — project carousel */}
                 <a
                   href="/start.html"
-                  className="group relative flex min-h-[200px] flex-col gap-2 rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] p-5 transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
                 >
-                  <span
-                    className="mb-6 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-white"
-                    style={{ background: "linear-gradient(135deg, hsl(215 35% 22%), hsl(220 30% 14%))" }}
-                  >
-                    <LayoutGrid size={20} />
-                  </span>
-                  <ArrowUpRight size={16} className="absolute right-4 top-4 text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  <h3 className="text-xl font-bold tracking-tight">Produce</h3>
-                  <p className="max-w-[38ch] text-sm leading-relaxed text-white/65">
-                    Start a project with Rhozeland for studio, visuals, rollout support, and launch planning.
-                  </p>
+                  <div className="relative h-[132px] overflow-hidden border-b border-white/[0.06] bg-[hsl(240_30%_4%)]">
+                    {produceSlides.map((s, i) => (
+                      <div
+                        key={s.title}
+                        className="absolute inset-0 transition-opacity duration-700"
+                        style={{ opacity: i === produceIdx ? 1 : 0, zIndex: i === produceIdx ? 1 : 0 }}
+                      >
+                        <img src={s.img} alt={`${s.title} — ${s.artist}`} className="h-full w-full object-cover" loading="lazy" />
+                        <div className="absolute inset-x-0 bottom-0 px-3 pb-2.5 pt-5" style={{ background: "linear-gradient(180deg, transparent, hsl(240 30% 4% / 0.85) 70%)" }}>
+                          <span className="mb-1 inline-block rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-white">{s.tag}</span>
+                          <div className="text-sm font-bold tracking-tight text-white">{s.title}</div>
+                          <div className="text-[0.7rem] text-white/75">{s.artist}</div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="absolute bottom-2 right-2.5 z-[2] flex gap-1.5">
+                      {produceSlides.map((s, i) => (
+                        <button
+                          key={s.title}
+                          type="button"
+                          aria-label={`Slide ${i + 1}`}
+                          onClick={(e) => { e.preventDefault(); setProduceIdx(i); }}
+                          className="h-1.5 rounded-full bg-white/40 transition-all"
+                          style={{ width: i === produceIdx ? 18 : 6, background: i === produceIdx ? "white" : undefined }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative flex flex-col gap-1 px-4 pb-3.5 pt-3">
+                    <ArrowUpRight size={16} className="absolute right-3 top-3 text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <h3 className="text-xl font-bold tracking-tight">Produce</h3>
+                    <p className="max-h-0 overflow-hidden text-[0.78rem] leading-snug text-white/60 opacity-0 transition-all duration-200 group-hover:mt-0.5 group-hover:max-h-[4em] group-hover:opacity-100">
+                      Studio, visuals, rollout, launch planning.
+                    </p>
+                  </div>
                 </a>
+
+                {/* Distribute — Creator OS preview */}
                 <a
                   href="https://rhozeland.app/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group relative flex min-h-[200px] flex-col gap-2 rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] p-5 transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
                 >
-                  <span
-                    className="mb-6 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-white"
-                    style={{ background: "linear-gradient(135deg, hsl(345 35% 22%), hsl(330 30% 14%))" }}
+                  <div
+                    className="relative h-[132px] overflow-hidden border-b border-white/[0.06] p-2"
+                    style={{
+                      background:
+                        "radial-gradient(60% 80% at 20% 0%, hsl(280 60% 30% / 0.35), transparent 70%), radial-gradient(60% 80% at 100% 100%, hsl(200 70% 35% / 0.35), transparent 70%), hsl(240 30% 4%)",
+                    }}
                   >
-                    <Radio size={20} />
-                  </span>
-                  <ArrowUpRight size={16} className="absolute right-4 top-4 text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  <h3 className="text-xl font-bold tracking-tight">Distribute</h3>
-                  <p className="max-w-[38ch] text-sm leading-relaxed text-white/65">
-                    Open the creator app to publish, connect, and keep your release moving through the network.
-                  </p>
+                    <div className="flex h-full flex-col overflow-hidden rounded-lg border border-white/10 bg-[hsl(240_18%_7%)] shadow-2xl">
+                      <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-[hsl(240_18%_5%)] px-2 py-1 text-[0.6rem] text-white/60">
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
+                        <span className="ml-1.5 font-mono text-white/70">rhozeland.app / discover</span>
+                      </div>
+                      <div className="flex flex-1 flex-col gap-1.5 p-2">
+                        <div className="flex items-center justify-between">
+                          <span className="inline-flex items-center gap-1.5 text-[0.7rem] font-bold">
+                            <span
+                              className="h-3 w-3 rounded"
+                              style={{ background: "linear-gradient(135deg, hsl(330 90% 65%), hsl(28 95% 60%) 40%, hsl(48 95% 60%) 65%, hsl(200 90% 60%))", boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.2)" }}
+                            />
+                            Creator OS
+                          </span>
+                          <span className="inline-flex items-center gap-1 rounded-full border border-white/20 px-1.5 py-0.5 text-[0.5rem] font-bold tracking-[0.18em] text-white/90">
+                            <span className="h-1 w-1 animate-pulse rounded-full bg-[hsl(135_80%_55%)]" />
+                            LIVE
+                          </span>
+                        </div>
+                        <div className="flex gap-0.5 rounded-full border border-white/[0.06] bg-[hsl(240_18%_5%)] p-0.5">
+                          {[
+                            { l: "Spark", a: true },
+                            { l: "Bloom", a: false },
+                            { l: "Glow", a: false },
+                            { l: "Play", a: false },
+                          ].map((t) => (
+                            <span
+                              key={t.l}
+                              className={`flex-1 rounded-full px-1 py-0.5 text-center text-[0.55rem] font-semibold ${t.a ? "bg-white/10 text-white" : "text-white/55"}`}
+                            >
+                              {t.l}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="grid flex-1 grid-cols-3 gap-1">
+                          {[
+                            { t: "Verified Studio", m: "Spaces · Toronto", g: "linear-gradient(135deg, hsl(280 60% 45%), hsl(220 70% 38%))" },
+                            { t: "Open Drop", m: "Launchpad · 24h", g: "linear-gradient(135deg, hsl(345 70% 50%), hsl(20 80% 50%))" },
+                            { t: "Creator Hub", m: "Network · 1.2k", g: "linear-gradient(135deg, hsl(170 70% 42%), hsl(200 70% 38%))" },
+                          ].map((c) => (
+                            <div key={c.t} className="flex flex-col gap-1 rounded-md border border-white/[0.05] bg-[hsl(240_18%_9%)] p-1">
+                              <div className="h-4 rounded" style={{ background: c.g }} />
+                              <div className="text-[0.55rem] font-bold tracking-tight">{c.t}</div>
+                              <div className="text-[0.5rem] text-white/55">{c.m}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative flex flex-col gap-1 px-4 pb-3.5 pt-3">
+                    <ArrowUpRight size={16} className="absolute right-3 top-3 text-white/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <h3 className="text-xl font-bold tracking-tight">Distribute</h3>
+                    <p className="max-h-0 overflow-hidden text-[0.78rem] leading-snug text-white/60 opacity-0 transition-all duration-200 group-hover:mt-0.5 group-hover:max-h-[4em] group-hover:opacity-100">
+                      Publish, connect, and keep your release moving.
+                    </p>
+                  </div>
                 </a>
               </div>
             </div>

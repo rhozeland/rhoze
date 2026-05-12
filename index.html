@@ -3158,37 +3158,26 @@
         </style>
         <div class="era-line reveal" id="eraLine">
           <svg class="era-line-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
-            <path class="era-line-path" d="M 42 70 Q 205 22, 340 70 T 660 70 T 958 70" />
+            <path class="era-line-stem" d="M 42 78 C 150 22, 230 42, 300 70 C 385 105, 470 104, 550 70 C 670 18, 800 30, 958 78" />
+            <path class="era-line-path" d="M 58 80 C 130 66, 178 68, 242 80 M 315 72 C 378 58, 435 58, 498 72 M 570 72 C 638 56, 705 58, 770 72 M 828 80 C 875 66, 918 66, 958 80" />
           </svg>
           <div class="era-line-grid">
-            <div class="era-node">
-              <div class="era-avatar"><img src="/images/timeline-2016.png" alt="Rhozeland 2016" loading="lazy" /></div>
-              <span class="era-year-sm">2016</span>
-              <h4 class="era-title-sm">The origin story</h4>
-              <p class="era-desc-sm">A circle of friends sharing music, art, and culture.</p>
+            <div class="era-node is-active" data-era="2016" data-title="The origin story" data-desc="A circle of friends sharing music, art, and culture." data-image="/images/timeline-2016.png" data-alt="Rhozeland 2016">
+              <button class="era-trigger" type="button" aria-label="View 2016 story"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">2016</span><span class="era-title-sm">The origin story</span></button>
             </div>
-            <div class="era-node">
-              <div class="era-avatar"><img src="/images/timeline-2021.png" alt="Rhozeland 2021" loading="lazy" /></div>
-              <span class="era-year-sm">2021</span>
-              <h4 class="era-title-sm">Building the hub</h4>
-              <p class="era-desc-sm">A digital platform connecting creators and resources.</p>
+            <div class="era-node" data-era="2021" data-title="Building the hub" data-desc="A digital platform connecting creators and resources." data-image="/images/timeline-2021.png" data-alt="Rhozeland 2021">
+              <button class="era-trigger" type="button" aria-label="View 2021 story"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">2021</span><span class="era-title-sm">Building the hub</span></button>
             </div>
-            <div class="era-node">
-              <div class="era-avatar"><img src="/images/timeline-2023.png" alt="Rhozeland 2023" loading="lazy" /></div>
-              <span class="era-year-sm">2023</span>
-              <h4 class="era-title-sm">Studio launch</h4>
-              <p class="era-desc-sm">First physical studio — record, produce, collaborate.</p>
+            <div class="era-node" data-era="2023" data-title="Studio launch" data-desc="First physical studio — record, produce, collaborate." data-image="/images/timeline-2023.png" data-alt="Rhozeland 2023">
+              <button class="era-trigger" type="button" aria-label="View 2023 story"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">2023</span><span class="era-title-sm">Studio launch</span></button>
             </div>
-            <div class="era-node">
-              <a class="era-avatar" href="https://www.youtube.com/watch?v=9rxMdl_mQws" target="_blank" rel="noopener noreferrer" aria-label="Watch the Rhozeland documentary">
-                <img src="/images/documentary-thumbnail.png" alt="Rhozeland documentary" loading="lazy" />
-                <span class="era-play" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M4 2.2v7.6L9.4 6 4 2.2Z"></path></svg></span>
-              </a>
-              <span class="era-year-sm">Today</span>
-              <h4 class="era-title-sm">The documentary</h4>
-              <p class="era-desc-sm">A living record of the creators, space, and movement.</p>
-              <a class="era-link" href="https://www.youtube.com/watch?v=9rxMdl_mQws" target="_blank" rel="noopener noreferrer">Watch</a>
+            <div class="era-node" data-era="Today" data-title="The documentary" data-desc="A living record of the creators, space, and movement." data-image="/images/documentary-thumbnail.png" data-alt="Rhozeland documentary" data-video="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1">
+              <button class="era-trigger" type="button" aria-label="Preview the Rhozeland documentary"><span class="era-bloom" aria-hidden="true"></span><span class="era-year-sm">Today</span><span class="era-title-sm">The documentary</span></button>
             </div>
+          </div>
+          <div class="era-detail" id="eraDetail" aria-live="polite">
+            <div class="era-detail-media" id="eraDetailMedia"><img src="/images/timeline-2016.png" alt="Rhozeland 2016" loading="lazy" /></div>
+            <div class="era-detail-copy"><span class="era-detail-year" id="eraDetailYear">2016</span><h4 id="eraDetailTitle">The origin story</h4><p id="eraDetailDesc">A circle of friends sharing music, art, and culture.</p></div>
           </div>
         </div>
         <script>

@@ -3097,24 +3097,25 @@
                 <g id="orb-spin">
                   <!-- 1. GRADIENT MESH -->
                   <g class="orb-tex is-active" data-tex="0">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-a)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-b)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-c)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="hsl(230 70% 18%)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="url(#orb-mesh-a)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="url(#orb-mesh-b)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="url(#orb-mesh-c)" />
                   </g>
 
                   <!-- 2. LIQUID CHROME -->
                   <g class="orb-tex" data-tex="1">
-                    <circle cx="50" cy="50" r="36" fill="hsl(220 12% 14%)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="hsl(220 12% 14%)" />
                     <g filter="url(#orb-chrome-warp)">
-                      <rect x="14" y="14" width="72" height="72" fill="url(#orb-chrome)" />
+                      <rect class="orb-tex-bg" x="10" y="10" width="80" height="80" fill="url(#orb-chrome)" />
                     </g>
                   </g>
 
                   <!-- 3. RISOGRAPH (two-color halftone) -->
                   <g class="orb-tex" data-tex="2">
-                    <circle cx="50" cy="50" r="36" fill="hsl(38 85% 78%)" />
-                    <circle cx="50" cy="50" r="36" fill="hsl(0 80% 56%)" filter="url(#orb-noise)" opacity="0.85" style="mix-blend-mode: multiply;" />
-                    <circle cx="50" cy="50" r="36" fill="hsl(220 70% 30%)" filter="url(#orb-noise)" opacity="0.55" style="mix-blend-mode: multiply;" transform="translate(0.6 0.4)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="hsl(38 85% 78%)" />
+                    <rect class="orb-tex-bg" x="14" y="14" width="72" height="72" fill="hsl(0 80% 56%)" filter="url(#orb-noise)" opacity="0.85" style="mix-blend-mode: multiply;" />
+                    <rect class="orb-tex-bg" x="13" y="13" width="74" height="74" fill="hsl(220 70% 30%)" filter="url(#orb-noise)" opacity="0.55" style="mix-blend-mode: multiply;" transform="translate(0.6 0.4)" />
                   </g>
 
                   <!-- 4. TOPOGRAPHIC LINES -->

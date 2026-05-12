@@ -208,12 +208,14 @@
         </div>
 
         <style>
-          .tokenized-grid { display:grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: 2rem; align-items: stretch; }
+          .tokenized-grid { display:flex; flex-direction:column; gap: 2rem; align-items: stretch; }
           .tokenized-grid > * { display:flex; flex-direction:column; }
+          .tokenized-grid > .flywheel-redesign { max-width: 720px; margin: 0 auto; width: 100%; }
+          .tokenized-grid > .tokenomics-col { max-width: 860px; margin: 0 auto; width: 100%; }
           .tokenized-col-head { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.9rem; }
           .tokenized-col-head .section-kicker { margin:0; }
           .tokenized-col-head h3 { margin:0; font-family:'Inter',system-ui,sans-serif; font-size:1.15rem; font-weight:700; letter-spacing:-0.02em; color:hsl(var(--ink)); }
-          @media (max-width: 900px) { .tokenized-grid { grid-template-columns: 1fr; gap:2rem; } .tokenized-grid > * { display:block; } }
+          @media (max-width: 900px) { .tokenized-grid > * { display:block; } }
           .fw-stage { position: relative; width: 100%; max-width: 320px; margin: 0 auto 0.75rem; aspect-ratio: 1 / 1; }
           .flywheel-redesign { justify-content: flex-start; }
           .fw-orbit { position: absolute; inset: 12%; border: 1px solid hsl(var(--ink) / 0.35); border-radius: 50%; animation: flywheel-spin 60s linear infinite; }
@@ -300,7 +302,7 @@
           </div>
 
           <!-- Tokenomics column -->
-          <div class="fade-in">
+          <div class="fade-in tokenomics-col">
             <div class="tokenized-col-head">
               <span class="section-kicker">Allocation</span>
             </div>

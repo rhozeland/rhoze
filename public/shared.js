@@ -2,15 +2,35 @@
 
 // Create modal — injected once on every page
 (function(){
-  // Project thumbnails for the Produce showcase carousel
-  var produceSlides = [
+  // Pool of recent projects — 3 random are picked each time the modal opens
+  var producePool = [
     { img: '/images/ooak-the-mask-thumb.png', tag: 'Music Video', title: 'The Mask', artist: 'Ooak' },
     { img: '/images/fingaz-mansa-musa-thumb.png', tag: 'Music Video', title: 'Mansa Musa', artist: 'MONEE FINGAZ' },
-    { img: '/images/rhozeland-fus-thumb.png', tag: 'EP', title: 'FUS', artist: 'Rhozeland' }
+    { img: '/images/rhozeland-fus-thumb.png', tag: 'EP', title: 'FUS', artist: 'Rhozeland' },
+    { img: '/images/holy-water-thumb.jpg', tag: 'Music Video', title: 'Holy Water', artist: 'Cozal' },
+    { img: '/images/vampurp-2027-thumb.jpg', tag: 'Music Video', title: '2027', artist: 'Vampurp' },
+    { img: '/images/fingaz-superhero-thumb.png', tag: 'Music Video', title: 'Feel Like A Superhero', artist: 'MONEE FINGAZ' },
+    { img: '/images/carina-lucky-charm-thumb.jpg', tag: 'Music Video', title: 'Lucky Charm', artist: 'Carina' },
+    { img: '/images/steelo-u-outta-know-thumb.jpg', tag: 'Music Video', title: 'U Outta Know', artist: 'YOUNG $TEELO' },
+    { img: '/images/rc1-thumb.jpg', tag: 'Campaign', title: "Who Runs The World?", artist: "Runner's Club" },
+    { img: '/images/straightdizzy-the-only-reason-thumb.png', tag: 'Music Video', title: 'The Only Reason', artist: 'Straightdizzy' },
+    { img: '/images/bk-whiskey-mma-thumb.png', tag: 'Campaign', title: 'United MMA', artist: 'BK Whiskey' },
+    { img: '/images/ooak-saint-flair-west-thumb.png', tag: 'Album', title: 'Saint Flair West', artist: 'Ooak' }
   ];
+  var produceSlides = pickRandom(producePool, 3);
+  function pickRandom(arr, n){
+    var copy = arr.slice();
+    for (var i = copy.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+    }
+    return copy.slice(0, n);
+  }
+  function reshuffleProduce(){ produceSlides = pickRandom(producePool, 3); }
 
   function ensureModal(){
-    if (document.getElementById('createModal')) return;
+    var existing = document.getElementById('createModal');
+    if (existing) existing.parentNode.removeChild(existing);
     var arrow = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>';
     var slidesHtml = produceSlides.map(function(s, i){
       return '<div class="cm-slide' + (i===0?' is-active':'') + '" data-cm-slide="' + i + '">'
@@ -58,24 +78,25 @@
       +           '<div class="cm-visual cm-visual--distribute">'
       +             '<div class="cm-app">'
       +               '<div class="cm-app__bar">'
-      +                 '<span class="cm-app__dot"></span><span class="cm-app__dot"></span><span class="cm-app__dot"></span>'
-      +                 '<span class="cm-app__url">rhozeland.app / discover</span>'
+      +                 '<span class="cm-app__brand"><span class="cm-app__logo"></span><span class="cm-app__brand-text">Creator OS</span></span>'
+      +                 '<span class="cm-app__live"><span class="cm-app__live-dot"></span>LIVE</span>'
       +               '</div>'
       +               '<div class="cm-app__body">'
-      +                 '<div class="cm-app__head">'
-      +                   '<span class="cm-app__brand"><span class="cm-app__logo"></span><span class="cm-app__brand-text">Creator OS</span></span>'
-      +                   '<span class="cm-app__live"><span class="cm-app__live-dot"></span>LIVE</span>'
+      +                 '<div class="cm-app__profile">'
+      +                   '<span class="cm-app__avatar"></span>'
+      +                   '<div class="cm-app__id">'
+      +                     '<div class="cm-app__name">Rhozeland</div>'
+      +                     '<div class="cm-app__handle">@rhoze · 12.4k</div>'
+      +                   '</div>'
+      +                   '<span class="cm-app__cta">Follow</span>'
       +                 '</div>'
-      +                 '<div class="cm-app__tabs">'
-      +                   '<span class="cm-app__tab is-active">Spark</span>'
-      +                   '<span class="cm-app__tab">Bloom</span>'
-      +                   '<span class="cm-app__tab">Glow</span>'
-      +                   '<span class="cm-app__tab">Play</span>'
-      +                 '</div>'
-      +                 '<div class="cm-app__cards">'
-      +                   '<div class="cm-app__card cm-app__card--a"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Verified Studio</div><div class="cm-app__card-meta">Spaces · Toronto</div></div>'
-      +                   '<div class="cm-app__card cm-app__card--b"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Open Drop</div><div class="cm-app__card-meta">Launchpad · 24h</div></div>'
-      +                   '<div class="cm-app__card cm-app__card--c"><div class="cm-app__thumb"></div><div class="cm-app__card-title">Creator Hub</div><div class="cm-app__card-meta">Network · 1.2k</div></div>'
+      +                 '<div class="cm-app__drop">'
+      +                   '<div class="cm-app__cover"></div>'
+      +                   '<div class="cm-app__drop-meta">'
+      +                     '<span class="cm-app__tag">Latest Drop</span>'
+      +                     '<div class="cm-app__drop-title">FUS — out now</div>'
+      +                     '<div class="cm-app__drop-stats"><span>▶ 2.1k</span><span>♡ 318</span><span>↗ Share</span></div>'
+      +                   '</div>'
       +                 '</div>'
       +               '</div>'
       +             '</div>'
@@ -123,6 +144,7 @@
   }
 
   function open(){
+    reshuffleProduce();
     ensureModal();
     var m = document.getElementById('createModal');
     if (!m) return;

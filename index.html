@@ -4258,13 +4258,13 @@
     })();
   </script>
   <script>
-    // Hero globe — auto-spin with crossfading skins. No drag, no surface swaps mid-rotation.
+    // Hero globe — auto-spin with crossfading skins (5 textures).
     (function(){
       var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
       var skins = svg.querySelectorAll('.orb-skin');
       var caption = document.getElementById('orbCaption');
-      var labels = ['Chrome aurora', 'Pop Rhozeland', 'Earth'];
+      var labels = ['Gradient mesh', 'Liquid chrome', 'Risograph', 'Topographic', 'Starfield'];
       if (!skins.length) return;
       var i = 0;
       setInterval(function(){

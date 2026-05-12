@@ -267,29 +267,37 @@ const Navbar = () => {
                           LIVE
                         </span>
                       </div>
-                      <div className="flex flex-1 flex-col gap-1.5 p-2 min-h-0">
-                        <div className="grid grid-cols-[auto_1fr_auto] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] px-2 py-1.5">
-                          <span className="h-6 w-6 rounded-full" style={{ background: "conic-gradient(from 180deg, hsl(330 90% 65%), hsl(28 95% 60%), hsl(200 90% 60%), hsl(330 90% 65%))", boxShadow: "inset 0 0 0 2px hsl(240 18% 9%)" }} />
-                          <div className="min-w-0">
-                            <div className="text-[0.7rem] font-bold leading-tight">Rhozeland</div>
-                            <div className="text-[0.55rem] leading-tight text-white/55">@rhoze · 12.4k</div>
-                          </div>
-                          <span className="rounded-full bg-white px-2 py-0.5 text-[0.55rem] font-bold tracking-wider text-[hsl(240_18%_7%)]">Follow</span>
-                        </div>
-                        <div className="grid flex-1 grid-cols-[44px_1fr] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] p-1.5 min-h-0">
+                      <div className="flex flex-1 flex-col p-2 min-h-0">
+                        <div className="grid flex-1 grid-cols-[42px_1fr_auto] items-center gap-2 rounded-lg border border-white/[0.06] bg-[hsl(240_18%_9%)] px-2 py-1.5 min-h-0">
                           <div
-                            className="h-full min-h-[34px] w-11 rounded-md"
+                            className="h-[42px] w-[42px] rounded-md"
                             style={{
                               background:
                                 "radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))",
                               boxShadow: "inset 0 0 0 1px hsl(0 0% 100% / 0.12)",
                             }}
                           />
-                          <div className="flex min-w-0 flex-col gap-0.5">
-                            <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">Latest Drop</span>
-                            <div className="truncate text-[0.7rem] font-bold leading-tight">FUS — out now</div>
-                            <div className="flex gap-2 text-[0.5rem] text-white/55"><span>▶ 2.1k</span><span>♡ 318</span><span>↗ Share</span></div>
+                          <div className="flex min-w-0 flex-col gap-1">
+                            <span className="self-start rounded-full bg-white/10 px-1.5 py-[1px] text-[0.45rem] font-bold uppercase tracking-[0.16em] text-white/85">Now Playing</span>
+                            <div className="truncate text-[0.7rem] font-bold leading-tight">FUS — Rhozeland</div>
+                            <div className="flex h-[10px] items-end gap-[2px]" aria-hidden="true">
+                              {Array.from({ length: 10 }).map((_, i) => (
+                                <span
+                                  key={i}
+                                  className="block w-[2px] rounded-[1px]"
+                                  style={{
+                                    background: "linear-gradient(180deg, hsl(330 90% 70%), hsl(200 90% 65%))",
+                                    animation: "cm-eq 1.1s ease-in-out infinite",
+                                    animationDelay: `${-(((i * 37) % 100) / 100).toFixed(2)}s`,
+                                    height: "60%",
+                                  }}
+                                />
+                              ))}
+                            </div>
                           </div>
+                          <span className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-[hsl(240_18%_7%)] shadow-md">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                          </span>
                         </div>
                       </div>
                     </div>

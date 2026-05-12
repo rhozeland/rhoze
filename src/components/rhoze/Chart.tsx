@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Copy, Check } from "lucide-react";
 
 const TOKEN = "7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump";
 const API_URL = `https://api.dexscreener.com/latest/dex/tokens/${TOKEN}`;
@@ -15,7 +16,7 @@ const fmtPrice = (n: number | null) => {
   if (n == null || !isFinite(n)) return "—";
   if (n >= 1) return `$${n.toFixed(4)}`;
   if (n >= 0.01) return `$${n.toFixed(5)}`;
-  return `$${n.toPrecision(4)}`;
+  return `$${n.toPrecision(3)}`;
 };
 const fmtCompact = (n: number | null) => {
   if (n == null || !isFinite(n) || n <= 0) return "—";
@@ -32,6 +33,12 @@ const Chart = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-50px" });
   const [stats, setStats] = useState<Stats>({ price: null, change24h: null, marketCap: null, volume24h: null });
+  const [copied, setCopied] = useState(false);
+  const copyCa = () => {
+    navigator.clipboard.writeText(TOKEN);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -71,9 +78,9 @@ const Chart = () => {
   const changeClass = stats.change24h == null ? "text-foreground" : stats.change24h >= 0 ? "text-emerald-500" : "text-rose-500";
 
   const StatCard = ({ label, value, valueClass = "text-foreground" }: { label: string; value: string; valueClass?: string }) => (
-    <div className="rounded-lg border border-border bg-card px-3 py-2.5">
-      <div className="text-[0.62rem] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
-      <div className={`mt-0.5 font-display text-base font-extrabold tabular-nums ${valueClass}`}>{value}</div>
+    <div className="min-w-0 rounded-lg border border-border bg-card px-2.5 py-2 sm:px-3 sm:py-2.5">
+      <div className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className={`mt-0.5 truncate font-display text-[0.82rem] font-extrabold tabular-nums sm:text-sm md:text-base ${valueClass}`}>{value}</div>
     </div>
   );
 
@@ -106,6 +113,22 @@ const Chart = () => {
           <StatCard label="Market Cap" value={fmtCompact(stats.marketCap)} />
           <StatCard label="24h Vol" value={fmtCompact(stats.volume24h)} />
         </motion.div>
+
+        <div className="mb-4 flex justify-center">
+          <button
+            type="button"
+            onClick={copyCa}
+            className="group inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-[0.7rem] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+            aria-label="Copy contract address"
+            title="Copy contract address"
+          >
+            <span className="text-[0.55rem] font-bold uppercase tracking-widest text-muted-foreground/80">CA</span>
+            <code className="truncate font-mono text-[0.72rem] text-foreground">{TOKEN}</code>
+            {copied
+              ? <Check size={12} className="shrink-0 text-primary" />
+              : <Copy size={12} className="shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />}
+          </button>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}

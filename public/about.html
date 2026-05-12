@@ -412,7 +412,7 @@
               html.dark .rhoze-stat .stat-value.is-down { color: hsl(0 75% 65%); }
             </style>
             <div style="position:relative; border-radius:0.75rem; overflow:hidden; border:1px solid hsl(var(--line));">
-              <iframe src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light" title="Birdeye $RHOZE Chart" loading="lazy" style="width:100%; height:340px; border:none; display:block;" allowfullscreen></iframe>
+              <iframe id="chartFrame" data-src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light" title="Birdeye $RHOZE Chart" loading="lazy" style="width:100%; height:340px; border:none; display:block;" allowfullscreen></iframe>
             </div>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; margin-top:0.9rem; flex-wrap:wrap;">
               <a href="https://birdeye.so/token/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana" target="_blank" rel="noopener noreferrer" style="font-size:0.82rem; color:hsl(var(--muted)); text-decoration:underline;">View full chart →</a>
@@ -437,6 +437,11 @@
             document.querySelectorAll('[data-wallet-panel]').forEach(function(p){
               p.hidden = p.dataset.walletPanel !== key;
             });
+            // Lazy-load chart iframe only when tab opens
+            if (key === 'chart') {
+              var f = document.getElementById('chartFrame');
+              if (f && !f.src && f.dataset.src) f.src = f.dataset.src;
+            }
           }
           (function(){
             var b=document.querySelector('[data-wallet-tab="main"]');

@@ -406,11 +406,12 @@
     }
     .hero-globe-svg:active { cursor: grabbing; }
 
-    /* Stable morphing orb — no rotating clipped textures */
-    .orb-skin { opacity: 0; transition: opacity 1s ease; }
+    /* Morphing orb — full-sphere skins, drag-to-spin without texture flicker */
+    .orb-spin { transform-box: view-box; transform-origin: 50px 50px; will-change: transform; }
+    .orb-skin { opacity: 0; transition: opacity 0.9s ease; }
     .orb-skin.is-active { opacity: 1; }
-    .orb-drift { transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
-    .orb-glint { transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
+    .orb-drift { transform-box: view-box; transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
+    .orb-glint { transform-box: view-box; transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
     @keyframes orb-drift {
       0%, 100% { transform: translate(-1px, 1px) scale(1); }
       50% { transform: translate(1.5px, -1px) scale(1.025); }
@@ -418,6 +419,7 @@
     @media (prefers-reduced-motion: reduce) {
       .orb-skin { transition: none; }
       .orb-drift { animation: none; }
+      .orb-spin { transform: none !important; }
     }
     /* Texture caption */
     .orb-caption {
@@ -3065,28 +3067,74 @@
                   <stop offset="72%" stop-color="hsl(240 50% 6%)" stop-opacity="0.06" />
                   <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.28" />
                 </radialGradient>
+                <!-- Earth skin -->
+                <radialGradient id="orb-ocean" cx="36%" cy="30%" r="78%">
+                  <stop offset="0%" stop-color="hsl(205 90% 62%)" />
+                  <stop offset="60%" stop-color="hsl(212 80% 38%)" />
+                  <stop offset="100%" stop-color="hsl(225 70% 16%)" />
+                </radialGradient>
+                <!-- Pop-art skin -->
+                <pattern id="orb-pop-dots" x="0" y="0" width="3.6" height="3.6" patternUnits="userSpaceOnUse">
+                  <circle cx="1.8" cy="1.8" r="0.55" fill="hsl(0 0% 8% / 0.55)" />
+                </pattern>
+                <linearGradient id="orb-pop-base" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="hsl(48 100% 60%)" />
+                  <stop offset="50%" stop-color="hsl(345 88% 62%)" />
+                  <stop offset="100%" stop-color="hsl(215 95% 56%)" />
+                </linearGradient>
               </defs>
               <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.28)" />
               <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
               <g clip-path="url(#orb-clip)">
                 <circle cx="50" cy="50" r="36" fill="url(#orb-base)" />
-                <g class="orb-skin is-active" data-label="Living mesh">
-                  <circle cx="50" cy="50" r="36" fill="url(#orb-rose-a)" />
-                </g>
-                <g class="orb-skin" data-label="Soft chrome">
-                  <circle cx="50" cy="50" r="36" fill="url(#orb-chrome-soft)" />
-                  <path class="orb-drift" d="M18 59 C30 43 38 36 50 22 C58 40 66 52 84 68 C65 72 43 70 18 59Z" fill="hsl(0 0% 100% / 0.22)" />
-                </g>
-                <g class="orb-skin" data-label="Rose grain">
-                  <circle cx="50" cy="50" r="36" fill="hsl(338 68% 52% / 0.18)" />
-                  <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.7" />
-                </g>
-                <g class="orb-skin" data-label="Growth rings" stroke="hsl(150 70% 72% / 0.4)" stroke-width="0.35" fill="none">
-                  <circle cx="50" cy="50" r="8" /><circle cx="50" cy="50" r="13" /><circle cx="50" cy="50" r="18" /><circle cx="50" cy="50" r="23" /><circle cx="50" cy="50" r="28" /><circle cx="50" cy="50" r="33" />
-                </g>
-                <g class="orb-skin" data-label="Starfield">
-                  <circle cx="50" cy="50" r="36" fill="hsl(244 70% 8% / 0.58)" />
-                  <g id="orb-stars" fill="hsl(0 0% 100%)"></g>
+                <g id="orbSpin" class="orb-spin">
+                  <g class="orb-skin is-active" data-label="Living mesh">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-rose-a)" />
+                  </g>
+                  <g class="orb-skin" data-label="Soft chrome">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-chrome-soft)" />
+                    <path class="orb-drift" d="M18 59 C30 43 38 36 50 22 C58 40 66 52 84 68 C65 72 43 70 18 59Z" fill="hsl(0 0% 100% / 0.22)" />
+                  </g>
+                  <g class="orb-skin" data-label="Rose grain">
+                    <circle cx="50" cy="50" r="36" fill="hsl(338 68% 52% / 0.18)" />
+                    <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.7" />
+                  </g>
+                  <g class="orb-skin" data-label="Growth rings" stroke="hsl(150 70% 72% / 0.4)" stroke-width="0.35" fill="none">
+                    <circle cx="50" cy="50" r="8" /><circle cx="50" cy="50" r="13" /><circle cx="50" cy="50" r="18" /><circle cx="50" cy="50" r="23" /><circle cx="50" cy="50" r="28" /><circle cx="50" cy="50" r="33" />
+                  </g>
+                  <g class="orb-skin" data-label="Starfield">
+                    <circle cx="50" cy="50" r="36" fill="hsl(244 70% 8% / 0.58)" />
+                    <g id="orb-stars" fill="hsl(0 0% 100%)"></g>
+                  </g>
+                  <g class="orb-skin" data-label="Pop Rhozeland">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-pop-base)" />
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-pop-dots)" opacity="0.55" />
+                    <circle cx="34" cy="36" r="11" fill="hsl(48 100% 60%)" />
+                    <circle cx="64" cy="42" r="8" fill="hsl(345 88% 62%)" />
+                    <circle cx="42" cy="64" r="9" fill="hsl(215 95% 56%)" />
+                    <circle cx="64" cy="66" r="6" fill="hsl(28 100% 58%)" />
+                    <circle cx="50" cy="50" r="3" fill="hsl(0 0% 100%)" />
+                    <circle cx="50" cy="50" r="36" fill="none" stroke="hsl(0 0% 8% / 0.55)" stroke-width="0.9" />
+                  </g>
+                  <g class="orb-skin" data-label="Earth">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-ocean)" />
+                    <!-- Stylised continents tiled twice for seamless spin -->
+                    <g fill="hsl(135 55% 42%)">
+                      <path d="M28 32 C 32 28, 40 28, 44 32 C 46 36, 42 42, 38 44 C 32 46, 26 42, 26 38 Z" />
+                      <path d="M52 26 C 58 26, 64 30, 62 36 C 60 40, 54 40, 50 38 C 48 34, 48 28, 52 26 Z" />
+                      <path d="M30 56 C 36 54, 44 56, 46 62 C 44 68, 38 70, 32 68 C 26 66, 26 60, 30 56 Z" />
+                      <path d="M56 54 C 64 52, 72 56, 70 62 C 68 66, 60 66, 56 62 C 54 60, 54 56, 56 54 Z" />
+                      <path d="M48 44 C 52 42, 58 44, 58 48 C 56 52, 50 52, 48 50 Z" opacity="0.85" />
+                    </g>
+                    <!-- Cloud layer -->
+                    <g fill="hsl(0 0% 100% / 0.32)">
+                      <ellipse cx="40" cy="28" rx="9" ry="2" />
+                      <ellipse cx="62" cy="50" rx="7" ry="1.6" />
+                      <ellipse cx="36" cy="68" rx="8" ry="1.8" />
+                    </g>
+                    <!-- Day/night terminator -->
+                    <circle cx="50" cy="50" r="36" fill="hsl(230 60% 6% / 0.28)" style="clip-path: inset(0 0 0 55%);" />
+                  </g>
                 </g>
                 <g id="orbParallax" class="orb-glint">
                   <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
@@ -4172,6 +4220,7 @@
       var caption = document.getElementById('orbCaption');
       var skins = svg.querySelectorAll('.orb-skin');
       var glint = document.getElementById('orbParallax');
+      var spin = document.getElementById('orbSpin');
 
       // Seed starfield once
       var starsG = document.getElementById('orb-stars');
@@ -4189,7 +4238,7 @@
         starsG.innerHTML = s;
       }
 
-      // Surface cycler
+      // Surface cycler — opacity cross-fade only, independent of rotation.
       var idx = 0;
       function setTex(i) {
         idx = i;
@@ -4197,18 +4246,61 @@
         if (caption) caption.textContent = skins[i] ? (skins[i].dataset.label || '') : '';
       }
       var cycleTimer = setInterval(function(){
-        setTex((idx + 1) % skins.length);
-      }, 5200);
+        if (!dragging) setTex((idx + 1) % skins.length);
+      }, 5600);
 
-      // Drag/hover shifts light only, so the globe never reveals missing texture edges.
-      function apply(dx, dy){
-        if (glint) glint.setAttribute('transform', 'translate(' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ')');
+      // Rotation state lives on #orbSpin only — never touches skin DOM, so textures don't flicker.
+      var angle = 0;          // degrees
+      var velocity = 0.08;    // baseline auto-spin
+      var dragging = false;
+      var lastX = 0;
+      var lastT = 0;
+      var pointerId = null;
+
+      function applySpin(){ if (spin) spin.setAttribute('transform', 'rotate(' + angle.toFixed(2) + ' 50 50)'); }
+      function applyGlint(dx, dy){ if (glint) glint.setAttribute('transform', 'translate(' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ')'); }
+
+      function tick(){
+        if (!dragging) {
+          angle = (angle + velocity) % 360;
+          // Ease velocity back toward gentle auto-spin
+          velocity += (0.08 - velocity) * 0.04;
+          applySpin();
+        }
+        requestAnimationFrame(tick);
       }
+      requestAnimationFrame(tick);
+
+      svg.addEventListener('pointerdown', function(e){
+        dragging = true;
+        pointerId = e.pointerId;
+        lastX = e.clientX;
+        lastT = performance.now();
+        try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+      });
       svg.addEventListener('pointermove', function(e){
         var r = svg.getBoundingClientRect();
-        apply(((e.clientX - r.left) / r.width - 0.5) * 3, ((e.clientY - r.top) / r.height - 0.5) * 3);
+        applyGlint(((e.clientX - r.left) / r.width - 0.5) * 3, ((e.clientY - r.top) / r.height - 0.5) * 3);
+        if (!dragging || e.pointerId !== pointerId) return;
+        var now = performance.now();
+        var dx = e.clientX - lastX;
+        var dt = Math.max(1, now - lastT);
+        var deg = dx * 0.45;
+        angle = (angle + deg) % 360;
+        velocity = (deg / dt) * 16; // momentum on release
+        applySpin();
+        lastX = e.clientX;
+        lastT = now;
       });
-      svg.addEventListener('pointerleave', function(){ apply(0, 0); });
+      function endDrag(e){
+        if (!dragging) return;
+        dragging = false;
+        try { if (pointerId !== null) svg.releasePointerCapture(pointerId); } catch (_) {}
+        pointerId = null;
+      }
+      svg.addEventListener('pointerup', endDrag);
+      svg.addEventListener('pointercancel', endDrag);
+      svg.addEventListener('pointerleave', function(){ applyGlint(0, 0); });
     })();
   </script>
 </body>

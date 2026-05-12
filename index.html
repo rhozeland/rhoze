@@ -409,11 +409,8 @@
     /* Morphing orb — texture layers crossfade on a slow loop */
     .orb-tex { opacity: 0; transition: opacity 1.4s ease; }
     .orb-tex.is-active { opacity: 1; }
-    @keyframes orb-spin-auto { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    #orb-spin { transform-origin: 50px 50px; animation: orb-spin-auto 60s linear infinite; }
-    .orb-dragging #orb-spin { animation: none; }
+    #orb-spin { transform-origin: 50px 50px; transform-box: fill-box; }
     @media (prefers-reduced-motion: reduce) {
-      #orb-spin { animation: none; }
       .orb-tex { transition: none; }
     }
     /* Texture caption */

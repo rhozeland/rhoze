@@ -3036,7 +3036,25 @@
               <defs>
                 <clipPath id="orb-clip"><circle cx="50" cy="50" r="36" /></clipPath>
 
-                <!-- Skin 1: Chrome / aurora -->
+                <!-- Skin 1: Gradient Mesh -->
+                <radialGradient id="orb-mesh-a" cx="25%" cy="25%" r="70%">
+                  <stop offset="0%" stop-color="hsl(320 70% 72%)" />
+                  <stop offset="55%" stop-color="hsl(280 60% 55%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-mesh-b" cx="75%" cy="35%" r="65%">
+                  <stop offset="0%" stop-color="hsl(40 90% 65%)" />
+                  <stop offset="60%" stop-color="hsl(30 80% 50%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-mesh-c" cx="50%" cy="80%" r="60%">
+                  <stop offset="0%" stop-color="hsl(170 70% 60%)" />
+                  <stop offset="60%" stop-color="hsl(190 60% 45%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-mesh-base" cx="50%" cy="50%" r="70%">
+                  <stop offset="0%" stop-color="hsl(250 35% 88%)" />
+                  <stop offset="100%" stop-color="hsl(240 40% 22%)" />
+                </radialGradient>
+
+                <!-- Skin 2: Liquid Chrome -->
                 <radialGradient id="orb-chrome" cx="34%" cy="28%" r="82%">
                   <stop offset="0%" stop-color="hsl(205 28% 95%)" />
                   <stop offset="42%" stop-color="hsl(214 42% 60%)" />
@@ -3050,23 +3068,38 @@
                   <stop offset="100%" stop-color="hsl(159 64% 48%)" stop-opacity="0.5" />
                 </linearGradient>
 
-                <!-- Skin 2: Pop Rhozeland (halftone) -->
-                <linearGradient id="orb-pop-base" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                <!-- Skin 3: Risograph -->
+                <linearGradient id="orb-riso-base" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
                   <stop offset="0%" stop-color="hsl(330 90% 64%)" />
                   <stop offset="35%" stop-color="hsl(28 95% 60%)" />
                   <stop offset="65%" stop-color="hsl(48 95% 58%)" />
                   <stop offset="100%" stop-color="hsl(210 90% 56%)" />
                 </linearGradient>
-                <pattern id="orb-pop-dots" x="0" y="0" width="3.4" height="3.4" patternUnits="userSpaceOnUse">
+                <pattern id="orb-riso-dots" x="0" y="0" width="3.4" height="3.4" patternUnits="userSpaceOnUse">
                   <circle cx="1.7" cy="1.7" r="0.55" fill="hsl(240 30% 8% / 0.32)" />
                 </pattern>
 
-                <!-- Skin 3: Earth -->
-                <radialGradient id="orb-ocean" cx="40%" cy="32%" r="80%">
-                  <stop offset="0%" stop-color="hsl(200 80% 55%)" />
-                  <stop offset="55%" stop-color="hsl(212 75% 38%)" />
-                  <stop offset="100%" stop-color="hsl(225 70% 14%)" />
+                <!-- Skin 4: Topographic -->
+                <radialGradient id="orb-topo-base" cx="45%" cy="35%" r="78%">
+                  <stop offset="0%" stop-color="hsl(210 20% 92%)" />
+                  <stop offset="55%" stop-color="hsl(220 18% 72%)" />
+                  <stop offset="100%" stop-color="hsl(230 25% 38%)" />
                 </radialGradient>
+
+                <!-- Skin 5: Starfield -->
+                <radialGradient id="orb-star-base" cx="50%" cy="50%" r="75%">
+                  <stop offset="0%" stop-color="hsl(240 30% 18%)" />
+                  <stop offset="100%" stop-color="hsl(240 40% 6%)" />
+                </radialGradient>
+                <pattern id="orb-stars" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+                  <circle cx="2.4" cy="3.6" r="0.35" fill="hsl(0 0% 100% / 0.65)" />
+                  <circle cx="7.8" cy="1.8" r="0.25" fill="hsl(0 0% 100% / 0.45)" />
+                  <circle cx="10.2" cy="7.2" r="0.4" fill="hsl(0 0% 100% / 0.7)" />
+                  <circle cx="4.8" cy="9.6" r="0.2" fill="hsl(0 0% 100% / 0.35)" />
+                  <circle cx="0.6" cy="6" r="0.3" fill="hsl(0 0% 100% / 0.55)" />
+                  <circle cx="6" cy="5.4" r="0.18" fill="hsl(0 0% 100% / 0.3)" />
+                  <circle cx="9" cy="10.8" r="0.28" fill="hsl(0 0% 100% / 0.5)" />
+                </pattern>
 
                 <!-- Shared overlays -->
                 <filter id="orb-grain" x="0" y="0" width="100%" height="100%">
@@ -3091,33 +3124,57 @@
 
               <g clip-path="url(#orb-clip)">
                 <g id="orbSpin" class="orb-spin">
-                  <!-- Skin 1: Chrome / Aurora -->
+                  <!-- Skin 1: Gradient Mesh -->
                   <g class="orb-skin is-active" data-skin="0">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-base)" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-mesh-a)" opacity="0.9" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-mesh-b)" opacity="0.85" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-mesh-c)" opacity="0.8" />
+                    <path d="M14 48 C28 40 42 38 56 44 C68 49 78 46 86 38" fill="none" stroke="hsl(0 0% 100% / 0.25)" stroke-width="0.7" />
+                    <path d="M14 62 C28 55 42 56 54 62 C66 68 78 66 86 58" fill="none" stroke="hsl(0 0% 100% / 0.2)" stroke-width="0.6" />
+                  </g>
+
+                  <!-- Skin 2: Liquid Chrome -->
+                  <g class="orb-skin" data-skin="1">
                     <circle cx="50" cy="50" r="36" fill="url(#orb-chrome)" />
                     <rect x="14" y="14" width="72" height="72" fill="url(#orb-aurora)" opacity="0.85" />
                     <path d="M14 46 C26 36 38 34 50 38 C62 42 74 38 86 30" fill="none" stroke="hsl(0 0% 100% / 0.32)" stroke-width="0.7" />
                     <path d="M14 60 C28 53 40 54 52 60 C64 66 76 64 86 56" fill="none" stroke="hsl(48 100% 62% / 0.4)" stroke-width="0.65" />
                   </g>
 
-                  <!-- Skin 2: Pop Rhozeland -->
-                  <g class="orb-skin" data-skin="1">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-pop-base)" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-pop-dots)" opacity="0.85" />
+                  <!-- Skin 3: Risograph -->
+                  <g class="orb-skin" data-skin="2">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-riso-base)" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-riso-dots)" opacity="0.85" />
                     <path d="M14 38 C28 30 42 30 56 36 C68 41 78 39 86 32" fill="none" stroke="hsl(0 0% 100% / 0.55)" stroke-width="0.9" />
                     <path d="M14 64 C28 56 42 56 56 62 C68 67 78 65 86 58" fill="none" stroke="hsl(240 30% 8% / 0.4)" stroke-width="0.9" />
                   </g>
 
-                  <!-- Skin 3: Earth -->
-                  <g class="orb-skin" data-skin="2">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-ocean)" />
-                    <!-- Continent shapes (stylized, kept inside r=36) -->
-                    <path d="M22 40 C28 34 36 33 42 36 C48 39 50 44 47 49 C44 54 36 55 30 51 C25 48 22 45 22 40 Z" fill="hsl(120 38% 42%)" opacity="0.85" />
-                    <path d="M52 32 C60 30 68 32 72 38 C75 43 72 48 66 49 C58 50 52 46 50 40 C49 36 50 33 52 32 Z" fill="hsl(110 35% 40%)" opacity="0.85" />
-                    <path d="M40 58 C48 56 56 58 62 62 C68 66 66 72 58 73 C50 74 42 70 40 64 Z" fill="hsl(100 32% 38%)" opacity="0.85" />
-                    <path d="M22 62 C28 60 32 62 32 66 C32 70 26 72 22 70 Z" fill="hsl(115 35% 40%)" opacity="0.8" />
-                    <!-- Cloud wisps -->
-                    <path d="M18 30 C30 26 42 28 54 26" fill="none" stroke="hsl(0 0% 100% / 0.55)" stroke-width="1.2" stroke-linecap="round" />
-                    <path d="M30 70 C42 67 54 70 70 67" fill="none" stroke="hsl(0 0% 100% / 0.45)" stroke-width="1" stroke-linecap="round" />
+                  <!-- Skin 4: Topographic -->
+                  <g class="orb-skin" data-skin="3">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-topo-base)" />
+                    <!-- Wavy contour lines -->
+                    <path d="M14 30 C28 22 42 24 56 28 C70 32 78 30 86 24" fill="none" stroke="hsl(0 0% 100% / 0.55)" stroke-width="0.7" stroke-linecap="round" />
+                    <path d="M14 40 C26 33 38 34 50 38 C62 42 74 40 86 34" fill="none" stroke="hsl(0 0% 100% / 0.42)" stroke-width="0.7" stroke-linecap="round" />
+                    <path d="M14 50 C28 44 40 45 52 49 C64 53 76 51 86 45" fill="none" stroke="hsl(0 0% 100% / 0.3)" stroke-width="0.7" stroke-linecap="round" />
+                    <path d="M14 60 C26 54 38 55 50 59 C62 63 74 61 86 55" fill="none" stroke="hsl(0 0% 100% / 0.22)" stroke-width="0.7" stroke-linecap="round" />
+                    <path d="M14 70 C28 65 40 66 52 70 C64 74 76 72 86 66" fill="none" stroke="hsl(0 0% 100% / 0.15)" stroke-width="0.7" stroke-linecap="round" />
+                    <path d="M22 20 C34 26 46 24 58 20 C70 16 78 18 86 24" fill="none" stroke="hsl(0 0% 100% / 0.18)" stroke-width="0.6" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Skin 5: Starfield -->
+                  <g class="orb-skin" data-skin="4">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-star-base)" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-stars)" opacity="0.9" />
+                    <!-- Larger accent stars -->
+                    <circle cx="32" cy="38" r="0.9" fill="hsl(0 0% 100% / 0.85)" />
+                    <circle cx="62" cy="28" r="0.7" fill="hsl(0 0% 100% / 0.7)" />
+                    <circle cx="48" cy="58" r="1.1" fill="hsl(0 0% 100% / 0.9)" />
+                    <circle cx="24" cy="54" r="0.6" fill="hsl(0 0% 100% / 0.6)" />
+                    <circle cx="70" cy="52" r="0.8" fill="hsl(0 0% 100% / 0.75)" />
+                    <!-- Subtle nebula wisps -->
+                    <path d="M18 34 C30 28 42 30 54 26" fill="none" stroke="hsl(280 60% 65% / 0.35)" stroke-width="1.4" stroke-linecap="round" />
+                    <path d="M36 66 C48 60 60 62 72 58" fill="none" stroke="hsl(190 70% 60% / 0.3)" stroke-width="1.2" stroke-linecap="round" />
                   </g>
 
                   <!-- Grain over all skins -->
@@ -3131,7 +3188,7 @@
                 </g>
               </g>
             </svg>
-            <span class="orb-caption" id="orbCaption">Chrome aurora</span>
+            <span class="orb-caption" id="orbCaption">Gradient mesh</span>
           </div>
 
         </div>

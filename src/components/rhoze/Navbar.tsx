@@ -21,30 +21,35 @@ const Navbar = () => {
 
   const distributeSlides = [
     {
+      kind: "music" as const,
       tag: "Now Playing",
       title: "FUS — Rhozeland",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(330 90% 65% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 60% / 0.85), transparent 60%), linear-gradient(135deg, hsl(280 70% 35%), hsl(20 80% 45%))",
     },
     {
+      kind: "drop" as const,
       tag: "New Drop",
       title: "Saint Flair West · Ooak",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(20 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(330 85% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(340 70% 35%), hsl(10 80% 45%))",
     },
     {
+      kind: "space" as const,
       tag: "Live Space",
       title: "Creator Roundtable · 12",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(160 80% 55% / 0.85), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(200 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(190 70% 30%), hsl(150 70% 35%))",
     },
     {
+      kind: "event" as const,
       tag: "Upcoming Event",
       title: "Land Sessions · LA",
       cover:
         "radial-gradient(120% 80% at 0% 0%, hsl(48 95% 60% / 0.9), transparent 60%), radial-gradient(120% 80% at 100% 100%, hsl(20 90% 55% / 0.9), transparent 60%), linear-gradient(135deg, hsl(30 80% 35%), hsl(48 80% 45%))",
     },
     {
+      kind: "rewards" as const,
       tag: "$Rhoze Rewards",
       title: "Tier 3 · Citizen +250",
       cover:

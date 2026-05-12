@@ -113,14 +113,16 @@ const Chart = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="rounded-2xl overflow-hidden border border-border shadow-lift"
         >
-          <iframe
-            src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light"
-            className="w-full"
-            style={{ height: "500px", border: "none" }}
-            title="Birdeye $RHOZE Chart"
-            loading="lazy"
-            allowFullScreen
-          />
+          {inView && (
+            <iframe
+              src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light"
+              className="w-full"
+              style={{ height: "500px", border: "none" }}
+              title="Birdeye $RHOZE Chart"
+              loading="lazy"
+              allowFullScreen
+            />
+          )}
         </motion.div>
 
         <div className="mt-6 text-center">

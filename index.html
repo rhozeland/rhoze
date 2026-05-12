@@ -3023,67 +3023,137 @@
           </div>
 
           <div class="hero-globe-wrap" aria-hidden="true">
-            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroGlobeSvg">
+            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroOrbSvg">
               <defs>
-                <radialGradient id="hg-ocean" cx="38%" cy="30%" r="78%">
-                  <stop offset="0%"  stop-color="hsl(200 85% 72%)" />
-                  <stop offset="40%" stop-color="hsl(210 75% 52%)" />
-                  <stop offset="78%" stop-color="hsl(220 70% 32%)" />
-                  <stop offset="100%" stop-color="hsl(225 65% 18%)" />
+                <clipPath id="orb-clip"><circle cx="50" cy="50" r="36" /></clipPath>
+
+                <!-- 1. Gradient mesh -->
+                <radialGradient id="orb-mesh-a" cx="32%" cy="28%" r="70%">
+                  <stop offset="0%"  stop-color="hsl(280 90% 72%)" />
+                  <stop offset="55%" stop-color="hsl(210 80% 48%)" />
+                  <stop offset="100%" stop-color="hsl(230 70% 18%)" />
                 </radialGradient>
-                <radialGradient id="hg-land" cx="42%" cy="32%" r="80%">
-                  <stop offset="0%"  stop-color="hsl(85 55% 62%)" />
-                  <stop offset="55%" stop-color="hsl(120 40% 42%)" />
-                  <stop offset="100%" stop-color="hsl(150 45% 22%)" />
+                <radialGradient id="orb-mesh-b" cx="78%" cy="72%" r="60%">
+                  <stop offset="0%"  stop-color="hsl(20 95% 65%)" stop-opacity="0.85" />
+                  <stop offset="100%" stop-color="hsl(330 80% 55%)" stop-opacity="0" />
                 </radialGradient>
-                <radialGradient id="hg-hi" cx="38%" cy="28%" r="55%">
-                  <stop offset="0%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.35" />
-                  <stop offset="60%" stop-color="hsl(0 0% 100%)" stop-opacity="0.05" />
-                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
+                <radialGradient id="orb-mesh-c" cx="20%" cy="80%" r="55%">
+                  <stop offset="0%"  stop-color="hsl(170 85% 60%)" stop-opacity="0.7" />
+                  <stop offset="100%" stop-color="hsl(170 85% 60%)" stop-opacity="0" />
                 </radialGradient>
-                <radialGradient id="hg-shadow" cx="70%" cy="78%" r="60%">
-                  <stop offset="0%"  stop-color="hsl(225 70% 8%)" stop-opacity="0" />
-                  <stop offset="100%" stop-color="hsl(225 70% 8%)" stop-opacity="0.55" />
-                </radialGradient>
-                <!-- Iridescent texture overlay -->
-                <linearGradient id="hg-irid" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%"   stop-color="hsl(320 80% 70%)" stop-opacity="0.55" />
-                  <stop offset="35%"  stop-color="hsl(30 85% 65%)"  stop-opacity="0.5" />
-                  <stop offset="70%"  stop-color="hsl(175 80% 60%)" stop-opacity="0.55" />
-                  <stop offset="100%" stop-color="hsl(280 70% 65%)" stop-opacity="0.5" />
+
+                <!-- 2. Liquid chrome -->
+                <linearGradient id="orb-chrome" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%"   stop-color="hsl(220 15% 92%)" />
+                  <stop offset="22%"  stop-color="hsl(220 20% 38%)" />
+                  <stop offset="42%"  stop-color="hsl(220 18% 88%)" />
+                  <stop offset="58%"  stop-color="hsl(220 25% 22%)" />
+                  <stop offset="78%"  stop-color="hsl(220 18% 80%)" />
+                  <stop offset="100%" stop-color="hsl(220 25% 30%)" />
                 </linearGradient>
-                <filter id="hg-noise" x="0" y="0" width="100%" height="100%">
-                  <feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="2" seed="7" result="t"/>
-                  <feColorMatrix in="t" type="matrix"
+                <filter id="orb-chrome-warp" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02 0.035" numOctaves="2" seed="4" result="w">
+                    <animate attributeName="seed" from="0" to="24" dur="28s" repeatCount="indefinite" />
+                  </feTurbulence>
+                  <feDisplacementMap in="SourceGraphic" in2="w" scale="9" />
+                </filter>
+
+                <!-- 3. Risograph grain -->
+                <filter id="orb-noise" x="0" y="0" width="100%" height="100%">
+                  <feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" seed="9" result="n"/>
+                  <feColorMatrix in="n" type="matrix"
                     values="0 0 0 0 1
                             0 0 0 0 1
                             0 0 0 0 1
-                            0 0 0 0.55 0"/>
+                            0 0 0 0.9 0"/>
                 </filter>
-                <filter id="hg-warp" x="-10%" y="-10%" width="120%" height="120%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.025 0.04" numOctaves="2" seed="3" result="warp">
-                    <animate attributeName="seed" from="0" to="20" dur="22s" repeatCount="indefinite" />
+
+                <!-- 4. Topographic lines via warped concentric circles -->
+                <filter id="orb-topo-warp" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="2" seed="11" result="tw">
+                    <animate attributeName="seed" from="0" to="20" dur="40s" repeatCount="indefinite" />
                   </feTurbulence>
-                  <feDisplacementMap in="SourceGraphic" in2="warp" scale="6" />
+                  <feDisplacementMap in="SourceGraphic" in2="tw" scale="14" />
                 </filter>
-                <clipPath id="hg-clip"><circle cx="50" cy="50" r="36" /></clipPath>
+
+                <!-- Highlight + shadow shared across textures -->
+                <radialGradient id="orb-hi" cx="36%" cy="26%" r="55%">
+                  <stop offset="0%"   stop-color="hsl(0 0% 100%)" stop-opacity="0.42" />
+                  <stop offset="60%"  stop-color="hsl(0 0% 100%)" stop-opacity="0.06" />
+                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-shadow" cx="72%" cy="78%" r="62%">
+                  <stop offset="0%"   stop-color="hsl(240 50% 6%)" stop-opacity="0" />
+                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.55" />
+                </radialGradient>
               </defs>
-              <ellipse cx="50" cy="88" rx="24" ry="5" fill="hsl(225 60% 12% / 0.35)" />
-              <circle cx="50" cy="50" r="37.2" fill="hsl(200 85% 70% / 0.18)" />
-              <circle cx="50" cy="50" r="36" fill="url(#hg-ocean)" stroke="hsl(225 65% 22%)" stroke-width="0.5" />
-              <g clip-path="url(#hg-clip)">
-                <g id="hg-continents"></g>
-                <g id="hg-grid" stroke="hsl(0 0% 100% / 0.12)" stroke-width="0.26" fill="none"></g>
-                <!-- Animated iridescent sheen layer -->
-                <g filter="url(#hg-warp)" opacity="0.7" style="mix-blend-mode: overlay;">
-                  <circle cx="50" cy="50" r="36" fill="url(#hg-irid)" />
+
+              <!-- Drop shadow under orb -->
+              <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.32)" />
+              <!-- Outer halo ring -->
+              <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
+
+              <g clip-path="url(#orb-clip)">
+                <!-- Drag-to-spin container -->
+                <g id="orb-spin">
+                  <!-- 1. GRADIENT MESH -->
+                  <g class="orb-tex is-active" data-tex="0">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-a)" />
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-b)" />
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-c)" />
+                  </g>
+
+                  <!-- 2. LIQUID CHROME -->
+                  <g class="orb-tex" data-tex="1">
+                    <circle cx="50" cy="50" r="36" fill="hsl(220 12% 14%)" />
+                    <g filter="url(#orb-chrome-warp)">
+                      <rect x="14" y="14" width="72" height="72" fill="url(#orb-chrome)" />
+                    </g>
+                  </g>
+
+                  <!-- 3. RISOGRAPH (two-color halftone) -->
+                  <g class="orb-tex" data-tex="2">
+                    <circle cx="50" cy="50" r="36" fill="hsl(38 85% 78%)" />
+                    <circle cx="50" cy="50" r="36" fill="hsl(0 80% 56%)" filter="url(#orb-noise)" opacity="0.85" style="mix-blend-mode: multiply;" />
+                    <circle cx="50" cy="50" r="36" fill="hsl(220 70% 30%)" filter="url(#orb-noise)" opacity="0.55" style="mix-blend-mode: multiply;" transform="translate(0.6 0.4)" />
+                  </g>
+
+                  <!-- 4. TOPOGRAPHIC LINES -->
+                  <g class="orb-tex" data-tex="3">
+                    <circle cx="50" cy="50" r="36" fill="hsl(150 35% 8%)" />
+                    <g filter="url(#orb-topo-warp)" stroke="hsl(140 60% 70% / 0.55)" stroke-width="0.35" fill="none">
+                      <circle cx="50" cy="50" r="4" />
+                      <circle cx="50" cy="50" r="7" />
+                      <circle cx="50" cy="50" r="10" />
+                      <circle cx="50" cy="50" r="13" />
+                      <circle cx="50" cy="50" r="16" />
+                      <circle cx="50" cy="50" r="19" />
+                      <circle cx="50" cy="50" r="22" />
+                      <circle cx="50" cy="50" r="25" />
+                      <circle cx="50" cy="50" r="28" />
+                      <circle cx="50" cy="50" r="31" />
+                      <circle cx="50" cy="50" r="34" />
+                    </g>
+                  </g>
+
+                  <!-- 5. STARFIELD -->
+                  <g class="orb-tex" data-tex="4">
+                    <radialGradient id="orb-night" cx="40%" cy="30%" r="80%">
+                      <stop offset="0%"   stop-color="hsl(250 60% 22%)" />
+                      <stop offset="60%"  stop-color="hsl(245 70% 10%)" />
+                      <stop offset="100%" stop-color="hsl(245 80% 4%)" />
+                    </radialGradient>
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-night)" />
+                    <g id="orb-stars" fill="hsl(0 0% 100%)"></g>
+                  </g>
                 </g>
-                <!-- Subtle film grain -->
-                <circle cx="50" cy="50" r="36" fill="hsl(0 0% 100%)" filter="url(#hg-noise)" opacity="0.18" style="mix-blend-mode: soft-light;" />
-                <circle cx="50" cy="50" r="36" fill="url(#hg-shadow)" />
-                <circle cx="50" cy="50" r="36" fill="url(#hg-hi)" />
+
+                <!-- Shared lighting -->
+                <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
+                <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
               </g>
             </svg>
+            <span class="orb-caption" id="orbCaption">Gradient mesh</span>
           </div>
 
         </div>

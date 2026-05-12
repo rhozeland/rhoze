@@ -3101,6 +3101,57 @@
                   <circle cx="9" cy="10.8" r="0.28" fill="hsl(0 0% 100% / 0.5)" />
                 </pattern>
 
+                <!-- Skin 6: Earth -->
+                <radialGradient id="orb-earth-base" cx="40%" cy="35%" r="80%">
+                  <stop offset="0%" stop-color="hsl(205 75% 55%)" />
+                  <stop offset="60%" stop-color="hsl(215 70% 32%)" />
+                  <stop offset="100%" stop-color="hsl(225 60% 14%)" />
+                </radialGradient>
+                <radialGradient id="orb-earth-clouds" cx="60%" cy="40%" r="65%">
+                  <stop offset="0%" stop-color="hsl(0 0% 100% / 0.18)" />
+                  <stop offset="100%" stop-color="hsl(0 0% 100% / 0)" />
+                </radialGradient>
+
+                <!-- Skin 7: Vinyl Record -->
+                <radialGradient id="orb-vinyl-base" cx="50%" cy="50%" r="60%">
+                  <stop offset="0%" stop-color="hsl(0 0% 12%)" />
+                  <stop offset="100%" stop-color="hsl(0 0% 4%)" />
+                </radialGradient>
+                <radialGradient id="orb-vinyl-label" cx="50%" cy="50%" r="55%">
+                  <stop offset="0%" stop-color="hsl(345 80% 58%)" />
+                  <stop offset="100%" stop-color="hsl(15 85% 50%)" />
+                </radialGradient>
+
+                <!-- Skin 8: Ringed Planet -->
+                <radialGradient id="orb-ring-base" cx="40%" cy="32%" r="78%">
+                  <stop offset="0%" stop-color="hsl(38 92% 72%)" />
+                  <stop offset="55%" stop-color="hsl(22 78% 48%)" />
+                  <stop offset="100%" stop-color="hsl(12 60% 22%)" />
+                </radialGradient>
+
+                <!-- Skin 9: Holographic Film -->
+                <linearGradient id="orb-holo" x1="14" y1="14" x2="86" y2="86" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stop-color="hsl(285 90% 70%)" />
+                  <stop offset="20%"  stop-color="hsl(195 95% 65%)" />
+                  <stop offset="40%"  stop-color="hsl(150 80% 65%)" />
+                  <stop offset="60%"  stop-color="hsl(48 100% 65%)" />
+                  <stop offset="80%"  stop-color="hsl(345 90% 65%)" />
+                  <stop offset="100%" stop-color="hsl(265 80% 65%)" />
+                </linearGradient>
+                <pattern id="orb-holo-stripes" x="0" y="0" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+                  <rect x="0" y="0" width="1.2" height="2.4" fill="hsl(0 0% 100% / 0.18)" />
+                </pattern>
+
+                <!-- Skin 10: Stained Glass -->
+                <linearGradient id="orb-stain-a" x1="14" y1="14" x2="86" y2="86" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stop-color="hsl(330 70% 55%)" />
+                  <stop offset="100%" stop-color="hsl(260 60% 35%)" />
+                </linearGradient>
+                <linearGradient id="orb-stain-b" x1="14" y1="86" x2="86" y2="14" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%"   stop-color="hsl(38 90% 60%)" />
+                  <stop offset="100%" stop-color="hsl(165 70% 45%)" />
+                </linearGradient>
+
                 <!-- Shared overlays -->
                 <filter id="orb-grain" x="0" y="0" width="100%" height="100%">
                   <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="6" />
@@ -3175,6 +3226,73 @@
                     <!-- Subtle nebula wisps -->
                     <path d="M18 34 C30 28 42 30 54 26" fill="none" stroke="hsl(280 60% 65% / 0.35)" stroke-width="1.4" stroke-linecap="round" />
                     <path d="M36 66 C48 60 60 62 72 58" fill="none" stroke="hsl(190 70% 60% / 0.3)" stroke-width="1.2" stroke-linecap="round" />
+                  </g>
+
+                  <!-- Skin 6: Earth -->
+                  <g class="orb-skin" data-skin="5">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-earth-base)" />
+                    <!-- Stylized continents -->
+                    <path d="M22 40 C26 34 32 33 38 36 C44 38 46 34 50 36 C54 38 53 44 48 46 C42 47 38 44 34 47 C30 49 26 47 22 40 Z" fill="hsl(135 55% 38%)" opacity="0.92" />
+                    <path d="M58 30 C64 28 72 32 74 38 C76 43 70 46 64 44 C60 43 56 38 58 30 Z" fill="hsl(140 50% 35%)" opacity="0.9" />
+                    <path d="M44 56 C52 54 60 56 66 62 C70 66 66 72 58 72 C50 72 46 68 44 56 Z" fill="hsl(135 55% 32%)" opacity="0.92" />
+                    <path d="M28 62 C32 60 36 62 36 66 C36 70 30 72 26 68 C24 66 25 63 28 62 Z" fill="hsl(140 50% 30%)" opacity="0.85" />
+                    <!-- Cloud highlights -->
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-earth-clouds)" />
+                    <ellipse cx="40" cy="28" rx="10" ry="2.2" fill="hsl(0 0% 100% / 0.22)" />
+                    <ellipse cx="62" cy="58" rx="9" ry="2" fill="hsl(0 0% 100% / 0.18)" />
+                  </g>
+
+                  <!-- Skin 7: Vinyl -->
+                  <g class="orb-skin" data-skin="6">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-vinyl-base)" />
+                    <!-- Concentric grooves -->
+                    <circle cx="50" cy="50" r="32" fill="none" stroke="hsl(0 0% 100% / 0.06)" stroke-width="0.3" />
+                    <circle cx="50" cy="50" r="28" fill="none" stroke="hsl(0 0% 100% / 0.07)" stroke-width="0.3" />
+                    <circle cx="50" cy="50" r="24" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.3" />
+                    <circle cx="50" cy="50" r="20" fill="none" stroke="hsl(0 0% 100% / 0.09)" stroke-width="0.3" />
+                    <circle cx="50" cy="50" r="16" fill="none" stroke="hsl(0 0% 100% / 0.1)" stroke-width="0.3" />
+                    <!-- Reflective sheen -->
+                    <path d="M22 40 A 32 32 0 0 1 78 40" fill="none" stroke="hsl(0 0% 100% / 0.12)" stroke-width="2" />
+                    <!-- Center label -->
+                    <circle cx="50" cy="50" r="11" fill="url(#orb-vinyl-label)" />
+                    <circle cx="50" cy="50" r="1.4" fill="hsl(0 0% 4%)" />
+                  </g>
+
+                  <!-- Skin 8: Ringed Planet -->
+                  <g class="orb-skin" data-skin="7">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-ring-base)" />
+                    <!-- Atmospheric bands -->
+                    <path d="M16 42 Q50 38 84 42" fill="none" stroke="hsl(28 80% 35% / 0.55)" stroke-width="2" />
+                    <path d="M16 50 Q50 47 84 50" fill="none" stroke="hsl(20 70% 28% / 0.5)" stroke-width="1.6" />
+                    <path d="M16 58 Q50 56 84 58" fill="none" stroke="hsl(28 80% 38% / 0.45)" stroke-width="1.4" />
+                    <!-- Dark spot -->
+                    <ellipse cx="62" cy="54" rx="5" ry="2.2" fill="hsl(15 60% 22% / 0.7)" />
+                    <!-- Rings -->
+                    <ellipse cx="50" cy="50" rx="46" ry="6" fill="none" stroke="hsl(38 80% 70% / 0.55)" stroke-width="1.2" />
+                    <ellipse cx="50" cy="50" rx="42" ry="5" fill="none" stroke="hsl(28 70% 55% / 0.45)" stroke-width="0.8" />
+                  </g>
+
+                  <!-- Skin 9: Holographic -->
+                  <g class="orb-skin" data-skin="8">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-holo)" />
+                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-holo-stripes)" opacity="0.55" />
+                    <!-- Iridescent sheen -->
+                    <path d="M16 36 Q40 22 84 32" fill="none" stroke="hsl(0 0% 100% / 0.45)" stroke-width="1.2" />
+                    <path d="M16 64 Q60 78 84 60" fill="none" stroke="hsl(0 0% 100% / 0.3)" stroke-width="0.8" />
+                  </g>
+
+                  <!-- Skin 10: Stained Glass -->
+                  <g class="orb-skin" data-skin="9">
+                    <circle cx="50" cy="50" r="36" fill="url(#orb-stain-a)" />
+                    <!-- Faceted shards -->
+                    <polygon points="14,14 50,18 38,46 14,40" fill="url(#orb-stain-b)" opacity="0.85" />
+                    <polygon points="50,18 86,14 78,42 52,38" fill="hsl(265 70% 55%)" opacity="0.78" />
+                    <polygon points="14,40 38,46 32,72 14,68" fill="hsl(345 75% 55%)" opacity="0.7" />
+                    <polygon points="38,46 64,52 56,82 32,72" fill="hsl(38 90% 55%)" opacity="0.78" />
+                    <polygon points="64,52 86,42 86,82 56,82" fill="hsl(165 65% 45%)" opacity="0.78" />
+                    <polygon points="52,38 78,42 64,52 38,46" fill="hsl(195 80% 55%)" opacity="0.72" />
+                    <!-- Lead lines -->
+                    <path d="M14 40 L38 46 L64 52 L86 42 M50 18 L38 46 M52 38 L64 52 L56 82 M32 72 L56 82" fill="none" stroke="hsl(0 0% 8% / 0.55)" stroke-width="0.7" />
                   </g>
 
                   <!-- Grain over all skins -->
@@ -4176,7 +4294,7 @@
       if (!svg) return;
       var skins = svg.querySelectorAll('.orb-skin');
       var caption = document.getElementById('orbCaption');
-      var labels = ['Gradient mesh', 'Liquid chrome', 'Risograph', 'Topographic', 'Starfield'];
+      var labels = ['Gradient mesh', 'Liquid chrome', 'Risograph', 'Topographic', 'Starfield', 'Earth', 'Vinyl', 'Ringed planet', 'Holographic', 'Stained glass'];
       if (!skins.length) return;
       var i = 0;
       setInterval(function(){

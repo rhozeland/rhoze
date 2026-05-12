@@ -2217,11 +2217,14 @@ button { background: none; border: 0; cursor: pointer; }
   margin: 0 0 clamp(1.25rem, 3vw, 1.75rem);
   font-family: 'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
   font-weight: 800;
-  font-size: clamp(1.7rem, 4.4vw, 2.6rem);
+  font-size: clamp(1.15rem, 3.2vw, 1.85rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
   color: hsl(0 0% 98%);
-  max-width: 12ch;
+  max-width: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
 }
 .create-modal__grid {
   display: grid;

@@ -357,14 +357,14 @@
       padding: clamp(2.5rem, 5vw, 3.5rem) 2rem clamp(2.5rem, 5vw, 4rem);
     }
 
-    /* Globe block — anchored top-right of hero, out of flow */
+    /* Globe block — anchored top-right, visually behind copy/proof links */
     .hero-globe-wrap {
       position: absolute;
       top: clamp(0.5rem, 2vw, 1.5rem);
       right: clamp(0.5rem, 2vw, 2rem);
       width: clamp(320px, 40vw, 520px);
       aspect-ratio: 1 / 1;
-      z-index: 4;
+      z-index: 2;
       touch-action: none;
       user-select: none;
     }
@@ -406,13 +406,18 @@
     }
     .hero-globe-svg:active { cursor: grabbing; }
 
-    /* Morphing orb — each texture fully covers the sphere before rotation */
-    .orb-tex { opacity: 0; visibility: hidden; transition: opacity 0.75s ease, visibility 0s linear 0.75s; }
-    .orb-tex.is-active { opacity: 1; visibility: visible; transition-delay: 0s; }
-    .orb-tex-bg { pointer-events:none; }
-    #orb-spin { transform-origin: 50px 50px; transform-box: view-box; will-change: transform; }
+    /* Stable morphing orb — no rotating clipped textures */
+    .orb-skin { opacity: 0; transition: opacity 1s ease; }
+    .orb-skin.is-active { opacity: 1; }
+    .orb-drift { transform-origin: 50px 50px; animation: orb-drift 16s ease-in-out infinite; }
+    .orb-glint { transform-origin: 50px 50px; transition: transform 0.2s ease-out; }
+    @keyframes orb-drift {
+      0%, 100% { transform: translate(-1px, 1px) scale(1); }
+      50% { transform: translate(1.5px, -1px) scale(1.025); }
+    }
     @media (prefers-reduced-motion: reduce) {
-      .orb-tex { transition: none; }
+      .orb-skin { transition: none; }
+      .orb-drift { animation: none; }
     }
     /* Texture caption */
     .orb-caption {

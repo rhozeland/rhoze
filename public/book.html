@@ -95,12 +95,11 @@
       <div class="nav-links">
         <a href="/about.html">About</a>
         <a href="/projects.html">Projects</a>
-        <a href="/events.html">Events</a>
         <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer">Shop</a>
         <a href="/contact.html">Contact</a>
       </div>
-      <a class="nav-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
-        Join Community
+      <a class="nav-cta" href="#create" onclick="event.preventDefault(); openCreateModal();">
+        Create
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
       </a>
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">
@@ -110,11 +109,10 @@
     <div id="mobileMenu" class="mobile-menu">
       <a href="/about.html" onclick="closeMenu()">About</a>
       <a href="/projects.html" onclick="closeMenu()">Projects</a>
-      <a href="/events.html" onclick="closeMenu()">Events</a>
       <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">Shop</a>
       <a href="/contact.html" onclick="closeMenu()">Contact</a>
-      <a class="mobile-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">
-        Join Community
+      <a class="mobile-cta" href="#create" onclick="event.preventDefault(); closeMenu(); openCreateModal();">
+        Create
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
       </a>
     </div>
@@ -198,7 +196,6 @@
           <h3 class="footer-heading">Explore</h3>
           <a href="/about.html">About us</a>
           <a href="/projects.html">Projects</a>
-          <a href="/events.html">Events</a>
           <a href="https://rhozeland.shop" target="_blank" rel="noopener noreferrer">Shop</a>
           <a href="/contact.html">Contact us</a>
         </div>

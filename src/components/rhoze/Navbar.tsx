@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, X, Sparkles, ArrowUpRight, Grid3x3, Radio } from "lucide-react";
 import logoBlack from "@/assets/logo-black.png";
 import logoWhite from "@/assets/logo-white.png";
 import logoColor from "@/assets/logo-color.png";
@@ -8,7 +8,6 @@ import logoColor from "@/assets/logo-color.png";
 const navLinks = [
   { label: "About", href: "/about.html" },
   { label: "Projects", href: "/projects.html" },
-  { label: "Events", href: "/events.html" },
   { label: "Shop", href: "https://rhozeland.shop", external: true },
   { label: "Contact", href: "/contact.html" },
 ];
@@ -16,6 +15,19 @@ const navLinks = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
+
+  useEffect(() => {
+    if (!createOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setCreateOpen(false); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = prev;
+    };
+  }, [createOpen]);
 
   return (
     <motion.nav
@@ -67,14 +79,13 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
-          <a
-            href="https://rhozeland.app/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
             className="px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           >
-            Join Community
-          </a>
+            Create
+          </button>
         </div>
 
         <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
@@ -99,15 +110,99 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
-          <a
-            href="https://rhozeland.app/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => { setOpen(false); setCreateOpen(true); }}
             className="mt-3 inline-block px-5 py-2 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
           >
-            Join Community
-          </a>
+            Create
+          </button>
         </motion.div>
+      )}
+
+      {createOpen && (
+        <div
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-8"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-modal-title"
+        >
+          <button
+            type="button"
+            aria-label="Close"
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            onClick={() => setCreateOpen(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="relative w-full max-w-4xl overflow-hidden rounded-3xl bg-[hsl(240_12%_7%)] text-white shadow-2xl"
+          >
+            <div
+              className="h-1 w-full"
+              style={{
+                background:
+                  "linear-gradient(90deg, hsl(330 90% 70%), hsl(28 95% 65%), hsl(48 95% 65%), hsl(150 70% 60%), hsl(195 90% 65%), hsl(260 80% 70%))",
+              }}
+            />
+            <div className="p-6 sm:p-10">
+              <div className="mb-6 flex items-center justify-between">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/80">
+                  <Sparkles size={12} /> Create
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCreateOpen(false)}
+                  aria-label="Close"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/90 transition-colors hover:bg-white/10"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+              <h2
+                id="create-modal-title"
+                className="mb-8 max-w-[12ch] text-4xl font-extrabold leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl"
+              >
+                What are we building next?
+              </h2>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <a
+                  href="/start.html"
+                  className="group relative block min-h-[220px] rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] p-6 transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
+                >
+                  <span className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(205_35%_22%)] text-white">
+                    <Grid3x3 size={22} />
+                  </span>
+                  <span className="absolute right-5 top-5 text-white/80 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                    <ArrowUpRight size={16} />
+                  </span>
+                  <h3 className="mb-2 text-2xl font-bold tracking-tight">Produce</h3>
+                  <p className="max-w-[32ch] text-sm leading-relaxed text-white/70">
+                    Start a project with Rhozeland for studio, visuals, rollout support, and launch planning.
+                  </p>
+                </a>
+                <a
+                  href="https://rhozeland.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative block min-h-[220px] rounded-2xl border border-white/10 bg-[hsl(240_18%_5%)] p-6 transition-all hover:-translate-y-0.5 hover:border-white/25 hover:bg-[hsl(240_18%_7%)]"
+                >
+                  <span className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(340_30%_22%)] text-white">
+                    <Radio size={22} />
+                  </span>
+                  <span className="absolute right-5 top-5 text-white/80 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                    <ArrowUpRight size={16} />
+                  </span>
+                  <h3 className="mb-2 text-2xl font-bold tracking-tight">Distribute</h3>
+                  <p className="max-w-[32ch] text-sm leading-relaxed text-white/70">
+                    Open the creator app to publish, connect, and keep your release moving through the network.
+                  </p>
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       )}
     </motion.nav>
   );

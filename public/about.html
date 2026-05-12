@@ -205,7 +205,7 @@
         <div class="section-head" style="margin-bottom:1.5rem;">
           <div>
             <span class="section-kicker">Today</span>
-            <h2 style="color:hsl(var(--ink));">A tokenized company, built by its creators.</h2>
+            <h2 style="color:hsl(var(--ink)); text-wrap: pretty; max-width: 22ch;">A tokenized company, built by its creators.</h2>
           </div>
         </div>
 
@@ -317,6 +317,9 @@
             <button type="button" role="tab" class="wallet-tab" data-wallet-tab="airdrop" aria-selected="false" onclick="switchWalletTab('airdrop')" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
               Airdrop <span style="opacity:0.6; font-weight:500;">9.54%</span>
             </button>
+            <button type="button" role="tab" class="wallet-tab" data-wallet-tab="chart" aria-selected="false" onclick="switchWalletTab('chart')" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
+              Live Chart
+            </button>
           </div>
 
           <div class="wallet-panel token-card fade-in" data-wallet-panel="main">
@@ -372,6 +375,18 @@
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
                 Solscan
               </a>
+            </div>
+          </div>
+
+          <div class="wallet-panel token-card fade-in" data-wallet-panel="chart" hidden>
+            <h3 style="margin-top:0;">Live $RHOZE Chart</h3>
+            <p style="color:hsl(var(--muted)); margin:0 0 0.9rem; font-size:0.9rem;">Real-time price, powered by Birdeye.</p>
+            <div style="position:relative; border-radius:0.75rem; overflow:hidden; border:1px solid hsl(var(--line));">
+              <iframe src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light" title="Birdeye $RHOZE Chart" loading="lazy" style="width:100%; height:340px; border:none; display:block;" allowfullscreen></iframe>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; margin-top:0.9rem; flex-wrap:wrap;">
+              <a href="https://birdeye.so/token/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana" target="_blank" rel="noopener noreferrer" style="font-size:0.82rem; color:hsl(var(--muted)); text-decoration:underline;">View full chart →</a>
+              <a href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.55rem 1rem; border-radius:999px; background:hsl(var(--ink)); color:hsl(var(--surface)); font-weight:700; font-size:0.85rem; text-decoration:none;">Buy $RHOZE</a>
             </div>
           </div>
         </div>

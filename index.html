@@ -367,6 +367,7 @@
       z-index: 2;
       touch-action: none;
       user-select: none;
+      pointer-events: auto;
     }
     @media (max-width: 720px) {
       .hero-globe-wrap {
@@ -403,7 +404,9 @@
       height: 84%;
       overflow: visible;
       cursor: grab;
+      pointer-events: auto;
     }
+    .hero-globe-svg * { pointer-events: none; }
     .hero-globe-svg:active { cursor: grabbing; }
 
     /* Stable full-sphere globe — one continuous surface, drag-to-spin without texture flicker */

@@ -208,8 +208,10 @@
         </div>
 
         <style>
-          .tokenized-grid { display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+          .tokenized-grid { display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; align-items: center; }
           .tokenized-col-head { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.9rem; }
+          .flywheel-redesign { display:flex; flex-direction:column; align-items:center; }
+          .flywheel-redesign .tokenized-col-head { justify-content:center; text-align:center; }
           .tokenized-col-head .section-kicker { margin:0; }
           .tokenized-col-head h3 { margin:0; font-family:'Inter',system-ui,sans-serif; font-size:1.15rem; font-weight:700; letter-spacing:-0.02em; color:hsl(var(--ink)); }
           @media (max-width: 900px) { .tokenized-grid { grid-template-columns: 1fr; gap:2rem; } }
@@ -511,19 +513,6 @@
         </div><!-- /tokenized-grid -->
       </section>
 
-      <!-- Contract + Buy CTA (chart now lives in tokenomics tab above) -->
-      <section class="section" style="text-align:center; background: hsl(var(--surface-alt));">
-        <span class="section-kicker">Contract</span>
-        <h2 style="font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:1.5rem; font-weight:700; letter-spacing:-0.04em; margin:0.5rem auto 0.5rem;">Hold $RHOZE</h2>
-        <p style="color:hsl(var(--muted)); margin-bottom:2rem;">One contract. One token. One ecosystem.</p>
-        <div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
-          <button class="contract-btn" onclick="copyAddress(this,'7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump')" style="margin:0;">
-            <code>7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</code>
-            <svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-          </button>
-          <a href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump" target="_blank" rel="noopener noreferrer" style="display:flex; align-items:center; justify-content:center; width:120px; height:120px; border-radius:50%; border:2px solid hsl(var(--line-strong)); background:hsl(var(--surface-card)); font-weight:700; font-size:0.82rem; color:hsl(var(--ink)); text-decoration:none; transition:transform 0.2s, box-shadow 0.2s, border-color 0.2s; box-shadow:0 4px 20px hsl(var(--shadow) / 0.1);" onmouseover="this.style.transform='scale(1.04)'; this.style.borderColor='hsl(var(--ink))'; this.style.boxShadow='0 8px 30px hsl(var(--shadow) / 0.18)';" onmouseout="this.style.transform='scale(1)'; this.style.borderColor='hsl(var(--line-strong))'; this.style.boxShadow='0 4px 20px hsl(var(--shadow) / 0.1)';">Buy $RHOZE</a>
-        </div>
-      </section>
     </main>
 
     <!-- FOOTER -->

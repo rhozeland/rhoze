@@ -381,6 +381,31 @@
           <div class="wallet-panel token-card fade-in" data-wallet-panel="chart" hidden>
             <h3 style="margin-top:0;">Live $RHOZE Chart</h3>
             <p style="color:hsl(var(--muted)); margin:0 0 0.9rem; font-size:0.9rem;">Real-time price, powered by Birdeye.</p>
+            <div class="rhoze-stats" id="rhozeStats" aria-live="polite" style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.5rem; margin:0 0 0.9rem;">
+              <div class="rhoze-stat" data-stat="price" style="padding:0.6rem 0.7rem; border:1px solid hsl(var(--line)); border-radius:0.6rem; background:hsl(var(--surface-card));">
+                <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:hsl(var(--muted));">Price</div>
+                <div class="stat-value" style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:0.95rem; color:hsl(var(--ink)); margin-top:0.18rem; font-variant-numeric:tabular-nums;">—</div>
+              </div>
+              <div class="rhoze-stat" data-stat="change" style="padding:0.6rem 0.7rem; border:1px solid hsl(var(--line)); border-radius:0.6rem; background:hsl(var(--surface-card));">
+                <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:hsl(var(--muted));">24h</div>
+                <div class="stat-value" style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:0.95rem; color:hsl(var(--ink)); margin-top:0.18rem; font-variant-numeric:tabular-nums;">—</div>
+              </div>
+              <div class="rhoze-stat" data-stat="mcap" style="padding:0.6rem 0.7rem; border:1px solid hsl(var(--line)); border-radius:0.6rem; background:hsl(var(--surface-card));">
+                <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:hsl(var(--muted));">Market Cap</div>
+                <div class="stat-value" style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:0.95rem; color:hsl(var(--ink)); margin-top:0.18rem; font-variant-numeric:tabular-nums;">—</div>
+              </div>
+              <div class="rhoze-stat" data-stat="vol" style="padding:0.6rem 0.7rem; border:1px solid hsl(var(--line)); border-radius:0.6rem; background:hsl(var(--surface-card));">
+                <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:hsl(var(--muted));">24h Vol</div>
+                <div class="stat-value" style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:0.95rem; color:hsl(var(--ink)); margin-top:0.18rem; font-variant-numeric:tabular-nums;">—</div>
+              </div>
+            </div>
+            <style>
+              @media (max-width: 640px) { .rhoze-stats { grid-template-columns:repeat(2, minmax(0,1fr)) !important; } }
+              .rhoze-stat .stat-value.is-up { color: hsl(150 65% 35%); }
+              .rhoze-stat .stat-value.is-down { color: hsl(0 70% 48%); }
+              html.dark .rhoze-stat .stat-value.is-up { color: hsl(140 60% 60%); }
+              html.dark .rhoze-stat .stat-value.is-down { color: hsl(0 75% 65%); }
+            </style>
             <div style="position:relative; border-radius:0.75rem; overflow:hidden; border:1px solid hsl(var(--line));">
               <iframe src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light" title="Birdeye $RHOZE Chart" loading="lazy" style="width:100%; height:340px; border:none; display:block;" allowfullscreen></iframe>
             </div>
@@ -406,6 +431,54 @@
             });
           }
           (function(){ var b=document.querySelector('[data-wallet-tab="main"]'); if(b){ b.style.background='hsl(var(--surface-card))'; b.style.boxShadow='0 1px 3px hsl(var(--shadow) / 0.08)'; } })();
+          (function(){
+            var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
+            var URL = 'https://api.dexscreener.com/latest/dex/tokens/' + TOKEN;
+            var root = document.getElementById('rhozeStats');
+            if (!root) return;
+            var nodes = {
+              price: root.querySelector('[data-stat="price"] .stat-value'),
+              change: root.querySelector('[data-stat="change"] .stat-value'),
+              mcap: root.querySelector('[data-stat="mcap"] .stat-value'),
+              vol: root.querySelector('[data-stat="vol"] .stat-value')
+            };
+            function fmtPrice(n){ if(!isFinite(n)) return '—'; if(n>=1) return '$'+n.toFixed(4); if(n>=0.01) return '$'+n.toFixed(5); return '$'+n.toPrecision(4); }
+            function fmtCompact(n){ if(!isFinite(n)||n<=0) return '—'; var u=['','K','M','B','T']; var i=0; while(n>=1000&&i<u.length-1){ n/=1000; i++; } return '$'+(n>=10?n.toFixed(1):n.toFixed(2))+u[i]; }
+            function fmtPct(n){ if(!isFinite(n)) return '—'; var s=(n>=0?'+':'')+n.toFixed(2)+'%'; return s; }
+            var timer = null;
+            var inflight = false;
+            function update(){
+              if (inflight) return; inflight = true;
+              fetch(URL, { cache: 'no-store' })
+                .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+                .then(function(d){
+                  var pairs = (d && d.pairs) || [];
+                  if (!pairs.length) return;
+                  // Pick the highest-liquidity pair
+                  pairs.sort(function(a,b){ return (b.liquidity&&b.liquidity.usd||0) - (a.liquidity&&a.liquidity.usd||0); });
+                  var p = pairs[0];
+                  var price = parseFloat(p.priceUsd);
+                  var change = p.priceChange && parseFloat(p.priceChange.h24);
+                  var mcap = p.marketCap || p.fdv;
+                  var vol = p.volume && parseFloat(p.volume.h24);
+                  if (nodes.price) nodes.price.textContent = fmtPrice(price);
+                  if (nodes.change) {
+                    nodes.change.textContent = fmtPct(change);
+                    nodes.change.classList.remove('is-up','is-down');
+                    if (isFinite(change)) nodes.change.classList.add(change>=0?'is-up':'is-down');
+                  }
+                  if (nodes.mcap) nodes.mcap.textContent = fmtCompact(mcap);
+                  if (nodes.vol) nodes.vol.textContent = fmtCompact(vol);
+                })
+                .catch(function(){ /* keep prior values; never throw */ })
+                .finally(function(){ inflight = false; });
+            }
+            function start(){ update(); if(timer) clearInterval(timer); timer = setInterval(update, 30000); }
+            function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+            // Always fetch once; refresh while tab is visible
+            start();
+            document.addEventListener('visibilitychange', function(){ if(document.hidden) stop(); else start(); });
+          })();
         </script>
           </div><!-- /tokenomics col -->
         </div><!-- /tokenized-grid -->

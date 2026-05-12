@@ -4155,49 +4155,33 @@
         setTex((idx + 1) % textures.length);
       }, 5200);
 
-      // Drag to spin
-      var rotation = 0, manual = 0, isDragging = false, dragStart = null;
-      function applyRotation(){
-        spin.setAttribute('transform', 'rotate(' + (rotation + manual).toFixed(2) + ' 50 50)');
+      // Drag-to-spin + idle auto-rotate (JS so drag releases don't jump).
+      var rotation = 0, isDragging = false, dragStart = null;
+      var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function apply(){ spin.setAttribute('transform', 'rotate(' + rotation.toFixed(2) + ' 50 50)'); }
+      function tick(){
+        if (!isDragging && !prefersReduced) { rotation = (rotation + 0.1) % 360; apply(); }
+        requestAnimationFrame(tick);
       }
       svg.addEventListener('pointerdown', function(e){
         isDragging = true;
-        wrap.classList.add('orb-dragging');
-        // Capture current visual angle so the orb doesn't jump.
-        var cs = getComputedStyle(spin);
-        var m = new DOMMatrixReadOnly(cs.transform === 'none' ? '' : cs.transform);
-        rotation = Math.atan2(m.b, m.a) * 180 / Math.PI;
-        manual = 0;
         dragStart = { x: e.clientX, base: rotation };
         try { svg.setPointerCapture(e.pointerId); } catch(_){}
-        applyRotation();
       });
       svg.addEventListener('pointermove', function(e){
         if (!isDragging || !dragStart) return;
-        manual = (e.clientX - dragStart.x) * 0.5;
-        applyRotation();
+        rotation = dragStart.base + (e.clientX - dragStart.x) * 0.45;
+        apply();
       });
       function endDrag(e){
-        if (!isDragging) return;
-        isDragging = false;
-        rotation = rotation + manual;
-        manual = 0;
-        dragStart = null;
+        isDragging = false; dragStart = null;
         try { svg.releasePointerCapture(e.pointerId); } catch(_){}
-        // Resume CSS auto-spin from the new angle.
-        spin.style.animation = 'none';
-        spin.getBoundingClientRect();
-        applyRotation();
-        // Re-enable the auto animation on next frame.
-        requestAnimationFrame(function(){
-          spin.style.transform = '';
-          spin.style.animation = '';
-          wrap.classList.remove('orb-dragging');
-        });
       }
       svg.addEventListener('pointerup', endDrag);
       svg.addEventListener('pointercancel', endDrag);
       svg.addEventListener('pointerleave', endDrag);
+      apply();
+      tick();
     })();
   </script>
 </body>

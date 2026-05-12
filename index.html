@@ -3168,35 +3168,53 @@
           </div>
              <div class="story-doc-column story-copy-column">
                <span class="section-kicker">Since 2016</span>
-               <h3 style="font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.35rem; font-weight:500; line-height:1.15; letter-spacing:-0.01em;">What began as a vision became a studio, and now stands as a launchpad for the boldest creators.</h3>
-               <ol class="home-timeline" style="list-style:none; margin:1rem 0 0.6rem; padding:0; display:flex; flex-direction:column;">
-                 <li style="display:grid; grid-template-columns:64px 1fr; gap:0.9rem; padding:0.7rem 0; border-top:1px solid hsl(var(--line)); align-items:start;">
-                   <div style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.1rem; letter-spacing:-0.03em; color:hsl(var(--ink));">2016</div>
-                   <div>
-                     <h4 style="font-size:0.92rem; font-weight:600; margin:0 0 0.2rem; color:hsl(var(--ink));">The origin story</h4>
-                     <p style="color:hsl(var(--muted)); font-size:0.85rem; line-height:1.55; margin:0;">A circle of friends turned a shared love of music, art, and culture into a creative collective.</p>
-                   </div>
-                 </li>
-                 <li style="display:grid; grid-template-columns:64px 1fr; gap:0.9rem; padding:0.7rem 0; border-top:1px solid hsl(var(--line)); align-items:start;">
-                   <div style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.1rem; letter-spacing:-0.03em; color:hsl(var(--ink));">2021</div>
-                   <div>
-                     <h4 style="font-size:0.92rem; font-weight:600; margin:0 0 0.2rem; color:hsl(var(--ink));">Building the hub</h4>
-                     <p style="color:hsl(var(--muted)); font-size:0.85rem; line-height:1.55; margin:0;">Rhozeland grew into a digital platform connecting creators with resources, services, and each other.</p>
-                   </div>
-                 </li>
-                 <li style="display:grid; grid-template-columns:64px 1fr; gap:0.9rem; padding:0.7rem 0; border-top:1px solid hsl(var(--line)); align-items:start;">
-                   <div style="font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.1rem; letter-spacing:-0.03em; color:hsl(var(--ink));">2023</div>
-                   <div>
-                     <h4 style="font-size:0.92rem; font-weight:600; margin:0 0 0.2rem; color:hsl(var(--ink));">Studio launch</h4>
-                     <p style="color:hsl(var(--muted)); font-size:0.85rem; line-height:1.55; margin:0;">Opened the first physical studio — recording, production, and collaboration under one roof.</p>
-                   </div>
-                 </li>
-               </ol>
-               <a class="section-link" href="/about.html" style="margin-top:0.4rem;">
-                 See the full timeline
+               <h3 style="font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:1.35rem; font-weight:500; line-height:1.15; letter-spacing:-0.01em; margin:0;">What began as a vision became a studio, and now stands as a launchpad for the boldest creators.</h3>
+               <p style="color:hsl(var(--muted)); font-size:0.92rem; line-height:1.55; margin:0.85rem 0 0;">From a circle of friends in 2016 to a full studio and on-chain creator platform today — every chapter has been built with the community.</p>
+               <a class="section-link" href="/about.html" style="margin-top:auto; padding-top:1rem;">
+                 Learn more
                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
                </a>
             </div>
+        </div>
+
+        <!-- Horizontal era timeline -->
+        <style>
+          .era-timeline { position:relative; margin:1.25rem 0 0; }
+          .era-track { position:absolute; left:0; right:0; top:64px; height:1px; background:hsl(var(--line)); z-index:0; }
+          .era-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1rem; }
+          .era-card { display:flex; flex-direction:column; gap:0.6rem; }
+          .era-photo-wrap { position:relative; aspect-ratio: 16/10; border-radius:0.65rem; overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); }
+          .era-photo-wrap img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.6s ease; }
+          .era-card:hover .era-photo-wrap img { transform: scale(1.04); }
+          .era-dot { position:absolute; left:50%; bottom:-5px; transform:translateX(-50%); width:10px; height:10px; border-radius:50%; background:hsl(var(--ink)); border:2px solid hsl(var(--bg)); z-index:2; }
+          .era-meta { display:flex; align-items:baseline; gap:0.55rem; padding-top:0.5rem; }
+          .era-year { font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.35rem; letter-spacing:-0.04em; color:hsl(var(--ink)); line-height:1; }
+          .era-title { font-size:0.9rem; font-weight:600; color:hsl(var(--ink)); margin:0; }
+          .era-desc { color:hsl(var(--muted)); font-size:0.82rem; line-height:1.5; margin:0; }
+          @media (max-width: 720px) {
+            .era-grid { grid-template-columns: 1fr; gap:0.85rem; }
+            .era-track { display:none; }
+          }
+        </style>
+        <div class="era-timeline reveal">
+          <div class="era-track" aria-hidden="true"></div>
+          <div class="era-grid">
+            <div class="era-card">
+              <div class="era-photo-wrap"><img src="/images/timeline-2016.png" alt="Rhozeland 2016" loading="lazy" /><span class="era-dot"></span></div>
+              <div class="era-meta"><span class="era-year">2016</span><h4 class="era-title">The origin story</h4></div>
+              <p class="era-desc">A circle of friends turned a shared love of music, art, and culture into a creative collective.</p>
+            </div>
+            <div class="era-card">
+              <div class="era-photo-wrap"><img src="/images/timeline-2021.png" alt="Rhozeland 2021" loading="lazy" /><span class="era-dot"></span></div>
+              <div class="era-meta"><span class="era-year">2021</span><h4 class="era-title">Building the hub</h4></div>
+              <p class="era-desc">Rhozeland grew into a digital platform connecting creators with resources, services, and each other.</p>
+            </div>
+            <div class="era-card">
+              <div class="era-photo-wrap"><img src="/images/timeline-2023.png" alt="Rhozeland 2023" loading="lazy" /><span class="era-dot"></span></div>
+              <div class="era-meta"><span class="era-year">2023</span><h4 class="era-title">Studio launch</h4></div>
+              <p class="era-desc">Opened the first physical studio — recording, production, and collaboration under one roof.</p>
+            </div>
+          </div>
         </div>
 
         <!-- Events ticker widget -->

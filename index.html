@@ -406,10 +406,11 @@
     }
     .hero-globe-svg:active { cursor: grabbing; }
 
-    /* Morphing orb — texture layers crossfade on a slow loop */
-    .orb-tex { opacity: 0; transition: opacity 1.4s ease; }
-    .orb-tex.is-active { opacity: 1; }
-    #orb-spin { transform-origin: 50px 50px; transform-box: fill-box; }
+    /* Morphing orb — each texture fully covers the sphere before rotation */
+    .orb-tex { opacity: 0; visibility: hidden; transition: opacity 0.75s ease, visibility 0s linear 0.75s; }
+    .orb-tex.is-active { opacity: 1; visibility: visible; transition-delay: 0s; }
+    .orb-tex-bg { pointer-events:none; }
+    #orb-spin { transform-origin: 50px 50px; transform-box: view-box; will-change: transform; }
     @media (prefers-reduced-motion: reduce) {
       .orb-tex { transition: none; }
     }

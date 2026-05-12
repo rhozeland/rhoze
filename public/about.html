@@ -313,6 +313,15 @@
             .wallet-tab { outline:none; }
             .wallet-tab:focus-visible { box-shadow:0 0 0 2px hsl(var(--surface-alt)), 0 0 0 4px hsl(var(--ink)) !important; }
             html.dark .wallet-tab:focus-visible { box-shadow:0 0 0 2px hsl(var(--surface-alt)), 0 0 0 4px hsl(var(--accent-blue)) !important; }
+            .wallet-panel { animation-fill-mode: both; }
+            .wallet-panel:not([hidden]) { animation: walletPanelIn 0.32s cubic-bezier(0.22, 0.9, 0.34, 1); }
+            @keyframes walletPanelIn {
+              from { opacity: 0; transform: translateY(8px); }
+              to   { opacity: 1; transform: translateY(0); }
+            }
+            @media (prefers-reduced-motion: reduce) {
+              .wallet-panel:not([hidden]) { animation: none; }
+            }
           </style>
           <div role="tablist" aria-label="Wallet allocations" style="display:flex; gap:0.4rem; padding:0.3rem; background:hsl(var(--surface-alt)); border:1px solid hsl(var(--line)); border-radius:0.75rem; margin-bottom:1rem;">
             <button type="button" role="tab" id="wtab-main" class="wallet-tab is-active" data-wallet-tab="main" aria-selected="true" aria-controls="wpanel-main" tabindex="0" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--ink)); cursor:pointer; transition:background 0.18s;">

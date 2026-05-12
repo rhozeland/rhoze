@@ -208,12 +208,14 @@
         </div>
 
         <style>
-          .tokenized-grid { display:grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+          .tokenized-grid { display:grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: 2rem; align-items: stretch; }
+          .tokenized-grid > * { display:flex; flex-direction:column; }
           .tokenized-col-head { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.9rem; }
           .tokenized-col-head .section-kicker { margin:0; }
           .tokenized-col-head h3 { margin:0; font-family:'Inter',system-ui,sans-serif; font-size:1.15rem; font-weight:700; letter-spacing:-0.02em; color:hsl(var(--ink)); }
-          @media (max-width: 900px) { .tokenized-grid { grid-template-columns: 1fr; gap:2rem; } }
-          .fw-stage { position: relative; width: 100%; max-width: 420px; margin: 0 auto 1rem; aspect-ratio: 1 / 1; }
+          @media (max-width: 900px) { .tokenized-grid { grid-template-columns: 1fr; gap:2rem; } .tokenized-grid > * { display:block; } }
+          .fw-stage { position: relative; width: 100%; max-width: 320px; margin: 0 auto 0.75rem; aspect-ratio: 1 / 1; }
+          .flywheel-redesign { justify-content: flex-start; }
           .fw-orbit { position: absolute; inset: 12%; border: 1px solid hsl(var(--ink) / 0.35); border-radius: 50%; animation: flywheel-spin 60s linear infinite; }
           .fw-orbit::before, .fw-orbit::after,
           .fw-orbit > span { content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%; background: hsl(var(--ink) / 0.4); }
@@ -253,25 +255,25 @@
 
             <button type="button" class="fw-node fw-top">
               <svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="5" width="20" height="14" rx="2"/><path d="M21 9 L30 4 V20 L21 15 Z"/></svg>
-              <span>Studio Produces</span>
+              <span>Produces</span>
               <span class="fw-tip" role="tooltip">Our Toronto production house records, films, and develops the artists.</span>
             </button>
 
             <button type="button" class="fw-node fw-right">
               <svg viewBox="0 0 32 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="1" width="16" height="26" rx="3"/><line x1="6" y1="23" x2="12" y2="23"/><path d="M21 8 H30 M21 14 H28 M21 20 H26"/></svg>
-              <span>App Distributes</span>
+              <span>Distributes</span>
               <span class="fw-tip" role="tooltip">Creator OS pushes the work to new markets and onboards every artist on Solana.</span>
             </button>
 
             <button type="button" class="fw-node fw-bottom">
               <svg viewBox="0 0 34 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="9" r="4"/><circle cx="25" cy="9" r="4"/><path d="M2 26 C4 19 7 17 9 17 C11 17 14 19 16 26"/><path d="M18 26 C20 19 23 17 25 17 C27 17 30 19 32 26"/></svg>
-              <span>Community Holds $RHOZE</span>
+              <span>Holds $RHOZE</span>
               <span class="fw-tip" role="tooltip">Token holders own a real share of every release, venue, and collaboration the studio ships.</span>
             </button>
 
             <button type="button" class="fw-node fw-left">
               <svg viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 1 L3 16 H12 L8 27 L21 11 H12 Z"/></svg>
-              <span>Earnings Fuel Growth</span>
+              <span>Fuels Growth</span>
               <span class="fw-tip" role="tooltip">Creators list ticketed venues and open spaces, and find collaborations inside the app.</span>
             </button>
           </div>
@@ -294,7 +296,7 @@
               <p>Creators list ticketed venues and open spaces, and find collaborations inside the app.</p>
             </div>
           </div>
-            <p style="text-align:center; color:hsl(var(--ink)); font-size:0.92rem; font-weight:600; max-width:30rem; margin:0.75rem auto 0;">Creative work deserves on-chain proof.</p>
+            <p style="text-align:center; color:hsl(var(--ink)); font-size:0.88rem; font-weight:600; max-width:28rem; margin:auto auto 0;">Creative work deserves on-chain proof.</p>
           </div>
 
           <!-- Tokenomics column -->
@@ -383,7 +385,6 @@
 
           <div class="wallet-panel token-card fade-in" id="wpanel-chart" role="tabpanel" aria-labelledby="wtab-chart" tabindex="0" data-wallet-panel="chart" hidden>
             <h3 style="margin-top:0;">Live $RHOZE Chart</h3>
-            <p style="color:hsl(var(--muted)); margin:0 0 0.9rem; font-size:0.9rem;">Real-time price, powered by Birdeye.</p>
             <div class="rhoze-stats" id="rhozeStats" aria-live="polite" style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.5rem; margin:0 0 0.9rem;">
               <div class="rhoze-stat" data-stat="price" style="padding:0.6rem 0.7rem; border:1px solid hsl(var(--line)); border-radius:0.6rem; background:hsl(var(--surface-card));">
                 <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:hsl(var(--muted));">Price</div>

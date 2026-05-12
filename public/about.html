@@ -307,22 +307,27 @@
             <h3 style="font-family:'Inter',system-ui,sans-serif; font-size:1.5rem; font-weight:800; letter-spacing:-0.04em; margin:0 0 0.4rem;">Tokenomics</h3>
             <p style="color:hsl(var(--muted)); margin:0 0 1rem; font-size:0.92rem;">Full transparency on supply allocation. Every wallet is public, every move is announced.</p>
             <div class="wallet-tabs">
+          <style>
+            .wallet-tab { outline:none; }
+            .wallet-tab:focus-visible { box-shadow:0 0 0 2px hsl(var(--surface-alt)), 0 0 0 4px hsl(var(--ink)) !important; }
+            html.dark .wallet-tab:focus-visible { box-shadow:0 0 0 2px hsl(var(--surface-alt)), 0 0 0 4px hsl(var(--accent-blue)) !important; }
+          </style>
           <div role="tablist" aria-label="Wallet allocations" style="display:flex; gap:0.4rem; padding:0.3rem; background:hsl(var(--surface-alt)); border:1px solid hsl(var(--line)); border-radius:0.75rem; margin-bottom:1rem;">
-            <button type="button" role="tab" class="wallet-tab is-active" data-wallet-tab="main" aria-selected="true" onclick="switchWalletTab('main')" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--ink)); cursor:pointer; transition:background 0.18s;">
+            <button type="button" role="tab" id="wtab-main" class="wallet-tab is-active" data-wallet-tab="main" aria-selected="true" aria-controls="wpanel-main" tabindex="0" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--ink)); cursor:pointer; transition:background 0.18s;">
               Main <span style="opacity:0.6; font-weight:500;">0.43%</span>
             </button>
-            <button type="button" role="tab" class="wallet-tab" data-wallet-tab="marketing" aria-selected="false" onclick="switchWalletTab('marketing')" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
+            <button type="button" role="tab" id="wtab-marketing" class="wallet-tab" data-wallet-tab="marketing" aria-selected="false" aria-controls="wpanel-marketing" tabindex="-1" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
               Marketing <span style="opacity:0.6; font-weight:500;">0.83%</span>
             </button>
-            <button type="button" role="tab" class="wallet-tab" data-wallet-tab="airdrop" aria-selected="false" onclick="switchWalletTab('airdrop')" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
+            <button type="button" role="tab" id="wtab-airdrop" class="wallet-tab" data-wallet-tab="airdrop" aria-selected="false" aria-controls="wpanel-airdrop" tabindex="-1" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
               Airdrop <span style="opacity:0.6; font-weight:500;">9.54%</span>
             </button>
-            <button type="button" role="tab" class="wallet-tab" data-wallet-tab="chart" aria-selected="false" onclick="switchWalletTab('chart')" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
+            <button type="button" role="tab" id="wtab-chart" class="wallet-tab" data-wallet-tab="chart" aria-selected="false" aria-controls="wpanel-chart" tabindex="-1" style="flex:1; padding:0.55rem 0.75rem; border:none; background:transparent; border-radius:0.55rem; font-family:inherit; font-size:0.85rem; font-weight:600; color:hsl(var(--muted)); cursor:pointer; transition:background 0.18s;">
               Live Chart
             </button>
           </div>
 
-          <div class="wallet-panel token-card fade-in" data-wallet-panel="main">
+          <div class="wallet-panel token-card fade-in" id="wpanel-main" role="tabpanel" aria-labelledby="wtab-main" tabindex="0" data-wallet-panel="main">
             <h3 style="margin-top:0;">Main Wallet</h3>
             <div class="pct">0.43%</div>
             <div class="lock-badge">
@@ -342,7 +347,7 @@
             </div>
           </div>
 
-          <div class="wallet-panel token-card fade-in" data-wallet-panel="marketing" hidden>
+          <div class="wallet-panel token-card fade-in" id="wpanel-marketing" role="tabpanel" aria-labelledby="wtab-marketing" tabindex="0" data-wallet-panel="marketing" hidden>
             <h3 style="margin-top:0;">Marketing Wallet</h3>
             <div class="pct">0.83%</div>
             <div class="lock-badge">
@@ -362,7 +367,7 @@
             </div>
           </div>
 
-          <div class="wallet-panel token-card fade-in" data-wallet-panel="airdrop" hidden>
+          <div class="wallet-panel token-card fade-in" id="wpanel-airdrop" role="tabpanel" aria-labelledby="wtab-airdrop" tabindex="0" data-wallet-panel="airdrop" hidden>
             <h3 style="margin-top:0;">Airdrop Wallet</h3>
             <div class="pct">9.54%</div>
             <p>Providing supply to real-world participants of our network and studio.</p>
@@ -378,7 +383,7 @@
             </div>
           </div>
 
-          <div class="wallet-panel token-card fade-in" data-wallet-panel="chart" hidden>
+          <div class="wallet-panel token-card fade-in" id="wpanel-chart" role="tabpanel" aria-labelledby="wtab-chart" tabindex="0" data-wallet-panel="chart" hidden>
             <h3 style="margin-top:0;">Live $RHOZE Chart</h3>
             <p style="color:hsl(var(--muted)); margin:0 0 0.9rem; font-size:0.9rem;">Real-time price, powered by Birdeye.</p>
             <div class="rhoze-stats" id="rhozeStats" aria-live="polite" style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.5rem; margin:0 0 0.9rem;">

@@ -1,0 +1,13 @@
+# Rhozeland
+
+> Rhozeland is a creative studio and ecosystem for independent artists, musicians, and designers — offering recording, content production, and launch infrastructure to build, ship, and grow.
+
+## Pages
+
+- [Home](/): Overview of Rhozeland's studio, Creator OS, and ecosystem.
+- [About](/about): Studio history, mission, and how Rhozeland supports artists.
+- [Projects](/projects): Selected work — music videos, releases, and creative productions.
+- [Events](/events): Creative socials, summits, and community gatherings.
+- [Start a project](/start): Book studio time or start a creative engagement.
+- [Book a call](/book): Free 20-minute discovery call.
+- [Contact](/contact): Get in touch — email collab@rhozeland.com.

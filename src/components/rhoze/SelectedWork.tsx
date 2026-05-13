@@ -4,6 +4,16 @@ import { ArrowUpRight, Music, Camera, Video } from "lucide-react";
 
 const projects = [
   {
+    title: "Just Call Me",
+    artist: "Ess B",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=2Nuyr57Xe3o",
+    image: "/images/ess-b-just-call-me-thumb.jpg",
+    video: "/videos/ess-b-just-call-me.mp4",
+  },
+  {
     title: "The Mask",
     artist: "Ooak",
     tag: "Audio & Visual",

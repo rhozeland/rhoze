@@ -3306,7 +3306,6 @@
                 </g>
               </g>
             </svg>
-            <span class="orb-caption" id="orbCaption">Gradient mesh</span>
           </div>
 
         </div>
@@ -4293,14 +4292,11 @@
       var svg = document.getElementById('heroOrbSvg');
       if (!svg) return;
       var skins = svg.querySelectorAll('.orb-skin');
-      var caption = document.getElementById('orbCaption');
-      var labels = ['Gradient mesh', 'Liquid chrome', 'Risograph', 'Topographic', 'Starfield', 'Earth', 'Vinyl', 'Ringed planet', 'Holographic', 'Stained glass'];
       if (!skins.length) return;
       var i = 0;
       setInterval(function(){
         i = (i + 1) % skins.length;
         skins.forEach(function(el, idx){ el.classList.toggle('is-active', idx === i); });
-        if (caption) caption.textContent = labels[i] || '';
       }, 5200);
     })();
   </script>

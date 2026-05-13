@@ -730,14 +730,14 @@ export default function StartPage() {
               <div className="space-y-1.5"><Label>Phone</Label><Input value={contact.phone} onChange={e => setContact({ ...contact, phone: e.target.value })} /></div>
               <div className="space-y-1.5">
                 <Label>Region</Label>
-                <div className="inline-flex rounded-lg border border-border p-1 bg-muted/30 w-full">
+                <div className="inline-flex rounded-lg border border-border p-1 bg-muted/30 w-full min-w-0">
                   {(["North America", "International"] as const).map(r => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setContact({ ...contact, region: r })}
-                      className={`flex-1 px-3 py-1.5 text-sm rounded-md transition-colors ${contact.region === r ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                    >{r}</button>
+                      className={`flex-1 min-w-0 px-2 py-1.5 text-xs sm:text-sm rounded-md transition-colors text-center whitespace-nowrap ${contact.region === r ? "bg-background shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+                    >{r === "North America" ? "N. America" : r}</button>
                   ))}
                 </div>
               </div>

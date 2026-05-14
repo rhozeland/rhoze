@@ -138,6 +138,17 @@ export default function Docs() {
   const clearError = (k: keyof FieldErrors) =>
     setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
 
+  useEffect(() => {
+    if (previewDoc) {
+      setShowNav(true);
+      if (navTimerRef.current) window.clearTimeout(navTimerRef.current);
+      navTimerRef.current = window.setTimeout(() => setShowNav(false), 2500);
+    }
+    return () => {
+      if (navTimerRef.current) window.clearTimeout(navTimerRef.current);
+    };
+  }, [previewDoc]);
+
   // Resolve the caller's department first — the docs query relies on it to
   // mirror the server-side RLS rules at the fetch layer.
   const { data: myProfile } = useQuery({

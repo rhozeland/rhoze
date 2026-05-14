@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { validateDocForm, type FieldErrors } from "../lib/validateDocForm";
@@ -1382,7 +1383,7 @@ export default function Docs() {
               <div className="flex flex-col h-full relative">
                 {/* Prev / Next side buttons — fixed to viewport edges.
                     Visible on open / mouse move, auto-hide after 2.5 s idle. */}
-                {total > 1 && (
+                {total > 1 && createPortal(
                   <>
                     <button
                       type="button"
@@ -1400,7 +1401,8 @@ export default function Docs() {
                     >
                       <span className="text-sm hidden sm:inline">Next</span> <ChevronRight size={20} />
                     </button>
-                  </>
+                  </>,
+                  document.body
                 )}
                 <div className="flex-1 flex items-center justify-center overflow-auto p-4">
                   {isImg && signed ? (

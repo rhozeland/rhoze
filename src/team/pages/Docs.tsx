@@ -324,6 +324,7 @@ export default function Docs() {
       if (scope === "mine") return aud === "user" && d.target_user_id === user?.id;
       if (scope === "department")
         return aud === "department" && !!myProfile?.department && d.department === myProfile.department;
+      if (scope === "admin") return aud === "admin";
       // "team" — docs visible to everyone
       return aud === "all";
     })

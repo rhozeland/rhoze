@@ -492,7 +492,7 @@ export default function Docs() {
                         <SelectValue placeholder="Select department…" />
                       </SelectTrigger>
                       <SelectContent>
-                        {DEPARTMENTS.map((d) => (
+                        {departments?.map((d: string) => (
                           <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
                         ))}
                       </SelectContent>
@@ -548,7 +548,7 @@ export default function Docs() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__none">No category</SelectItem>
-                      {DEPARTMENTS.map((d) => (
+                      {departments?.map((d: string) => (
                         <SelectItem key={d} value={d} className="capitalize">
                           {d}
                         </SelectItem>
@@ -790,7 +790,7 @@ export default function Docs() {
             <span className="uppercase tracking-wider text-muted-foreground font-medium">
               Filter
             </span>
-            {(["all", ...DEPARTMENTS] as const).map((t) => {
+            {(["all", ...(departments ?? [])] as const).map((t) => {
               const active = tagFilter === t;
               return (
                 <button

@@ -24,7 +24,7 @@ export type ValidateContext = {
   lookupProfile?: (id: string) => Promise<{ id: string; department: string | null } | null>;
 };
 
-const MAX_FILE_BYTES = 100 * 1024 * 1024;
+const MAX_FILE_BYTES = 500 * 1024 * 1024;
 
 function isAcceptedFile(f: { name: string; type: string }) {
   return (
@@ -100,7 +100,7 @@ export async function validateDocForm(
     if (!isAcceptedFile(form.file)) {
       errors.file = "Unsupported file type — use PDF, Markdown, image, or video";
     } else if (form.file.size > MAX_FILE_BYTES) {
-      errors.file = "File must be under 100MB";
+      errors.file = "File must be under 500 MB";
     } else if (form.file.size <= 0) {
       errors.file = "File appears to be empty";
     }

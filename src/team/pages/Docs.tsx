@@ -411,6 +411,7 @@ export default function Docs() {
                       <SelectItem value="all">Everyone</SelectItem>
                       <SelectItem value="department">Specific department</SelectItem>
                       <SelectItem value="user">Specific employee</SelectItem>
+                      <SelectItem value="admin">Admin only</SelectItem>
                     </SelectContent>
                   </Select>
                   {fieldErrors.audience && (

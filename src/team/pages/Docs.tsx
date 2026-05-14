@@ -472,7 +472,7 @@ export default function Docs() {
                       const f = e.dataTransfer.files?.[0];
                       if (f) onPickFile(f);
                     }}
-                    onClick={() => !uploading && fileInputRef.current?.click()}
+                    onClick={() => uploadState !== "uploading" && fileInputRef.current?.click()}
                     role="button"
                     tabIndex={0}
                     className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
@@ -481,9 +481,9 @@ export default function Docs() {
                         : dragOver
                           ? "border-primary bg-primary/5"
                           : "border-border hover:border-primary/50"
-                    } ${uploading ? "cursor-default" : ""}`}
+                    } ${uploadState === "uploading" ? "cursor-default" : ""}`}
                   >
-                    {uploading && form.file ? (
+                    {uploadState === "uploading" && form.file ? (
                       <div className="flex flex-col items-center gap-3 text-sm">
                         <div className="w-full max-w-xs text-left">
                           <div className="flex items-center justify-between mb-1">
@@ -492,7 +492,74 @@ export default function Docs() {
                           </div>
                           <Progress value={uploadProgress} className="h-2" />
                         </div>
-                        <span className="text-xs text-muted-foreground">Uploading…</span>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              abortRef.current?.();
+                              abortRef.current = null;
+                              setUploadState("cancelled");
+                              setUploadProgress(0);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : uploadState === "error" && form.file ? (
+                      <div className="flex flex-col items-center gap-3 text-sm text-destructive">
+                        <UploadCloud size={28} />
+                        <div className="font-medium">Upload failed</div>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setUploadState("idle");
+                              create.mutate();
+                            }}
+                          >
+                            Retry
+                          </Button>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onPickFile(null); setUploadState("idle"); }}
+                            className="text-xs text-muted-foreground hover:text-foreground underline"
+                          >
+                            Remove file
+                          </button>
+                        </div>
+                      </div>
+                    ) : uploadState === "cancelled" && form.file ? (
+                      <div className="flex flex-col items-center gap-3 text-sm text-muted-foreground">
+                        <UploadCloud size={28} />
+                        <div className="font-medium">Upload cancelled</div>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setUploadState("idle");
+                              create.mutate();
+                            }}
+                          >
+                            Retry
+                          </Button>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onPickFile(null); setUploadState("idle"); }}
+                            className="text-xs text-muted-foreground hover:text-foreground underline"
+                          >
+                            Remove file
+                          </button>
+                        </div>
                       </div>
                     ) : form.file ? (
                       <div className="flex items-center justify-between gap-2 text-sm">

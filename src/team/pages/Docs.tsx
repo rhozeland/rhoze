@@ -1293,12 +1293,12 @@ export default function Docs() {
                           {d.file_name || (d.file_url ? new URL(d.file_url).hostname : "")}
                           {d.file_size_bytes ? ` · ${formatBytes(d.file_size_bytes)}` : ""}
                         </span>
-                        <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1">
                           {previewable && (
                             <button
                               type="button"
                               onClick={() => setPreviewDoc(d)}
-                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
                               aria-label={`Preview ${d.title}`}
                             >
                               <Eye size={12} /> Preview
@@ -1309,7 +1309,7 @@ export default function Docs() {
                               href={d.file_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
                             >
                               <ExternalLink size={12} /> Open
                             </a>
@@ -1320,7 +1320,8 @@ export default function Docs() {
                               download={d.file_name || undefined}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+                              aria-label={`Download ${d.file_name || d.title}`}
                             >
                               <Download size={12} /> Download
                             </a>

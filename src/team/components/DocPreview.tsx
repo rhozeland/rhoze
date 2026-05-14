@@ -7,6 +7,8 @@ type Props = {
   url: string;
   mime?: string | null;
   fileName?: string | null;
+  /** When true, render in a compact form suited for thumbnail tiles. */
+  compact?: boolean;
 };
 
 // Module-level cache keyed by URL so reopening the same attachment never re-fetches.

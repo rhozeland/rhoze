@@ -999,6 +999,49 @@ function EditMemberDialogBody({
         </div>
       </div>
       )}
+      {isAdmin && currentUser?.id !== p.id && (
+        <div className="mt-6 pt-4 border-t border-destructive/30">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <div className="text-sm font-semibold text-destructive">Danger zone</div>
+              <p className="text-xs text-muted-foreground max-w-md">
+                Permanently delete this user, their profile and all associated team data. This cannot be undone.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => setConfirmDelete(true)}
+            >
+              <Trash2 size={14} className="mr-1.5" />
+              Remove profile
+            </Button>
+          </div>
+          <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove this profile?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete <strong>{p.display_name ?? p.email ?? "this user"}</strong>,
+                  their login, role grants, project memberships, availability, pay stubs and related team
+                  records. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={(e) => { e.preventDefault(); removeProfile(); }}
+                  disabled={deleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? "Removing…" : "Yes, remove profile"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
     </div>
   );
 }

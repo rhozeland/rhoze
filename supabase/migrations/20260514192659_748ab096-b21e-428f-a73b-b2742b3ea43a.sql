@@ -1,0 +1,2 @@
+ALTER TABLE public.docs DROP CONSTRAINT IF EXISTS docs_audience_check;
+ALTER TABLE public.docs ADD CONSTRAINT docs_audience_check CHECK (audience = ANY (ARRAY['all'::text, 'department'::text, 'user'::text, 'admin'::text]));

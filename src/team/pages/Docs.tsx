@@ -1308,9 +1308,9 @@ export default function Docs() {
                               href={d.file_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-xs text-primary hover:underline"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
                             >
-                              Open
+                              <ExternalLink size={12} /> Open
                             </a>
                           )}
                           {signed && (

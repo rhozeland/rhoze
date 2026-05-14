@@ -565,10 +565,32 @@ export default function RoleManager() {
 function EditMemberDialogBody({
   userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   titleDrafts, setTitleDrafts, notesDrafts, setNotesDrafts,
-  setDept, setTitle, setEmp, grant, revoke,
+  setDept, setTitle, setEmp, grant, revoke, onDeleted,
 }: any) {
   if (!p) return null;
   const qc = useQueryClient();
+  const { user: currentUser, isAdmin } = useAuth();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const removeProfile = async () => {
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("delete-team-member", {
+        body: { user_id: p.id },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast({ title: "Profile removed" });
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+      qc.invalidateQueries({ queryKey: ["roles-by-user"] });
+      setConfirmDelete(false);
+      onDeleted?.();
+    } catch (e: any) {
+      toast({ title: "Failed to remove profile", description: e.message, variant: "destructive" });
+    } finally {
+      setDeleting(false);
+    }
+  };
   const titleVal = titleDrafts[p.id] ?? p.job_title ?? "";
   const notesVal = notesDrafts[p.id] ?? p.employment_notes ?? "";
   const dept = (p.department ?? null) as Dept | null;

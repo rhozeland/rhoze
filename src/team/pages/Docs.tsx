@@ -244,11 +244,16 @@ export default function Docs() {
       user?.id,
       myProfile?.department ?? null,
       isAdmin,
+      focusedUserId,
+      manageView,
+      focusedMeta?.profile?.department ?? null,
+      (focusedMeta?.roles ?? []).join(","),
     ],
     enabled:
       !!user?.id &&
       (scope !== "department" || !!myProfile?.department) &&
-      (scope !== "admin" || canSeeAdmin),
+      (scope !== "admin" || canSeeAdmin) &&
+      (scope !== "manage" || (isAdmin && !!focusedUserId && !!focusedMeta)),
     queryFn: async () => {
       let query = supabase.from("docs").select("*");
       if (scope === "mine") {
@@ -261,6 +266,26 @@ export default function Docs() {
         query = query.eq("audience", "all");
       } else if (scope === "admin") {
         query = query.eq("audience", "admin");
+      } else if (scope === "manage" && focusedUserId) {
+        if (manageView === "uploaded") {
+          query = query.eq("created_by", focusedUserId);
+        } else {
+          // "Accessible to them" — replicate RLS read logic for that user.
+          const fdept = focusedMeta?.profile?.department ?? null;
+          const isFocAdmin = (focusedMeta?.roles ?? []).includes("admin");
+          const isFocHr = fdept === "hr";
+          const ors: string[] = [
+            "audience.eq.all",
+            `and(audience.eq.user,target_user_id.eq.${focusedUserId})`,
+          ];
+          if (fdept) {
+            ors.push(`and(audience.eq.department,department.eq.${fdept})`);
+          }
+          if (isFocAdmin || isFocHr) {
+            ors.push("audience.eq.admin");
+          }
+          query = query.or(ors.join(","));
+        }
       }
       if (tagFilter !== "all") {
         query = query.eq("tag_department", tagFilter as any);

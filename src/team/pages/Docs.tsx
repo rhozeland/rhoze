@@ -326,22 +326,25 @@ export default function Docs() {
         file_size_bytes = form.file.size;
       }
 
+      // Required docs always go to the whole team so they appear in "My Team".
+      const effectiveAudience: Audience = form.is_required ? "all" : form.audience;
+
       // Derive a visible "category" label for grouping/back-compat.
       const category =
-        form.audience === "all"
+        effectiveAudience === "all"
           ? "general"
-          : form.audience === "department"
+          : effectiveAudience === "department"
             ? `dept: ${form.department}`
-            : form.audience === "admin"
+            : effectiveAudience === "admin"
               ? "admin"
               : "personal";
 
       const { error } = await supabase.from("docs").insert({
         title: form.title.trim(),
         category,
-        audience: form.audience,
-        department: form.audience === "department" ? (form.department as any) : null,
-        target_user_id: form.audience === "user" ? form.target_user_id : null,
+        audience: effectiveAudience,
+        department: effectiveAudience === "department" ? (form.department as any) : null,
+        target_user_id: effectiveAudience === "user" ? form.target_user_id : null,
         tag_department: (form.tag_department || null) as any,
         file_url: form.file_url.trim() || null,
         file_path,
@@ -730,7 +733,26 @@ export default function Docs() {
                 )}
 
                 <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: !!v })} />
+                  <Checkbox
+                    checked={form.is_required}
+                    onCheckedChange={(v) => {
+                      const checked = !!v;
+                      setForm((prev) => ({
+                        ...prev,
+                        is_required: checked,
+                        // Required docs are visible to the whole team — force
+                        // the audience to "all" so they land in the My Team tab.
+                        ...(checked
+                          ? { audience: "all" as Audience, department: "", target_user_id: "" }
+                          : {}),
+                      }));
+                      if (checked) {
+                        clearError("audience");
+                        clearError("department");
+                        clearError("target_user_id");
+                      }
+                    }}
+                  />
                   Required for all team members
                 </label>
               </div>

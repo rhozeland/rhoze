@@ -1164,6 +1164,7 @@ export default function Docs() {
                 const Icon = fileIconFor(d.file_mime);
                 const signed = d.file_path ? signedUrls[d.file_path] : null;
                 const previewable = isDocPreviewable(d) && !!signed;
+                const embedUrl = d.file_url ? toEmbedUrl(d.file_url) : null;
                 const audienceLabel =
                   d.audience === "department"
                     ? `Department · ${d.department ?? "—"}`
@@ -1197,6 +1198,14 @@ export default function Docs() {
                         <img src={signed} alt={d.title} className="w-full h-full object-cover" />
                       ) : d.file_mime?.startsWith("video/") && signed ? (
                         <video src={signed} className="w-full h-full object-cover" muted />
+                      ) : embedUrl ? (
+                        <iframe
+                          src={embedUrl}
+                          title={d.title}
+                          className="w-full h-full bg-background pointer-events-none"
+                          loading="lazy"
+                          allow="autoplay; encrypted-media; fullscreen"
+                        />
                       ) : (
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
                       )}
@@ -1260,17 +1269,13 @@ export default function Docs() {
                         </div>
                       </div>
 
-                      {d.file_url && toEmbedUrl(d.file_url) && (
-                        <EmbedPreview url={d.file_url} title={d.title} height={180} />
-                      )}
-
                       <div className="mt-auto flex items-center justify-between gap-2 pt-2">
                         <span className="text-[11px] text-muted-foreground truncate">
                           {d.file_name || (d.file_url ? new URL(d.file_url).hostname : "")}
                           {d.file_size_bytes ? ` · ${formatBytes(d.file_size_bytes)}` : ""}
                         </span>
                         <div className="flex items-center gap-1">
-                          {d.file_url && !toEmbedUrl(d.file_url) && (
+                          {d.file_url && (
                             <a
                               href={d.file_url}
                               target="_blank"

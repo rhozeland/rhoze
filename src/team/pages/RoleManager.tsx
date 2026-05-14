@@ -259,77 +259,7 @@ export default function RoleManager() {
         <p className="text-sm text-muted-foreground">Grant team access, assign department and title, and track employment history. New users have no role until you assign one.</p>
       </header>
 
-      <div className="flex gap-2 text-sm">
-        {([
-          { k: "current", label: `Current (${counts.current})` },
-          { k: "former", label: `Former (${counts.former})` },
-          { k: "all", label: `All (${counts.all})` },
-        ] as const).map((t) => (
-          <button
-            key={t.k}
-            onClick={() => setView(t.k)}
-            className={`px-3 py-1.5 rounded border ${view === t.k ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap items-end gap-3 border border-border rounded-lg p-3 bg-card">
-        <div className="flex-1 min-w-[220px]">
-          <label className="text-[10px] uppercase text-muted-foreground">Search</label>
-          <div className="relative">
-            <Search size={14} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              className="h-9 pl-7"
-              placeholder="Name, title, notes…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="w-44">
-          <label className="text-[10px] uppercase text-muted-foreground">Department</label>
-          <Select value={deptFilter} onValueChange={(v) => setDeptFilter(v as any)}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All departments</SelectItem>
-              <SelectItem value="unassigned">Unassigned</SelectItem>
-              {DEPTS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-40">
-          <label className="text-[10px] uppercase text-muted-foreground">Status</label>
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
-            <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              {EMP_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-28">
-          <label className="text-[10px] uppercase text-muted-foreground">Tenure ≥ (mo)</label>
-          <Input type="number" min={0} className="h-9" value={tenureMin} onChange={(e) => setTenureMin(e.target.value)} placeholder="0" />
-        </div>
-        <div className="w-28">
-          <label className="text-[10px] uppercase text-muted-foreground">Tenure ≤ (mo)</label>
-          <Input type="number" min={0} className="h-9" value={tenureMax} onChange={(e) => setTenureMax(e.target.value)} placeholder="∞" />
-        </div>
-        <div className="ml-auto flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">{filtered.length} result{filtered.length === 1 ? "" : "s"}</span>
-          {activeFilterCount > 0 && (
-            <button onClick={clearFilters} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-              <X size={12} /> Clear ({activeFilterCount})
-            </button>
-          )}
-        </div>
-      </div>
-
       <RolePresetsCombined />
-
-      <CoveragePanel profiles={profiles ?? []} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {filtered.map((p: any) => {

@@ -557,9 +557,9 @@ export default function Docs() {
             type="button"
             aria-label="Edit visibility"
             title="Edit visibility"
-            className="text-muted-foreground hover:text-foreground shrink-0"
+            className="inline-flex items-center justify-center text-xs w-7 h-7 rounded border border-border bg-background hover:bg-muted shrink-0"
           >
-            <Settings2 size={14} />
+            <Settings2 size={12} />
           </button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-72 p-3 space-y-3">

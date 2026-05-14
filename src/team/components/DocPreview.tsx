@@ -21,6 +21,38 @@ const htmlCache = new Map<string, string>();
 // for every uploaded file type (pdf, images, video, audio, etc.).
 const mediaBlobCache = new Map<string, string>();
 
+function FailedMedia({
+  kind,
+  url,
+  sizeBox,
+  padding,
+  error,
+}: {
+  kind: string;
+  url: string;
+  sizeBox: string;
+  padding: string;
+  error: string | null;
+}) {
+  return (
+    <div className={`${sizeBox} flex flex-col items-center justify-center gap-3 bg-background text-foreground rounded ${padding} text-center`}>
+      <AlertCircle size={24} className="text-destructive" />
+      <div className="text-sm font-medium">This {kind} couldn’t be loaded</div>
+      <p className="text-xs text-muted-foreground max-w-sm">
+        {error || "The browser blocked the embedded preview."}
+      </p>
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+      >
+        <ExternalLink size={12} /> Open in new tab
+      </a>
+    </div>
+  );
+}
+
 function inferKind(mime: string | null | undefined, fileName: string | null | undefined) {
   const m = (mime || "").toLowerCase();
   const n = (fileName || "").toLowerCase();

@@ -2,7 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import {
   LayoutDashboard, Users, BookOpen,
-  UserCircle2, Shield, LogOut,
+  UserCircle2, Shield, LogOut, Calendar,
   FolderKanban, Inbox, Package, Clock,
   Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare,
 } from "lucide-react";
@@ -14,7 +14,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 
 const nav = [
-  { to: "/directory", label: "Directory", icon: UserCircle2 },
+  { to: "/directory", label: "Directory", icon: Calendar },
   { to: "/", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/time", label: "Time & Pay", icon: Clock },
   { to: "/projects", label: "Projects", icon: FolderKanban },

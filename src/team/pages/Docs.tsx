@@ -1172,15 +1172,15 @@ export default function Docs() {
                     <div
                       className={
                         "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
-                        (isPreviewable && signed ? "cursor-pointer" : "")
+                        (previewable ? "cursor-pointer" : "")
                       }
                       onClick={() => {
-                        if (isPreviewable && signed) setPreviewDoc(d);
+                        if (previewable) setPreviewDoc(d);
                       }}
                     >
-                      {isImage && signed ? (
+                      {d.file_mime?.startsWith("image/") && signed ? (
                         <img src={signed} alt={d.title} className="w-full h-full object-cover" />
-                      ) : isVideo && signed ? (
+                      ) : d.file_mime?.startsWith("video/") && signed ? (
                         <video src={signed} className="w-full h-full object-cover" muted />
                       ) : (
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
@@ -1211,7 +1211,7 @@ export default function Docs() {
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
                       </span>
-                      {isPreviewable && signed && (
+                      {previewable && (
                         <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
                       )}
                     </div>

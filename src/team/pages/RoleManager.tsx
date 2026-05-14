@@ -918,7 +918,7 @@ function RolePresetsBox() {
         .order("sort_order")
         .order("label");
       if (error) throw error;
-      return (data ?? []) as Preset[];
+      return ((data ?? []) as unknown) as Preset[];
     },
   });
 

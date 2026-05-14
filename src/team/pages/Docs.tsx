@@ -311,6 +311,7 @@ export default function Docs() {
         audience: form.audience,
         department: form.audience === "department" ? (form.department as any) : null,
         target_user_id: form.audience === "user" ? form.target_user_id : null,
+        tag_department: (form.tag_department || null) as any,
         file_url: form.file_url.trim() || null,
         file_path,
         file_name,

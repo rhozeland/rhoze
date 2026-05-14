@@ -476,9 +476,9 @@ export default function Docs() {
                       e.preventDefault();
                       setDragOver(false);
                       const f = e.dataTransfer.files?.[0];
-                      if (f) { clearError("file"); onPickFile(f); }
+                      if (f) onPickFile(f);
                     }}
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => !uploading && fileInputRef.current?.click()}
                     role="button"
                     tabIndex={0}
                     className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
@@ -487,9 +487,20 @@ export default function Docs() {
                         : dragOver
                           ? "border-primary bg-primary/5"
                           : "border-border hover:border-primary/50"
-                    }`}
+                    } ${uploading ? "cursor-default" : ""}`}
                   >
-                    {form.file ? (
+                    {uploading && form.file ? (
+                      <div className="flex flex-col items-center gap-3 text-sm">
+                        <div className="w-full max-w-xs text-left">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-muted-foreground truncate max-w-[200px]">{form.file.name}</span>
+                            <span className="text-xs font-medium">{uploadProgress}%</span>
+                          </div>
+                          <Progress value={uploadProgress} className="h-2" />
+                        </div>
+                        <span className="text-xs text-muted-foreground">Uploading…</span>
+                      </div>
+                    ) : form.file ? (
                       <div className="flex items-center justify-between gap-2 text-sm">
                         <div className="flex items-center gap-2 min-w-0">
                           <FileIcon size={16} className="shrink-0 text-muted-foreground" />
@@ -505,11 +516,17 @@ export default function Docs() {
                           <X size={14} />
                         </button>
                       </div>
+                    ) : fieldErrors.file ? (
+                      <div className="flex flex-col items-center gap-2 text-sm text-destructive">
+                        <UploadCloud size={28} />
+                        <div className="font-medium">{fieldErrors.file}</div>
+                        <div className="text-[11px] text-muted-foreground">PDF · Markdown · Images · Videos · Max 500 MB</div>
+                      </div>
                     ) : (
                       <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
                         <UploadCloud size={28} />
                         <div><span className="text-foreground font-medium">Click to upload</span> or drag & drop</div>
-                        <div className="text-[11px]">PDF · Markdown · Images · Videos</div>
+                        <div className="text-[11px]">PDF · Markdown · Images · Videos · Max 500 MB</div>
                       </div>
                     )}
                     <input
@@ -517,12 +534,9 @@ export default function Docs() {
                       type="file"
                       className="hidden"
                       accept={ACCEPT}
-                      onChange={(e) => { clearError("file"); onPickFile(e.target.files?.[0] ?? null); }}
+                      onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
                     />
                   </div>
-                  {fieldErrors.file && (
-                    <p role="alert" className="text-xs text-destructive">{fieldErrors.file}</p>
-                  )}
                 </div>
 
                 <div className="space-y-1.5">

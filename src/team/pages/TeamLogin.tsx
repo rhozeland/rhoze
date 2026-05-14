@@ -14,6 +14,8 @@ const signinSchema = z.object({
 });
 const signupSchema = signinSchema.extend({
   referralCode: z.string().trim().min(4).max(64),
+  fullName: z.string().trim().min(2, "Enter your full name").max(80),
+  alias: z.string().trim().max(60).optional().or(z.literal("")),
 });
 
 export default function TeamLogin() {
@@ -23,6 +25,8 @@ export default function TeamLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [alias, setAlias] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -38,9 +42,9 @@ export default function TeamLogin() {
         return;
       }
     } else {
-      const parsed = signupSchema.safeParse({ email, password, referralCode });
+      const parsed = signupSchema.safeParse({ email, password, referralCode, fullName, alias });
       if (!parsed.success) {
-        toast({ title: "Check your input", description: "Email, 6+ char password, and a referral code are required.", variant: "destructive" });
+        toast({ title: "Check your input", description: "Name, email, 6+ char password, and a referral code are required.", variant: "destructive" });
         return;
       }
     }
@@ -55,7 +59,13 @@ export default function TeamLogin() {
         const { data: signUpData, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/team.html` },
+          options: {
+            emailRedirectTo: `${window.location.origin}/team.html`,
+            data: {
+              display_name: fullName.trim(),
+              alias: alias.trim() || null,
+            },
+          },
         });
         if (error) throw error;
 
@@ -105,6 +115,30 @@ export default function TeamLogin() {
             <Input id="password" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} required value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           {mode === "signup" && (
+            <>
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName">Full name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  placeholder="Jane Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="alias">Alias <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                <Input
+                  id="alias"
+                  type="text"
+                  autoComplete="nickname"
+                  placeholder="Stage / artist name"
+                  value={alias}
+                  onChange={(e) => setAlias(e.target.value)}
+                />
+              </div>
             <div className="space-y-1.5">
               <Label htmlFor="referral">Referral code</Label>
               <Input
@@ -120,6 +154,7 @@ export default function TeamLogin() {
                 A valid referral code is required. Contact an admin if you don't have one.
               </p>
             </div>
+            </>
           )}
           <Button type="submit" className="w-full" disabled={busy}>
             {mode === "signin" ? "Sign in" : "Create account"}

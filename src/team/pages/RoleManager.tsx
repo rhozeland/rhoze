@@ -430,12 +430,17 @@ export default function RoleManager() {
                   <Select
                     value={pick}
                     onValueChange={(v) => {
-                      setPicks({ ...picks, [p.id]: v as Role });
-                      setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
+                      setPicks({ ...picks, [p.id]: v as any });
+                      if (v.startsWith("dept:")) {
+                        setErrors({ ...errors, [p.id]: null });
+                      } else {
+                        setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
+                      }
                     }}
                   >
                     <SelectTrigger className={`h-9 flex-1 ${err ? "border-destructive" : ""}`}><SelectValue /></SelectTrigger>
                     <SelectContent>
+                      <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground">Position</div>
                       {ROLES.map((r) => {
                         const disabled = !allowed.includes(r);
                         return (
@@ -444,12 +449,23 @@ export default function RoleManager() {
                           </SelectItem>
                         );
                       })}
+                      <div className="px-2 pt-2 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground border-t border-border mt-1">Department</div>
+                      {DEPTS.map((d) => (
+                        <SelectItem key={`dept:${d.value}`} value={`dept:${d.value}`} disabled={p.department === d.value}>
+                          {d.label}{p.department === d.value ? " — current" : ""}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <Button
                     size="sm"
                     disabled={!!err || !hasAllowed}
                     onClick={() => {
+                      if (typeof pick === "string" && pick.startsWith("dept:")) {
+                        const newDept = pick.slice(5) as Dept;
+                        setDept.mutate({ userId: p.id, department: newDept });
+                        return;
+                      }
                       const v = validateRoleForDept(pick as Role, dept);
                       if (v) {
                         setErrors({ ...errors, [p.id]: v });

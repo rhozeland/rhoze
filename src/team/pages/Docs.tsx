@@ -1293,6 +1293,16 @@ export default function Docs() {
                           {d.file_size_bytes ? ` · ${formatBytes(d.file_size_bytes)}` : ""}
                         </span>
                         <div className="flex items-center gap-1">
+                          {previewable && (
+                            <button
+                              type="button"
+                              onClick={() => setPreviewDoc(d)}
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              aria-label={`Preview ${d.title}`}
+                            >
+                              <Eye size={12} /> Preview
+                            </button>
+                          )}
                           {d.file_url && (
                             <a
                               href={d.file_url}

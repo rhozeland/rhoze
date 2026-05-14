@@ -2,6 +2,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RoleManager from "./RoleManager";
 import Invites from "./Invites";
 import ReferralCodes from "./ReferralCodes";
+import RoleSettings from "./RoleSettings";
 
 export default function TeamAdmin() {
   return (
@@ -15,10 +16,12 @@ export default function TeamAdmin() {
           <TabsTrigger value="roles">Roles</TabsTrigger>
           <TabsTrigger value="invites">Invites</TabsTrigger>
           <TabsTrigger value="referral-codes">Referral codes</TabsTrigger>
+          <TabsTrigger value="role-settings">Roles Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="roles"><RoleManager /></TabsContent>
         <TabsContent value="invites"><Invites /></TabsContent>
         <TabsContent value="referral-codes"><ReferralCodes /></TabsContent>
+        <TabsContent value="role-settings"><RoleSettings /></TabsContent>
       </Tabs>
     </div>
   );

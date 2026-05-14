@@ -1166,6 +1166,9 @@ export default function Docs() {
                   ...(canSeeAdmin
                     ? [{ id: "admin" as const, label: "Admin Documents", Icon: Shield }]
                     : []),
+                  ...(isAdmin
+                    ? [{ id: "manage" as const, label: "Manage", Icon: Shield }]
+                    : []),
                 ]
               ).map(({ id, label, Icon }) => {
                 const active = scope === id;

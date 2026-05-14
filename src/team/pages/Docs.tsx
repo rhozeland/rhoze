@@ -729,7 +729,9 @@ export default function Docs() {
                     ? `Department · ${d.department ?? "—"}`
                     : d.audience === "user"
                       ? "Personal"
-                      : "Everyone";
+                      : d.audience === "admin"
+                        ? "Admin"
+                        : "Everyone";
 
                 return (
                   <div

@@ -1266,16 +1266,11 @@ export default function Docs() {
                         <div className="flex items-center gap-1 shrink-0">
                           {canManage && (
                             <>
-                              <button
-                                type="button"
-                                className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
-                              >
-                                <VisibilityMenu doc={d} />
-                              </button>
+                              <VisibilityMenu doc={d} />
                               <button
                                 type="button"
                                 onClick={() => deleteDoc.mutate(d.id)}
-                                className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted hover:text-destructive transition-colors"
+                                className="inline-flex items-center justify-center text-xs w-7 h-7 rounded border border-border bg-background hover:bg-muted hover:text-destructive transition-colors"
                                 title="Remove"
                                 disabled={deleteDoc.isPending}
                               >
@@ -1285,7 +1280,7 @@ export default function Docs() {
                           )}
                           <button
                             onClick={() => toggleComplete.mutate({ docId: d.id, done })}
-                            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+                            className="inline-flex items-center justify-center text-xs w-7 h-7 rounded border border-border bg-background hover:bg-muted"
                             title={done ? "Mark incomplete" : "Mark complete"}
                           >
                             {done ? <CheckCircle2 size={12} className="text-green-500" /> : <Circle size={12} />}

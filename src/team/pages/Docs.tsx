@@ -1151,7 +1151,15 @@ export default function Docs() {
                     }
                   >
                     {/* Thumbnail */}
-                    <div className="relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden">
+                    <div
+                      className={
+                        "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
+                        ((isImage || isVideo) && signed ? "cursor-pointer" : "")
+                      }
+                      onClick={() => {
+                        if ((isImage || isVideo) && signed) setPreviewDoc(d);
+                      }}
+                    >
                       {isImage && signed ? (
                         <img src={signed} alt={d.title} className="w-full h-full object-cover" />
                       ) : isVideo && signed ? (
@@ -1176,6 +1184,7 @@ export default function Docs() {
                                 return next;
                               });
                             }}
+                            onClick={(e) => e.stopPropagation()}
                             aria-label={`Select ${d.title}`}
                             className="border-background/80 bg-background/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                           />
@@ -1184,6 +1193,9 @@ export default function Docs() {
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
                       </span>
+                      {(isImage || isVideo) && signed && (
+                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
+                      )}
                     </div>
 
                     {/* Body */}

@@ -11,6 +11,17 @@ import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
 import PayrollRun from "../components/PayrollRun";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type WorkType = "project" | "specialist" | "standard" | "reimbursement";
 
@@ -52,6 +63,7 @@ export default function TimeAndPay() {
   const [editingUserName, setEditingUserName] = useState<string>("");
   const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
+  const [purging, setPurging] = useState(false);
 
   const { data: periods } = useQuery({
     queryKey: ["timesheet_periods"],
@@ -64,6 +76,33 @@ export default function TimeAndPay() {
 
   const periodId = activePeriodId || periods?.[0]?.id || "";
   const activePeriod = periods?.find((p: any) => p.id === periodId);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const pastPeriods = (periods ?? []).filter((p: any) => p.end_date < today);
+
+  const purgePastPeriods = async () => {
+    setPurging(true);
+    try {
+      const ids = pastPeriods.map((p: any) => p.id);
+      if (ids.length === 0) {
+        toast({ title: "Nothing to purge", description: "No past periods found." });
+        return;
+      }
+      const { error } = await supabase.from("timesheet_periods").delete().in("id", ids);
+      if (error) throw error;
+      toast({ title: `Deleted ${ids.length} past period${ids.length === 1 ? "" : "s"}` });
+      if (activePeriodId && ids.includes(activePeriodId)) setActivePeriodId("");
+      qc.invalidateQueries({ queryKey: ["timesheet_periods"] });
+    } catch (e: any) {
+      toast({
+        title: "Failed to purge periods",
+        description: e.message + " (Periods with timesheets or pay stubs cannot be deleted.)",
+        variant: "destructive",
+      });
+    } finally {
+      setPurging(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -94,6 +133,34 @@ export default function TimeAndPay() {
           <Button size="sm" variant="outline" onClick={() => setShowPeriodForm((s) => !s)}>
             <Plus size={14} /> Period
           </Button>
+        )}
+        {isAdmin && pastPeriods.length > 0 && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" disabled={purging}>
+                <Trash2 size={14} /> Purge past ({pastPeriods.length})
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {pastPeriods.length} past pay period{pastPeriods.length === 1 ? "" : "s"}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes every period whose end date is before today ({formatDate(today)}).
+                  Periods that still have timesheets or pay stubs attached will fail to delete and stay intact.
+                  This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={purgePastPeriods}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete past periods
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
         {activePeriod && (
           <span className="text-xs text-muted-foreground ml-1">

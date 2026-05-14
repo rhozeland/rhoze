@@ -53,6 +53,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
+import DocPreview from "../components/DocPreview";
 import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
@@ -1131,6 +1132,17 @@ export default function Docs() {
                 const signed = d.file_path ? signedUrls[d.file_path] : null;
                 const isImage = d.file_mime?.startsWith("image/");
                 const isVideo = d.file_mime?.startsWith("video/");
+                const fileNameLc = (d.file_name || "").toLowerCase();
+                const isPdf = d.file_mime === "application/pdf" || fileNameLc.endsWith(".pdf");
+                const isMd =
+                  d.file_mime === "text/markdown" ||
+                  fileNameLc.endsWith(".md") ||
+                  fileNameLc.endsWith(".markdown");
+                const isDocx =
+                  d.file_mime ===
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                  fileNameLc.endsWith(".docx");
+                const isPreviewable = isImage || isVideo || isPdf || isMd || isDocx;
                 const audienceLabel =
                   d.audience === "department"
                     ? `Department · ${d.department ?? "—"}`
@@ -1154,10 +1166,10 @@ export default function Docs() {
                     <div
                       className={
                         "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
-                        ((isImage || isVideo) && signed ? "cursor-pointer" : "")
+                        (isPreviewable && signed ? "cursor-pointer" : "")
                       }
                       onClick={() => {
-                        if ((isImage || isVideo) && signed) setPreviewDoc(d);
+                        if (isPreviewable && signed) setPreviewDoc(d);
                       }}
                     >
                       {isImage && signed ? (
@@ -1193,7 +1205,7 @@ export default function Docs() {
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
                       </span>
-                      {(isImage || isVideo) && signed && (
+                      {isPreviewable && signed && (
                         <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
                       )}
                     </div>
@@ -1282,6 +1294,12 @@ export default function Docs() {
                     <img src={signed} alt={previewDoc.title} className="max-w-full max-h-[70vh] object-contain rounded" />
                   ) : isVid && signed ? (
                     <video src={signed} controls className="max-w-full max-h-[70vh] rounded" />
+                  ) : signed ? (
+                    <DocPreview
+                      url={signed}
+                      mime={previewDoc.file_mime}
+                      fileName={previewDoc.file_name}
+                    />
                   ) : (
                     <div className="text-muted-foreground text-sm">Preview not available</div>
                   )}

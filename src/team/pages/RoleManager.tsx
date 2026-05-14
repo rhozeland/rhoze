@@ -95,7 +95,7 @@ export default function RoleManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, display_name, alias, pronouns, bio, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program")
+        .select("id, display_name, alias, pronouns, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program")
         .order("display_name");
       if (error) throw error;
       return data;
@@ -493,15 +493,6 @@ function EditMemberDialogBody({
   const [wageDraft, setWageDraft] = useState<string | null>(null);
   const [rateDraft, setRateDraft] = useState<string | null>(null);
   const [preview, setPreview] = useState(true);
-  const [nameDraft, setNameDraft] = useState<string | null>(null);
-  const [aliasDraft, setAliasDraft] = useState<string | null>(null);
-  const [pronounsDraft, setPronounsDraft] = useState<string | null>(null);
-  const [bioDraft, setBioDraft] = useState<string | null>(null);
-  const nameVal = nameDraft ?? p.display_name ?? "";
-  const aliasVal = aliasDraft ?? p.alias ?? "";
-  const pronounsVal = pronounsDraft ?? p.pronouns ?? "";
-  const bioVal = bioDraft ?? p.bio ?? "";
-  const initial = (p.display_name || p.email || "?").trim().charAt(0).toUpperCase();
   const wageVal = wageDraft ?? p.wage ?? "";
   const rateVal = rateDraft ?? (p.hourly_rate_cents != null ? (p.hourly_rate_cents / 100).toString() : "");
   const fmtRate = p.hourly_rate_cents ? `$${(p.hourly_rate_cents / 100).toFixed(2)}/hr` : "—";
@@ -527,27 +518,7 @@ function EditMemberDialogBody({
         </Button>
       </div>
       {preview ? (
-        <div className="space-y-4 text-sm">
-          <section className="border border-border rounded p-3 bg-background">
-            <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-3">Profile</div>
-            <div className="flex items-start gap-3">
-              {p.avatar_url ? (
-                <img src={p.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border shrink-0" />
-              ) : (
-                <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center text-xl font-medium border border-border shrink-0">{initial}</div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="text-base font-semibold leading-tight truncate">{p.display_name || "—"}</div>
-                {p.alias && <div className="text-xs text-muted-foreground truncate">aka {p.alias}</div>}
-                <div className="text-xs text-muted-foreground truncate">
-                  {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
-                </div>
-                {p.email && <div className="text-xs text-primary truncate break-all mt-0.5">{p.email}</div>}
-                {p.bio && <div className="pt-2 text-xs whitespace-pre-wrap">{p.bio}</div>}
-              </div>
-            </div>
-          </section>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <section className="border border-border rounded p-3 bg-background">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Employment</div>
             <PreviewRow label="Department" value={deptLabel} />
@@ -566,68 +537,8 @@ function EditMemberDialogBody({
             <PreviewRow label="Payment method" value={p.payment_method} />
             <PreviewRow label="Program" value={p.program} />
           </section>
-          </div>
         </div>
       ) : (
-      <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-        <div className="md:col-span-2 flex items-start gap-3">
-          {p.avatar_url ? (
-            <img src={p.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover border border-border shrink-0" />
-          ) : (
-            <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center text-lg font-medium border border-border shrink-0">{initial}</div>
-          )}
-          <div className="text-[11px] text-muted-foreground self-center">Avatar upload is managed by the member from their own Settings page.</div>
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted-foreground">Display name</label>
-          <Input className="h-9" value={nameVal}
-            onChange={(e) => setNameDraft(e.target.value)}
-            onBlur={() => {
-              if (nameDraft === null) return;
-              const next = nameDraft.trim();
-              if (next !== (p.display_name ?? "")) setEmp.mutate({ userId: p.id, patch: { display_name: next || null } });
-              setNameDraft(null);
-            }} />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted-foreground">Alias</label>
-          <Input className="h-9" placeholder="Short handle" value={aliasVal}
-            onChange={(e) => setAliasDraft(e.target.value)}
-            onBlur={() => {
-              if (aliasDraft === null) return;
-              const next = aliasDraft.trim();
-              if (next !== (p.alias ?? "")) setEmp.mutate({ userId: p.id, patch: { alias: next || null } });
-              setAliasDraft(null);
-            }} />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted-foreground">Pronouns</label>
-          <Input className="h-9" placeholder="they/them" value={pronounsVal}
-            onChange={(e) => setPronounsDraft(e.target.value)}
-            onBlur={() => {
-              if (pronounsDraft === null) return;
-              const next = pronounsDraft.trim();
-              if (next !== (p.pronouns ?? "")) setEmp.mutate({ userId: p.id, patch: { pronouns: next || null } });
-              setPronounsDraft(null);
-            }} />
-        </div>
-        <div>
-          <label className="text-[10px] uppercase text-muted-foreground">Email</label>
-          <Input className="h-9" value={p.email ?? ""} disabled readOnly />
-        </div>
-        <div className="md:col-span-2">
-          <label className="text-[10px] uppercase text-muted-foreground">Bio</label>
-          <Textarea rows={3} value={bioVal}
-            onChange={(e) => setBioDraft(e.target.value)}
-            onBlur={() => {
-              if (bioDraft === null) return;
-              const next = bioDraft;
-              if (next !== (p.bio ?? "")) setEmp.mutate({ userId: p.id, patch: { bio: next || null } });
-              setBioDraft(null);
-            }} />
-        </div>
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
         <div>
           <label className="text-[10px] uppercase text-muted-foreground">Department</label>
@@ -773,11 +684,7 @@ function EditMemberDialogBody({
           />
         </div>
       </div>
-      </div>
       )}
-      <div className="border-t border-border pt-2">
-        <MastersheetPanel userId={userId} />
-      </div>
     </div>
   );
 }

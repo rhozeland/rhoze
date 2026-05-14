@@ -232,19 +232,27 @@ export default function Docs() {
       let file_size_bytes: number | null = null;
 
       if (form.file) {
-        setUploading(true);
+        setUploadState("uploading");
         setUploadProgress(0);
         const safe = form.file.name.replace(/[^a-zA-Z0-9._-]+/g, "_");
         const path = `${user?.id ?? "anon"}/${Date.now()}_${safe}`;
-        const { error: upErr } = await supabase.storage
-          .from("docs")
-          .upload(path, form.file, {
-            contentType: form.file.type || undefined,
-            upsert: false,
-          });
-        setUploading(false);
+        const { promise, abort } = uploadWithProgress({
+          bucket: "docs",
+          path,
+          file: form.file,
+          onProgress: (pct) => setUploadProgress(pct),
+        });
+        abortRef.current = abort;
+        try {
+          await promise;
+        } catch (err: any) {
+          setUploadState("error");
+          abortRef.current = null;
+          throw err;
+        }
+        abortRef.current = null;
+        setUploadState("idle");
         setUploadProgress(0);
-        if (upErr) throw upErr;
         file_path = path;
         file_name = form.file.name;
         file_mime = form.file.type || null;

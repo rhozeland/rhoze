@@ -1325,12 +1325,19 @@ export default function Docs() {
 
       {/* Preview / Lightbox */}
       <Dialog open={!!previewDoc} onOpenChange={(v) => !v && setPreviewDoc(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-black/95 border-none">
+        <DialogContent
+          className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-black/95 border-none"
+          aria-describedby={undefined}
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>{previewDoc?.title ?? "Attachment preview"}</DialogTitle>
+          </DialogHeader>
           {previewDoc && (() => {
             const signed = previewDoc.file_path ? signedUrls[previewDoc.file_path] : null;
+            const embedUrl = previewDoc.file_url ? toEmbedUrl(previewDoc.file_url) : null;
             const isImg = previewDoc.file_mime?.startsWith("image/");
             const isVid = previewDoc.file_mime?.startsWith("video/");
-            const previewableList = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+            const previewableList = filtered.filter((d: any) => isDocPreviewable(d) && (d.file_path ? signedUrls[d.file_path] : true));
             const currentIdx = previewableList.findIndex((d: any) => d.id === previewDoc.id);
             const total = previewableList.length;
             const goPrev = () => {
@@ -1374,6 +1381,15 @@ export default function Docs() {
                       url={signed}
                       mime={previewDoc.file_mime}
                       fileName={previewDoc.file_name}
+                    />
+                  ) : embedUrl ? (
+                    <iframe
+                      src={embedUrl}
+                      title={previewDoc.title || "Embedded preview"}
+                      className="w-full h-[75vh] bg-background rounded"
+                      allow="autoplay; encrypted-media; fullscreen"
+                      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
+                      referrerPolicy="no-referrer-when-downgrade"
                     />
                   ) : (
                     <div className="text-muted-foreground text-sm">Preview not available</div>

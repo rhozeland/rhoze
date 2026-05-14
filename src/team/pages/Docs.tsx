@@ -44,6 +44,7 @@ import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress"
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user";
+type DocScope = "mine" | "department" | "team";
 
 type DocForm = {
   title: string;
@@ -85,6 +86,7 @@ export default function Docs() {
   const { user, isAdmin } = useAuth();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
+  const [scope, setScope] = useState<DocScope>("team");
   const [form, setForm] = useState<DocForm>(EMPTY_FORM);
   const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -313,6 +315,14 @@ export default function Docs() {
     // Belt-and-suspenders: hide anything the audience guard rejects so
     // thumbnails/derived URLs respect the same dept/user rules as the file.
     .filter((d: any) => canView(d))
+    .filter((d: any) => {
+      const aud = (d.audience ?? "all") as Audience;
+      if (scope === "mine") return aud === "user" && d.target_user_id === user?.id;
+      if (scope === "department")
+        return aud === "department" && !!myProfile?.department && d.department === myProfile.department;
+      // "team" — docs visible to everyone
+      return aud === "all";
+    })
     .filter((d: any) =>
       !q ||
       d.title.toLowerCase().includes(q.toLowerCase()) ||
@@ -646,9 +656,37 @@ export default function Docs() {
       </div>
 
       <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
-            <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+              <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
+            </div>
+            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
+              {([
+                { id: "mine", label: "My Documents", Icon: UserIcon },
+                { id: "department", label: "My Department", Icon: Users },
+                { id: "team", label: "My Team", Icon: Users },
+              ] as const).map(({ id, label, Icon }) => {
+                const active = scope === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setScope(id)}
+                    className={
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
+                      (active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground")
+                    }
+                    aria-pressed={active}
+                  >
+                    <Icon size={12} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {filtered.length === 0 ? (

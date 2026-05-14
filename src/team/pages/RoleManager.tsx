@@ -327,7 +327,8 @@ export default function RoleManager() {
         </div>
       </div>
 
-      <RolePresetsBox />
+      <RolePresetsBox kind="position" title="Position" description="Manage the positions that can be assigned to team members." placeholder="e.g. moderator" />
+      <RolePresetsBox kind="department" title="Departments" description="Manage the departments available for team members." placeholder="e.g. Production" />
 
       <CoveragePanel profiles={profiles ?? []} />
 
@@ -901,19 +902,19 @@ function EditMemberDialogBody({
 
 type Preset = { id: string; kind: "department" | "job_title" | "position"; label: string; sort_order: number };
 
-function RolePresetsBox() {
+function RolePresetsBox({ kind, title, description, placeholder }: { kind: "position" | "department"; title: string; description: string; placeholder: string }) {
   const qc = useQueryClient();
   const [newLabel, setNewLabel] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editLabel, setEditLabel] = useState("");
 
   const { data: presets } = useQuery({
-    queryKey: ["role-presets", "position"],
+    queryKey: ["role-presets", kind],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("role_presets" as any)
         .select("id, kind, label, sort_order")
-        .eq("kind", "position")
+        .eq("kind", kind)
         .order("sort_order")
         .order("label");
       if (error) throw error;
@@ -923,13 +924,13 @@ function RolePresetsBox() {
 
   const create = useMutation({
     mutationFn: async (p: { label: string }) => {
-      const { error } = await supabase.from("role_presets" as any).insert({ kind: "position", label: p.label });
+      const { error } = await supabase.from("role_presets" as any).insert({ kind, label: p.label });
       if (error) throw error;
     },
     onSuccess: () => {
       setNewLabel("");
-      toast({ title: "Position added" });
-      qc.invalidateQueries({ queryKey: ["role-presets", "position"] });
+      toast({ title: `${title} added` });
+      qc.invalidateQueries({ queryKey: ["role-presets", kind] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
@@ -941,8 +942,8 @@ function RolePresetsBox() {
     },
     onSuccess: () => {
       setEditingId(null);
-      toast({ title: "Position updated" });
-      qc.invalidateQueries({ queryKey: ["role-presets", "position"] });
+      toast({ title: `${title} updated` });
+      qc.invalidateQueries({ queryKey: ["role-presets", kind] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
@@ -953,8 +954,8 @@ function RolePresetsBox() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: "Position deleted" });
-      qc.invalidateQueries({ queryKey: ["role-presets", "position"] });
+      toast({ title: `${title} deleted` });
+      qc.invalidateQueries({ queryKey: ["role-presets", kind] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
@@ -962,18 +963,18 @@ function RolePresetsBox() {
   const filtered = presets ?? [];
 
   return (
-    <div className="border border-border rounded-lg p-4 bg-card">
+    <div className="border border-border rounded-lg p-4 bg-card mb-3">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <div className="text-sm font-semibold">Position</div>
-          <p className="text-xs text-muted-foreground">Manage the positions that can be assigned to team members.</p>
+          <div className="text-sm font-semibold">{title}</div>
+          <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>
 
       <div className="mt-3 flex gap-2">
         <Input
           className="h-9 flex-1"
-          placeholder="e.g. moderator"
+          placeholder={placeholder}
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
           onKeyDown={(e) => {
@@ -990,7 +991,7 @@ function RolePresetsBox() {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        {filtered.length === 0 && <span className="text-xs text-muted-foreground">No positions yet.</span>}
+        {filtered.length === 0 && <span className="text-xs text-muted-foreground">None yet.</span>}
         {filtered.map((p) => {
           const editing = editingId === p.id;
           return (

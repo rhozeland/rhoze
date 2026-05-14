@@ -1015,7 +1015,7 @@ function RolePresetsSection({ kind, title, description, placeholder, builtIns }:
             <span>{label}</span>
             <button
               onClick={() => toast({ title: "Built-in departments can't be edited." })}
-              className="hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+              className="hover:text-primary"
               aria-label={`Edit ${label}`}
             >
               <Pencil size={12} />

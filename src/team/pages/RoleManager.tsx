@@ -28,6 +28,14 @@ const DEPTS: { value: Dept; label: string }[] = [
   { value: "operations", label: "Operations" },
 ];
 
+const DEPT_STYLES: Record<Dept, string> = {
+  marketing: "bg-pink-500/15 text-pink-600 dark:text-pink-300 border-pink-500/30",
+  hr: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
+  development: "bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30",
+  sales: "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30",
+  operations: "bg-violet-500/15 text-violet-600 dark:text-violet-300 border-violet-500/30",
+};
+
 type EmpStatus = "active" | "on_leave" | "former" | "contractor" | "intern";
 const EMP_STATUSES: { value: EmpStatus; label: string }[] = [
   { value: "active", label: "Active" },
@@ -86,6 +94,7 @@ export default function RoleManager() {
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState<Dept | "all" | "unassigned">("all");
+  const [deptChips, setDeptChips] = useState<Set<Dept>>(new Set());
   const [statusFilter, setStatusFilter] = useState<EmpStatus | "all">("all");
   const [tenureMin, setTenureMin] = useState<string>("");
   const [tenureMax, setTenureMax] = useState<string>("");
@@ -209,6 +218,10 @@ export default function RoleManager() {
       );
     }
 
+    if (deptChips.size > 0) {
+      list = list.filter((p: any) => p.department && deptChips.has(p.department as Dept));
+    }
+
     if (statusFilter !== "all") {
       list = list.filter((p: any) => (p.employment_status ?? "active") === statusFilter);
     }
@@ -226,7 +239,7 @@ export default function RoleManager() {
     }
 
     return list;
-  }, [profiles, view, search, deptFilter, statusFilter, tenureMin, tenureMax]);
+  }, [profiles, view, search, deptFilter, deptChips, statusFilter, tenureMin, tenureMax]);
 
   const activeFilterCount =
     (deptFilter !== "all" ? 1 : 0) +
@@ -261,8 +274,50 @@ export default function RoleManager() {
 
       <RolePresetsCombined />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {filtered.map((p: any) => {
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Filter</span>
+        {DEPTS.map(({ value: d, label }) => {
+          const active = deptChips.has(d);
+          return (
+            <button
+              key={d}
+              onClick={() => setDeptChips((prev) => { const n = new Set(prev); if (n.has(d)) n.delete(d); else n.add(d); return n; })}
+              className={`inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-medium uppercase tracking-wide transition ${active ? DEPT_STYLES[d] : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"}`}
+            >
+              {label}
+            </button>
+          );
+        })}
+        {deptChips.size > 0 && (
+          <button onClick={() => setDeptChips(new Set())} className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1">Clear</button>
+        )}
+      </div>
+
+      {(() => {
+        const visibleDepts = DEPTS.filter(({ value }) => deptChips.size === 0 || deptChips.has(value));
+        const groups: { dept: Dept | null; label: string; people: any[] }[] = visibleDepts.map(({ value, label }) => ({
+          dept: value,
+          label,
+          people: filtered.filter((p: any) => p.department === value),
+        }));
+        if (deptChips.size === 0) {
+          const unassigned = filtered.filter((p: any) => !p.department);
+          if (unassigned.length > 0) groups.push({ dept: null, label: "Unassigned", people: unassigned });
+        }
+        const totalShown = groups.reduce((n, g) => n + g.people.length, 0);
+        if (totalShown === 0) {
+          return <div className="text-sm text-muted-foreground italic text-center py-8">No members match your filters.</div>;
+        }
+        return (
+          <div className="space-y-6">
+            {groups.map((g) => g.people.length === 0 ? null : (
+              <section key={g.label}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-medium uppercase tracking-wide ${g.dept ? DEPT_STYLES[g.dept] : "bg-muted text-muted-foreground border-border"}`}>{g.label}</span>
+                  <span className="text-xs text-muted-foreground">{g.people.length} {g.people.length === 1 ? "person" : "people"}</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {g.people.map((p: any) => {
           const cur = rolesByUser?.[p.id] ?? [];
           const isFormer = p.employment_status === "former";
           const av = availabilityMap?.[p.id];
@@ -368,10 +423,12 @@ export default function RoleManager() {
             </div>
           );
         })}
-        {filtered.length === 0 && (
-          <div className="text-sm text-muted-foreground italic col-span-full text-center py-8">No members match your filters.</div>
-        )}
-      </div>
+                </div>
+              </section>
+            ))}
+          </div>
+        );
+      })()}
 
       <Dialog open={!!editingUid} onOpenChange={(o) => !o && setEditingUid(null)}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">

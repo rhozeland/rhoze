@@ -3,8 +3,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import { useEffect } from "react";
 
-function useTimeBasedTheme() {
+function useSystemTheme() {
   useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
     function applyTheme() {
       // If user has manually overridden, respect that
       const override = localStorage.getItem("theme-override");
@@ -12,19 +13,18 @@ function useTimeBasedTheme() {
         document.documentElement.classList.toggle("dark", override === "dark");
         return;
       }
-      const hour = new Date().getHours();
-      const isDark = hour < 6 || hour >= 19;
-      document.documentElement.classList.toggle("dark", isDark);
+      // No manual override → follow OS preference
+      document.documentElement.classList.toggle("dark", mq.matches);
     }
     applyTheme();
-    const interval = setInterval(applyTheme, 60000);
 
     // Listen for manual toggle events
     const handler = () => applyTheme();
     window.addEventListener("theme-changed", handler);
+    mq.addEventListener("change", handler);
     return () => {
-      clearInterval(interval);
       window.removeEventListener("theme-changed", handler);
+      mq.removeEventListener("change", handler);
     };
   }, []);
 }
@@ -32,7 +32,7 @@ function useTimeBasedTheme() {
 const queryClient = new QueryClient();
 
 const App = () => {
-  useTimeBasedTheme();
+  useSystemTheme();
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

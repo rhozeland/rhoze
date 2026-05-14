@@ -40,6 +40,7 @@ import {
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import { Progress } from "@/components/ui/progress";
+import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user";

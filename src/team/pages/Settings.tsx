@@ -46,10 +46,11 @@ export default function Settings() {
       <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
       <Button
         type="button"
-        variant="ghost"
+        variant={previewMode[tab] ? "ghost" : "default"}
         size="sm"
-        className="h-7 px-2 text-[11px]"
+        className="h-7 px-2.5 text-[11px] transition-colors"
         onClick={() => togglePreview(tab)}
+        aria-pressed={!previewMode[tab]}
       >
         {previewMode[tab] ? (<><Pencil size={12} className="mr-1" /> Edit</>) : (<><Eye size={12} className="mr-1" /> Preview</>)}
       </Button>

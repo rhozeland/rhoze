@@ -527,9 +527,24 @@ export default function Docs() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">
-              No docs yet.
-            </div>
+            isAdmin ? (
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                className="w-full border border-dashed border-border rounded-lg p-10 text-center hover:bg-muted/30 transition-colors flex flex-col items-center gap-3"
+              >
+                <UploadCloud size={32} className="text-muted-foreground" strokeWidth={1.5} />
+                <div className="text-sm">
+                  <span className="text-foreground font-medium">Click to upload</span>{" "}
+                  <span className="text-muted-foreground">or drag &amp; drop</span>
+                </div>
+                <div className="text-xs text-muted-foreground">PDF · Markdown · Images · Videos</div>
+              </button>
+            ) : (
+              <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">
+                No docs yet.
+              </div>
+            )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {filtered.map((d: any) => {

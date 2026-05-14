@@ -327,7 +327,8 @@ export default function RoleManager() {
         </div>
       </div>
 
-      <RolePresetsBox />
+      <RolePresetsBox kind="position" title="Position" description="Manage the positions that can be assigned to team members." placeholder="e.g. moderator" />
+      <RolePresetsBox kind="department" title="Departments" description="Manage the departments available for team members." placeholder="e.g. Production" />
 
       <CoveragePanel profiles={profiles ?? []} />
 

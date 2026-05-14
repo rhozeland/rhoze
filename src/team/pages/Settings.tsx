@@ -242,8 +242,7 @@ export default function Settings() {
       </div>
 
       {/* Live preview card — reflects unsaved edits in real-time */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-card to-muted/40 shadow-sm">
-        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <div className="relative p-6 sm:p-8 space-y-6">
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {profile?.avatar_url ? (

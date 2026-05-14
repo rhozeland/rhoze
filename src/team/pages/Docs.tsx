@@ -289,6 +289,28 @@ export default function Docs() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docs, signedUrls, myProfile?.department, isAdmin, user?.id]);
 
+  // Keyboard navigation inside the preview lightbox.
+  useEffect(() => {
+    if (!previewDoc) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const idx = list.findIndex((d: any) => d.id === previewDoc.id);
+        if (idx > 0) setPreviewDoc(list[idx - 1]);
+        else if (list.length > 1) setPreviewDoc(list[list.length - 1]);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const idx = list.findIndex((d: any) => d.id === previewDoc.id);
+        if (idx >= 0 && idx < list.length - 1) setPreviewDoc(list[idx + 1]);
+        else if (list.length > 1) setPreviewDoc(list[0]);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [previewDoc, filtered, signedUrls]);
+
   const create = useMutation({
     mutationFn: async () => {
       // Run the shared validator. Any failures are surfaced as inline

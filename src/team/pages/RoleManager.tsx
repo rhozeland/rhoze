@@ -455,6 +455,9 @@ export default function RoleManager() {
                           {d.label}{p.department === d.value ? " — current" : ""}
                         </SelectItem>
                       ))}
+                      <SelectItem value="dept:__none" disabled={!p.department}>
+                        Unassigned{!p.department ? " — current" : " — remove department"}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <Button
@@ -462,7 +465,8 @@ export default function RoleManager() {
                     disabled={!!err || !hasAllowed}
                     onClick={() => {
                       if (typeof pick === "string" && pick.startsWith("dept:")) {
-                        const newDept = pick.slice(5) as Dept;
+                        const raw = pick.slice(5);
+                        const newDept = raw === "__none" ? null : (raw as Dept);
                         setDept.mutate({ userId: p.id, department: newDept });
                         return;
                       }

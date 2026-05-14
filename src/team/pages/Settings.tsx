@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
-import { Upload, Eye, Pencil } from "lucide-react";
+import { Upload, Pencil } from "lucide-react";
 import { formatPhone, validateAll, type MastersheetField } from "../lib/validation";
 import AvatarEditor from "../components/AvatarEditor";
 import AvailabilityEditor from "../components/AvailabilityEditor";
@@ -30,31 +30,6 @@ export default function Settings() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [editorFile, setEditorFile] = useState<File | null>(null);
-
-  type TabKey = "profile" | "personal" | "availability" | "account";
-  const [previewMode, setPreviewMode] = useState<Record<TabKey, boolean>>({
-    profile: true,
-    personal: true,
-    availability: true,
-    account: true,
-  });
-  const togglePreview = (k: TabKey) =>
-    setPreviewMode((p) => ({ ...p, [k]: !p[k] }));
-
-  const PreviewToggle = ({ tab, label }: { tab: TabKey; label: string }) => (
-    <div className="flex items-center justify-between gap-3">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-      <Button
-        type="button"
-        size="sm"
-        onClick={() => togglePreview(tab)}
-        aria-pressed={!previewMode[tab]}
-        className="h-9 rounded-full px-4 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm transition-colors"
-      >
-        {previewMode[tab] ? (<><Pencil size={14} className="mr-1.5" /> Edit {label}</>) : (<><Eye size={14} className="mr-1.5" /> Preview {label}</>)}
-      </Button>
-    </div>
-  );
 
   const { data: profile } = useQuery({
     queryKey: ["my-profile", user?.id],

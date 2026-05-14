@@ -1621,6 +1621,8 @@ export default function Docs() {
               })}
             </div>
           )}
+          </>
+          )}
       </div>
 
       {/* Preview / Lightbox */}

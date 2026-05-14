@@ -326,22 +326,25 @@ export default function Docs() {
         file_size_bytes = form.file.size;
       }
 
+      // Required docs always go to the whole team so they appear in "My Team".
+      const effectiveAudience: Audience = form.is_required ? "all" : form.audience;
+
       // Derive a visible "category" label for grouping/back-compat.
       const category =
-        form.audience === "all"
+        effectiveAudience === "all"
           ? "general"
-          : form.audience === "department"
+          : effectiveAudience === "department"
             ? `dept: ${form.department}`
-            : form.audience === "admin"
+            : effectiveAudience === "admin"
               ? "admin"
               : "personal";
 
       const { error } = await supabase.from("docs").insert({
         title: form.title.trim(),
         category,
-        audience: form.audience,
-        department: form.audience === "department" ? (form.department as any) : null,
-        target_user_id: form.audience === "user" ? form.target_user_id : null,
+        audience: effectiveAudience,
+        department: effectiveAudience === "department" ? (form.department as any) : null,
+        target_user_id: effectiveAudience === "user" ? form.target_user_id : null,
         tag_department: (form.tag_department || null) as any,
         file_url: form.file_url.trim() || null,
         file_path,

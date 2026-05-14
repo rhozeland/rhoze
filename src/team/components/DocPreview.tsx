@@ -125,6 +125,8 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
         src={url}
         title={fileName || "PDF preview"}
         className={compact ? "w-full h-full bg-white" : "w-full h-[75vh] rounded bg-white"}
+        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
+        referrerPolicy="no-referrer-when-downgrade"
       />
     );
   }

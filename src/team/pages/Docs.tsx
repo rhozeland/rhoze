@@ -1,30 +1,102 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Search, CheckCircle2, Circle } from "lucide-react";
+import {
+  Plus,
+  Search,
+  CheckCircle2,
+  Circle,
+  UploadCloud,
+  Download,
+  FileText,
+  FileVideo,
+  FileImage,
+  File as FileIcon,
+  X,
+  Users,
+  User as UserIcon,
+} from "lucide-react";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import GoogleDriveBrowser from "../components/GoogleDriveBrowser";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
+type Audience = "all" | "department" | "user";
+
+type DocForm = {
+  title: string;
+  audience: Audience;
+  department: string;
+  target_user_id: string;
+  file_url: string;
+  is_required: boolean;
+  file: File | null;
+};
+
+const EMPTY_FORM: DocForm = {
+  title: "",
+  audience: "all",
+  department: "",
+  target_user_id: "",
+  file_url: "",
+  is_required: false,
+  file: null,
+};
+
+function fileIconFor(mime: string | null | undefined) {
+  if (!mime) return FileIcon;
+  if (mime.startsWith("image/")) return FileImage;
+  if (mime.startsWith("video/")) return FileVideo;
+  if (mime === "application/pdf" || mime.startsWith("text/")) return FileText;
+  return FileIcon;
+}
+
+function formatBytes(b: number | null | undefined) {
+  if (!b) return "";
+  if (b < 1024) return `${b} B`;
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+  return `${(b / 1024 / 1024).toFixed(1)} MB`;
+}
 
 export default function Docs() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
-  const [form, setForm] = useState({ title: "", category: "general", content: "", file_url: "", is_required: false });
+  const [form, setForm] = useState<DocForm>(EMPTY_FORM);
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: docs } = useQuery({
     queryKey: ["docs"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("docs").select("*").order("category").order("title");
+      const { data, error } = await supabase
+        .from("docs")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -40,23 +112,103 @@ export default function Docs() {
     },
   });
 
+  const { data: employees } = useQuery({
+    queryKey: ["docs_employee_directory"],
+    enabled: isAdmin,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, display_name, email, department")
+        .order("display_name", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  // Resolve private "docs" bucket file paths to signed URLs for download.
+  useEffect(() => {
+    const paths = (docs ?? [])
+      .map((d: any) => d.file_path as string | null)
+      .filter((p): p is string => !!p && !signedUrls[p]);
+    if (paths.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase.storage
+        .from("docs")
+        .createSignedUrls(paths, 60 * 60);
+      if (cancelled || error || !data) return;
+      const next: Record<string, string> = {};
+      data.forEach((r: any) => {
+        if (r.signedUrl && r.path) next[r.path] = r.signedUrl;
+      });
+      if (Object.keys(next).length) setSignedUrls((prev) => ({ ...prev, ...next }));
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [docs, signedUrls]);
+
   const create = useMutation({
     mutationFn: async () => {
       if (!form.title.trim()) throw new Error("Title required");
+      if (form.audience === "department" && !form.department) {
+        throw new Error("Pick a department");
+      }
+      if (form.audience === "user" && !form.target_user_id) {
+        throw new Error("Pick an employee");
+      }
+
+      let file_path: string | null = null;
+      let file_name: string | null = null;
+      let file_mime: string | null = null;
+      let file_size_bytes: number | null = null;
+
+      if (form.file) {
+        setUploading(true);
+        const safe = form.file.name.replace(/[^a-zA-Z0-9._-]+/g, "_");
+        const path = `${user?.id ?? "anon"}/${Date.now()}_${safe}`;
+        const { error: upErr } = await supabase.storage
+          .from("docs")
+          .upload(path, form.file, {
+            contentType: form.file.type || undefined,
+            upsert: false,
+          });
+        setUploading(false);
+        if (upErr) throw upErr;
+        file_path = path;
+        file_name = form.file.name;
+        file_mime = form.file.type || null;
+        file_size_bytes = form.file.size;
+      }
+
+      // Derive a visible "category" label for grouping/back-compat.
+      const category =
+        form.audience === "all"
+          ? "general"
+          : form.audience === "department"
+            ? `dept: ${form.department}`
+            : "personal";
+
       const { error } = await supabase.from("docs").insert({
         title: form.title.trim(),
-        category: form.category.trim() || "general",
-        content: form.content.trim() || null,
+        category,
+        audience: form.audience,
+        department: form.audience === "department" ? (form.department as any) : null,
+        target_user_id: form.audience === "user" ? form.target_user_id : null,
         file_url: form.file_url.trim() || null,
+        file_path,
+        file_name,
+        file_mime,
+        file_size_bytes,
         is_required: form.is_required,
         created_by: user?.id,
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
       toast({ title: "Doc added" });
       setOpen(false);
-      setForm({ title: "", category: "general", content: "", file_url: "", is_required: false });
+      setForm(EMPTY_FORM);
       qc.invalidateQueries({ queryKey: ["docs"] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
@@ -76,13 +228,14 @@ export default function Docs() {
   });
 
   const filtered = (docs ?? []).filter((d: any) =>
-    !q || d.title.toLowerCase().includes(q.toLowerCase()) || d.category.toLowerCase().includes(q.toLowerCase()),
+    !q ||
+    d.title.toLowerCase().includes(q.toLowerCase()) ||
+    (d.category ?? "").toLowerCase().includes(q.toLowerCase()),
   );
 
-  const grouped = filtered.reduce((acc: Record<string, any[]>, d: any) => {
-    (acc[d.category] = acc[d.category] || []).push(d);
-    return acc;
-  }, {});
+  const onPickFile = (f: File | null) => setForm((prev) => ({ ...prev, file: f }));
+
+  const ACCEPT = "application/pdf,.md,text/markdown,image/*,video/*";
 
   return (
     <div className="space-y-6">
@@ -94,12 +247,126 @@ export default function Docs() {
         {isAdmin && (
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild><Button><Plus size={14} /> New doc</Button></DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
               <DialogHeader><DialogTitle>New doc</DialogTitle></DialogHeader>
-              <div className="space-y-3">
-                <div className="space-y-1.5"><Label>Title *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-                <div className="space-y-1.5"><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></div>
-                <div className="space-y-1.5"><Label>Content (markdown)</Label><Textarea rows={5} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} /></div>
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label>Title *</Label>
+                  <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label>Visible to</Label>
+                  <Select
+                    value={form.audience}
+                    onValueChange={(v: Audience) =>
+                      setForm({ ...form, audience: v, department: "", target_user_id: "" })
+                    }
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Everyone</SelectItem>
+                      <SelectItem value="department">Specific department</SelectItem>
+                      <SelectItem value="user">Specific employee</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="flex items-center gap-1.5"><Users size={12} /> Department</Label>
+                    <Select
+                      value={form.department || undefined}
+                      onValueChange={(v) =>
+                        setForm({ ...form, audience: "department", department: v, target_user_id: "" })
+                      }
+                    >
+                      <SelectTrigger disabled={form.audience === "user"}>
+                        <SelectValue placeholder="Select department…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DEPARTMENTS.map((d) => (
+                          <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="flex items-center gap-1.5"><UserIcon size={12} /> Employee</Label>
+                    <Select
+                      value={form.target_user_id || undefined}
+                      onValueChange={(v) =>
+                        setForm({ ...form, audience: "user", target_user_id: v, department: "" })
+                      }
+                    >
+                      <SelectTrigger disabled={form.audience === "department"}>
+                        <SelectValue placeholder="Select employee…" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(employees ?? []).map((e: any) => (
+                          <SelectItem key={e.id} value={e.id}>
+                            {e.display_name || e.email || e.id.slice(0, 8)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground -mt-2">
+                  Department and employee selectors are interchangeable — picking one clears the other.
+                </p>
+
+                <div className="space-y-1.5">
+                  <Label>Attachment (PDF, Markdown, image, or video)</Label>
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragOver(false);
+                      const f = e.dataTransfer.files?.[0];
+                      if (f) onPickFile(f);
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                      dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {form.file ? (
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <FileIcon size={16} className="shrink-0 text-muted-foreground" />
+                          <span className="truncate">{form.file.name}</span>
+                          <span className="text-xs text-muted-foreground">{formatBytes(form.file.size)}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); onPickFile(null); }}
+                          className="text-muted-foreground hover:text-foreground"
+                          aria-label="Remove file"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                        <UploadCloud size={28} />
+                        <div><span className="text-foreground font-medium">Click to upload</span> or drag & drop</div>
+                        <div className="text-[11px]">PDF · Markdown · Images · Videos</div>
+                      </div>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      accept={ACCEPT}
+                      onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-1.5">
                   <Label>File URL (optional)</Label>
                   <Input
@@ -111,12 +378,17 @@ export default function Docs() {
                     Google Docs, Sheets, Slides, Drive files & folders, YouTube and Loom links auto-embed.
                   </p>
                 </div>
+
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: !!v })} />
                   Required for all team members
                 </label>
               </div>
-              <DialogFooter><Button onClick={() => create.mutate()} disabled={create.isPending}>Save</Button></DialogFooter>
+              <DialogFooter>
+                <Button onClick={() => create.mutate()} disabled={create.isPending || uploading}>
+                  {uploading ? "Uploading…" : create.isPending ? "Saving…" : "Save"}
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         )}
@@ -134,48 +406,101 @@ export default function Docs() {
             <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
 
-          {Object.entries(grouped).length === 0 && (
-            <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">No docs yet.</div>
-          )}
-          {Object.entries(grouped).map(([cat, list]) => (
-        <div key={cat}>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2">{cat}</div>
-          <div className="space-y-2">
-            {list.map((d: any) => {
-              const done = completions?.has(d.id) ?? false;
-              return (
-                <div key={d.id} className="border border-border rounded-lg p-4 bg-card">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{d.title}</span>
-                        {d.is_required && <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary">Required</span>}
+          {filtered.length === 0 ? (
+            <div className="text-sm text-muted-foreground border border-dashed border-border rounded-lg p-8 text-center">
+              No docs yet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {filtered.map((d: any) => {
+                const done = completions?.has(d.id) ?? false;
+                const Icon = fileIconFor(d.file_mime);
+                const signed = d.file_path ? signedUrls[d.file_path] : null;
+                const isImage = d.file_mime?.startsWith("image/");
+                const isVideo = d.file_mime?.startsWith("video/");
+                const audienceLabel =
+                  d.audience === "department"
+                    ? `Department · ${d.department ?? "—"}`
+                    : d.audience === "user"
+                      ? "Personal"
+                      : "Everyone";
+
+                return (
+                  <div
+                    key={d.id}
+                    className="border border-border rounded-lg bg-card overflow-hidden flex flex-col"
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden">
+                      {isImage && signed ? (
+                        <img src={signed} alt={d.title} className="w-full h-full object-cover" />
+                      ) : isVideo && signed ? (
+                        <video src={signed} className="w-full h-full object-cover" muted />
+                      ) : (
+                        <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
+                      )}
+                      {d.is_required && (
+                        <span className="absolute top-2 left-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary text-primary-foreground">
+                          Required
+                        </span>
+                      )}
+                      <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
+                        {audienceLabel}
+                      </span>
+                    </div>
+
+                    {/* Body */}
+                    <div className="p-3 flex-1 flex flex-col gap-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="font-medium text-sm leading-tight">{d.title}</div>
+                        <button
+                          onClick={() => toggleComplete.mutate({ docId: d.id, done })}
+                          className="text-muted-foreground hover:text-foreground shrink-0"
+                          title={done ? "Mark incomplete" : "Mark complete"}
+                        >
+                          {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
+                        </button>
                       </div>
-                      {d.content && <div className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{d.content}</div>}
-                      {d.file_url && (
-                        <div className="mt-3">
-                          {toEmbedUrl(d.file_url) ? (
-                            <EmbedPreview url={d.file_url} title={d.title} height={420} />
-                          ) : (
-                            <a href={d.file_url} target="_blank" rel="noreferrer" className="text-xs text-primary inline-block">Open file →</a>
+
+                      {d.file_url && toEmbedUrl(d.file_url) && (
+                        <EmbedPreview url={d.file_url} title={d.title} height={180} />
+                      )}
+
+                      <div className="mt-auto flex items-center justify-between gap-2 pt-2">
+                        <span className="text-[11px] text-muted-foreground truncate">
+                          {d.file_name || (d.file_url ? new URL(d.file_url).hostname : "")}
+                          {d.file_size_bytes ? ` · ${formatBytes(d.file_size_bytes)}` : ""}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {d.file_url && !toEmbedUrl(d.file_url) && (
+                            <a
+                              href={d.file_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-primary hover:underline"
+                            >
+                              Open
+                            </a>
+                          )}
+                          {signed && (
+                            <a
+                              href={signed}
+                              download={d.file_name || undefined}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                            >
+                              <Download size={12} /> Download
+                            </a>
                           )}
                         </div>
-                      )}
+                      </div>
                     </div>
-                    <button
-                      onClick={() => toggleComplete.mutate({ docId: d.id, done })}
-                      className="text-xs flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
-                      title={done ? "Mark incomplete" : "Mark complete"}
-                    >
-                      {done ? <CheckCircle2 size={18} className="text-green-500" /> : <Circle size={18} />}
-                    </button>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-          ))}
+                );
+              })}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="drive" className="mt-4">

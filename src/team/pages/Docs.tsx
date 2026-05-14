@@ -239,10 +239,6 @@ export default function Docs() {
           .upload(path, form.file, {
             contentType: form.file.type || undefined,
             upsert: false,
-            onUploadProgress: (ev) => {
-              const pct = ev.total ? Math.round((ev.loaded / ev.total) * 100) : 0;
-              setUploadProgress(pct);
-            },
           });
         setUploading(false);
         setUploadProgress(0);

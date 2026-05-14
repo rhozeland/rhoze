@@ -5,7 +5,7 @@
     (function(){
       var o=localStorage.getItem('theme-override');
       if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}
-      var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add('dark');
+      if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
     })();
   </script>
   <script>

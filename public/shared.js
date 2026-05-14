@@ -243,20 +243,19 @@
 })();
 
 
-// Time-based dark mode with manual override
+// System-preference dark mode with manual override
 (function() {
+  var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
   function applyTheme() {
     var override = localStorage.getItem('theme-override');
     if (override === 'light' || override === 'dark') {
       document.documentElement.classList.toggle('dark', override === 'dark');
       return;
     }
-    var hour = new Date().getHours();
-    var isDark = hour < 6 || hour >= 19;
-    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.classList.toggle('dark', !!(mq && mq.matches));
   }
   applyTheme();
-  setInterval(applyTheme, 60000);
+  if (mq && mq.addEventListener) mq.addEventListener('change', applyTheme);
   window.applyTheme = applyTheme;
 })();
 

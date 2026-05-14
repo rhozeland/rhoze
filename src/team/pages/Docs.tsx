@@ -1058,13 +1058,18 @@ export default function Docs() {
                     <div className="p-3 flex-1 flex flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">
                         <div className="font-medium text-sm leading-tight">{d.title}</div>
-                        <button
-                          onClick={() => toggleComplete.mutate({ docId: d.id, done })}
-                          className="text-muted-foreground hover:text-foreground shrink-0"
-                          title={done ? "Mark incomplete" : "Mark complete"}
-                        >
-                          {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
-                        </button>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {(isAdmin || d.created_by === user?.id) && (
+                            <VisibilityMenu doc={d} />
+                          )}
+                          <button
+                            onClick={() => toggleComplete.mutate({ docId: d.id, done })}
+                            className="text-muted-foreground hover:text-foreground"
+                            title={done ? "Mark incomplete" : "Mark complete"}
+                          >
+                            {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
+                          </button>
+                        </div>
                       </div>
 
                       {d.file_url && toEmbedUrl(d.file_url) && (

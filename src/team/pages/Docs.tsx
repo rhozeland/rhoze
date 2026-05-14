@@ -1188,10 +1188,11 @@ export default function Docs() {
                     <div
                       className={
                         "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
-                        (previewable ? "cursor-pointer" : "")
+                        (previewable || embedUrl || d.file_url ? "cursor-pointer" : "")
                       }
                       onClick={() => {
                         if (previewable) setPreviewDoc(d);
+                        else if (d.file_url) window.open(d.file_url, "_blank", "noopener,noreferrer");
                       }}
                     >
                       {d.file_mime?.startsWith("image/") && signed ? (

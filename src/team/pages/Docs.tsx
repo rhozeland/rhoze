@@ -49,6 +49,8 @@ import {
   Shield,
   Settings2,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
@@ -89,6 +91,22 @@ function fileIconFor(mime: string | null | undefined) {
   if (mime.startsWith("video/")) return FileVideo;
   if (mime === "application/pdf" || mime.startsWith("text/")) return FileText;
   return FileIcon;
+}
+
+function isDocPreviewable(d: any): boolean {
+  if (!d.file_path || !d.file_mime) return false;
+  const mime = d.file_mime as string;
+  const name = (d.file_name || "").toLowerCase();
+  if (mime.startsWith("image/")) return true;
+  if (mime.startsWith("video/")) return true;
+  if (mime === "application/pdf" || name.endsWith(".pdf")) return true;
+  if (mime === "text/markdown" || name.endsWith(".md") || name.endsWith(".markdown")) return true;
+  if (
+    mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    name.endsWith(".docx")
+  ) return true;
+  if (mime.startsWith("text/")) return true;
+  return false;
 }
 
 function formatBytes(b: number | null | undefined) {
@@ -498,6 +516,28 @@ export default function Docs() {
       d.title.toLowerCase().includes(q.toLowerCase()) ||
       (d.category ?? "").toLowerCase().includes(q.toLowerCase()),
     );
+
+  // Keyboard navigation inside the preview lightbox.
+  useEffect(() => {
+    if (!previewDoc) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const idx = list.findIndex((d: any) => d.id === previewDoc.id);
+        if (idx > 0) setPreviewDoc(list[idx - 1]);
+        else if (list.length > 1) setPreviewDoc(list[list.length - 1]);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const idx = list.findIndex((d: any) => d.id === previewDoc.id);
+        if (idx >= 0 && idx < list.length - 1) setPreviewDoc(list[idx + 1]);
+        else if (list.length > 1) setPreviewDoc(list[0]);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [previewDoc, filtered, signedUrls]);
 
   const MAX_FILE_BYTES = 500 * 1024 * 1024;
 
@@ -1130,19 +1170,7 @@ export default function Docs() {
                 const done = completions?.has(d.id) ?? false;
                 const Icon = fileIconFor(d.file_mime);
                 const signed = d.file_path ? signedUrls[d.file_path] : null;
-                const isImage = d.file_mime?.startsWith("image/");
-                const isVideo = d.file_mime?.startsWith("video/");
-                const fileNameLc = (d.file_name || "").toLowerCase();
-                const isPdf = d.file_mime === "application/pdf" || fileNameLc.endsWith(".pdf");
-                const isMd =
-                  d.file_mime === "text/markdown" ||
-                  fileNameLc.endsWith(".md") ||
-                  fileNameLc.endsWith(".markdown");
-                const isDocx =
-                  d.file_mime ===
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-                  fileNameLc.endsWith(".docx");
-                const isPreviewable = isImage || isVideo || isPdf || isMd || isDocx;
+                const previewable = isDocPreviewable(d) && !!signed;
                 const audienceLabel =
                   d.audience === "department"
                     ? `Department · ${d.department ?? "—"}`
@@ -1166,15 +1194,15 @@ export default function Docs() {
                     <div
                       className={
                         "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
-                        (isPreviewable && signed ? "cursor-pointer" : "")
+                        (previewable ? "cursor-pointer" : "")
                       }
                       onClick={() => {
-                        if (isPreviewable && signed) setPreviewDoc(d);
+                        if (previewable) setPreviewDoc(d);
                       }}
                     >
-                      {isImage && signed ? (
+                      {d.file_mime?.startsWith("image/") && signed ? (
                         <img src={signed} alt={d.title} className="w-full h-full object-cover" />
-                      ) : isVideo && signed ? (
+                      ) : d.file_mime?.startsWith("video/") && signed ? (
                         <video src={signed} className="w-full h-full object-cover" muted />
                       ) : (
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
@@ -1205,7 +1233,7 @@ export default function Docs() {
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
                       </span>
-                      {isPreviewable && signed && (
+                      {previewable && (
                         <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
                       )}
                     </div>
@@ -1287,8 +1315,40 @@ export default function Docs() {
             const signed = previewDoc.file_path ? signedUrls[previewDoc.file_path] : null;
             const isImg = previewDoc.file_mime?.startsWith("image/");
             const isVid = previewDoc.file_mime?.startsWith("video/");
+            const previewableList = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+            const currentIdx = previewableList.findIndex((d: any) => d.id === previewDoc.id);
+            const total = previewableList.length;
+            const goPrev = () => {
+              if (currentIdx > 0) setPreviewDoc(previewableList[currentIdx - 1]);
+              else if (total > 1) setPreviewDoc(previewableList[total - 1]);
+            };
+            const goNext = () => {
+              if (currentIdx >= 0 && currentIdx < total - 1) setPreviewDoc(previewableList[currentIdx + 1]);
+              else if (total > 1) setPreviewDoc(previewableList[0]);
+            };
             return (
-              <div className="flex flex-col h-full">
+              <div className="flex flex-col h-full relative">
+                {/* Prev / Next side buttons */}
+                {total > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={goPrev}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      aria-label="Previous attachment"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      aria-label="Next attachment"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </>
+                )}
                 <div className="flex-1 flex items-center justify-center overflow-auto p-4">
                   {isImg && signed ? (
                     <img src={signed} alt={previewDoc.title} className="max-w-full max-h-[70vh] object-contain rounded" />
@@ -1305,7 +1365,14 @@ export default function Docs() {
                   )}
                 </div>
                 <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-white/10 bg-black/80 backdrop-blur">
-                  <div className="text-sm text-white/90 truncate">{previewDoc.title}</div>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="text-sm text-white/90 truncate">{previewDoc.title}</div>
+                    {total > 1 && (
+                      <span className="text-xs text-white/50 shrink-0">
+                        {currentIdx + 1} / {total}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2">
                     {signed && (
                       <a

@@ -1067,13 +1067,7 @@ function EditMemberDialogBody({
       )}
       {isAdmin && currentUser?.id !== p.id && (
         <div className="mt-6 pt-4 border-t border-destructive/30">
-          <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <div className="text-sm font-semibold text-destructive">Danger zone</div>
-              <p className="text-xs text-muted-foreground max-w-md">
-                Permanently delete this user, their profile and all associated team data. This cannot be undone.
-              </p>
-            </div>
+          <div className="flex items-start justify-start gap-4 flex-wrap">
             <Button
               type="button"
               variant="destructive"
@@ -1083,6 +1077,12 @@ function EditMemberDialogBody({
               <Trash2 size={14} className="mr-1.5" />
               Remove profile
             </Button>
+            <div>
+              <div className="text-sm font-semibold text-destructive">Danger zone</div>
+              <p className="text-xs text-muted-foreground max-w-md">
+                Permanently delete this user, their profile and all associated team data. This cannot be undone.
+              </p>
+            </div>
           </div>
           <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
             <AlertDialogContent>

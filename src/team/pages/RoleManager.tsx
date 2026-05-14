@@ -1029,7 +1029,7 @@ function RolePresetsSection({ kind, title, description, placeholder, builtIns }:
             </button>
           </div>
         ))}
-        {filtered.length === 0 && <span className="text-xs text-muted-foreground">None yet.</span>}
+        {filtered.length === 0 && !builtIns?.length && <span className="text-xs text-muted-foreground">None yet.</span>}
         {filtered.map((p) => {
           const editing = editingId === p.id;
           return (

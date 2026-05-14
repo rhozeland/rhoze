@@ -901,6 +901,30 @@ function EditMemberDialogBody({
 
 type Preset = { id: string; kind: "department" | "job_title" | "position"; label: string; sort_order: number };
 
+function RolePresetsCombined() {
+  return (
+    <div className="border border-border rounded-lg p-4 bg-card space-y-5">
+      <div>
+        <div className="text-sm font-semibold">Roles</div>
+        <p className="text-xs text-muted-foreground">Manage positions and departments. Built-in departments control what employees can view.</p>
+      </div>
+      <RolePresetsSection
+        kind="position"
+        title="Position"
+        description="Positions assignable to team members."
+        placeholder="e.g. moderator"
+      />
+      <RolePresetsSection
+        kind="department"
+        title="Departments"
+        description="Custom departments. Built-ins below are read-only and gate employee visibility."
+        placeholder="e.g. Production"
+        builtIns={DEPTS.map((d) => d.label)}
+      />
+    </div>
+  );
+}
+
 function RolePresetsBox({ kind, title, description, placeholder }: { kind: "position" | "department"; title: string; description: string; placeholder: string }) {
   const qc = useQueryClient();
   const [newLabel, setNewLabel] = useState("");

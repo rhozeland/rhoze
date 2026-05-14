@@ -43,10 +43,9 @@ import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
-const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user" | "admin";
 type DocScope = "mine" | "department" | "team" | "admin";
-type TagFilter = "all" | (typeof DEPARTMENTS)[number];
+type TagFilter = "all" | string;
 
 type DocForm = {
   title: string;
@@ -128,6 +127,29 @@ export default function Docs() {
       setScope("team");
     }
   }, [scope, canSeeAdmin]);
+
+  // Dynamically load all department values that exist across profiles and docs
+  // so the filter chips and dropdowns always reflect the current system state.
+  const { data: departments } = useQuery({
+    queryKey: ["departments"],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const [pRes, dRes, tRes] = await Promise.all([
+        supabase.from("profiles").select("department").not("department", "is", null),
+        supabase.from("docs").select("department").not("department", "is", null),
+        supabase.from("docs").select("tag_department").not("tag_department", "is", null),
+      ]);
+      if (pRes.error) throw pRes.error;
+      if (dRes.error) throw dRes.error;
+      if (tRes.error) throw tRes.error;
+
+      const set = new Set<string>();
+      (pRes.data ?? []).forEach((d: any) => d.department && set.add(d.department));
+      (dRes.data ?? []).forEach((d: any) => d.department && set.add(d.department));
+      (tRes.data ?? []).forEach((d: any) => d.tag_department && set.add(d.tag_department));
+      return [...set].sort();
+    },
+  });
 
   // Docs query enforces the active scope at the fetch layer so the request
   // mirrors what the RLS policy will return — never just a UI filter on top
@@ -470,7 +492,7 @@ export default function Docs() {
                         <SelectValue placeholder="Select department…" />
                       </SelectTrigger>
                       <SelectContent>
-                        {DEPARTMENTS.map((d) => (
+                        {departments?.map((d: string) => (
                           <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
                         ))}
                       </SelectContent>
@@ -526,7 +548,7 @@ export default function Docs() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__none">No category</SelectItem>
-                      {DEPARTMENTS.map((d) => (
+                      {departments?.map((d: string) => (
                         <SelectItem key={d} value={d} className="capitalize">
                           {d}
                         </SelectItem>
@@ -768,7 +790,7 @@ export default function Docs() {
             <span className="uppercase tracking-wider text-muted-foreground font-medium">
               Filter
             </span>
-            {(["all", ...DEPARTMENTS] as const).map((t) => {
+            {(["all", ...(departments ?? [])] as const).map((t) => {
               const active = tagFilter === t;
               return (
                 <button

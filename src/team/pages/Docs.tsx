@@ -514,20 +514,18 @@ export default function Docs() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && (d.file_path ? signedUrls[d.file_path] : true));
         const idx = list.findIndex((d: any) => d.id === previewDoc.id);
         if (idx > 0) setPreviewDoc(list[idx - 1]);
         else if (list.length > 1) setPreviewDoc(list[list.length - 1]);
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
-        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && (d.file_path ? signedUrls[d.file_path] : true));
         const idx = list.findIndex((d: any) => d.id === previewDoc.id);
         if (idx >= 0 && idx < list.length - 1) setPreviewDoc(list[idx + 1]);
         else if (list.length > 1) setPreviewDoc(list[0]);
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        setPreviewDoc(null);
       }
+      // Escape is handled natively by the Radix Dialog (which also focus-traps).
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

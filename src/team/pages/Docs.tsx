@@ -334,27 +334,6 @@ export default function Docs() {
     },
   });
 
-  // For the Manage drill-in: load the focused teammate's profile + roles so
-  // we can compute exactly which docs they can access (mirrors RLS logic).
-  const { data: focusedMeta } = useQuery({
-    queryKey: ["docs_focused_meta", focusedUserId],
-    enabled: !!focusedUserId && isAdmin,
-    queryFn: async () => {
-      const [pRes, rRes] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("id, display_name, email, department")
-          .eq("id", focusedUserId!)
-          .maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", focusedUserId!),
-      ]);
-      return {
-        profile: pRes.data as { id: string; display_name: string | null; email: string | null; department: string | null } | null,
-        roles: (rRes.data ?? []).map((r: any) => r.role as string),
-      };
-    },
-  });
-
   // Resolve private "docs" bucket file paths to signed URLs for download.
   // Only request URLs for docs the client-side guard says the user can view —
   // unauthorized files are never fetched, previewed, or thumbnailed.

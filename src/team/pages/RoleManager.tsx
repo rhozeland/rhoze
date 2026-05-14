@@ -753,13 +753,12 @@ function EditMemberDialogBody({
                   }} />
               </div>
               <div>
-                <label className="text-[10px] uppercase text-muted-foreground">Avatar URL</label>
-                <Input className="h-9" placeholder="https://…"
-                  defaultValue={p.avatar_url ?? ""}
-                  onBlur={(e) => {
-                    const next = e.target.value.trim();
-                    if (next !== (p.avatar_url ?? "")) setEmp.mutate({ userId: p.id, patch: { avatar_url: next || null } });
-                  }} />
+                <label className="text-[10px] uppercase text-muted-foreground">Avatar</label>
+                <AvatarUploader
+                  userId={p.id}
+                  currentUrl={p.avatar_url}
+                  onChange={(url) => setEmp.mutate({ userId: p.id, patch: { avatar_url: url } })}
+                />
               </div>
               <div className="md:col-span-2">
                 <label className="text-[10px] uppercase text-muted-foreground">Bio</label>

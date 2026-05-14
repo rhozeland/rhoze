@@ -409,7 +409,6 @@ export default function Settings() {
           <Button onClick={() => save.mutate()} disabled={save.isPending || hasPersonalErrors}>Save details</Button>
           {hasPersonalErrors && <span className="text-xs text-destructive">Fix the highlighted fields above.</span>}
         </div>
-        <p className="text-[11px] text-muted-foreground">Wage, payment method, department and program are managed by an admin in Role Manager.</p>
         </>
         )}
         </div>

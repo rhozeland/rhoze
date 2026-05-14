@@ -111,6 +111,7 @@ export default function Docs() {
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState<any | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<(() => void) | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -1150,7 +1151,15 @@ export default function Docs() {
                     }
                   >
                     {/* Thumbnail */}
-                    <div className="relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden">
+                    <div
+                      className={
+                        "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
+                        ((isImage || isVideo) && signed ? "cursor-pointer" : "")
+                      }
+                      onClick={() => {
+                        if ((isImage || isVideo) && signed) setPreviewDoc(d);
+                      }}
+                    >
                       {isImage && signed ? (
                         <img src={signed} alt={d.title} className="w-full h-full object-cover" />
                       ) : isVideo && signed ? (
@@ -1175,6 +1184,7 @@ export default function Docs() {
                                 return next;
                               });
                             }}
+                            onClick={(e) => e.stopPropagation()}
                             aria-label={`Select ${d.title}`}
                             className="border-background/80 bg-background/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
                           />
@@ -1183,6 +1193,9 @@ export default function Docs() {
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
                       </span>
+                      {(isImage || isVideo) && signed && (
+                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
+                      )}
                     </div>
 
                     {/* Body */}
@@ -1254,6 +1267,54 @@ export default function Docs() {
             </div>
           )}
       </div>
+
+      {/* Preview / Lightbox */}
+      <Dialog open={!!previewDoc} onOpenChange={(v) => !v && setPreviewDoc(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-black/95 border-none">
+          {previewDoc && (() => {
+            const signed = previewDoc.file_path ? signedUrls[previewDoc.file_path] : null;
+            const isImg = previewDoc.file_mime?.startsWith("image/");
+            const isVid = previewDoc.file_mime?.startsWith("video/");
+            return (
+              <div className="flex flex-col h-full">
+                <div className="flex-1 flex items-center justify-center overflow-auto p-4">
+                  {isImg && signed ? (
+                    <img src={signed} alt={previewDoc.title} className="max-w-full max-h-[70vh] object-contain rounded" />
+                  ) : isVid && signed ? (
+                    <video src={signed} controls className="max-w-full max-h-[70vh] rounded" />
+                  ) : (
+                    <div className="text-muted-foreground text-sm">Preview not available</div>
+                  )}
+                </div>
+                <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-white/10 bg-black/80 backdrop-blur">
+                  <div className="text-sm text-white/90 truncate">{previewDoc.title}</div>
+                  <div className="flex items-center gap-2">
+                    {signed && (
+                      <a
+                        href={signed}
+                        download={previewDoc.file_name || undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      >
+                        <Download size={12} /> Download
+                      </a>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-white hover:bg-white/10"
+                      onClick={() => setPreviewDoc(null)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

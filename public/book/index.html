@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<script>!function(){var o=localStorage.getItem('theme-override');if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add("dark")}();</script>
+<script>!function(){var o=localStorage.getItem('theme-override');if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}();</script>
 <script>!function(){try{var p=location.pathname;if(/\.html$/i.test(p)){var clean=p.replace(/\.html$/i,"")||"/";history.replaceState(null,"",clean+location.search+location.hash);}}catch(e){}}();</script>
 <head>
   <meta charset="UTF-8" />

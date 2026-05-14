@@ -1187,7 +1187,8 @@ export default function Docs() {
                     {/* Thumbnail */}
                     <div
                       className={
-                        "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
+                        "relative bg-muted/40 flex items-center justify-center overflow-hidden " +
+                        (embedUrl ? "h-64 " : "aspect-[16/9] ") +
                         (previewable || (!embedUrl && d.file_url) ? "cursor-pointer" : "")
                       }
                       onClick={() => {

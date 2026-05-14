@@ -752,6 +752,34 @@ export default function Docs() {
             </div>
           </div>
 
+          {/* Department category filter — mirrors the FILTER | MARKETING | HR …
+              row. Admins assign the tag in the New doc dialog; everyone can
+              filter by it. */}
+          <div className="flex items-center gap-2 flex-wrap text-xs">
+            <span className="uppercase tracking-wider text-muted-foreground font-medium">
+              Filter
+            </span>
+            {(["all", ...DEPARTMENTS] as const).map((t) => {
+              const active = tagFilter === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTagFilter(t)}
+                  className={
+                    "uppercase tracking-wider px-2.5 py-1 rounded border transition-colors " +
+                    (active
+                      ? "border-primary text-foreground bg-primary/10"
+                      : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40")
+                  }
+                  aria-pressed={active}
+                >
+                  {t === "all" ? "All" : t}
+                </button>
+              );
+            })}
+          </div>
+
           {filtered.length === 0 ? (
             isAdmin ? (
               <button

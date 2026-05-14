@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import mammoth from "mammoth";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, AlertCircle, ExternalLink } from "lucide-react";
 
 type Props = {
   url: string;
@@ -14,6 +14,7 @@ type Props = {
 // Module-level cache keyed by URL so reopening the same attachment never re-fetches.
 const textCache = new Map<string, string>();
 const htmlCache = new Map<string, string>();
+const pdfBlobCache = new Map<string, string>();
 
 function inferKind(mime: string | null | undefined, fileName: string | null | undefined) {
   const m = (mime || "").toLowerCase();
@@ -45,10 +46,17 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
   const padding = compact ? "p-3" : "p-6";
   const cachedText = kind === "md" || kind === "text" || kind === "code" ? textCache.get(url) : null;
   const cachedHtml = kind === "docx" ? htmlCache.get(url) : null;
+  const cachedPdf = kind === "pdf" ? pdfBlobCache.get(url) : null;
   const [text, setText] = useState<string | null>(cachedText ?? null);
   const [html, setHtml] = useState<string | null>(cachedHtml ?? null);
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(cachedPdf ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(cachedText === undefined && cachedHtml === undefined && (kind === "md" || kind === "text" || kind === "code" || kind === "docx"));
+  const [loading, setLoading] = useState(
+    (kind === "md" || kind === "text" || kind === "code") ? !textCache.has(url)
+    : kind === "docx" ? !htmlCache.has(url)
+    : kind === "pdf" ? !pdfBlobCache.has(url)
+    : false
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +97,32 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
         })
         .catch((e) => { if (!cancelled) setError(e.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
+    } else if (kind === "pdf") {
+      // Chrome sometimes refuses to render remote PDFs inside sandboxed iframes
+      // ("This page has been blocked by Chrome"). Fetching the bytes ourselves
+      // and handing the iframe a same-origin blob: URL sidesteps that block.
+      if (pdfBlobCache.has(url)) {
+        setPdfBlobUrl(pdfBlobCache.get(url)!);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      fetch(url)
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.blob();
+        })
+        .then((blob) => {
+          if (cancelled) return;
+          const typed = blob.type === "application/pdf"
+            ? blob
+            : new Blob([blob], { type: "application/pdf" });
+          const objectUrl = URL.createObjectURL(typed);
+          pdfBlobCache.set(url, objectUrl);
+          setPdfBlobUrl(objectUrl);
+        })
+        .catch((e) => { if (!cancelled) setError(e.message); })
+        .finally(() => { if (!cancelled) setLoading(false); });
     }
 
     return () => { cancelled = true; };
@@ -120,13 +154,37 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
   }
 
   if (kind === "pdf") {
+    if (loading) {
+      return (
+        <div className={`${sizeBox} flex items-center justify-center bg-background text-muted-foreground text-sm rounded`}>
+          Loading PDF…
+        </div>
+      );
+    }
+    if (error || !pdfBlobUrl) {
+      return (
+        <div className={`${sizeBox} flex flex-col items-center justify-center gap-3 bg-background text-foreground rounded ${padding} text-center`}>
+          <AlertCircle size={24} className="text-destructive" />
+          <div className="text-sm font-medium">This PDF couldn’t be displayed</div>
+          <p className="text-xs text-muted-foreground max-w-sm">
+            {error || "The browser blocked the embedded preview."}
+          </p>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+          >
+            <ExternalLink size={12} /> Open in new tab
+          </a>
+        </div>
+      );
+    }
     return (
       <iframe
-        src={url}
+        src={pdfBlobUrl}
         title={fileName || "PDF preview"}
         className={compact ? "w-full h-full bg-white" : "w-full h-[75vh] rounded bg-white"}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
-        referrerPolicy="no-referrer-when-downgrade"
       />
     );
   }

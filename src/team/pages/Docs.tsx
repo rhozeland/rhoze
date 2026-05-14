@@ -517,6 +517,28 @@ export default function Docs() {
       (d.category ?? "").toLowerCase().includes(q.toLowerCase()),
     );
 
+  // Keyboard navigation inside the preview lightbox.
+  useEffect(() => {
+    if (!previewDoc) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const idx = list.findIndex((d: any) => d.id === previewDoc.id);
+        if (idx > 0) setPreviewDoc(list[idx - 1]);
+        else if (list.length > 1) setPreviewDoc(list[list.length - 1]);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const idx = list.findIndex((d: any) => d.id === previewDoc.id);
+        if (idx >= 0 && idx < list.length - 1) setPreviewDoc(list[idx + 1]);
+        else if (list.length > 1) setPreviewDoc(list[0]);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [previewDoc, filtered, signedUrls]);
+
   const MAX_FILE_BYTES = 500 * 1024 * 1024;
 
   function VisibilityMenu({ doc }: { doc: any }) {

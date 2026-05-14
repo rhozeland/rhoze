@@ -47,23 +47,41 @@ export default function DocPreview({ url, mime, fileName }: Props) {
 
   useEffect(() => {
     let cancelled = false;
-    setText(null);
-    setHtml(null);
     setError(null);
 
     if (kind === "md" || kind === "text" || kind === "code") {
+      if (textCache.has(url)) {
+        setText(textCache.get(url)!);
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       fetch(url)
         .then((r) => r.text())
-        .then((t) => { if (!cancelled) setText(t); })
+        .then((t) => {
+          if (!cancelled) {
+            textCache.set(url, t);
+            setText(t);
+          }
+        })
         .catch((e) => { if (!cancelled) setError(e.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
     } else if (kind === "docx") {
+      if (htmlCache.has(url)) {
+        setHtml(htmlCache.get(url)!);
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       fetch(url)
         .then((r) => r.arrayBuffer())
         .then((buf) => mammoth.convertToHtml({ arrayBuffer: buf }))
-        .then((res) => { if (!cancelled) setHtml(res.value); })
+        .then((res) => {
+          if (!cancelled) {
+            htmlCache.set(url, res.value);
+            setHtml(res.value);
+          }
+        })
         .catch((e) => { if (!cancelled) setError(e.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
     }

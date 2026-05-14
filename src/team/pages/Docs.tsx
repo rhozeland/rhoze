@@ -36,6 +36,7 @@ import {
   X,
   Users,
   User as UserIcon,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
@@ -43,8 +44,8 @@ import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
-type Audience = "all" | "department" | "user";
-type DocScope = "mine" | "department" | "team";
+type Audience = "all" | "department" | "user" | "admin";
+type DocScope = "mine" | "department" | "team" | "admin";
 
 type DocForm = {
   title: string;
@@ -135,6 +136,9 @@ export default function Docs() {
     if (audience === "user") return d.target_user_id === user.id;
     if (audience === "department") {
       return !!myProfile?.department && d.department === myProfile.department;
+    }
+    if (audience === "admin") {
+      return myProfile?.department === "hr";
     }
     return false;
   };
@@ -267,7 +271,9 @@ export default function Docs() {
           ? "general"
           : form.audience === "department"
             ? `dept: ${form.department}`
-            : "personal";
+            : form.audience === "admin"
+              ? "admin"
+              : "personal";
 
       const { error } = await supabase.from("docs").insert({
         title: form.title.trim(),
@@ -320,6 +326,7 @@ export default function Docs() {
       if (scope === "mine") return aud === "user" && d.target_user_id === user?.id;
       if (scope === "department")
         return aud === "department" && !!myProfile?.department && d.department === myProfile.department;
+      if (scope === "admin") return aud === "admin";
       // "team" — docs visible to everyone
       return aud === "all";
     })
@@ -406,6 +413,7 @@ export default function Docs() {
                       <SelectItem value="all">Everyone</SelectItem>
                       <SelectItem value="department">Specific department</SelectItem>
                       <SelectItem value="user">Specific employee</SelectItem>
+                      <SelectItem value="admin">Admin only</SelectItem>
                     </SelectContent>
                   </Select>
                   {fieldErrors.audience && (
@@ -662,11 +670,16 @@ export default function Docs() {
               <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
             <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
-              {([
-                { id: "mine", label: "My Documents", Icon: UserIcon },
-                { id: "department", label: "My Department", Icon: Users },
-                { id: "team", label: "My Team", Icon: Users },
-              ] as const).map(({ id, label, Icon }) => {
+              {(
+                [
+                  { id: "mine", label: "My Documents", Icon: UserIcon },
+                  { id: "department", label: "My Department", Icon: Users },
+                  { id: "team", label: "My Team", Icon: Users },
+                  ...(isAdmin || myProfile?.department === "hr"
+                    ? [{ id: "admin" as const, label: "Admin Documents", Icon: Shield }]
+                    : []),
+                ] as const
+              ).map(({ id, label, Icon }) => {
                 const active = scope === id;
                 return (
                   <button
@@ -721,7 +734,9 @@ export default function Docs() {
                     ? `Department · ${d.department ?? "—"}`
                     : d.audience === "user"
                       ? "Personal"
-                      : "Everyone";
+                      : d.audience === "admin"
+                        ? "Admin"
+                        : "Everyone";
 
                 return (
                   <div

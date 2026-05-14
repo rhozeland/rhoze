@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 export type Department = (typeof DEPARTMENTS)[number];
-export type Audience = "all" | "department" | "user";
+export type Audience = "all" | "department" | "user" | "admin";
 
 export type DocFormInput = {
   title: string;
@@ -62,7 +62,7 @@ export async function validateDocForm(
 
   const schema = z.object({
     title: z.string().trim().min(1, "Title required").max(200, "Title too long"),
-    audience: z.enum(["all", "department", "user"]),
+    audience: z.enum(["all", "department", "user", "admin"]),
     department: z.enum(DEPARTMENTS).optional(),
     target_user_id: z.string().uuid("Pick a valid employee").optional(),
     file_url: z

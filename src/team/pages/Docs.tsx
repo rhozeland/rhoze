@@ -656,9 +656,37 @@ export default function Docs() {
       </div>
 
       <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
-            <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
+              <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
+            </div>
+            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
+              {([
+                { id: "mine", label: "My Documents", Icon: UserIcon },
+                { id: "department", label: "My Department", Icon: Users },
+                { id: "team", label: "My Team", Icon: Users },
+              ] as const).map(({ id, label, Icon }) => {
+                const active = scope === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setScope(id)}
+                    className={
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
+                      (active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground")
+                    }
+                    aria-pressed={active}
+                  >
+                    <Icon size={12} />
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {filtered.length === 0 ? (

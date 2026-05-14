@@ -44,6 +44,7 @@ import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress"
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user";
+type DocScope = "mine" | "department" | "team";
 
 type DocForm = {
   title: string;
@@ -85,6 +86,7 @@ export default function Docs() {
   const { user, isAdmin } = useAuth();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
+  const [scope, setScope] = useState<DocScope>("team");
   const [form, setForm] = useState<DocForm>(EMPTY_FORM);
   const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -313,6 +315,14 @@ export default function Docs() {
     // Belt-and-suspenders: hide anything the audience guard rejects so
     // thumbnails/derived URLs respect the same dept/user rules as the file.
     .filter((d: any) => canView(d))
+    .filter((d: any) => {
+      const aud = (d.audience ?? "all") as Audience;
+      if (scope === "mine") return aud === "user" && d.target_user_id === user?.id;
+      if (scope === "department")
+        return aud === "department" && !!myProfile?.department && d.department === myProfile.department;
+      // "team" — docs visible to everyone
+      return aud === "all";
+    })
     .filter((d: any) =>
       !q ||
       d.title.toLowerCase().includes(q.toLowerCase()) ||

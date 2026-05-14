@@ -1067,7 +1067,7 @@ function EditMemberDialogBody({
       )}
       {isAdmin && currentUser?.id !== p.id && (
         <div className="mt-6 pt-4 border-t border-destructive/30">
-          <div className="flex items-start justify-start gap-4 flex-wrap">
+          <div className="flex flex-col items-start gap-3">
             <Button
               type="button"
               variant="destructive"

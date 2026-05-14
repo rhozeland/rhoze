@@ -94,6 +94,7 @@ export default function RoleManager() {
   const [errors, setErrors] = useState<Record<string, string | null>>({});
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState<Dept | "all" | "unassigned">("all");
+  const [deptChips, setDeptChips] = useState<Set<Dept>>(new Set());
   const [statusFilter, setStatusFilter] = useState<EmpStatus | "all">("all");
   const [tenureMin, setTenureMin] = useState<string>("");
   const [tenureMax, setTenureMax] = useState<string>("");

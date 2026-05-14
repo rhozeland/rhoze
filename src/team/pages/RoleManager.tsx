@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Download, Eye, FileText, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -308,6 +308,8 @@ export default function RoleManager() {
       </header>
 
       <RolePresetsCombined />
+
+      <MastersheetTracker profiles={profiles ?? []} />
 
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Filter</span>

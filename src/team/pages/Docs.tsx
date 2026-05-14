@@ -557,9 +557,9 @@ export default function Docs() {
             type="button"
             aria-label="Edit visibility"
             title="Edit visibility"
-            className="text-muted-foreground hover:text-foreground shrink-0"
+            className="inline-flex items-center justify-center text-xs w-7 h-7 rounded border border-border bg-background hover:bg-muted shrink-0"
           >
-            <Settings2 size={14} />
+            <Settings2 size={12} />
           </button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-72 p-3 space-y-3">
@@ -1263,27 +1263,27 @@ export default function Docs() {
                     <div className="p-3 flex-1 flex flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">
                         <div className="font-medium text-sm leading-tight">{d.title}</div>
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1 shrink-0">
                           {canManage && (
                             <>
                               <VisibilityMenu doc={d} />
                               <button
                                 type="button"
                                 onClick={() => deleteDoc.mutate(d.id)}
-                                className="text-muted-foreground hover:text-destructive transition-colors"
+                                className="inline-flex items-center justify-center text-xs w-7 h-7 rounded border border-border bg-background hover:bg-muted hover:text-destructive transition-colors"
                                 title="Remove"
                                 disabled={deleteDoc.isPending}
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={12} />
                               </button>
                             </>
                           )}
                           <button
                             onClick={() => toggleComplete.mutate({ docId: d.id, done })}
-                            className="text-muted-foreground hover:text-foreground"
+                            className="inline-flex items-center justify-center text-xs w-7 h-7 rounded border border-border bg-background hover:bg-muted"
                             title={done ? "Mark incomplete" : "Mark complete"}
                           >
-                            {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
+                            {done ? <CheckCircle2 size={12} className="text-green-500" /> : <Circle size={12} />}
                           </button>
                         </div>
                       </div>
@@ -1293,12 +1293,12 @@ export default function Docs() {
                           {d.file_name || (d.file_url ? new URL(d.file_url).hostname : "")}
                           {d.file_size_bytes ? ` · ${formatBytes(d.file_size_bytes)}` : ""}
                         </span>
-                        <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1">
                           {previewable && (
                             <button
                               type="button"
                               onClick={() => setPreviewDoc(d)}
-                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
                               aria-label={`Preview ${d.title}`}
                             >
                               <Eye size={12} /> Preview
@@ -1309,7 +1309,7 @@ export default function Docs() {
                               href={d.file_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
                             >
                               <ExternalLink size={12} /> Open
                             </a>
@@ -1320,7 +1320,8 @@ export default function Docs() {
                               download={d.file_name || undefined}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+                              aria-label={`Download ${d.file_name || d.title}`}
                             >
                               <Download size={12} /> Download
                             </a>

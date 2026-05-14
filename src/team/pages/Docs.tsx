@@ -1294,6 +1294,12 @@ export default function Docs() {
                     <img src={signed} alt={previewDoc.title} className="max-w-full max-h-[70vh] object-contain rounded" />
                   ) : isVid && signed ? (
                     <video src={signed} controls className="max-w-full max-h-[70vh] rounded" />
+                  ) : signed ? (
+                    <DocPreview
+                      url={signed}
+                      mime={previewDoc.file_mime}
+                      fileName={previewDoc.file_name}
+                    />
                   ) : (
                     <div className="text-muted-foreground text-sm">Preview not available</div>
                   )}

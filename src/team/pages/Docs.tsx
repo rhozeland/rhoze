@@ -122,6 +122,13 @@ export default function Docs() {
   const isHr = myProfile?.department === "hr";
   const canSeeAdmin = isAdmin || isHr;
 
+  // If the user loses admin/HR access while on the admin scope, reset to team.
+  useEffect(() => {
+    if (scope === "admin" && !canSeeAdmin) {
+      setScope("team");
+    }
+  }, [scope, canSeeAdmin]);
+
   // Docs query enforces the active scope at the fetch layer so the request
   // mirrors what the RLS policy will return — never just a UI filter on top
   // of `select *`.
@@ -134,7 +141,10 @@ export default function Docs() {
       myProfile?.department ?? null,
       isAdmin,
     ],
-    enabled: !!user?.id && (scope !== "department" || !!myProfile?.department),
+    enabled:
+      !!user?.id &&
+      (scope !== "department" || !!myProfile?.department) &&
+      (scope !== "admin" || canSeeAdmin),
     queryFn: async () => {
       let query = supabase.from("docs").select("*");
       if (scope === "mine") {
@@ -146,7 +156,6 @@ export default function Docs() {
       } else if (scope === "team") {
         query = query.eq("audience", "all");
       } else if (scope === "admin") {
-        if (!canSeeAdmin) return [];
         query = query.eq("audience", "admin");
       }
       if (tagFilter !== "all") {
@@ -722,13 +731,13 @@ export default function Docs() {
             <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
               {(
                 [
-                  { id: "mine", label: "My Documents", Icon: UserIcon },
-                  { id: "department", label: "My Department", Icon: Users },
-                  { id: "team", label: "My Team", Icon: Users },
-                  ...(isAdmin || myProfile?.department === "hr"
+                  { id: "mine" as const, label: "My Documents", Icon: UserIcon },
+                  { id: "department" as const, label: "My Department", Icon: Users },
+                  { id: "team" as const, label: "My Team", Icon: Users },
+                  ...(canSeeAdmin
                     ? [{ id: "admin" as const, label: "Admin Documents", Icon: Shield }]
                     : []),
-                ] as const
+                ]
               ).map(({ id, label, Icon }) => {
                 const active = scope === id;
                 return (

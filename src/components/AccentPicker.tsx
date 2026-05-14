@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Palette, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ const PRESETS: Preset[] = [
 const STORAGE_KEY = "accent-preset";
 const CUSTOM_KEY = "accent-custom-hex";
 
-// ───────────────────────── color math ─────────────────────────
+// ——————————————— color math ———————————————
 
 function hexToRgb(hex: string): [number, number, number] | null {
   const m = hex.trim().replace(/^#/, "");
@@ -67,20 +67,6 @@ function hexToHslTriplet(hex: string): string | null {
   return `${h} ${s}% ${l}%`;
 }
 
-function relLum(r: number, g: number, b: number) {
-  const f = (c: number) => {
-    const v = c / 255;
-    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-  };
-  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
-}
-
-function contrastRatio(a: [number, number, number], b: [number, number, number]) {
-  const la = relLum(...a), lb = relLum(...b);
-  const [hi, lo] = la > lb ? [la, lb] : [lb, la];
-  return (hi + 0.05) / (lo + 0.05);
-}
-
 function hslTripletToRgb(triplet: string): [number, number, number] {
   const m = triplet.match(/(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)%\s+(-?\d+(?:\.\d+)?)%/);
   if (!m) return [0, 0, 0];
@@ -108,15 +94,23 @@ function hslTripletToRgb(triplet: string): [number, number, number] {
   ];
 }
 
-function rateRatio(r: number) {
-  // WCAG 2.1: AA non-text 3, AA text 4.5, AAA text 7
-  if (r >= 7) return { label: "AAA", tone: "text-emerald-500" };
-  if (r >= 4.5) return { label: "AA", tone: "text-emerald-500" };
-  if (r >= 3) return { label: "AA Large", tone: "text-amber-500" };
-  return { label: "Fail", tone: "text-destructive" };
+/** Pick a foreground (white/near-black) that has the best contrast on `triplet`. */
+function bestForeground(triplet: string): string {
+  const rgb = hslTripletToRgb(triplet);
+  // relative luminance
+  const lum = ([r, g, b]: [number, number, number]) => {
+    const f = (c: number) => {
+      const v = c / 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  };
+  const cWhite = (lum(rgb) + 0.05) / (lum([255, 255, 255]) + 0.05);
+  const cBlack = (lum([12, 12, 14]) + 0.05) / (lum(rgb) + 0.05);
+  return cWhite >= cBlack ? "0 0% 100%" : "0 0% 4%";
 }
 
-// ───────────────────────── apply ─────────────────────────
+// ——————————————— apply ———————————————
 
 function applyTriplet(hsl: string, fg: string) {
   const root = document.documentElement;
@@ -125,14 +119,6 @@ function applyTriplet(hsl: string, fg: string) {
   root.style.setProperty("--accent", hsl);
   root.style.setProperty("--accent-foreground", fg);
   root.style.setProperty("--ring", hsl);
-}
-
-/** Pick a foreground (white/near-black) that has the best contrast on `triplet`. */
-function bestForeground(triplet: string): string {
-  const rgb = hslTripletToRgb(triplet);
-  const cWhite = contrastRatio(rgb, [255, 255, 255]);
-  const cBlack = contrastRatio(rgb, [10, 10, 10]);
-  return cWhite >= cBlack ? "0 0% 100%" : "0 0% 4%";
 }
 
 type StoredAccent =
@@ -160,7 +146,7 @@ if (typeof window !== "undefined") {
   try { applyAccent(readAccent()); } catch { /* noop */ }
 }
 
-// ───────────────────────── component ─────────────────────────
+// ——————————————— component ———————————————
 
 interface Props {
   collapsed?: boolean;
@@ -195,31 +181,7 @@ export function AccentPicker({ collapsed = false, className }: Props) {
   };
 
   const currentTriplet = accent.kind === "preset" ? accent.preset.hsl : accent.hsl;
-  const currentFg = accent.kind === "preset" ? accent.preset.fg : accent.fg;
   const currentName = accent.kind === "preset" ? accent.preset.name : `Custom ${accent.hex.toUpperCase()}`;
-
-  const a11y = useMemo(() => {
-    const accentRgb = hslTripletToRgb(currentTriplet);
-    const fgRgb = hslTripletToRgb(currentFg);
-    const onAccent = contrastRatio(accentRgb, fgRgb);
-    const onWhite = contrastRatio(accentRgb, [255, 255, 255]);
-    const onBlack = contrastRatio(accentRgb, [12, 12, 14]);
-
-    // Recommend the best non-current preset by max(min(contrast vs white, vs black))
-    const candidates = PRESETS.filter((p) => p.contrast);
-    let best = candidates[0];
-    let bestScore = 0;
-    for (const c of candidates) {
-      const rgb = hslTripletToRgb(c.hsl);
-      const score = Math.min(
-        contrastRatio(rgb, [255, 255, 255]),
-        contrastRatio(rgb, [12, 12, 14]),
-      );
-      if (score > bestScore) { bestScore = score; best = c; }
-    }
-
-    return { onAccent, onWhite, onBlack, recommended: best, recommendedScore: bestScore };
-  }, [currentTriplet, currentFg]);
 
   const swatch = (p: Preset) => {
     const isSelected = accent.kind === "preset" && accent.preset.id === p.id;
@@ -245,19 +207,6 @@ export function AccentPicker({ collapsed = false, className }: Props) {
 
   const standard = PRESETS.filter((p) => !p.contrast);
   const contrast = PRESETS.filter((p) => p.contrast);
-
-  const Row = ({ label, ratio }: { label: string; ratio: number }) => {
-    const r = rateRatio(ratio);
-    return (
-      <div className="flex items-center justify-between gap-2 text-[11px]">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="flex items-center gap-1.5">
-          <span className="font-mono">{ratio.toFixed(2)}:1</span>
-          <span className={cn("font-medium", r.tone)}>{r.label}</span>
-        </span>
-      </div>
-    );
-  };
 
   return (
     <Popover>
@@ -330,36 +279,8 @@ export function AccentPicker({ collapsed = false, className }: Props) {
           </div>
         </div>
 
-        <div className="rounded-md border border-border p-2 space-y-1.5">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-              Accessibility preview
-            </span>
-            <span
-              className="px-2 py-0.5 rounded text-[10px] font-semibold"
-              style={{ background: `hsl(${currentTriplet})`, color: `hsl(${currentFg})` }}
-            >
-              Sample
-            </span>
-          </div>
-          <Row label="Accent vs foreground" ratio={a11y.onAccent} />
-          <Row label="Accent on white bg" ratio={a11y.onWhite} />
-          <Row label="Accent on dark bg" ratio={a11y.onBlack} />
-          {a11y.onAccent < 4.5 && (
-            <button
-              type="button"
-              onClick={() => choosePreset(a11y.recommended)}
-              className="mt-1 w-full text-left text-[11px] rounded border border-border px-2 py-1.5 hover:bg-muted transition-colors"
-            >
-              <span className="text-muted-foreground">Recommended:</span>{" "}
-              <span className="font-medium">{a11y.recommended.name}</span>
-              <span className="text-muted-foreground"> — {a11y.recommendedScore.toFixed(1)}:1</span>
-            </button>
-          )}
-        </div>
-
         <p className="text-[10px] text-muted-foreground leading-snug">
-          Saved to this device. WCAG AA needs ≥ 4.5:1 for body text, ≥ 3:1 for large text and UI.
+          Saved to this device. Affects buttons, links, and highlights across the portal.
         </p>
       </PopoverContent>
     </Popover>

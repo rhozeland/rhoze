@@ -51,6 +51,7 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Eye,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
@@ -1292,6 +1293,16 @@ export default function Docs() {
                           {d.file_size_bytes ? ` · ${formatBytes(d.file_size_bytes)}` : ""}
                         </span>
                         <div className="flex items-center gap-1">
+                          {previewable && (
+                            <button
+                              type="button"
+                              onClick={() => setPreviewDoc(d)}
+                              className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border hover:bg-muted"
+                              aria-label={`Preview ${d.title}`}
+                            >
+                              <Eye size={12} /> Preview
+                            </button>
+                          )}
                           {d.file_url && (
                             <a
                               href={d.file_url}
@@ -1356,18 +1367,18 @@ export default function Docs() {
                     <button
                       type="button"
                       onClick={goPrev}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur"
                       aria-label="Previous attachment"
                     >
-                      <ChevronLeft size={24} />
+                      <ChevronLeft size={20} /> <span className="text-sm hidden sm:inline">Previous</span>
                     </button>
                     <button
                       type="button"
                       onClick={goNext}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur"
                       aria-label="Next attachment"
                     >
-                      <ChevronRight size={24} />
+                      <span className="text-sm hidden sm:inline">Next</span> <ChevronRight size={20} />
                     </button>
                   </>
                 )}

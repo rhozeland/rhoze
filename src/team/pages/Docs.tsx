@@ -1204,14 +1204,14 @@ export default function Docs() {
                         <iframe
                           src={embedUrl}
                           title={d.title}
-                          className="w-full h-full bg-background pointer-events-none group-hover:pointer-events-auto"
+                          className="w-full h-full bg-background"
                           loading="lazy"
                           allow="autoplay; encrypted-media; fullscreen"
                           sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
                           referrerPolicy="no-referrer-when-downgrade"
                         />
                       ) : signed ? (
-                        <div className="w-full h-full overflow-auto bg-background pointer-events-none group-hover:pointer-events-auto">
+                        <div className="w-full h-full overflow-auto bg-background">
                           <DocPreview url={signed} mime={d.file_mime} fileName={d.file_name} compact />
                         </div>
                       ) : (

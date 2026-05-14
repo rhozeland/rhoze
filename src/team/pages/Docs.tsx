@@ -787,8 +787,37 @@ export default function Docs() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Docs & Training</h1>
-          <p className="text-sm text-muted-foreground">Internal handbook, SOPs, training materials.</p>
+          {scope === "manage" && focusedUserId ? (
+            <>
+              <button
+                onClick={() => setFocusedUserId(null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
+              >
+                <ArrowLeft size={12} /> Back to roster
+              </button>
+              <h1 className="text-2xl font-semibold flex items-center gap-2 flex-wrap">
+                {focusedMeta?.profile?.display_name ?? focusedMeta?.profile?.email ?? "Teammate"}
+                {focusedMeta?.profile?.department && (
+                  <DepartmentBadge department={focusedMeta.profile.department} />
+                )}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Browse the docs this teammate can access and the ones they uploaded.
+              </p>
+            </>
+          ) : scope === "manage" ? (
+            <>
+              <h1 className="text-2xl font-semibold">Manage</h1>
+              <p className="text-sm text-muted-foreground">
+                Click a teammate to view the docs they can access and the ones they uploaded.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-semibold">Docs & Training</h1>
+              <p className="text-sm text-muted-foreground">Internal handbook, SOPs, training materials.</p>
+            </>
+          )}
         </div>
         {isAdmin && (
           <Dialog open={open} onOpenChange={setOpen}>

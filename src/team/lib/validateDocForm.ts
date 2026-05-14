@@ -100,7 +100,7 @@ export async function validateDocForm(
     if (!isAcceptedFile(form.file)) {
       errors.file = "Unsupported file type — use PDF, Markdown, image, or video";
     } else if (form.file.size > MAX_FILE_BYTES) {
-      errors.file = "File must be under 100MB";
+      errors.file = "File must be under 500 MB";
     } else if (form.file.size <= 0) {
       errors.file = "File appears to be empty";
     }

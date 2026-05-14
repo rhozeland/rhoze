@@ -54,6 +54,8 @@ import {
   ChevronRight,
   Eye,
   ExternalLink,
+  ArrowLeft,
+  UserCircle2,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";

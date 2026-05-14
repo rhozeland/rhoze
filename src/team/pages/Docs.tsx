@@ -91,6 +91,7 @@ export default function Docs() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [scope, setScope] = useState<DocScope>("team");
+  const [tagFilter, setTagFilter] = useState<TagFilter>("all");
   const [form, setForm] = useState<DocForm>(EMPTY_FORM);
   const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -102,21 +103,8 @@ export default function Docs() {
   const clearError = (k: keyof FieldErrors) =>
     setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
 
-  const { data: docs } = useQuery({
-    queryKey: ["docs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("docs")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Client-side audience guard: even though RLS already filters server-side,
-  // we re-check on the client so we never render thumbnails or request signed
-  // URLs for files the current user isn't authorized to see.
+  // Resolve the caller's department first — the docs query relies on it to
+  // mirror the server-side RLS rules at the fetch layer.
   const { data: myProfile } = useQuery({
     queryKey: ["docs_my_profile", user?.id],
     enabled: !!user?.id,
@@ -126,6 +114,45 @@ export default function Docs() {
         .select("id, department")
         .eq("id", user!.id)
         .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const isHr = myProfile?.department === "hr";
+  const canSeeAdmin = isAdmin || isHr;
+
+  // Docs query enforces the active scope at the fetch layer so the request
+  // mirrors what the RLS policy will return — never just a UI filter on top
+  // of `select *`.
+  const { data: docs } = useQuery({
+    queryKey: [
+      "docs",
+      scope,
+      tagFilter,
+      user?.id,
+      myProfile?.department ?? null,
+      isAdmin,
+    ],
+    enabled: !!user?.id && (scope !== "department" || !!myProfile?.department),
+    queryFn: async () => {
+      let query = supabase.from("docs").select("*");
+      if (scope === "mine") {
+        query = query.eq("audience", "user").eq("target_user_id", user!.id);
+      } else if (scope === "department") {
+        query = query
+          .eq("audience", "department")
+          .eq("department", myProfile!.department as any);
+      } else if (scope === "team") {
+        query = query.eq("audience", "all");
+      } else if (scope === "admin") {
+        if (!canSeeAdmin) return [];
+        query = query.eq("audience", "admin");
+      }
+      if (tagFilter !== "all") {
+        query = query.eq("tag_department", tagFilter as any);
+      }
+      const { data, error } = await query.order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },

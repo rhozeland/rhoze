@@ -40,6 +40,7 @@ import {
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import { Progress } from "@/components/ui/progress";
+import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user";
@@ -85,30 +86,15 @@ export default function Docs() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [form, setForm] = useState<DocForm>(EMPTY_FORM);
-  const [uploading, setUploading] = useState(false);
+  const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<(() => void) | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const clearError = (k: keyof FieldErrors) =>
     setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
-
-  // Simulate upload progress while an upload is in flight so the UI
-  // shows a determinate bar even though Supabase upload() does not
-  // expose native progress events.
-  useEffect(() => {
-    if (!uploading) return;
-    setUploadProgress(0);
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 92) return prev;
-        const increment = prev < 30 ? 6 : prev < 60 ? 3 : 1;
-        return Math.min(prev + increment, 92);
-      });
-    }, 250);
-    return () => clearInterval(interval);
-  }, [uploading]);
 
   const { data: docs } = useQuery({
     queryKey: ["docs"],
@@ -246,19 +232,27 @@ export default function Docs() {
       let file_size_bytes: number | null = null;
 
       if (form.file) {
-        setUploading(true);
+        setUploadState("uploading");
         setUploadProgress(0);
         const safe = form.file.name.replace(/[^a-zA-Z0-9._-]+/g, "_");
         const path = `${user?.id ?? "anon"}/${Date.now()}_${safe}`;
-        const { error: upErr } = await supabase.storage
-          .from("docs")
-          .upload(path, form.file, {
-            contentType: form.file.type || undefined,
-            upsert: false,
-          });
-        setUploading(false);
+        const { promise, abort } = uploadWithProgress({
+          bucket: "docs",
+          path,
+          file: form.file,
+          onProgress: (pct) => setUploadProgress(pct),
+        });
+        abortRef.current = abort;
+        try {
+          await promise;
+        } catch (err: any) {
+          setUploadState("error");
+          abortRef.current = null;
+          throw err;
+        }
+        abortRef.current = null;
+        setUploadState("idle");
         setUploadProgress(0);
-        if (upErr) throw upErr;
         file_path = path;
         file_name = form.file.name;
         file_mime = form.file.type || null;
@@ -478,7 +472,7 @@ export default function Docs() {
                       const f = e.dataTransfer.files?.[0];
                       if (f) onPickFile(f);
                     }}
-                    onClick={() => !uploading && fileInputRef.current?.click()}
+                    onClick={() => uploadState !== "uploading" && fileInputRef.current?.click()}
                     role="button"
                     tabIndex={0}
                     className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
@@ -487,9 +481,9 @@ export default function Docs() {
                         : dragOver
                           ? "border-primary bg-primary/5"
                           : "border-border hover:border-primary/50"
-                    } ${uploading ? "cursor-default" : ""}`}
+                    } ${uploadState === "uploading" ? "cursor-default" : ""}`}
                   >
-                    {uploading && form.file ? (
+                    {uploadState === "uploading" && form.file ? (
                       <div className="flex flex-col items-center gap-3 text-sm">
                         <div className="w-full max-w-xs text-left">
                           <div className="flex items-center justify-between mb-1">
@@ -498,7 +492,74 @@ export default function Docs() {
                           </div>
                           <Progress value={uploadProgress} className="h-2" />
                         </div>
-                        <span className="text-xs text-muted-foreground">Uploading…</span>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              abortRef.current?.();
+                              abortRef.current = null;
+                              setUploadState("cancelled");
+                              setUploadProgress(0);
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    ) : uploadState === "error" && form.file ? (
+                      <div className="flex flex-col items-center gap-3 text-sm text-destructive">
+                        <UploadCloud size={28} />
+                        <div className="font-medium">Upload failed</div>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setUploadState("idle");
+                              create.mutate();
+                            }}
+                          >
+                            Retry
+                          </Button>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onPickFile(null); setUploadState("idle"); }}
+                            className="text-xs text-muted-foreground hover:text-foreground underline"
+                          >
+                            Remove file
+                          </button>
+                        </div>
+                      </div>
+                    ) : uploadState === "cancelled" && form.file ? (
+                      <div className="flex flex-col items-center gap-3 text-sm text-muted-foreground">
+                        <UploadCloud size={28} />
+                        <div className="font-medium">Upload cancelled</div>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setUploadState("idle");
+                              create.mutate();
+                            }}
+                          >
+                            Retry
+                          </Button>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); onPickFile(null); setUploadState("idle"); }}
+                            className="text-xs text-muted-foreground hover:text-foreground underline"
+                          >
+                            Remove file
+                          </button>
+                        </div>
                       </div>
                     ) : form.file ? (
                       <div className="flex items-center justify-between gap-2 text-sm">
@@ -575,8 +636,8 @@ export default function Docs() {
                 </label>
               </div>
               <DialogFooter>
-                <Button onClick={() => create.mutate()} disabled={create.isPending || uploading}>
-                  {uploading ? "Uploading…" : create.isPending ? "Saving…" : "Save"}
+                <Button onClick={() => create.mutate()} disabled={create.isPending || uploadState === "uploading"}>
+                  {uploadState === "uploading" ? "Uploading…" : create.isPending ? "Saving…" : "Save"}
                 </Button>
               </DialogFooter>
             </DialogContent>

@@ -1843,7 +1843,6 @@ function AvatarUploader({
   currentUrl: string | null | undefined;
   onChange: (url: string | null) => void;
 }) {
-  const fileRef = useState<HTMLInputElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
 

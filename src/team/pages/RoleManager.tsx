@@ -414,7 +414,7 @@ export default function RoleManager() {
                     </a>
                   )}
                 </div>
-                <Button size="sm" onClick={() => setEditingUid(p.id)}>Edit User Profile</Button>
+                <Button size="sm" onClick={() => setEditingUid(p.id)}>Edit Mastersheet</Button>
               </div>
               <div className="mt-3 pt-3 border-t border-border space-y-2">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Roles</div>

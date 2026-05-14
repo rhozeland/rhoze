@@ -94,9 +94,10 @@ function fileIconFor(mime: string | null | undefined) {
 }
 
 function isDocPreviewable(d: any): boolean {
-  // Any uploaded file can open the lightbox — DocPreview renders an inline
-  // preview when possible and a clear "download to view" fallback otherwise.
-  return !!d.file_path;
+  // Any uploaded file OR embeddable URL can open the lightbox — DocPreview /
+  // EmbedPreview render an inline preview when possible and a clear
+  // "download to view" fallback otherwise.
+  return !!d.file_path || (!!d.file_url && !!toEmbedUrl(d.file_url));
 }
 
 function formatBytes(b: number | null | undefined) {

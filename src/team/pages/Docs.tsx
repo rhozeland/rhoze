@@ -39,8 +39,6 @@ import {
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
-import GoogleDriveBrowser from "../components/GoogleDriveBrowser";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user";
@@ -478,19 +476,29 @@ export default function Docs() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label>File URL (optional)</Label>
+                  <Label>File or link URL</Label>
                   <Input
                     value={form.file_url}
                     aria-invalid={!!fieldErrors.file_url}
                     onChange={(e) => { clearError("file_url"); setForm({ ...form, file_url: e.target.value }); }}
-                    placeholder="Paste a Google Doc / Sheet / Slides / Drive link"
+                    placeholder="Paste a Google Doc, Sheet, Slides, Form, Drive folder, YouTube or Loom link"
                   />
                   {fieldErrors.file_url && (
                     <p role="alert" className="text-xs text-destructive">{fieldErrors.file_url}</p>
                   )}
                   <p className="text-[11px] text-muted-foreground">
-                    Google Docs, Sheets, Slides, Drive files & folders, YouTube and Loom links auto-embed.
+                    Auto-embeds Google Docs · Sheets · Slides · Forms · Drive files & folders · YouTube · Loom.
                   </p>
+                  {form.file_url && toEmbedUrl(form.file_url) && (
+                    <div className="mt-2">
+                      <EmbedPreview url={form.file_url} title="Live preview" height={220} />
+                    </div>
+                  )}
+                  {form.file_url && !toEmbedUrl(form.file_url) && (
+                    <p className="text-[11px] text-muted-foreground italic">
+                      Link saved as-is — no inline preview available for this URL.
+                    </p>
+                  )}
                 </div>
 
                 {fieldErrors._form && (
@@ -512,13 +520,7 @@ export default function Docs() {
         )}
       </div>
 
-      <Tabs defaultValue="docs">
-        <TabsList>
-          <TabsTrigger value="docs">Internal docs</TabsTrigger>
-          <TabsTrigger value="drive">Shared Drive</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="docs" className="space-y-4 mt-4">
+      <div className="space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
             <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
@@ -619,16 +621,7 @@ export default function Docs() {
               })}
             </div>
           )}
-        </TabsContent>
-
-        <TabsContent value="drive" className="mt-4">
-          <p className="text-xs text-muted-foreground mb-3">
-            Browse the shared Google Drive linked to the workspace. Click a file to preview it inline; click the
-            external icon to open it in Google Drive. Anyone with team access can read this view.
-          </p>
-          <GoogleDriveBrowser />
-        </TabsContent>
-      </Tabs>
+      </div>
     </div>
   );
 }

@@ -503,6 +503,33 @@ export default function Docs() {
                 </p>
 
                 <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <Users size={12} /> Category (department tag)
+                  </Label>
+                  <Select
+                    value={form.tag_department || "__none"}
+                    onValueChange={(v) =>
+                      setForm({ ...form, tag_department: v === "__none" ? "" : v })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="No category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none">No category</SelectItem>
+                      {DEPARTMENTS.map((d) => (
+                        <SelectItem key={d} value={d} className="capitalize">
+                          {d}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[11px] text-muted-foreground">
+                    Admin-only label used for filtering. Independent of who can view the doc.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
                   <Label>Attachment (PDF, Markdown, image, or video)</Label>
                   <div
                     onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}

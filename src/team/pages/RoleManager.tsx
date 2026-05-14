@@ -95,7 +95,7 @@ export default function RoleManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, display_name, alias, pronouns, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program")
+        .select("id, display_name, alias, pronouns, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program, phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone")
         .order("display_name");
       if (error) throw error;
       return data;
@@ -455,6 +455,7 @@ export default function RoleManager() {
             <EditMemberDialogBody
               userId={editingUid}
               profile={(profiles ?? []).find((x: any) => x.id === editingUid)}
+              availability={availabilityMap?.[editingUid]}
               roles={rolesByUser?.[editingUid] ?? []}
               picks={picks}
               setPicks={setPicks}
@@ -478,11 +479,12 @@ export default function RoleManager() {
 }
 
 function EditMemberDialogBody({
-  userId, profile: p, roles: cur, picks, setPicks, errors, setErrors,
+  userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   titleDrafts, setTitleDrafts, notesDrafts, setNotesDrafts,
   setDept, setTitle, setEmp, grant, revoke,
 }: any) {
   if (!p) return null;
+  const qc = useQueryClient();
   const titleVal = titleDrafts[p.id] ?? p.job_title ?? "";
   const notesVal = notesDrafts[p.id] ?? p.employment_notes ?? "";
   const dept = (p.department ?? null) as Dept | null;
@@ -493,11 +495,43 @@ function EditMemberDialogBody({
   const [wageDraft, setWageDraft] = useState<string | null>(null);
   const [rateDraft, setRateDraft] = useState<string | null>(null);
   const [preview, setPreview] = useState(true);
+  const [phoneDraft, setPhoneDraft] = useState<string | null>(null);
+  const [addressDraft, setAddressDraft] = useState<string | null>(null);
+  const [ecNameDraft, setEcNameDraft] = useState<string | null>(null);
+  const [ecRelDraft, setEcRelDraft] = useState<string | null>(null);
+  const [ecPhoneDraft, setEcPhoneDraft] = useState<string | null>(null);
+  const [availNotesDraft, setAvailNotesDraft] = useState<string | null>(null);
   const wageVal = wageDraft ?? p.wage ?? "";
   const rateVal = rateDraft ?? (p.hourly_rate_cents != null ? (p.hourly_rate_cents / 100).toString() : "");
   const fmtRate = p.hourly_rate_cents ? `$${(p.hourly_rate_cents / 100).toFixed(2)}/hr` : "—";
   const deptLabel = DEPTS.find((d) => d.value === p.department)?.label ?? "—";
   const statusLabel = EMP_STATUSES.find((s) => s.value === (p.employment_status ?? "active"))?.label ?? "—";
+  const availDays: string[] = av?.days ?? [];
+  const availBlocks: string[] = av?.time_blocks ?? [];
+  const availNotes: string = (availNotesDraft ?? av?.notes ?? "") as string;
+
+  const saveAvail = useMutation({
+    mutationFn: async (next: { days: string[]; time_blocks: string[]; notes: string | null }) => {
+      const { error } = await supabase
+        .from("team_availability")
+        .upsert({ user_id: p.id, ...next }, { onConflict: "user_id" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["team-availability-all"] });
+    },
+    onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+  const toggleAvail = (key: "days" | "time_blocks", v: string) => {
+    const cur = key === "days" ? availDays : availBlocks;
+    const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
+    saveAvail.mutate({
+      days: key === "days" ? next : availDays,
+      time_blocks: key === "time_blocks" ? next : availBlocks,
+      notes: (availNotesDraft ?? av?.notes ?? null) as any,
+    });
+  };
+
   const PreviewRow = ({ label, value }: { label: string; value: any }) => (
     <div className="flex justify-between gap-3 py-1.5 border-b border-border/50 last:border-0">
       <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
@@ -517,6 +551,173 @@ function EditMemberDialogBody({
           {preview ? (<><Pencil size={14} className="mr-1.5" /> Edit mastersheet</>) : (<><Eye size={14} className="mr-1.5" /> Preview mastersheet</>)}
         </Button>
       </div>
+
+      {/* Header — avatar, name, alias, title/pronouns, email */}
+      <div className="flex items-start gap-4">
+        {p.avatar_url ? (
+          <img src={p.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border shrink-0" />
+        ) : (
+          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center text-lg font-medium border border-border shrink-0">
+            {(p.display_name ?? p.email ?? "?").slice(0, 1).toUpperCase()}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="text-xl font-semibold leading-tight truncate">{p.display_name ?? "Unnamed"}</div>
+          {p.alias && <div className="text-sm text-muted-foreground truncate">aka {p.alias}</div>}
+          <div className="text-sm text-muted-foreground truncate">
+            {[p.job_title, p.pronouns].filter(Boolean).join(" · ") || "—"}
+          </div>
+          {p.email && (
+            <a href={`mailto:${p.email}`} className="text-sm text-primary hover:underline truncate block mt-0.5 break-all">
+              {p.email}
+            </a>
+          )}
+        </div>
+      </div>
+
+      {preview ? (
+        <>
+          <section className="space-y-1.5 text-sm">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Personal & emergency</div>
+            <div><span className="text-muted-foreground">Phone:</span> {p.phone || "—"}</div>
+            <div><span className="text-muted-foreground">Date of birth:</span> {p.date_of_birth || "—"}</div>
+            <div><span className="text-muted-foreground">Address:</span> {p.address || "—"}</div>
+            <div className="pt-2 text-[11px] uppercase tracking-wider text-muted-foreground">Emergency contact</div>
+            <div><span className="text-muted-foreground">Name:</span> {p.emergency_contact_name || "—"}</div>
+            <div><span className="text-muted-foreground">Relation:</span> {p.emergency_contact_relation || "—"}</div>
+            <div><span className="text-muted-foreground">Phone:</span> {p.emergency_contact_phone || "—"}</div>
+          </section>
+          <section className="space-y-1.5 text-sm">
+            <div className="text-[11px] uppercase tracking-wider text-muted-foreground">Availability</div>
+            <div><span className="text-muted-foreground">Days:</span> {availDays.length ? availDays.join(", ") : "—"}</div>
+            <div><span className="text-muted-foreground">Time of day:</span> {availBlocks.length ? availBlocks.join(", ") : "—"}</div>
+            {av?.notes && <div className="text-muted-foreground italic">{av.notes}</div>}
+          </section>
+        </>
+      ) : (
+        <>
+          <section className="border border-border rounded p-3 space-y-3">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Personal & emergency</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Phone</label>
+                <Input className="h-9" inputMode="tel" placeholder="(416) 555-0123"
+                  value={phoneDraft ?? p.phone ?? ""}
+                  onChange={(e) => setPhoneDraft(formatPhone(e.target.value))}
+                  onBlur={() => {
+                    if (phoneDraft === null) return;
+                    const next = phoneDraft.trim();
+                    if (next !== (p.phone ?? "")) setEmp.mutate({ userId: p.id, patch: { phone: next || null } });
+                    setPhoneDraft(null);
+                  }} />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Date of birth</label>
+                <Input type="date" className="h-9" max={new Date().toISOString().slice(0, 10)} min="1900-01-01"
+                  value={p.date_of_birth ?? ""}
+                  onChange={(e) => setEmp.mutate({ userId: p.id, patch: { date_of_birth: e.target.value || null } })} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-[10px] uppercase text-muted-foreground">Address</label>
+                <Textarea rows={2}
+                  value={addressDraft ?? p.address ?? ""}
+                  onChange={(e) => setAddressDraft(e.target.value)}
+                  onBlur={() => {
+                    if (addressDraft === null) return;
+                    const next = addressDraft.trim();
+                    if (next !== (p.address ?? "")) setEmp.mutate({ userId: p.id, patch: { address: next || null } });
+                    setAddressDraft(null);
+                  }} />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Emergency name</label>
+                <Input className="h-9" maxLength={80}
+                  value={ecNameDraft ?? p.emergency_contact_name ?? ""}
+                  onChange={(e) => setEcNameDraft(e.target.value)}
+                  onBlur={() => {
+                    if (ecNameDraft === null) return;
+                    const next = ecNameDraft.trim();
+                    if (next !== (p.emergency_contact_name ?? "")) setEmp.mutate({ userId: p.id, patch: { emergency_contact_name: next || null } });
+                    setEcNameDraft(null);
+                  }} />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Relation</label>
+                <Input className="h-9" maxLength={40} placeholder="Mother, Sibling…"
+                  value={ecRelDraft ?? p.emergency_contact_relation ?? ""}
+                  onChange={(e) => setEcRelDraft(e.target.value)}
+                  onBlur={() => {
+                    if (ecRelDraft === null) return;
+                    const next = ecRelDraft.trim();
+                    if (next !== (p.emergency_contact_relation ?? "")) setEmp.mutate({ userId: p.id, patch: { emergency_contact_relation: next || null } });
+                    setEcRelDraft(null);
+                  }} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-[10px] uppercase text-muted-foreground">Emergency phone</label>
+                <Input className="h-9" inputMode="tel" placeholder="(416) 555-0123"
+                  value={ecPhoneDraft ?? p.emergency_contact_phone ?? ""}
+                  onChange={(e) => setEcPhoneDraft(formatPhone(e.target.value))}
+                  onBlur={() => {
+                    if (ecPhoneDraft === null) return;
+                    const next = ecPhoneDraft.trim();
+                    if (next !== (p.emergency_contact_phone ?? "")) setEmp.mutate({ userId: p.id, patch: { emergency_contact_phone: next || null } });
+                    setEcPhoneDraft(null);
+                  }} />
+              </div>
+            </div>
+          </section>
+
+          <section className="border border-border rounded p-3 space-y-3">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Availability</div>
+            <div>
+              <div className="text-[10px] uppercase text-muted-foreground mb-1.5">Days</div>
+              <div className="flex flex-wrap gap-1.5">
+                {DAYS_OF_WEEK.map((d) => {
+                  const on = availDays.includes(d);
+                  return (
+                    <button key={d} type="button"
+                      onClick={() => toggleAvail("days", d)}
+                      className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                      {d.slice(0, 3)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="text-[10px] uppercase text-muted-foreground mb-1.5">Time of day</div>
+              <div className="flex flex-wrap gap-1.5">
+                {TIME_BLOCKS.map((b) => {
+                  const on = availBlocks.includes(b);
+                  return (
+                    <button key={b} type="button"
+                      onClick={() => toggleAvail("time_blocks", b)}
+                      className={`px-2 py-0.5 rounded text-[11px] border ${on ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}>
+                      {b}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <label className="text-[10px] uppercase text-muted-foreground">Notes</label>
+              <Textarea rows={2}
+                value={availNotes}
+                onChange={(e) => setAvailNotesDraft(e.target.value)}
+                onBlur={() => {
+                  if (availNotesDraft === null) return;
+                  const next = availNotesDraft.trim();
+                  if (next !== (av?.notes ?? "")) {
+                    saveAvail.mutate({ days: availDays, time_blocks: availBlocks, notes: next || null });
+                  }
+                  setAvailNotesDraft(null);
+                }} />
+            </div>
+          </section>
+        </>
+      )}
+
       {preview ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <section className="border border-border rounded p-3 bg-background">

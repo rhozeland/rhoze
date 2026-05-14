@@ -1188,7 +1188,7 @@ export default function Docs() {
                     <div
                       className={
                         "relative bg-muted/40 flex items-center justify-center overflow-hidden " +
-                        (embedUrl ? "h-64 " : "aspect-[16/9] ") +
+                        (embedUrl || (signed && !d.file_mime?.startsWith("image/") && !d.file_mime?.startsWith("video/")) ? "h-64 " : "aspect-[16/9] ") +
                         (previewable || (!embedUrl && d.file_url) ? "cursor-pointer" : "")
                       }
                       onClick={() => {
@@ -1210,6 +1210,10 @@ export default function Docs() {
                           sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
                           referrerPolicy="no-referrer-when-downgrade"
                         />
+                      ) : signed ? (
+                        <div className="w-full h-full overflow-auto bg-background">
+                          <DocPreview url={signed} mime={d.file_mime} fileName={d.file_name} />
+                        </div>
                       ) : (
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
                       )}

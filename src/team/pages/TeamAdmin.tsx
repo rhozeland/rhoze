@@ -9,7 +9,7 @@ export default function TeamAdmin() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-semibold">Team Members</h1>
-        <p className="text-sm text-muted-foreground">Manage roles, invitations, and referral codes.</p>
+        <p className="text-sm text-muted-foreground">Grant team access, assign department and title, and track employer's mastersheet. New users have no role until you assign one.</p>
       </div>
       <Tabs defaultValue="roles" className="space-y-4">
         <TabsList className="flex flex-wrap">

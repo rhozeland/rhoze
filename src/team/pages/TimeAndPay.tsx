@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil } from "lucide-react";
@@ -12,16 +13,14 @@ import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
 import PayrollRun from "../components/PayrollRun";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 type WorkType = "project" | "specialist" | "standard" | "reimbursement";
 
@@ -80,22 +79,41 @@ export default function TimeAndPay() {
   const today = new Date().toISOString().slice(0, 10);
   const pastPeriods = (periods ?? []).filter((p: any) => p.end_date < today);
 
-  const purgePastPeriods = async () => {
+  const [showPurgeDialog, setShowPurgeDialog] = useState(false);
+  const [selectedPeriodIds, setSelectedPeriodIds] = useState<Set<string>>(new Set());
+
+  const openPurgeDialog = () => {
+    const preselected = new Set(pastPeriods.map((p: any) => p.id));
+    setSelectedPeriodIds(preselected);
+    setShowPurgeDialog(true);
+  };
+
+  const togglePeriodSelection = (id: string) => {
+    setSelectedPeriodIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const purgeSelectedPeriods = async () => {
     setPurging(true);
     try {
-      const ids = pastPeriods.map((p: any) => p.id);
+      const ids = Array.from(selectedPeriodIds);
       if (ids.length === 0) {
-        toast({ title: "Nothing to purge", description: "No past periods found." });
+        toast({ title: "Nothing selected", description: "Select at least one period to delete." });
         return;
       }
       const { error } = await supabase.from("timesheet_periods").delete().in("id", ids);
       if (error) throw error;
-      toast({ title: `Deleted ${ids.length} past period${ids.length === 1 ? "" : "s"}` });
+      toast({ title: `Deleted ${ids.length} period${ids.length === 1 ? "" : "s"}` });
       if (activePeriodId && ids.includes(activePeriodId)) setActivePeriodId("");
+      setShowPurgeDialog(false);
       qc.invalidateQueries({ queryKey: ["timesheet_periods"] });
     } catch (e: any) {
       toast({
-        title: "Failed to purge periods",
+        title: "Failed to delete periods",
         description: e.message + " (Periods with timesheets or pay stubs cannot be deleted.)",
         variant: "destructive",
       });
@@ -134,33 +152,66 @@ export default function TimeAndPay() {
             <Plus size={14} /> Period
           </Button>
         )}
-        {isAdmin && pastPeriods.length > 0 && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button size="sm" variant="outline" className="text-destructive hover:text-destructive" disabled={purging}>
-                <Trash2 size={14} /> Purge past ({pastPeriods.length})
+        {isAdmin && (periods ?? []).length > 1 && (
+          <Dialog open={showPurgeDialog} onOpenChange={setShowPurgeDialog}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline" className="text-destructive hover:text-destructive">
+                <Trash2 size={14} /> Delete periods
               </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete {pastPeriods.length} past pay period{pastPeriods.length === 1 ? "" : "s"}?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This permanently removes every period whose end date is before today ({formatDate(today)}).
-                  Periods that still have timesheets or pay stubs attached will fail to delete and stay intact.
-                  This cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={purgePastPeriods}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Delete pay periods</DialogTitle>
+                <DialogDescription>
+                  Select the periods you want to remove. The currently active period is protected and cannot be deleted.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                {(periods ?? []).map((p: any) => {
+                  const isActive = p.id === periodId;
+                  const isPast = p.end_date < today;
+                  return (
+                    <label
+                      key={p.id}
+                      className={cn(
+                        "flex items-center gap-3 rounded-md border px-3 py-2 text-sm cursor-pointer transition",
+                        isActive
+                          ? "border-amber-500/30 bg-amber-500/10 cursor-not-allowed opacity-70"
+                          : "border-border hover:bg-accent/30",
+                        selectedPeriodIds.has(p.id) && !isActive && "bg-destructive/10 border-destructive/30"
+                      )}
+                    >
+                      <Checkbox
+                        checked={selectedPeriodIds.has(p.id)}
+                        disabled={isActive}
+                        onCheckedChange={() => togglePeriodSelection(p.id)}
+                      />
+                      <div className="flex-1">
+                        <div className="font-medium">{p.label}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {formatDate(p.start_date)} → {formatDate(p.end_date)} · pay {formatDate(p.pay_date)}
+                          {isActive && <span className="ml-1 text-amber-600 dark:text-amber-400 font-semibold">(active)</span>}
+                          {isPast && !isActive && <span className="ml-1 text-muted-foreground">(past)</span>}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                <Button variant="ghost" size="sm" onClick={() => setShowPurgeDialog(false)}>Cancel</Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={purging || selectedPeriodIds.size === 0}
+                  onClick={purgeSelectedPeriods}
                 >
-                  Delete past periods
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                  {purging ? <Clock size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                  Delete {selectedPeriodIds.size} selected
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
         {activePeriod && (
           <span className="text-xs text-muted-foreground ml-1">

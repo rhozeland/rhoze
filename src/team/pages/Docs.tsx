@@ -1148,19 +1148,7 @@ export default function Docs() {
                 const done = completions?.has(d.id) ?? false;
                 const Icon = fileIconFor(d.file_mime);
                 const signed = d.file_path ? signedUrls[d.file_path] : null;
-                const isImage = d.file_mime?.startsWith("image/");
-                const isVideo = d.file_mime?.startsWith("video/");
-                const fileNameLc = (d.file_name || "").toLowerCase();
-                const isPdf = d.file_mime === "application/pdf" || fileNameLc.endsWith(".pdf");
-                const isMd =
-                  d.file_mime === "text/markdown" ||
-                  fileNameLc.endsWith(".md") ||
-                  fileNameLc.endsWith(".markdown");
-                const isDocx =
-                  d.file_mime ===
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-                  fileNameLc.endsWith(".docx");
-                const isPreviewable = isImage || isVideo || isPdf || isMd || isDocx;
+                const previewable = isDocPreviewable(d) && !!signed;
                 const audienceLabel =
                   d.audience === "department"
                     ? `Department · ${d.department ?? "—"}`

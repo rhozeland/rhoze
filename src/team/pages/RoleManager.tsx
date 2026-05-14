@@ -1011,14 +1011,16 @@ function RolePresetsSection({ kind, title, description, placeholder, builtIns }:
 
       <div className="mt-3 flex flex-wrap gap-2">
         {builtIns?.map((label) => (
-          <span
-            key={`builtin-${label}`}
-            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded bg-muted/60 border border-border text-muted-foreground"
-            title="Built-in (read-only)"
-          >
-            {label}
-            <span className="text-[10px] uppercase tracking-wide opacity-70">built-in</span>
-          </span>
+          <div key={`builtin-${label}`} className="group relative inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded bg-muted">
+            <span>{label}</span>
+            <button
+              onClick={() => toast({ title: "Built-in departments can't be deleted." })}
+              className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+              aria-label={`Delete ${label}`}
+            >
+              <X size={10} strokeWidth={3} />
+            </button>
+          </div>
         ))}
         {filtered.length === 0 && <span className="text-xs text-muted-foreground">None yet.</span>}
         {filtered.map((p) => {

@@ -657,7 +657,7 @@ function EditMemberDialogBody({
   );
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-start">
         <Button
           type="button"
           size="sm"

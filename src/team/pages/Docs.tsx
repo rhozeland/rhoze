@@ -1367,18 +1367,18 @@ export default function Docs() {
                     <button
                       type="button"
                       onClick={goPrev}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur"
                       aria-label="Previous attachment"
                     >
-                      <ChevronLeft size={24} />
+                      <ChevronLeft size={20} /> <span className="text-sm hidden sm:inline">Previous</span>
                     </button>
                     <button
                       type="button"
                       onClick={goNext}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur"
                       aria-label="Next attachment"
                     >
-                      <ChevronRight size={24} />
+                      <span className="text-sm hidden sm:inline">Next</span> <ChevronRight size={20} />
                     </button>
                   </>
                 )}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { validateDocForm, type FieldErrors } from "../lib/validateDocForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,6 +90,9 @@ export default function Docs() {
   const [dragOver, setDragOver] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const clearError = (k: keyof FieldErrors) =>
+    setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
 
   const { data: docs } = useQuery({
     queryKey: ["docs"],
@@ -184,71 +187,42 @@ export default function Docs() {
 
   const create = useMutation({
     mutationFn: async () => {
-      // --- Authorization & input validation ---------------------------------
-      // Only admins are allowed to create docs (enforced again by RLS), and the
-      // selected audience/department/target must be a real, verifiable value
-      // before we upload the file or insert metadata.
-      if (!user?.id) throw new Error("You must be signed in");
-      if (!isAdmin) throw new Error("Only admins can publish docs");
-
-      const schema = z.object({
-        title: z.string().trim().min(1, "Title required").max(200),
-        audience: z.enum(["all", "department", "user"]),
-        department: z.enum(DEPARTMENTS).optional(),
-        target_user_id: z.string().uuid().optional(),
-        file_url: z
-          .string()
-          .trim()
-          .max(2048)
-          .url("File URL must be a valid URL")
-          .optional()
-          .or(z.literal("")),
-      }).superRefine((v, ctx) => {
-        if (v.audience === "department" && !v.department) {
-          ctx.addIssue({ code: "custom", path: ["department"], message: "Pick a department" });
-        }
-        if (v.audience === "user" && !v.target_user_id) {
-          ctx.addIssue({ code: "custom", path: ["target_user_id"], message: "Pick an employee" });
-        }
-      });
-
-      const parsed = schema.safeParse({
-        title: form.title,
-        audience: form.audience,
-        department: form.department || undefined,
-        target_user_id: form.target_user_id || undefined,
-        file_url: form.file_url,
-      });
-      if (!parsed.success) {
-        throw new Error(parsed.error.issues[0]?.message ?? "Invalid input");
+      // Run the shared validator. Any failures are surfaced as inline
+      // field-level errors instead of a generic toast.
+      const result = await validateDocForm(
+        {
+          title: form.title,
+          audience: form.audience,
+          department: form.department,
+          target_user_id: form.target_user_id,
+          file_url: form.file_url,
+          file: form.file
+            ? { name: form.file.name, type: form.file.type, size: form.file.size }
+            : null,
+        },
+        {
+          isAdmin,
+          userId: user?.id,
+          lookupProfile: async (id) => {
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("id, department")
+              .eq("id", id)
+              .maybeSingle();
+            if (error) throw error;
+            return data ?? null;
+          },
+        },
+      );
+      if (!result.ok) {
+        setFieldErrors(result.errors);
+        // Throw a sentinel so the mutation enters onError without showing a
+        // generic message — the inline errors carry the detail.
+        const e: any = new Error(result.errors._form ?? "Please fix the highlighted fields");
+        e.__validation = true;
+        throw e;
       }
-
-      // Verify the targeted employee actually exists (and matches the chosen
-      // department, if both were specified) before saving.
-      if (form.audience === "user") {
-        const { data: target, error: targetErr } = await supabase
-          .from("profiles")
-          .select("id, department")
-          .eq("id", form.target_user_id)
-          .maybeSingle();
-        if (targetErr) throw targetErr;
-        if (!target) throw new Error("Selected employee not found");
-      }
-
-      // File-type / size guard: matches the dialog's accepted types.
-      if (form.file) {
-        const okType =
-          form.file.type === "application/pdf" ||
-          form.file.type === "text/markdown" ||
-          /\.md$/i.test(form.file.name) ||
-          form.file.type.startsWith("image/") ||
-          form.file.type.startsWith("video/");
-        if (!okType) throw new Error("Unsupported file type");
-        if (form.file.size > 100 * 1024 * 1024) {
-          throw new Error("File must be under 100MB");
-        }
-      }
-      // ---------------------------------------------------------------------
+      setFieldErrors({});
 
       let file_path: string | null = null;
       let file_name: string | null = null;
@@ -301,9 +275,13 @@ export default function Docs() {
       toast({ title: "Doc added" });
       setOpen(false);
       setForm(EMPTY_FORM);
+      setFieldErrors({});
       qc.invalidateQueries({ queryKey: ["docs"] });
     },
-    onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
+    onError: (e: any) => {
+      if (e?.__validation) return; // inline errors already rendered
+      toast({ title: "Failed", description: e.message, variant: "destructive" });
+    },
   });
 
   const toggleComplete = useMutation({

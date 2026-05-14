@@ -13,7 +13,7 @@ export default function TeamAdmin() {
       </div>
       <Tabs defaultValue="roles" className="space-y-4">
         <TabsList className="flex flex-wrap">
-          <TabsTrigger value="roles">Roles</TabsTrigger>
+          <TabsTrigger value="roles">Roster</TabsTrigger>
           <TabsTrigger value="role-settings">Roles Settings</TabsTrigger>
           <TabsTrigger value="invites">Invites</TabsTrigger>
           <TabsTrigger value="referral-codes">Referral codes</TabsTrigger>

@@ -218,6 +218,10 @@ export default function RoleManager() {
       );
     }
 
+    if (deptChips.size > 0) {
+      list = list.filter((p: any) => p.department && deptChips.has(p.department as Dept));
+    }
+
     if (statusFilter !== "all") {
       list = list.filter((p: any) => (p.employment_status ?? "active") === statusFilter);
     }
@@ -235,7 +239,7 @@ export default function RoleManager() {
     }
 
     return list;
-  }, [profiles, view, search, deptFilter, statusFilter, tenureMin, tenureMax]);
+  }, [profiles, view, search, deptFilter, deptChips, statusFilter, tenureMin, tenureMax]);
 
   const activeFilterCount =
     (deptFilter !== "all" ? 1 : 0) +

@@ -455,6 +455,7 @@ export default function RoleManager() {
             <EditMemberDialogBody
               userId={editingUid}
               profile={(profiles ?? []).find((x: any) => x.id === editingUid)}
+              availability={availabilityMap?.[editingUid]}
               roles={rolesByUser?.[editingUid] ?? []}
               picks={picks}
               setPicks={setPicks}

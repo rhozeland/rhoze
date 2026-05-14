@@ -1263,27 +1263,32 @@ export default function Docs() {
                     <div className="p-3 flex-1 flex flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">
                         <div className="font-medium text-sm leading-tight">{d.title}</div>
-                        <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1 shrink-0">
                           {canManage && (
                             <>
-                              <VisibilityMenu doc={d} />
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+                              >
+                                <VisibilityMenu doc={d} />
+                              </button>
                               <button
                                 type="button"
                                 onClick={() => deleteDoc.mutate(d.id)}
-                                className="text-muted-foreground hover:text-destructive transition-colors"
+                                className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted hover:text-destructive transition-colors"
                                 title="Remove"
                                 disabled={deleteDoc.isPending}
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={12} />
                               </button>
                             </>
                           )}
                           <button
                             onClick={() => toggleComplete.mutate({ docId: d.id, done })}
-                            className="text-muted-foreground hover:text-foreground"
+                            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
                             title={done ? "Mark incomplete" : "Mark complete"}
                           >
-                            {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
+                            {done ? <CheckCircle2 size={12} className="text-green-500" /> : <Circle size={12} />}
                           </button>
                         </div>
                       </div>

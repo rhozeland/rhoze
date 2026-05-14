@@ -445,7 +445,7 @@ export default function RoleManager() {
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              Edit profile{editingUid && (() => {
+              Edit mastersheet{editingUid && (() => {
                 const p = (profiles ?? []).find((x: any) => x.id === editingUid);
                 return p ? ` — ${p.display_name ?? p.email ?? ""}` : "";
               })()}

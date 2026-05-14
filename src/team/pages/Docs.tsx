@@ -307,7 +307,37 @@ export default function Docs() {
       (d.category ?? "").toLowerCase().includes(q.toLowerCase()),
     );
 
-  const onPickFile = (f: File | null) => setForm((prev) => ({ ...prev, file: f }));
+  const MAX_FILE_BYTES = 500 * 1024 * 1024;
+
+  function isAcceptedFile(f: File) {
+    return (
+      f.type === "application/pdf" ||
+      f.type === "text/markdown" ||
+      /\.md$/i.test(f.name) ||
+      f.type.startsWith("image/") ||
+      f.type.startsWith("video/")
+    );
+  }
+
+  const onPickFile = (f: File | null) => {
+    if (!f) {
+      setForm((prev) => ({ ...prev, file: null }));
+      clearError("file");
+      return;
+    }
+    if (!isAcceptedFile(f)) {
+      setFieldErrors((prev) => ({ ...prev, file: "Unsupported file type — use PDF, Markdown, image, or video" }));
+      setForm((prev) => ({ ...prev, file: null }));
+      return;
+    }
+    if (f.size > MAX_FILE_BYTES) {
+      setFieldErrors((prev) => ({ ...prev, file: "File must be under 500 MB" }));
+      setForm((prev) => ({ ...prev, file: null }));
+      return;
+    }
+    clearError("file");
+    setForm((prev) => ({ ...prev, file: f }));
+  };
 
   const ACCEPT = "application/pdf,.md,text/markdown,image/*,video/*";
 

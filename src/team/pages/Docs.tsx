@@ -46,6 +46,7 @@ import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress"
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user" | "admin";
 type DocScope = "mine" | "department" | "team" | "admin";
+type TagFilter = "all" | (typeof DEPARTMENTS)[number];
 
 type DocForm = {
   title: string;
@@ -55,6 +56,7 @@ type DocForm = {
   file_url: string;
   is_required: boolean;
   file: File | null;
+  tag_department: string;
 };
 
 const EMPTY_FORM: DocForm = {
@@ -65,6 +67,7 @@ const EMPTY_FORM: DocForm = {
   file_url: "",
   is_required: false,
   file: null,
+  tag_department: "",
 };
 
 function fileIconFor(mime: string | null | undefined) {
@@ -88,6 +91,7 @@ export default function Docs() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [scope, setScope] = useState<DocScope>("team");
+  const [tagFilter, setTagFilter] = useState<TagFilter>("all");
   const [form, setForm] = useState<DocForm>(EMPTY_FORM);
   const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -99,21 +103,8 @@ export default function Docs() {
   const clearError = (k: keyof FieldErrors) =>
     setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
 
-  const { data: docs } = useQuery({
-    queryKey: ["docs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("docs")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Client-side audience guard: even though RLS already filters server-side,
-  // we re-check on the client so we never render thumbnails or request signed
-  // URLs for files the current user isn't authorized to see.
+  // Resolve the caller's department first — the docs query relies on it to
+  // mirror the server-side RLS rules at the fetch layer.
   const { data: myProfile } = useQuery({
     queryKey: ["docs_my_profile", user?.id],
     enabled: !!user?.id,
@@ -123,6 +114,45 @@ export default function Docs() {
         .select("id, department")
         .eq("id", user!.id)
         .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const isHr = myProfile?.department === "hr";
+  const canSeeAdmin = isAdmin || isHr;
+
+  // Docs query enforces the active scope at the fetch layer so the request
+  // mirrors what the RLS policy will return — never just a UI filter on top
+  // of `select *`.
+  const { data: docs } = useQuery({
+    queryKey: [
+      "docs",
+      scope,
+      tagFilter,
+      user?.id,
+      myProfile?.department ?? null,
+      isAdmin,
+    ],
+    enabled: !!user?.id && (scope !== "department" || !!myProfile?.department),
+    queryFn: async () => {
+      let query = supabase.from("docs").select("*");
+      if (scope === "mine") {
+        query = query.eq("audience", "user").eq("target_user_id", user!.id);
+      } else if (scope === "department") {
+        query = query
+          .eq("audience", "department")
+          .eq("department", myProfile!.department as any);
+      } else if (scope === "team") {
+        query = query.eq("audience", "all");
+      } else if (scope === "admin") {
+        if (!canSeeAdmin) return [];
+        query = query.eq("audience", "admin");
+      }
+      if (tagFilter !== "all") {
+        query = query.eq("tag_department", tagFilter as any);
+      }
+      const { data, error } = await query.order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -281,6 +311,7 @@ export default function Docs() {
         audience: form.audience,
         department: form.audience === "department" ? (form.department as any) : null,
         target_user_id: form.audience === "user" ? form.target_user_id : null,
+        tag_department: (form.tag_department || null) as any,
         file_url: form.file_url.trim() || null,
         file_path,
         file_name,
@@ -318,18 +349,10 @@ export default function Docs() {
   });
 
   const filtered = (docs ?? [])
-    // Belt-and-suspenders: hide anything the audience guard rejects so
-    // thumbnails/derived URLs respect the same dept/user rules as the file.
+    // Defense in depth — the docs query already filters by scope/tag at the
+    // fetch layer to mirror RLS, but we re-check the audience guard here so
+    // unauthorized rows can never leak into thumbnails or signed URLs.
     .filter((d: any) => canView(d))
-    .filter((d: any) => {
-      const aud = (d.audience ?? "all") as Audience;
-      if (scope === "mine") return aud === "user" && d.target_user_id === user?.id;
-      if (scope === "department")
-        return aud === "department" && !!myProfile?.department && d.department === myProfile.department;
-      if (scope === "admin") return aud === "admin";
-      // "team" — docs visible to everyone
-      return aud === "all";
-    })
     .filter((d: any) =>
       !q ||
       d.title.toLowerCase().includes(q.toLowerCase()) ||
@@ -478,6 +501,33 @@ export default function Docs() {
                 <p className="text-[11px] text-muted-foreground -mt-2">
                   Department and employee selectors are interchangeable — picking one clears the other.
                 </p>
+
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <Users size={12} /> Category (department tag)
+                  </Label>
+                  <Select
+                    value={form.tag_department || "__none"}
+                    onValueChange={(v) =>
+                      setForm({ ...form, tag_department: v === "__none" ? "" : v })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="No category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none">No category</SelectItem>
+                      {DEPARTMENTS.map((d) => (
+                        <SelectItem key={d} value={d} className="capitalize">
+                          {d}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[11px] text-muted-foreground">
+                    Admin-only label used for filtering. Independent of who can view the doc.
+                  </p>
+                </div>
 
                 <div className="space-y-1.5">
                   <Label>Attachment (PDF, Markdown, image, or video)</Label>
@@ -700,6 +750,34 @@ export default function Docs() {
                 );
               })}
             </div>
+          </div>
+
+          {/* Department category filter — mirrors the FILTER | MARKETING | HR …
+              row. Admins assign the tag in the New doc dialog; everyone can
+              filter by it. */}
+          <div className="flex items-center gap-2 flex-wrap text-xs">
+            <span className="uppercase tracking-wider text-muted-foreground font-medium">
+              Filter
+            </span>
+            {(["all", ...DEPARTMENTS] as const).map((t) => {
+              const active = tagFilter === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTagFilter(t)}
+                  className={
+                    "uppercase tracking-wider px-2.5 py-1 rounded border transition-colors " +
+                    (active
+                      ? "border-primary text-foreground bg-primary/10"
+                      : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40")
+                  }
+                  aria-pressed={active}
+                >
+                  {t === "all" ? "All" : t}
+                </button>
+              );
+            })}
           </div>
 
           {filtered.length === 0 ? (

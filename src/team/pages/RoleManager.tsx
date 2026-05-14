@@ -607,6 +607,10 @@ function EditMemberDialogBody({
   const [ecRelDraft, setEcRelDraft] = useState<string | null>(null);
   const [ecPhoneDraft, setEcPhoneDraft] = useState<string | null>(null);
   const [availNotesDraft, setAvailNotesDraft] = useState<string | null>(null);
+  const [displayNameDraft, setDisplayNameDraft] = useState<string | null>(null);
+  const [aliasDraft, setAliasDraft] = useState<string | null>(null);
+  const [pronounsDraft, setPronounsDraft] = useState<string | null>(null);
+  const [bioDraft, setBioDraft] = useState<string | null>(null);
   const wageVal = wageDraft ?? p.wage ?? "";
   const rateVal = rateDraft ?? (p.hourly_rate_cents != null ? (p.hourly_rate_cents / 100).toString() : "");
   const fmtRate = p.hourly_rate_cents ? `$${(p.hourly_rate_cents / 100).toFixed(2)}/hr` : "—";
@@ -709,6 +713,69 @@ function EditMemberDialogBody({
         </>
       ) : (
         <>
+          <section className="border border-border rounded p-3 space-y-3">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Profile</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Display name</label>
+                <Input className="h-9"
+                  value={displayNameDraft ?? p.display_name ?? ""}
+                  onChange={(e) => setDisplayNameDraft(e.target.value)}
+                  onBlur={() => {
+                    if (displayNameDraft === null) return;
+                    const next = displayNameDraft.trim();
+                    if (next !== (p.display_name ?? "")) setEmp.mutate({ userId: p.id, patch: { display_name: next || null } });
+                    setDisplayNameDraft(null);
+                  }} />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Alias</label>
+                <Input className="h-9" placeholder="Short handle"
+                  value={aliasDraft ?? p.alias ?? ""}
+                  onChange={(e) => setAliasDraft(e.target.value)}
+                  onBlur={() => {
+                    if (aliasDraft === null) return;
+                    const next = aliasDraft.trim();
+                    if (next !== (p.alias ?? "")) setEmp.mutate({ userId: p.id, patch: { alias: next || null } });
+                    setAliasDraft(null);
+                  }} />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Pronouns</label>
+                <Input className="h-9" placeholder="they/them"
+                  value={pronounsDraft ?? p.pronouns ?? ""}
+                  onChange={(e) => setPronounsDraft(e.target.value)}
+                  onBlur={() => {
+                    if (pronounsDraft === null) return;
+                    const next = pronounsDraft.trim();
+                    if (next !== (p.pronouns ?? "")) setEmp.mutate({ userId: p.id, patch: { pronouns: next || null } });
+                    setPronounsDraft(null);
+                  }} />
+              </div>
+              <div>
+                <label className="text-[10px] uppercase text-muted-foreground">Avatar URL</label>
+                <Input className="h-9" placeholder="https://…"
+                  defaultValue={p.avatar_url ?? ""}
+                  onBlur={(e) => {
+                    const next = e.target.value.trim();
+                    if (next !== (p.avatar_url ?? "")) setEmp.mutate({ userId: p.id, patch: { avatar_url: next || null } });
+                  }} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-[10px] uppercase text-muted-foreground">Bio</label>
+                <Textarea rows={3}
+                  value={bioDraft ?? (p as any).bio ?? ""}
+                  onChange={(e) => setBioDraft(e.target.value)}
+                  onBlur={() => {
+                    if (bioDraft === null) return;
+                    const next = bioDraft.trim();
+                    if (next !== ((p as any).bio ?? "")) setEmp.mutate({ userId: p.id, patch: { bio: next || null } });
+                    setBioDraft(null);
+                  }} />
+              </div>
+            </div>
+          </section>
+
           <section className="border border-border rounded p-3 space-y-3">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Personal & emergency</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">

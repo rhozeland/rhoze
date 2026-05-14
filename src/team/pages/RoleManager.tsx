@@ -327,8 +327,7 @@ export default function RoleManager() {
         </div>
       </div>
 
-      <RolePresetsBox kind="position" title="Position" description="Manage the positions that can be assigned to team members." placeholder="e.g. moderator" />
-      <RolePresetsBox kind="department" title="Departments" description="Manage the departments available for team members." placeholder="e.g. Production" />
+      <RolePresetsCombined />
 
       <CoveragePanel profiles={profiles ?? []} />
 
@@ -902,7 +901,31 @@ function EditMemberDialogBody({
 
 type Preset = { id: string; kind: "department" | "job_title" | "position"; label: string; sort_order: number };
 
-function RolePresetsBox({ kind, title, description, placeholder }: { kind: "position" | "department"; title: string; description: string; placeholder: string }) {
+function RolePresetsCombined() {
+  return (
+    <div className="border border-border rounded-lg p-4 bg-card space-y-5">
+      <div>
+        <div className="text-sm font-semibold">Roles</div>
+        <p className="text-xs text-muted-foreground">Manage positions and departments. Built-in departments control what employees can view.</p>
+      </div>
+      <RolePresetsSection
+        kind="position"
+        title="Position"
+        description="Positions assignable to team members."
+        placeholder="e.g. moderator"
+      />
+      <RolePresetsSection
+        kind="department"
+        title="Departments"
+        description="Custom departments. Built-ins below are read-only and gate employee visibility."
+        placeholder="e.g. Production"
+        builtIns={DEPTS.map((d) => d.label)}
+      />
+    </div>
+  );
+}
+
+function RolePresetsSection({ kind, title, description, placeholder, builtIns }: { kind: "position" | "department"; title: string; description: string; placeholder: string; builtIns?: string[] }) {
   const qc = useQueryClient();
   const [newLabel, setNewLabel] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -963,13 +986,9 @@ function RolePresetsBox({ kind, title, description, placeholder }: { kind: "posi
   const filtered = presets ?? [];
 
   return (
-    <div className="border border-border rounded-lg p-4 bg-card mb-3">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <div className="text-sm font-semibold">{title}</div>
-          <p className="text-xs text-muted-foreground">{description}</p>
-        </div>
-      </div>
+    <div>
+      <div className="text-sm font-semibold">{title}</div>
+      <p className="text-xs text-muted-foreground">{description}</p>
 
       <div className="mt-3 flex gap-2">
         <Input
@@ -991,6 +1010,16 @@ function RolePresetsBox({ kind, title, description, placeholder }: { kind: "posi
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
+        {builtIns?.map((label) => (
+          <span
+            key={`builtin-${label}`}
+            className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded bg-muted/60 border border-border text-muted-foreground"
+            title="Built-in (read-only)"
+          >
+            {label}
+            <span className="text-[10px] uppercase tracking-wide opacity-70">built-in</span>
+          </span>
+        ))}
         {filtered.length === 0 && <span className="text-xs text-muted-foreground">None yet.</span>}
         {filtered.map((p) => {
           const editing = editingId === p.id;

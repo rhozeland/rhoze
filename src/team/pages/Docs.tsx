@@ -86,6 +86,7 @@ export default function Docs() {
   const [q, setQ] = useState("");
   const [form, setForm] = useState<DocForm>(EMPTY_FORM);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);

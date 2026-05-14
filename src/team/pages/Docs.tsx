@@ -1187,12 +1187,13 @@ export default function Docs() {
                     {/* Thumbnail */}
                     <div
                       className={
-                        "relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden " +
-                        (previewable || embedUrl || d.file_url ? "cursor-pointer" : "")
+                        "relative bg-muted/40 flex items-center justify-center overflow-hidden " +
+                        (embedUrl ? "h-64 " : "aspect-[16/9] ") +
+                        (previewable || (!embedUrl && d.file_url) ? "cursor-pointer" : "")
                       }
                       onClick={() => {
                         if (previewable) setPreviewDoc(d);
-                        else if (d.file_url) window.open(d.file_url, "_blank", "noopener,noreferrer");
+                        else if (!embedUrl && d.file_url) window.open(d.file_url, "_blank", "noopener,noreferrer");
                       }}
                     >
                       {d.file_mime?.startsWith("image/") && signed ? (
@@ -1203,9 +1204,11 @@ export default function Docs() {
                         <iframe
                           src={embedUrl}
                           title={d.title}
-                          className="w-full h-full bg-background pointer-events-none"
+                          className="w-full h-full bg-background"
                           loading="lazy"
                           allow="autoplay; encrypted-media; fullscreen"
+                          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
+                          referrerPolicy="no-referrer-when-downgrade"
                         />
                       ) : (
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
@@ -1236,8 +1239,8 @@ export default function Docs() {
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
                       </span>
-                      {previewable && (
-                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors" />
+                      {previewable && !embedUrl && (
+                        <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors pointer-events-none" />
                       )}
                     </div>
 

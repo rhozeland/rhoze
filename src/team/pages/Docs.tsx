@@ -93,6 +93,22 @@ function fileIconFor(mime: string | null | undefined) {
   return FileIcon;
 }
 
+function isDocPreviewable(d: any): boolean {
+  if (!d.file_path || !d.file_mime) return false;
+  const mime = d.file_mime as string;
+  const name = (d.file_name || "").toLowerCase();
+  if (mime.startsWith("image/")) return true;
+  if (mime.startsWith("video/")) return true;
+  if (mime === "application/pdf" || name.endsWith(".pdf")) return true;
+  if (mime === "text/markdown" || name.endsWith(".md") || name.endsWith(".markdown")) return true;
+  if (
+    mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    name.endsWith(".docx")
+  ) return true;
+  if (mime.startsWith("text/")) return true;
+  return false;
+}
+
 function formatBytes(b: number | null | undefined) {
   if (!b) return "";
   if (b < 1024) return `${b} B`;

@@ -326,7 +326,14 @@ export default function Docs() {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <Label>Title *</Label>
-                  <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                  <Input
+                    value={form.title}
+                    aria-invalid={!!fieldErrors.title}
+                    onChange={(e) => { clearError("title"); setForm({ ...form, title: e.target.value }); }}
+                  />
+                  {fieldErrors.title && (
+                    <p role="alert" className="text-xs text-destructive">{fieldErrors.title}</p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
@@ -334,7 +341,12 @@ export default function Docs() {
                   <Select
                     value={form.audience}
                     onValueChange={(v: Audience) =>
-                      setForm({ ...form, audience: v, department: "", target_user_id: "" })
+                      {
+                        clearError("audience");
+                        clearError("department");
+                        clearError("target_user_id");
+                        setForm({ ...form, audience: v, department: "", target_user_id: "" });
+                      }
                     }
                   >
                     <SelectTrigger><SelectValue /></SelectTrigger>
@@ -344,6 +356,9 @@ export default function Docs() {
                       <SelectItem value="user">Specific employee</SelectItem>
                     </SelectContent>
                   </Select>
+                  {fieldErrors.audience && (
+                    <p role="alert" className="text-xs text-destructive">{fieldErrors.audience}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -352,7 +367,11 @@ export default function Docs() {
                     <Select
                       value={form.department || undefined}
                       onValueChange={(v) =>
-                        setForm({ ...form, audience: "department", department: v, target_user_id: "" })
+                        {
+                          clearError("department");
+                          clearError("target_user_id");
+                          setForm({ ...form, audience: "department", department: v, target_user_id: "" });
+                        }
                       }
                     >
                       <SelectTrigger disabled={form.audience === "user"}>
@@ -364,13 +383,20 @@ export default function Docs() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {fieldErrors.department && (
+                      <p role="alert" className="text-xs text-destructive">{fieldErrors.department}</p>
+                    )}
                   </div>
                   <div className="space-y-1.5">
                     <Label className="flex items-center gap-1.5"><UserIcon size={12} /> Employee</Label>
                     <Select
                       value={form.target_user_id || undefined}
                       onValueChange={(v) =>
-                        setForm({ ...form, audience: "user", target_user_id: v, department: "" })
+                        {
+                          clearError("target_user_id");
+                          clearError("department");
+                          setForm({ ...form, audience: "user", target_user_id: v, department: "" });
+                        }
                       }
                     >
                       <SelectTrigger disabled={form.audience === "department"}>
@@ -384,6 +410,9 @@ export default function Docs() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {fieldErrors.target_user_id && (
+                      <p role="alert" className="text-xs text-destructive">{fieldErrors.target_user_id}</p>
+                    )}
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground -mt-2">
@@ -399,13 +428,17 @@ export default function Docs() {
                       e.preventDefault();
                       setDragOver(false);
                       const f = e.dataTransfer.files?.[0];
-                      if (f) onPickFile(f);
+                      if (f) { clearError("file"); onPickFile(f); }
                     }}
                     onClick={() => fileInputRef.current?.click()}
                     role="button"
                     tabIndex={0}
                     className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                      dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                      fieldErrors.file
+                        ? "border-destructive bg-destructive/5"
+                        : dragOver
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50"
                     }`}
                   >
                     {form.file ? (
@@ -436,22 +469,33 @@ export default function Docs() {
                       type="file"
                       className="hidden"
                       accept={ACCEPT}
-                      onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+                      onChange={(e) => { clearError("file"); onPickFile(e.target.files?.[0] ?? null); }}
                     />
                   </div>
+                  {fieldErrors.file && (
+                    <p role="alert" className="text-xs text-destructive">{fieldErrors.file}</p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">
                   <Label>File URL (optional)</Label>
                   <Input
                     value={form.file_url}
-                    onChange={(e) => setForm({ ...form, file_url: e.target.value })}
+                    aria-invalid={!!fieldErrors.file_url}
+                    onChange={(e) => { clearError("file_url"); setForm({ ...form, file_url: e.target.value }); }}
                     placeholder="Paste a Google Doc / Sheet / Slides / Drive link"
                   />
+                  {fieldErrors.file_url && (
+                    <p role="alert" className="text-xs text-destructive">{fieldErrors.file_url}</p>
+                  )}
                   <p className="text-[11px] text-muted-foreground">
                     Google Docs, Sheets, Slides, Drive files & folders, YouTube and Loom links auto-embed.
                   </p>
                 </div>
+
+                {fieldErrors._form && (
+                  <p role="alert" className="text-xs text-destructive">{fieldErrors._form}</p>
+                )}
 
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: !!v })} />

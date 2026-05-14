@@ -523,6 +523,9 @@ export default function Docs() {
         const idx = list.findIndex((d: any) => d.id === previewDoc.id);
         if (idx >= 0 && idx < list.length - 1) setPreviewDoc(list[idx + 1]);
         else if (list.length > 1) setPreviewDoc(list[0]);
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        setPreviewDoc(null);
       }
     };
     window.addEventListener("keydown", onKey);

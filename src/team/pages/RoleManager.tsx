@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Download, Eye, FileText, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -308,6 +308,8 @@ export default function RoleManager() {
       </header>
 
       <RolePresetsCombined />
+
+      <MastersheetTracker profiles={profiles ?? []} />
 
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Filter</span>
@@ -1902,5 +1904,146 @@ function AvatarUploader({
         </Button>
       )}
     </div>
+  );
+}
+
+function MastersheetTracker({ profiles }: { profiles: any[] }) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const rows = useMemo(
+    () =>
+      (profiles ?? [])
+        .map((p) => ({
+          name: p.display_name ?? p.email ?? "Unnamed",
+          email: p.email ?? "",
+          department:
+            DEPTS.find((d) => d.value === p.department)?.label ?? "Unassigned",
+          title: p.job_title ?? "—",
+          status:
+            EMP_STATUSES.find((s) => s.value === (p.employment_status ?? "active"))
+              ?.label ?? "Active",
+          started: p.started_at ?? "",
+          tenure: tenure(p.started_at, p.ended_at),
+        }))
+        .sort((a, b) => a.department.localeCompare(b.department) || a.name.localeCompare(b.name)),
+    [profiles],
+  );
+
+  const totals = useMemo(() => {
+    const byDept: Record<string, number> = {};
+    rows.forEach((r) => {
+      byDept[r.department] = (byDept[r.department] ?? 0) + 1;
+    });
+    return { total: rows.length, byDept };
+  }, [rows]);
+
+  const exportCSV = () => {
+    const header = ["Name", "Email", "Department", "Title", "Status", "Started", "Tenure"];
+    const csv = [
+      header.join(","),
+      ...rows.map((r) =>
+        [r.name, r.email, r.department, r.title, r.status, r.started, r.tenure]
+          .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
+          .join(","),
+      ),
+    ].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `mastersheet-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "CSV exported" });
+  };
+
+  const exportPDF = async () => {
+    try {
+      const [{ default: jsPDF }, autoTableMod] = await Promise.all([
+        import("jspdf"),
+        import("jspdf-autotable"),
+      ]);
+      const autoTable = (autoTableMod as any).default ?? (autoTableMod as any);
+      const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "letter" });
+      const today = new Date().toLocaleDateString();
+      doc.setFontSize(16);
+      doc.text("Roster Mastersheet", 40, 40);
+      doc.setFontSize(10);
+      doc.text(`Generated ${today}  ·  ${rows.length} member${rows.length === 1 ? "" : "s"}`, 40, 58);
+      autoTable(doc, {
+        startY: 75,
+        head: [["Name", "Department", "Title", "Status", "Started", "Tenure"]],
+        body: rows.map((r) => [r.name, r.department, r.title, r.status, r.started, r.tenure]),
+        styles: { fontSize: 9, cellPadding: 4 },
+        headStyles: { fillColor: [30, 30, 30] },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+      });
+      doc.save(`mastersheet-${new Date().toISOString().slice(0, 10)}.pdf`);
+      toast({ title: "PDF exported" });
+    } catch (e: any) {
+      toast({ title: "Export failed", description: e?.message, variant: "destructive" });
+    }
+  };
+
+  return (
+    <section className="border border-border rounded-lg bg-card">
+      <div className="flex items-center justify-between gap-3 p-4 border-b border-border">
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          className="flex items-center gap-2 text-left"
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+          <div>
+            <div className="text-sm font-medium">Mastersheet tracker</div>
+            <div className="text-xs text-muted-foreground">
+              {totals.total} {totals.total === 1 ? "member" : "members"} ·{" "}
+              {Object.entries(totals.byDept)
+                .map(([d, n]) => `${d} ${n}`)
+                .join(" · ")}
+            </div>
+          </div>
+        </button>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={exportCSV}>
+            <Download size={12} className="mr-1.5" /> CSV
+          </Button>
+          <Button size="sm" variant="outline" onClick={exportPDF}>
+            <FileText size={12} className="mr-1.5" /> PDF
+          </Button>
+        </div>
+      </div>
+      {!collapsed && (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead className="bg-muted/40 text-muted-foreground">
+              <tr>
+                <th className="text-left font-medium px-3 py-2">Name</th>
+                <th className="text-left font-medium px-3 py-2">Department</th>
+                <th className="text-left font-medium px-3 py-2">Title</th>
+                <th className="text-left font-medium px-3 py-2">Status</th>
+                <th className="text-left font-medium px-3 py-2">Started</th>
+                <th className="text-left font-medium px-3 py-2">Tenure</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={i} className="border-t border-border/60">
+                  <td className="px-3 py-2 font-medium">{r.name}</td>
+                  <td className="px-3 py-2">{r.department}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{r.title}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{r.status}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{r.started || "—"}</td>
+                  <td className="px-3 py-2 text-muted-foreground">{r.tenure}</td>
+                </tr>
+              ))}
+              {rows.length === 0 && (
+                <tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground italic">No members yet.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }

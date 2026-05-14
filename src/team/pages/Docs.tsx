@@ -1212,7 +1212,7 @@ export default function Docs() {
                         />
                       ) : signed ? (
                         <div className="w-full h-full overflow-auto bg-background">
-                          <DocPreview url={signed} mime={d.file_mime} fileName={d.file_name} />
+                          <DocPreview url={signed} mime={d.file_mime} fileName={d.file_name} compact />
                         </div>
                       ) : (
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />

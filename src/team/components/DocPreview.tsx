@@ -7,6 +7,8 @@ type Props = {
   url: string;
   mime?: string | null;
   fileName?: string | null;
+  /** When true, render in a compact form suited for thumbnail tiles. */
+  compact?: boolean;
 };
 
 // Module-level cache keyed by URL so reopening the same attachment never re-fetches.
@@ -36,8 +38,11 @@ function inferKind(mime: string | null | undefined, fileName: string | null | un
   return "unknown";
 }
 
-export default function DocPreview({ url, mime, fileName }: Props) {
+export default function DocPreview({ url, mime, fileName, compact = false }: Props) {
   const kind = inferKind(mime, fileName);
+  const sizeBox = compact ? "w-full h-full" : "w-full max-h-[75vh]";
+  const mediaSize = compact ? "w-full h-full object-contain" : "max-w-full max-h-[75vh] object-contain rounded";
+  const padding = compact ? "p-3" : "p-6";
   const cachedText = kind === "md" || kind === "text" || kind === "code" ? textCache.get(url) : null;
   const cachedHtml = kind === "docx" ? htmlCache.get(url) : null;
   const [text, setText] = useState<string | null>(cachedText ?? null);
@@ -94,20 +99,20 @@ export default function DocPreview({ url, mime, fileName }: Props) {
       <img
         src={url}
         alt={fileName || "Image preview"}
-        className="max-w-full max-h-[75vh] object-contain rounded"
+        className={mediaSize}
       />
     );
   }
 
   if (kind === "video") {
     return (
-      <video src={url} controls className="max-w-full max-h-[75vh] rounded" />
+      <video src={url} controls className={compact ? "w-full h-full" : "max-w-full max-h-[75vh] rounded"} />
     );
   }
 
   if (kind === "audio") {
     return (
-      <div className="w-full max-w-xl bg-background text-foreground rounded p-6 flex flex-col items-center gap-4">
+      <div className={`w-full ${compact ? "h-full justify-center" : "max-w-xl"} bg-background text-foreground rounded ${padding} flex flex-col items-center gap-4`}>
         <div className="text-sm font-medium truncate w-full text-center">{fileName || "Audio"}</div>
         <audio src={url} controls className="w-full" />
       </div>
@@ -119,14 +124,14 @@ export default function DocPreview({ url, mime, fileName }: Props) {
       <iframe
         src={url}
         title={fileName || "PDF preview"}
-        className="w-full h-[75vh] rounded bg-white"
+        className={compact ? "w-full h-full bg-white" : "w-full h-[75vh] rounded bg-white"}
       />
     );
   }
 
   if (kind === "md" || kind === "text" || kind === "code") {
     return (
-      <div className="w-full max-h-[75vh] overflow-auto bg-background text-foreground rounded p-6">
+      <div className={`${sizeBox} overflow-auto bg-background text-foreground rounded ${padding}`}>
         {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
         {error && <div className="text-sm text-destructive">Failed to load: {error}</div>}
         {text != null && (
@@ -144,7 +149,7 @@ export default function DocPreview({ url, mime, fileName }: Props) {
 
   if (kind === "docx") {
     return (
-      <div className="w-full max-h-[75vh] overflow-auto bg-background text-foreground rounded p-6">
+      <div className={`${sizeBox} overflow-auto bg-background text-foreground rounded ${padding}`}>
         {loading && <div className="text-sm text-muted-foreground">Loading…</div>}
         {error && <div className="text-sm text-destructive">Failed to load: {error}</div>}
         {html != null && (

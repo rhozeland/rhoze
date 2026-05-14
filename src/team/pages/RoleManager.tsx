@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "../lib/auth";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
@@ -95,6 +95,31 @@ export default function RoleManager() {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState<Dept | "all" | "unassigned">("all");
   const [deptChips, setDeptChips] = useState<Set<Dept>>(new Set());
+  const [deptOrder, setDeptOrder] = useState<Dept[]>(() => {
+    try {
+      const raw = localStorage.getItem("rolemanager.deptOrder");
+      if (raw) {
+        const parsed = JSON.parse(raw) as Dept[];
+        const valid = parsed.filter((d) => DEPTS.some((x) => x.value === d));
+        const missing = DEPTS.map((x) => x.value).filter((d) => !valid.includes(d));
+        return [...valid, ...missing];
+      }
+    } catch {}
+    return DEPTS.map((x) => x.value);
+  });
+  useEffect(() => {
+    try { localStorage.setItem("rolemanager.deptOrder", JSON.stringify(deptOrder)); } catch {}
+  }, [deptOrder]);
+  const moveDept = (d: Dept, dir: -1 | 1) => {
+    setDeptOrder((prev) => {
+      const i = prev.indexOf(d);
+      const j = i + dir;
+      if (i < 0 || j < 0 || j >= prev.length) return prev;
+      const next = prev.slice();
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  };
   const [statusFilter, setStatusFilter] = useState<EmpStatus | "all">("all");
   const [tenureMin, setTenureMin] = useState<string>("");
   const [tenureMax, setTenureMax] = useState<string>("");
@@ -294,10 +319,15 @@ export default function RoleManager() {
       </div>
 
       {(() => {
-        const visibleDepts = DEPTS.filter(({ value }) => deptChips.size === 0 || deptChips.has(value));
-        const groups: { dept: Dept | null; label: string; people: any[] }[] = visibleDepts.map(({ value, label }) => ({
+        const orderedDepts: Dept[] = [
+          ...deptOrder,
+          ...DEPTS.map((x) => x.value).filter((d) => !deptOrder.includes(d)),
+        ];
+        const visibleDepts = orderedDepts.filter((value) => deptChips.size === 0 || deptChips.has(value));
+        const labelOf = (d: Dept) => DEPTS.find((x) => x.value === d)?.label ?? d;
+        const groups: { dept: Dept | null; label: string; people: any[] }[] = visibleDepts.map((value) => ({
           dept: value,
-          label,
+          label: labelOf(value),
           people: filtered.filter((p: any) => p.department === value),
         }));
         if (deptChips.size === 0) {
@@ -310,11 +340,33 @@ export default function RoleManager() {
         }
         return (
           <div className="space-y-6">
-            {groups.map((g) => g.people.length === 0 ? null : (
+            {groups.map((g, gi) => g.people.length === 0 ? null : (
               <section key={g.label}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-medium uppercase tracking-wide ${g.dept ? DEPT_STYLES[g.dept] : "bg-muted text-muted-foreground border-border"}`}>{g.label}</span>
                   <span className="text-xs text-muted-foreground">{g.people.length} {g.people.length === 1 ? "person" : "people"}</span>
+                  {g.dept && (
+                    <div className="flex items-center gap-0.5 ml-1">
+                      <button
+                        type="button"
+                        onClick={() => moveDept(g.dept as Dept, -1)}
+                        disabled={deptOrder.indexOf(g.dept as Dept) <= 0}
+                        className="p-1 rounded border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Move up"
+                      >
+                        <ArrowUp size={11} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveDept(g.dept as Dept, 1)}
+                        disabled={deptOrder.indexOf(g.dept as Dept) >= deptOrder.length - 1}
+                        className="p-1 rounded border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Move down"
+                      >
+                        <ArrowDown size={11} />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {g.people.map((p: any) => {

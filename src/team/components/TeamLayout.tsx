@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AccentPicker } from "@/components/AccentPicker";
 
 const nav = [
   { to: "/directory", label: "Directory", icon: Calendar },
@@ -160,6 +161,7 @@ export default function TeamLayout() {
             </>
           )}
           <ThemeToggle collapsed={collapsed} />
+          <AccentPicker collapsed={collapsed} />
           <Button
             onClick={handleSignOut}
             variant="outline"

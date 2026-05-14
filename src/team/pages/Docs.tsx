@@ -54,6 +54,8 @@ import {
   ChevronRight,
   Eye,
   ExternalLink,
+  ArrowLeft,
+  UserCircle2,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
@@ -64,8 +66,25 @@ import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
 type Audience = "all" | "department" | "user" | "admin";
-type DocScope = "mine" | "department" | "team" | "admin";
+type DocScope = "mine" | "department" | "team" | "admin" | "manage";
 type TagFilter = "all" | string;
+
+const DEPARTMENT_STYLES: Record<string, string> = {
+  marketing: "bg-pink-500/15 text-pink-600 dark:text-pink-300 border-pink-500/30",
+  hr: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
+  development: "bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30",
+  sales: "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30",
+  operations: "bg-violet-500/15 text-violet-600 dark:text-violet-300 border-violet-500/30",
+};
+
+function DepartmentBadge({ department }: { department: string }) {
+  const style = DEPARTMENT_STYLES[department] ?? "bg-muted text-muted-foreground border-border";
+  return (
+    <span className={"inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-medium uppercase tracking-wide " + style}>
+      {department}
+    </span>
+  );
+}
 
 type DocForm = {
   title: string;
@@ -126,6 +145,9 @@ export default function Docs() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
+  const [focusedUserId, setFocusedUserId] = useState<string | null>(null);
+  const [manageView, setManageView] = useState<"accessible" | "uploaded">("accessible");
+  const [manageDeptFilter, setManageDeptFilter] = useState<Set<string>>(new Set());
   const [showNav, setShowNav] = useState(false);
   const navTimerRef = useRef<number | null>(null);
   const resetNavTimer = () => {
@@ -176,6 +198,18 @@ export default function Docs() {
     }
   }, [scope, canSeeAdmin]);
 
+  // Reset manage drill-in whenever the scope changes.
+  useEffect(() => {
+    setFocusedUserId(null);
+    setManageView("accessible");
+    setSelectedIds(new Set());
+  }, [scope]);
+
+  // If a non-admin somehow lands on "manage", fall back to team.
+  useEffect(() => {
+    if (scope === "manage" && !isAdmin) setScope("team");
+  }, [scope, isAdmin]);
+
   // Dynamically load all department values that exist across profiles and docs
   // so the filter chips and dropdowns always reflect the current system state.
   const { data: departments } = useQuery({
@@ -199,6 +233,27 @@ export default function Docs() {
     },
   });
 
+  // For the Manage drill-in: load the focused teammate's profile + roles so
+  // we can compute exactly which docs they can access (mirrors RLS logic).
+  const { data: focusedMeta } = useQuery({
+    queryKey: ["docs_focused_meta", focusedUserId],
+    enabled: !!focusedUserId && isAdmin,
+    queryFn: async () => {
+      const [pRes, rRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, display_name, email, department")
+          .eq("id", focusedUserId!)
+          .maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", focusedUserId!),
+      ]);
+      return {
+        profile: pRes.data as { id: string; display_name: string | null; email: string | null; department: string | null } | null,
+        roles: (rRes.data ?? []).map((r: any) => r.role as string),
+      };
+    },
+  });
+
   // Docs query enforces the active scope at the fetch layer so the request
   // mirrors what the RLS policy will return — never just a UI filter on top
   // of `select *`.
@@ -210,11 +265,16 @@ export default function Docs() {
       user?.id,
       myProfile?.department ?? null,
       isAdmin,
+      focusedUserId,
+      manageView,
+      focusedMeta?.profile?.department ?? null,
+      (focusedMeta?.roles ?? []).join(","),
     ],
     enabled:
       !!user?.id &&
       (scope !== "department" || !!myProfile?.department) &&
-      (scope !== "admin" || canSeeAdmin),
+      (scope !== "admin" || canSeeAdmin) &&
+      (scope !== "manage" || (isAdmin && !!focusedUserId && !!focusedMeta)),
     queryFn: async () => {
       let query = supabase.from("docs").select("*");
       if (scope === "mine") {
@@ -227,6 +287,26 @@ export default function Docs() {
         query = query.eq("audience", "all");
       } else if (scope === "admin") {
         query = query.eq("audience", "admin");
+      } else if (scope === "manage" && focusedUserId) {
+        if (manageView === "uploaded") {
+          query = query.eq("created_by", focusedUserId);
+        } else {
+          // "Accessible to them" — replicate RLS read logic for that user.
+          const fdept = focusedMeta?.profile?.department ?? null;
+          const isFocAdmin = (focusedMeta?.roles ?? []).includes("admin");
+          const isFocHr = fdept === "hr";
+          const ors: string[] = [
+            "audience.eq.all",
+            `and(audience.eq.user,target_user_id.eq.${focusedUserId})`,
+          ];
+          if (fdept) {
+            ors.push(`and(audience.eq.department,department.eq.${fdept})`);
+          }
+          if (isFocAdmin || isFocHr) {
+            ors.push("audience.eq.admin");
+          }
+          query = query.or(ors.join(","));
+        }
       }
       if (tagFilter !== "all") {
         query = query.eq("tag_department", tagFilter as any);
@@ -707,8 +787,37 @@ export default function Docs() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Docs & Training</h1>
-          <p className="text-sm text-muted-foreground">Internal handbook, SOPs, training materials.</p>
+          {scope === "manage" && focusedUserId ? (
+            <>
+              <button
+                onClick={() => setFocusedUserId(null)}
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-1"
+              >
+                <ArrowLeft size={12} /> Back to roster
+              </button>
+              <h1 className="text-2xl font-semibold flex items-center gap-2 flex-wrap">
+                {focusedMeta?.profile?.display_name ?? focusedMeta?.profile?.email ?? "Teammate"}
+                {focusedMeta?.profile?.department && (
+                  <DepartmentBadge department={focusedMeta.profile.department} />
+                )}
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Browse the docs this teammate can access and the ones they uploaded.
+              </p>
+            </>
+          ) : scope === "manage" ? (
+            <>
+              <h1 className="text-2xl font-semibold">Manage</h1>
+              <p className="text-sm text-muted-foreground">
+                Click a teammate to view the docs they can access and the ones they uploaded.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-semibold">Docs & Training</h1>
+              <p className="text-sm text-muted-foreground">Internal handbook, SOPs, training materials.</p>
+            </>
+          )}
         </div>
         {isAdmin && (
           <Dialog open={open} onOpenChange={setOpen}>
@@ -1057,6 +1166,9 @@ export default function Docs() {
                   ...(canSeeAdmin
                     ? [{ id: "admin" as const, label: "Admin Documents", Icon: Shield }]
                     : []),
+                  ...(isAdmin
+                    ? [{ id: "manage" as const, label: "Manage", Icon: Shield }]
+                    : []),
                 ]
               ).map(({ id, label, Icon }) => {
                 const active = scope === id;
@@ -1080,6 +1192,164 @@ export default function Docs() {
               })}
             </div>
           </div>
+
+          {scope === "manage" && !focusedUserId ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 flex-wrap text-xs">
+                <span className="uppercase tracking-wider text-muted-foreground font-medium">Filter</span>
+                {(departments ?? []).map((d: string) => {
+                  const active = manageDeptFilter.has(d);
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() =>
+                        setManageDeptFilter((prev) => {
+                          const n = new Set(prev);
+                          if (n.has(d)) n.delete(d);
+                          else n.add(d);
+                          return n;
+                        })
+                      }
+                      className={
+                        "uppercase tracking-wider px-2.5 py-1 rounded border transition-colors " +
+                        (active
+                          ? "border-primary text-foreground bg-primary/10"
+                          : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40")
+                      }
+                      aria-pressed={active}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+                {manageDeptFilter.size > 0 && (
+                  <button
+                    onClick={() => setManageDeptFilter(new Set())}
+                    className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              {(() => {
+                const visibleDepts = (departments ?? []).filter(
+                  (d) => manageDeptFilter.size === 0 || manageDeptFilter.has(d),
+                );
+                const ql = q.trim().toLowerCase();
+                const groups = visibleDepts.map((dept) => ({
+                  dept,
+                  people: (employees ?? []).filter(
+                    (p: any) =>
+                      p.department === dept &&
+                      (!ql ||
+                        (p.display_name || "").toLowerCase().includes(ql) ||
+                        (p.email || "").toLowerCase().includes(ql)),
+                  ),
+                }));
+                const orphans = (employees ?? []).filter(
+                  (p: any) =>
+                    !p.department &&
+                    (manageDeptFilter.size === 0) &&
+                    (!ql ||
+                      (p.display_name || "").toLowerCase().includes(ql) ||
+                      (p.email || "").toLowerCase().includes(ql)),
+                );
+                const empty = groups.every((g) => g.people.length === 0) && orphans.length === 0;
+                return (
+                  <div className="space-y-6">
+                    {empty && (
+                      <div className="text-sm text-muted-foreground italic px-1">No teammates match.</div>
+                    )}
+                    {groups.map((g) =>
+                      g.people.length === 0 ? null : (
+                        <section key={g.dept}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <DepartmentBadge department={g.dept} />
+                            <span className="text-xs text-muted-foreground">
+                              {g.people.length} {g.people.length === 1 ? "person" : "people"}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {g.people.map((p: any) => (
+                              <button
+                                key={p.id}
+                                onClick={() => setFocusedUserId(p.id)}
+                                className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover:border-foreground/30 hover:bg-muted/40 transition text-left"
+                              >
+                                <UserCircle2 size={20} className="text-muted-foreground shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-medium truncate">
+                                    {p.display_name ?? p.email ?? "—"}
+                                  </div>
+                                  <div className="text-[11px] text-muted-foreground truncate">
+                                    View accessible · uploaded
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </section>
+                      ),
+                    )}
+                    {orphans.length > 0 && (
+                      <section>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                          No department
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          {orphans.map((p: any) => (
+                            <button
+                              key={p.id}
+                              onClick={() => setFocusedUserId(p.id)}
+                              className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover:border-foreground/30 hover:bg-muted/40 transition text-left"
+                            >
+                              <UserCircle2 size={20} className="text-muted-foreground shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium truncate">
+                                  {p.display_name ?? p.email ?? "—"}
+                                </div>
+                                <div className="text-[11px] text-muted-foreground truncate">
+                                  View accessible · uploaded
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+          <>
+          {scope === "manage" && focusedUserId && (
+            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
+              {([
+                { id: "accessible" as const, label: "Accessible" },
+                { id: "uploaded" as const, label: "Uploaded by them" },
+              ]).map(({ id, label }) => {
+                const active = manageView === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setManageView(id)}
+                    className={
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
+                      (active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground")
+                    }
+                    aria-pressed={active}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* Department category filter — mirrors the FILTER | MARKETING | HR …
               row. Admins assign the tag in the New doc dialog; everyone can
@@ -1350,6 +1620,8 @@ export default function Docs() {
                 );
               })}
             </div>
+          )}
+          </>
           )}
       </div>
 

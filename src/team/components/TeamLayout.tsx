@@ -98,35 +98,26 @@ export default function TeamLayout() {
         <div
           className={cn(
             "border-b border-border flex items-center",
-            collapsed
-              ? "flex-col gap-2 py-3 justify-center"
-              : "px-5 py-5 justify-between",
+            collapsed ? "px-2 py-3 justify-center" : "px-5 py-5 justify-between",
           )}
         >
-          <NavLink
-            to="/settings"
-            className={cn(
-              "group",
-              collapsed
-                ? "flex items-center justify-center"
-                : "flex items-center gap-2",
-            )}
-            title="My Profile"
-          >
-            <img
-              src={rhozelandLogo}
-              alt="Rhozeland"
-              className={cn(
-                "object-contain shrink-0",
-                collapsed ? "h-7 w-7" : "h-8 w-8",
-              )}
-            />
-            {!collapsed && (
-              <span className="text-sm font-semibold tracking-wider uppercase group-hover:text-primary transition-colors">
-                My Profile
-              </span>
-            )}
-          </NavLink>
+          {!collapsed && (
+            <NavLink
+              to="/settings"
+              className="flex items-center gap-2 group"
+              title="My Profile"
+            >
+              <img
+                src={rhozelandLogo}
+                alt="Rhozeland"
+                className="h-8 w-8 object-contain shrink-0"
+              />
+              <div>
+                <div className="text-sm font-semibold tracking-wider uppercase group-hover:text-primary transition-colors">Rhozeland</div>
+                <div className="text-xs text-muted-foreground">Team Portal</div>
+              </div>
+            </NavLink>
+          )}
           <Button
             onClick={() => setCollapsed((c) => !c)}
             variant="ghost"

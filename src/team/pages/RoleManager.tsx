@@ -409,7 +409,7 @@ export default function RoleManager() {
               <div className="mt-3 pt-3 border-t border-border space-y-2">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Roles</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {cur.length === 0 && <span className="text-xs text-muted-foreground">none</span>}
+                  {cur.length === 0 && !p.department && <span className="text-xs text-muted-foreground">none</span>}
                   {cur.map((r: any) => {
                     const invalid = !allowed.includes(r.role);
                     return (
@@ -425,6 +425,18 @@ export default function RoleManager() {
                       </span>
                     );
                   })}
+                  {p.department && (
+                    <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded border ${DEPT_STYLES[p.department as Dept]}`}>
+                      {DEPTS.find((d) => d.value === p.department)?.label ?? p.department}
+                      <button
+                        onClick={() => setDept.mutate({ userId: p.id, department: null })}
+                        className="hover:text-destructive"
+                        aria-label={`Remove ${p.department} department`}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </span>
+                  )}
                 </div>
                 <div className="flex gap-2 items-start">
                   <Select

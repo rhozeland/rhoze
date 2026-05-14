@@ -24,7 +24,7 @@ export type ValidateContext = {
   lookupProfile?: (id: string) => Promise<{ id: string; department: string | null } | null>;
 };
 
-const MAX_FILE_BYTES = 100 * 1024 * 1024;
+const MAX_FILE_BYTES = 500 * 1024 * 1024;
 
 function isAcceptedFile(f: { name: string; type: string }) {
   return (

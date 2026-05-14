@@ -137,6 +137,9 @@ export default function Docs() {
     if (audience === "department") {
       return !!myProfile?.department && d.department === myProfile.department;
     }
+    if (audience === "admin") {
+      return myProfile?.department === "hr";
+    }
     return false;
   };
 

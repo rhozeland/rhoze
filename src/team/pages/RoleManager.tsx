@@ -553,6 +553,7 @@ export default function RoleManager() {
               setEmp={setEmp}
               grant={grant}
               revoke={revoke}
+              onDeleted={() => setEditingUid(null)}
             />
           )}
         </DialogContent>

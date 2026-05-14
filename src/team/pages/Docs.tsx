@@ -46,6 +46,7 @@ import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress"
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user" | "admin";
 type DocScope = "mine" | "department" | "team" | "admin";
+type TagFilter = "all" | (typeof DEPARTMENTS)[number];
 
 type DocForm = {
   title: string;
@@ -55,6 +56,7 @@ type DocForm = {
   file_url: string;
   is_required: boolean;
   file: File | null;
+  tag_department: string;
 };
 
 const EMPTY_FORM: DocForm = {
@@ -65,6 +67,7 @@ const EMPTY_FORM: DocForm = {
   file_url: "",
   is_required: false,
   file: null,
+  tag_department: "",
 };
 
 function fileIconFor(mime: string | null | undefined) {

@@ -272,20 +272,20 @@ export default function Settings() {
         <PreviewToggle tab="profile" label="Profile" />
 
         {previewMode.profile ? (
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="h-20 w-20 rounded-full object-cover border border-border shrink-0" />
+              <img src={profile.avatar_url} alt="" className="h-16 w-16 sm:h-20 sm:w-20 rounded-full object-cover border border-border shrink-0" />
             ) : (
-              <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center text-2xl font-medium border border-border shrink-0">{initial}</div>
+              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-muted flex items-center justify-center text-xl sm:text-2xl font-medium border border-border shrink-0">{initial}</div>
             )}
-            <div className="min-w-0 flex-1">
-              <div className="text-2xl font-semibold leading-tight truncate">{form.display_name || "—"}</div>
+            <div className="min-w-0 w-full sm:flex-1">
+              <div className="text-xl sm:text-2xl font-semibold leading-tight truncate">{form.display_name || "—"}</div>
               {personal.alias && <div className="text-sm text-muted-foreground truncate mt-0.5">aka {personal.alias}</div>}
               <div className="text-sm text-muted-foreground truncate">
                 {[profile?.job_title, form.pronouns].filter(Boolean).join(" · ") || "—"}
               </div>
               {user?.email && (
-                <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline truncate block mt-1">
+                <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline truncate block mt-1 break-all">
                   {user.email}
                 </a>
               )}

@@ -36,7 +36,8 @@ Deno.serve(async (req) => {
     if (targetId === userData.user.id) return json({ error: "You cannot delete your own account" }, 400);
 
     // Best-effort cleanup of related rows that lack FK cascades.
-    const tables = [
+    // 1) Delete rows owned by the user via user_id (NOT NULL FKs / personal data).
+    const userIdTables = [
       "user_roles",
       "project_clients",
       "project_allocations",
@@ -45,10 +46,41 @@ Deno.serve(async (req) => {
       "team_availability",
       "team_invites",
       "pay_stubs",
+      "timesheets",
+      "subscriptions",
     ];
-    for (const t of tables) {
+    for (const t of userIdTables) {
       await admin.from(t).delete().eq("user_id", targetId);
     }
+
+    // 2) Delete rows on tables where the owning column is NOT NULL.
+    await admin.from("tasks").delete().eq("owner_id", targetId);
+    await admin.from("credit_requests").delete().eq("requested_by", targetId);
+
+    // 3) Null out audit / ownership references on shared business data so
+    //    we keep the records but drop the link to the deleted user.
+    const nullOuts: Array<[string, string]> = [
+      ["activities", "owner_id"],
+      ["contacts", "owner_id"],
+      ["deals", "owner_id"],
+      ["messages", "author_id"],
+      ["tasks", "assigned_to"],
+      ["task_activity", "actor_id"],
+      ["credit_requests", "decided_by"],
+      ["projects", "owner_id"],
+      ["docs", "created_by"],
+      ["referral_codes", "created_by"],
+      ["rhoze_airdrops", "created_by"],
+      ["rhoze_ledger", "created_by"],
+      ["profile_employment_history", "created_by"],
+      ["project_allocations", "created_by"],
+      ["project_line_items", "created_by"],
+      ["project_milestones", "created_by"],
+    ];
+    for (const [t, col] of nullOuts) {
+      await admin.from(t).update({ [col]: null }).eq(col, targetId);
+    }
+
     await admin.from("profiles").delete().eq("id", targetId);
 
     const { error: delErr } = await admin.auth.admin.deleteUser(targetId);

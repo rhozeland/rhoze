@@ -94,9 +94,10 @@ function fileIconFor(mime: string | null | undefined) {
 }
 
 function isDocPreviewable(d: any): boolean {
-  // Any uploaded file can open the lightbox — DocPreview renders an inline
-  // preview when possible and a clear "download to view" fallback otherwise.
-  return !!d.file_path;
+  // Any uploaded file OR embeddable URL can open the lightbox — DocPreview /
+  // EmbedPreview render an inline preview when possible and a clear
+  // "download to view" fallback otherwise.
+  return !!d.file_path || (!!d.file_url && !!toEmbedUrl(d.file_url));
 }
 
 function formatBytes(b: number | null | undefined) {
@@ -513,20 +514,18 @@ export default function Docs() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && (d.file_path ? signedUrls[d.file_path] : true));
         const idx = list.findIndex((d: any) => d.id === previewDoc.id);
         if (idx > 0) setPreviewDoc(list[idx - 1]);
         else if (list.length > 1) setPreviewDoc(list[list.length - 1]);
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
-        const list = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+        const list = filtered.filter((d: any) => isDocPreviewable(d) && (d.file_path ? signedUrls[d.file_path] : true));
         const idx = list.findIndex((d: any) => d.id === previewDoc.id);
         if (idx >= 0 && idx < list.length - 1) setPreviewDoc(list[idx + 1]);
         else if (list.length > 1) setPreviewDoc(list[0]);
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        setPreviewDoc(null);
       }
+      // Escape is handled natively by the Radix Dialog (which also focus-traps).
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -1191,9 +1190,19 @@ export default function Docs() {
                         (embedUrl || (signed && !d.file_mime?.startsWith("image/") && !d.file_mime?.startsWith("video/")) ? "h-64 " : "aspect-[16/9] ") +
                         (previewable || (!embedUrl && d.file_url) ? "cursor-pointer" : "")
                       }
+                      role={previewable ? "button" : undefined}
+                      tabIndex={previewable ? 0 : undefined}
+                      aria-label={previewable ? `Open preview for ${d.title}` : undefined}
                       onClick={() => {
                         if (previewable) setPreviewDoc(d);
                         else if (!embedUrl && d.file_url) window.open(d.file_url, "_blank", "noopener,noreferrer");
+                      }}
+                      onKeyDown={(e) => {
+                        if (!previewable) return;
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setPreviewDoc(d);
+                        }
                       }}
                     >
                       {d.file_mime?.startsWith("image/") && signed ? (
@@ -1316,12 +1325,19 @@ export default function Docs() {
 
       {/* Preview / Lightbox */}
       <Dialog open={!!previewDoc} onOpenChange={(v) => !v && setPreviewDoc(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-black/95 border-none">
+        <DialogContent
+          className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-black/95 border-none"
+          aria-describedby={undefined}
+        >
+          <DialogHeader className="sr-only">
+            <DialogTitle>{previewDoc?.title ?? "Attachment preview"}</DialogTitle>
+          </DialogHeader>
           {previewDoc && (() => {
             const signed = previewDoc.file_path ? signedUrls[previewDoc.file_path] : null;
+            const embedUrl = previewDoc.file_url ? toEmbedUrl(previewDoc.file_url) : null;
             const isImg = previewDoc.file_mime?.startsWith("image/");
             const isVid = previewDoc.file_mime?.startsWith("video/");
-            const previewableList = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+            const previewableList = filtered.filter((d: any) => isDocPreviewable(d) && (d.file_path ? signedUrls[d.file_path] : true));
             const currentIdx = previewableList.findIndex((d: any) => d.id === previewDoc.id);
             const total = previewableList.length;
             const goPrev = () => {
@@ -1365,6 +1381,15 @@ export default function Docs() {
                       url={signed}
                       mime={previewDoc.file_mime}
                       fileName={previewDoc.file_name}
+                    />
+                  ) : embedUrl ? (
+                    <iframe
+                      src={embedUrl}
+                      title={previewDoc.title || "Embedded preview"}
+                      className="w-full h-[75vh] bg-background rounded"
+                      allow="autoplay; encrypted-media; fullscreen"
+                      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
+                      referrerPolicy="no-referrer-when-downgrade"
                     />
                   ) : (
                     <div className="text-muted-foreground text-sm">Preview not available</div>

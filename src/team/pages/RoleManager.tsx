@@ -139,7 +139,7 @@ export default function RoleManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, display_name, alias, pronouns, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program, phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone")
+        .select("id, display_name, alias, pronouns, bio, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program, phone, address, date_of_birth, emergency_contact_name, emergency_contact_relation, emergency_contact_phone")
         .order("display_name");
       if (error) throw error;
       return data;

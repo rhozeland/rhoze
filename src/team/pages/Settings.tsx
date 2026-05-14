@@ -242,13 +242,6 @@ export default function Settings() {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-4">
-        <TabsList className="flex flex-wrap">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="personal">Personal & emergency</TabsTrigger>
-          <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="account">Account Settings</TabsTrigger>
-        </TabsList>
-
         <TabsContent value="profile" className="space-y-4">
         <div className="border border-border rounded-lg p-5 bg-card space-y-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Profile</div>
@@ -405,6 +398,12 @@ export default function Settings() {
             </Button>
           </div>
         </TabsContent>
+        <TabsList className="flex flex-wrap">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="personal">Personal & emergency</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="account">Account Settings</TabsTrigger>
+        </TabsList>
       </Tabs>
 
       <AvatarEditor

@@ -94,19 +94,9 @@ function fileIconFor(mime: string | null | undefined) {
 }
 
 function isDocPreviewable(d: any): boolean {
-  if (!d.file_path || !d.file_mime) return false;
-  const mime = d.file_mime as string;
-  const name = (d.file_name || "").toLowerCase();
-  if (mime.startsWith("image/")) return true;
-  if (mime.startsWith("video/")) return true;
-  if (mime === "application/pdf" || name.endsWith(".pdf")) return true;
-  if (mime === "text/markdown" || name.endsWith(".md") || name.endsWith(".markdown")) return true;
-  if (
-    mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    name.endsWith(".docx")
-  ) return true;
-  if (mime.startsWith("text/")) return true;
-  return false;
+  // Any uploaded file can open the lightbox — DocPreview renders an inline
+  // preview when possible and a clear "download to view" fallback otherwise.
+  return !!d.file_path;
 }
 
 function formatBytes(b: number | null | undefined) {

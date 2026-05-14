@@ -349,18 +349,10 @@ export default function Docs() {
   });
 
   const filtered = (docs ?? [])
-    // Belt-and-suspenders: hide anything the audience guard rejects so
-    // thumbnails/derived URLs respect the same dept/user rules as the file.
+    // Defense in depth — the docs query already filters by scope/tag at the
+    // fetch layer to mirror RLS, but we re-check the audience guard here so
+    // unauthorized rows can never leak into thumbnails or signed URLs.
     .filter((d: any) => canView(d))
-    .filter((d: any) => {
-      const aud = (d.audience ?? "all") as Audience;
-      if (scope === "mine") return aud === "user" && d.target_user_id === user?.id;
-      if (scope === "department")
-        return aud === "department" && !!myProfile?.department && d.department === myProfile.department;
-      if (scope === "admin") return aud === "admin";
-      // "team" — docs visible to everyone
-      return aud === "all";
-    })
     .filter((d: any) =>
       !q ||
       d.title.toLowerCase().includes(q.toLowerCase()) ||

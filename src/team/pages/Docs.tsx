@@ -1360,14 +1360,16 @@ export default function Docs() {
               else if (total > 1) setPreviewDoc(previewableList[0]);
             };
             return (
-              <div className="flex flex-col h-full relative">
-                {/* Prev / Next side buttons */}
+              <div className="flex flex-col h-full relative group/lightbox">
+                {/* Prev / Next side buttons — rendered outside the dialog
+                    box (fixed to the viewport edges) and only visible on
+                    hover so they don't obscure the preview content. */}
                 {total > 1 && (
                   <>
                     <button
                       type="button"
                       onClick={goPrev}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur"
+                      className="fixed left-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur opacity-0 group-hover/lightbox:opacity-100 focus:opacity-100 transition-opacity duration-200"
                       aria-label="Previous attachment"
                     >
                       <ChevronLeft size={20} /> <span className="text-sm hidden sm:inline">Previous</span>
@@ -1375,7 +1377,7 @@ export default function Docs() {
                     <button
                       type="button"
                       onClick={goNext}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 transition-colors backdrop-blur"
+                      className="fixed right-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur opacity-0 group-hover/lightbox:opacity-100 focus:opacity-100 transition-opacity duration-200"
                       aria-label="Next attachment"
                     >
                       <span className="text-sm hidden sm:inline">Next</span> <ChevronRight size={20} />

@@ -8,6 +8,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useAuth } from "../lib/auth";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
 
@@ -543,6 +553,7 @@ export default function RoleManager() {
               setEmp={setEmp}
               grant={grant}
               revoke={revoke}
+              onDeleted={() => setEditingUid(null)}
             />
           )}
         </DialogContent>
@@ -554,10 +565,32 @@ export default function RoleManager() {
 function EditMemberDialogBody({
   userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   titleDrafts, setTitleDrafts, notesDrafts, setNotesDrafts,
-  setDept, setTitle, setEmp, grant, revoke,
+  setDept, setTitle, setEmp, grant, revoke, onDeleted,
 }: any) {
   if (!p) return null;
   const qc = useQueryClient();
+  const { user: currentUser, isAdmin } = useAuth();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const removeProfile = async () => {
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("delete-team-member", {
+        body: { user_id: p.id },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast({ title: "Profile removed" });
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+      qc.invalidateQueries({ queryKey: ["roles-by-user"] });
+      setConfirmDelete(false);
+      onDeleted?.();
+    } catch (e: any) {
+      toast({ title: "Failed to remove profile", description: e.message, variant: "destructive" });
+    } finally {
+      setDeleting(false);
+    }
+  };
   const titleVal = titleDrafts[p.id] ?? p.job_title ?? "";
   const notesVal = notesDrafts[p.id] ?? p.employment_notes ?? "";
   const dept = (p.department ?? null) as Dept | null;
@@ -965,6 +998,49 @@ function EditMemberDialogBody({
           />
         </div>
       </div>
+      )}
+      {isAdmin && currentUser?.id !== p.id && (
+        <div className="mt-6 pt-4 border-t border-destructive/30">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <div className="text-sm font-semibold text-destructive">Danger zone</div>
+              <p className="text-xs text-muted-foreground max-w-md">
+                Permanently delete this user, their profile and all associated team data. This cannot be undone.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => setConfirmDelete(true)}
+            >
+              <Trash2 size={14} className="mr-1.5" />
+              Remove profile
+            </Button>
+          </div>
+          <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove this profile?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete <strong>{p.display_name ?? p.email ?? "this user"}</strong>,
+                  their login, role grants, project memberships, availability, pay stubs and related team
+                  records. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={(e) => { e.preventDefault(); removeProfile(); }}
+                  disabled={deleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? "Removing…" : "Yes, remove profile"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       )}
     </div>
   );

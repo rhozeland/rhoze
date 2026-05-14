@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, AlertCircle, ExternalLink } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface IframePreviewProps {
   src: string;
@@ -10,6 +11,42 @@ interface IframePreviewProps {
   style?: React.CSSProperties;
   /** Seconds to wait for the iframe to fire `onLoad` before declaring it failed. */
   timeoutMs?: number;
+}
+
+function ContentSkeleton({ title }: { title?: string }) {
+  return (
+    <div className="w-full h-full flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl rounded-2xl bg-card border border-border p-8 space-y-6 shadow-sm">
+        {/* Header skeleton matching token dashboard card header */}
+        <div className="flex items-start gap-4">
+          <Skeleton className="h-12 w-12 rounded-xl shrink-0" />
+          <div className="flex-1 space-y-2 pt-1">
+            <Skeleton className="h-5 w-3/5 rounded-md" />
+            <Skeleton className="h-3 w-1/3 rounded-md" />
+          </div>
+        </div>
+
+        {/* Body lines */}
+        <div className="space-y-3">
+          <Skeleton className="h-4 w-full rounded-md" />
+          <Skeleton className="h-4 w-11/12 rounded-md" />
+          <Skeleton className="h-4 w-4/5 rounded-md" />
+        </div>
+
+        {/* Footer / metadata area */}
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-32 rounded-lg" />
+          <Skeleton className="h-8 w-20 rounded-lg" />
+        </div>
+
+        {title && (
+          <p className="text-xs text-muted-foreground text-center pt-2">
+            Loading <span className="font-medium text-foreground">{title}</span>…
+          </p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -62,12 +99,11 @@ export default function IframePreview({
 
       {status === "loading" && (
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/80 backdrop-blur-sm pointer-events-none"
+          className="absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-none"
           role="status"
           aria-live="polite"
         >
-          <Loader2 size={20} className="animate-spin text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">Loading preview…</span>
+          <ContentSkeleton title={title} />
         </div>
       )}
 
@@ -108,3 +144,4 @@ export default function IframePreview({
     </div>
   );
 }
+

@@ -670,11 +670,16 @@ export default function Docs() {
               <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
             <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
-              {([
-                { id: "mine", label: "My Documents", Icon: UserIcon },
-                { id: "department", label: "My Department", Icon: Users },
-                { id: "team", label: "My Team", Icon: Users },
-              ] as const).map(({ id, label, Icon }) => {
+              {(
+                [
+                  { id: "mine", label: "My Documents", Icon: UserIcon },
+                  { id: "department", label: "My Department", Icon: Users },
+                  { id: "team", label: "My Team", Icon: Users },
+                  ...(isAdmin || myProfile?.department === "hr"
+                    ? [{ id: "admin" as const, label: "Admin Documents", Icon: Shield }]
+                    : []),
+                ] as const
+              ).map(({ id, label, Icon }) => {
                 const active = scope === id;
                 return (
                   <button

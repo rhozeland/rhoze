@@ -102,6 +102,35 @@ export default function Docs() {
     },
   });
 
+  // Client-side audience guard: even though RLS already filters server-side,
+  // we re-check on the client so we never render thumbnails or request signed
+  // URLs for files the current user isn't authorized to see.
+  const { data: myProfile } = useQuery({
+    queryKey: ["docs_my_profile", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, department")
+        .eq("id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const canView = (d: any): boolean => {
+    if (!user?.id) return false;
+    if (isAdmin) return true;
+    const audience = (d.audience ?? "all") as Audience;
+    if (audience === "all") return true;
+    if (audience === "user") return d.target_user_id === user.id;
+    if (audience === "department") {
+      return !!myProfile?.department && d.department === myProfile.department;
+    }
+    return false;
+  };
+
   const { data: completions } = useQuery({
     queryKey: ["doc_completions", user?.id],
     enabled: !!user?.id,
@@ -126,8 +155,11 @@ export default function Docs() {
   });
 
   // Resolve private "docs" bucket file paths to signed URLs for download.
+  // Only request URLs for docs the client-side guard says the user can view —
+  // unauthorized files are never fetched, previewed, or thumbnailed.
   useEffect(() => {
     const paths = (docs ?? [])
+      .filter((d: any) => canView(d))
       .map((d: any) => d.file_path as string | null)
       .filter((p): p is string => !!p && !signedUrls[p]);
     if (paths.length === 0) return;
@@ -146,7 +178,8 @@ export default function Docs() {
     return () => {
       cancelled = true;
     };
-  }, [docs, signedUrls]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docs, signedUrls, myProfile?.department, isAdmin, user?.id]);
 
   const create = useMutation({
     mutationFn: async () => {
@@ -227,11 +260,15 @@ export default function Docs() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["doc_completions", user?.id] }),
   });
 
-  const filtered = (docs ?? []).filter((d: any) =>
-    !q ||
-    d.title.toLowerCase().includes(q.toLowerCase()) ||
-    (d.category ?? "").toLowerCase().includes(q.toLowerCase()),
-  );
+  const filtered = (docs ?? [])
+    // Belt-and-suspenders: hide anything the audience guard rejects so
+    // thumbnails/derived URLs respect the same dept/user rules as the file.
+    .filter((d: any) => canView(d))
+    .filter((d: any) =>
+      !q ||
+      d.title.toLowerCase().includes(q.toLowerCase()) ||
+      (d.category ?? "").toLowerCase().includes(q.toLowerCase()),
+    );
 
   const onPickFile = (f: File | null) => setForm((prev) => ({ ...prev, file: f }));
 

@@ -469,6 +469,8 @@ export default function Settings() {
               {savingPassword ? "Saving…" : "Update password"}
             </Button>
           </div>
+          </>
+          )}
         </TabsContent>
         <TabsList className="flex flex-wrap">
           <TabsTrigger value="profile">Profile</TabsTrigger>

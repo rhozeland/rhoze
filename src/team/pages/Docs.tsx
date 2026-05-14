@@ -125,6 +125,13 @@ export default function Docs() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
+  const [showNav, setShowNav] = useState(false);
+  const navTimerRef = useRef<number | null>(null);
+  const resetNavTimer = () => {
+    setShowNav(true);
+    if (navTimerRef.current) window.clearTimeout(navTimerRef.current);
+    navTimerRef.current = window.setTimeout(() => setShowNav(false), 2500);
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<(() => void) | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});

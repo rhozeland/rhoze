@@ -231,6 +231,7 @@ export default function Docs() {
 
       if (form.file) {
         setUploading(true);
+        setUploadProgress(0);
         const safe = form.file.name.replace(/[^a-zA-Z0-9._-]+/g, "_");
         const path = `${user?.id ?? "anon"}/${Date.now()}_${safe}`;
         const { error: upErr } = await supabase.storage
@@ -238,8 +239,13 @@ export default function Docs() {
           .upload(path, form.file, {
             contentType: form.file.type || undefined,
             upsert: false,
+            onUploadProgress: (ev) => {
+              const pct = ev.total ? Math.round((ev.loaded / ev.total) * 100) : 0;
+              setUploadProgress(pct);
+            },
           });
         setUploading(false);
+        setUploadProgress(0);
         if (upErr) throw upErr;
         file_path = path;
         file_name = form.file.name;

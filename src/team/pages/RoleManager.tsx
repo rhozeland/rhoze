@@ -492,10 +492,53 @@ function EditMemberDialogBody({
   const hasAllowed = allowed.length > 0;
   const [wageDraft, setWageDraft] = useState<string | null>(null);
   const [rateDraft, setRateDraft] = useState<string | null>(null);
+  const [preview, setPreview] = useState(true);
   const wageVal = wageDraft ?? p.wage ?? "";
   const rateVal = rateDraft ?? (p.hourly_rate_cents != null ? (p.hourly_rate_cents / 100).toString() : "");
+  const fmtRate = p.hourly_rate_cents ? `$${(p.hourly_rate_cents / 100).toFixed(2)}/hr` : "—";
+  const deptLabel = DEPTS.find((d) => d.value === p.department)?.label ?? "—";
+  const statusLabel = EMP_STATUSES.find((s) => s.value === (p.employment_status ?? "active"))?.label ?? "—";
+  const PreviewRow = ({ label, value }: { label: string; value: any }) => (
+    <div className="flex justify-between gap-3 py-1.5 border-b border-border/50 last:border-0">
+      <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
+      <span className="text-xs text-right">{value === null || value === undefined || value === "" ? "—" : String(value)}</span>
+    </div>
+  );
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-end">
+        <Button
+          type="button"
+          size="sm"
+          onClick={() => setPreview((v) => !v)}
+          aria-pressed={!preview}
+          className="h-9 rounded-full px-4 text-sm font-medium bg-gradient-mint text-primary-foreground hover:opacity-90 shadow-sm transition-opacity"
+        >
+          {preview ? (<><Pencil size={14} className="mr-1.5" /> Edit mastersheet</>) : (<><Eye size={14} className="mr-1.5" /> Preview mastersheet</>)}
+        </Button>
+      </div>
+      {preview ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <section className="border border-border rounded p-3 bg-background">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Employment</div>
+            <PreviewRow label="Department" value={deptLabel} />
+            <PreviewRow label="Job title" value={p.job_title} />
+            <PreviewRow label="Status" value={statusLabel} />
+            <PreviewRow label="Tenure" value={tenure(p.started_at, p.ended_at)} />
+            <PreviewRow label="Started" value={p.started_at} />
+            <PreviewRow label="Ended" value={p.ended_at} />
+            <PreviewRow label="Notes" value={p.employment_notes} />
+          </section>
+          <section className="border border-border rounded p-3 bg-background">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payroll</div>
+            <PreviewRow label="Work type" value={p.work_type} />
+            <PreviewRow label="Wage" value={p.wage} />
+            <PreviewRow label="Hourly rate" value={fmtRate} />
+            <PreviewRow label="Payment method" value={p.payment_method} />
+            <PreviewRow label="Program" value={p.program} />
+          </section>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
         <div>
           <label className="text-[10px] uppercase text-muted-foreground">Department</label>
@@ -641,7 +684,7 @@ function EditMemberDialogBody({
           />
         </div>
       </div>
-
+      )}
     </div>
   );
 }

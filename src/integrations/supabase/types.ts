@@ -1410,6 +1410,33 @@ export type Database = {
         }
         Relationships: []
       }
+      role_presets: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       service_packages: {
         Row: {
           billing_interval: string | null

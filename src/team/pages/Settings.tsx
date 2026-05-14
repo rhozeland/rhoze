@@ -42,17 +42,16 @@ export default function Settings() {
     setPreviewMode((p) => ({ ...p, [k]: !p[k] }));
 
   const PreviewToggle = ({ tab, label }: { tab: TabKey; label: string }) => (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-3">
       <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
       <Button
         type="button"
-        variant={previewMode[tab] ? "ghost" : "default"}
         size="sm"
-        className="h-7 px-2.5 text-[11px] transition-colors"
         onClick={() => togglePreview(tab)}
         aria-pressed={!previewMode[tab]}
+        className="h-9 rounded-full px-4 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm transition-colors"
       >
-        {previewMode[tab] ? (<><Pencil size={12} className="mr-1" /> Edit</>) : (<><Eye size={12} className="mr-1" /> Preview</>)}
+        {previewMode[tab] ? (<><Pencil size={14} className="mr-1.5" /> Edit {label}</>) : (<><Eye size={14} className="mr-1.5" /> Preview {label}</>)}
       </Button>
     </div>
   );
@@ -275,16 +274,22 @@ export default function Settings() {
         {previewMode.profile ? (
           <div className="flex items-start gap-4">
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border" />
+              <img src={profile.avatar_url} alt="" className="h-20 w-20 rounded-full object-cover border border-border shrink-0" />
             ) : (
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center text-xl font-medium border border-border">{initial}</div>
+              <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center text-2xl font-medium border border-border shrink-0">{initial}</div>
             )}
-            <div className="text-sm space-y-1 min-w-0">
-              <div className="font-medium">{form.display_name || "—"}</div>
-              {personal.alias && <div className="text-muted-foreground">aka {personal.alias}</div>}
-              {form.pronouns && <div className="text-muted-foreground">{form.pronouns}</div>}
-              <div className="text-muted-foreground">{user?.email}</div>
-              {form.bio && <div className="pt-2 whitespace-pre-wrap">{form.bio}</div>}
+            <div className="min-w-0 flex-1">
+              <div className="text-2xl font-semibold leading-tight truncate">{form.display_name || "—"}</div>
+              {personal.alias && <div className="text-sm text-muted-foreground truncate mt-0.5">aka {personal.alias}</div>}
+              <div className="text-sm text-muted-foreground truncate">
+                {[profile?.job_title, form.pronouns].filter(Boolean).join(" · ") || "—"}
+              </div>
+              {user?.email && (
+                <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline truncate block mt-1">
+                  {user.email}
+                </a>
+              )}
+              {form.bio && <div className="pt-3 text-sm whitespace-pre-wrap">{form.bio}</div>}
             </div>
           </div>
         ) : (

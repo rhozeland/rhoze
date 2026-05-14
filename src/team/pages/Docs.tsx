@@ -15,6 +15,16 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -38,6 +48,7 @@ import {
   User as UserIcon,
   Shield,
   Settings2,
+  Trash2,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
@@ -98,6 +109,8 @@ export default function Docs() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<(() => void) | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -425,6 +438,52 @@ export default function Docs() {
     },
     onError: (e: any) =>
       toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
+  const deleteDoc = useMutation({
+    mutationFn: async (docId: string) => {
+      const { data: doc, error: fetchErr } = await supabase
+        .from("docs")
+        .select("file_path")
+        .eq("id", docId)
+        .maybeSingle();
+      if (fetchErr) throw fetchErr;
+      const { error } = await supabase.from("docs").delete().eq("id", docId);
+      if (error) throw error;
+      if (doc?.file_path) {
+        await supabase.storage.from("docs").remove([doc.file_path]);
+      }
+    },
+    onSuccess: () => {
+      toast({ title: "Doc removed" });
+      qc.invalidateQueries({ queryKey: ["docs"] });
+    },
+    onError: (e: any) =>
+      toast({ title: "Failed to remove", description: e.message, variant: "destructive" }),
+  });
+
+  const massDelete = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { data: rows, error: fetchErr } = await supabase
+        .from("docs")
+        .select("id, file_path")
+        .in("id", ids);
+      if (fetchErr) throw fetchErr;
+      const { error } = await supabase.from("docs").delete().in("id", ids);
+      if (error) throw error;
+      const paths = (rows ?? []).map((r: any) => r.file_path).filter(Boolean) as string[];
+      if (paths.length) {
+        await supabase.storage.from("docs").remove(paths);
+      }
+    },
+    onSuccess: () => {
+      toast({ title: "Docs removed" });
+      setSelectedIds(new Set());
+      setConfirmOpen(false);
+      qc.invalidateQueries({ queryKey: ["docs"] });
+    },
+    onError: (e: any) =>
+      toast({ title: "Failed to remove", description: e.message, variant: "destructive" }),
   });
 
   const filtered = (docs ?? [])
@@ -994,6 +1053,56 @@ export default function Docs() {
             })}
           </div>
 
+          {selectedIds.size > 0 && (
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2">
+              <div className="text-sm">
+                <span className="font-medium">{selectedIds.size}</span>{" "}
+                <span className="text-muted-foreground">selected</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => setSelectedIds(new Set())}
+                >
+                  Clear
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={massDelete.isPending}
+                >
+                  <Trash2 size={12} />
+                  Remove selected
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove {selectedIds.size} document{selectedIds.size > 1 ? "s" : ""}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the selected documents and their attached files. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={massDelete.isPending}>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => massDelete.mutate([...selectedIds])}
+                  disabled={massDelete.isPending}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {massDelete.isPending ? "Removing…" : "Remove"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           {filtered.length === 0 ? (
             isAdmin ? (
               <button
@@ -1029,11 +1138,16 @@ export default function Docs() {
                       : d.audience === "admin"
                         ? "Admin"
                         : "Everyone";
+                const canManage = isAdmin || d.created_by === user?.id;
+                const isSelected = selectedIds.has(d.id);
 
                 return (
                   <div
                     key={d.id}
-                    className="border border-border rounded-lg bg-card overflow-hidden flex flex-col"
+                    className={
+                      "border rounded-lg bg-card overflow-hidden flex flex-col transition-colors " +
+                      (isSelected ? "border-primary ring-1 ring-primary" : "border-border")
+                    }
                   >
                     {/* Thumbnail */}
                     <div className="relative bg-muted/40 aspect-[16/9] flex items-center justify-center overflow-hidden">
@@ -1045,9 +1159,26 @@ export default function Docs() {
                         <Icon size={42} className="text-muted-foreground" strokeWidth={1.25} />
                       )}
                       {d.is_required && (
-                        <span className="absolute top-2 left-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary text-primary-foreground">
+                        <span className="absolute top-2 left-8 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary text-primary-foreground">
                           Required
                         </span>
+                      )}
+                      {canManage && (
+                        <div className="absolute top-2 left-2">
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={(v) => {
+                              setSelectedIds((prev) => {
+                                const next = new Set(prev);
+                                if (v) next.add(d.id);
+                                else next.delete(d.id);
+                                return next;
+                              });
+                            }}
+                            aria-label={`Select ${d.title}`}
+                            className="border-background/80 bg-background/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                          />
+                        </div>
                       )}
                       <span className="absolute top-2 right-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-background/80 backdrop-blur text-foreground border border-border">
                         {audienceLabel}
@@ -1059,8 +1190,19 @@ export default function Docs() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="font-medium text-sm leading-tight">{d.title}</div>
                         <div className="flex items-center gap-2 shrink-0">
-                          {(isAdmin || d.created_by === user?.id) && (
-                            <VisibilityMenu doc={d} />
+                          {canManage && (
+                            <>
+                              <VisibilityMenu doc={d} />
+                              <button
+                                type="button"
+                                onClick={() => deleteDoc.mutate(d.id)}
+                                className="text-muted-foreground hover:text-destructive transition-colors"
+                                title="Remove"
+                                disabled={deleteDoc.isPending}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={() => toggleComplete.mutate({ docId: d.id, done })}

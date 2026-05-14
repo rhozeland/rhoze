@@ -37,7 +37,9 @@ import {
   Users,
   User as UserIcon,
   Shield,
+  Settings2,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import { Progress } from "@/components/ui/progress";

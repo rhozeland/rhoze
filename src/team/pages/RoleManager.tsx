@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, Upload, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -753,13 +753,12 @@ function EditMemberDialogBody({
                   }} />
               </div>
               <div>
-                <label className="text-[10px] uppercase text-muted-foreground">Avatar URL</label>
-                <Input className="h-9" placeholder="https://…"
-                  defaultValue={p.avatar_url ?? ""}
-                  onBlur={(e) => {
-                    const next = e.target.value.trim();
-                    if (next !== (p.avatar_url ?? "")) setEmp.mutate({ userId: p.id, patch: { avatar_url: next || null } });
-                  }} />
+                <label className="text-[10px] uppercase text-muted-foreground">Avatar</label>
+                <AvatarUploader
+                  userId={p.id}
+                  currentUrl={p.avatar_url}
+                  onChange={(url) => setEmp.mutate({ userId: p.id, patch: { avatar_url: url } })}
+                />
               </div>
               <div className="md:col-span-2">
                 <label className="text-[10px] uppercase text-muted-foreground">Bio</label>
@@ -1831,6 +1830,76 @@ function CoveragePanel({ profiles }: { profiles: any[] }) {
             </div>
           )}
         </div>
+      )}
+    </div>
+  );
+}
+function AvatarUploader({
+  userId,
+  currentUrl,
+  onChange,
+}: {
+  userId: string;
+  currentUrl: string | null | undefined;
+  onChange: (url: string | null) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Pick an image or GIF file", variant: "destructive" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Image too large (max 5MB)", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.type === "image/gif" ? "gif" : (file.name.split(".").pop() || "png").toLowerCase();
+      const path = `${userId}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, {
+        upsert: true,
+        contentType: file.type || "image/png",
+      });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+      onChange(pub.publicUrl);
+      toast({ title: "Avatar updated" });
+    } catch (e: any) {
+      toast({ title: "Upload failed", description: e.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      {currentUrl ? (
+        <img src={currentUrl} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
+      ) : (
+        <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-sm font-medium border border-border">?</div>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,image/gif"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = "";
+        }}
+      />
+      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={uploading}>
+        <Upload size={12} className="mr-1.5" />
+        {uploading ? "Uploading…" : currentUrl ? "Change" : "Upload"}
+      </Button>
+      {currentUrl && (
+        <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)} disabled={uploading}>
+          Remove
+        </Button>
       )}
     </div>
   );

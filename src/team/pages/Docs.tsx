@@ -1193,6 +1193,164 @@ export default function Docs() {
             </div>
           </div>
 
+          {scope === "manage" && !focusedUserId ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 flex-wrap text-xs">
+                <span className="uppercase tracking-wider text-muted-foreground font-medium">Filter</span>
+                {(departments ?? []).map((d: string) => {
+                  const active = manageDeptFilter.has(d);
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() =>
+                        setManageDeptFilter((prev) => {
+                          const n = new Set(prev);
+                          if (n.has(d)) n.delete(d);
+                          else n.add(d);
+                          return n;
+                        })
+                      }
+                      className={
+                        "uppercase tracking-wider px-2.5 py-1 rounded border transition-colors " +
+                        (active
+                          ? "border-primary text-foreground bg-primary/10"
+                          : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40")
+                      }
+                      aria-pressed={active}
+                    >
+                      {d}
+                    </button>
+                  );
+                })}
+                {manageDeptFilter.size > 0 && (
+                  <button
+                    onClick={() => setManageDeptFilter(new Set())}
+                    className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2 ml-1"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+              {(() => {
+                const visibleDepts = (departments ?? []).filter(
+                  (d) => manageDeptFilter.size === 0 || manageDeptFilter.has(d),
+                );
+                const ql = q.trim().toLowerCase();
+                const groups = visibleDepts.map((dept) => ({
+                  dept,
+                  people: (employees ?? []).filter(
+                    (p: any) =>
+                      p.department === dept &&
+                      (!ql ||
+                        (p.display_name || "").toLowerCase().includes(ql) ||
+                        (p.email || "").toLowerCase().includes(ql)),
+                  ),
+                }));
+                const orphans = (employees ?? []).filter(
+                  (p: any) =>
+                    !p.department &&
+                    (manageDeptFilter.size === 0) &&
+                    (!ql ||
+                      (p.display_name || "").toLowerCase().includes(ql) ||
+                      (p.email || "").toLowerCase().includes(ql)),
+                );
+                const empty = groups.every((g) => g.people.length === 0) && orphans.length === 0;
+                return (
+                  <div className="space-y-6">
+                    {empty && (
+                      <div className="text-sm text-muted-foreground italic px-1">No teammates match.</div>
+                    )}
+                    {groups.map((g) =>
+                      g.people.length === 0 ? null : (
+                        <section key={g.dept}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <DepartmentBadge department={g.dept} />
+                            <span className="text-xs text-muted-foreground">
+                              {g.people.length} {g.people.length === 1 ? "person" : "people"}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {g.people.map((p: any) => (
+                              <button
+                                key={p.id}
+                                onClick={() => setFocusedUserId(p.id)}
+                                className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover:border-foreground/30 hover:bg-muted/40 transition text-left"
+                              >
+                                <UserCircle2 size={20} className="text-muted-foreground shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-medium truncate">
+                                    {p.display_name ?? p.email ?? "—"}
+                                  </div>
+                                  <div className="text-[11px] text-muted-foreground truncate">
+                                    View accessible · uploaded
+                                  </div>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </section>
+                      ),
+                    )}
+                    {orphans.length > 0 && (
+                      <section>
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                          No department
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          {orphans.map((p: any) => (
+                            <button
+                              key={p.id}
+                              onClick={() => setFocusedUserId(p.id)}
+                              className="flex items-center gap-3 p-3 rounded-md border border-border bg-card hover:border-foreground/30 hover:bg-muted/40 transition text-left"
+                            >
+                              <UserCircle2 size={20} className="text-muted-foreground shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium truncate">
+                                  {p.display_name ?? p.email ?? "—"}
+                                </div>
+                                <div className="text-[11px] text-muted-foreground truncate">
+                                  View accessible · uploaded
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+          <>
+          {scope === "manage" && focusedUserId && (
+            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
+              {([
+                { id: "accessible" as const, label: "Accessible" },
+                { id: "uploaded" as const, label: "Uploaded by them" },
+              ]).map(({ id, label }) => {
+                const active = manageView === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => setManageView(id)}
+                    className={
+                      "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors " +
+                      (active
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground")
+                    }
+                    aria-pressed={active}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* Department category filter — mirrors the FILTER | MARKETING | HR …
               row. Admins assign the tag in the New doc dialog; everyone can
               filter by it. */}

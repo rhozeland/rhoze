@@ -1164,7 +1164,7 @@ export default function Docs() {
                 const done = completions?.has(d.id) ?? false;
                 const Icon = fileIconFor(d.file_mime);
                 const signed = d.file_path ? signedUrls[d.file_path] : null;
-                const previewable = isDocPreviewable(d) && !!signed;
+                const previewable = isDocPreviewable(d) && (d.file_path ? !!signed : true);
                 const embedUrl = d.file_url ? toEmbedUrl(d.file_url) : null;
                 const audienceLabel =
                   d.audience === "department"

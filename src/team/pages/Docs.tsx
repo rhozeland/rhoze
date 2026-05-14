@@ -36,6 +36,7 @@ import {
   X,
   Users,
   User as UserIcon,
+  Shield,
 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";

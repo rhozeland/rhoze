@@ -314,35 +314,59 @@ export type Database = {
       }
       docs: {
         Row: {
+          audience: string
           category: string
           content: string | null
           created_at: string
           created_by: string | null
+          department: Database["public"]["Enums"]["department"] | null
+          file_mime: string | null
+          file_name: string | null
+          file_path: string | null
+          file_size_bytes: number | null
           file_url: string | null
           id: string
           is_required: boolean
+          target_user_id: string | null
+          thumbnail_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          audience?: string
           category?: string
           content?: string | null
           created_at?: string
           created_by?: string | null
+          department?: Database["public"]["Enums"]["department"] | null
+          file_mime?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
           file_url?: string | null
           id?: string
           is_required?: boolean
+          target_user_id?: string | null
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          audience?: string
           category?: string
           content?: string | null
           created_at?: string
           created_by?: string | null
+          department?: Database["public"]["Enums"]["department"] | null
+          file_mime?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
           file_url?: string | null
           id?: string
           is_required?: boolean
+          target_user_id?: string | null
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
         }

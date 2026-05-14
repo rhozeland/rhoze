@@ -128,6 +128,29 @@ export default function Docs() {
     }
   }, [scope, canSeeAdmin]);
 
+  // Dynamically load all department values that exist across profiles and docs
+  // so the filter chips and dropdowns always reflect the current system state.
+  const { data: departments } = useQuery({
+    queryKey: ["departments"],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const [pRes, dRes, tRes] = await Promise.all([
+        supabase.from("profiles").select("department").not("department", "is", null),
+        supabase.from("docs").select("department").not("department", "is", null),
+        supabase.from("docs").select("tag_department").not("tag_department", "is", null),
+      ]);
+      if (pRes.error) throw pRes.error;
+      if (dRes.error) throw dRes.error;
+      if (tRes.error) throw tRes.error;
+
+      const set = new Set<string>();
+      (pRes.data ?? []).forEach((d: any) => d.department && set.add(d.department));
+      (dRes.data ?? []).forEach((d: any) => d.department && set.add(d.department));
+      (tRes.data ?? []).forEach((d: any) => d.tag_department && set.add(d.tag_department));
+      return [...set].sort();
+    },
+  });
+
   // Docs query enforces the active scope at the fetch layer so the request
   // mirrors what the RLS policy will return — never just a UI filter on top
   // of `select *`.

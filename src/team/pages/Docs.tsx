@@ -44,8 +44,8 @@ import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
 const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
-type Audience = "all" | "department" | "user";
-type DocScope = "mine" | "department" | "team";
+type Audience = "all" | "department" | "user" | "admin";
+type DocScope = "mine" | "department" | "team" | "admin";
 
 type DocForm = {
   title: string;

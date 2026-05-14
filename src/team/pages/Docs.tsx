@@ -271,7 +271,9 @@ export default function Docs() {
           ? "general"
           : form.audience === "department"
             ? `dept: ${form.department}`
-            : "personal";
+            : form.audience === "admin"
+              ? "admin"
+              : "personal";
 
       const { error } = await supabase.from("docs").insert({
         title: form.title.trim(),

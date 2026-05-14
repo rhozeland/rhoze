@@ -145,6 +145,9 @@ export default function Docs() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
+  const [focusedUserId, setFocusedUserId] = useState<string | null>(null);
+  const [manageView, setManageView] = useState<"accessible" | "uploaded">("accessible");
+  const [manageDeptFilter, setManageDeptFilter] = useState<Set<string>>(new Set());
   const [showNav, setShowNav] = useState(false);
   const navTimerRef = useRef<number | null>(null);
   const resetNavTimer = () => {
@@ -194,6 +197,18 @@ export default function Docs() {
       setScope("team");
     }
   }, [scope, canSeeAdmin]);
+
+  // Reset manage drill-in whenever the scope changes.
+  useEffect(() => {
+    setFocusedUserId(null);
+    setManageView("accessible");
+    setSelectedIds(new Set());
+  }, [scope]);
+
+  // If a non-admin somehow lands on "manage", fall back to team.
+  useEffect(() => {
+    if (scope === "manage" && !isAdmin) setScope("team");
+  }, [scope, isAdmin]);
 
   // Dynamically load all department values that exist across profiles and docs
   // so the filter chips and dropdowns always reflect the current system state.

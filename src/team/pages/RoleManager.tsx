@@ -1834,3 +1834,74 @@ function CoveragePanel({ profiles }: { profiles: any[] }) {
     </div>
   );
 }
+function AvatarUploader({
+  userId,
+  currentUrl,
+  onChange,
+}: {
+  userId: string;
+  currentUrl: string | null | undefined;
+  onChange: (url: string | null) => void;
+}) {
+  const fileRef = useState<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Pick an image or GIF file", variant: "destructive" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Image too large (max 5MB)", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.type === "image/gif" ? "gif" : (file.name.split(".").pop() || "png").toLowerCase();
+      const path = `${userId}/avatar-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, {
+        upsert: true,
+        contentType: file.type || "image/png",
+      });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+      onChange(pub.publicUrl);
+      toast({ title: "Avatar updated" });
+    } catch (e: any) {
+      toast({ title: "Upload failed", description: e.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      {currentUrl ? (
+        <img src={currentUrl} alt="" className="h-12 w-12 rounded-full object-cover border border-border" />
+      ) : (
+        <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-sm font-medium border border-border">?</div>
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,image/gif"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = "";
+        }}
+      />
+      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={uploading}>
+        <Upload size={12} className="mr-1.5" />
+        {uploading ? "Uploading…" : currentUrl ? "Change" : "Upload"}
+      </Button>
+      {currentUrl && (
+        <Button type="button" variant="ghost" size="sm" onClick={() => onChange(null)} disabled={uploading}>
+          Remove
+        </Button>
+      )}
+    </div>
+  );
+}

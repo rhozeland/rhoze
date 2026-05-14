@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Search, Trash2, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "../lib/auth";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
@@ -326,6 +326,8 @@ export default function RoleManager() {
           )}
         </div>
       </div>
+
+      <RolePresetsBox />
 
       <CoveragePanel profiles={profiles ?? []} />
 
@@ -893,6 +895,169 @@ function EditMemberDialogBody({
         </div>
       </div>
       )}
+    </div>
+  );
+}
+
+type Preset = { id: string; kind: "department" | "job_title"; label: string; sort_order: number };
+
+function RolePresetsBox() {
+  const qc = useQueryClient();
+  const [kind, setKind] = useState<"department" | "job_title">("job_title");
+  const [newLabel, setNewLabel] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editLabel, setEditLabel] = useState("");
+
+  const { data: presets } = useQuery({
+    queryKey: ["role-presets"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("role_presets" as any)
+        .select("id, kind, label, sort_order")
+        .order("kind")
+        .order("sort_order")
+        .order("label");
+      if (error) throw error;
+      return ((data ?? []) as unknown) as Preset[];
+    },
+  });
+
+  const create = useMutation({
+    mutationFn: async (p: { kind: string; label: string }) => {
+      const { error } = await supabase.from("role_presets" as any).insert(p);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setNewLabel("");
+      toast({ title: "Preset added" });
+      qc.invalidateQueries({ queryKey: ["role-presets"] });
+    },
+    onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
+  const update = useMutation({
+    mutationFn: async (p: { id: string; label: string }) => {
+      const { error } = await supabase.from("role_presets" as any).update({ label: p.label }).eq("id", p.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setEditingId(null);
+      toast({ title: "Preset updated" });
+      qc.invalidateQueries({ queryKey: ["role-presets"] });
+    },
+    onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("role_presets" as any).delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Preset deleted" });
+      qc.invalidateQueries({ queryKey: ["role-presets"] });
+    },
+    onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
+  const filtered = (presets ?? []).filter((p) => p.kind === kind);
+
+  return (
+    <div className="border border-border rounded-lg p-4 bg-card">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <div className="text-sm font-semibold">Role presets</div>
+          <p className="text-xs text-muted-foreground">Reusable department and job-title labels admins can manage.</p>
+        </div>
+        <div className="flex gap-2 text-xs">
+          {(["job_title", "department"] as const).map((k) => (
+            <button
+              key={k}
+              onClick={() => setKind(k)}
+              className={`px-3 py-1.5 rounded border ${kind === k ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}
+            >
+              {k === "job_title" ? "Job titles" : "Departments"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3 flex gap-2">
+        <Input
+          className="h-9 flex-1"
+          placeholder={kind === "job_title" ? "e.g. Lead Photographer" : "e.g. Production"}
+          value={newLabel}
+          onChange={(e) => setNewLabel(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && newLabel.trim()) create.mutate({ kind, label: newLabel.trim() });
+          }}
+        />
+        <Button
+          size="sm"
+          onClick={() => newLabel.trim() && create.mutate({ kind, label: newLabel.trim() })}
+          disabled={!newLabel.trim() || create.isPending}
+        >
+          <Plus size={14} /> Add
+        </Button>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {filtered.length === 0 && <span className="text-xs text-muted-foreground">No presets yet.</span>}
+        {filtered.map((p) => {
+          const editing = editingId === p.id;
+          return (
+            <div key={p.id} className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded bg-muted">
+              {editing ? (
+                <>
+                  <Input
+                    className="h-7 w-44"
+                    value={editLabel}
+                    onChange={(e) => setEditLabel(e.target.value)}
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && editLabel.trim()) update.mutate({ id: p.id, label: editLabel.trim() });
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                  />
+                  <button
+                    onClick={() => editLabel.trim() && update.mutate({ id: p.id, label: editLabel.trim() })}
+                    className="hover:text-primary"
+                    aria-label="Save"
+                  >
+                    <Save size={12} />
+                  </button>
+                  <button onClick={() => setEditingId(null)} className="hover:text-destructive" aria-label="Cancel">
+                    <X size={12} />
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span>{p.label}</span>
+                  <button
+                    onClick={() => {
+                      setEditingId(p.id);
+                      setEditLabel(p.label);
+                    }}
+                    className="hover:text-primary"
+                    aria-label={`Edit ${p.label}`}
+                  >
+                    <Pencil size={12} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm(`Delete "${p.label}"?`)) remove.mutate(p.id);
+                    }}
+                    className="hover:text-destructive"
+                    aria-label={`Delete ${p.label}`}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

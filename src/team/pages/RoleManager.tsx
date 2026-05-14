@@ -560,64 +560,6 @@ function EditMemberDialogBody({
         </div>
       </div>
 
-      <div className="border border-border rounded p-3 space-y-2">
-        <div className="text-[10px] uppercase text-muted-foreground">Roles</div>
-        <div className="flex flex-wrap gap-1.5">
-          {cur.length === 0 && <span className="text-xs text-muted-foreground">none</span>}
-          {cur.map((r: any) => {
-            const invalid = !allowedRoles(p.department as Dept | null).includes(r.role);
-            return (
-              <span key={r.id}
-                className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
-                  invalid ? "bg-destructive/10 text-destructive border border-destructive/40" : "bg-muted"
-                }`}>
-                {r.role}
-                {invalid && <span className="text-[10px] uppercase">invalid</span>}
-                <button onClick={() => revoke.mutate(r.id)} className="hover:text-destructive"><Trash2 size={12} /></button>
-              </span>
-            );
-          })}
-        </div>
-        <div className="flex gap-2 items-start">
-          <Select
-            value={pick}
-            onValueChange={(v) => {
-              setPicks({ ...picks, [p.id]: v as Role });
-              setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
-            }}
-          >
-            <SelectTrigger className={`h-9 w-48 ${err ? "border-destructive" : ""}`}><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {ROLES.map((r) => {
-                const disabled = !allowed.includes(r);
-                return (
-                  <SelectItem key={r} value={r} disabled={disabled}>
-                    {r}{disabled ? " — not allowed" : ""}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-          <Button
-            size="sm"
-            disabled={!!err || !hasAllowed}
-            onClick={() => {
-              const v = validateRoleForDept(pick as Role, dept);
-              if (v) {
-                setErrors({ ...errors, [p.id]: v });
-                toast({ title: "Role not allowed", description: v, variant: "destructive" });
-                return;
-              }
-              grant.mutate({ userId: p.id, role: pick as Role });
-            }}
-          >
-            Add role
-          </Button>
-        </div>
-        {err
-          ? <div className="text-[11px] text-destructive">{err}</div>
-          : <div className="text-[10px] text-muted-foreground">Allowed: {allowed.join(", ") || "none"}</div>}
-      </div>
     </div>
   );
 }

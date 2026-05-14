@@ -58,6 +58,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import DocPreview from "../components/DocPreview";
+import IframePreview from "../components/IframePreview";
 import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
@@ -1212,14 +1213,11 @@ export default function Docs() {
                       ) : d.file_mime?.startsWith("video/") && signed ? (
                         <video src={signed} className="w-full h-full object-cover" muted />
                       ) : embedUrl ? (
-                        <iframe
+                        <IframePreview
                           src={embedUrl}
                           title={d.title}
-                          className="w-full h-full bg-background"
-                          loading="lazy"
-                          allow="autoplay; encrypted-media; fullscreen"
-                          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
-                          referrerPolicy="no-referrer-when-downgrade"
+                          fallbackUrl={d.file_url}
+                          className="w-full h-full"
                         />
                       ) : signed ? (
                         <div className="w-full h-full overflow-auto bg-background">
@@ -1389,20 +1387,21 @@ export default function Docs() {
                     <img src={signed} alt={previewDoc.title} className="max-w-full max-h-[70vh] object-contain rounded" />
                   ) : isVid && signed ? (
                     <video src={signed} controls className="max-w-full max-h-[70vh] rounded" />
+                  ) : embedUrl ? (
+                    // Embeddable URL docs render the iframe embed URL directly
+                    // in the lightbox — even if a signed file_path also exists,
+                    // the user explicitly chose to preview the linked source.
+                    <IframePreview
+                      src={embedUrl}
+                      title={previewDoc.title || "Embedded preview"}
+                      fallbackUrl={previewDoc.file_url}
+                      className="w-full h-[75vh] rounded overflow-hidden"
+                    />
                   ) : signed ? (
                     <DocPreview
                       url={signed}
                       mime={previewDoc.file_mime}
                       fileName={previewDoc.file_name}
-                    />
-                  ) : embedUrl ? (
-                    <iframe
-                      src={embedUrl}
-                      title={previewDoc.title || "Embedded preview"}
-                      className="w-full h-[75vh] bg-background rounded"
-                      allow="autoplay; encrypted-media; fullscreen"
-                      sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
-                      referrerPolicy="no-referrer-when-downgrade"
                     />
                   ) : (
                     <div className="text-muted-foreground text-sm">Preview not available</div>

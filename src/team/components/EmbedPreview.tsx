@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import IframePreview from "./IframePreview";
 
 /**
  * Converts a Google Drive / Docs / Sheets / Slides URL into an embeddable preview URL.
@@ -91,15 +92,12 @@ export default function EmbedPreview({ url, title, height = 480 }: EmbedPreviewP
           Open <ExternalLink size={11} />
         </a>
       </div>
-      <iframe
+      <IframePreview
         src={embedUrl}
         title={title || "Embedded preview"}
-        className="w-full bg-background"
+        fallbackUrl={url}
         style={{ height }}
-        allow="autoplay; encrypted-media; fullscreen"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
-        referrerPolicy="no-referrer-when-downgrade"
+        className="w-full"
       />
     </div>
   );

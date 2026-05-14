@@ -37,7 +37,9 @@ import {
   Users,
   User as UserIcon,
   Shield,
+  Settings2,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import { Progress } from "@/components/ui/progress";
@@ -382,6 +384,49 @@ export default function Docs() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["doc_completions", user?.id] }),
   });
 
+  // Update a doc's visibility / audience after it's been posted.
+  const updateVisibility = useMutation({
+    mutationFn: async ({
+      docId,
+      audience,
+      department,
+      target_user_id,
+      tag_department,
+    }: {
+      docId: string;
+      audience: Audience;
+      department: string | null;
+      target_user_id: string | null;
+      tag_department: string | null;
+    }) => {
+      const category =
+        audience === "all"
+          ? "general"
+          : audience === "department"
+            ? `dept: ${department ?? ""}`
+            : audience === "admin"
+              ? "admin"
+              : "personal";
+      const { error } = await supabase
+        .from("docs")
+        .update({
+          audience,
+          department: audience === "department" ? (department as any) : null,
+          target_user_id: audience === "user" ? target_user_id : null,
+          tag_department: (tag_department || null) as any,
+          category,
+        } as any)
+        .eq("id", docId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Visibility updated" });
+      qc.invalidateQueries({ queryKey: ["docs"] });
+    },
+    onError: (e: any) =>
+      toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
   const filtered = (docs ?? [])
     // Defense in depth — the docs query already filters by scope/tag at the
     // fetch layer to mirror RLS, but we re-check the audience guard here so
@@ -394,6 +439,122 @@ export default function Docs() {
     );
 
   const MAX_FILE_BYTES = 500 * 1024 * 1024;
+
+  function VisibilityMenu({ doc }: { doc: any }) {
+    const [aud, setAud] = useState<Audience>((doc.audience ?? "all") as Audience);
+    const [dep, setDep] = useState<string>(doc.department ?? "");
+    const [tgt, setTgt] = useState<string>(doc.target_user_id ?? "");
+    const [tag, setTag] = useState<string>(doc.tag_department ?? "");
+    const NONE = "__none__";
+    const onSave = () => {
+      updateVisibility.mutate({
+        docId: doc.id,
+        audience: aud,
+        department: aud === "department" ? dep || null : null,
+        target_user_id: aud === "user" ? tgt || null : null,
+        tag_department: tag || null,
+      });
+    };
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <button
+            type="button"
+            aria-label="Edit visibility"
+            title="Edit visibility"
+            className="text-muted-foreground hover:text-foreground shrink-0"
+          >
+            <Settings2 size={14} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-72 p-3 space-y-3">
+          <div className="text-xs font-semibold">Edit visibility</div>
+
+          <div className="space-y-1">
+            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Visible to
+            </Label>
+            <Select value={aud} onValueChange={(v) => setAud(v as Audience)}>
+              <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Everyone</SelectItem>
+                <SelectItem value="department">Specific department</SelectItem>
+                <SelectItem value="user">Specific employee</SelectItem>
+                {isAdmin && <SelectItem value="admin">Admin / HR only</SelectItem>}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {aud === "department" && (
+            <div className="space-y-1">
+              <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                Department
+              </Label>
+              <Select value={dep || undefined} onValueChange={(v) => setDep(v)}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="Select department…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments?.map((d: string) => (
+                    <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {aud === "user" && (
+            <div className="space-y-1">
+              <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                Employee
+              </Label>
+              <Select value={tgt || undefined} onValueChange={(v) => setTgt(v)}>
+                <SelectTrigger className="h-8 text-xs">
+                  <SelectValue placeholder="Select employee…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(employees ?? []).map((e: any) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.display_name || e.email}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground">
+              Category (department tag)
+            </Label>
+            <Select
+              value={tag || NONE}
+              onValueChange={(v) => setTag(v === NONE ? "" : v)}
+            >
+              <SelectTrigger className="h-8 text-xs">
+                <SelectValue placeholder="No category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE}>No category</SelectItem>
+                {departments?.map((d: string) => (
+                  <SelectItem key={d} value={d} className="capitalize">{d}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-[10px] text-muted-foreground">
+              Admin-only label used for filtering. Independent of who can view the doc.
+            </p>
+          </div>
+
+          <div className="flex justify-end pt-1">
+            <Button size="sm" className="h-7 text-xs" onClick={onSave} disabled={updateVisibility.isPending}>
+              {updateVisibility.isPending ? "Saving…" : "Save"}
+            </Button>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  }
 
   function isAcceptedFile(f: File) {
     return (
@@ -897,13 +1058,18 @@ export default function Docs() {
                     <div className="p-3 flex-1 flex flex-col gap-2">
                       <div className="flex items-start justify-between gap-2">
                         <div className="font-medium text-sm leading-tight">{d.title}</div>
-                        <button
-                          onClick={() => toggleComplete.mutate({ docId: d.id, done })}
-                          className="text-muted-foreground hover:text-foreground shrink-0"
-                          title={done ? "Mark incomplete" : "Mark complete"}
-                        >
-                          {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
-                        </button>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {(isAdmin || d.created_by === user?.id) && (
+                            <VisibilityMenu doc={d} />
+                          )}
+                          <button
+                            onClick={() => toggleComplete.mutate({ docId: d.id, done })}
+                            className="text-muted-foreground hover:text-foreground"
+                            title={done ? "Mark incomplete" : "Mark complete"}
+                          >
+                            {done ? <CheckCircle2 size={16} className="text-green-500" /> : <Circle size={16} />}
+                          </button>
+                        </div>
                       </div>
 
                       {d.file_url && toEmbedUrl(d.file_url) && (

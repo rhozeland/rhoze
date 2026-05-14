@@ -1014,6 +1014,13 @@ function RolePresetsSection({ kind, title, description, placeholder, builtIns }:
           <div key={`builtin-${label}`} className="group relative inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded bg-muted">
             <span>{label}</span>
             <button
+              onClick={() => toast({ title: "Built-in departments can't be edited." })}
+              className="hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+              aria-label={`Edit ${label}`}
+            >
+              <Pencil size={12} />
+            </button>
+            <button
               onClick={() => toast({ title: "Built-in departments can't be deleted." })}
               className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
               aria-label={`Delete ${label}`}

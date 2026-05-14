@@ -166,6 +166,31 @@ export default function TimeAndPay() {
                   Select the periods you want to remove. The currently active period is protected and cannot be deleted.
                 </DialogDescription>
               </DialogHeader>
+              <div className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/20 px-3 py-2">
+                <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                  <Checkbox
+                    checked={(() => {
+                      const deletable = (periods ?? []).filter((p: any) => p.id !== periodId).map((p: any) => p.id);
+                      return deletable.length > 0 && deletable.every((id: string) => selectedPeriodIds.has(id));
+                    })()}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        const deletable = (periods ?? []).filter((p: any) => p.id !== periodId).map((p: any) => p.id);
+                        setSelectedPeriodIds(new Set(deletable));
+                      } else {
+                        setSelectedPeriodIds(new Set());
+                      }
+                    }}
+                  />
+                  <span className="font-medium">Select all (except active)</span>
+                </label>
+                <button
+                  className="text-xs text-muted-foreground hover:text-foreground underline"
+                  onClick={() => setSelectedPeriodIds(new Set())}
+                >
+                  Clear selection
+                </button>
+              </div>
               <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                 {(periods ?? []).map((p: any) => {
                   const isActive = p.id === periodId;

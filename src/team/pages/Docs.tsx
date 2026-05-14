@@ -636,8 +636,8 @@ export default function Docs() {
                 </label>
               </div>
               <DialogFooter>
-                <Button onClick={() => create.mutate()} disabled={create.isPending || uploading}>
-                  {uploading ? "Uploading…" : create.isPending ? "Saving…" : "Save"}
+                <Button onClick={() => create.mutate()} disabled={create.isPending || uploadState === "uploading"}>
+                  {uploadState === "uploading" ? "Uploading…" : create.isPending ? "Saving…" : "Save"}
                 </Button>
               </DialogFooter>
             </DialogContent>

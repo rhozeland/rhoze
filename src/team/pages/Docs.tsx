@@ -730,7 +730,26 @@ export default function Docs() {
                 )}
 
                 <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={form.is_required} onCheckedChange={(v) => setForm({ ...form, is_required: !!v })} />
+                  <Checkbox
+                    checked={form.is_required}
+                    onCheckedChange={(v) => {
+                      const checked = !!v;
+                      setForm((prev) => ({
+                        ...prev,
+                        is_required: checked,
+                        // Required docs are visible to the whole team — force
+                        // the audience to "all" so they land in the My Team tab.
+                        ...(checked
+                          ? { audience: "all" as Audience, department: "", target_user_id: "" }
+                          : {}),
+                      }));
+                      if (checked) {
+                        clearError("audience");
+                        clearError("department");
+                        clearError("target_user_id");
+                      }
+                    }}
+                  />
                   Required for all team members
                 </label>
               </div>

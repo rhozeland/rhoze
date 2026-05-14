@@ -490,6 +490,10 @@ function EditMemberDialogBody({
   const pick = picks[p.id] ?? allowed[0] ?? "employee";
   const err = errors[p.id] ?? validateRoleForDept(pick as Role, dept);
   const hasAllowed = allowed.length > 0;
+  const [wageDraft, setWageDraft] = useState<string | null>(null);
+  const [rateDraft, setRateDraft] = useState<string | null>(null);
+  const wageVal = wageDraft ?? p.wage ?? "";
+  const rateVal = rateDraft ?? (p.hourly_rate_cents != null ? (p.hourly_rate_cents / 100).toString() : "");
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
@@ -544,6 +548,84 @@ function EditMemberDialogBody({
           <label className="text-[10px] uppercase text-muted-foreground">Ended</label>
           <Input type="date" className="h-9" value={p.ended_at ?? ""}
             onChange={(e) => setEmp.mutate({ userId: p.id, patch: { ended_at: e.target.value || null } })} />
+        </div>
+        <div className="md:col-span-2 pt-2">
+          <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-2">Payroll</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label className="text-[10px] uppercase text-muted-foreground">Work type</label>
+              <Select
+                value={p.work_type || "__none"}
+                onValueChange={(v) => setEmp.mutate({ userId: p.id, patch: { work_type: v === "__none" ? null : v } })}
+              >
+                <SelectTrigger className="h-9"><SelectValue placeholder="—" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none">—</SelectItem>
+                  {WORK_TYPES.map((w) => <SelectItem key={w} value={w}>{w}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-[10px] uppercase text-muted-foreground">Wage (notes)</label>
+              <Input
+                className="h-9"
+                placeholder="$19.50/hour, Equity…"
+                value={wageVal}
+                onChange={(e) => setWageDraft(e.target.value)}
+                onBlur={() => {
+                  if (wageDraft === null) return;
+                  const next = wageDraft.trim();
+                  if (next !== (p.wage ?? "")) setEmp.mutate({ userId: p.id, patch: { wage: next || null } });
+                  setWageDraft(null);
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase text-muted-foreground">Hourly rate ($/hr)</label>
+              <Input
+                className="h-9"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0.00"
+                value={rateVal}
+                onChange={(e) => setRateDraft(e.target.value)}
+                onBlur={() => {
+                  if (rateDraft === null) return;
+                  const n = parseFloat(rateDraft || "0");
+                  const cents = Number.isFinite(n) ? Math.round(n * 100) : 0;
+                  if (cents !== (p.hourly_rate_cents ?? 0)) setEmp.mutate({ userId: p.id, patch: { hourly_rate_cents: cents } });
+                  setRateDraft(null);
+                }}
+              />
+            </div>
+            <div>
+              <label className="text-[10px] uppercase text-muted-foreground">Payment method</label>
+              <Select
+                value={p.payment_method || "__none"}
+                onValueChange={(v) => setEmp.mutate({ userId: p.id, patch: { payment_method: v === "__none" ? null : v } })}
+              >
+                <SelectTrigger className="h-9"><SelectValue placeholder="—" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none">—</SelectItem>
+                  {PAYMENT_METHODS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-[10px] uppercase text-muted-foreground">Program</label>
+              <Select
+                value={p.program || "__none"}
+                onValueChange={(v) => setEmp.mutate({ userId: p.id, patch: { program: v === "__none" ? null : v } })}
+              >
+                <SelectTrigger className="h-9"><SelectValue placeholder="—" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none">—</SelectItem>
+                  {PROGRAMS.map((pr) => <SelectItem key={pr} value={pr}>{pr}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
         <div className="md:col-span-2">
           <label className="text-[10px] uppercase text-muted-foreground">Employment notes</label>

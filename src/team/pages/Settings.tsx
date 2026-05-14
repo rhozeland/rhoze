@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
-import { Upload } from "lucide-react";
+import { Upload, Eye, Pencil } from "lucide-react";
 import { formatPhone, validateAll, type MastersheetField } from "../lib/validation";
 import AvatarEditor from "../components/AvatarEditor";
 import AvailabilityEditor from "../components/AvailabilityEditor";
@@ -30,6 +30,31 @@ export default function Settings() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [editorFile, setEditorFile] = useState<File | null>(null);
+
+  type TabKey = "profile" | "personal" | "availability" | "account";
+  const [previewMode, setPreviewMode] = useState<Record<TabKey, boolean>>({
+    profile: false,
+    personal: false,
+    availability: false,
+    account: false,
+  });
+  const togglePreview = (k: TabKey) =>
+    setPreviewMode((p) => ({ ...p, [k]: !p[k] }));
+
+  const PreviewToggle = ({ tab, label }: { tab: TabKey; label: string }) => (
+    <div className="flex items-center justify-between">
+      <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className="h-7 px-2 text-[11px]"
+        onClick={() => togglePreview(tab)}
+      >
+        {previewMode[tab] ? (<><Pencil size={12} className="mr-1" /> Edit</>) : (<><Eye size={12} className="mr-1" /> Preview</>)}
+      </Button>
+    </div>
+  );
 
   const { data: profile } = useQuery({
     queryKey: ["my-profile", user?.id],
@@ -244,8 +269,25 @@ export default function Settings() {
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsContent value="profile" className="space-y-4">
         <div className="border border-border rounded-lg p-5 bg-card space-y-4">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Profile</div>
+        <PreviewToggle tab="profile" label="Profile" />
 
+        {previewMode.profile ? (
+          <div className="flex items-start gap-4">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border" />
+            ) : (
+              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center text-xl font-medium border border-border">{initial}</div>
+            )}
+            <div className="text-sm space-y-1 min-w-0">
+              <div className="font-medium">{form.display_name || "—"}</div>
+              {personal.alias && <div className="text-muted-foreground">aka {personal.alias}</div>}
+              {form.pronouns && <div className="text-muted-foreground">{form.pronouns}</div>}
+              <div className="text-muted-foreground">{user?.email}</div>
+              {form.bio && <div className="pt-2 whitespace-pre-wrap">{form.bio}</div>}
+            </div>
+          </div>
+        ) : (
+        <>
         <div className="flex items-center gap-4">
           {profile?.avatar_url ? (
             <img src={profile.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border" />
@@ -303,12 +345,26 @@ export default function Settings() {
         <div className="pt-2">
           <Button onClick={() => save.mutate()} disabled={save.isPending}>Save profile</Button>
         </div>
+        </>
+        )}
         </div>
         </TabsContent>
 
         <TabsContent value="personal" className="space-y-4">
         <div className="border border-border rounded-lg p-5 bg-card space-y-4">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Personal & emergency</div>
+        <PreviewToggle tab="personal" label="Personal & emergency" />
+        {previewMode.personal ? (
+          <div className="text-sm space-y-1.5">
+            <div><span className="text-muted-foreground">Phone:</span> {personal.phone || "—"}</div>
+            <div><span className="text-muted-foreground">Date of birth:</span> {personal.date_of_birth || "—"}</div>
+            <div><span className="text-muted-foreground">Address:</span> {personal.address || "—"}</div>
+            <div className="pt-2 text-xs uppercase tracking-wider text-muted-foreground">Emergency contact</div>
+            <div><span className="text-muted-foreground">Name:</span> {personal.emergency_contact_name || "—"}</div>
+            <div><span className="text-muted-foreground">Relation:</span> {personal.emergency_contact_relation || "—"}</div>
+            <div><span className="text-muted-foreground">Phone:</span> {personal.emergency_contact_phone || "—"}</div>
+          </div>
+        ) : (
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Phone</Label>
@@ -348,16 +404,30 @@ export default function Settings() {
           {hasPersonalErrors && <span className="text-xs text-destructive">Fix the highlighted fields above.</span>}
         </div>
         <p className="text-[11px] text-muted-foreground">Wage, payment method, department and program are managed by an admin in Role Manager.</p>
+        </>
+        )}
         </div>
         </TabsContent>
 
         <TabsContent value="availability" className="space-y-4">
-          <AvailabilityEditor />
+          <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+            <PreviewToggle tab="availability" label="Availability" />
+            {previewMode.availability ? (
+              <div className="text-sm space-y-1.5">
+                <div><span className="text-muted-foreground">Days:</span> {(availability?.days ?? []).join(", ") || "—"}</div>
+                <div><span className="text-muted-foreground">Time of day:</span> {(availability?.time_blocks ?? []).join(", ") || "—"}</div>
+                {availability?.notes && <div><span className="text-muted-foreground">Notes:</span> {availability.notes}</div>}
+                {!availability && <div className="text-muted-foreground italic">No availability marked yet.</div>}
+              </div>
+            ) : (
+              <AvailabilityEditor showHeader={false} />
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="account" className="space-y-4">
           <div className="border border-border rounded-lg p-5 bg-card space-y-3">
-            <div className="text-xs uppercase tracking-wider text-muted-foreground">Account</div>
+            <PreviewToggle tab="account" label="Account" />
             <div className="text-sm"><span className="text-muted-foreground">Email:</span> {user?.email}</div>
             <div className="text-sm"><span className="text-muted-foreground">Roles:</span> {roles.join(", ") || "—"}</div>
             <div className="text-sm"><span className="text-muted-foreground">Department:</span> {dept}</div>
@@ -365,6 +435,8 @@ export default function Settings() {
             <p className="text-xs text-muted-foreground pt-1">Department and job title are assigned by an admin.</p>
           </div>
 
+          {!previewMode.account && (
+          <>
           <div className="border border-border rounded-lg p-5 bg-card space-y-4">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">Change email</div>
             <div className="space-y-1.5">
@@ -397,6 +469,8 @@ export default function Settings() {
               {savingPassword ? "Saving…" : "Update password"}
             </Button>
           </div>
+          </>
+          )}
         </TabsContent>
         <TabsList className="flex flex-wrap">
           <TabsTrigger value="profile">Profile</TabsTrigger>

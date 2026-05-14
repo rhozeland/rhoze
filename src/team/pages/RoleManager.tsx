@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { AlertTriangle, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, CheckCircle2, ChevronDown, ChevronRight, Eye, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "../lib/auth";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
@@ -95,6 +95,31 @@ export default function RoleManager() {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState<Dept | "all" | "unassigned">("all");
   const [deptChips, setDeptChips] = useState<Set<Dept>>(new Set());
+  const [deptOrder, setDeptOrder] = useState<Dept[]>(() => {
+    try {
+      const raw = localStorage.getItem("rolemanager.deptOrder");
+      if (raw) {
+        const parsed = JSON.parse(raw) as Dept[];
+        const valid = parsed.filter((d) => DEPTS.some((x) => x.value === d));
+        const missing = DEPTS.map((x) => x.value).filter((d) => !valid.includes(d));
+        return [...valid, ...missing];
+      }
+    } catch {}
+    return DEPTS.map((x) => x.value);
+  });
+  useEffect(() => {
+    try { localStorage.setItem("rolemanager.deptOrder", JSON.stringify(deptOrder)); } catch {}
+  }, [deptOrder]);
+  const moveDept = (d: Dept, dir: -1 | 1) => {
+    setDeptOrder((prev) => {
+      const i = prev.indexOf(d);
+      const j = i + dir;
+      if (i < 0 || j < 0 || j >= prev.length) return prev;
+      const next = prev.slice();
+      [next[i], next[j]] = [next[j], next[i]];
+      return next;
+    });
+  };
   const [statusFilter, setStatusFilter] = useState<EmpStatus | "all">("all");
   const [tenureMin, setTenureMin] = useState<string>("");
   const [tenureMax, setTenureMax] = useState<string>("");

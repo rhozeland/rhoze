@@ -14,7 +14,44 @@ type Props = {
 // Module-level cache keyed by URL so reopening the same attachment never re-fetches.
 const textCache = new Map<string, string>();
 const htmlCache = new Map<string, string>();
-const pdfBlobCache = new Map<string, string>();
+// Blob-URL cache for any binary media we hand to the browser. Chrome occasionally
+// refuses to render remote uploads inside iframes/plugins ("This page has been
+// blocked by Chrome") when the storage response isn't perfectly inline. Fetching
+// the bytes ourselves and serving a same-origin blob: URL avoids that entirely
+// for every uploaded file type (pdf, images, video, audio, etc.).
+const mediaBlobCache = new Map<string, string>();
+
+function FailedMedia({
+  kind,
+  url,
+  sizeBox,
+  padding,
+  error,
+}: {
+  kind: string;
+  url: string;
+  sizeBox: string;
+  padding: string;
+  error: string | null;
+}) {
+  return (
+    <div className={`${sizeBox} flex flex-col items-center justify-center gap-3 bg-background text-foreground rounded ${padding} text-center`}>
+      <AlertCircle size={24} className="text-destructive" />
+      <div className="text-sm font-medium">This {kind} couldn’t be loaded</div>
+      <p className="text-xs text-muted-foreground max-w-sm">
+        {error || "The browser blocked the embedded preview."}
+      </p>
+      <a
+        href={url}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded border border-border bg-background hover:bg-muted"
+      >
+        <ExternalLink size={12} /> Open in new tab
+      </a>
+    </div>
+  );
+}
 
 function inferKind(mime: string | null | undefined, fileName: string | null | undefined) {
   const m = (mime || "").toLowerCase();
@@ -46,15 +83,16 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
   const padding = compact ? "p-3" : "p-6";
   const cachedText = kind === "md" || kind === "text" || kind === "code" ? textCache.get(url) : null;
   const cachedHtml = kind === "docx" ? htmlCache.get(url) : null;
-  const cachedPdf = kind === "pdf" ? pdfBlobCache.get(url) : null;
+  const isBinaryMedia = kind === "pdf" || kind === "image" || kind === "video" || kind === "audio";
+  const cachedBlob = isBinaryMedia ? mediaBlobCache.get(url) : null;
   const [text, setText] = useState<string | null>(cachedText ?? null);
   const [html, setHtml] = useState<string | null>(cachedHtml ?? null);
-  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(cachedPdf ?? null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(cachedBlob ?? null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(
     (kind === "md" || kind === "text" || kind === "code") ? !textCache.has(url)
     : kind === "docx" ? !htmlCache.has(url)
-    : kind === "pdf" ? !pdfBlobCache.has(url)
+    : isBinaryMedia ? !mediaBlobCache.has(url)
     : false
   );
 
@@ -97,12 +135,12 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
         })
         .catch((e) => { if (!cancelled) setError(e.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
-    } else if (kind === "pdf") {
-      // Chrome sometimes refuses to render remote PDFs inside sandboxed iframes
-      // ("This page has been blocked by Chrome"). Fetching the bytes ourselves
-      // and handing the iframe a same-origin blob: URL sidesteps that block.
-      if (pdfBlobCache.has(url)) {
-        setPdfBlobUrl(pdfBlobCache.get(url)!);
+    } else if (isBinaryMedia) {
+      // Fetch the upload as bytes and expose it as a same-origin blob: URL —
+      // this prevents Chrome from blocking iframe-rendered uploads and also
+      // dodges any attachment-disposition headers from storage.
+      if (mediaBlobCache.has(url)) {
+        setBlobUrl(mediaBlobCache.get(url)!);
         setLoading(false);
         return;
       }
@@ -114,24 +152,45 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
         })
         .then((blob) => {
           if (cancelled) return;
-          const typed = blob.type === "application/pdf"
-            ? blob
-            : new Blob([blob], { type: "application/pdf" });
+          // If the storage response didn't set a useful MIME type, force one
+          // based on the inferred kind so the browser still renders inline.
+          const fallbackType =
+            kind === "pdf" ? "application/pdf"
+            : kind === "image" ? (mime || "image/*")
+            : kind === "video" ? (mime || "video/mp4")
+            : kind === "audio" ? (mime || "audio/mpeg")
+            : blob.type;
+          const typed =
+            !blob.type || blob.type === "application/octet-stream"
+              ? new Blob([blob], { type: fallbackType })
+              : blob;
           const objectUrl = URL.createObjectURL(typed);
-          pdfBlobCache.set(url, objectUrl);
-          setPdfBlobUrl(objectUrl);
+          mediaBlobCache.set(url, objectUrl);
+          setBlobUrl(objectUrl);
         })
         .catch((e) => { if (!cancelled) setError(e.message); })
         .finally(() => { if (!cancelled) setLoading(false); });
     }
 
     return () => { cancelled = true; };
-  }, [url, kind]);
+  }, [url, kind, isBinaryMedia, mime]);
 
   if (kind === "image") {
+    if (loading) {
+      return (
+        <div className={`${sizeBox} flex items-center justify-center bg-muted/30 text-muted-foreground text-sm rounded`}>
+          Loading image…
+        </div>
+      );
+    }
+    if (error || !blobUrl) {
+      return (
+        <FailedMedia kind="image" url={url} sizeBox={sizeBox} padding={padding} error={error} />
+      );
+    }
     return (
       <img
-        src={url}
+        src={blobUrl}
         alt={fileName || "Image preview"}
         className={mediaSize}
       />
@@ -139,16 +198,40 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
   }
 
   if (kind === "video") {
+    if (loading) {
+      return (
+        <div className={`${sizeBox} flex items-center justify-center bg-muted/30 text-muted-foreground text-sm rounded`}>
+          Loading video…
+        </div>
+      );
+    }
+    if (error || !blobUrl) {
+      return (
+        <FailedMedia kind="video" url={url} sizeBox={sizeBox} padding={padding} error={error} />
+      );
+    }
     return (
-      <video src={url} controls className={compact ? "w-full h-full" : "max-w-full max-h-[75vh] rounded"} />
+      <video src={blobUrl} controls className={compact ? "w-full h-full" : "max-w-full max-h-[75vh] rounded"} />
     );
   }
 
   if (kind === "audio") {
+    if (loading) {
+      return (
+        <div className={`w-full ${compact ? "h-full justify-center" : "max-w-xl"} bg-background text-foreground rounded ${padding} flex flex-col items-center gap-4`}>
+          <div className="text-sm text-muted-foreground">Loading audio…</div>
+        </div>
+      );
+    }
+    if (error || !blobUrl) {
+      return (
+        <FailedMedia kind="audio" url={url} sizeBox={sizeBox} padding={padding} error={error} />
+      );
+    }
     return (
       <div className={`w-full ${compact ? "h-full justify-center" : "max-w-xl"} bg-background text-foreground rounded ${padding} flex flex-col items-center gap-4`}>
         <div className="text-sm font-medium truncate w-full text-center">{fileName || "Audio"}</div>
-        <audio src={url} controls className="w-full" />
+        <audio src={blobUrl} controls className="w-full" />
       </div>
     );
   }
@@ -161,7 +244,7 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
         </div>
       );
     }
-    if (error || !pdfBlobUrl) {
+    if (error || !blobUrl) {
       return (
         <div className={`${sizeBox} flex flex-col items-center justify-center gap-3 bg-background text-foreground rounded ${padding} text-center`}>
           <AlertCircle size={24} className="text-destructive" />
@@ -182,7 +265,7 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
     }
     return (
       <iframe
-        src={pdfBlobUrl}
+        src={blobUrl}
         title={fileName || "PDF preview"}
         className={compact ? "w-full h-full bg-white" : "w-full h-[75vh] rounded bg-white"}
       />

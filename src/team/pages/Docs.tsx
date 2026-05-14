@@ -94,6 +94,22 @@ export default function Docs() {
   const clearError = (k: keyof FieldErrors) =>
     setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
 
+  // Simulate upload progress while an upload is in flight so the UI
+  // shows a determinate bar even though Supabase upload() does not
+  // expose native progress events.
+  useEffect(() => {
+    if (!uploading) return;
+    setUploadProgress(0);
+    const interval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 92) return prev;
+        const increment = prev < 30 ? 6 : prev < 60 ? 3 : 1;
+        return Math.min(prev + increment, 92);
+      });
+    }, 250);
+    return () => clearInterval(interval);
+  }, [uploading]);
+
   const { data: docs } = useQuery({
     queryKey: ["docs"],
     queryFn: async () => {

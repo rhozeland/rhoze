@@ -1396,7 +1396,7 @@ export default function Docs() {
                     <button
                       type="button"
                       onClick={() => { goNext(); resetNavTimer(); }}
-                      className={`fixed right-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur focus:opacity-100 transition-opacity duration-200 ${showNav ? "opacity-100" : "opacity-0"}`}
+                      className={`fixed right-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur focus:opacity-100 transition-opacity duration-200 ${showNav ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
                       aria-label="Next attachment"
                     >
                       <span className="text-sm hidden sm:inline">Next</span> <ChevronRight size={20} />

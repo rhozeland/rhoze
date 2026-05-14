@@ -125,11 +125,29 @@ export default function Docs() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<any | null>(null);
+  const [showNav, setShowNav] = useState(false);
+  const navTimerRef = useRef<number | null>(null);
+  const resetNavTimer = () => {
+    setShowNav(true);
+    if (navTimerRef.current) window.clearTimeout(navTimerRef.current);
+    navTimerRef.current = window.setTimeout(() => setShowNav(false), 2500);
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<(() => void) | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const clearError = (k: keyof FieldErrors) =>
     setFieldErrors((prev) => (prev[k] ? { ...prev, [k]: undefined } : prev));
+
+  useEffect(() => {
+    if (previewDoc) {
+      setShowNav(true);
+      if (navTimerRef.current) window.clearTimeout(navTimerRef.current);
+      navTimerRef.current = window.setTimeout(() => setShowNav(false), 2500);
+    }
+    return () => {
+      if (navTimerRef.current) window.clearTimeout(navTimerRef.current);
+    };
+  }, [previewDoc]);
 
   // Resolve the caller's department first — the docs query relies on it to
   // mirror the server-side RLS rules at the fetch layer.
@@ -1339,6 +1357,7 @@ export default function Docs() {
         <DialogContent
           className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-black/95 border-none"
           aria-describedby={undefined}
+          onMouseMove={resetNavTimer}
         >
           <DialogHeader className="sr-only">
             <DialogTitle>{previewDoc?.title ?? "Attachment preview"}</DialogTitle>
@@ -1360,24 +1379,23 @@ export default function Docs() {
               else if (total > 1) setPreviewDoc(previewableList[0]);
             };
             return (
-              <div className="flex flex-col h-full relative group/lightbox">
-                {/* Prev / Next side buttons — rendered outside the dialog
-                    box (fixed to the viewport edges) and only visible on
-                    hover so they don't obscure the preview content. */}
+              <div className="flex flex-col h-full relative">
+                {/* Prev / Next side buttons — fixed to viewport edges.
+                    Visible on open / mouse move, auto-hide after 2.5 s idle. */}
                 {total > 1 && (
                   <>
                     <button
                       type="button"
-                      onClick={goPrev}
-                      className="fixed left-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur opacity-0 group-hover/lightbox:opacity-100 focus:opacity-100 transition-opacity duration-200"
+                      onClick={() => { goPrev(); resetNavTimer(); }}
+                      className={`fixed left-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur focus:opacity-100 transition-opacity duration-200 ${showNav ? "opacity-100" : "opacity-0"}`}
                       aria-label="Previous attachment"
                     >
                       <ChevronLeft size={20} /> <span className="text-sm hidden sm:inline">Previous</span>
                     </button>
                     <button
                       type="button"
-                      onClick={goNext}
-                      className="fixed right-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur opacity-0 group-hover/lightbox:opacity-100 focus:opacity-100 transition-opacity duration-200"
+                      onClick={() => { goNext(); resetNavTimer(); }}
+                      className={`fixed right-4 top-1/2 -translate-y-1/2 z-[60] flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/15 text-white hover:bg-white/25 backdrop-blur focus:opacity-100 transition-opacity duration-200 ${showNav ? "opacity-100" : "opacity-0"}`}
                       aria-label="Next attachment"
                     >
                       <span className="text-sm hidden sm:inline">Next</span> <ChevronRight size={20} />

@@ -1190,9 +1190,19 @@ export default function Docs() {
                         (embedUrl || (signed && !d.file_mime?.startsWith("image/") && !d.file_mime?.startsWith("video/")) ? "h-64 " : "aspect-[16/9] ") +
                         (previewable || (!embedUrl && d.file_url) ? "cursor-pointer" : "")
                       }
+                      role={previewable ? "button" : undefined}
+                      tabIndex={previewable ? 0 : undefined}
+                      aria-label={previewable ? `Open preview for ${d.title}` : undefined}
                       onClick={() => {
                         if (previewable) setPreviewDoc(d);
                         else if (!embedUrl && d.file_url) window.open(d.file_url, "_blank", "noopener,noreferrer");
+                      }}
+                      onKeyDown={(e) => {
+                        if (!previewable) return;
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setPreviewDoc(d);
+                        }
                       }}
                     >
                       {d.file_mime?.startsWith("image/") && signed ? (

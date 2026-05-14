@@ -14,9 +14,9 @@ export default function TeamAdmin() {
       <Tabs defaultValue="roles" className="space-y-4">
         <TabsList className="flex flex-wrap">
           <TabsTrigger value="roles">Roles</TabsTrigger>
+          <TabsTrigger value="role-settings">Roles Settings</TabsTrigger>
           <TabsTrigger value="invites">Invites</TabsTrigger>
           <TabsTrigger value="referral-codes">Referral codes</TabsTrigger>
-          <TabsTrigger value="role-settings">Roles Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="roles"><RoleManager /></TabsContent>
         <TabsContent value="invites"><Invites /></TabsContent>

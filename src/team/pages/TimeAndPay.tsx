@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil } from "lucide-react";
+import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
@@ -415,6 +415,23 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
     onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
   });
 
+  const duplicateEntry = useMutation({
+    mutationFn: async (src: any) => {
+      if (!timesheet?.id) throw new Error("No timesheet");
+      const { id, created_at, updated_at, ...rest } = src;
+      const { error } = await supabase.from("timesheet_entries").insert({
+        ...rest,
+        timesheet_id: timesheet.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Row duplicated" });
+      qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] });
+    },
+    onError: (e: any) => toast({ title: "Couldn't duplicate", description: e.message, variant: "destructive" }),
+  });
+
   const submit = useMutation({
     mutationFn: async () => {
       if (!timesheet?.id) throw new Error("No timesheet");
@@ -568,7 +585,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
               <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
-              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} />
+              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} />
             ))}
           </tbody>
         </table>
@@ -764,7 +781,7 @@ function Th({ children, className, icon }: any) {
 
 /* ---------- entry row ---------- */
 
-function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; onChange: (p: any) => void; onDelete: () => void }) {
+function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",
@@ -879,7 +896,14 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete }: 
       </td>
       <td className="px-3 py-2 text-right tabular-nums font-semibold">{formatCents(lineTotal)}</td>
       <td className="px-2 py-1 text-right">
-        {!locked && <button onClick={onDelete} className="text-muted-foreground hover:text-destructive p-1"><Trash2 size={14} /></button>}
+        {!locked && (
+          <div className="inline-flex items-center gap-0.5">
+            {onDuplicate && (
+              <button onClick={onDuplicate} title="Duplicate row" className="text-muted-foreground hover:text-foreground p-1"><Copy size={14} /></button>
+            )}
+            <button onClick={onDelete} title="Delete row" className="text-muted-foreground hover:text-destructive p-1"><Trash2 size={14} /></button>
+          </div>
+        )}
       </td>
     </tr>
   );

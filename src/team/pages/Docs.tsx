@@ -58,6 +58,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useAuth } from "../lib/auth";
 import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import DocPreview from "../components/DocPreview";
+import IframePreview from "../components/IframePreview";
 import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
@@ -1212,14 +1213,11 @@ export default function Docs() {
                       ) : d.file_mime?.startsWith("video/") && signed ? (
                         <video src={signed} className="w-full h-full object-cover" muted />
                       ) : embedUrl ? (
-                        <iframe
+                        <IframePreview
                           src={embedUrl}
                           title={d.title}
-                          className="w-full h-full bg-background"
-                          loading="lazy"
-                          allow="autoplay; encrypted-media; fullscreen"
-                          sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms allow-presentation"
-                          referrerPolicy="no-referrer-when-downgrade"
+                          fallbackUrl={d.file_url}
+                          className="w-full h-full"
                         />
                       ) : signed ? (
                         <div className="w-full h-full overflow-auto bg-background">

@@ -16,6 +16,16 @@ export function toEmbedUrl(url: string): string | null {
       return `https://docs.google.com/${gMatch[1]}/d/${gMatch[2]}/preview`;
     }
 
+    // Google Forms — embed via the published viewform URL
+    const formMatch = url.match(/https?:\/\/docs\.google\.com\/forms\/d\/(?:e\/)?([a-zA-Z0-9_-]+)/);
+    if (formMatch) {
+      const id = formMatch[1];
+      const isPublished = /\/forms\/d\/e\//.test(url);
+      return isPublished
+        ? `https://docs.google.com/forms/d/e/${id}/viewform?embedded=true`
+        : `https://docs.google.com/forms/d/${id}/viewform?embedded=true`;
+    }
+
     // Google Drive file
     const dMatch =
       url.match(/https?:\/\/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/) ||

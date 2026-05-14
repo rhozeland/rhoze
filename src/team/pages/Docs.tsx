@@ -440,6 +440,52 @@ export default function Docs() {
       toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
 
+  const deleteDoc = useMutation({
+    mutationFn: async (docId: string) => {
+      const { data: doc, error: fetchErr } = await supabase
+        .from("docs")
+        .select("file_path")
+        .eq("id", docId)
+        .maybeSingle();
+      if (fetchErr) throw fetchErr;
+      const { error } = await supabase.from("docs").delete().eq("id", docId);
+      if (error) throw error;
+      if (doc?.file_path) {
+        await supabase.storage.from("docs").remove([doc.file_path]);
+      }
+    },
+    onSuccess: () => {
+      toast({ title: "Doc removed" });
+      qc.invalidateQueries({ queryKey: ["docs"] });
+    },
+    onError: (e: any) =>
+      toast({ title: "Failed to remove", description: e.message, variant: "destructive" }),
+  });
+
+  const massDelete = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { data: rows, error: fetchErr } = await supabase
+        .from("docs")
+        .select("id, file_path")
+        .in("id", ids);
+      if (fetchErr) throw fetchErr;
+      const { error } = await supabase.from("docs").delete().in("id", ids);
+      if (error) throw error;
+      const paths = (rows ?? []).map((r: any) => r.file_path).filter(Boolean) as string[];
+      if (paths.length) {
+        await supabase.storage.from("docs").remove(paths);
+      }
+    },
+    onSuccess: () => {
+      toast({ title: "Docs removed" });
+      setSelectedIds(new Set());
+      setConfirmOpen(false);
+      qc.invalidateQueries({ queryKey: ["docs"] });
+    },
+    onError: (e: any) =>
+      toast({ title: "Failed to remove", description: e.message, variant: "destructive" }),
+  });
+
   const filtered = (docs ?? [])
     // Defense in depth — the docs query already filters by scope/tag at the
     // fetch layer to mirror RLS, but we re-check the audience guard here so

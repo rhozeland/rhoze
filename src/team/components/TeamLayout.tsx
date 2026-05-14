@@ -14,6 +14,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccentPicker } from "@/components/AccentPicker";
+import rhozelandLogo from "@/assets/rhozeland-logo.png";
 
 const nav = [
   { to: "/directory", label: "Directory", icon: Calendar },
@@ -101,10 +102,21 @@ export default function TeamLayout() {
           )}
         >
           {!collapsed && (
-            <div>
-              <div className="text-sm font-semibold tracking-wider uppercase">Rhozeland</div>
-              <div className="text-xs text-muted-foreground">Team Portal</div>
-            </div>
+            <NavLink
+              to="/settings"
+              className="flex items-center gap-2 group"
+              title="My Profile"
+            >
+              <img
+                src={rhozelandLogo}
+                alt="Rhozeland"
+                className="h-8 w-8 object-contain shrink-0"
+              />
+              <div>
+                <div className="text-sm font-semibold tracking-wider uppercase group-hover:text-primary transition-colors">Rhozeland</div>
+                <div className="text-xs text-muted-foreground">Team Portal</div>
+              </div>
+            </NavLink>
           )}
           <Button
             onClick={() => setCollapsed((c) => !c)}

@@ -1315,8 +1315,40 @@ export default function Docs() {
             const signed = previewDoc.file_path ? signedUrls[previewDoc.file_path] : null;
             const isImg = previewDoc.file_mime?.startsWith("image/");
             const isVid = previewDoc.file_mime?.startsWith("video/");
+            const previewableList = filtered.filter((d: any) => isDocPreviewable(d) && signedUrls[d.file_path]);
+            const currentIdx = previewableList.findIndex((d: any) => d.id === previewDoc.id);
+            const total = previewableList.length;
+            const goPrev = () => {
+              if (currentIdx > 0) setPreviewDoc(previewableList[currentIdx - 1]);
+              else if (total > 1) setPreviewDoc(previewableList[total - 1]);
+            };
+            const goNext = () => {
+              if (currentIdx >= 0 && currentIdx < total - 1) setPreviewDoc(previewableList[currentIdx + 1]);
+              else if (total > 1) setPreviewDoc(previewableList[0]);
+            };
             return (
-              <div className="flex flex-col h-full">
+              <div className="flex flex-col h-full relative">
+                {/* Prev / Next side buttons */}
+                {total > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={goPrev}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      aria-label="Previous attachment"
+                    >
+                      <ChevronLeft size={24} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goNext}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
+                      aria-label="Next attachment"
+                    >
+                      <ChevronRight size={24} />
+                    </button>
+                  </>
+                )}
                 <div className="flex-1 flex items-center justify-center overflow-auto p-4">
                   {isImg && signed ? (
                     <img src={signed} alt={previewDoc.title} className="max-w-full max-h-[70vh] object-contain rounded" />
@@ -1333,7 +1365,14 @@ export default function Docs() {
                   )}
                 </div>
                 <div className="flex items-center justify-between gap-3 px-4 py-3 border-t border-white/10 bg-black/80 backdrop-blur">
-                  <div className="text-sm text-white/90 truncate">{previewDoc.title}</div>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="text-sm text-white/90 truncate">{previewDoc.title}</div>
+                    {total > 1 && (
+                      <span className="text-xs text-white/50 shrink-0">
+                        {currentIdx + 1} / {total}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-2">
                     {signed && (
                       <a

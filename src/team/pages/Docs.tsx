@@ -731,13 +731,13 @@ export default function Docs() {
             <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
               {(
                 [
-                  { id: "mine", label: "My Documents", Icon: UserIcon },
-                  { id: "department", label: "My Department", Icon: Users },
-                  { id: "team", label: "My Team", Icon: Users },
-                  ...(isAdmin || myProfile?.department === "hr"
+                  { id: "mine" as const, label: "My Documents", Icon: UserIcon },
+                  { id: "department" as const, label: "My Department", Icon: Users },
+                  { id: "team" as const, label: "My Team", Icon: Users },
+                  ...(canSeeAdmin
                     ? [{ id: "admin" as const, label: "Admin Documents", Icon: Shield }]
                     : []),
-                ] as const
+                ]
               ).map(({ id, label, Icon }) => {
                 const active = scope === id;
                 return (

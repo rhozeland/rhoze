@@ -95,7 +95,7 @@ export default function RoleManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, display_name, alias, pronouns, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program")
+        .select("id, display_name, alias, pronouns, bio, email, avatar_url, department, job_title, employment_status, started_at, ended_at, employment_notes, work_type, wage, hourly_rate_cents, payment_method, program")
         .order("display_name");
       if (error) throw error;
       return data;

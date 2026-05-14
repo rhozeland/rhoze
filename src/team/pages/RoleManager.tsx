@@ -899,7 +899,7 @@ function EditMemberDialogBody({
   );
 }
 
-type Preset = { id: string; kind: "department" | "job_title"; label: string; sort_order: number };
+type Preset = { id: string; kind: "department" | "job_title" | "position"; label: string; sort_order: number };
 
 function RolePresetsBox() {
   const qc = useQueryClient();
@@ -908,12 +908,12 @@ function RolePresetsBox() {
   const [editLabel, setEditLabel] = useState("");
 
   const { data: presets } = useQuery({
-    queryKey: ["role-presets"],
+    queryKey: ["role-presets", "position"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("role_presets" as any)
         .select("id, kind, label, sort_order")
-        .eq("kind", "department")
+        .eq("kind", "position")
         .order("sort_order")
         .order("label");
       if (error) throw error;
@@ -923,13 +923,13 @@ function RolePresetsBox() {
 
   const create = useMutation({
     mutationFn: async (p: { label: string }) => {
-      const { error } = await supabase.from("role_presets" as any).insert({ kind: "department", label: p.label });
+      const { error } = await supabase.from("role_presets" as any).insert({ kind: "position", label: p.label });
       if (error) throw error;
     },
     onSuccess: () => {
       setNewLabel("");
-      toast({ title: "Preset added" });
-      qc.invalidateQueries({ queryKey: ["role-presets"] });
+      toast({ title: "Position added" });
+      qc.invalidateQueries({ queryKey: ["role-presets", "position"] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
@@ -941,8 +941,8 @@ function RolePresetsBox() {
     },
     onSuccess: () => {
       setEditingId(null);
-      toast({ title: "Preset updated" });
-      qc.invalidateQueries({ queryKey: ["role-presets"] });
+      toast({ title: "Position updated" });
+      qc.invalidateQueries({ queryKey: ["role-presets", "position"] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
@@ -953,28 +953,27 @@ function RolePresetsBox() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: "Preset deleted" });
-      qc.invalidateQueries({ queryKey: ["role-presets"] });
+      toast({ title: "Position deleted" });
+      qc.invalidateQueries({ queryKey: ["role-presets", "position"] });
     },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
 
   const filtered = presets ?? [];
-  const builtIns = DEPTS;
 
   return (
     <div className="border border-border rounded-lg p-4 bg-card">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <div className="text-sm font-semibold">Departments</div>
-          <p className="text-xs text-muted-foreground">Built-in departments and any custom ones admins add.</p>
+          <div className="text-sm font-semibold">Position</div>
+          <p className="text-xs text-muted-foreground">Manage the positions that can be assigned to team members.</p>
         </div>
       </div>
 
       <div className="mt-3 flex gap-2">
         <Input
           className="h-9 flex-1"
-          placeholder="e.g. Production"
+          placeholder="e.g. moderator"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
           onKeyDown={(e) => {
@@ -991,20 +990,11 @@ function RolePresetsBox() {
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
-        {builtIns.map((d) => (
-          <div
-            key={d.value}
-            className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded bg-muted/60 border border-border"
-            title="Built-in department (read-only)"
-          >
-            <span>{d.label}</span>
-            <span className="text-[9px] uppercase tracking-wider text-muted-foreground">built-in</span>
-          </div>
-        ))}
+        {filtered.length === 0 && <span className="text-xs text-muted-foreground">No positions yet.</span>}
         {filtered.map((p) => {
           const editing = editingId === p.id;
           return (
-            <div key={p.id} className="inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded bg-muted">
+            <div key={p.id} className="group relative inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded bg-muted">
               {editing ? (
                 <>
                   <Input
@@ -1045,10 +1035,10 @@ function RolePresetsBox() {
                     onClick={() => {
                       if (confirm(`Delete "${p.label}"?`)) remove.mutate(p.id);
                     }}
-                    className="hover:text-destructive"
+                    className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
                     aria-label={`Delete ${p.label}`}
                   >
-                    <Trash2 size={12} />
+                    <X size={10} strokeWidth={3} />
                   </button>
                 </>
               )}

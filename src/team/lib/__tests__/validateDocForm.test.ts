@@ -118,13 +118,13 @@ describe("validateDocForm — file & url checks", () => {
     if (!r.ok) expect(r.errors.file).toMatch(/unsupported/i);
   });
 
-  it("rejects files over 100MB", async () => {
+  it("rejects files over 500 MB", async () => {
     const r = await validateDocForm(
-      { ...baseForm, file: { name: "big.pdf", type: "application/pdf", size: 200 * 1024 * 1024 } },
+      { ...baseForm, file: { name: "big.pdf", type: "application/pdf", size: 600 * 1024 * 1024 } },
       adminCtx(),
     );
     expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.errors.file).toMatch(/100MB/);
+    if (!r.ok) expect(r.errors.file).toMatch(/500 MB/);
   });
 
   it("accepts pdf, markdown by extension, image, and video", async () => {

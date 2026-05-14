@@ -49,6 +49,8 @@ import {
   Shield,
   Settings2,
   Trash2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "../lib/auth";

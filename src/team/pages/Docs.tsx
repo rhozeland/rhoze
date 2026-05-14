@@ -43,10 +43,9 @@ import EmbedPreview, { toEmbedUrl } from "../components/EmbedPreview";
 import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
-const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 type Audience = "all" | "department" | "user" | "admin";
 type DocScope = "mine" | "department" | "team" | "admin";
-type TagFilter = "all" | (typeof DEPARTMENTS)[number];
+type TagFilter = "all" | string;
 
 type DocForm = {
   title: string;

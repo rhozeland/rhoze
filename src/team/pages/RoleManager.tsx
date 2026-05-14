@@ -512,9 +512,16 @@ function EditMemberDialogBody({
 
   const saveAvail = useMutation({
     mutationFn: async (next: { days: string[]; time_blocks: string[]; notes: string | null }) => {
+      // Derive `slots` (cell keys "Day|Block") so the user-facing AvailabilityEditor,
+      // which reads `slots` preferentially, stays in sync with admin edits here.
+      const slots = next.days.flatMap((d) => next.time_blocks.map((b) => `${d}|${b}`));
+      const tz = (() => {
+        try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+        catch { return "UTC"; }
+      })();
       const { error } = await supabase
         .from("team_availability")
-        .upsert({ user_id: p.id, ...next }, { onConflict: "user_id" });
+        .upsert({ user_id: p.id, ...next, slots, timezone: tz }, { onConflict: "user_id" });
       if (error) throw error;
     },
     onSuccess: () => {

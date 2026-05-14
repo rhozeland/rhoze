@@ -567,8 +567,6 @@ function EditMemberDialogBody({
           ? <div className="text-[11px] text-destructive">{err}</div>
           : <div className="text-[10px] text-muted-foreground">Allowed: {allowed.join(", ") || "none"}</div>}
       </div>
-
-      <MastersheetPanel userId={userId} />
     </div>
   );
 }

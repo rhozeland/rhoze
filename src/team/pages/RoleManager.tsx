@@ -335,6 +335,11 @@ export default function RoleManager() {
           const isFormer = p.employment_status === "former";
           const av = availabilityMap?.[p.id];
           const hasAvail = av && ((av.days?.length ?? 0) > 0 || (av.time_blocks?.length ?? 0) > 0 || av.notes);
+          const dept = (p.department ?? null) as Dept | null;
+          const allowed = allowedRoles(dept);
+          const hasAllowed = allowed.length > 0;
+          const pick = picks[p.id] ?? (allowed[0] ?? "client");
+          const err = errors[p.id];
           return (
             <div
               key={p.id}
@@ -362,24 +367,70 @@ export default function RoleManager() {
                 </div>
                 <Button size="sm" onClick={() => setEditingUid(p.id)}>Edit User Profile</Button>
               </div>
-              {(hasAvail || cur.length > 0) && (
+              <div className="mt-3 pt-3 border-t border-border space-y-2">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Roles</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {cur.length === 0 && <span className="text-xs text-muted-foreground">none</span>}
+                  {cur.map((r: any) => {
+                    const invalid = !allowed.includes(r.role);
+                    return (
+                      <span key={r.id}
+                        className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded ${
+                          invalid ? "bg-destructive/10 text-destructive border border-destructive/40" : "bg-muted"
+                        }`}>
+                        {r.role}
+                        {invalid && <span className="text-[10px] uppercase">invalid</span>}
+                        <button onClick={() => revoke.mutate(r.id)} className="hover:text-destructive" aria-label={`Remove ${r.role}`}>
+                          <Trash2 size={12} />
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+                <div className="flex gap-2 items-start">
+                  <Select
+                    value={pick}
+                    onValueChange={(v) => {
+                      setPicks({ ...picks, [p.id]: v as Role });
+                      setErrors({ ...errors, [p.id]: validateRoleForDept(v as Role, dept) });
+                    }}
+                  >
+                    <SelectTrigger className={`h-9 flex-1 ${err ? "border-destructive" : ""}`}><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {ROLES.map((r) => {
+                        const disabled = !allowed.includes(r);
+                        return (
+                          <SelectItem key={r} value={r} disabled={disabled}>
+                            {r}{disabled ? " — not allowed" : ""}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    size="sm"
+                    disabled={!!err || !hasAllowed}
+                    onClick={() => {
+                      const v = validateRoleForDept(pick as Role, dept);
+                      if (v) {
+                        setErrors({ ...errors, [p.id]: v });
+                        toast({ title: "Role not allowed", description: v, variant: "destructive" });
+                        return;
+                      }
+                      grant.mutate({ userId: p.id, role: pick as Role });
+                    }}
+                  >
+                    Add role
+                  </Button>
+                </div>
+                {err && <div className="text-[11px] text-destructive">{err}</div>}
+              </div>
+              {hasAvail && (
                 <div className="mt-3 pt-3 border-t border-border space-y-1 text-[11px]">
-                  {cur.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="uppercase tracking-wide text-muted-foreground">Roles:</span>
-                      {cur.map((r) => (
-                        <span key={r.id} className="text-[10px] px-1.5 py-0.5 rounded bg-muted">{r.role}</span>
-                      ))}
-                    </div>
-                  )}
-                  {hasAvail && (
-                    <>
-                      <div className="uppercase tracking-wide text-muted-foreground pt-1">Availability</div>
-                      {av!.days.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av!.days.map((d) => d.slice(0,3)).join(", ")}</div>}
-                      {av!.time_blocks.length > 0 && <div><span className="text-muted-foreground">When:</span> {av!.time_blocks.join(", ")}</div>}
-                      {av!.notes && <div className="text-muted-foreground italic">{av!.notes}</div>}
-                    </>
-                  )}
+                  <div className="uppercase tracking-wide text-muted-foreground">Availability</div>
+                  {av!.days.length > 0 && <div><span className="text-muted-foreground">Days:</span> {av!.days.map((d) => d.slice(0,3)).join(", ")}</div>}
+                  {av!.time_blocks.length > 0 && <div><span className="text-muted-foreground">When:</span> {av!.time_blocks.join(", ")}</div>}
+                  {av!.notes && <div className="text-muted-foreground italic">{av!.notes}</div>}
                 </div>
               )}
             </div>

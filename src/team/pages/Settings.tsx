@@ -233,42 +233,75 @@ export default function Settings() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-3xl">
       <div>
         <h1 className="text-2xl font-semibold">
           Welcome, {(form.display_name || user?.email?.split("@")[0] || "there").trim()}!
         </h1>
-        <p className="text-sm text-muted-foreground">Your team profile. Visible to other team members.</p>
+        <p className="text-sm text-muted-foreground">Your team profile updates live as you edit. Visible to other team members.</p>
       </div>
 
-      <Tabs defaultValue="profile" className="space-y-4">
-        <TabsContent value="profile" className="space-y-4">
-        <div className="border border-border rounded-lg p-5 bg-card space-y-4">
-        <PreviewToggle tab="profile" label="Profile" />
-
-        {previewMode.profile ? (
-          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+      {/* Live preview card — reflects unsaved edits in real-time */}
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-card via-card to-muted/40 shadow-sm">
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-r from-primary/15 via-primary/5 to-transparent pointer-events-none" />
+        <div className="relative p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row items-start gap-5">
             {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="h-16 w-16 sm:h-20 sm:w-20 rounded-full object-cover border border-border shrink-0" />
+              <img src={profile.avatar_url} alt="" className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover border-2 border-border shadow-md shrink-0" />
             ) : (
-              <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-muted flex items-center justify-center text-xl sm:text-2xl font-medium border border-border shrink-0">{initial}</div>
+              <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-full bg-muted flex items-center justify-center text-3xl font-medium border-2 border-border shadow-md shrink-0">{initial}</div>
             )}
-            <div className="min-w-0 w-full sm:flex-1">
-              <div className="text-xl sm:text-2xl font-semibold leading-tight truncate">{form.display_name || "—"}</div>
-              {personal.alias && <div className="text-sm text-muted-foreground truncate mt-0.5">aka {personal.alias}</div>}
-              <div className="text-sm text-muted-foreground truncate">
+            <div className="min-w-0 w-full sm:flex-1 pt-1">
+              <div className="text-2xl sm:text-3xl font-semibold leading-tight tracking-tight">{form.display_name || "—"}</div>
+              {personal.alias && <div className="text-sm text-muted-foreground mt-1">aka {personal.alias}</div>}
+              <div className="text-sm text-muted-foreground mt-0.5">
                 {[profile?.job_title, form.pronouns].filter(Boolean).join(" · ") || "—"}
               </div>
               {user?.email && (
-                <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline truncate block mt-1 break-all">
+                <a href={`mailto:${user.email}`} className="text-sm text-primary hover:underline break-all block mt-2">
                   {user.email}
                 </a>
               )}
-              {form.bio && <div className="pt-3 text-sm whitespace-pre-wrap">{form.bio}</div>}
+              {form.bio && <p className="pt-3 text-sm whitespace-pre-wrap text-foreground/90">{form.bio}</p>}
             </div>
           </div>
-        ) : (
-        <>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 pt-2 border-t border-border/60">
+            <section className="space-y-1.5 pt-5 text-sm">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground font-medium">Personal &amp; emergency</div>
+              <div><span className="text-muted-foreground">Phone:</span> <span className="font-medium">{personal.phone || "—"}</span></div>
+              <div><span className="text-muted-foreground">Date of birth:</span> <span className="font-medium">{personal.date_of_birth || "—"}</span></div>
+              <div><span className="text-muted-foreground">Address:</span> <span className="font-medium">{personal.address || "—"}</span></div>
+            </section>
+
+            <section className="space-y-1.5 pt-5 text-sm">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground font-medium">Emergency contact</div>
+              <div><span className="text-muted-foreground">Name:</span> <span className="font-medium">{personal.emergency_contact_name || "—"}</span></div>
+              <div><span className="text-muted-foreground">Relation:</span> <span className="font-medium">{personal.emergency_contact_relation || "—"}</span></div>
+              <div><span className="text-muted-foreground">Phone:</span> <span className="font-medium">{personal.emergency_contact_phone || "—"}</span></div>
+            </section>
+
+            <section className="space-y-1.5 pt-2 md:pt-0 text-sm md:col-span-2 md:border-t md:border-border/60 md:pt-5">
+              <div className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground font-medium">Availability</div>
+              <div><span className="text-muted-foreground">Days:</span> <span className="font-medium">{(avail.days ?? []).join(", ") || "—"}</span></div>
+              <div><span className="text-muted-foreground">Time of day:</span> <span className="font-medium">{(avail.time_blocks ?? []).join(", ") || "—"}</span></div>
+              {avail.notes && <div><span className="text-muted-foreground">Notes:</span> <span className="font-medium">{avail.notes}</span></div>}
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <Tabs defaultValue="profile" className="space-y-4">
+        <TabsList className="flex flex-wrap">
+          <TabsTrigger value="profile"><Pencil size={13} className="mr-1.5" /> Profile</TabsTrigger>
+          <TabsTrigger value="personal">Personal &amp; emergency</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="account">Account Settings</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="profile" className="space-y-4">
+        <div className="border border-border rounded-lg p-5 bg-card space-y-4">
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">Edit profile</div>
         <div className="flex items-center gap-4">
           {profile?.avatar_url ? (
             <img src={profile.avatar_url} alt="" className="h-16 w-16 rounded-full object-cover border border-border" />
@@ -326,26 +359,12 @@ export default function Settings() {
         <div className="pt-2">
           <Button onClick={() => save.mutate()} disabled={save.isPending}>Save profile</Button>
         </div>
-        </>
-        )}
         </div>
         </TabsContent>
 
         <TabsContent value="personal" className="space-y-4">
         <div className="border border-border rounded-lg p-5 bg-card space-y-4">
-        <PreviewToggle tab="personal" label="Personal & emergency" />
-        {previewMode.personal ? (
-          <div className="text-sm space-y-1.5">
-            <div><span className="text-muted-foreground">Phone:</span> {personal.phone || "—"}</div>
-            <div><span className="text-muted-foreground">Date of birth:</span> {personal.date_of_birth || "—"}</div>
-            <div><span className="text-muted-foreground">Address:</span> {personal.address || "—"}</div>
-            <div className="pt-2 text-xs uppercase tracking-wider text-muted-foreground">Emergency contact</div>
-            <div><span className="text-muted-foreground">Name:</span> {personal.emergency_contact_name || "—"}</div>
-            <div><span className="text-muted-foreground">Relation:</span> {personal.emergency_contact_relation || "—"}</div>
-            <div><span className="text-muted-foreground">Phone:</span> {personal.emergency_contact_phone || "—"}</div>
-          </div>
-        ) : (
-        <>
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">Edit personal &amp; emergency</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Phone</Label>
@@ -384,30 +403,19 @@ export default function Settings() {
           <Button onClick={() => save.mutate()} disabled={save.isPending || hasPersonalErrors}>Save details</Button>
           {hasPersonalErrors && <span className="text-xs text-destructive">Fix the highlighted fields above.</span>}
         </div>
-        </>
-        )}
         </div>
         </TabsContent>
 
         <TabsContent value="availability" className="space-y-4">
           <div className="border border-border rounded-lg p-5 bg-card space-y-4">
-            <PreviewToggle tab="availability" label="Availability" />
-            {previewMode.availability ? (
-              <div className="text-sm space-y-1.5">
-                <div><span className="text-muted-foreground">Days:</span> {(availability?.days ?? []).join(", ") || "—"}</div>
-                <div><span className="text-muted-foreground">Time of day:</span> {(availability?.time_blocks ?? []).join(", ") || "—"}</div>
-                {availability?.notes && <div><span className="text-muted-foreground">Notes:</span> {availability.notes}</div>}
-                {!availability && <div className="text-muted-foreground italic">No availability marked yet.</div>}
-              </div>
-            ) : (
-              <AvailabilityEditor showHeader={false} />
-            )}
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Edit availability</div>
+            <AvailabilityEditor showHeader={false} />
           </div>
         </TabsContent>
 
         <TabsContent value="account" className="space-y-4">
           <div className="border border-border rounded-lg p-5 bg-card space-y-3">
-            <PreviewToggle tab="account" label="Account" />
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Account</div>
             <div className="text-sm"><span className="text-muted-foreground">Email:</span> {user?.email}</div>
             <div className="text-sm"><span className="text-muted-foreground">Roles:</span> {roles.join(", ") || "—"}</div>
             <div className="text-sm"><span className="text-muted-foreground">Department:</span> {dept}</div>
@@ -416,8 +424,6 @@ export default function Settings() {
             <p className="text-xs text-muted-foreground pt-1">Department, job title and work type are assigned by an admin.</p>
           </div>
 
-          {!previewMode.account && (
-          <>
           <div className="border border-border rounded-lg p-5 bg-card space-y-4">
             <div className="text-xs uppercase tracking-wider text-muted-foreground">Change email</div>
             <div className="space-y-1.5">
@@ -450,15 +456,7 @@ export default function Settings() {
               {savingPassword ? "Saving…" : "Update password"}
             </Button>
           </div>
-          </>
-          )}
         </TabsContent>
-        <TabsList className="flex flex-wrap">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="personal">Personal & emergency</TabsTrigger>
-          <TabsTrigger value="availability">Availability</TabsTrigger>
-          <TabsTrigger value="account">Account Settings</TabsTrigger>
-        </TabsList>
       </Tabs>
 
       <AvatarEditor

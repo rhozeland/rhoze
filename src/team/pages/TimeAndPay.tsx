@@ -79,22 +79,41 @@ export default function TimeAndPay() {
   const today = new Date().toISOString().slice(0, 10);
   const pastPeriods = (periods ?? []).filter((p: any) => p.end_date < today);
 
-  const purgePastPeriods = async () => {
+  const [showPurgeDialog, setShowPurgeDialog] = useState(false);
+  const [selectedPeriodIds, setSelectedPeriodIds] = useState<Set<string>>(new Set());
+
+  const openPurgeDialog = () => {
+    const preselected = new Set(pastPeriods.map((p: any) => p.id));
+    setSelectedPeriodIds(preselected);
+    setShowPurgeDialog(true);
+  };
+
+  const togglePeriodSelection = (id: string) => {
+    setSelectedPeriodIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const purgeSelectedPeriods = async () => {
     setPurging(true);
     try {
-      const ids = pastPeriods.map((p: any) => p.id);
+      const ids = Array.from(selectedPeriodIds);
       if (ids.length === 0) {
-        toast({ title: "Nothing to purge", description: "No past periods found." });
+        toast({ title: "Nothing selected", description: "Select at least one period to delete." });
         return;
       }
       const { error } = await supabase.from("timesheet_periods").delete().in("id", ids);
       if (error) throw error;
-      toast({ title: `Deleted ${ids.length} past period${ids.length === 1 ? "" : "s"}` });
+      toast({ title: `Deleted ${ids.length} period${ids.length === 1 ? "" : "s"}` });
       if (activePeriodId && ids.includes(activePeriodId)) setActivePeriodId("");
+      setShowPurgeDialog(false);
       qc.invalidateQueries({ queryKey: ["timesheet_periods"] });
     } catch (e: any) {
       toast({
-        title: "Failed to purge periods",
+        title: "Failed to delete periods",
         description: e.message + " (Periods with timesheets or pay stubs cannot be deleted.)",
         variant: "destructive",
       });

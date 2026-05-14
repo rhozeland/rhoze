@@ -438,7 +438,8 @@ export default function Settings() {
             <div className="text-sm"><span className="text-muted-foreground">Roles:</span> {roles.join(", ") || "—"}</div>
             <div className="text-sm"><span className="text-muted-foreground">Department:</span> {dept}</div>
             <div className="text-sm"><span className="text-muted-foreground">Job title:</span> {profile?.job_title || "—"}</div>
-            <p className="text-xs text-muted-foreground pt-1">Department and job title are assigned by an admin.</p>
+            <div className="text-sm"><span className="text-muted-foreground">Work type:</span> {(profile as any)?.work_type || "—"}</div>
+            <p className="text-xs text-muted-foreground pt-1">Department, job title and work type are assigned by an admin.</p>
           </div>
 
           {!previewMode.account && (

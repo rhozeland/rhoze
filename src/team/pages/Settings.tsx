@@ -33,10 +33,10 @@ export default function Settings() {
 
   type TabKey = "profile" | "personal" | "availability" | "account";
   const [previewMode, setPreviewMode] = useState<Record<TabKey, boolean>>({
-    profile: false,
-    personal: false,
-    availability: false,
-    account: false,
+    profile: true,
+    personal: true,
+    availability: true,
+    account: true,
   });
   const togglePreview = (k: TabKey) =>
     setPreviewMode((p) => ({ ...p, [k]: !p[k] }));

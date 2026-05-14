@@ -398,6 +398,12 @@ export default function Settings() {
             </Button>
           </div>
         </TabsContent>
+        <TabsList className="flex flex-wrap">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="personal">Personal & emergency</TabsTrigger>
+          <TabsTrigger value="availability">Availability</TabsTrigger>
+          <TabsTrigger value="account">Account Settings</TabsTrigger>
+        </TabsList>
       </Tabs>
 
       <AvatarEditor

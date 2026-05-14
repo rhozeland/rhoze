@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const DEPARTMENTS = ["marketing", "hr", "development", "sales", "operations"] as const;
 export type Department = (typeof DEPARTMENTS)[number];
-export type Audience = "all" | "department" | "user";
+export type Audience = "all" | "department" | "user" | "admin";
 
 export type DocFormInput = {
   title: string;

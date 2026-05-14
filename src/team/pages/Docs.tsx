@@ -384,6 +384,49 @@ export default function Docs() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["doc_completions", user?.id] }),
   });
 
+  // Update a doc's visibility / audience after it's been posted.
+  const updateVisibility = useMutation({
+    mutationFn: async ({
+      docId,
+      audience,
+      department,
+      target_user_id,
+      tag_department,
+    }: {
+      docId: string;
+      audience: Audience;
+      department: string | null;
+      target_user_id: string | null;
+      tag_department: string | null;
+    }) => {
+      const category =
+        audience === "all"
+          ? "general"
+          : audience === "department"
+            ? `dept: ${department ?? ""}`
+            : audience === "admin"
+              ? "admin"
+              : "personal";
+      const { error } = await supabase
+        .from("docs")
+        .update({
+          audience,
+          department: audience === "department" ? (department as any) : null,
+          target_user_id: audience === "user" ? target_user_id : null,
+          tag_department: (tag_department || null) as any,
+          category,
+        } as any)
+        .eq("id", docId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Visibility updated" });
+      qc.invalidateQueries({ queryKey: ["docs"] });
+    },
+    onError: (e: any) =>
+      toast({ title: "Failed", description: e.message, variant: "destructive" }),
+  });
+
   const filtered = (docs ?? [])
     // Defense in depth — the docs query already filters by scope/tag at the
     // fetch layer to mirror RLS, but we re-check the audience guard here so

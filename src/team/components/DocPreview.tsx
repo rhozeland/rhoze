@@ -9,6 +9,10 @@ type Props = {
   fileName?: string | null;
 };
 
+// Module-level cache keyed by URL so reopening the same attachment never re-fetches.
+const textCache = new Map<string, string>();
+const htmlCache = new Map<string, string>();
+
 function inferKind(mime: string | null | undefined, fileName: string | null | undefined) {
   const m = (mime || "").toLowerCase();
   const n = (fileName || "").toLowerCase();
@@ -34,10 +38,12 @@ function inferKind(mime: string | null | undefined, fileName: string | null | un
 
 export default function DocPreview({ url, mime, fileName }: Props) {
   const kind = inferKind(mime, fileName);
-  const [text, setText] = useState<string | null>(null);
-  const [html, setHtml] = useState<string | null>(null);
+  const cachedText = kind === "md" || kind === "text" || kind === "code" ? textCache.get(url) : null;
+  const cachedHtml = kind === "docx" ? htmlCache.get(url) : null;
+  const [text, setText] = useState<string | null>(cachedText ?? null);
+  const [html, setHtml] = useState<string | null>(cachedHtml ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(cachedText === undefined && cachedHtml === undefined && (kind === "md" || kind === "text" || kind === "code" || kind === "docx"));
 
   useEffect(() => {
     let cancelled = false;

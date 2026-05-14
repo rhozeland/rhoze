@@ -327,6 +327,7 @@ export type Database = {
           file_url: string | null
           id: string
           is_required: boolean
+          tag_department: Database["public"]["Enums"]["department"] | null
           target_user_id: string | null
           thumbnail_url: string | null
           title: string
@@ -346,6 +347,7 @@ export type Database = {
           file_url?: string | null
           id?: string
           is_required?: boolean
+          tag_department?: Database["public"]["Enums"]["department"] | null
           target_user_id?: string | null
           thumbnail_url?: string | null
           title: string
@@ -365,6 +367,7 @@ export type Database = {
           file_url?: string | null
           id?: string
           is_required?: boolean
+          tag_department?: Database["public"]["Enums"]["department"] | null
           target_user_id?: string | null
           thumbnail_url?: string | null
           title?: string

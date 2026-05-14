@@ -64,8 +64,25 @@ import { Progress } from "@/components/ui/progress";
 import { uploadWithProgress, type UploadState } from "../lib/uploadWithProgress";
 
 type Audience = "all" | "department" | "user" | "admin";
-type DocScope = "mine" | "department" | "team" | "admin";
+type DocScope = "mine" | "department" | "team" | "admin" | "manage";
 type TagFilter = "all" | string;
+
+const DEPARTMENT_STYLES: Record<string, string> = {
+  marketing: "bg-pink-500/15 text-pink-600 dark:text-pink-300 border-pink-500/30",
+  hr: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border-emerald-500/30",
+  development: "bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30",
+  sales: "bg-amber-500/15 text-amber-600 dark:text-amber-300 border-amber-500/30",
+  operations: "bg-violet-500/15 text-violet-600 dark:text-violet-300 border-violet-500/30",
+};
+
+function DepartmentBadge({ department }: { department: string }) {
+  const style = DEPARTMENT_STYLES[department] ?? "bg-muted text-muted-foreground border-border";
+  return (
+    <span className={"inline-flex items-center px-1.5 py-0.5 rounded border text-[9px] font-medium uppercase tracking-wide " + style}>
+      {department}
+    </span>
+  );
+}
 
 type DocForm = {
   title: string;

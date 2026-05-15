@@ -2591,3 +2591,85 @@ button { background: none; border: 0; cursor: pointer; }
 @media (max-width: 640px) {
   .create-card--visual .cm-visual { height: 120px; }
 }
+
+/* ===== Light-mode theming for the create modal ===== */
+html:not(.dark) .create-modal__overlay {
+  background: hsl(240 20% 90% / 0.55);
+}
+html:not(.dark) .create-modal__panel {
+  background: hsl(0 0% 100%);
+  color: hsl(240 12% 12%);
+  box-shadow: 0 30px 80px hsl(240 30% 30% / 0.18);
+}
+html:not(.dark) .create-modal__title { color: hsl(240 12% 8%); }
+html:not(.dark) .create-modal__chip {
+  border-color: hsl(240 10% 12% / 0.14);
+  background: hsl(240 10% 12% / 0.04);
+  color: hsl(240 10% 30%);
+}
+html:not(.dark) .create-modal__close {
+  border-color: hsl(240 10% 12% / 0.14);
+  background: hsl(240 10% 12% / 0.04);
+  color: hsl(240 12% 18%);
+}
+html:not(.dark) .create-modal__close:hover {
+  background: hsl(240 10% 12% / 0.1);
+  border-color: hsl(240 10% 12% / 0.28);
+}
+html:not(.dark) .create-card {
+  background: hsl(0 0% 99%);
+  border-color: hsl(240 10% 12% / 0.1);
+}
+html:not(.dark) .create-card:hover {
+  background: hsl(0 0% 100%);
+  border-color: hsl(240 10% 12% / 0.22);
+}
+html:not(.dark) .create-card__title { color: hsl(240 12% 8%); }
+html:not(.dark) .create-card__arrow { color: hsl(240 10% 30%); }
+html:not(.dark) .create-card__desc,
+html:not(.dark) .create-card__desc--hover { color: hsl(240 8% 40%); }
+
+/* Produce visual stays image-led; just soften the bottom gradient & dots */
+html:not(.dark) .cm-visual {
+  background: hsl(240 12% 96%);
+  border-bottom-color: hsl(240 10% 12% / 0.08);
+}
+html:not(.dark) .create-card--visual .cm-visual {
+  border-bottom-color: hsl(240 10% 12% / 0.08);
+}
+
+/* Distribute — Creator OS preview in light mode */
+html:not(.dark) .cm-visual--distribute {
+  background:
+    radial-gradient(60% 80% at 20% 0%, hsl(280 70% 75% / 0.35), transparent 70%),
+    radial-gradient(60% 80% at 100% 100%, hsl(200 80% 75% / 0.35), transparent 70%),
+    hsl(240 20% 96%);
+}
+html:not(.dark) .cm-app {
+  background: hsl(0 0% 100%);
+  border-color: hsl(240 10% 12% / 0.08);
+  box-shadow: 0 14px 40px hsl(240 30% 30% / 0.12);
+}
+html:not(.dark) .cm-app__bar {
+  background: hsl(240 12% 97%);
+  border-bottom-color: hsl(240 10% 12% / 0.06);
+  color: hsl(240 8% 40%);
+}
+html:not(.dark) .cm-app__body { color: hsl(240 12% 14%); }
+html:not(.dark) .cm-app__live {
+  border-color: hsl(240 10% 12% / 0.18);
+  color: hsl(240 12% 20%);
+}
+html:not(.dark) .cm-app__player {
+  background: hsl(240 12% 97%);
+  border-color: hsl(240 10% 12% / 0.06);
+}
+html:not(.dark) .cm-app__tag {
+  background: hsl(240 10% 12% / 0.06);
+  color: hsl(240 12% 25%);
+}
+html:not(.dark) .cm-app__play {
+  background: hsl(240 12% 10%);
+  color: hsl(0 0% 98%);
+  box-shadow: 0 2px 8px hsl(240 30% 20% / 0.25);
+}

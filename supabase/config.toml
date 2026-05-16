@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.handle-email-suppression]
 verify_jwt = false
+
+[functions.notify-task-completed]
+verify_jwt = true

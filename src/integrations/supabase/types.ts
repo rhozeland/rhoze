@@ -1918,7 +1918,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      booking_slots: {
+        Row: {
+          slot_end: string | null
+          slot_start: string | null
+          status: string | null
+          timezone: string | null
+        }
+        Insert: {
+          slot_end?: string | null
+          slot_start?: string | null
+          status?: string | null
+          timezone?: string | null
+        }
+        Update: {
+          slot_end?: string | null
+          slot_start?: string | null
+          status?: string | null
+          timezone?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       _rhoze_ensure_balance: {

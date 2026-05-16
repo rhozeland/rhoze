@@ -9,6 +9,22 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
   try {
+    // Require an authenticated team member to call this endpoint.
+    const authHeader = req.headers.get('Authorization') ?? ''
+    const token = authHeader.replace('Bearer ', '').trim()
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const authClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: `Bearer ${token}` } } },
+    )
+    const { data: userData, error: userErr } = await authClient.auth.getUser()
+    if (userErr || !userData.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+
     const { taskId } = await req.json()
     if (!taskId) {
       return new Response(JSON.stringify({ error: 'taskId required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -18,6 +34,12 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     )
+
+    // Verify caller is a team member (admin or employee).
+    const { data: isTeam } = await supabase.rpc('is_team_member', { _user_id: userData.user.id })
+    if (!isTeam) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
 
     const { data: task } = await supabase
       .from('tasks')

@@ -2010,6 +2010,14 @@ export type Database = {
         Returns: boolean
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      list_busy_slots: {
+        Args: { _from?: string }
+        Returns: {
+          slot_end: string
+          slot_start: string
+          status: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string

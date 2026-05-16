@@ -408,9 +408,15 @@
     // ========= Fetch existing bookings =========
     function loadTakenSlots() {
       var startISO = new Date().toISOString();
-      var url = SUPABASE_URL + '/rest/v1/bookings?select=slot_start&status=neq.cancelled&slot_start=gte.' + encodeURIComponent(startISO);
+      var url = SUPABASE_URL + '/rest/v1/rpc/list_busy_slots';
       return fetch(url, {
-        headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer '+SUPABASE_ANON }
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON,
+          Authorization: 'Bearer '+SUPABASE_ANON,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ _from: startISO })
       }).then(function(r){ return r.ok ? r.json() : []; }).then(function(rows){
         TAKEN = {};
         (rows||[]).forEach(function(row){

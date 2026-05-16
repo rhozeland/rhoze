@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import mammoth from "mammoth";
+import DOMPurify from "dompurify";
 import { FileText, Download, AlertCircle, ExternalLink } from "lucide-react";
 
 type Props = {
@@ -129,8 +130,12 @@ export default function DocPreview({ url, mime, fileName, compact = false }: Pro
         .then((buf) => mammoth.convertToHtml({ arrayBuffer: buf }))
         .then((res) => {
           if (!cancelled) {
-            htmlCache.set(url, res.value);
-            setHtml(res.value);
+            const safe = DOMPurify.sanitize(res.value, {
+              FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
+              FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover", "onfocus", "onblur"],
+            });
+            htmlCache.set(url, safe);
+            setHtml(safe);
           }
         })
         .catch((e) => { if (!cancelled) setError(e.message); })

@@ -1918,27 +1918,7 @@ export type Database = {
       }
     }
     Views: {
-      booking_slots: {
-        Row: {
-          slot_end: string | null
-          slot_start: string | null
-          status: string | null
-          timezone: string | null
-        }
-        Insert: {
-          slot_end?: string | null
-          slot_start?: string | null
-          status?: string | null
-          timezone?: string | null
-        }
-        Update: {
-          slot_end?: string | null
-          slot_start?: string | null
-          status?: string | null
-          timezone?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       _rhoze_ensure_balance: {
@@ -2030,6 +2010,14 @@ export type Database = {
         Returns: boolean
       }
       is_team_member: { Args: { _user_id: string }; Returns: boolean }
+      list_busy_slots: {
+        Args: { _from?: string }
+        Returns: {
+          slot_end: string
+          slot_start: string
+          status: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string

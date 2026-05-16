@@ -1925,6 +1925,33 @@ export type Database = {
         Args: { _project_id: string }
         Returns: undefined
       }
+      admin_get_service_packages: {
+        Args: never
+        Returns: {
+          billing_interval: string | null
+          category: string | null
+          created_at: string
+          credits: number
+          credits_cost: number
+          description: string | null
+          id: string
+          is_active: boolean
+          kind: string
+          min_quantity: number
+          name: string
+          price_cents: number
+          slug: string
+          sort_order: number
+          stripe_price_id: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "service_packages"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       apply_pending_tier_change: {
         Args: { _subscription_id: string }
         Returns: undefined
@@ -1994,6 +2021,7 @@ export type Database = {
           project_id: string
         }[]
       }
+      get_package_stripe_lookup: { Args: { _slug: string }; Returns: string }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean

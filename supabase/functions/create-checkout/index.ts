@@ -43,6 +43,32 @@ function isSafeId(s: string) {
   return /^[a-zA-Z0-9_-]+$/.test(s);
 }
 
+// Restrict checkout return_url to first-party origins to prevent open-redirect
+// abuse. Stripe will redirect the buyer to this URL after payment, so an
+// attacker who can craft a session could otherwise land victims on a phishing
+// page. localhost is allowed for dev.
+const ALLOWED_RETURN_HOSTS = [
+  "rhozeland.com",
+  "www.rhozeland.com",
+  "rhoze.lovable.app",
+  "localhost",
+  "127.0.0.1",
+];
+function isAllowedReturnUrl(raw: string): boolean {
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "https:" && u.hostname !== "localhost" && u.hostname !== "127.0.0.1") {
+      return false;
+    }
+    if (ALLOWED_RETURN_HOSTS.includes(u.hostname)) return true;
+    // Allow Lovable preview subdomains (id-preview--*.lovable.app etc.)
+    if (u.hostname.endsWith(".lovable.app")) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 const MANAGED_PAYMENTS_COUNTRIES = new Set([
   "US","CA","BR","CL","CO","AR","PE","UY",
   "AT","BE","BG","HR","CY","CZ","DK","EE","FI","FR","DE","GR","HU","IE","IT","LV","LT","LU","MT","NL","PL","PT","RO","SK","SI","ES","SE",
@@ -80,6 +106,9 @@ async function handle(req: Request) {
 
   if (!body.returnUrl || (body.environment !== "sandbox" && body.environment !== "live")) {
     return jsonError("returnUrl and environment are required", 400);
+  }
+  if (!isAllowedReturnUrl(body.returnUrl)) {
+    return jsonError("Invalid returnUrl", 400);
   }
 
   const stripe = createStripeClient(body.environment);
@@ -259,7 +288,7 @@ async function handle(req: Request) {
     return jsonOk({ clientSecret: session.client_secret });
   } catch (e) {
     console.error("create-checkout error", e);
-    return jsonError((e as Error).message || "Checkout failed", 500);
+    return jsonError("Checkout failed", 500);
   }
 }
 

@@ -13,6 +13,9 @@ interface CartLine {
 interface Body {
   // For tier subscription checkout
   subscriptionPriceId?: string;
+  // Slug of a service_packages row; the function resolves its stripe lookup_key
+  // server-side so anonymous callers never need the column.
+  subscriptionSlug?: string;
   // For à la carte / mixed cart one-time checkout
   cart?: CartLine[];
   // Custom-amount deposit (one-time)
@@ -150,16 +153,36 @@ async function handle(req: Request) {
     }
 
     // ----- Subscription checkout -----
-    if (body.subscriptionPriceId) {
-      if (!isSafeId(body.subscriptionPriceId)) return jsonError("Invalid subscriptionPriceId", 400);
-      const prices = await stripe.prices.list({ lookup_keys: [body.subscriptionPriceId] });
+    if (body.subscriptionPriceId || body.subscriptionSlug) {
+      let lookupKey = body.subscriptionPriceId;
+      if (!lookupKey && body.subscriptionSlug) {
+        if (!isSafeId(body.subscriptionSlug)) return jsonError("Invalid subscriptionSlug", 400);
+        // Resolve slug → stripe lookup_key via SECURITY DEFINER RPC (anon-callable).
+        const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+        const ANON = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY")!;
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_package_stripe_lookup`, {
+          method: "POST",
+          headers: {
+            apikey: ANON,
+            Authorization: `Bearer ${ANON}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ _slug: body.subscriptionSlug }),
+        });
+        if (!resp.ok) return jsonError("Failed to resolve subscription slug", 400);
+        const resolved = await resp.json();
+        lookupKey = typeof resolved === "string" ? resolved : null;
+        if (!lookupKey) return jsonError("Subscription package not found", 400);
+      }
+      if (!isSafeId(lookupKey!)) return jsonError("Invalid subscriptionPriceId", 400);
+      const prices = await stripe.prices.list({ lookup_keys: [lookupKey!] });
       if (!prices.data.length) return jsonError("Price not found", 400);
       const price = prices.data[0];
       if (price.type !== "recurring") return jsonError("Not a subscription price", 400);
 
       const metadata: Record<string, string> = {
         flow: "subscription",
-        tier_price_id: body.subscriptionPriceId,
+        tier_price_id: lookupKey!,
       };
       if (body.userId) metadata.userId = body.userId;
       if (body.customerName) metadata.customer_name = body.customerName;

@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ updated: results }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("set-tax-codes error", e);
-    return jsonError((e as Error).message || "failed", 500);
+    return jsonError("Internal server error", 500);
   }
 });
 

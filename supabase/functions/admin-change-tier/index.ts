@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     return j({ ok: true, immediate: !!immediate });
   } catch (e) {
     console.error("admin-change-tier", e);
-    return j({ error: (e as Error).message }, 500);
+    return j({ error: "Internal server error" }, 500);
   }
 });
 function j(d: unknown, status = 200) {

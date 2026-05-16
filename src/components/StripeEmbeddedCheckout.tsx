@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   subscriptionPriceId?: string;
+  subscriptionSlug?: string;
   cart?: { priceId: string; quantity?: number }[];
   depositCents?: number;
   topupDollarCents?: number;

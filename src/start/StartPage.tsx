@@ -16,7 +16,7 @@ type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
   description: string | null; price_cents: number; credits: number;
   credits_cost: number; min_quantity: number;
-  billing_interval: string | null; stripe_price_id: string | null; sort_order: number;
+  billing_interval: string | null; sort_order: number;
 };
 
 type Category = "visual" | "audio" | "development";
@@ -249,7 +249,13 @@ export default function StartPage() {
   const { data: pkgs } = useQuery<Pkg[]>({
     queryKey: ["start_packages_v2"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("service_packages").select("*").eq("is_active", true).order("sort_order").order("price_cents");
+      // Anonymous visitors can't read stripe_price_id (server-resolved at checkout).
+      const { data, error } = await supabase
+        .from("service_packages")
+        .select("id, slug, name, kind, category, description, price_cents, credits, credits_cost, min_quantity, billing_interval, sort_order")
+        .eq("is_active", true)
+        .order("sort_order")
+        .order("price_cents");
       if (error) throw error;
       return data as Pkg[];
     },
@@ -826,7 +832,7 @@ export default function StartPage() {
         <Button variant="outline" size="sm" onClick={() => setStep("review")}>← Back</Button>
         <StripeEmbeddedCheckout
           {...(path === "subscribe"
-            ? { subscriptionPriceId: selectedTier?.stripe_price_id ?? undefined }
+            ? { subscriptionSlug: selectedTier?.slug ?? undefined }
             : { depositCents: depositCents })}
           customerEmail={contact.email}
           customerName={contact.name}

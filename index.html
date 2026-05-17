@@ -3108,11 +3108,24 @@
                   <circle cx="1.7" cy="1.7" r="0.55" fill="hsl(240 30% 8% / 0.32)" />
                 </pattern>
 
-                <!-- Skin 4: Topographic -->
-                <radialGradient id="orb-topo-base" cx="45%" cy="35%" r="78%">
-                  <stop offset="0%" stop-color="hsl(210 20% 92%)" />
-                  <stop offset="55%" stop-color="hsl(220 18% 72%)" />
-                  <stop offset="100%" stop-color="hsl(230 25% 38%)" />
+                <!-- Skin 4: Pastel Watercolor World -->
+                <radialGradient id="orb-pastel-base" cx="40%" cy="35%" r="80%">
+                  <stop offset="0%" stop-color="hsl(28 95% 92%)" />
+                  <stop offset="45%" stop-color="hsl(340 75% 88%)" />
+                  <stop offset="80%" stop-color="hsl(260 55% 82%)" />
+                  <stop offset="100%" stop-color="hsl(200 60% 78%)" />
+                </radialGradient>
+                <radialGradient id="orb-pastel-wash-a" cx="28%" cy="30%" r="55%">
+                  <stop offset="0%" stop-color="hsl(345 90% 78%)" stop-opacity="0.65" />
+                  <stop offset="100%" stop-color="hsl(345 90% 78%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-pastel-wash-b" cx="72%" cy="68%" r="50%">
+                  <stop offset="0%" stop-color="hsl(165 70% 78%)" stop-opacity="0.6" />
+                  <stop offset="100%" stop-color="hsl(165 70% 78%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-pastel-wash-c" cx="65%" cy="28%" r="45%">
+                  <stop offset="0%" stop-color="hsl(40 95% 78%)" stop-opacity="0.55" />
+                  <stop offset="100%" stop-color="hsl(40 95% 78%)" stop-opacity="0" />
                 </radialGradient>
 
                 <!-- Skin 5: Starfield -->
@@ -3130,15 +3143,27 @@
                   <circle cx="9" cy="10.8" r="0.28" fill="hsl(0 0% 100% / 0.5)" />
                 </pattern>
 
-                <!-- Skin 6: Earth -->
+                <!-- Skin 6: Cosmic Neon Earth -->
                 <radialGradient id="orb-earth-base" cx="40%" cy="35%" r="80%">
-                  <stop offset="0%" stop-color="hsl(205 75% 55%)" />
-                  <stop offset="60%" stop-color="hsl(215 70% 32%)" />
-                  <stop offset="100%" stop-color="hsl(225 60% 14%)" />
+                  <stop offset="0%" stop-color="hsl(232 55% 14%)" />
+                  <stop offset="60%" stop-color="hsl(232 65% 7%)" />
+                  <stop offset="100%" stop-color="hsl(232 70% 3%)" />
                 </radialGradient>
-                <radialGradient id="orb-earth-clouds" cx="60%" cy="40%" r="65%">
-                  <stop offset="0%" stop-color="hsl(0 0% 100% / 0.18)" />
-                  <stop offset="100%" stop-color="hsl(0 0% 100% / 0)" />
+                <radialGradient id="orb-earth-glow-magenta" cx="28%" cy="36%" r="22%">
+                  <stop offset="0%" stop-color="hsl(320 100% 70%)" stop-opacity="0.9" />
+                  <stop offset="100%" stop-color="hsl(320 100% 70%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-earth-glow-orange" cx="68%" cy="34%" r="22%">
+                  <stop offset="0%" stop-color="hsl(28 100% 65%)" stop-opacity="0.85" />
+                  <stop offset="100%" stop-color="hsl(28 100% 65%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-earth-glow-cyan" cx="72%" cy="64%" r="20%">
+                  <stop offset="0%" stop-color="hsl(190 100% 65%)" stop-opacity="0.85" />
+                  <stop offset="100%" stop-color="hsl(190 100% 65%)" stop-opacity="0" />
+                </radialGradient>
+                <radialGradient id="orb-earth-glow-green" cx="44%" cy="70%" r="18%">
+                  <stop offset="0%" stop-color="hsl(140 90% 60%)" stop-opacity="0.85" />
+                  <stop offset="100%" stop-color="hsl(140 90% 60%)" stop-opacity="0" />
                 </radialGradient>
 
                 <!-- Skin 7: Vinyl Record -->
@@ -3158,18 +3183,18 @@
                   <stop offset="100%" stop-color="hsl(12 60% 22%)" />
                 </radialGradient>
 
-                <!-- Skin 9: Holographic Film -->
-                <linearGradient id="orb-holo" x1="14" y1="14" x2="86" y2="86" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%"   stop-color="hsl(285 90% 70%)" />
-                  <stop offset="20%"  stop-color="hsl(195 95% 65%)" />
-                  <stop offset="40%"  stop-color="hsl(150 80% 65%)" />
-                  <stop offset="60%"  stop-color="hsl(48 100% 65%)" />
-                  <stop offset="80%"  stop-color="hsl(345 90% 65%)" />
-                  <stop offset="100%" stop-color="hsl(265 80% 65%)" />
-                </linearGradient>
-                <pattern id="orb-holo-stripes" x="0" y="0" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-                  <rect x="0" y="0" width="1.2" height="2.4" fill="hsl(0 0% 100% / 0.18)" />
-                </pattern>
+                <!-- Skin 9: Holographic Aura -->
+                <radialGradient id="orb-holo" cx="42%" cy="34%" r="78%">
+                  <stop offset="0%"   stop-color="hsl(48 100% 90%)" />
+                  <stop offset="32%"  stop-color="hsl(320 90% 82%)" />
+                  <stop offset="62%"  stop-color="hsl(265 80% 80%)" />
+                  <stop offset="88%"  stop-color="hsl(195 90% 78%)" />
+                  <stop offset="100%" stop-color="hsl(165 70% 78%)" />
+                </radialGradient>
+                <radialGradient id="orb-holo-wash" cx="70%" cy="68%" r="55%">
+                  <stop offset="0%" stop-color="hsl(345 95% 78%)" stop-opacity="0.55" />
+                  <stop offset="100%" stop-color="hsl(345 95% 78%)" stop-opacity="0" />
+                </radialGradient>
 
                 <!-- Skin 10: Stained Glass -->
                 <linearGradient id="orb-stain-a" x1="14" y1="14" x2="86" y2="86" gradientUnits="userSpaceOnUse">

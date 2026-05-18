@@ -10,7 +10,7 @@ import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock,
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import logoWhite from "@/assets/logo-white.png";
+import logoWhite from "@/assets/logo-white.webp";
 
 type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
@@ -55,76 +55,76 @@ type ServiceExample = { title: string; artist: string; thumb?: string; href?: st
 const SERVICE_EXAMPLES: Record<string, ServiceExample[]> = {
   // ---- Visual ----
   "photo-shoot": [
-    { title: "U Outta Know", artist: "YOUNG $TEELO", thumb: "/images/steelo-u-outta-know-thumb.jpg", video: "/videos/steelo-u-outta-know.mp4", href: "https://www.youtube.com/watch?v=JL85Aej4Je4" },
-    { title: "Salar Gholami", artist: "BK Whiskey", thumb: "/images/bk-salar-thumb.jpg", video: "/videos/bk-salar.mp4", href: "https://www.instagram.com/p/DDr6K4fJTOJ/" },
-    { title: "Milad Zareian", artist: "BK Whiskey", thumb: "/images/bk-milad-thumb.jpg", video: "/videos/bk-milad.mp4", href: "https://www.instagram.com/p/DINIm3lMhZj/" },
+    { title: "U Outta Know", artist: "YOUNG $TEELO", thumb: "/images/steelo-u-outta-know-thumb.webp", video: "/videos/steelo-u-outta-know.mp4", href: "https://www.youtube.com/watch?v=JL85Aej4Je4" },
+    { title: "Salar Gholami", artist: "BK Whiskey", thumb: "/images/bk-salar-thumb.webp", video: "/videos/bk-salar.mp4", href: "https://www.instagram.com/p/DDr6K4fJTOJ/" },
+    { title: "Milad Zareian", artist: "BK Whiskey", thumb: "/images/bk-milad-thumb.webp", video: "/videos/bk-milad.mp4", href: "https://www.instagram.com/p/DINIm3lMhZj/" },
   ],
   "content-edit": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
-    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.webp", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.webp", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.webp", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
   ],
   "commercial-edit": [
-    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "United MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.webp", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.webp", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.webp", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
   ],
   "short-form-edit": [
-    { title: "Runner's Club Vol. 1", artist: "Runner's Club", thumb: "/images/rc1-thumb.jpg", video: "/videos/rc1.mp4", href: "https://www.instagram.com/p/DJ90KlZIg3r/" },
-    { title: "Runner's Club Vol. 2", artist: "Runner's Club", thumb: "/images/rc2-thumb.jpg", video: "/videos/rc2.mp4", href: "https://www.instagram.com/p/DS0oshoASn1/" },
-    { title: "Bombaaa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-bombaaa-thumb.jpg", video: "/videos/fingaz-bombaaa.mp4", href: "https://www.youtube.com/watch?v=QSFF9jI8f4g" },
+    { title: "Runner's Club Vol. 1", artist: "Runner's Club", thumb: "/images/rc1-thumb.webp", video: "/videos/rc1.mp4", href: "https://www.instagram.com/p/DJ90KlZIg3r/" },
+    { title: "Runner's Club Vol. 2", artist: "Runner's Club", thumb: "/images/rc2-thumb.webp", video: "/videos/rc2.mp4", href: "https://www.instagram.com/p/DS0oshoASn1/" },
+    { title: "Bombaaa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-bombaaa-thumb.webp", video: "/videos/fingaz-bombaaa.mp4", href: "https://www.youtube.com/watch?v=QSFF9jI8f4g" },
   ],
   "mv-edit": [
-    { title: "The Mask", artist: "Ooak", thumb: "/images/ooak-the-mask-thumb.png", video: "/videos/ooak-the-mask.mp4", href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg" },
-    { title: "Mansa Musa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-mansa-musa-thumb.png", video: "/videos/fingaz-mansa-musa.mp4", href: "https://www.youtube.com/watch?v=w9dYE595cBw" },
-    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ", thumb: "/images/fingaz-superhero-thumb.png", video: "/videos/fingaz-superhero.mp4", href: "https://www.youtube.com/watch?v=_4FotFv6VWc" },
+    { title: "The Mask", artist: "Ooak", thumb: "/images/ooak-the-mask-thumb.webp", video: "/videos/ooak-the-mask.mp4", href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg" },
+    { title: "Mansa Musa", artist: "MONEE FINGAZ", thumb: "/images/fingaz-mansa-musa-thumb.webp", video: "/videos/fingaz-mansa-musa.mp4", href: "https://www.youtube.com/watch?v=w9dYE595cBw" },
+    { title: "Feel Like A Superhero", artist: "MONEE FINGAZ", thumb: "/images/fingaz-superhero-thumb.webp", video: "/videos/fingaz-superhero.mp4", href: "https://www.youtube.com/watch?v=_4FotFv6VWc" },
   ],
   // ---- Audio ----
   "audio-recording": [
-    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png", href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" },
-    { title: "Surfin'", artist: "Straightdizzy", thumb: "/images/surfin-thumb.png", href: "https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63?si=157021a0c33e4a8f" },
-    { title: "Gotta Go", artist: "Straightdizzy", thumb: "/images/straightdizzy-gotta-go-thumb.jpg", video: "/videos/straightdizzy-gotta-go.mp4", href: "https://www.youtube.com/watch?v=nLlh8k-Uwdg" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.webp", href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" },
+    { title: "Surfin'", artist: "Straightdizzy", thumb: "/images/surfin-thumb.webp", href: "https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63?si=157021a0c33e4a8f" },
+    { title: "Gotta Go", artist: "Straightdizzy", thumb: "/images/straightdizzy-gotta-go-thumb.webp", video: "/videos/straightdizzy-gotta-go.mp4", href: "https://www.youtube.com/watch?v=nLlh8k-Uwdg" },
   ],
   "mixing": [
-    { title: "Holy Water", artist: "Cozal", thumb: "/images/cozal-holy-water-thumb.png", video: "/videos/cozal-holy-water.mp4", href: "https://www.youtube.com/watch?v=VPLyATcs7fE" },
-    { title: "Night Come", artist: "Luckz", thumb: "/images/luckz-night-come-thumb.png", video: "/videos/luckz-night-come.mp4", href: "https://www.youtube.com/watch?v=pDO4sTpWKng" },
-    { title: "Withdrawals", artist: "Semiah", thumb: "/images/semiah-withdrawals-thumb.png", video: "/videos/semiah-withdrawals.mp4", href: "https://www.youtube.com/watch?v=Y1v-IBb2aIA" },
+    { title: "Holy Water", artist: "Cozal", thumb: "/images/cozal-holy-water-thumb.webp", video: "/videos/cozal-holy-water.mp4", href: "https://www.youtube.com/watch?v=VPLyATcs7fE" },
+    { title: "Night Come", artist: "Luckz", thumb: "/images/luckz-night-come-thumb.webp", video: "/videos/luckz-night-come.mp4", href: "https://www.youtube.com/watch?v=pDO4sTpWKng" },
+    { title: "Withdrawals", artist: "Semiah", thumb: "/images/semiah-withdrawals-thumb.webp", video: "/videos/semiah-withdrawals.mp4", href: "https://www.youtube.com/watch?v=Y1v-IBb2aIA" },
   ],
   "mastering": [
-    { title: "For The Dot", artist: "Luckz", thumb: "/images/luckz-forthedot-thumb.jpg", video: "/videos/luckz-forthedot.mp4", href: "https://www.youtube.com/watch?v=VKzcwcNTlaU" },
-    { title: "Figure It Out", artist: "Meesch", thumb: "/images/meesch-figure-it-out-thumb.jpg", video: "/videos/meesch-figure-it-out.mp4", href: "https://music.apple.com/ca/album/figure-it-out-single/1750641530" },
-    { title: "Privilege", artist: "Jevy", thumb: "/images/jevy-privilege-thumb.png", href: "https://open.spotify.com/track/48FdIGtXonO8Wll38PUIi0" },
+    { title: "For The Dot", artist: "Luckz", thumb: "/images/luckz-forthedot-thumb.webp", video: "/videos/luckz-forthedot.mp4", href: "https://www.youtube.com/watch?v=VKzcwcNTlaU" },
+    { title: "Figure It Out", artist: "Meesch", thumb: "/images/meesch-figure-it-out-thumb.webp", video: "/videos/meesch-figure-it-out.mp4", href: "https://music.apple.com/ca/album/figure-it-out-single/1750641530" },
+    { title: "Privilege", artist: "Jevy", thumb: "/images/jevy-privilege-thumb.webp", href: "https://open.spotify.com/track/48FdIGtXonO8Wll38PUIi0" },
   ],
   "podcast": [
-    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
-    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png", href: "/projects.html" },
+    { title: "Songwriting Camp Documentary", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.webp", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.webp", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.webp", href: "/projects.html" },
   ],
   // ---- Development ----
   "design": [
-    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.jpg", href: "/projects.html" },
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "Hacking The Tower", artist: "ETHDenver", thumb: "/images/ethdenver-hacking-tower-thumb.webp", href: "/projects.html" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.webp", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.webp", href: "https://www.youtube.com/@iimpctmedia" },
   ],
   "graphic-design": [
-    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.png", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
-    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.png", href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" },
-    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.png", href: "/projects.html" },
+    { title: "FUS", artist: "Rhozeland", thumb: "/images/rhozeland-fus-thumb.webp", href: "https://www.youtube.com/watch?v=WULC2OD8EFs" },
+    { title: "Saint Flair West", artist: "Ooak", thumb: "/images/ooak-saint-flair-west-thumb.webp", href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" },
+    { title: "89/32", artist: "Rhozeland", thumb: "/images/rhozeland-89-32-thumb.webp", href: "/projects.html" },
   ],
   "web-development": [
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.webp", href: "https://www.youtube.com/@iimpctmedia" },
     { title: "Toronto Palapa Tours", artist: "Toronto Palapa Tours", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e962a828465eeb8dcd60e_admin-ajax%20(7).webp", href: "https://torontopalapa.tours/" },
     { title: "Indo LeLongLegs", artist: "Indoléstic", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png", href: "https://www.lelonglegs.lol/" },
   ],
   "uiux-development": [
     { title: "Server Incognito", artist: "Indoléstic", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif", href: "https://vectorfestival.org/window-activation" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.webp", href: "https://www.youtube.com/@iimpctmedia" },
     { title: "Toronto Palapa Tours", artist: "Toronto Palapa Tours", thumb: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e962a828465eeb8dcd60e_admin-ajax%20(7).webp", href: "https://torontopalapa.tours/" },
   ],
   "consult": [
-    { title: "Songwriting Camp", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.jpg", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
-    { title: "MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.png", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
-    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.png", href: "https://www.youtube.com/@iimpctmedia" },
+    { title: "Songwriting Camp", artist: "Global Masterminds", thumb: "/images/global-masterminds-doc-thumb.webp", video: "/videos/global-masterminds-doc.mp4", href: "https://www.youtube.com/watch?v=mHP4M-CIMls" },
+    { title: "MMA Sponsorship", artist: "BK Whiskey", thumb: "/images/bk-whiskey-mma-thumb.webp", video: "/videos/bk-whiskey-mma.mp4", href: "https://www.instagram.com/p/DKvf2jXMbRs" },
+    { title: "iiMPCT Media", artist: "iiMPCT Media", thumb: "/images/iimpct-media-thumb.webp", href: "https://www.youtube.com/@iimpctmedia" },
   ],
 };
 

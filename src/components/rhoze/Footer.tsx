@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { Sun, Moon } from "lucide-react";
-import logoBlack from "@/assets/logo-black.png";
-import logoWhite from "@/assets/logo-white.png";
-import logoColor from "@/assets/logo-color.png";
+import logoBlack from "@/assets/logo-black.webp";
+import logoWhite from "@/assets/logo-white.webp";
+import logoColor from "@/assets/logo-color.webp";
 
 const Footer = () => {
   const [hovered, setHovered] = useState(false);

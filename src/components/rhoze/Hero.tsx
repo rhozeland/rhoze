@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Calendar, Music, Palette, Users, Zap } from "lucide-react";
-import logoWhite from "@/assets/logo-white.png";
-import logoBlack from "@/assets/logo-black.png";
+import logoWhite from "@/assets/logo-white.webp";
+import logoBlack from "@/assets/logo-black.webp";
 
 const offerCards = [
   {

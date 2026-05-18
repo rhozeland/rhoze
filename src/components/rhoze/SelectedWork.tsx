@@ -10,7 +10,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=2Nuyr57Xe3o",
-    image: "/images/ess-b-just-call-me-thumb.jpg",
+    image: "/images/ess-b-just-call-me-thumb.webp",
     video: "/videos/ess-b-just-call-me.mp4",
   },
   {
@@ -20,7 +20,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/ooak-the-mask-thumb.png",
+    image: "/images/ooak-the-mask-thumb.webp",
     video: "/videos/ooak-the-mask.mp4",
   },
   {
@@ -30,7 +30,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=w9dYE595cBw",
-    image: "/images/fingaz-mansa-musa-thumb.png",
+    image: "/images/fingaz-mansa-musa-thumb.webp",
     video: "/videos/fingaz-mansa-musa.mp4",
   },
   {
@@ -50,7 +50,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/fingaz-superhero-thumb.png",
+    image: "/images/fingaz-superhero-thumb.webp",
   },
   {
     title: "Holy Water",
@@ -59,7 +59,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=VPLyATcs7fE",
-    image: "/images/cozal-holy-water-thumb.png",
+    image: "/images/cozal-holy-water-thumb.webp",
     video: "/videos/cozal-holy-water.mp4",
   },
   {
@@ -78,7 +78,7 @@ const projects = [
     type: "Web Series",
     icons: ["camera"],
     href: "https://www.youtube.com/@iimpctmedia",
-    image: "/images/iimpct-media-thumb.png",
+    image: "/images/iimpct-media-thumb.webp",
   },
   {
     title: "United MMA Sponsorship",
@@ -87,7 +87,7 @@ const projects = [
     type: "Commercial",
     icons: ["camera"],
     href: "https://www.instagram.com/p/DKvf2jXMbRs",
-    image: "/images/bk-whiskey-mma-thumb.png",
+    image: "/images/bk-whiskey-mma-thumb.webp",
     video: "/videos/bk-whiskey-mma.mp4",
   },
   {
@@ -97,7 +97,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/rc1-thumb.jpg",
+    image: "/images/rc1-thumb.webp",
   },
   {
     title: "Nothing At All",
@@ -106,7 +106,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/semiah-withdrawals-thumb.png",
+    image: "/images/semiah-withdrawals-thumb.webp",
   },
   {
     title: "Photoshoot",
@@ -115,7 +115,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
-    image: "/images/steelo-photoshoot-2.png",
+    image: "/images/steelo-photoshoot-2.webp",
   },
   {
     title: "LeLongLegs",
@@ -133,7 +133,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=Y1v-IBb2aIA",
-    image: "/images/semiah-withdrawals-thumb.png",
+    image: "/images/semiah-withdrawals-thumb.webp",
     video: "/videos/semiah-withdrawals.mp4",
   },
   {
@@ -143,7 +143,7 @@ const projects = [
     type: "Full Release",
     icons: ["music"],
     href: "https://open.spotify.com/album/09tM0lhctM6aEfwG4mYmN5",
-    image: "/images/julz-sensimelia.png",
+    image: "/images/julz-sensimelia.webp",
   },
   {
     title: "Baby Blue",
@@ -152,7 +152,7 @@ const projects = [
     type: "Single",
     icons: ["music"],
     href: "https://www.youtube.com/watch?v=7-nqVh05kZ8",
-    image: "/images/godfrey-noir-baby-blue.png",
+    image: "/images/godfrey-noir-baby-blue.webp",
   },
   {
     title: "U OUTTA KNOW",
@@ -161,7 +161,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=JL85Aej4Je4",
-    image: "/images/steelo-u-outta-know-thumb.jpg",
+    image: "/images/steelo-u-outta-know-thumb.webp",
   },
   {
     title: "Saint Flair West",
@@ -170,7 +170,7 @@ const projects = [
     type: "EP",
     icons: ["music"],
     href: "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM",
-    image: "/images/ooak-saint-flair-west-thumb.png",
+    image: "/images/ooak-saint-flair-west-thumb.webp",
   },
   {
     title: "Server Incognito",
@@ -188,7 +188,7 @@ const projects = [
     type: "Single",
     icons: ["music"],
     href: "https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63",
-    image: "/images/surfin-thumb.png",
+    image: "/images/surfin-thumb.webp",
   },
   {
     title: "Night Come",
@@ -197,7 +197,7 @@ const projects = [
     type: "Music Video",
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=pDO4sTpWKng",
-    image: "/images/luckz-night-come-thumb.png",
+    image: "/images/luckz-night-come-thumb.webp",
     video: "/videos/luckz-night-come.mp4",
   },
   {
@@ -207,7 +207,7 @@ const projects = [
     type: "Reel",
     icons: ["camera"],
     href: "https://www.instagram.com/p/DXdWvKNDsOA/",
-    image: "/images/carina-lucky-charm-thumb.jpg",
+    image: "/images/carina-lucky-charm-thumb.webp",
     video: "/videos/carina-lucky-charm.mp4",
   },
 ];

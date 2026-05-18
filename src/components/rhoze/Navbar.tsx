@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Menu, X, Sparkles, ArrowUpRight, BookOpen, Layers, ShoppingBag, MessageCircle } from "lucide-react";
-import logoBlack from "@/assets/logo-black.png";
-import logoWhite from "@/assets/logo-white.png";
-import logoColor from "@/assets/logo-color.png";
+import logoBlack from "@/assets/logo-black.webp";
+import logoWhite from "@/assets/logo-white.webp";
+import logoColor from "@/assets/logo-color.webp";
 
 const navLinks = [
   { label: "About", href: "/about.html", icon: BookOpen },
@@ -58,18 +58,18 @@ const Navbar = () => {
   ];
 
   const producePool = [
-    { img: "/images/ooak-the-mask-thumb.png", tag: "Music Video", title: "The Mask", artist: "Ooak" },
-    { img: "/images/fingaz-mansa-musa-thumb.png", tag: "Music Video", title: "Mansa Musa", artist: "MONEE FINGAZ" },
-    { img: "/images/rhozeland-fus-thumb.png", tag: "EP", title: "FUS", artist: "Rhozeland" },
-    { img: "/images/holy-water-thumb.jpg", tag: "Music Video", title: "Holy Water", artist: "Cozal" },
-    { img: "/images/vampurp-2027-thumb.jpg", tag: "Music Video", title: "2027", artist: "Vampurp" },
-    { img: "/images/fingaz-superhero-thumb.png", tag: "Music Video", title: "Feel Like A Superhero", artist: "MONEE FINGAZ" },
-    { img: "/images/carina-lucky-charm-thumb.jpg", tag: "Music Video", title: "Lucky Charm", artist: "Carina" },
-    { img: "/images/steelo-u-outta-know-thumb.jpg", tag: "Music Video", title: "U Outta Know", artist: "YOUNG $TEELO" },
-    { img: "/images/rc1-thumb.jpg", tag: "Campaign", title: "Who Runs The World?", artist: "Runner's Club" },
-    { img: "/images/straightdizzy-the-only-reason-thumb.png", tag: "Music Video", title: "The Only Reason", artist: "Straightdizzy" },
-    { img: "/images/bk-whiskey-mma-thumb.png", tag: "Campaign", title: "United MMA", artist: "BK Whiskey" },
-    { img: "/images/ooak-saint-flair-west-thumb.png", tag: "Album", title: "Saint Flair West", artist: "Ooak" },
+    { img: "/images/ooak-the-mask-thumb.webp", tag: "Music Video", title: "The Mask", artist: "Ooak" },
+    { img: "/images/fingaz-mansa-musa-thumb.webp", tag: "Music Video", title: "Mansa Musa", artist: "MONEE FINGAZ" },
+    { img: "/images/rhozeland-fus-thumb.webp", tag: "EP", title: "FUS", artist: "Rhozeland" },
+    { img: "/images/holy-water-thumb.webp", tag: "Music Video", title: "Holy Water", artist: "Cozal" },
+    { img: "/images/vampurp-2027-thumb.webp", tag: "Music Video", title: "2027", artist: "Vampurp" },
+    { img: "/images/fingaz-superhero-thumb.webp", tag: "Music Video", title: "Feel Like A Superhero", artist: "MONEE FINGAZ" },
+    { img: "/images/carina-lucky-charm-thumb.webp", tag: "Music Video", title: "Lucky Charm", artist: "Carina" },
+    { img: "/images/steelo-u-outta-know-thumb.webp", tag: "Music Video", title: "U Outta Know", artist: "YOUNG $TEELO" },
+    { img: "/images/rc1-thumb.webp", tag: "Campaign", title: "Who Runs The World?", artist: "Runner's Club" },
+    { img: "/images/straightdizzy-the-only-reason-thumb.webp", tag: "Music Video", title: "The Only Reason", artist: "Straightdizzy" },
+    { img: "/images/bk-whiskey-mma-thumb.webp", tag: "Campaign", title: "United MMA", artist: "BK Whiskey" },
+    { img: "/images/ooak-saint-flair-west-thumb.webp", tag: "Album", title: "Saint Flair West", artist: "Ooak" },
   ];
   const [produceSlides, setProduceSlides] = useState(() => pickRandom(producePool, 3));
 

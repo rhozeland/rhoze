@@ -14,7 +14,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccentPicker } from "@/components/AccentPicker";
-import rhozelandLogo from "@/assets/rhozeland-logo.png";
+import rhozelandLogo from "@/assets/rhozeland-logo.webp";
 
 const nav = [
   { to: "/directory", label: "Directory", icon: Calendar },

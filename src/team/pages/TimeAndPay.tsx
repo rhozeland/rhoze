@@ -614,6 +614,80 @@ function MyTimesheet({ periodId, userId, editorName, adminEdit, onExitEdit }: { 
   const isLocked = timesheet.status !== "draft" && !adminEdit;
 
   return (
+    <MyTimesheetView
+      timesheet={timesheet}
+      entries={entries ?? []}
+      visible={visible}
+      totals={totals}
+      isLocked={isLocked}
+      adminEdit={!!adminEdit}
+      editorName={editorName}
+      onExitEdit={onExitEdit}
+      myHourlyCents={myHourlyCents}
+      saveStatus={saveStatus}
+      saveCell={saveCell}
+      flushAllCells={flushAllCells}
+      addEntry={addEntry}
+      removeEntry={removeEntry}
+      duplicateEntry={duplicateEntry}
+      submit={submit}
+      recall={recall}
+    />
+  );
+}
+
+function MyTimesheetView(props: any) {
+  const { timesheet, entries, visible, totals, isLocked, adminEdit, editorName, onExitEdit,
+          myHourlyCents, saveStatus, saveCell, flushAllCells,
+          addEntry, removeEntry, duplicateEntry, submit, recall } = props;
+
+  const [bulkMode, setBulkMode] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulk, setBulk] = useState<{ deliverable: string; work_type: string; rate: string; hours: string; expense: string }>({
+    deliverable: "", work_type: "", rate: "", hours: "", expense: "",
+  });
+
+  const allIds = visible.map((e: any) => e.id);
+  const allSelected = allIds.length > 0 && allIds.every((id: string) => selected.has(id));
+  const someSelected = selected.size > 0 && !allSelected;
+
+  const toggleOne = (id: string) =>
+    setSelected((s) => { const n = new Set(s); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  const toggleAll = () => setSelected(allSelected ? new Set() : new Set(allIds));
+  const clearSel = () => setSelected(new Set());
+
+  const applyBulk = () => {
+    if (selected.size === 0) { toast({ title: "Select rows first" }); return; }
+    const patch: any = {};
+    if (bulk.deliverable !== "") patch.deliverable = bulk.deliverable;
+    if (bulk.work_type !== "")   patch.work_type = bulk.work_type;
+    if (bulk.rate !== "")        patch.rate_amount_cents = toCents(bulk.rate || "0");
+    if (bulk.hours !== "")       patch.hours = parseFloat(bulk.hours) || 0;
+    if (bulk.expense !== "")     patch.expense_cents = toCents(bulk.expense || "0");
+    if (Object.keys(patch).length === 0) { toast({ title: "Enter a value to apply" }); return; }
+    // Snap rate to fixed value when type forces it
+    selected.forEach((id) => {
+      const p = { ...patch };
+      if (p.work_type === "specialist") p.rate_amount_cents = SPECIALIST_RATE_CENTS;
+      if (p.work_type === "standard" && bulk.rate === "") p.rate_amount_cents = myHourlyCents || 0;
+      if (p.work_type === "reimbursement" && bulk.rate === "") p.rate_amount_cents = 0;
+      saveCell(id, p);
+    });
+    toast({ title: `Applied to ${selected.size} row${selected.size === 1 ? "" : "s"}` });
+    setBulk({ deliverable: "", work_type: "", rate: "", hours: "", expense: "" });
+  };
+
+  const deleteSelected = async () => {
+    if (selected.size === 0) return;
+    if (!confirm(`Delete ${selected.size} row${selected.size === 1 ? "" : "s"}? This can't be undone.`)) return;
+    const ids = Array.from(selected);
+    for (const id of ids) await removeEntry.mutateAsync(id).catch(() => {});
+    clearSel();
+  };
+
+  const bulkCol = bulkMode && adminEdit;
+
+  return (
     <div className="space-y-4">
       {editorName && (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">

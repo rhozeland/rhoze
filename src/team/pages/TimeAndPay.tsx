@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -508,6 +508,16 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
   // Optimistic / retrying saver for entry cells.
   const entryQK = ["timesheet_entries", timesheet?.id];
   const { save: saveCell, status: saveStatus, flushAll: flushAllCells } = useEntrySaver(entryQK);
+
+  // Warn before unload if anything is still in flight, so a stray tab close
+  // never silently drops an unsaved keystroke.
+  useEffect(() => {
+    const pending = Object.values(saveStatus).some((s) => s === "saving" || s === "error");
+    if (!pending) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [saveStatus]);
 
   const totals = useMemo(() => {
     const t = {

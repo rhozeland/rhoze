@@ -685,7 +685,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
           {!isLocked && (
-            <Button size="sm" variant="outline" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => saveDraft.mutate(), 50); }} disabled={saveDraft.isPending}>
+            <Button size="sm" variant="outline" onClick={async () => { (document.activeElement as HTMLElement)?.blur?.(); await flushAllCells(); saveDraft.mutate(); }} disabled={saveDraft.isPending}>
               Save draft
             </Button>
           )}
@@ -693,7 +693,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
           {!isLocked && (
-            <Button size="sm" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => submit.mutate(), 50); }} disabled={(entries ?? []).length === 0 || submit.isPending}>
+            <Button size="sm" onClick={async () => { (document.activeElement as HTMLElement)?.blur?.(); await flushAllCells(); submit.mutate(); }} disabled={(entries ?? []).length === 0 || submit.isPending}>
               Submit for approval
             </Button>
           )}
@@ -916,7 +916,7 @@ function Th({ children, className, icon }: any) {
 
 /* ---------- entry row ---------- */
 
-function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {
+function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; status?: "saving" | "saved" | "error"; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",
@@ -981,9 +981,12 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, on
   return (
     <tr className={cn("hover:bg-accent/20", stripe && "bg-muted/20")}>
       <td className="px-2 py-1">
-        <input disabled={locked} value={local.deliverable}
-          onChange={(e) => { setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
-          placeholder="What did you do?" className={cell} />
+        <div className="flex items-center gap-1.5">
+          <SaveDot status={status} />
+          <input disabled={locked} value={local.deliverable}
+            onChange={(e) => { setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
+            placeholder="What did you do?" className={cell} />
+        </div>
       </td>
       <td className="px-2 py-1">
         <select disabled={locked} value={local.work_type}

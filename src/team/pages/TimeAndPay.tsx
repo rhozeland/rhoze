@@ -505,6 +505,10 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
     },
   });
 
+  // Optimistic / retrying saver for entry cells.
+  const entryQK = ["timesheet_entries", timesheet?.id];
+  const { save: saveCell, status: saveStatus, flushAll: flushAllCells } = useEntrySaver(entryQK);
+
   const totals = useMemo(() => {
     const t = {
       project: 0, specialist: 0, standard: 0,
@@ -539,14 +543,6 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
     onError: (e: any) => toast({ title: "Couldn't add row", description: e.message, variant: "destructive" }),
   });
 
-  const updateEntry = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: any }) => {
-      const { error } = await supabase.from("timesheet_entries").update(patch).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
-    onError: (e: any) => toast({ title: "Couldn't save change", description: e.message, variant: "destructive" }),
-  });
 
   const removeEntry = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from("timesheet_entries").delete().eq("id", id); if (error) throw error; },

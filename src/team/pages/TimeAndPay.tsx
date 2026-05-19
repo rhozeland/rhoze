@@ -602,7 +602,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
           {!isLocked && (
-            <Button size="sm" variant="outline" onClick={() => saveDraft.mutate()} disabled={saveDraft.isPending}>
+            <Button size="sm" variant="outline" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => saveDraft.mutate(), 50); }} disabled={saveDraft.isPending}>
               Save draft
             </Button>
           )}
@@ -610,7 +610,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
           {!isLocked && (
-            <Button size="sm" onClick={() => submit.mutate()} disabled={(entries ?? []).length === 0 || submit.isPending}>
+            <Button size="sm" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => submit.mutate(), 50); }} disabled={(entries ?? []).length === 0 || submit.isPending}>
               Submit for approval
             </Button>
           )}

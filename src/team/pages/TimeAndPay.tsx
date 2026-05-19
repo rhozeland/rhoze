@@ -720,7 +720,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
               <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
-              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} />
+              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} status={saveStatus[e.id]} onChange={(p) => saveCell(e.id, p)} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} />
             ))}
           </tbody>
         </table>

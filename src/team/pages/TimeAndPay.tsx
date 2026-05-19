@@ -684,11 +684,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
 
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
-          {!isLocked && (
-            <Button size="sm" variant="outline" onClick={async () => { (document.activeElement as HTMLElement)?.blur?.(); await flushAllCells(); saveDraft.mutate(); }} disabled={saveDraft.isPending}>
-              Save draft
-            </Button>
-          )}
+          {!isLocked && <AutosaveBadge status={saveStatus} />}
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}

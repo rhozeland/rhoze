@@ -624,8 +624,6 @@
       z-index: 6;
       overflow: hidden;
       margin-top: 1.3rem;
-      mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
-      -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
     }
 
     .hero-proof-label {
@@ -647,8 +645,24 @@
       cursor: grab;
       touch-action: none;
       user-select: none;
-      mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
-      -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+    }
+    .hero-proof-track-wrap::before,
+    .hero-proof-track-wrap::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 72px;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .hero-proof-track-wrap::before {
+      left: 0;
+      background: linear-gradient(90deg, hsl(var(--surface) / 1) 0%, hsl(var(--surface) / 0) 100%);
+    }
+    .hero-proof-track-wrap::after {
+      right: 0;
+      background: linear-gradient(270deg, hsl(var(--surface) / 1) 0%, hsl(var(--surface) / 0) 100%);
     }
     .hero-proof-track-wrap::-webkit-scrollbar { display: none; }
     .hero-proof-track-wrap.is-dragging { cursor: grabbing; }

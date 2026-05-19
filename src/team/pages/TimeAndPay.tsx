@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy, Loader2, AlertCircle } from "lucide-react";
+import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy, Loader2, AlertCircle, Undo2 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
@@ -694,7 +694,6 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
 
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
-          {!isLocked && <AutosaveBadge status={saveStatus} />}
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
@@ -981,6 +980,40 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDe
     expense: ((entry.expense_cents ?? 0) / 100).toString(),
   });
 
+  type LocalState = typeof local;
+  // Snapshot the row state from BEFORE the most recent edit so we can revert it.
+  // We keep a stack so the user can step back through a few quick edits.
+  const [undoStack, setUndoStack] = useState<LocalState[]>([]);
+
+  // Build a full DB patch from a local snapshot so undo writes a consistent set of fields.
+  const localToDb = (l: LocalState) => ({
+    deliverable: l.deliverable,
+    work_type: l.work_type,
+    rate_amount_cents:
+      l.work_type === "specialist" ? SPECIALIST_RATE_CENTS
+      : l.work_type === "reimbursement" ? 0
+      : toCents(l.rate || "0"),
+    start_time: l.start_time ? new Date(l.start_time).toISOString() : null,
+    end_time:   l.end_time   ? new Date(l.end_time).toISOString()   : null,
+    day:        l.start_time ? l.start_time.slice(0, 10) : null,
+    hours:      parseFloat(l.hours) || 0,
+    expense_cents: toCents(l.expense || "0"),
+  });
+
+  // Record an undo point before any user edit. Keeps the last 20 steps.
+  const pushUndo = () => {
+    if (locked) return;
+    setUndoStack((s) => [...s.slice(-19), local]);
+  };
+
+  const handleUndo = () => {
+    if (locked || undoStack.length === 0) return;
+    const prev = undoStack[undoStack.length - 1];
+    setUndoStack((s) => s.slice(0, -1));
+    setLocal(prev);
+    onChange(localToDb(prev));
+  };
+
   const isReimburse = local.work_type === "reimbursement";
   const isProject   = local.work_type === "project";
   const isSpecialist = local.work_type === "specialist";
@@ -1005,6 +1038,7 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDe
 
   // When the work type changes, snap the rate to the right default
   const handleTypeChange = (next: string) => {
+    pushUndo();
     let nextRateCents = entry.rate_amount_cents ?? 0;
     if (next === "specialist") nextRateCents = SPECIALIST_RATE_CENTS;
     else if (next === "standard") nextRateCents = myHourlyCents || 0;
@@ -1038,7 +1072,7 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDe
         <div className="flex items-center gap-1.5">
           <SaveDot status={status} />
           <input disabled={locked} value={local.deliverable}
-            onChange={(e) => { setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
+            onChange={(e) => { pushUndo(); setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
             placeholder="What did you do?" className={cell} />
         </div>
       </td>
@@ -1054,36 +1088,44 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDe
           value={isReimburse ? "" : isSpecialist ? "30.00" : local.rate}
           placeholder={isReimburse ? "—" : isProject ? "flat $" : "0.00"}
           title={isSpecialist ? "Specialist rate is locked at $30/hr" : undefined}
-          onChange={(e) => { setLocal({ ...local, rate: e.target.value }); commit({ rate_amount_cents: toCents(e.target.value || "0") }); }}
+          onChange={(e) => { pushUndo(); setLocal({ ...local, rate: e.target.value }); commit({ rate_amount_cents: toCents(e.target.value || "0") }); }}
           className={cn(cellNum, "max-w-[90px]", isSpecialist && "font-semibold opacity-90")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="datetime-local" value={local.start_time}
-          onChange={(e) => { setLocal({ ...local, start_time: e.target.value }); recalcHours(e.target.value, local.end_time); }}
+          onChange={(e) => { pushUndo(); setLocal({ ...local, start_time: e.target.value }); recalcHours(e.target.value, local.end_time); }}
           className={cn(cell, "min-w-[170px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="datetime-local" value={local.end_time}
-          onChange={(e) => { setLocal({ ...local, end_time: e.target.value }); recalcHours(local.start_time, e.target.value); }}
+          onChange={(e) => { pushUndo(); setLocal({ ...local, end_time: e.target.value }); recalcHours(local.start_time, e.target.value); }}
           className={cn(cell, "min-w-[170px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="number" step="0.25" min="0"
           value={isReimburse ? "" : local.hours}
           placeholder={isReimburse ? "—" : "0.00"}
-          onChange={(e) => { setLocal({ ...local, hours: e.target.value }); commit({ hours: parseFloat(e.target.value) || 0 }); }}
+          onChange={(e) => { pushUndo(); setLocal({ ...local, hours: e.target.value }); commit({ hours: parseFloat(e.target.value) || 0 }); }}
           className={cn(cellNum, "max-w-[70px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked} type="number" step="0.01" min="0"
           value={local.expense}
-          onChange={(e) => { setLocal({ ...local, expense: e.target.value }); commit({ expense_cents: toCents(e.target.value || "0") }); }}
+          onChange={(e) => { pushUndo(); setLocal({ ...local, expense: e.target.value }); commit({ expense_cents: toCents(e.target.value || "0") }); }}
           className={cn(cellNum, "max-w-[90px]")} />
       </td>
       <td className="px-3 py-2 text-right tabular-nums font-semibold">{formatCents(lineTotal)}</td>
       <td className="px-2 py-1 text-right">
         {!locked && (
           <div className="inline-flex items-center gap-0.5">
+            <button
+              onClick={handleUndo}
+              disabled={undoStack.length === 0}
+              title={undoStack.length === 0 ? "Nothing to undo" : "Undo last edit on this row"}
+              className="text-muted-foreground hover:text-foreground p-1 disabled:opacity-30 disabled:hover:text-muted-foreground"
+            >
+              <Undo2 size={14} />
+            </button>
             {onDuplicate && (
               <button onClick={onDuplicate} title="Duplicate row" className="text-muted-foreground hover:text-foreground p-1"><Copy size={14} /></button>
             )}

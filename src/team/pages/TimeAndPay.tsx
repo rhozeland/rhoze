@@ -395,6 +395,7 @@ export default function TimeAndPay() {
           periodId={periodId}
           userId={editingUserId || user!.id}
           editorName={editingUserId ? editingUserName : undefined}
+          adminEdit={!!editingUserId && isAdmin}
           onExitEdit={editingUserId ? () => {
             setEditingUserId(null);
             setEditingUserName("");
@@ -472,7 +473,7 @@ function PeriodForm({ form, setForm, onCreated, editingId, onCancel }: any) {
 
 /* ---------- MY TIMESHEET ---------- */
 
-function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: string; userId: string; editorName?: string; onExitEdit?: () => void }) {
+function MyTimesheet({ periodId, userId, editorName, adminEdit, onExitEdit }: { periodId: string; userId: string; editorName?: string; adminEdit?: boolean; onExitEdit?: () => void }) {
   const qc = useQueryClient();
 
   // Per-person rate from the role mastersheet (used for "Hourly" rows)
@@ -610,14 +611,18 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
   });
 
   if (!timesheet) return null;
-  const isLocked = timesheet.status !== "draft";
+  const isLocked = timesheet.status !== "draft" && !adminEdit;
 
   return (
     <div className="space-y-4">
       {editorName && (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
           <div>
-            <div className="text-sm font-medium">Editing saved draft</div>
+            <div className="text-sm font-medium">
+              {adminEdit && timesheet.status !== "draft"
+                ? `Admin edit mode — ${timesheet.status} timesheet`
+                : "Editing saved draft"}
+            </div>
             <div className="text-xs text-muted-foreground">{editorName}&rsquo;s timesheet for this pay period</div>
           </div>
           {onExitEdit && <Button size="sm" variant="outline" onClick={onExitEdit}>Done</Button>}
@@ -807,6 +812,7 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
         {submitted.length === 0 ? <Empty>No timesheets waiting.</Empty> : submitted.map((s: any) => (
           <SheetRow key={s.id} sheet={s}
             actions={<>
+              <Button size="icon" variant="outline" className="h-9 w-9 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-300" onClick={() => onEditDraft(s)} aria-label="Admin edit"><Pencil size={14} /></Button>
               <Button size="sm" variant="outline" onClick={() => setStatus.mutate({ id: s.id, status: "draft" })}><X size={14} /> Send back</Button>
               <Button size="sm" onClick={() => setStatus.mutate({ id: s.id, status: "approved" })}><Check size={14} /> Approve</Button>
             </>} />
@@ -815,7 +821,10 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
       <Section title="Approved" count={approved.length}>
         {approved.length === 0 ? <Empty>None yet.</Empty> : approved.map((s: any) => (
           <SheetRow key={s.id} sheet={s}
-            actions={<Button size="sm" variant="ghost" onClick={() => setStatus.mutate({ id: s.id, status: "draft" })}>Reopen</Button>} />
+            actions={<>
+              <Button size="icon" variant="outline" className="h-9 w-9 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-300" onClick={() => onEditDraft(s)} aria-label="Admin edit"><Pencil size={14} /></Button>
+              <Button size="sm" variant="ghost" onClick={() => setStatus.mutate({ id: s.id, status: "draft" })}>Reopen</Button>
+            </>} />
         ))}
       </Section>
       <Section title="In progress (drafts)" count={drafts.length} muted>

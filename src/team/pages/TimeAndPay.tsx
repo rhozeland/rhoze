@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy, Loader2, AlertCircle } from "lucide-react";
+import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy, Loader2, AlertCircle, Undo2 } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
@@ -694,7 +694,6 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
 
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
-          {!isLocked && <AutosaveBadge status={saveStatus} />}
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}

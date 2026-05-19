@@ -732,7 +732,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
         {!isLocked && (
           <div className="border-t border-border p-2">
             <button onClick={() => addEntry.mutate()} className="w-full text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded py-2 flex items-center justify-center gap-1.5 transition">
-              <Plus size={14} /> Add row
+              <Plus size={14} /> Add deliverable
             </button>
           </div>
         )}

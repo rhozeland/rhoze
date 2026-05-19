@@ -914,6 +914,31 @@ function Th({ children, className, icon }: any) {
   return <th className={cn("px-3 py-2 font-semibold", className)}><span className="inline-flex items-center gap-1">{icon}{children}</span></th>;
 }
 
+function SaveDot({ status }: { status?: "saving" | "saved" | "error" }) {
+  if (!status) {
+    return <span className="w-3.5 h-3.5 inline-flex shrink-0" aria-hidden />;
+  }
+  if (status === "saving") {
+    return (
+      <span title="Saving…" className="text-muted-foreground inline-flex shrink-0">
+        <Loader2 size={12} className="animate-spin" />
+      </span>
+    );
+  }
+  if (status === "saved") {
+    return (
+      <span title="Saved" className="text-emerald-600 dark:text-emerald-400 inline-flex shrink-0">
+        <Check size={12} />
+      </span>
+    );
+  }
+  return (
+    <span title="Couldn't reach the server — retrying. Your input is safe." className="text-amber-600 dark:text-amber-400 inline-flex shrink-0">
+      <AlertCircle size={12} />
+    </span>
+  );
+}
+
 /* ---------- entry row ---------- */
 
 function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; status?: "saving" | "saved" | "error"; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {

@@ -773,6 +773,11 @@ function MyTimesheetView(props: any) {
 
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
+          {adminEdit && !isLocked && (
+            <Button size="sm" variant={bulkMode ? "default" : "outline"} onClick={() => { setBulkMode(!bulkMode); clearSel(); }}>
+              {bulkMode ? "Exit bulk edit" : "Bulk edit"}
+            </Button>
+          )}
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
@@ -783,11 +788,43 @@ function MyTimesheetView(props: any) {
           )}
       </div>
 
+      {bulkCol && (
+        <div className="rounded-lg border border-orange-500/40 bg-orange-500/5 p-3 space-y-2">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-orange-300">
+              Bulk edit · {selected.size} selected
+            </div>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" onClick={toggleAll}>{allSelected ? "Clear all" : "Select all"}</Button>
+              <Button size="sm" variant="ghost" onClick={clearSel} disabled={selected.size === 0}>Reset</Button>
+              <Button size="sm" variant="outline" onClick={deleteSelected} disabled={selected.size === 0} className="border-destructive/40 text-destructive hover:bg-destructive/10">Delete</Button>
+              <Button size="sm" onClick={applyBulk} disabled={selected.size === 0}>Apply to selected</Button>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            <Input placeholder="Deliverable" value={bulk.deliverable} onChange={(e: any) => setBulk({ ...bulk, deliverable: e.target.value })} className="h-9" />
+            <select value={bulk.work_type} onChange={(e) => setBulk({ ...bulk, work_type: e.target.value })} className="h-9 rounded-md border border-input bg-background px-2 text-sm">
+              <option value="">Type — keep</option>
+              {WORK_TYPES.map((w) => <option key={w.value} value={w.value}>{w.short}</option>)}
+            </select>
+            <Input type="number" step="0.01" min="0" placeholder="Rate $/hr" value={bulk.rate} onChange={(e: any) => setBulk({ ...bulk, rate: e.target.value })} className="h-9" />
+            <Input type="number" step="0.25" min="0" placeholder="Hours" value={bulk.hours} onChange={(e: any) => setBulk({ ...bulk, hours: e.target.value })} className="h-9" />
+            <Input type="number" step="0.01" min="0" placeholder="Expense $" value={bulk.expense} onChange={(e: any) => setBulk({ ...bulk, expense: e.target.value })} className="h-9" />
+          </div>
+          <p className="text-[11px] text-muted-foreground">Empty fields are ignored. Only filled fields overwrite the selected rows.</p>
+        </div>
+      )}
+
       {/* Spreadsheet table */}
       <div className="border border-border rounded-lg overflow-x-auto bg-card">
         <table className="w-full text-sm">
           <thead className="bg-orange-500 text-white text-[11px] uppercase tracking-wider">
             <tr>
+              {bulkCol && (
+                <th className="w-9 px-2 text-center">
+                  <input type="checkbox" aria-label="Select all" checked={allSelected} ref={(el) => { if (el) el.indeterminate = someSelected; }} onChange={toggleAll} />
+                </th>
+              )}
               <Th icon={<FileText size={12} />} className="text-left min-w-[220px]">Deliverable</Th>
               <Th className="text-left">Type</Th>
               <Th icon={<DollarSign size={12} />} className="text-right">Rate</Th>
@@ -801,10 +838,10 @@ function MyTimesheetView(props: any) {
           </thead>
           <tbody className="divide-y divide-border">
             {visible.length === 0 && (
-              <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
+              <tr><td colSpan={bulkCol ? 10 : 9} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
-              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} status={saveStatus[e.id]} onChange={(p) => saveCell(e.id, p)} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} />
+              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} status={saveStatus[e.id]} onChange={(p) => saveCell(e.id, p)} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} selectable={bulkCol} selected={selected.has(e.id)} onToggleSelect={() => toggleOne(e.id)} />
             ))}
           </tbody>
         </table>

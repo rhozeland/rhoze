@@ -458,11 +458,13 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
+    onError: (e: any) => toast({ title: "Couldn't save change", description: e.message, variant: "destructive" }),
   });
 
   const removeEntry = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from("timesheet_entries").delete().eq("id", id); if (error) throw error; },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
+    onError: (e: any) => toast({ title: "Couldn't delete row", description: e.message, variant: "destructive" }),
   });
 
   const duplicateEntry = useMutation({

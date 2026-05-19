@@ -62,6 +62,7 @@ export default function TimeAndPay() {
   const [editingUserName, setEditingUserName] = useState<string>("");
   const [periodForm, setPeriodForm] = useState(() => defaultBiweeklyPeriod());
   const [showPeriodForm, setShowPeriodForm] = useState(false);
+  const [editingPeriodId, setEditingPeriodId] = useState<string | null>(null);
   const [purging, setPurging] = useState(false);
 
   const { data: periods } = useQuery({
@@ -150,6 +151,24 @@ export default function TimeAndPay() {
         {isAdmin && (
           <Button size="sm" variant="outline" onClick={() => setShowPeriodForm((s) => !s)}>
             <Plus size={14} /> Period
+          </Button>
+        )}
+        {isAdmin && activePeriod && (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setEditingPeriodId(activePeriod.id);
+              setPeriodForm({
+                label: activePeriod.label,
+                start_date: activePeriod.start_date,
+                end_date: activePeriod.end_date,
+                pay_date: activePeriod.pay_date,
+              });
+              setShowPeriodForm(true);
+            }}
+          >
+            <Pencil size={14} /> Edit period
           </Button>
         )}
         {isAdmin && (periods ?? []).length > 1 && (
@@ -246,7 +265,18 @@ export default function TimeAndPay() {
       </div>
 
       {showPeriodForm && isAdmin && (
-        <PeriodForm form={periodForm} setForm={setPeriodForm} onCreated={() => { setShowPeriodForm(false); setPeriodForm(defaultBiweeklyPeriod()); qc.invalidateQueries({ queryKey: ["timesheet_periods"] }); }} />
+        <PeriodForm
+          form={periodForm}
+          setForm={setPeriodForm}
+          editingId={editingPeriodId}
+          onCancel={() => { setShowPeriodForm(false); setEditingPeriodId(null); setPeriodForm(defaultBiweeklyPeriod()); }}
+          onCreated={() => {
+            setShowPeriodForm(false);
+            setEditingPeriodId(null);
+            setPeriodForm(defaultBiweeklyPeriod());
+            qc.invalidateQueries({ queryKey: ["timesheet_periods"] });
+          }}
+        />
       )}
 
       {!periodId ? (
@@ -312,14 +342,29 @@ function defaultBiweeklyPeriod() {
   };
 }
 
-function PeriodForm({ form, setForm, onCreated }: any) {
-  const create = useMutation({
+function PeriodForm({ form, setForm, onCreated, editingId, onCancel }: any) {
+  const save = useMutation({
     mutationFn: async () => {
       if (!form.label || !form.start_date || !form.end_date || !form.pay_date) throw new Error("All fields required");
-      const { error } = await supabase.from("timesheet_periods").insert(form);
-      if (error) throw error;
+      if (editingId) {
+        // Update ONLY the period row's metadata. timesheets, entries, and pay stubs
+        // reference period_id which is unchanged — all employee data stays intact.
+        const { error } = await supabase
+          .from("timesheet_periods")
+          .update({
+            label: form.label,
+            start_date: form.start_date,
+            end_date: form.end_date,
+            pay_date: form.pay_date,
+          })
+          .eq("id", editingId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("timesheet_periods").insert(form);
+        if (error) throw error;
+      }
     },
-    onSuccess: () => { toast({ title: "Period added" }); onCreated(); },
+    onSuccess: () => { toast({ title: editingId ? "Period updated" : "Period added" }); onCreated(); },
     onError: (e: any) => toast({ title: "Failed", description: e.message, variant: "destructive" }),
   });
   return (
@@ -328,7 +373,12 @@ function PeriodForm({ form, setForm, onCreated }: any) {
       <div className="space-y-1.5"><Label>Start</Label><Input type="date" value={form.start_date} onChange={(e: any) => setForm({ ...form, start_date: e.target.value })} /></div>
       <div className="space-y-1.5"><Label>End</Label><Input type="date" value={form.end_date} onChange={(e: any) => setForm({ ...form, end_date: e.target.value })} /></div>
       <div className="space-y-1.5"><Label>Pay date</Label><Input type="date" value={form.pay_date} onChange={(e: any) => setForm({ ...form, pay_date: e.target.value })} /></div>
-      <div className="md:col-span-5 flex justify-end"><Button size="sm" onClick={() => create.mutate()} disabled={create.isPending}>Create period</Button></div>
+      <div className="md:col-span-5 flex justify-end gap-2">
+        {onCancel && <Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button>}
+        <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
+          {editingId ? "Save changes" : "Create period"}
+        </Button>
+      </div>
     </div>
   );
 }

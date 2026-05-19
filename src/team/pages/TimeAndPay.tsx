@@ -473,7 +473,7 @@ function PeriodForm({ form, setForm, onCreated, editingId, onCancel }: any) {
 
 /* ---------- MY TIMESHEET ---------- */
 
-function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: string; userId: string; editorName?: string; onExitEdit?: () => void }) {
+function MyTimesheet({ periodId, userId, editorName, adminEdit, onExitEdit }: { periodId: string; userId: string; editorName?: string; adminEdit?: boolean; onExitEdit?: () => void }) {
   const qc = useQueryClient();
 
   // Per-person rate from the role mastersheet (used for "Hourly" rows)

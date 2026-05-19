@@ -458,11 +458,13 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
+    onError: (e: any) => toast({ title: "Couldn't save change", description: e.message, variant: "destructive" }),
   });
 
   const removeEntry = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from("timesheet_entries").delete().eq("id", id); if (error) throw error; },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
+    onError: (e: any) => toast({ title: "Couldn't delete row", description: e.message, variant: "destructive" }),
   });
 
   const duplicateEntry = useMutation({
@@ -600,7 +602,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
           {!isLocked && (
-            <Button size="sm" variant="outline" onClick={() => saveDraft.mutate()} disabled={saveDraft.isPending}>
+            <Button size="sm" variant="outline" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => saveDraft.mutate(), 50); }} disabled={saveDraft.isPending}>
               Save draft
             </Button>
           )}
@@ -608,7 +610,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
           {!isLocked && (
-            <Button size="sm" onClick={() => submit.mutate()} disabled={(entries ?? []).length === 0 || submit.isPending}>
+            <Button size="sm" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => submit.mutate(), 50); }} disabled={(entries ?? []).length === 0 || submit.isPending}>
               Submit for approval
             </Button>
           )}
@@ -897,8 +899,7 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, on
     <tr className={cn("hover:bg-accent/20", stripe && "bg-muted/20")}>
       <td className="px-2 py-1">
         <input disabled={locked} value={local.deliverable}
-          onChange={(e) => setLocal({ ...local, deliverable: e.target.value })}
-          onBlur={() => local.deliverable !== entry.deliverable && commit({ deliverable: local.deliverable })}
+          onChange={(e) => { setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
           placeholder="What did you do?" className={cell} />
       </td>
       <td className="px-2 py-1">
@@ -913,35 +914,30 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, on
           value={isReimburse ? "" : isSpecialist ? "30.00" : local.rate}
           placeholder={isReimburse ? "—" : isProject ? "flat $" : "0.00"}
           title={isSpecialist ? "Specialist rate is locked at $30/hr" : undefined}
-          onChange={(e) => setLocal({ ...local, rate: e.target.value })}
-          onBlur={() => commit({ rate_amount_cents: toCents(local.rate || "0") })}
+          onChange={(e) => { setLocal({ ...local, rate: e.target.value }); commit({ rate_amount_cents: toCents(e.target.value || "0") }); }}
           className={cn(cellNum, "max-w-[90px]", isSpecialist && "font-semibold opacity-90")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="datetime-local" value={local.start_time}
-          onChange={(e) => setLocal({ ...local, start_time: e.target.value })}
-          onBlur={() => recalcHours(local.start_time, local.end_time)}
+          onChange={(e) => { setLocal({ ...local, start_time: e.target.value }); recalcHours(e.target.value, local.end_time); }}
           className={cn(cell, "min-w-[170px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="datetime-local" value={local.end_time}
-          onChange={(e) => setLocal({ ...local, end_time: e.target.value })}
-          onBlur={() => recalcHours(local.start_time, local.end_time)}
+          onChange={(e) => { setLocal({ ...local, end_time: e.target.value }); recalcHours(local.start_time, e.target.value); }}
           className={cn(cell, "min-w-[170px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked || isReimburse} type="number" step="0.25" min="0"
           value={isReimburse ? "" : local.hours}
           placeholder={isReimburse ? "—" : "0.00"}
-          onChange={(e) => setLocal({ ...local, hours: e.target.value })}
-          onBlur={() => commit({ hours: parseFloat(local.hours) || 0 })}
+          onChange={(e) => { setLocal({ ...local, hours: e.target.value }); commit({ hours: parseFloat(e.target.value) || 0 }); }}
           className={cn(cellNum, "max-w-[70px]")} />
       </td>
       <td className="px-2 py-1">
         <input disabled={locked} type="number" step="0.01" min="0"
           value={local.expense}
-          onChange={(e) => setLocal({ ...local, expense: e.target.value })}
-          onBlur={() => commit({ expense_cents: toCents(local.expense || "0") })}
+          onChange={(e) => { setLocal({ ...local, expense: e.target.value }); commit({ expense_cents: toCents(e.target.value || "0") }); }}
           className={cn(cellNum, "max-w-[90px]")} />
       </td>
       <td className="px-3 py-2 text-right tabular-nums font-semibold">{formatCents(lineTotal)}</td>

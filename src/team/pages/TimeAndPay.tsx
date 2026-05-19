@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy } from "lucide-react";
+import { Plus, Trash2, Check, X, FileText, DollarSign, Clock, Calendar as CalendarIcon, Receipt, Pencil, Copy, Loader2, AlertCircle } from "lucide-react";
 import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
@@ -51,6 +51,93 @@ function toLocalDT(iso: string): string {
   if (Number.isNaN(d.getTime())) return "";
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+type SaveStatus = "saving" | "saved" | "error" | undefined;
+
+/**
+ * Per-entry save manager: optimistic cache updates, debounced patch coalescing,
+ * exponential backoff on transient errors, and a per-row status the UI can render.
+ *
+ * Typed deliverables / hours / rates are written to the cache immediately so they
+ * never visually disappear, and the actual Supabase write is retried up to ~5s of
+ * backoff. If we still can't reach the server, the patch stays queued and we try
+ * again every 5s in the background — so a flaky connection never loses input.
+ */
+function useEntrySaver(queryKey: any[]) {
+  const qc = useQueryClient();
+  const pending = useRef<Map<string, any>>(new Map());
+  const timers = useRef<Map<string, any>>(new Map());
+  const inflight = useRef<Map<string, boolean>>(new Map());
+  const [status, setStatus] = useState<Record<string, SaveStatus>>({});
+
+  const setOne = (id: string, s: SaveStatus) =>
+    setStatus((prev) => (prev[id] === s ? prev : { ...prev, [id]: s }));
+
+  const flush = useCallback(async (id: string) => {
+    if (inflight.current.get(id)) return;
+    const patch = pending.current.get(id);
+    if (!patch || Object.keys(patch).length === 0) return;
+    pending.current.delete(id);
+    inflight.current.set(id, true);
+    setOne(id, "saving");
+
+    let attempt = 0;
+    let lastErr: any = null;
+    // ~5 retries with backoff (300ms, 600, 1200, 2400, 4000)
+    while (attempt < 6) {
+      const { error } = await supabase.from("timesheet_entries").update(patch).eq("id", id);
+      if (!error) { lastErr = null; break; }
+      lastErr = error;
+      attempt++;
+      if (attempt >= 6) break;
+      await new Promise((r) => setTimeout(r, Math.min(300 * 2 ** (attempt - 1), 4000)));
+    }
+
+    inflight.current.set(id, false);
+
+    if (lastErr) {
+      // Keep the patch (merged with anything new) and try again in 5s — never lose input.
+      const merged = { ...patch, ...(pending.current.get(id) ?? {}) };
+      pending.current.set(id, merged);
+      setOne(id, "error");
+      setTimeout(() => flush(id), 5000);
+      return;
+    }
+
+    // Anything new queued during the request? Flush again right away.
+    if (pending.current.has(id)) {
+      flush(id);
+    } else {
+      setOne(id, "saved");
+      setTimeout(() => {
+        setStatus((prev) => (prev[id] === "saved" ? { ...prev, [id]: undefined } : prev));
+      }, 1500);
+    }
+  }, []);
+
+  const save = useCallback((id: string, patch: any) => {
+    if (!id || !patch || Object.keys(patch).length === 0) return;
+    // Optimistic cache patch — UI is the source of truth immediately.
+    qc.setQueryData<any[]>(queryKey, (old) =>
+      (old ?? []).map((e: any) => (e.id === id ? { ...e, ...patch } : e))
+    );
+    pending.current.set(id, { ...(pending.current.get(id) ?? {}), ...patch });
+    setOne(id, "saving");
+    if (timers.current.has(id)) clearTimeout(timers.current.get(id));
+    timers.current.set(id, setTimeout(() => flush(id), 300));
+  }, [qc, JSON.stringify(queryKey), flush]);
+
+  // Force-flush every pending patch right now (used by Save draft / Submit).
+  const flushAll = useCallback(async () => {
+    const ids = Array.from(pending.current.keys());
+    ids.forEach((id) => {
+      if (timers.current.has(id)) clearTimeout(timers.current.get(id));
+    });
+    await Promise.all(ids.map((id) => flush(id)));
+  }, [flush]);
+
+  return { save, status, flushAll };
 }
 
 export default function TimeAndPay() {
@@ -418,6 +505,10 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
     },
   });
 
+  // Optimistic / retrying saver for entry cells.
+  const entryQK = ["timesheet_entries", timesheet?.id];
+  const { save: saveCell, status: saveStatus, flushAll: flushAllCells } = useEntrySaver(entryQK);
+
   const totals = useMemo(() => {
     const t = {
       project: 0, specialist: 0, standard: 0,
@@ -452,14 +543,6 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
     onError: (e: any) => toast({ title: "Couldn't add row", description: e.message, variant: "destructive" }),
   });
 
-  const updateEntry = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: any }) => {
-      const { error } = await supabase.from("timesheet_entries").update(patch).eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["timesheet_entries", timesheet?.id] }),
-    onError: (e: any) => toast({ title: "Couldn't save change", description: e.message, variant: "destructive" }),
-  });
 
   const removeEntry = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from("timesheet_entries").delete().eq("id", id); if (error) throw error; },
@@ -602,7 +685,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
           {!isLocked && (
-            <Button size="sm" variant="outline" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => saveDraft.mutate(), 50); }} disabled={saveDraft.isPending}>
+            <Button size="sm" variant="outline" onClick={async () => { (document.activeElement as HTMLElement)?.blur?.(); await flushAllCells(); saveDraft.mutate(); }} disabled={saveDraft.isPending}>
               Save draft
             </Button>
           )}
@@ -610,7 +693,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
           {!isLocked && (
-            <Button size="sm" onClick={() => { (document.activeElement as HTMLElement)?.blur?.(); setTimeout(() => submit.mutate(), 50); }} disabled={(entries ?? []).length === 0 || submit.isPending}>
+            <Button size="sm" onClick={async () => { (document.activeElement as HTMLElement)?.blur?.(); await flushAllCells(); submit.mutate(); }} disabled={(entries ?? []).length === 0 || submit.isPending}>
               Submit for approval
             </Button>
           )}
@@ -637,7 +720,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
               <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground italic">No entries yet. Click below to add one.</td></tr>
             )}
             {visible.map((e: any, i: number) => (
-              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} onChange={(p) => updateEntry.mutate({ id: e.id, patch: p })} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} />
+              <EntryRow key={e.id} entry={e} stripe={i % 2 === 1} locked={isLocked} myHourlyCents={myHourlyCents} status={saveStatus[e.id]} onChange={(p) => saveCell(e.id, p)} onDelete={() => removeEntry.mutate(e.id)} onDuplicate={() => duplicateEntry.mutate(e)} />
             ))}
           </tbody>
         </table>
@@ -831,9 +914,34 @@ function Th({ children, className, icon }: any) {
   return <th className={cn("px-3 py-2 font-semibold", className)}><span className="inline-flex items-center gap-1">{icon}{children}</span></th>;
 }
 
+function SaveDot({ status }: { status?: "saving" | "saved" | "error" }) {
+  if (!status) {
+    return <span className="w-3.5 h-3.5 inline-flex shrink-0" aria-hidden />;
+  }
+  if (status === "saving") {
+    return (
+      <span title="Saving…" className="text-muted-foreground inline-flex shrink-0">
+        <Loader2 size={12} className="animate-spin" />
+      </span>
+    );
+  }
+  if (status === "saved") {
+    return (
+      <span title="Saved" className="text-emerald-600 dark:text-emerald-400 inline-flex shrink-0">
+        <Check size={12} />
+      </span>
+    );
+  }
+  return (
+    <span title="Couldn't reach the server — retrying. Your input is safe." className="text-amber-600 dark:text-amber-400 inline-flex shrink-0">
+      <AlertCircle size={12} />
+    </span>
+  );
+}
+
 /* ---------- entry row ---------- */
 
-function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {
+function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; status?: "saving" | "saved" | "error"; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",
@@ -898,9 +1006,12 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, onChange, onDelete, on
   return (
     <tr className={cn("hover:bg-accent/20", stripe && "bg-muted/20")}>
       <td className="px-2 py-1">
-        <input disabled={locked} value={local.deliverable}
-          onChange={(e) => { setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
-          placeholder="What did you do?" className={cell} />
+        <div className="flex items-center gap-1.5">
+          <SaveDot status={status} />
+          <input disabled={locked} value={local.deliverable}
+            onChange={(e) => { setLocal({ ...local, deliverable: e.target.value }); commit({ deliverable: e.target.value }); }}
+            placeholder="What did you do?" className={cell} />
+        </div>
       </td>
       <td className="px-2 py-1">
         <select disabled={locked} value={local.work_type}

@@ -611,14 +611,18 @@ function MyTimesheet({ periodId, userId, editorName, adminEdit, onExitEdit }: { 
   });
 
   if (!timesheet) return null;
-  const isLocked = timesheet.status !== "draft";
+  const isLocked = timesheet.status !== "draft" && !adminEdit;
 
   return (
     <div className="space-y-4">
       {editorName && (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3">
           <div>
-            <div className="text-sm font-medium">Editing saved draft</div>
+            <div className="text-sm font-medium">
+              {adminEdit && timesheet.status !== "draft"
+                ? `Admin edit mode — ${timesheet.status} timesheet`
+                : "Editing saved draft"}
+            </div>
             <div className="text-xs text-muted-foreground">{editorName}&rsquo;s timesheet for this pay period</div>
           </div>
           {onExitEdit && <Button size="sm" variant="outline" onClick={onExitEdit}>Done</Button>}

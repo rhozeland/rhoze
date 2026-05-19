@@ -935,6 +935,29 @@ function SaveDot({ status }: { status?: "saving" | "saved" | "error" }) {
   );
 }
 
+function AutosaveBadge({ status }: { status: Record<string, "saving" | "saved" | "error" | undefined> }) {
+  const vals = Object.values(status);
+  const saving = vals.some((s) => s === "saving");
+  const error  = vals.some((s) => s === "error");
+  const recent = vals.some((s) => s === "saved");
+  const tone =
+    error ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+    : saving ? "bg-muted text-muted-foreground border-border"
+    : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30";
+  const label =
+    error ? "Retrying…"
+    : saving ? "Saving…"
+    : recent ? "Saved"
+    : "Auto-save on";
+  return (
+    <span className={cn("text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-full border font-semibold inline-flex items-center gap-1.5", tone)}
+      title="Everything you type is saved automatically. No need to click anything.">
+      {saving ? <Loader2 size={11} className="animate-spin" /> : error ? <AlertCircle size={11} /> : <Check size={11} />}
+      {label}
+    </span>
+  );
+}
+
 /* ---------- entry row ---------- */
 
 function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; status?: "saving" | "saved" | "error"; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {

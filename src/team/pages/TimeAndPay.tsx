@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -509,6 +509,16 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
   const entryQK = ["timesheet_entries", timesheet?.id];
   const { save: saveCell, status: saveStatus, flushAll: flushAllCells } = useEntrySaver(entryQK);
 
+  // Warn before unload if anything is still in flight, so a stray tab close
+  // never silently drops an unsaved keystroke.
+  useEffect(() => {
+    const pending = Object.values(saveStatus).some((s) => s === "saving" || s === "error");
+    if (!pending) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [saveStatus]);
+
   const totals = useMemo(() => {
     const t = {
       project: 0, specialist: 0, standard: 0,
@@ -684,11 +694,7 @@ function MyTimesheet({ periodId, userId, editorName, onExitEdit }: { periodId: s
 
       {/* Actions */}
       <div className="flex items-center justify-end flex-wrap gap-2">
-          {!isLocked && (
-            <Button size="sm" variant="outline" onClick={async () => { (document.activeElement as HTMLElement)?.blur?.(); await flushAllCells(); saveDraft.mutate(); }} disabled={saveDraft.isPending}>
-              Save draft
-            </Button>
-          )}
+          {!isLocked && <AutosaveBadge status={saveStatus} />}
           {isLocked && timesheet.status === "submitted" && (
             <Button size="sm" variant="ghost" onClick={() => recall.mutate()}>Recall</Button>
           )}
@@ -935,6 +941,29 @@ function SaveDot({ status }: { status?: "saving" | "saved" | "error" }) {
   return (
     <span title="Couldn't reach the server — retrying. Your input is safe." className="text-amber-600 dark:text-amber-400 inline-flex shrink-0">
       <AlertCircle size={12} />
+    </span>
+  );
+}
+
+function AutosaveBadge({ status }: { status: Record<string, "saving" | "saved" | "error" | undefined> }) {
+  const vals = Object.values(status);
+  const saving = vals.some((s) => s === "saving");
+  const error  = vals.some((s) => s === "error");
+  const recent = vals.some((s) => s === "saved");
+  const tone =
+    error ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+    : saving ? "bg-muted text-muted-foreground border-border"
+    : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30";
+  const label =
+    error ? "Retrying…"
+    : saving ? "Saving…"
+    : recent ? "Saved"
+    : "Auto-save on";
+  return (
+    <span className={cn("text-[11px] uppercase tracking-wider px-2.5 py-1 rounded-full border font-semibold inline-flex items-center gap-1.5", tone)}
+      title="Everything you type is saved automatically. No need to click anything.">
+      {saving ? <Loader2 size={11} className="animate-spin" /> : error ? <AlertCircle size={11} /> : <Check size={11} />}
+      {label}
     </span>
   );
 }

@@ -53,6 +53,93 @@ function toLocalDT(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+type SaveStatus = "saving" | "saved" | "error" | undefined;
+
+/**
+ * Per-entry save manager: optimistic cache updates, debounced patch coalescing,
+ * exponential backoff on transient errors, and a per-row status the UI can render.
+ *
+ * Typed deliverables / hours / rates are written to the cache immediately so they
+ * never visually disappear, and the actual Supabase write is retried up to ~5s of
+ * backoff. If we still can't reach the server, the patch stays queued and we try
+ * again every 5s in the background — so a flaky connection never loses input.
+ */
+function useEntrySaver(queryKey: any[]) {
+  const qc = useQueryClient();
+  const pending = useRef<Map<string, any>>(new Map());
+  const timers = useRef<Map<string, any>>(new Map());
+  const inflight = useRef<Map<string, boolean>>(new Map());
+  const [status, setStatus] = useState<Record<string, SaveStatus>>({});
+
+  const setOne = (id: string, s: SaveStatus) =>
+    setStatus((prev) => (prev[id] === s ? prev : { ...prev, [id]: s }));
+
+  const flush = useCallback(async (id: string) => {
+    if (inflight.current.get(id)) return;
+    const patch = pending.current.get(id);
+    if (!patch || Object.keys(patch).length === 0) return;
+    pending.current.delete(id);
+    inflight.current.set(id, true);
+    setOne(id, "saving");
+
+    let attempt = 0;
+    let lastErr: any = null;
+    // ~5 retries with backoff (300ms, 600, 1200, 2400, 4000)
+    while (attempt < 6) {
+      const { error } = await supabase.from("timesheet_entries").update(patch).eq("id", id);
+      if (!error) { lastErr = null; break; }
+      lastErr = error;
+      attempt++;
+      if (attempt >= 6) break;
+      await new Promise((r) => setTimeout(r, Math.min(300 * 2 ** (attempt - 1), 4000)));
+    }
+
+    inflight.current.set(id, false);
+
+    if (lastErr) {
+      // Keep the patch (merged with anything new) and try again in 5s — never lose input.
+      const merged = { ...patch, ...(pending.current.get(id) ?? {}) };
+      pending.current.set(id, merged);
+      setOne(id, "error");
+      setTimeout(() => flush(id), 5000);
+      return;
+    }
+
+    // Anything new queued during the request? Flush again right away.
+    if (pending.current.has(id)) {
+      flush(id);
+    } else {
+      setOne(id, "saved");
+      setTimeout(() => {
+        setStatus((prev) => (prev[id] === "saved" ? { ...prev, [id]: undefined } : prev));
+      }, 1500);
+    }
+  }, []);
+
+  const save = useCallback((id: string, patch: any) => {
+    if (!id || !patch || Object.keys(patch).length === 0) return;
+    // Optimistic cache patch — UI is the source of truth immediately.
+    qc.setQueryData<any[]>(queryKey, (old) =>
+      (old ?? []).map((e: any) => (e.id === id ? { ...e, ...patch } : e))
+    );
+    pending.current.set(id, { ...(pending.current.get(id) ?? {}), ...patch });
+    setOne(id, "saving");
+    if (timers.current.has(id)) clearTimeout(timers.current.get(id));
+    timers.current.set(id, setTimeout(() => flush(id), 300));
+  }, [qc, JSON.stringify(queryKey), flush]);
+
+  // Force-flush every pending patch right now (used by Save draft / Submit).
+  const flushAll = useCallback(async () => {
+    const ids = Array.from(pending.current.keys());
+    ids.forEach((id) => {
+      if (timers.current.has(id)) clearTimeout(timers.current.get(id));
+    });
+    await Promise.all(ids.map((id) => flush(id)));
+  }, [flush]);
+
+  return { save, status, flushAll };
+}
+
 export default function TimeAndPay() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();

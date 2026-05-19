@@ -395,6 +395,7 @@ export default function TimeAndPay() {
           periodId={periodId}
           userId={editingUserId || user!.id}
           editorName={editingUserId ? editingUserName : undefined}
+          adminEdit={!!editingUserId && isAdmin}
           onExitEdit={editingUserId ? () => {
             setEditingUserId(null);
             setEditingUserName("");

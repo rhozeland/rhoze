@@ -1089,7 +1089,7 @@ function AutosaveBadge({ status }: { status: Record<string, "saving" | "saved" |
 
 /* ---------- entry row ---------- */
 
-function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDelete, onDuplicate }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; status?: "saving" | "saved" | "error"; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void }) {
+function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDelete, onDuplicate, selectable, selected, onToggleSelect }: { entry: any; stripe: boolean; locked: boolean; myHourlyCents: number; status?: "saving" | "saved" | "error"; onChange: (p: any) => void; onDelete: () => void; onDuplicate?: () => void; selectable?: boolean; selected?: boolean; onToggleSelect?: () => void }) {
   const [local, setLocal] = useState({
     deliverable: entry.deliverable ?? "",
     work_type: entry.work_type ?? "standard",

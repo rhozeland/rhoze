@@ -1187,7 +1187,12 @@ function EntryRow({ entry, stripe, locked, myHourlyCents, status, onChange, onDe
   const cellNum = cn(cell, "text-right tabular-nums");
 
   return (
-    <tr className={cn("hover:bg-accent/20", stripe && "bg-muted/20")}>
+    <tr className={cn("hover:bg-accent/20", stripe && "bg-muted/20", selectable && selected && "bg-orange-500/10")}>
+      {selectable && (
+        <td className="px-2 py-1 text-center">
+          <input type="checkbox" checked={!!selected} onChange={onToggleSelect} aria-label="Select row" />
+        </td>
+      )}
       <td className="px-2 py-1">
         <div className="flex items-center gap-1.5">
           <SaveDot status={status} />

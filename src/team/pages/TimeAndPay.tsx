@@ -812,6 +812,7 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
         {submitted.length === 0 ? <Empty>No timesheets waiting.</Empty> : submitted.map((s: any) => (
           <SheetRow key={s.id} sheet={s}
             actions={<>
+              <Button size="icon" variant="outline" className="h-9 w-9 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-300" onClick={() => onEditDraft(s)} aria-label="Admin edit"><Pencil size={14} /></Button>
               <Button size="sm" variant="outline" onClick={() => setStatus.mutate({ id: s.id, status: "draft" })}><X size={14} /> Send back</Button>
               <Button size="sm" onClick={() => setStatus.mutate({ id: s.id, status: "approved" })}><Check size={14} /> Approve</Button>
             </>} />
@@ -820,7 +821,10 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
       <Section title="Approved" count={approved.length}>
         {approved.length === 0 ? <Empty>None yet.</Empty> : approved.map((s: any) => (
           <SheetRow key={s.id} sheet={s}
-            actions={<Button size="sm" variant="ghost" onClick={() => setStatus.mutate({ id: s.id, status: "draft" })}>Reopen</Button>} />
+            actions={<>
+              <Button size="icon" variant="outline" className="h-9 w-9 border-orange-500/40 text-orange-600 hover:bg-orange-500/10 hover:text-orange-700 dark:text-orange-300" onClick={() => onEditDraft(s)} aria-label="Admin edit"><Pencil size={14} /></Button>
+              <Button size="sm" variant="ghost" onClick={() => setStatus.mutate({ id: s.id, status: "draft" })}>Reopen</Button>
+            </>} />
         ))}
       </Section>
       <Section title="In progress (drafts)" count={drafts.length} muted>

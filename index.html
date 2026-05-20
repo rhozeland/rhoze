@@ -3181,33 +3181,36 @@
           @media (max-width: 860px) {
             .r-eco-panes { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 170px; height: auto; gap: 6px; }
             .r-eco-pane { flex: unset; min-height: 0; }
-            .r-eco-pane-body { padding: 0.85rem 0.9rem; justify-content: flex-start; }
-            .r-eco-icon { width: 30px; height: 30px; margin: 0 0 0.45rem; }
-            .r-eco-icon svg { width: 16px; height: 16px; }
-            .r-eco-cat { font-size: 1.05rem; margin: 0 0 0.5rem; }
-            .r-eco-pills { gap: 0.25rem; opacity: 1; transform: none; pointer-events: auto; }
+            /* Centered icon+label, pills hidden until hover/tap — match desktop */
+            .r-eco-pane-body { padding: 0.85rem; justify-content: center; align-items: center; text-align: center; }
+            .r-eco-pane-body > div { display: flex; flex-direction: column; align-items: center; width: 100%; transition: transform 0.3s ease; }
+            .r-eco-icon { width: 34px; height: 34px; margin: 0 0 0.5rem; }
+            .r-eco-icon svg { width: 18px; height: 18px; }
+            .r-eco-cat { font-size: 1.15rem; margin: 0; text-align: center; }
+            .r-eco-pills { gap: 0.25rem; justify-content: center; opacity: 0; max-height: 0; overflow: hidden; transform: translateY(6px); transition: opacity 0.3s ease, max-height 0.4s ease, transform 0.3s ease, margin-top 0.3s ease; pointer-events: none; margin-top: 0; }
+            .r-eco-pane:hover .r-eco-pills, .r-eco-pane:focus-within .r-eco-pills, .r-eco-pane.is-open .r-eco-pills { opacity: 1; max-height: 200px; transform: none; pointer-events: auto; margin-top: 0.6rem; }
             .r-eco-pill { font-size: 0.5rem; padding: 0.22rem 0.5rem; letter-spacing: 0.08em; }
-            .r-eco-events { max-height: 110px; gap: 0.3rem; opacity: 1; transform: none; pointer-events: auto; }
-            .r-eco-event { padding: 0.35rem 0.4rem; grid-template-columns: 34px 1fr; gap: 0.4rem; }
+            .r-eco-events { max-height: 0; gap: 0.3rem; opacity: 0; overflow: hidden; transform: translateY(6px); transition: opacity 0.3s ease, max-height 0.4s ease, transform 0.3s ease, margin-top 0.3s ease; pointer-events: none; margin-top: 0; width: 100%; }
+            .r-eco-pane:hover .r-eco-events, .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 130px; transform: none; pointer-events: auto; margin-top: 0.6rem; overflow-y: auto; }
+            .r-eco-event { padding: 0.35rem 0.4rem; grid-template-columns: 34px 1fr; gap: 0.4rem; text-align: left; }
             .r-eco-event-date .d { font-size: 0.82rem; }
             .r-eco-event-title { font-size: 0.66rem; }
             .r-eco-event-tag { font-size: 0.48rem; }
-            /* Disable takeover behavior on small screens */
+            /* Disable horizontal takeover behavior on small screens */
             .r-eco-panes:hover .r-eco-pane, .r-eco-panes:focus-within .r-eco-pane { flex: unset; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-cat,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: horizontal-tb; transform: none; font-size: 1.05rem; letter-spacing: -0.03em; margin: 0 0 0.5rem; }
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: horizontal-tb; transform: none; font-size: 1.15rem; letter-spacing: -0.03em; margin: 0; }
+            .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: inline-flex; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pills,
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events,
-            .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
             .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pills,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: revert; }
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events { display: flex; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pane-body,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem 0.9rem; justify-content: flex-start; align-items: stretch; }
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem; justify-content: center; align-items: center; }
           }
           @media (max-width: 480px) {
-            .r-eco-panes { grid-template-columns: 1fr; grid-auto-rows: auto; }
-            .r-eco-pane { min-height: 150px; }
+            .r-eco-panes { grid-template-columns: 1fr 1fr; grid-auto-rows: 140px; }
           }
         </style>
 

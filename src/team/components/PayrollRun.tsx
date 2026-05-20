@@ -138,10 +138,10 @@ export default function PayrollRun({ period }: { period: any }) {
         r.specialist_hours += h;
         r.breakdown.hourly_lines.push({ deliverable: e.deliverable, type: "specialist", hours: h, rate_cents: SPECIALIST_RATE_CENTS, amount_cents: amt });
       } else if (e.work_type === "project") {
-        const amt = e.rate_amount_cents || 0;
+        const amt = Math.round(h * (e.rate_amount_cents || 0));
         r.flat_cents += amt;
         r.flat_hours += h;
-        r.breakdown.flat_lines.push({ deliverable: e.deliverable, amount_cents: amt });
+        r.breakdown.flat_lines.push({ deliverable: e.deliverable, hours: h, rate_cents: e.rate_amount_cents, amount_cents: amt });
       } else if (e.work_type === "reimbursement") {
         // expense-only; handled below
       } else {

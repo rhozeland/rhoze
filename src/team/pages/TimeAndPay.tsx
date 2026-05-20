@@ -882,7 +882,16 @@ function ApprovalQueue({ periodId, onEditDraft }: { periodId: string; onEditDraf
       return rows.map((r: any) => {
         const es = emap.get(r.id) ?? [];
         let payroll = 0, expenses = 0, hrs = 0;
-        es.forEach((e: any) => { const h = Number(e.hours) || 0; hrs += h; expenses += e.expense_cents || 0; if (e.work_type !== "reimbursement") payroll += h * (e.rate_amount_cents || 0); });
+        es.forEach((e: any) => {
+          const h = Number(e.hours) || 0;
+          const rate = e.rate_amount_cents || 0;
+          hrs += h;
+          expenses += e.expense_cents || 0;
+          if (e.work_type === "specialist") payroll += h * SPECIALIST_RATE_CENTS;
+          else if (e.work_type === "project") payroll += rate; // flat fee
+          else if (e.work_type === "reimbursement") { /* expense-only */ }
+          else payroll += h * rate; // standard hourly
+        });
         return { ...r, profile: pmap.get(r.user_id), entry_count: es.length, total_hours: hrs, total_expenses: expenses, total_payroll: Math.round(payroll) + expenses };
       });
     },

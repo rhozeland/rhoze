@@ -15,6 +15,14 @@ const SENDER_DOMAIN = "notify.www.rhozeland.com"
 // even though actual sending uses the subdomain above.
 const FROM_DOMAIN = "www.rhozeland.com"
 
+// Public-facing notifications allowed from anon callers (browser forms).
+// These templates only ever send to fixed internal recipients, so exposing
+// them to anon callers is safe. Any other template+recipient combo still
+// requires a service_role JWT.
+const PUBLIC_NOTIFICATION_ALLOWLIST: Record<string, string[]> = {
+  'discovery-call-notification': ['collab@rhozeland.com', 'support@rhozeland.com'],
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':
@@ -53,15 +61,13 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // Require service_role JWT — block anon-key callers.
+  // Require service_role JWT for arbitrary sends. Anon callers (browser
+  // forms) are allowed only for templates in PUBLIC_NOTIFICATION_ALLOWLIST
+  // and only when recipientEmail matches the allowlisted fixed recipients.
   const authHeader = req.headers.get('Authorization') || req.headers.get('authorization')
   const token = authHeader?.replace(/^Bearer\s+/i, '') ?? null
-  if (parseJwtRole(token) !== 'service_role') {
-    return new Response(
-      JSON.stringify({ error: 'Forbidden' }),
-      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-  }
+  const callerRole = parseJwtRole(token)
+  const isServiceRole = callerRole === 'service_role'
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -110,6 +116,16 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
+  }
+
+  if (!isServiceRole) {
+    const allowedRecipients = PUBLIC_NOTIFICATION_ALLOWLIST[templateName]
+    if (!allowedRecipients || !allowedRecipients.includes(String(recipientEmail ?? '').toLowerCase())) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
   }
 
   // 1. Look up template from registry (early — needed to resolve recipient)

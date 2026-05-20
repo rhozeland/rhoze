@@ -15,6 +15,14 @@ const SENDER_DOMAIN = "notify.www.rhozeland.com"
 // even though actual sending uses the subdomain above.
 const FROM_DOMAIN = "www.rhozeland.com"
 
+// Public-facing notifications allowed from anon callers (browser forms).
+// These templates only ever send to fixed internal recipients, so exposing
+// them to anon callers is safe. Any other template+recipient combo still
+// requires a service_role JWT.
+const PUBLIC_NOTIFICATION_ALLOWLIST: Record<string, string[]> = {
+  'discovery-call-notification': ['collab@rhozeland.com', 'support@rhozeland.com'],
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers':

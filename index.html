@@ -3097,25 +3097,25 @@
           .r-eco-pane.is-events { background: linear-gradient(155deg, #FFF1F6 0%, #FFD2E1 55%, #FF8FB8 100%); }
           .r-eco-pane::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 110% 110%, rgba(26,26,26,0.07), transparent 60%); pointer-events: none; z-index: 1; opacity: 0.55; transition: opacity 0.5s ease; }
           /* Takeover: hovered pane fills, siblings collapse to vertical tabs */
-          .r-eco-panes:hover .r-eco-pane, .r-eco-panes:focus-within .r-eco-pane { flex: 0 0 58px; }
-          .r-eco-panes:hover .r-eco-pane:hover, .r-eco-panes:focus-within .r-eco-pane:focus-within { flex: 1 1 auto; }
-          .r-eco-panes:hover .r-eco-pane:hover::after, .r-eco-panes:focus-within .r-eco-pane:focus-within::after { opacity: 1; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane { flex: 0 0 58px; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible { flex: 1 1 auto; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover::after, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible::after { opacity: 1; }
           .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(0.9rem, 1.6vw, 1.4rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; transition: padding 0.35s ease; }
           .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.05rem, 1.8vw, 1.55rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1; color: #1a1a1a; text-transform: uppercase; margin: 0 0 0.7rem; display: block; white-space: nowrap; overflow: hidden; transition: font-size 0.4s ease, writing-mode 0s, transform 0.3s ease; }
-          .r-eco-panes:hover .r-eco-pane:hover .r-eco-cat, .r-eco-panes:focus-within .r-eco-pane:focus-within .r-eco-cat { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover .r-eco-cat, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible .r-eco-cat { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
           /* Collapsed siblings: vertical category, hide body content */
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pane-body,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem 0; justify-content: center; align-items: center; }
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-cat,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; }
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pills,
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-foot,
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events,
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events-status,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pills,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-foot,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events-status { display: none; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-pane-body,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-pane-body { padding: 0.85rem 0; justify-content: center; align-items: center; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-cat,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-cat { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-pills,
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-foot,
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-events,
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-events-status,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-pills,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-foot,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-events,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-events-status { display: none; }
           .r-eco-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
           @media (min-width: 861px) {
             .r-eco-pills { opacity: 0; transform: translateY(6px); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
@@ -3125,8 +3125,8 @@
           /* Category icon — always visible (except on collapsed sibling panes) */
           .r-eco-icon { display: inline-flex; width: 38px; height: 38px; align-items: center; justify-content: center; border-radius: 10px; background: rgba(26,26,26,0.10); color: #1a1a1a; margin: 0 0 0.6rem; }
           .r-eco-icon svg { width: 20px; height: 20px; }
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: none; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-icon,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-icon { display: none; }
           /* Featured marquee carousel above the panes */
           .r-eco-feat { position: relative; overflow: hidden; border-radius: calc(var(--radius-lg) - 4px); background: #0f0f0f; margin-top: 6px; }
           .r-eco-feat::before, .r-eco-feat::after { content: ""; position: absolute; top: 0; bottom: 0; width: 72px; z-index: 2; pointer-events: none; }
@@ -3200,11 +3200,14 @@
             .r-eco-pills { display: flex; flex-basis: 100%; gap: 0.3rem; justify-content: flex-start; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; }
             .r-eco-pane:focus-within .r-eco-pills, .r-eco-pane.is-open .r-eco-pills { opacity: 1; max-height: 240px; pointer-events: auto; margin-top: 0.5rem; }
             .r-eco-pill { font-size: 0.55rem; padding: 0.25rem 0.6rem; letter-spacing: 0.08em; }
-            .r-eco-events { display: flex; flex-basis: 100%; flex-direction: column; gap: 0.35rem; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; width: 100%; padding: 0; }
-            .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 260px; pointer-events: auto; margin-top: 0.5rem; overflow-y: auto; }
-            .r-eco-event { padding: 0.45rem 0.55rem; grid-template-columns: 38px 1fr; gap: 0.55rem; text-align: left; }
-            .r-eco-event-title { font-size: 0.72rem; }
-            .r-eco-event-tag { font-size: 0.52rem; }
+            .r-eco-events { display: flex; flex-basis: 100%; flex-direction: column; gap: 0.5rem; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; width: 100%; padding: 0; }
+            .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 420px; pointer-events: auto; margin-top: 0.65rem; overflow-y: auto; }
+            .r-eco-event { padding: 0.6rem 0.7rem; grid-template-columns: 44px 1fr; gap: 0.7rem; text-align: left; }
+            .r-eco-event-date { padding: 0.4rem 0; }
+            .r-eco-event-date .m { font-size: 0.55rem; }
+            .r-eco-event-date .d { font-size: 1.05rem; }
+            .r-eco-event-title { font-size: 0.82rem; white-space: normal; }
+            .r-eco-event-tag { font-size: 0.55rem; }
             /* Hide the events status badge on mobile (already removed in HTML, but ensure) */
             .r-eco-events-status { display: none; }
             /* Hard-disable the desktop horizontal-takeover hover behavior */
@@ -3360,7 +3363,7 @@
                         <span class="r-eco-event-tag">Screening</span>
                       </div>
                     </a>
-                    <a class="r-eco-event" href="https://luma.com/user/collabrhozeland" target="_blank" rel="noopener noreferrer" style="background:#1a1a1a;color:#FAF9F6;border-color:#1a1a1a;justify-content:center;">
+                    <a class="r-eco-event" href="https://luma.com/user/rhozeland" target="_blank" rel="noopener noreferrer" style="background:#1a1a1a;color:#FAF9F6;border-color:#1a1a1a;justify-content:center;">
                       <div class="r-eco-event-body" style="grid-column:1 / -1;text-align:center;">
                         <span class="r-eco-event-title" style="color:#FAF9F6;">Follow on Luma →</span>
                       </div>

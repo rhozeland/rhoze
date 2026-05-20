@@ -3047,33 +3047,73 @@
           .r-eco-story-tagline { font-size: 0.92rem; color: hsl(var(--ink)); font-weight: 500; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
           .r-eco-story-chev { width: 1.1rem; height: 1.1rem; flex-shrink: 0; color: hsl(var(--ink)); transition: transform 0.3s ease; }
           .r-eco-story[open] .r-eco-story-chev { transform: rotate(180deg); }
-          .r-eco-story-content { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; padding: 0.15rem 0 0.85rem; }
-          .r-eco-story-step { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.65rem 0.75rem; border: 1px solid hsl(var(--line)); border-radius: var(--radius-md); background: hsl(var(--surface) / 0.4); }
-          .r-eco-story-step .y { font-family: 'Inter', system-ui, sans-serif; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em; color: hsl(var(--ink)); }
-          .r-eco-story-step .t { font-size: 0.78rem; font-weight: 700; color: hsl(var(--ink)); line-height: 1.2; }
-          .r-eco-story-step .d { font-size: 0.72rem; color: hsl(var(--muted)); line-height: 1.35; }
-          .r-eco-story-more { grid-column: 1 / -1; display: flex; justify-content: flex-end; padding-top: 0.25rem; }
-          .r-eco-story-more a { font-size: 0.7rem; font-weight: 700; color: hsl(var(--ink)); text-decoration: underline; text-underline-offset: 3px; }
-          @media (max-width: 720px) { .r-eco-story-content { grid-template-columns: repeat(2, minmax(0, 1fr)); } .r-eco-story-tagline { white-space: normal; } }
+          .r-eco-story-panel { padding: 0.4rem 0 0.9rem; }
+          @media (max-width: 720px) { .r-eco-story-tagline { white-space: normal; } }
+          /* Flower era timeline inside Our Story dropdown */
+          .era-line { position:relative; margin:0.25rem auto 0.3rem; max-width:1040px; padding:0.2rem 0.25rem 0; }
+          .era-line-svg { position:absolute; left:4%; right:4%; top:22px; width:92%; height:88px; pointer-events:none; overflow:visible; z-index:0; }
+          .era-line-path, .era-line-stem { fill:none; stroke:hsl(var(--ink) / 0.42); stroke-width:1.05; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.6s cubic-bezier(.22,.61,.36,1); }
+          .era-line-stem { stroke: #FF8FB8; stroke-width:0.85; }
+          .era-line.is-visible .era-line-path, .era-line.is-visible .era-line-stem { stroke-dashoffset: 0; }
+          .era-line-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.5rem; }
+          .era-node { position:relative; min-height:118px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; gap:0.32rem; padding:0.4rem 0.35rem 0.5rem; border-radius:var(--radius-md); opacity:0; transform:translateY(8px); transition: opacity .55s ease, transform .55s ease, background .3s ease; }
+          .era-node:nth-child(1){transition-delay:.08s;} .era-node:nth-child(2){transition-delay:.28s;} .era-node:nth-child(3){transition-delay:.48s;} .era-node:nth-child(4){transition-delay:.68s;}
+          .era-line.is-visible .era-node { opacity:1; transform:translateY(0); }
+          .era-node:hover, .era-node:focus-within, .era-node.is-active { background:hsl(var(--surface) / 0.42); }
+          .era-trigger { appearance:none; border:0; background:transparent; color:inherit; padding:0; display:flex; flex-direction:column; align-items:center; gap:0.4rem; cursor:pointer; }
+          .era-bloom { position:relative; width:42px; height:42px; margin-bottom:0.45rem; display:inline-flex; align-items:center; justify-content:center; }
+          .era-bloom svg { width:100%; height:100%; overflow:visible; transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+          .era-bloom .petal, .era-bloom .seed, .era-bloom .stem, .era-bloom .leaf, .era-bloom .core { fill:none; stroke:hsl(var(--ink) / 0.78); stroke-width:1.1; stroke-linecap:round; stroke-linejoin:round; transition: stroke .35s ease, fill .35s ease; transform-origin:center; transform-box:fill-box; }
+          .era-bloom .seed { fill:hsl(var(--ink) / 0.55); stroke:none; }
+          .era-bloom .core { fill:hsl(var(--surface) / 0.4); }
+          .era-node.is-active .era-bloom svg, .era-node:hover .era-bloom svg, .era-node:focus-within .era-bloom svg { transform:scale(1.16) rotate(-3deg); }
+          .era-node.is-active .era-bloom .petal, .era-node:hover .era-bloom .petal { fill:#FF7BAE; stroke:#1a1a1a; }
+          .era-node.is-active .era-bloom .leaf, .era-node:hover .era-bloom .leaf { fill:#7FD499; stroke:#1a1a1a; }
+          .era-node.is-active .era-bloom .core, .era-node:hover .era-bloom .core { fill:#FFD93D; }
+          .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.05rem; color:hsl(var(--ink)); line-height:1; }
+          .era-title-sm { font-size:0.78rem; font-weight:680; color:hsl(var(--ink)); margin:0; line-height:1.2; }
+          .era-detail { position:relative; z-index:2; display:grid; grid-template-columns:220px minmax(0,1fr); gap:1.1rem; align-items:center; min-height:160px; max-width:760px; margin:0.5rem auto 0; padding:0.85rem 0.5rem 0.3rem; border-top:1px solid hsl(var(--line)); opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .35s ease, transform .35s ease; }
+          .era-line.has-detail .era-detail { opacity:1; transform:translateY(0); pointer-events:auto; }
+          .era-detail-media { position:relative; aspect-ratio:4/3; border-radius:var(--radius-md); overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); }
+          .era-detail-media img, .era-detail-media iframe { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border:0; }
+          .era-detail-copy { text-align:left; }
+          .era-detail-year { display:block; font-size:0.66rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:hsl(var(--muted)); margin-bottom:0.28rem; }
+          .era-detail-copy h4 { margin:0; color:hsl(var(--ink)); font-size:1.02rem; line-height:1.18; font-weight:700; }
+          .era-detail-copy p { margin:0.4rem 0 0; color:hsl(var(--muted)); font-size:0.82rem; line-height:1.5; max-width:48ch; }
+          .era-detail-watch { display:inline-flex; align-items:center; gap:0.35rem; margin-top:0.55rem; color:hsl(var(--ink)); font-size:0.72rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+          @media (max-width:640px) { .era-line-svg{display:none;} .era-line-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.5rem;} .era-node{min-height:108px;} .era-bloom{width:36px;height:36px;} .era-detail{grid-template-columns:1fr; max-width:420px;} }
           .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 6px; box-shadow: 0 16px 48px -20px rgba(0,0,0,0.45); }
           .r-eco-panes { display: flex; gap: 6px; height: 460px; }
-          .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: #FAF9F6; border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex 0.7s cubic-bezier(0.23, 1, 0.32, 1); }
-          /* Per-pane soft gradient tints */
-          .r-eco-pane.is-visual { background: linear-gradient(155deg, #FAF9F6 0%, #FFEFE2 55%, #FFD9BE 100%); }
-          .r-eco-pane.is-audio  { background: linear-gradient(155deg, #FAF9F6 0%, #E6EEFF 55%, #C8D7FB 100%); }
-          .r-eco-pane.is-dev    { background: linear-gradient(155deg, #FAF9F6 0%, #E4F6EC 55%, #BFE9D2 100%); }
-          .r-eco-pane.is-events { background: linear-gradient(155deg, #FAF9F6 0%, #F1E7FF 55%, #DCC6FB 100%); }
-          .r-eco-pane::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 110% 110%, rgba(26,26,26,0.07), transparent 60%); pointer-events: none; z-index: 1; opacity: 0.6; transition: opacity 0.5s ease; }
-          .r-eco-pane:hover::after, .r-eco-pane:focus-within::after { opacity: 1; }
-          .r-eco-pane:hover, .r-eco-pane:focus-within { flex-grow: 4.2; }
-          .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(1rem, 1.6vw, 1.5rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; }
-          .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.45rem, 2.8vw, 2.3rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: #1a1a1a; text-transform: uppercase; margin: 0 0 0.75rem; opacity: 0.34; transition: opacity 0.5s ease; display: block; word-break: break-word; }
-          .r-eco-pane:hover .r-eco-cat, .r-eco-pane:focus-within .r-eco-cat { opacity: 1; }
-          .r-eco-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; opacity: 0; transform: translateY(8px); transition: opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s; pointer-events: none; }
-          .r-eco-pane:hover .r-eco-pills, .r-eco-pane:focus-within .r-eco-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
-          .r-eco-pill { display: inline-flex; align-items: center; padding: 0.35rem 0.7rem; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
-          .r-eco-foot { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease 0.18s, transform 0.5s ease 0.18s; }
-          .r-eco-pane:hover .r-eco-foot, .r-eco-pane:focus-within .r-eco-foot { opacity: 1; transform: translateY(0); }
+          .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: #FAF9F6; border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex 0.65s cubic-bezier(0.23, 1, 0.32, 1); }
+          /* Logo-aligned palette: Visual=Orange, Audio=Blue, Development=Yellow, Events=Pink */
+          .r-eco-pane.is-visual { background: linear-gradient(155deg, #FFF6EC 0%, #FFE2C2 55%, #FFB870 100%); }
+          .r-eco-pane.is-audio  { background: linear-gradient(155deg, #F1F5FF 0%, #D6E4FF 55%, #94B4FF 100%); }
+          .r-eco-pane.is-dev    { background: linear-gradient(155deg, #FFFBE6 0%, #FFF1A8 55%, #FFD93D 100%); }
+          .r-eco-pane.is-events { background: linear-gradient(155deg, #FFF1F6 0%, #FFD2E1 55%, #FF8FB8 100%); }
+          .r-eco-pane::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 110% 110%, rgba(26,26,26,0.07), transparent 60%); pointer-events: none; z-index: 1; opacity: 0.55; transition: opacity 0.5s ease; }
+          /* Takeover: hovered pane fills, siblings collapse to vertical tabs */
+          .r-eco-panes:hover .r-eco-pane, .r-eco-panes:focus-within .r-eco-pane { flex: 0 0 58px; }
+          .r-eco-panes:hover .r-eco-pane:hover, .r-eco-panes:focus-within .r-eco-pane:focus-within { flex: 1 1 auto; }
+          .r-eco-panes:hover .r-eco-pane:hover::after, .r-eco-panes:focus-within .r-eco-pane:focus-within::after { opacity: 1; }
+          .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(0.9rem, 1.6vw, 1.4rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; transition: padding 0.35s ease; }
+          .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.05rem, 1.8vw, 1.55rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1; color: #1a1a1a; text-transform: uppercase; margin: 0 0 0.7rem; display: block; white-space: nowrap; overflow: hidden; transition: font-size 0.4s ease, writing-mode 0s, transform 0.3s ease; }
+          .r-eco-panes:hover .r-eco-pane:hover .r-eco-cat, .r-eco-panes:focus-within .r-eco-pane:focus-within .r-eco-cat { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
+          /* Collapsed siblings: vertical category, hide body content */
+          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pane-body,
+          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem 0; justify-content: center; align-items: center; }
+          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-cat,
+          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; }
+          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pills,
+          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-foot,
+          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events,
+          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events-status,
+          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pills,
+          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-foot,
+          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events,
+          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events-status { display: none; }
+          .r-eco-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+          .r-eco-pill { display: inline-flex; align-items: center; padding: 0.32rem 0.65rem; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+          .r-eco-foot { }
           .r-eco-foot-label { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(26,26,26,0.55); margin: 0 0 0.55rem; display: block; }
           .r-eco-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
           .r-eco-thumb { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: var(--radius-md); overflow: hidden; background: rgba(26,26,26,0.05); border: 1px solid rgba(26,26,26,0.08); text-decoration: none; }
@@ -3122,12 +3162,36 @@
               </span>
               <svg class="r-eco-story-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
             </summary>
-            <div class="r-eco-story-content">
-              <div class="r-eco-story-step"><span class="y">2016</span><span class="t">Origin</span><span class="d">A circle of friends sharing music, art, and culture.</span></div>
-              <div class="r-eco-story-step"><span class="y">2021</span><span class="t">The hub</span><span class="d">A digital platform connecting creators and resources.</span></div>
-              <div class="r-eco-story-step"><span class="y">2023</span><span class="t">Studio launch</span><span class="d">First physical studio — record, produce, collaborate.</span></div>
-              <div class="r-eco-story-step"><span class="y">Today</span><span class="t">A new era</span><span class="d">A living record of creators, space, and movement.</span></div>
-              <div class="r-eco-story-more"><a href="/about.html">Read the full story →</a></div>
+            <div class="r-eco-story-panel">
+              <div class="era-line has-detail" id="eraLine">
+                <svg class="era-line-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="era-line-stem" d="M 42 78 C 150 22, 230 42, 300 70 C 385 105, 470 104, 550 70 C 670 18, 800 30, 958 78" />
+                  <path class="era-line-path" d="M 58 80 C 130 66, 178 68, 242 80 M 315 72 C 378 58, 435 58, 498 72 M 570 72 C 638 56, 705 58, 770 72 M 828 80 C 875 66, 918 66, 958 80" />
+                </svg>
+                <div class="era-line-grid">
+                  <div class="era-node" data-era="2016" data-title="The origin story" data-desc="A circle of friends sharing music, art, and culture." data-image="/images/timeline-2016.webp" data-alt="Rhozeland 2016">
+                    <button class="era-trigger" type="button" aria-label="View 2016 story"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 26"/><ellipse class="seed" cx="21" cy="22" rx="3.2" ry="4.2"/></svg></span><span class="era-year-sm">2016</span><span class="era-title-sm">The origin story</span></button>
+                  </div>
+                  <div class="era-node" data-era="2021" data-title="Building the hub" data-desc="A digital platform connecting creators and resources." data-image="/images/timeline-2021.webp" data-alt="Rhozeland 2021">
+                    <button class="era-trigger" type="button" aria-label="View 2021 story"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 20"/><path class="leaf" d="M21 26 C 14 24, 12 19, 14 14 C 19 16, 22 20, 21 26 Z"/><path class="leaf" d="M21 22 C 28 20, 30 15, 28 10 C 23 12, 20 16, 21 22 Z"/></svg></span><span class="era-year-sm">2021</span><span class="era-title-sm">Building the hub</span></button>
+                  </div>
+                  <div class="era-node" data-era="2023" data-title="Studio launch" data-desc="First physical studio — record, produce, collaborate." data-image="/images/timeline-2023.webp" data-alt="Rhozeland 2023">
+                    <button class="era-trigger" type="button" aria-label="View 2023 story"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 24"/><path class="leaf" d="M21 28 C 15 26, 13 22, 15 18 C 19 20, 22 23, 21 28 Z"/><path class="petal" d="M21 22 C 14 20, 13 13, 18 10 C 22 13, 24 17, 21 22 Z"/><path class="petal" d="M21 22 C 28 20, 29 13, 24 10 C 20 13, 18 17, 21 22 Z"/><circle class="core" cx="21" cy="20" r="2.4"/></svg></span><span class="era-year-sm">2023</span><span class="era-title-sm">Studio launch</span></button>
+                  </div>
+                  <div class="era-node is-active" data-era="Today" data-title="A New Era" data-desc="A living record of the creators, space, and movement." data-image="/images/documentary-thumbnail.webp" data-alt="Rhozeland documentary" data-video="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws">
+                    <button class="era-trigger" type="button" aria-label="Preview A New Era"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 26"/><path class="leaf" d="M21 28 C 15 26, 13 22, 15 18 C 19 20, 22 23, 21 28 Z"/><path class="leaf" d="M21 28 C 27 26, 29 22, 27 18 C 23 20, 20 23, 21 28 Z"/><path class="petal" d="M21 22 C 13 19, 12 11, 18 8 C 22 11, 24 16, 21 22 Z"/><path class="petal" d="M21 22 C 29 19, 30 11, 24 8 C 20 11, 18 16, 21 22 Z"/><path class="petal" d="M21 22 C 16 16, 21 9, 26 12 C 25 17, 23 20, 21 22 Z"/><path class="petal" d="M21 22 C 26 16, 21 9, 16 12 C 17 17, 19 20, 21 22 Z"/><circle class="core" cx="21" cy="19" r="2.6"/></svg></span><span class="era-year-sm">Today</span><span class="era-title-sm">A New Era</span></button>
+                  </div>
+                </div>
+                <div class="era-detail has-detail" id="eraDetail" aria-live="polite">
+                  <div class="era-detail-media" id="eraDetailMedia"><iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe></div>
+                  <div class="era-detail-copy">
+                    <span class="era-detail-year" id="eraDetailYear">Today</span>
+                    <h4 id="eraDetailTitle">A New Era</h4>
+                    <p id="eraDetailDesc">A living record of the creators, space, and movement.</p>
+                    <a class="era-detail-watch" href="/about.html" aria-label="Read the full story">Read the full story →</a>
+                  </div>
+                </div>
+              </div>
             </div>
           </details>
 
@@ -3314,92 +3378,6 @@
           });
         })();
       </script>
-
-      <section class="section reveal" id="system" style="padding-bottom:1.5rem; padding-top:1.5rem;">
-        <div class="story-compact-head">
-          <div>
-            <span class="section-kicker">Our story</span>
-            <h3>What began as a vision became a studio, and now stands as a launchpad for the boldest creators.</h3>
-          </div>
-          <a class="section-link" href="/about.html">
-            Learn more
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-          </a>
-        </div>
-
-        <!-- Animated story timeline (compact) -->
-        <style>
-          .story-compact-head { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:1rem; max-width:920px; margin:0 auto 1rem; }
-          .story-compact-head h3 { font-family:'Neue Haas Grotesk Display Pro','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:clamp(1.12rem,2vw,1.45rem); font-weight:500; line-height:1.14; letter-spacing:0; max-width:28ch; margin:0.55rem 0 0; }
-          .story-compact-head .section-link { margin:0 0 0.1rem; white-space:nowrap; }
-          .era-line { --active-x:12.5%; position:relative; margin:0.25rem auto 1.6rem; max-width:1040px; padding:0.2rem 0.25rem 0; }
-          .era-line-svg { position:absolute; left:4%; right:4%; top:32px; width:92%; height:96px; pointer-events:none; overflow:visible; z-index:0; }
-          .era-line-path, .era-line-stem { fill:none; stroke:hsl(var(--ink) / 0.46); stroke-width:1.05; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray: 1200; stroke-dashoffset: 1200; transition: stroke-dashoffset 1.8s cubic-bezier(.22,.61,.36,1); }
-          .era-line-stem { stroke:hsl(var(--accent-green) / 0.5); stroke-width:0.75; }
-          .era-line.is-visible .era-line-path, .era-line.is-visible .era-line-stem { stroke-dashoffset: 0; }
-          .era-line-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.6rem; }
-          .era-node { position:relative; min-height:138px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; text-align:center; gap:0.32rem; padding:0.45rem 0.4rem 0.6rem; border-radius:var(--radius-md); opacity:0; transform:translateY(8px); transition: opacity .6s ease, transform .6s ease, background .35s ease; }
-          .era-node:nth-child(1) { transition-delay:.15s; }
-          .era-node:nth-child(2) { transition-delay:.55s; }
-          .era-node:nth-child(3) { transition-delay:.95s; }
-          .era-node:nth-child(4) { transition-delay:1.35s; }
-          .era-line.is-visible .era-node { opacity:1; transform:translateY(0); }
-          .era-node:hover, .era-node:focus-within, .era-node.is-active { background:hsl(var(--surface) / 0.32); }
-          .era-trigger { appearance:none; border:0; background:transparent; color:inherit; padding:0; display:flex; flex-direction:column; align-items:center; gap:0.4rem; cursor:pointer; }
-          .era-bloom { position:relative; width:42px; height:42px; margin-bottom:0.55rem; display:inline-flex; align-items:center; justify-content:center; }
-          .era-bloom svg { width:100%; height:100%; overflow:visible; transition: transform .4s cubic-bezier(.22,.61,.36,1); }
-          .era-bloom .petal, .era-bloom .seed, .era-bloom .stem, .era-bloom .leaf, .era-bloom .core { fill:none; stroke:hsl(var(--ink) / 0.78); stroke-width:1.1; stroke-linecap:round; stroke-linejoin:round; transition: stroke .35s ease, fill .35s ease, transform .4s ease; transform-origin:center; transform-box:fill-box; }
-          .era-bloom .seed { fill:hsl(var(--ink) / 0.55); stroke:none; }
-          .era-bloom .core { fill:hsl(var(--surface) / 0.4); }
-          .era-node:hover .era-bloom svg, .era-node:focus-within .era-bloom svg, .era-node.is-active .era-bloom svg { transform:scale(1.12); }
-          .era-node:hover .era-bloom .petal, .era-node:focus-within .era-bloom .petal, .era-node.is-active .era-bloom .petal { fill:hsl(var(--accent-pink) / 0.22); stroke:hsl(var(--ink)); }
-          .era-node:hover .era-bloom .leaf, .era-node:focus-within .era-bloom .leaf, .era-node.is-active .era-bloom .leaf { fill:hsl(var(--accent-green) / 0.28); stroke:hsl(var(--ink)); }
-          .era-node:hover .era-bloom .core, .era-node:focus-within .era-bloom .core, .era-node.is-active .era-bloom .core { fill:hsl(var(--accent-pink) / 0.45); }
-          .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.1rem; letter-spacing:0; color:hsl(var(--ink)); line-height:1; }
-          .era-title-sm { font-size:0.85rem; font-weight:680; color:hsl(var(--ink)); margin:0; line-height:1.22; }
-          .era-detail { position:relative; z-index:2; display:grid; grid-template-columns:200px minmax(0,1fr); gap:1.1rem; align-items:center; min-height:160px; max-width:720px; margin:0.5rem auto 0; padding:0.9rem; border-top:1px solid hsl(var(--line)); opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .35s ease, transform .35s ease; }
-          .era-line.has-detail .era-detail { opacity:1; transform:translateY(0); pointer-events:auto; }
-          .era-detail-media { position:relative; aspect-ratio:4/3; border-radius:var(--radius-md); overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); }
-          .era-detail-media img, .era-detail-media iframe { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border:0; }
-          .era-detail-copy { text-align:left; }
-          .era-detail-year { display:block; font-size:0.68rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:hsl(var(--muted)); margin-bottom:0.28rem; }
-          .era-detail-copy h4 { margin:0; color:hsl(var(--ink)); font-size:1.05rem; line-height:1.15; }
-          .era-detail-copy p { margin:0.4rem 0 0; color:hsl(var(--muted)); font-size:0.82rem; line-height:1.5; max-width:48ch; }
-          .era-detail-watch { display:inline-flex; align-items:center; gap:0.35rem; margin-top:0.55rem; color:hsl(var(--ink)); font-size:0.72rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
-          @media (max-width: 640px) {
-            .story-compact-head { grid-template-columns:1fr; align-items:start; margin-bottom:0.85rem; }
-            .era-line { margin-bottom:1.2rem; }
-            .era-line-svg { top:24px; height:160px; }
-            .era-line-grid { grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.6rem; }
-            .era-node { min-height:124px; }
-            .era-bloom { width:36px; height:36px; }
-            .era-detail { grid-template-columns:1fr; max-width:420px; }
-          }
-        </style>
-        <div class="era-line reveal has-detail" id="eraLine">
-          <svg class="era-line-svg" viewBox="0 0 1000 110" preserveAspectRatio="none" aria-hidden="true">
-            <path class="era-line-stem" d="M 42 78 C 150 22, 230 42, 300 70 C 385 105, 470 104, 550 70 C 670 18, 800 30, 958 78" />
-            <path class="era-line-path" d="M 58 80 C 130 66, 178 68, 242 80 M 315 72 C 378 58, 435 58, 498 72 M 570 72 C 638 56, 705 58, 770 72 M 828 80 C 875 66, 918 66, 958 80" />
-          </svg>
-          <div class="era-line-grid">
-            <div class="era-node" data-era="2016" data-title="The origin story" data-desc="A circle of friends sharing music, art, and culture." data-image="/images/timeline-2016.webp" data-alt="Rhozeland 2016">
-              <button class="era-trigger" type="button" aria-label="View 2016 story"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 26"/><ellipse class="seed" cx="21" cy="22" rx="3.2" ry="4.2"/></svg></span><span class="era-year-sm">2016</span><span class="era-title-sm">The origin story</span></button>
-            </div>
-            <div class="era-node" data-era="2021" data-title="Building the hub" data-desc="A digital platform connecting creators and resources." data-image="/images/timeline-2021.webp" data-alt="Rhozeland 2021">
-              <button class="era-trigger" type="button" aria-label="View 2021 story"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 20"/><path class="leaf" d="M21 26 C 14 24, 12 19, 14 14 C 19 16, 22 20, 21 26 Z"/><path class="leaf" d="M21 22 C 28 20, 30 15, 28 10 C 23 12, 20 16, 21 22 Z"/></svg></span><span class="era-year-sm">2021</span><span class="era-title-sm">Building the hub</span></button>
-            </div>
-            <div class="era-node" data-era="2023" data-title="Studio launch" data-desc="First physical studio — record, produce, collaborate." data-image="/images/timeline-2023.webp" data-alt="Rhozeland 2023">
-              <button class="era-trigger" type="button" aria-label="View 2023 story"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 24"/><path class="leaf" d="M21 28 C 15 26, 13 22, 15 18 C 19 20, 22 23, 21 28 Z"/><path class="petal" d="M21 22 C 14 20, 13 13, 18 10 C 22 13, 24 17, 21 22 Z"/><path class="petal" d="M21 22 C 28 20, 29 13, 24 10 C 20 13, 18 17, 21 22 Z"/><circle class="core" cx="21" cy="20" r="2.4"/></svg></span><span class="era-year-sm">2023</span><span class="era-title-sm">Studio launch</span></button>
-            </div>
-            <div class="era-node is-active" data-era="Today" data-title="A New Era" data-desc="A living record of the creators, space, and movement." data-image="/images/documentary-thumbnail.webp" data-alt="Rhozeland documentary" data-video="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws">
-              <button class="era-trigger" type="button" aria-label="Preview A New Era"><span class="era-bloom" aria-hidden="true"><svg viewBox="0 0 42 42" aria-hidden="true"><path class="stem" d="M21 38 V 26"/><path class="leaf" d="M21 28 C 15 26, 13 22, 15 18 C 19 20, 22 23, 21 28 Z"/><path class="leaf" d="M21 28 C 27 26, 29 22, 27 18 C 23 20, 20 23, 21 28 Z"/><path class="petal" d="M21 22 C 13 19, 12 11, 18 8 C 22 11, 24 16, 21 22 Z"/><path class="petal" d="M21 22 C 29 19, 30 11, 24 8 C 20 11, 18 16, 21 22 Z"/><path class="petal" d="M21 22 C 16 16, 21 9, 26 12 C 25 17, 23 20, 21 22 Z"/><path class="petal" d="M21 22 C 26 16, 21 9, 16 12 C 17 17, 19 20, 21 22 Z"/><circle class="core" cx="21" cy="19" r="2.6"/></svg></span><span class="era-year-sm">Today</span><span class="era-title-sm">A New Era</span></button>
-            </div>
-          </div>
-          <div class="era-detail has-detail" id="eraDetail" aria-live="polite">
-            <div class="era-detail-media" id="eraDetailMedia"><iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe></div>
-            <div class="era-detail-copy"><span class="era-detail-year" id="eraDetailYear">Today</span><h4 id="eraDetailTitle">A New Era</h4><p id="eraDetailDesc">A living record of the creators, space, and movement.</p></div>
-          </div>
-        </div>
         <script>
           (function(){
             var el = document.getElementById('eraLine');
@@ -3438,8 +3416,6 @@
             io.observe(el);
           })();
         </script>
-
-      </section>
 
 
 

@@ -12,6 +12,51 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
+  <style>
+    /* Compact sticky services bar */
+    .services-sticky {
+      position: sticky; top: 0; z-index: 40;
+      margin: 0 -1.25rem 1.25rem; padding: 0.6rem 1.25rem;
+      background: hsl(var(--background) / 0.78);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border-bottom: 1px solid hsl(var(--ink) / 0.08);
+      display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
+    }
+    .services-sticky-lead { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+    .services-sticky-kicker { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--ink) / 0.5); }
+    .services-sticky-tag { font-size: 0.78rem; font-weight: 600; color: hsl(var(--ink) / 0.95); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .services-sticky-pills { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem; background: hsl(var(--ink) / 0.06); border-radius: 999px; }
+    .services-sticky-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.85rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: -0.005em;
+      background: transparent; color: hsl(var(--ink) / 0.7); border: 0;
+      cursor: pointer; transition: background 0.18s ease, color 0.18s ease;
+    }
+    .services-sticky-pill svg { width: 13px; height: 13px; }
+    .services-sticky-pill:hover { color: hsl(var(--ink)); }
+    .services-sticky-pill.active { background: hsl(var(--ink)); color: hsl(var(--background)); }
+    .services-sticky-cta {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: 999px;
+      background: hsl(var(--ink)); color: hsl(var(--background));
+      font-size: 0.75rem; font-weight: 600; text-decoration: none;
+      white-space: nowrap; transition: opacity 0.18s ease;
+    }
+    .services-sticky-cta:hover { opacity: 0.88; }
+    .services-sticky-cta svg { width: 12px; height: 12px; }
+    @media (max-width: 720px) {
+      .services-sticky { gap: 0.55rem; padding: 0.55rem 1rem; margin: 0 -1rem 1rem; }
+      .services-sticky-lead { display: none; }
+      .services-sticky-pills { flex: 1 1 auto; justify-content: center; }
+      .services-sticky-pill { padding: 0.4rem 0.7rem; font-size: 0.7rem; }
+      .services-sticky-pill span { display: none; }
+      .services-sticky-pill svg { width: 14px; height: 14px; }
+      .services-sticky-pill.active span { display: inline; }
+      .services-sticky-cta { padding: 0.45rem 0.85rem; font-size: 0.72rem; }
+    }
+  </style>
 </head>
 <body class="page-projects">
   <div class="gradient-canvas" aria-hidden="true"></div>

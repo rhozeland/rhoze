@@ -3458,12 +3458,29 @@
             var defaultNode = el.querySelector('.era-node[data-video]') || nodes[nodes.length - 1];
             // Ensure the default detail panel is visible on load (no empty space pre-hover).
             el.classList.add('has-detail');
+            // Rotating tagline shown in the collapsed Our Story summary
+            var taglineEl = document.querySelector('#rEcoStory .r-eco-story-tagline');
+            var taglines = {
+              '2016': 'It started in 2016 — a circle of friends sharing music, art, and culture.',
+              '2021': 'By 2021, we built the hub — a digital home connecting creators and resources.',
+              '2023': '2023 — the studio opened. A real space to record, produce, and collaborate.',
+              'Today': 'Today — a studio and launchpad for bold creators shaping what comes next.'
+            };
+            function swapTagline(era){
+              if (!taglineEl || !era || !taglines[era]) return;
+              taglineEl.classList.add('is-swapping');
+              setTimeout(function(){
+                taglineEl.textContent = taglines[era];
+                taglineEl.classList.remove('is-swapping');
+              }, 280);
+            }
             function render(node, playVideo) {
               nodes.forEach(function(n){ n.classList.toggle('is-active', n === node); });
               el.classList.add('has-detail');
               if (year) year.textContent = node.dataset.era || '';
               if (title) title.textContent = node.dataset.title || '';
               if (desc) desc.textContent = node.dataset.desc || '';
+              swapTagline(node.dataset.era);
               if (!media) return;
               if (playVideo && node.dataset.video) {
                 media.innerHTML = '<iframe src="'+node.dataset.video+'" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>';
@@ -3482,6 +3499,15 @@
               entries.forEach(function(e){ if (e.isIntersecting) { el.classList.add('is-visible'); io.disconnect(); } });
             }, { threshold: 0.35 });
             io.observe(el);
+            // Auto-cycle the collapsed tagline through eras while Our Story is closed
+            var storyEl = document.getElementById('rEcoStory');
+            var eras = ['2016','2021','2023','Today'];
+            var cycleIdx = 0;
+            setInterval(function(){
+              if (storyEl && storyEl.open) return; // don't fight active hover
+              cycleIdx = (cycleIdx + 1) % eras.length;
+              swapTagline(eras[cycleIdx]);
+            }, 4200);
           })();
         </script>
 

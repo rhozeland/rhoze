@@ -3031,17 +3031,152 @@
     </div>
 
     <main>
-      <section class="hero" aria-labelledby="homepage-title">
-        <div class="hero-inner">
-          <!-- Iridescent gradient blob -->
-          <div aria-hidden="true" style="position:absolute; top:-15%; right:-10%; width:clamp(420px,60vw,800px); height:clamp(420px,60vw,800px); border-radius:48% 52% 58% 42% / 42% 56% 44% 58%; background:linear-gradient(135deg, hsl(320 50% 72% / 0.45), hsl(30 60% 72% / 0.4), hsl(175 50% 65% / 0.4), hsl(280 40% 72% / 0.35)); filter:blur(40px); pointer-events:none; z-index:1; animation: hero-blob-drift 14s ease-in-out infinite;"></div>
+      <section class="hero r-eco" aria-labelledby="homepage-title">
+        <style>
+          .r-eco { padding-top: 2.25rem; padding-bottom: 1.25rem; }
+          .r-eco .r-eco-inner { max-width: 1180px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); display: flex; flex-direction: column; gap: 1.25rem; }
+          .r-eco .r-eco-lead { display: flex; flex-direction: column; gap: 0.55rem; max-width: 760px; }
+          .r-eco .r-eco-lead h1 { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(2.1rem, 5.2vw, 3.6rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; color: hsl(var(--ink)); margin: 0; }
+          .r-eco .r-eco-lead p { font-size: 0.98rem; color: hsl(var(--muted)); margin: 0; max-width: 540px; line-height: 1.45; }
+          .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: hsl(var(--ink)); padding: 6px; box-shadow: 0 16px 48px -20px hsl(var(--ink) / 0.35); }
+          .r-eco-panes { display: flex; gap: 6px; height: 540px; }
+          .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: hsl(var(--surface-card)); border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex-grow 0.7s cubic-bezier(0.23, 1, 0.32, 1); }
+          .r-eco-pane:hover, .r-eco-pane:focus-within { flex-grow: 2.5; }
+          .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(1rem, 1.6vw, 1.5rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; }
+          .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(2.4rem, 4.4vw, 3.6rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: hsl(var(--ink)); text-transform: uppercase; margin: 0 0 0.9rem; opacity: 0.22; transition: opacity 0.5s ease; display: block; }
+          .r-eco-pane:hover .r-eco-cat, .r-eco-pane:focus-within .r-eco-cat { opacity: 1; }
+          .r-eco-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; opacity: 0; transform: translateY(8px); transition: opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s; pointer-events: none; }
+          .r-eco-pane:hover .r-eco-pills, .r-eco-pane:focus-within .r-eco-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
+          .r-eco-pill { display: inline-flex; align-items: center; padding: 0.35rem 0.7rem; background: hsl(var(--ink)); color: hsl(var(--surface-card)); border-radius: 999px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+          .r-eco-foot { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease 0.18s, transform 0.5s ease 0.18s; }
+          .r-eco-pane:hover .r-eco-foot, .r-eco-pane:focus-within .r-eco-foot { opacity: 1; transform: translateY(0); }
+          .r-eco-foot-label { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); margin: 0 0 0.55rem; display: block; }
+          .r-eco-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+          .r-eco-thumb { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: var(--radius-md); overflow: hidden; background: hsl(var(--surface)); border: 1px solid hsl(var(--line)); text-decoration: none; }
+          .r-eco-thumb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 0.5s ease, transform 0.6s ease; }
+          .r-eco-thumb:hover img { filter: grayscale(0); transform: scale(1.04); }
+          .r-eco-thumb-tag { position: absolute; top: 6px; left: 6px; padding: 2px 6px; background: hsl(var(--ink) / 0.85); color: hsl(var(--surface-card)); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; }
+          .r-eco-stage-cta { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; padding: 0.65rem 0.4rem 0; }
+          .r-eco-stage-cta .r-eco-count { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--surface-card) / 0.6); }
+          .r-eco-stage-cta .r-eco-all { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; background: hsl(var(--surface-card)); color: hsl(var(--ink)); border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-decoration: none; letter-spacing: 0.02em; transition: transform 0.2s ease; }
+          .r-eco-stage-cta .r-eco-all:hover { transform: translateX(2px); }
+          .r-eco-stage-cta .r-eco-all svg { width: 0.8rem; height: 0.8rem; }
+          @media (max-width: 860px) {
+            .r-eco-panes { flex-direction: column; height: auto; }
+            .r-eco-pane { flex: 1 1 auto; min-height: 280px; }
+            .r-eco-pane .r-eco-cat { opacity: 1; }
+            .r-eco-pane .r-eco-pills { opacity: 1; transform: none; pointer-events: auto; }
+            .r-eco-pane .r-eco-foot { opacity: 1; transform: none; }
+          }
+        </style>
 
-          <div class="hero-copy">
-            <h1 id="homepage-title">Build the world you imagine</h1>
-            <p class="hero-desc">The creative ecosystem for launching culture.</p>
-            <div class="hero-proof-links" id="proof">
-              <span class="hero-proof-label">Featured On</span>
-              <div class="hero-proof-track-wrap" id="proof-scroller">
+        <div class="hero-inner r-eco-inner">
+          <div class="r-eco-lead">
+            <h1 id="homepage-title">The creative ecosystem for launching culture.</h1>
+            <p>Studio sessions, content rollouts, and launch infrastructure — one team, every moving part.</p>
+          </div>
+
+          <div class="r-eco-stage">
+            <div class="r-eco-panes" role="list">
+              <!-- Visual -->
+              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Visual services">
+                <div class="r-eco-pane-body">
+                  <div>
+                    <span class="r-eco-cat">Visual</span>
+                    <div class="r-eco-pills">
+                      <span class="r-eco-pill">Photo shoots</span>
+                      <span class="r-eco-pill">Content editing</span>
+                      <span class="r-eco-pill">Commercial editing</span>
+                      <span class="r-eco-pill">Short-form editing</span>
+                      <span class="r-eco-pill">Music video editing</span>
+                    </div>
+                  </div>
+                  <div class="r-eco-foot">
+                    <span class="r-eco-foot-label">Selected work</span>
+                    <div class="r-eco-thumbs">
+                      <a class="r-eco-thumb" href="/projects.html" aria-label="YOUNG $TEELO photoshoot">
+                        <span class="r-eco-thumb-tag">Photography</span>
+                        <img src="/images/steelo-photoshoot-2.webp" alt="YOUNG $TEELO photoshoot" loading="lazy" />
+                      </a>
+                      <a class="r-eco-thumb" href="/projects.html" aria-label="iiMPCT Media web series">
+                        <span class="r-eco-thumb-tag">Web series</span>
+                        <img src="/images/iimpct-media-thumb.webp" alt="iiMPCT Media web series" loading="lazy" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Audio -->
+              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Audio services">
+                <div class="r-eco-pane-body">
+                  <div>
+                    <span class="r-eco-cat">Audio</span>
+                    <div class="r-eco-pills">
+                      <span class="r-eco-pill">Recording</span>
+                      <span class="r-eco-pill">Mixing</span>
+                      <span class="r-eco-pill">Mastering</span>
+                      <span class="r-eco-pill">Music production</span>
+                      <span class="r-eco-pill">Artist development</span>
+                    </div>
+                  </div>
+                  <div class="r-eco-foot">
+                    <span class="r-eco-foot-label">Selected work</span>
+                    <div class="r-eco-thumbs">
+                      <a class="r-eco-thumb" href="/projects.html" aria-label="Holy Water — Cozal">
+                        <span class="r-eco-thumb-tag">Single</span>
+                        <img src="/images/holy-water-thumb.webp" alt="Holy Water — Cozal" loading="lazy" />
+                      </a>
+                      <a class="r-eco-thumb" href="/projects.html" aria-label="Mansa Musa — MONEE FINGAZ">
+                        <span class="r-eco-thumb-tag">Music video</span>
+                        <img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Development -->
+              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Development services">
+                <div class="r-eco-pane-body">
+                  <div>
+                    <span class="r-eco-cat">Development</span>
+                    <div class="r-eco-pills">
+                      <span class="r-eco-pill">Web &amp; app dev</span>
+                      <span class="r-eco-pill">Brand systems</span>
+                      <span class="r-eco-pill">Launch strategy</span>
+                      <span class="r-eco-pill">Grant writing</span>
+                      <span class="r-eco-pill">Creator tooling</span>
+                    </div>
+                  </div>
+                  <div class="r-eco-foot">
+                    <span class="r-eco-foot-label">Selected work</span>
+                    <div class="r-eco-thumbs">
+                      <a class="r-eco-thumb" href="/projects.html" aria-label="Rhozeland documentary">
+                        <span class="r-eco-thumb-tag">Documentary</span>
+                        <img src="/images/documentary-thumbnail.webp" alt="Rhozeland documentary" loading="lazy" />
+                      </a>
+                      <a class="r-eco-thumb" href="/projects.html" aria-label="True North Transparency">
+                        <span class="r-eco-thumb-tag">Platform</span>
+                        <img src="/images/timeline-2023.webp" alt="True North Transparency platform" loading="lazy" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="r-eco-stage-cta">
+              <span class="r-eco-count">1000+ creator collaborations</span>
+              <a class="r-eco-all" href="/projects.html">See all projects
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-proof-links" id="proof">
+            <span class="hero-proof-label">Featured On</span>
+            <div class="hero-proof-track-wrap" id="proof-scroller">
               <div class="proof-track" id="proof-track">
                 <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=voyagehouston.com&sz=32" alt="" class="proof-favicon" />VoyageHouston Feature</a>
                 <a class="proof-link" href="https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups" target="_blank" rel="noopener noreferrer"><img src="https://fi.co/favicon.ico" alt="" class="proof-favicon" />Founder Institute Alumni</a>
@@ -3050,346 +3185,16 @@
                 <a class="proof-link" href="https://capacoa.ca/en/programs/digital-discoverability-program/past-cohorts/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=capacoa.ca&sz=32" alt="" class="proof-favicon" />CAPACOA Program Cohort</a>
                 <a class="proof-link" href="https://hackathon.pump.fun/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=pump.fun&sz=32" alt="" class="proof-favicon" />Pump.fun Hackathon Participant</a>
                 <a class="proof-link" href="https://arena.colosseum.org/projects/explore/rhozeland" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=colosseum.org&sz=32" alt="" class="proof-favicon" />Colosseum Participant</a>
-                <!-- duplicate set for seamless loop -->
                 <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=voyagehouston.com&sz=32" alt="" class="proof-favicon" />VoyageHouston Feature</a>
                 <a class="proof-link" href="https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups" target="_blank" rel="noopener noreferrer"><img src="https://fi.co/favicon.ico" alt="" class="proof-favicon" />Founder Institute Alumni</a>
                 <a class="proof-link" href="https://vectorfestival.org/window-activation" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=vectorfestival.org&sz=32" alt="" class="proof-favicon" />Vector Festival Participant</a>
-                
                 <a class="proof-link" href="https://www.sourcefromontario.com/en/page/event/138483/ontario-wis-2026#attendees" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=sourcefromontario.com&sz=32" alt="" class="proof-favicon" />WIS 2026 Attendee</a>
                 <a class="proof-link" href="https://capacoa.ca/en/programs/digital-discoverability-program/past-cohorts/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=capacoa.ca&sz=32" alt="" class="proof-favicon" />CAPACOA Program Cohort</a>
                 <a class="proof-link" href="https://hackathon.pump.fun/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=pump.fun&sz=32" alt="" class="proof-favicon" />Pump.fun Hackathon Participant</a>
                 <a class="proof-link" href="https://arena.colosseum.org/projects/explore/rhozeland" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=colosseum.org&sz=32" alt="" class="proof-favicon" />Colosseum Participant</a>
               </div>
-              </div>
-            </div>
             </div>
           </div>
-
-          <div class="hero-globe-wrap" aria-hidden="true">
-            <svg class="hero-globe-svg" viewBox="0 0 100 100" id="heroOrbSvg">
-              <defs>
-                <clipPath id="orb-clip"><circle cx="50" cy="50" r="36" /></clipPath>
-
-                <!-- Skin 1: Gradient Mesh -->
-                <radialGradient id="orb-mesh-a" cx="25%" cy="25%" r="70%">
-                  <stop offset="0%" stop-color="hsl(320 70% 72%)" />
-                  <stop offset="55%" stop-color="hsl(280 60% 55%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-mesh-b" cx="75%" cy="35%" r="65%">
-                  <stop offset="0%" stop-color="hsl(40 90% 65%)" />
-                  <stop offset="60%" stop-color="hsl(30 80% 50%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-mesh-c" cx="50%" cy="80%" r="60%">
-                  <stop offset="0%" stop-color="hsl(170 70% 60%)" />
-                  <stop offset="60%" stop-color="hsl(190 60% 45%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-mesh-base" cx="50%" cy="50%" r="70%">
-                  <stop offset="0%" stop-color="hsl(250 35% 88%)" />
-                  <stop offset="100%" stop-color="hsl(240 40% 22%)" />
-                </radialGradient>
-
-                <!-- Skin 2: Liquid Chrome -->
-                <radialGradient id="orb-chrome" cx="34%" cy="28%" r="82%">
-                  <stop offset="0%" stop-color="hsl(205 28% 95%)" />
-                  <stop offset="42%" stop-color="hsl(214 42% 60%)" />
-                  <stop offset="78%" stop-color="hsl(271 42% 32%)" />
-                  <stop offset="100%" stop-color="hsl(232 45% 12%)" />
-                </radialGradient>
-                <linearGradient id="orb-aurora" x1="0" y1="14" x2="100" y2="86" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="hsl(48 100% 62%)" stop-opacity="0.55" />
-                  <stop offset="40%" stop-color="hsl(345 88% 62%)" stop-opacity="0.45" />
-                  <stop offset="75%" stop-color="hsl(203 94% 58%)" stop-opacity="0.45" />
-                  <stop offset="100%" stop-color="hsl(159 64% 48%)" stop-opacity="0.5" />
-                </linearGradient>
-
-                <!-- Skin 3: Risograph -->
-                <linearGradient id="orb-riso-base" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="hsl(330 90% 64%)" />
-                  <stop offset="35%" stop-color="hsl(28 95% 60%)" />
-                  <stop offset="65%" stop-color="hsl(48 95% 58%)" />
-                  <stop offset="100%" stop-color="hsl(210 90% 56%)" />
-                </linearGradient>
-                <pattern id="orb-riso-dots" x="0" y="0" width="3.4" height="3.4" patternUnits="userSpaceOnUse">
-                  <circle cx="1.7" cy="1.7" r="0.55" fill="hsl(240 30% 8% / 0.32)" />
-                </pattern>
-
-                <!-- Skin 4: Pastel Watercolor World -->
-                <radialGradient id="orb-pastel-base" cx="40%" cy="35%" r="80%">
-                  <stop offset="0%" stop-color="hsl(28 95% 92%)" />
-                  <stop offset="45%" stop-color="hsl(340 75% 88%)" />
-                  <stop offset="80%" stop-color="hsl(260 55% 82%)" />
-                  <stop offset="100%" stop-color="hsl(200 60% 78%)" />
-                </radialGradient>
-                <radialGradient id="orb-pastel-wash-a" cx="28%" cy="30%" r="55%">
-                  <stop offset="0%" stop-color="hsl(345 90% 78%)" stop-opacity="0.65" />
-                  <stop offset="100%" stop-color="hsl(345 90% 78%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-pastel-wash-b" cx="72%" cy="68%" r="50%">
-                  <stop offset="0%" stop-color="hsl(165 70% 78%)" stop-opacity="0.6" />
-                  <stop offset="100%" stop-color="hsl(165 70% 78%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-pastel-wash-c" cx="65%" cy="28%" r="45%">
-                  <stop offset="0%" stop-color="hsl(40 95% 78%)" stop-opacity="0.55" />
-                  <stop offset="100%" stop-color="hsl(40 95% 78%)" stop-opacity="0" />
-                </radialGradient>
-
-                <!-- Skin 5: Starfield -->
-                <radialGradient id="orb-star-base" cx="50%" cy="50%" r="75%">
-                  <stop offset="0%" stop-color="hsl(240 30% 18%)" />
-                  <stop offset="100%" stop-color="hsl(240 40% 6%)" />
-                </radialGradient>
-                <pattern id="orb-stars" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
-                  <circle cx="2.4" cy="3.6" r="0.35" fill="hsl(0 0% 100% / 0.65)" />
-                  <circle cx="7.8" cy="1.8" r="0.25" fill="hsl(0 0% 100% / 0.45)" />
-                  <circle cx="10.2" cy="7.2" r="0.4" fill="hsl(0 0% 100% / 0.7)" />
-                  <circle cx="4.8" cy="9.6" r="0.2" fill="hsl(0 0% 100% / 0.35)" />
-                  <circle cx="0.6" cy="6" r="0.3" fill="hsl(0 0% 100% / 0.55)" />
-                  <circle cx="6" cy="5.4" r="0.18" fill="hsl(0 0% 100% / 0.3)" />
-                  <circle cx="9" cy="10.8" r="0.28" fill="hsl(0 0% 100% / 0.5)" />
-                </pattern>
-
-                <!-- Skin 6: Cosmic Neon Earth -->
-                <radialGradient id="orb-earth-base" cx="40%" cy="35%" r="80%">
-                  <stop offset="0%" stop-color="hsl(232 55% 14%)" />
-                  <stop offset="60%" stop-color="hsl(232 65% 7%)" />
-                  <stop offset="100%" stop-color="hsl(232 70% 3%)" />
-                </radialGradient>
-                <radialGradient id="orb-earth-glow-magenta" cx="28%" cy="36%" r="22%">
-                  <stop offset="0%" stop-color="hsl(320 100% 70%)" stop-opacity="0.9" />
-                  <stop offset="100%" stop-color="hsl(320 100% 70%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-earth-glow-orange" cx="68%" cy="34%" r="22%">
-                  <stop offset="0%" stop-color="hsl(28 100% 65%)" stop-opacity="0.85" />
-                  <stop offset="100%" stop-color="hsl(28 100% 65%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-earth-glow-cyan" cx="72%" cy="64%" r="20%">
-                  <stop offset="0%" stop-color="hsl(190 100% 65%)" stop-opacity="0.85" />
-                  <stop offset="100%" stop-color="hsl(190 100% 65%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-earth-glow-green" cx="44%" cy="70%" r="18%">
-                  <stop offset="0%" stop-color="hsl(140 90% 60%)" stop-opacity="0.85" />
-                  <stop offset="100%" stop-color="hsl(140 90% 60%)" stop-opacity="0" />
-                </radialGradient>
-
-                <!-- Skin 7: Vinyl Record -->
-                <radialGradient id="orb-vinyl-base" cx="50%" cy="50%" r="60%">
-                  <stop offset="0%" stop-color="hsl(0 0% 12%)" />
-                  <stop offset="100%" stop-color="hsl(0 0% 4%)" />
-                </radialGradient>
-                <radialGradient id="orb-vinyl-label" cx="50%" cy="50%" r="55%">
-                  <stop offset="0%" stop-color="hsl(345 80% 58%)" />
-                  <stop offset="100%" stop-color="hsl(15 85% 50%)" />
-                </radialGradient>
-
-                <!-- Skin 8: Ringed Planet -->
-                <radialGradient id="orb-ring-base" cx="40%" cy="32%" r="78%">
-                  <stop offset="0%" stop-color="hsl(38 92% 72%)" />
-                  <stop offset="55%" stop-color="hsl(22 78% 48%)" />
-                  <stop offset="100%" stop-color="hsl(12 60% 22%)" />
-                </radialGradient>
-
-                <!-- Skin 9: Holographic Aura -->
-                <radialGradient id="orb-holo" cx="42%" cy="34%" r="78%">
-                  <stop offset="0%"   stop-color="hsl(48 100% 90%)" />
-                  <stop offset="32%"  stop-color="hsl(320 90% 82%)" />
-                  <stop offset="62%"  stop-color="hsl(265 80% 80%)" />
-                  <stop offset="88%"  stop-color="hsl(195 90% 78%)" />
-                  <stop offset="100%" stop-color="hsl(165 70% 78%)" />
-                </radialGradient>
-                <radialGradient id="orb-holo-wash" cx="70%" cy="68%" r="55%">
-                  <stop offset="0%" stop-color="hsl(345 95% 78%)" stop-opacity="0.55" />
-                  <stop offset="100%" stop-color="hsl(345 95% 78%)" stop-opacity="0" />
-                </radialGradient>
-
-                <!-- Skin 10: Stained Glass -->
-                <linearGradient id="orb-stain-a" x1="14" y1="14" x2="86" y2="86" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%"   stop-color="hsl(330 70% 55%)" />
-                  <stop offset="100%" stop-color="hsl(260 60% 35%)" />
-                </linearGradient>
-                <linearGradient id="orb-stain-b" x1="14" y1="86" x2="86" y2="14" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%"   stop-color="hsl(38 90% 60%)" />
-                  <stop offset="100%" stop-color="hsl(165 70% 45%)" />
-                </linearGradient>
-
-                <!-- Shared overlays -->
-                <filter id="orb-grain" x="0" y="0" width="100%" height="100%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="6" />
-                  <feColorMatrix type="saturate" values="0" />
-                  <feComponentTransfer><feFuncA type="table" tableValues="0 0.16" /></feComponentTransfer>
-                </filter>
-                <radialGradient id="orb-hi" cx="35%" cy="27%" r="54%">
-                  <stop offset="0%" stop-color="hsl(0 0% 100%)" stop-opacity="0.48" />
-                  <stop offset="58%" stop-color="hsl(0 0% 100%)" stop-opacity="0.07" />
-                  <stop offset="100%" stop-color="hsl(0 0% 100%)" stop-opacity="0" />
-                </radialGradient>
-                <radialGradient id="orb-shadow" cx="76%" cy="82%" r="70%">
-                  <stop offset="0%" stop-color="hsl(240 50% 6%)" stop-opacity="0" />
-                  <stop offset="70%" stop-color="hsl(240 50% 6%)" stop-opacity="0.1" />
-                  <stop offset="100%" stop-color="hsl(240 50% 6%)" stop-opacity="0.36" />
-                </radialGradient>
-              </defs>
-
-              <ellipse cx="50" cy="89" rx="26" ry="4.5" fill="hsl(240 40% 8% / 0.28)" />
-              <circle cx="50" cy="50" r="37.4" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.5" />
-
-              <g clip-path="url(#orb-clip)">
-                <g id="orbSpin" class="orb-spin">
-                  <!-- Skin 1: Gradient Mesh -->
-                  <g class="orb-skin is-active" data-skin="0">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-mesh-base)" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-mesh-a)" opacity="0.9" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-mesh-b)" opacity="0.85" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-mesh-c)" opacity="0.8" />
-                    <path d="M14 48 C28 40 42 38 56 44 C68 49 78 46 86 38" fill="none" stroke="hsl(0 0% 100% / 0.25)" stroke-width="0.7" />
-                    <path d="M14 62 C28 55 42 56 54 62 C66 68 78 66 86 58" fill="none" stroke="hsl(0 0% 100% / 0.2)" stroke-width="0.6" />
-                  </g>
-
-                  <!-- Skin 2: Liquid Chrome -->
-                  <g class="orb-skin" data-skin="1">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-chrome)" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-aurora)" opacity="0.85" />
-                    <path d="M14 46 C26 36 38 34 50 38 C62 42 74 38 86 30" fill="none" stroke="hsl(0 0% 100% / 0.32)" stroke-width="0.7" />
-                    <path d="M14 60 C28 53 40 54 52 60 C64 66 76 64 86 56" fill="none" stroke="hsl(48 100% 62% / 0.4)" stroke-width="0.65" />
-                  </g>
-
-                  <!-- Skin 3: Risograph -->
-                  <g class="orb-skin" data-skin="2">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-riso-base)" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-riso-dots)" opacity="0.85" />
-                    <path d="M14 38 C28 30 42 30 56 36 C68 41 78 39 86 32" fill="none" stroke="hsl(0 0% 100% / 0.55)" stroke-width="0.9" />
-                    <path d="M14 64 C28 56 42 56 56 62 C68 67 78 65 86 58" fill="none" stroke="hsl(240 30% 8% / 0.4)" stroke-width="0.9" />
-                  </g>
-
-                  <!-- Skin 4: Pastel Watercolor World -->
-                  <g class="orb-skin" data-skin="3">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-pastel-base)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-pastel-wash-a)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-pastel-wash-b)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-pastel-wash-c)" />
-                    <!-- Soft hand-drawn continent suggestions -->
-                    <path d="M28 40 C32 36 38 36 42 40 C44 44 40 48 36 47 C30 46 26 44 28 40 Z" fill="hsl(345 60% 70% / 0.28)" />
-                    <path d="M52 36 C58 34 64 38 64 42 C62 46 56 46 53 43 C50 41 50 38 52 36 Z" fill="hsl(265 50% 70% / 0.28)" />
-                    <path d="M44 56 C50 54 58 58 60 62 C58 66 50 68 46 64 C42 62 42 58 44 56 Z" fill="hsl(200 55% 70% / 0.3)" />
-                    <!-- Tiny constellation dots -->
-                    <circle cx="26" cy="28" r="0.6" fill="hsl(240 30% 30% / 0.55)" />
-                    <circle cx="70" cy="26" r="0.5" fill="hsl(240 30% 30% / 0.5)" />
-                    <circle cx="74" cy="58" r="0.55" fill="hsl(240 30% 30% / 0.55)" />
-                    <circle cx="22" cy="60" r="0.45" fill="hsl(240 30% 30% / 0.45)" />
-                    <circle cx="50" cy="72" r="0.5" fill="hsl(240 30% 30% / 0.5)" />
-                    <path d="M26 28 L70 26" stroke="hsl(240 30% 30% / 0.18)" stroke-width="0.25" />
-                    <path d="M22 60 L50 72 L74 58" fill="none" stroke="hsl(240 30% 30% / 0.18)" stroke-width="0.25" />
-                  </g>
-
-                  <!-- Skin 5: Starfield (clean, no wisps) -->
-                  <g class="orb-skin" data-skin="4">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-star-base)" />
-                    <rect x="14" y="14" width="72" height="72" fill="url(#orb-stars)" opacity="0.9" />
-                    <!-- Larger accent stars -->
-                    <circle cx="32" cy="38" r="0.9" fill="hsl(0 0% 100% / 0.85)" />
-                    <circle cx="62" cy="28" r="0.7" fill="hsl(0 0% 100% / 0.7)" />
-                    <circle cx="48" cy="58" r="1.1" fill="hsl(0 0% 100% / 0.9)" />
-                    <circle cx="24" cy="54" r="0.6" fill="hsl(0 0% 100% / 0.6)" />
-                    <circle cx="70" cy="52" r="0.8" fill="hsl(0 0% 100% / 0.75)" />
-                  </g>
-
-                  <!-- Skin 6: Cosmic Neon Earth -->
-                  <g class="orb-skin" data-skin="5">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-earth-base)" />
-                    <!-- Neon glow continent clusters -->
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-earth-glow-magenta)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-earth-glow-orange)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-earth-glow-cyan)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-earth-glow-green)" />
-                    <!-- Faint city-light continent outlines -->
-                    <path d="M24 38 C28 33 34 32 38 35 C42 37 44 33 48 35" fill="none" stroke="hsl(320 100% 78% / 0.85)" stroke-width="0.55" stroke-linecap="round" />
-                    <path d="M58 32 C64 30 70 33 72 38" fill="none" stroke="hsl(28 100% 72% / 0.85)" stroke-width="0.55" stroke-linecap="round" />
-                    <path d="M64 58 C70 60 74 64 72 70" fill="none" stroke="hsl(190 100% 75% / 0.85)" stroke-width="0.55" stroke-linecap="round" />
-                    <path d="M38 66 C42 64 48 65 52 68" fill="none" stroke="hsl(140 90% 70% / 0.85)" stroke-width="0.55" stroke-linecap="round" />
-                    <!-- City light dots -->
-                    <circle cx="28" cy="36" r="0.6" fill="hsl(320 100% 80%)" />
-                    <circle cx="34" cy="34" r="0.45" fill="hsl(320 100% 85%)" />
-                    <circle cx="42" cy="38" r="0.35" fill="hsl(320 100% 80%)" />
-                    <circle cx="62" cy="34" r="0.55" fill="hsl(28 100% 75%)" />
-                    <circle cx="68" cy="38" r="0.4" fill="hsl(28 100% 80%)" />
-                    <circle cx="68" cy="62" r="0.55" fill="hsl(190 100% 80%)" />
-                    <circle cx="72" cy="56" r="0.4" fill="hsl(190 100% 85%)" />
-                    <circle cx="44" cy="68" r="0.5" fill="hsl(140 90% 72%)" />
-                    <circle cx="50" cy="70" r="0.35" fill="hsl(140 90% 78%)" />
-                    <!-- Glowing arc network lines between hubs -->
-                    <path d="M30 36 Q48 22 64 34" fill="none" stroke="hsl(320 95% 75% / 0.7)" stroke-width="0.35" />
-                    <path d="M64 34 Q60 48 68 60" fill="none" stroke="hsl(28 100% 72% / 0.6)" stroke-width="0.35" />
-                    <path d="M30 36 Q34 54 46 68" fill="none" stroke="hsl(280 90% 78% / 0.55)" stroke-width="0.3" />
-                    <path d="M46 68 Q58 64 68 60" fill="none" stroke="hsl(190 95% 75% / 0.6)" stroke-width="0.3" />
-                    <!-- Subtle grid lines -->
-                    <ellipse cx="50" cy="50" rx="34" ry="10" fill="none" stroke="hsl(220 50% 60% / 0.12)" stroke-width="0.25" />
-                    <ellipse cx="50" cy="50" rx="10" ry="34" fill="none" stroke="hsl(220 50% 60% / 0.12)" stroke-width="0.25" />
-                  </g>
-
-                  <!-- Skin 7: Vinyl -->
-                  <g class="orb-skin" data-skin="6">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-vinyl-base)" />
-                    <!-- Concentric grooves -->
-                    <circle cx="50" cy="50" r="32" fill="none" stroke="hsl(0 0% 100% / 0.06)" stroke-width="0.3" />
-                    <circle cx="50" cy="50" r="28" fill="none" stroke="hsl(0 0% 100% / 0.07)" stroke-width="0.3" />
-                    <circle cx="50" cy="50" r="24" fill="none" stroke="hsl(0 0% 100% / 0.08)" stroke-width="0.3" />
-                    <circle cx="50" cy="50" r="20" fill="none" stroke="hsl(0 0% 100% / 0.09)" stroke-width="0.3" />
-                    <circle cx="50" cy="50" r="16" fill="none" stroke="hsl(0 0% 100% / 0.1)" stroke-width="0.3" />
-                    <!-- Reflective sheen -->
-                    <path d="M22 40 A 32 32 0 0 1 78 40" fill="none" stroke="hsl(0 0% 100% / 0.12)" stroke-width="2" />
-                    <!-- Center label -->
-                    <circle cx="50" cy="50" r="11" fill="url(#orb-vinyl-label)" />
-                    <circle cx="50" cy="50" r="1.4" fill="hsl(0 0% 4%)" />
-                  </g>
-
-                  <!-- Skin 8: Ringed Planet -->
-                  <g class="orb-skin" data-skin="7">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-ring-base)" />
-                    <!-- Atmospheric bands -->
-                    <path d="M16 42 Q50 38 84 42" fill="none" stroke="hsl(28 80% 35% / 0.55)" stroke-width="2" />
-                    <path d="M16 50 Q50 47 84 50" fill="none" stroke="hsl(20 70% 28% / 0.5)" stroke-width="1.6" />
-                    <path d="M16 58 Q50 56 84 58" fill="none" stroke="hsl(28 80% 38% / 0.45)" stroke-width="1.4" />
-                    <!-- Dark spot -->
-                    <ellipse cx="62" cy="54" rx="5" ry="2.2" fill="hsl(15 60% 22% / 0.7)" />
-                    <!-- Rings -->
-                    <ellipse cx="50" cy="50" rx="46" ry="6" fill="none" stroke="hsl(38 80% 70% / 0.55)" stroke-width="1.2" />
-                    <ellipse cx="50" cy="50" rx="42" ry="5" fill="none" stroke="hsl(28 70% 55% / 0.45)" stroke-width="0.8" />
-                  </g>
-
-                  <!-- Skin 9: Holographic Aura -->
-                  <g class="orb-skin" data-skin="8">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-holo)" />
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-holo-wash)" />
-                    <!-- Soft equator hint, no stripes -->
-                    <path d="M16 52 Q50 56 84 50" fill="none" stroke="hsl(0 0% 100% / 0.22)" stroke-width="0.5" />
-                  </g>
-
-                  <!-- Skin 10: Stained Glass -->
-                  <g class="orb-skin" data-skin="9">
-                    <circle cx="50" cy="50" r="36" fill="url(#orb-stain-a)" />
-                    <!-- Faceted shards -->
-                    <polygon points="14,14 50,18 38,46 14,40" fill="url(#orb-stain-b)" opacity="0.85" />
-                    <polygon points="50,18 86,14 78,42 52,38" fill="hsl(265 70% 55%)" opacity="0.78" />
-                    <polygon points="14,40 38,46 32,72 14,68" fill="hsl(345 75% 55%)" opacity="0.7" />
-                    <polygon points="38,46 64,52 56,82 32,72" fill="hsl(38 90% 55%)" opacity="0.78" />
-                    <polygon points="64,52 86,42 86,82 56,82" fill="hsl(165 65% 45%)" opacity="0.78" />
-                    <polygon points="52,38 78,42 64,52 38,46" fill="hsl(195 80% 55%)" opacity="0.72" />
-                    <!-- Lead lines -->
-                    <path d="M14 40 L38 46 L64 52 L86 42 M50 18 L38 46 M52 38 L64 52 L56 82 M32 72 L56 82" fill="none" stroke="hsl(0 0% 8% / 0.55)" stroke-width="0.7" />
-                  </g>
-
-                  <!-- Grain over all skins -->
-                  <circle cx="50" cy="50" r="36" filter="url(#orb-grain)" opacity="0.5" />
-                </g>
-
-                <!-- Lighting -->
-                <g class="orb-lighting">
-                  <circle cx="50" cy="50" r="36" fill="url(#orb-shadow)" />
-                  <circle cx="50" cy="50" r="36" fill="url(#orb-hi)" />
-                </g>
-              </g>
-            </svg>
-          </div>
-
         </div>
       </section>
 
@@ -3516,265 +3321,6 @@
             io.observe(el);
           })();
         </script>
-          <div class="section-head" style="margin-bottom:1.2rem; text-align:right; justify-items:stretch;">
-            <div style="grid-column: 2; text-align:right; width:100%; justify-self:stretch;">
-              <span class="section-kicker">Selected work</span>
-              <h2 style="margin-left:auto; max-width:none;">1000+ creator collaborations</h2>
-              <p style="display:block; width:100%; margin:0.6rem 0 0 auto; max-width:none; text-align:right;">Artists, brands, founders, and builders have shaped moments together with Rhozeland.</p>
-              <a class="section-link" href="/projects.html" style="justify-content:flex-end;">
-                See all projects
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-              </a>
-            </div>
-          </div>
-
-          <div class="work-scroll-wrap">
-          <div class="work-scroll-strip" id="workAutoScroll">
-            <!-- Photoshoot — YOUNG $TEELO (Apr 2026) -->
-            <a class="work-scroll-card" href="https://www.instagram.com/p/DWp2HNMDc50/?img_index=1" target="_blank" rel="noopener noreferrer">
-              <img src="/images/steelo-photoshoot-2.webp" alt="Photoshoot — YOUNG $TEELO" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Photography</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Photoshoot</h3>
-                <p>YOUNG $TEELO</p>
-              </div>
-            </a>
-            <!-- iiMPCT Media (Mar 2026) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/@iimpctmedia" target="_blank" rel="noopener noreferrer">
-              <img src="/images/iimpct-media-thumb.webp" alt="iiMPCT Media" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Web Series</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>iiMPCT Media</h3>
-                <p>iiMPCT Media</p>
-              </div>
-            </a>
-            <!-- Feel Like A Superhero — MONEE FINGAZ (Mar 2026) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=_4FotFv6VWc" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/fingaz-superhero-thumb.webp" alt="Feel Like A Superhero — MONEE FINGAZ" loading="lazy" />
-              <video class="work-video" src="/videos/fingaz-superhero.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Feel Like A Superhero</h3>
-                <p>MONEE FINGAZ</p>
-              </div>
-            </a>
-            <!-- The Mask — Ooak (Feb 2026) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=Ht1RPGlJBZg" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/ooak-the-mask-thumb.webp" alt="The Mask — Ooak" loading="lazy" />
-              <video class="work-video" src="/videos/ooak-the-mask.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>The Mask</h3>
-                <p>Ooak</p>
-              </div>
-            </a>
-            <!-- Nothing At All — Semiah (Oct 2025) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=xhAA_iVJP0w" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9b4591a36ab4564c8560_admin-ajax%20(15).png" alt="Nothing At All — Semiah" loading="lazy" />
-              <video class="work-video" src="/videos/semiah-nothing-at-all.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Nothing At All</h3>
-                <p>Semiah</p>
-              </div>
-            </a>
-            <!-- Mansa Musa — MONEE FINGAZ (Feb 2026) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
-              <video class="work-video" src="/videos/fingaz-mansa-musa.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Mansa Musa</h3>
-                <p>MONEE FINGAZ</p>
-              </div>
-            </a>
-            <!-- Holy Water — Cozal (Jan 2026) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/holy-water-thumb.webp" alt="Holy Water — Cozal" loading="lazy" />
-              <video class="work-video" src="/videos/cozal-holy-water.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Full Release</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Holy Water</h3>
-                <p>Cozal</p>
-              </div>
-            </a>
-            <!-- Saint Flair West — Ooak (Dec 2025) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM" target="_blank" rel="noopener noreferrer">
-              <img src="/images/ooak-saint-flair-west-thumb.webp" alt="Saint Flair West — Ooak" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-<span class="work-scroll-type">EP</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span></span>
-                <h3>Saint Flair West</h3>
-                <p>Ooak</p>
-              </div>
-            </a>
-            <!-- U OUTTA KNOW — YOUNG $TEELO (Nov 2025) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=JL85Aej4Je4" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/steelo-u-outta-know-thumb.webp" alt="U OUTTA KNOW — YOUNG $TEELO" loading="lazy" />
-              <video class="work-video" src="/videos/steelo-u-outta-know.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>U OUTTA KNOW</h3>
-                <p>YOUNG $TEELO</p>
-              </div>
-            </a>
-            <!-- Server Incognito — Indoléstic (Aug 2025) -->
-            <a class="work-scroll-card" href="https://vectorfestival.org/window-activation" target="_blank" rel="noopener noreferrer">
-              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif" alt="Server Incognito — Indoléstic" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Art Installation</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Server Incognito</h3>
-                <p>Indoléstic</p>
-              </div>
-            </a>
-            <!-- Bombaaa — MONEE FINGAZ x 1CUZZMN (Oct 2025) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=QSFF9jI8f4g" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png" alt="Bombaaa — MONEE FINGAZ x 1CUZZMN" loading="lazy" />
-              <video class="work-video" src="/videos/fingaz-bombaaa.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Bombaaa</h3>
-                <p>MONEE FINGAZ x 1CUZZMN</p>
-              </div>
-            </a>
-            <!-- True North Transparency (Jun 2024 — Present) -->
-            <a class="work-scroll-card" href="https://www.youtube.com/@truenorthtransparency" target="_blank" rel="noopener noreferrer">
-              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png" alt="True North Transparency" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Web Series</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>True North Transparency</h3>
-                <p>True North Transparency</p>
-              </div>
-            </a>
-            <!-- Withdrawals — Semiah -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=Y1v-IBb2aIA" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/semiah-withdrawals-thumb.webp" alt="Withdrawals — Semiah" loading="lazy" />
-              <video class="work-video" src="/videos/semiah-withdrawals.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Withdrawals</h3>
-                <p>Semiah</p>
-              </div>
-            </a>
-            <!-- FATE — DUBZY33 -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/dubzy-fate-thumb.webp" alt="FATE — DUBZY33" loading="lazy" />
-              <video class="work-video" src="/videos/dubzy-fate.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>FATE</h3>
-                <p>DUBZY33</p>
-              </div>
-            </a>
-            <!-- Sensimelia — JulzMadeThisOne -->
-            <a class="work-scroll-card" href="https://open.spotify.com/album/09tM0lhctM6aEfwG4mYmN5" target="_blank" rel="noopener noreferrer">
-              <img src="/images/julz-sensimelia.webp" alt="Sensimelia — JulzMadeThisOne" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Full Release</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span></span>
-                <h3>Sensimelia</h3>
-                <p>JulzMadeThisOne</p>
-              </div>
-            </a>
-            <!-- Baby Blue — Godfrey Noir -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=7-nqVh05kZ8" target="_blank" rel="noopener noreferrer">
-              <img src="/images/godfrey-noir-baby-blue.webp" alt="Baby Blue — Godfrey Noir" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Single</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span></span>
-                <h3>Baby Blue</h3>
-                <p>Godfrey Noir</p>
-              </div>
-            </a>
-            <!-- BK Whiskey x United Nations MMA -->
-            <a class="work-scroll-card" href="https://www.instagram.com/p/DKvf2jXMbRs" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/bk-whiskey-mma-thumb.webp" alt="United MMA Sponsorship — BK Whiskey" loading="lazy" />
-              <video class="work-video" src="/videos/bk-whiskey-mma.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Commercial</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>United MMA Sponsorship</h3>
-                <p>BK Whiskey</p>
-              </div>
-            </a>
-            <!-- LeLongLegs — Indoléstic -->
-            <a class="work-scroll-card" href="https://www.lelonglegs.lol/" target="_blank" rel="noopener noreferrer">
-              <img src="https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png" alt="LeLongLegs — Indoléstic" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Web Series</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>LeLongLegs</h3>
-                <p>Indoléstic</p>
-              </div>
-            </a>
-            <!-- Surfin' — MARV -->
-            <a class="work-scroll-card" href="https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63" target="_blank" rel="noopener noreferrer">
-              <img src="/images/surfin-thumb.webp" alt="Surfin' — MARV x Straightdizzy" loading="lazy" />
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Single</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span></span>
-                <h3>Surfin'</h3>
-                <p>MARV x Straightdizzy</p>
-              </div>
-            </a>
-            <!-- Night Come — Luckz -->
-            <a class="work-scroll-card" href="https://www.youtube.com/watch?v=pDO4sTpWKng" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/luckz-night-come-thumb.webp" alt="Night Come — Luckz" loading="lazy" />
-              <video class="work-video" src="/videos/luckz-night-come.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Music Video</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Night Come</h3>
-                <p>Luckz ft. MARV</p>
-              </div>
-            </a>
-            <!-- Lucky Charm — Carina -->
-            <a class="work-scroll-card" href="https://www.instagram.com/p/DXdWvKNDsOA/" target="_blank" rel="noopener noreferrer" data-hover-video>
-              <img src="/images/carina-lucky-charm-thumb.webp" alt="Lucky Charm — Carina" loading="lazy" />
-              <video class="work-video" src="/videos/carina-lucky-charm.mp4" muted playsinline loop preload="metadata"></video>
-              <div class="work-scroll-overlay"></div>
-              <span class="work-scroll-type">Reel</span>
-              <div class="work-scroll-body">
-                <span class="work-scroll-tag"><span class="work-tag-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span></span>
-                <h3>Lucky Charm</h3>
-                <p>Carina</p>
-              </div>
-            </a>
-           </div>
-          </div>
         <!-- Events ticker widget -->
         <div class="events-ticker" style="margin-bottom:1rem;">
           <div class="events-ticker-row">

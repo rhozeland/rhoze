@@ -544,7 +544,7 @@ function MyTimesheet({ periodId, userId, editorName, adminEdit, onExitEdit }: { 
       const h = Number(e.hours) || 0;
       const rate = e.rate_amount_cents || 0;
       if (e.work_type === "specialist") { t.specialist += h; t.specialistPay += h * SPECIALIST_RATE_CENTS; }
-      else if (e.work_type === "project") { t.project += h; t.projectPay += rate; } // flat fee, but show hours worked
+      else if (e.work_type === "project") { t.project += h; t.projectPay += h * rate; } // rate × hours
       else if (e.work_type === "reimbursement") { /* expense-only */ }
       else { t.standard += h; t.standardPay += h * rate; }
       t.expenses += e.expense_cents || 0;

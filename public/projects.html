@@ -12,101 +12,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
-  <style>
-    /* Editorial split toolbar */
-    .proj-toolbar {
-      position: sticky; top: 0; z-index: 40;
-      margin: 0 -1.25rem 1rem; padding: 0 1.25rem;
-      height: 56px;
-      background: hsl(var(--background) / 0.85);
-      backdrop-filter: saturate(140%) blur(14px);
-      -webkit-backdrop-filter: saturate(140%) blur(14px);
-      border-bottom: 1px solid hsl(var(--ink) / 0.08);
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    }
-    .proj-toolbar-lead { flex: 1 1 0; min-width: 0; display: flex; align-items: center; }
-    .proj-toolbar-kicker { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 600; color: hsl(var(--ink) / 0.9); }
-    .proj-tabs { display: inline-flex; align-items: center; gap: 2rem; }
-    .proj-tab {
-      position: relative; background: transparent; border: 0; cursor: pointer; padding: 6px 0;
-      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
-      color: hsl(var(--ink) / 0.4); transition: color 0.18s ease;
-    }
-    .proj-tab:hover { color: hsl(var(--ink)); }
-    .proj-tab.active { color: hsl(var(--ink)); }
-    .proj-tab.active::after {
-      content: ""; position: absolute; left: 0; right: 0; bottom: -6px;
-      height: 1px; background: hsl(var(--ink));
-    }
-    .proj-toolbar-trail { flex: 1 1 0; display: flex; justify-content: flex-end; align-items: center; gap: 0.4rem; }
-    .proj-search-btn {
-      width: 34px; height: 34px; border-radius: 999px; border: 0; background: transparent;
-      color: hsl(var(--ink) / 0.85); display: inline-flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background 0.18s ease;
-    }
-    .proj-search-btn:hover { background: hsl(var(--ink) / 0.06); }
-    .proj-search-btn svg { width: 16px; height: 16px; }
-    .proj-search-btn.is-active { background: hsl(var(--ink) / 0.08); }
-    /* Expanding search */
-    .proj-search-row {
-      position: sticky; top: 56px; z-index: 39;
-      margin: 0 -1.25rem; padding: 0 1.25rem;
-      background: hsl(var(--background) / 0.92);
-      backdrop-filter: saturate(140%) blur(14px);
-      -webkit-backdrop-filter: saturate(140%) blur(14px);
-      border-bottom: 1px solid hsl(var(--ink) / 0.06);
-      max-height: 0; overflow: hidden; transition: max-height 0.22s ease;
-    }
-    .proj-search-row.is-open { max-height: 64px; }
-    .proj-search-inner { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0; }
-    .proj-search-inner svg { width: 15px; height: 15px; color: hsl(var(--ink) / 0.5); flex-shrink: 0; }
-    .proj-search-inner input {
-      flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: transparent;
-      font: inherit; font-size: 0.9rem; color: hsl(var(--ink));
-    }
-    .proj-search-inner input::placeholder { color: hsl(var(--ink) / 0.35); }
-    /* Mobile tabs row */
-    .proj-tabs-mobile { display: none; }
-    @media (max-width: 720px) {
-      .proj-toolbar { height: 52px; margin: 0 -1rem 0.5rem; padding: 0 1rem; }
-      .proj-toolbar-lead { flex: 0 0 auto; }
-      .proj-tabs { display: none; }
-      .proj-tabs-mobile {
-        display: flex; justify-content: center; gap: 1.6rem;
-        padding: 0.65rem 1rem; margin: 0 -1rem 0.75rem;
-        border-bottom: 1px solid hsl(var(--ink) / 0.06);
-      }
-      .proj-search-row { top: 52px; }
-    }
-    /* Fixed bottom CTA */
-    .proj-cta-bar {
-      position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
-      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
-      background: linear-gradient(to top, hsl(var(--background)) 60%, hsl(var(--background) / 0));
-      pointer-events: none;
-    }
-    .proj-cta-bar a {
-      pointer-events: auto;
-      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-      max-width: 1180px; margin: 0 auto;
-      background: hsl(var(--ink)); color: hsl(var(--surface-card));
-      padding: 0.95rem 1.4rem; border-radius: 0;
-      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
-      text-decoration: none;
-      transition: transform 0.18s ease, opacity 0.18s ease;
-    }
-    .proj-cta-bar a:hover { opacity: 0.92; }
-    .proj-cta-bar a .proj-cta-trail { display: inline-flex; align-items: center; gap: 0.65rem; }
-    .proj-cta-bar a .proj-cta-hint { font-size: 0.62rem; letter-spacing: 0.22em; opacity: 0.45; }
-    .proj-cta-bar a svg { width: 14px; height: 14px; transition: transform 0.18s ease; }
-    .proj-cta-bar a:hover svg { transform: translateX(3px); }
-    @media (max-width: 720px) {
-      .proj-cta-bar a .proj-cta-hint { display: none; }
-      .proj-cta-bar a { padding: 0.9rem 1.1rem; }
-    }
-    /* Give grid room above fixed CTA */
-    .page-projects main { padding-bottom: 6.5rem; }
-  </style>
 </head>
 <body class="page-projects">
   <div class="gradient-canvas" aria-hidden="true"></div>
@@ -145,37 +50,85 @@
 
     <main>
 
-      <!-- EDITORIAL TOOLBAR -->
-      <div class="proj-toolbar" aria-label="Projects">
-        <div class="proj-toolbar-lead">
-          <span class="proj-toolbar-kicker">Projects</span>
+      <!-- SERVICES -->
+      <section class="section">
+        <div class="section-head" style="flex-direction:column;align-items:center;text-align:center;margin-bottom:1.2rem;">
+          <div>
+            <span class="section-kicker">Services</span>
+            <h2>We handle every stage of the creative process.</h2>
+          </div>
         </div>
-        <div class="proj-tabs" role="tablist">
-          <button class="proj-tab active" data-svc="portfolio" type="button">All</button>
-          <button class="proj-tab" data-svc="visual" type="button">Visual</button>
-          <button class="proj-tab" data-svc="audio" type="button">Audio</button>
-          <button class="proj-tab" data-svc="development" type="button">Development</button>
+        <div class="services-tabs">
+          <div class="services-tab-buttons">
+            <button class="services-tab-btn active" data-tab="visual" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+              <span>Visual</span>
+            </button>
+            <button class="services-tab-btn" data-tab="audio" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <span>Audio</span>
+            </button>
+            <button class="services-tab-btn" data-tab="development" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <span>Development</span>
+            </button>
+          </div>
+          <div class="services-tab-panels">
+            <div class="services-tab-panel active" data-panel="visual">
+              <ul><li>Photo shoots</li><li>Content editing</li><li>Commercial editing</li><li>Short-form editing</li><li>Music video editing</li></ul>
+            </div>
+            <div class="services-tab-panel" data-panel="audio">
+              <ul><li>Audio recording</li><li>Mixing</li><li>Mastering</li><li>Podcast recording</li></ul>
+            </div>
+            <div class="services-tab-panel" data-panel="development">
+              <ul><li>Graphic design</li><li>Design hour</li><li>Web development</li><li>UI/UX design</li><li>Strategy consult</li></ul>
+            </div>
+          </div>
         </div>
-        <div class="proj-toolbar-trail">
-          <button class="proj-search-btn" id="projSearchBtn" type="button" aria-label="Search projects" aria-expanded="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
-          </button>
+        <div style="display:flex;justify-content:center;margin-top:2rem;">
+          <a href="/start.html" class="btn-dark" style="padding:0.95rem 1.6rem;font-size:0.92rem;">
+            Start a project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- MARQUEE -->
+      <div class="projects-marquee">
+        <div class="marquee-track">
+          <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+          <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+          <span>Our projects</span><span>Our projects</span><span>Our projects</span>
+          <span>Our projects</span><span>Our projects</span><span>Our projects</span>
         </div>
       </div>
 
-      <!-- Mobile filter tabs -->
-      <div class="proj-tabs-mobile" role="tablist">
-        <button class="proj-tab active" data-svc="portfolio" type="button">All</button>
-        <button class="proj-tab" data-svc="visual" type="button">Visual</button>
-        <button class="proj-tab" data-svc="audio" type="button">Audio</button>
-        <button class="proj-tab" data-svc="development" type="button">Dev</button>
-      </div>
-
-      <!-- Expanding search -->
-      <div class="proj-search-row" id="projSearchRow">
-        <div class="proj-search-inner">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      <!-- FILTER BAR -->
+      <div class="filter-bar" id="filterBar">
+        <div class="filter-search" role="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.35-4.35"></path></svg>
           <input id="projectSearch" type="search" placeholder="Search projects, artists, or release types" aria-label="Search projects" />
+        </div>
+        <div class="filter-right">
+          <div class="filter-dropdown" id="filterDropdown">
+            <button class="filter-dropdown-btn" id="filterDropdownBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              <span id="filterDropdownLabel">Portfolio Flow</span>
+              <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="filter-dropdown-menu" id="filterDropdownMenu">
+              <button class="filter-dropdown-item active" data-filter="portfolio" type="button">Portfolio Flow</button>
+              <button class="filter-dropdown-item" data-filter="newest" type="button">Newest First</button>
+              <div class="filter-dropdown-divider"></div>
+              <button class="filter-dropdown-item" data-filter="visual" type="button">Visual</button>
+              <button class="filter-dropdown-item" data-filter="audio" type="button">Audio</button>
+              <button class="filter-dropdown-item" data-filter="development" type="button">Development</button>
+            </div>
+          </div>
+          <button class="shuffle-toggle" id="shuffleToggle" type="button" aria-label="Shuffle project layout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M16 3h5v5"></path><path d="M4 20 21 3"></path><path d="M21 16v5h-5"></path><path d="m15 15 6 6"></path><path d="M4 4h5"></path><path d="m9 4 3 3"></path></svg>
+            <span>Shuffle</span>
+          </button>
         </div>
       </div>
 
@@ -598,17 +551,6 @@
       </section>
     </main>
 
-    <!-- Fixed bottom CTA -->
-    <div class="proj-cta-bar" aria-label="Start a project">
-      <a href="/start.html">
-        <span>Start a project</span>
-        <span class="proj-cta-trail">
-          <span class="proj-cta-hint">Inquiry</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </span>
-      </a>
-    </div>
-
     <!-- FOOTER -->
     <footer class="footer">
       <div class="footer-panel">
@@ -664,39 +606,49 @@
 
   <script>
   (function() {
+    /* Services tab toggle */
+    var tabBtns = document.querySelectorAll('.services-tab-btn');
+    tabBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        tabBtns.forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.services-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelector('.services-tab-panel[data-panel="' + btn.getAttribute('data-tab') + '"]').classList.add('active');
+      });
+    });
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');
-    var searchBtn = document.getElementById('projSearchBtn');
-    var searchRow = document.getElementById('projSearchRow');
-    var tabs = document.querySelectorAll('.proj-tab');
+    var dropdown = document.getElementById('filterDropdown');
+    var dropdownBtn = document.getElementById('filterDropdownBtn');
+    var dropdownMenu = document.getElementById('filterDropdownMenu');
+    var dropdownLabel = document.getElementById('filterDropdownLabel');
+    var dropdownItems = document.querySelectorAll('.filter-dropdown-item');
+    var shuffleBtn = document.getElementById('shuffleToggle');
     var modal = document.getElementById('artistModal');
     var currentSearch = '';
-    var currentFilter = 'portfolio'; // portfolio, visual, audio, development
+    var currentFilter = 'portfolio'; // portfolio, newest, video, audio, photo
 
-    function syncTabs() {
-      tabs.forEach(function(t) {
-        t.classList.toggle('active', t.getAttribute('data-svc') === currentFilter);
-      });
-    }
-    tabs.forEach(function(tab) {
-      tab.addEventListener('click', function() {
-        currentFilter = tab.getAttribute('data-svc');
-        syncTabs();
+    // Dropdown toggle
+    dropdownBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', function() {
+      dropdown.classList.remove('open');
+    });
+    dropdownMenu.addEventListener('click', function(e) { e.stopPropagation(); });
+
+    dropdownItems.forEach(function(item) {
+      item.addEventListener('click', function() {
+        currentFilter = item.getAttribute('data-filter');
+        dropdownLabel.textContent = item.textContent;
+        dropdownItems.forEach(function(i) { i.classList.remove('active'); });
+        item.classList.add('active');
+        dropdown.classList.remove('open');
         renderGrid();
       });
     });
-
-    // Search toggle
-    if (searchBtn && searchRow) {
-      searchBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var open = searchRow.classList.toggle('is-open');
-        searchBtn.classList.toggle('is-active', open);
-        searchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (open && searchInput) setTimeout(function() { searchInput.focus(); }, 60);
-      });
-    }
 
     function syncProjectGridRows() {
       if (!grid) return;
@@ -801,6 +753,16 @@
       });
     }
 
+    shuffleBtn.addEventListener('click', function() {
+      shuffleBtn.classList.remove('is-shuffling');
+      void shuffleBtn.offsetWidth;
+      shuffleBtn.classList.add('is-shuffling');
+      renderGrid('shuffle');
+    });
+
+    shuffleBtn.addEventListener('animationend', function() {
+      shuffleBtn.classList.remove('is-shuffling');
+    });
 
     function renderArtistBadges(name) {
       var badgeWrap = document.getElementById('artistModalBadges');

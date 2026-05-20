@@ -3187,11 +3187,12 @@
             .r-eco-panes { display: flex; flex-direction: column; height: auto; gap: 6px; }
             .r-eco-pane { flex: 1 1 auto; min-height: 0; }
             /* Body becomes natural flow so the card grows with content */
-            .r-eco-pane-body { position: relative; inset: auto; padding: 1rem 1.1rem; display: flex; flex-direction: row; align-items: center; gap: 0.75rem; min-height: 64px; }
-            .r-eco-pane-body > div { display: flex; flex-direction: row; align-items: center; gap: 0.75rem; flex-wrap: wrap; width: 100%; }
-            .r-eco-icon { width: 32px; height: 32px; margin: 0; flex-shrink: 0; }
+            .r-eco-pane-body { position: relative; inset: auto; padding: 0.95rem 1.1rem; display: block; min-height: 60px; }
+            .r-eco-pane-body > div { display: grid; grid-template-columns: auto 1fr; grid-template-areas: "icon title" "body body"; column-gap: 0.75rem; row-gap: 0; align-items: center; width: 100%; }
+            .r-eco-icon { grid-area: icon; width: 32px; height: 32px; margin: 0; flex-shrink: 0; }
             .r-eco-icon svg { width: 16px; height: 16px; }
-            .r-eco-cat { font-size: 1rem; margin: 0; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1 1 auto; min-width: 0; }
+            .r-eco-cat { grid-area: title; font-size: 1rem; margin: 0; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+            .r-eco-pills, .r-eco-events { grid-area: body; }
             /* Pills/events hidden by default; reveal when card is :focus-within (tap/click) */
             .r-eco-pills { display: flex; flex-basis: 100%; gap: 0.3rem; justify-content: flex-start; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; }
             .r-eco-pane:focus-within .r-eco-pills, .r-eco-pane.is-open .r-eco-pills { opacity: 1; max-height: 240px; pointer-events: auto; margin-top: 0.5rem; }

@@ -3181,6 +3181,12 @@
           .r-eco-event-tag { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(26,26,26,0.55); }
           .r-eco-events-status { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(26,26,26,0.6); margin-bottom: 0.15rem; }
           .r-eco-events-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #e94560; box-shadow: 0 0 0 0 rgba(233,69,96,0.6); animation: rEcoPulse 2s infinite; }
+          /* Events list header (Upcoming / Follow on Luma) — applies on all viewports */
+          .r-eco-pane.is-events .r-eco-events-head { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0 0 0.4rem; margin-bottom: 0.25rem; border-bottom: 1px solid rgba(26,26,26,0.08); gap: 0.5rem; }
+          .r-eco-pane.is-events .r-eco-events-up { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(26,26,26,0.65); }
+          .r-eco-pane.is-events .r-eco-events-up .dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.55); animation: rEcoPulse 2s infinite; }
+          .r-eco-pane.is-events .r-eco-events-luma { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.04em; color: rgba(26,26,26,0.7); text-decoration: none; display: inline-flex; align-items: center; gap: 2px; }
+          .r-eco-pane.is-events .r-eco-events-luma:hover { color: #1a1a1a; }
           @keyframes rEcoPulse { 0%{box-shadow:0 0 0 0 rgba(233,69,96,0.55);} 70%{box-shadow:0 0 0 6px rgba(233,69,96,0);} 100%{box-shadow:0 0 0 0 rgba(233,69,96,0);} }
           @media (max-width: 860px) {
             /* Minimal accordion layout: stacked rows, tap a card to expand inline */
@@ -3249,23 +3255,15 @@
             }
             .r-eco-pane.is-events .r-eco-pane-body > div { min-width: 0; overflow: hidden; }
             .r-eco-pane.is-events .r-eco-event-body { min-width: 0 !important; overflow: hidden; }
-            .r-eco-pane.is-events .r-eco-events-head {
-              display: flex; align-items: center; justify-content: space-between;
-              padding: 0 0 0.55rem; border-bottom: 1px solid rgba(26,26,26,0.08);
-              margin-bottom: 0.25rem; width: 100%;
-            }
+            .r-eco-pane.is-events .r-eco-events-head { padding-bottom: 0.55rem; }
             .r-eco-pane.is-events .r-eco-events-up {
               display: inline-flex; align-items: center; gap: 0.4rem;
               font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
               text-transform: uppercase; color: rgba(26,26,26,0.7);
             }
-            .r-eco-pane.is-events .r-eco-events-up .dot {
-              width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
-              box-shadow: 0 0 0 0 rgba(34,197,94,0.55); animation: rEcoPulse 2s infinite;
-            }
+            .r-eco-pane.is-events .r-eco-events-up .dot { width: 7px; height: 7px; }
             .r-eco-pane.is-events .r-eco-events-luma {
-              font-size: 0.7rem; font-weight: 600; color: #1a1a1a;
-              text-decoration: none; display: inline-flex; align-items: center;
+              font-size: 0.7rem; color: #1a1a1a;
             }
             .r-eco-pane.is-events .r-eco-event {
               display: flex !important; align-items: center; justify-content: flex-start;

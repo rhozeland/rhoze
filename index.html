@@ -3405,6 +3405,21 @@
       <script>
         (function(){
           var track = document.getElementById('rEcoFeatTrack');
+          // Mobile/tablet: tap to toggle expand on a service pane (accordion behavior)
+          (function(){
+            var panes = document.querySelectorAll('.r-eco-pane');
+            if (!panes.length) return;
+            panes.forEach(function(p){
+              p.addEventListener('click', function(e){
+                if (window.innerWidth > 860) return;
+                // Ignore clicks on actual links inside the pane
+                if (e.target.closest('a')) return;
+                var wasOpen = p.classList.contains('is-open');
+                panes.forEach(function(o){ o.classList.remove('is-open'); });
+                if (!wasOpen) p.classList.add('is-open');
+              });
+            });
+          })();
           if (!track) return;
           var projects = [
             { t:'Mansa Musa', a:'MONEE FINGAZ', tag:'Music Video', img:'/images/fingaz-mansa-musa-thumb.webp', vid:'/videos/fingaz-mansa-musa.mp4', href:'https://www.youtube.com/watch?v=w9dYE595cBw' },

@@ -3298,6 +3298,22 @@
           </div>
         </div>
       </section>
+      <script>
+        (function(){
+          var rotators = document.querySelectorAll('.r-eco-rotator');
+          if (!rotators.length) return;
+          rotators.forEach(function(r, idx){
+            var imgs = r.querySelectorAll('img');
+            if (imgs.length < 2) return;
+            var i = 0;
+            setInterval(function(){
+              imgs[i].classList.remove('is-active');
+              i = (i + 1) % imgs.length;
+              imgs[i].classList.add('is-active');
+            }, 3200 + (idx * 380));
+          });
+        })();
+      </script>
 
       <section class="section reveal" id="system" style="padding-bottom:1.5rem; padding-top:1.5rem;">
         <div class="story-compact-head">

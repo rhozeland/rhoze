@@ -3132,8 +3132,12 @@
           .r-eco-feat::before, .r-eco-feat::after { content: ""; position: absolute; top: 0; bottom: 0; width: 72px; z-index: 2; pointer-events: none; }
           .r-eco-feat::before { left: 0; background: linear-gradient(90deg, #0f0f0f, transparent); }
           .r-eco-feat::after { right: 0; background: linear-gradient(-90deg, #0f0f0f, transparent); }
-          .r-eco-feat-label { position: absolute; top: 10px; left: 14px; z-index: 3; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.7); display: inline-flex; align-items: center; gap: 0.45rem; }
-          .r-eco-feat-all { position: absolute; top: 10px; right: 14px; z-index: 3; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0; background: transparent; color: rgba(250,249,246,0.85); font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; transition: color 0.2s ease, transform 0.2s ease; border-bottom: 1px solid rgba(250,249,246,0.35); padding-bottom: 2px; }
+          .r-eco-feat-label { position: absolute; top: 10px; left: 14px; z-index: 3; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.7); display: inline-flex; align-items: center; gap: 0.45rem; max-width: calc(100% - 130px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .r-eco-feat-all { position: absolute; top: 10px; right: 14px; z-index: 3; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0 0 2px; background: transparent; color: rgba(250,249,246,0.85); font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; transition: color 0.2s ease, transform 0.2s ease; border-bottom: 1px solid rgba(250,249,246,0.35); white-space: nowrap; }
+          @media (max-width: 560px) {
+            .r-eco-feat-label { font-size: 0.5rem; letter-spacing: 0.16em; max-width: calc(100% - 110px); }
+            .r-eco-feat-all { font-size: 0.5rem; letter-spacing: 0.16em; }
+          }
           .r-eco-feat-all:hover { color: #FAF9F6; border-bottom-color: #FAF9F6; transform: translateX(2px); }
           .r-eco-feat-all svg { width: 0.7rem; height: 0.7rem; }
           .r-eco-feat-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #FFB870; box-shadow: 0 0 0 0 rgba(255,184,112,0.55); animation: rEcoPulse 2s infinite; }

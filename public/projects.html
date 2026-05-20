@@ -667,54 +667,36 @@
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');
-    var dropdown = document.getElementById('filterDropdown');
-    var dropdownBtn = document.getElementById('filterDropdownBtn');
-    var dropdownMenu = document.getElementById('filterDropdownMenu');
-    var dropdownLabel = document.getElementById('filterDropdownLabel');
-    var dropdownItems = document.querySelectorAll('.filter-dropdown-item');
-    var shuffleBtn = document.getElementById('shuffleToggle');
+    var searchBtn = document.getElementById('projSearchBtn');
+    var searchRow = document.getElementById('projSearchRow');
+    var tabs = document.querySelectorAll('.proj-tab');
     var modal = document.getElementById('artistModal');
     var currentSearch = '';
-    var currentFilter = 'portfolio'; // portfolio, newest, video, audio, photo
+    var currentFilter = 'portfolio'; // portfolio, visual, audio, development
 
-    // Dropdown toggle
-    dropdownBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      dropdown.classList.toggle('open');
-    });
-    document.addEventListener('click', function() {
-      dropdown.classList.remove('open');
-    });
-    dropdownMenu.addEventListener('click', function(e) { e.stopPropagation(); });
-
-    dropdownItems.forEach(function(item) {
-      item.addEventListener('click', function() {
-        currentFilter = item.getAttribute('data-filter');
-        dropdownLabel.textContent = item.textContent;
-        dropdownItems.forEach(function(i) { i.classList.remove('active'); });
-        item.classList.add('active');
-        dropdown.classList.remove('open');
-        renderGrid();
-        syncServicePills();
-      });
-    });
-
-    /* Sticky services pills → filter the grid (toggle to clear) */
-    var servicePills = document.querySelectorAll('.services-sticky-pill');
-    function syncServicePills() {
-      servicePills.forEach(function(p) {
-        p.classList.toggle('active', p.getAttribute('data-svc') === currentFilter);
+    function syncTabs() {
+      tabs.forEach(function(t) {
+        t.classList.toggle('active', t.getAttribute('data-svc') === currentFilter);
       });
     }
-    servicePills.forEach(function(pill) {
-      pill.addEventListener('click', function() {
-        var svc = pill.getAttribute('data-svc');
-        var target = (currentFilter === svc) ? 'portfolio' : svc;
-        var menuItem = document.querySelector('.filter-dropdown-item[data-filter="' + target + '"]');
-        if (menuItem) menuItem.click();
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        currentFilter = tab.getAttribute('data-svc');
+        syncTabs();
+        renderGrid();
       });
     });
-    syncServicePills();
+
+    // Search toggle
+    if (searchBtn && searchRow) {
+      searchBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var open = searchRow.classList.toggle('is-open');
+        searchBtn.classList.toggle('is-active', open);
+        searchBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open && searchInput) setTimeout(function() { searchInput.focus(); }, 60);
+      });
+    }
 
     function syncProjectGridRows() {
       if (!grid) return;

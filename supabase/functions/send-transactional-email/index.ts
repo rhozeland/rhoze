@@ -61,15 +61,13 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // Require service_role JWT — block anon-key callers.
+  // Require service_role JWT for arbitrary sends. Anon callers (browser
+  // forms) are allowed only for templates in PUBLIC_NOTIFICATION_ALLOWLIST
+  // and only when recipientEmail matches the allowlisted fixed recipients.
   const authHeader = req.headers.get('Authorization') || req.headers.get('authorization')
   const token = authHeader?.replace(/^Bearer\s+/i, '') ?? null
-  if (parseJwtRole(token) !== 'service_role') {
-    return new Response(
-      JSON.stringify({ error: 'Forbidden' }),
-      { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-  }
+  const callerRole = parseJwtRole(token)
+  const isServiceRole = callerRole === 'service_role'
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
@@ -83,6 +81,16 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
+  }
+
+  if (!isServiceRole) {
+    const allowedRecipients = PUBLIC_NOTIFICATION_ALLOWLIST[templateName]
+    if (!allowedRecipients || !allowedRecipients.includes(String(recipientEmail).toLowerCase())) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
   }
 
   // Parse request body

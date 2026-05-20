@@ -3114,10 +3114,27 @@
             <h1 id="homepage-title">The creative ecosystem for launching culture.</h1>
           </div>
 
+          <details class="r-eco-story" id="rEcoStory">
+            <summary aria-label="Our story (expand)">
+              <span class="r-eco-story-line">
+                <span class="r-eco-story-kicker">Our story</span>
+                <span class="r-eco-story-tagline">From a circle of friends in 2016 to a studio and launchpad for bold creators today.</span>
+              </span>
+              <svg class="r-eco-story-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </summary>
+            <div class="r-eco-story-content">
+              <div class="r-eco-story-step"><span class="y">2016</span><span class="t">Origin</span><span class="d">A circle of friends sharing music, art, and culture.</span></div>
+              <div class="r-eco-story-step"><span class="y">2021</span><span class="t">The hub</span><span class="d">A digital platform connecting creators and resources.</span></div>
+              <div class="r-eco-story-step"><span class="y">2023</span><span class="t">Studio launch</span><span class="d">First physical studio — record, produce, collaborate.</span></div>
+              <div class="r-eco-story-step"><span class="y">Today</span><span class="t">A new era</span><span class="d">A living record of creators, space, and movement.</span></div>
+              <div class="r-eco-story-more"><a href="/about.html">Read the full story →</a></div>
+            </div>
+          </details>
+
           <div class="r-eco-stage">
             <div class="r-eco-panes" role="list">
               <!-- Visual -->
-              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Visual services">
+              <div class="r-eco-pane is-visual" role="listitem" tabindex="0" aria-label="Visual services">
                 <div class="r-eco-pane-body">
                   <div>
                     <span class="r-eco-cat">Visual</span>
@@ -3132,13 +3149,17 @@
                   <div class="r-eco-foot">
                     <span class="r-eco-foot-label">Selected work</span>
                     <div class="r-eco-thumbs">
-                      <a class="r-eco-thumb" href="/projects.html" aria-label="YOUNG $TEELO photoshoot">
+                      <a class="r-eco-thumb r-eco-rotator" href="/projects.html" aria-label="Photography work">
                         <span class="r-eco-thumb-tag">Photography</span>
-                        <img src="/images/steelo-photoshoot-2.webp" alt="YOUNG $TEELO photoshoot" loading="lazy" />
-                      </a>
-                      <a class="r-eco-thumb" href="/projects.html" aria-label="iiMPCT Media web series">
-                        <span class="r-eco-thumb-tag">Web series</span>
+                        <img class="is-active" src="/images/steelo-photoshoot-2.webp" alt="YOUNG $TEELO photoshoot" loading="lazy" />
                         <img src="/images/iimpct-media-thumb.webp" alt="iiMPCT Media web series" loading="lazy" />
+                        <img src="/images/documentary-thumbnail.webp" alt="Rhozeland documentary still" loading="lazy" />
+                      </a>
+                      <a class="r-eco-thumb r-eco-rotator" href="/projects.html" aria-label="Visual production work">
+                        <span class="r-eco-thumb-tag">Web series</span>
+                        <img class="is-active" src="/images/iimpct-media-thumb.webp" alt="iiMPCT Media web series" loading="lazy" />
+                        <img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa video still" loading="lazy" />
+                        <img src="/images/steelo-photoshoot-2.webp" alt="YOUNG $TEELO photoshoot" loading="lazy" />
                       </a>
                     </div>
                   </div>
@@ -3146,7 +3167,7 @@
               </div>
 
               <!-- Audio -->
-              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Audio services">
+              <div class="r-eco-pane is-audio" role="listitem" tabindex="0" aria-label="Audio services">
                 <div class="r-eco-pane-body">
                   <div>
                     <span class="r-eco-cat">Audio</span>
@@ -3161,13 +3182,15 @@
                   <div class="r-eco-foot">
                     <span class="r-eco-foot-label">Selected work</span>
                     <div class="r-eco-thumbs">
-                      <a class="r-eco-thumb" href="/projects.html" aria-label="Holy Water — Cozal">
+                      <a class="r-eco-thumb r-eco-rotator" href="/projects.html" aria-label="Audio singles">
                         <span class="r-eco-thumb-tag">Single</span>
-                        <img src="/images/holy-water-thumb.webp" alt="Holy Water — Cozal" loading="lazy" />
-                      </a>
-                      <a class="r-eco-thumb" href="/projects.html" aria-label="Mansa Musa — MONEE FINGAZ">
-                        <span class="r-eco-thumb-tag">Music video</span>
+                        <img class="is-active" src="/images/holy-water-thumb.webp" alt="Holy Water — Cozal" loading="lazy" />
                         <img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
+                      </a>
+                      <a class="r-eco-thumb r-eco-rotator" href="/projects.html" aria-label="Music videos">
+                        <span class="r-eco-thumb-tag">Music video</span>
+                        <img class="is-active" src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa — MONEE FINGAZ" loading="lazy" />
+                        <img src="/images/holy-water-thumb.webp" alt="Holy Water — Cozal" loading="lazy" />
                       </a>
                     </div>
                   </div>
@@ -3175,7 +3198,7 @@
               </div>
 
               <!-- Development -->
-              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Development services">
+              <div class="r-eco-pane is-dev" role="listitem" tabindex="0" aria-label="Development services">
                 <div class="r-eco-pane-body">
                   <div>
                     <span class="r-eco-cat">Development</span>
@@ -3190,13 +3213,15 @@
                   <div class="r-eco-foot">
                     <span class="r-eco-foot-label">Selected work</span>
                     <div class="r-eco-thumbs">
-                      <a class="r-eco-thumb" href="/projects.html" aria-label="Rhozeland documentary">
+                      <a class="r-eco-thumb r-eco-rotator" href="/projects.html" aria-label="Documentary & films">
                         <span class="r-eco-thumb-tag">Documentary</span>
-                        <img src="/images/documentary-thumbnail.webp" alt="Rhozeland documentary" loading="lazy" />
-                      </a>
-                      <a class="r-eco-thumb" href="/projects.html" aria-label="True North Transparency">
-                        <span class="r-eco-thumb-tag">Platform</span>
+                        <img class="is-active" src="/images/documentary-thumbnail.webp" alt="Rhozeland documentary" loading="lazy" />
                         <img src="/images/timeline-2023.webp" alt="True North Transparency platform" loading="lazy" />
+                      </a>
+                      <a class="r-eco-thumb r-eco-rotator" href="/projects.html" aria-label="Platforms & products">
+                        <span class="r-eco-thumb-tag">Platform</span>
+                        <img class="is-active" src="/images/timeline-2023.webp" alt="True North Transparency platform" loading="lazy" />
+                        <img src="/images/documentary-thumbnail.webp" alt="Rhozeland documentary" loading="lazy" />
                       </a>
                     </div>
                   </div>
@@ -3204,7 +3229,7 @@
               </div>
 
               <!-- Events (custom view) -->
-              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Events and gatherings">
+              <div class="r-eco-pane is-events" role="listitem" tabindex="0" aria-label="Events and gatherings">
                 <div class="r-eco-pane-body">
                   <div>
                     <span class="r-eco-cat">Events</span>

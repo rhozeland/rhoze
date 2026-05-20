@@ -3129,9 +3129,9 @@
           .r-eco-feat::after { right: 0; background: linear-gradient(-90deg, #0f0f0f, transparent); }
           .r-eco-feat-label { position: absolute; top: 10px; left: 14px; z-index: 3; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.7); display: inline-flex; align-items: center; gap: 0.45rem; }
           .r-eco-feat-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #FFB870; box-shadow: 0 0 0 0 rgba(255,184,112,0.55); animation: rEcoPulse 2s infinite; }
-          .r-eco-feat-viewport { overflow: hidden; padding: 2.1rem 0 0.8rem; }
-          .r-eco-feat-track { display: flex; gap: 10px; padding: 0 14px; width: max-content; animation: rEcoMarquee 90s linear infinite; }
-          .r-eco-feat:hover .r-eco-feat-track { animation-play-state: paused; }
+          .r-eco-feat-viewport { overflow-x: auto; overflow-y: hidden; padding: 2.1rem 0 0.8rem; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+          .r-eco-feat-viewport::-webkit-scrollbar { display: none; }
+          .r-eco-feat-track { display: flex; gap: 10px; padding: 0 14px; width: max-content; }
           @keyframes rEcoMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
           .r-eco-feat-card { position: relative; flex: 0 0 auto; width: 168px; aspect-ratio: 4 / 5; border-radius: 10px; overflow: hidden; background: #1a1a1a; text-decoration: none; color: #FAF9F6; transition: transform 0.35s ease; }
           .r-eco-feat-card:hover { transform: translateY(-3px); }
@@ -3381,8 +3381,6 @@
             { t:'United MMA', a:'BK Whiskey', tag:'Commercial', img:'/images/bk-whiskey-mma-thumb.webp', vid:'/videos/bk-whiskey-mma.mp4', href:'https://www.instagram.com/p/DKvf2jXMbRs' },
             { t:'Night Come', a:'Luckz ft. MARV', tag:'Music Video', img:'/images/luckz-night-come-thumb.webp', vid:'/videos/luckz-night-come.mp4', href:'https://www.youtube.com/watch?v=pDO4sTpWKng' },
             { t:"Surfin'", a:'MARV x Straightdizzy', tag:'Single', img:'/images/surfin-thumb.webp', href:'https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63' },
-            { t:'The Documentary', a:'Rhozeland', tag:'Film', img:'/images/documentary-thumbnail.webp', href:'https://www.youtube.com/watch?v=9rxMdl_mQws' },
-            { t:'True North', a:'Transparency', tag:'Platform', img:'/images/project-truenorth.webp', href:'/projects.html' },
             { t:'Server Incognito', a:'Indoléstic', tag:'Installation', img:'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif', href:'https://vectorfestival.org/window-activation' }
           ];
           function card(p){
@@ -3397,6 +3395,35 @@
           var html = projects.map(card).join('');
           // Duplicate for seamless marquee loop
           track.innerHTML = html + html;
+          // Auto-scroll featured work like the Featured On ticker; pause on hover/touch/focus
+          var viewport = track.parentElement;
+          var paused = false, userInteracting = false, resumeTimer = null;
+          function pauseFor(ms){
+            userInteracting = true;
+            clearTimeout(resumeTimer);
+            resumeTimer = setTimeout(function(){ userInteracting = false; }, ms || 2500);
+          }
+          viewport.addEventListener('mouseenter', function(){ paused = true; });
+          viewport.addEventListener('mouseleave', function(){ paused = false; });
+          viewport.addEventListener('wheel', function(){ pauseFor(3000); }, { passive: true });
+          viewport.addEventListener('touchstart', function(){ paused = true; }, { passive: true });
+          viewport.addEventListener('touchend', function(){ pauseFor(3500); });
+          viewport.addEventListener('scroll', function(){
+            var half = track.scrollWidth / 2;
+            if (viewport.scrollLeft >= half) viewport.scrollLeft -= half;
+            else if (viewport.scrollLeft <= 0) viewport.scrollLeft += half;
+          });
+          var last = performance.now();
+          function tick(now){
+            var dt = now - last; last = now;
+            if (!paused && !userInteracting) {
+              viewport.scrollLeft += dt * 0.04; // ~40px/sec
+              var half = track.scrollWidth / 2;
+              if (viewport.scrollLeft >= half) viewport.scrollLeft -= half;
+            }
+            requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
           // Hover-to-play preview videos (lazy attach src on first hover)
           track.querySelectorAll('.r-eco-feat-card').forEach(function(card){
             var vid = card.querySelector('video');

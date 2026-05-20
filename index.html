@@ -3395,18 +3395,37 @@
       </section>
       <script>
         (function(){
-          var rotators = document.querySelectorAll('.r-eco-rotator');
-          if (!rotators.length) return;
-          rotators.forEach(function(r, idx){
-            var imgs = r.querySelectorAll('img');
-            if (imgs.length < 2) return;
-            var i = 0;
-            setInterval(function(){
-              imgs[i].classList.remove('is-active');
-              i = (i + 1) % imgs.length;
-              imgs[i].classList.add('is-active');
-            }, 3200 + (idx * 380));
-          });
+          var track = document.getElementById('rEcoFeatTrack');
+          if (!track) return;
+          var projects = [
+            { t:'Mansa Musa', a:'MONEE FINGAZ', tag:'Music Video', img:'/images/fingaz-mansa-musa-thumb.webp', href:'https://www.youtube.com/watch?v=w9dYE595cBw' },
+            { t:'Holy Water', a:'Cozal', tag:'Music Video', img:'/images/cozal-holy-water-thumb.webp', href:'https://www.youtube.com/watch?v=VPLyATcs7fE' },
+            { t:'Just Call Me', a:'Ess B', tag:'Music Video', img:'/images/ess-b-just-call-me-thumb.webp', href:'https://www.youtube.com/watch?v=2Nuyr57Xe3o' },
+            { t:'U OUTTA KNOW', a:'YOUNG $TEELO', tag:'Music Video', img:'/images/steelo-u-outta-know-thumb.webp', href:'https://www.youtube.com/watch?v=JL85Aej4Je4' },
+            { t:'Bombaaa', a:'MONEE FINGAZ x 1CUZZMN', tag:'Music Video', img:'/images/fingaz-bombaaa-thumb.webp', href:'https://www.youtube.com/watch?v=QSFF9jI8f4g' },
+            { t:'Photoshoot', a:'YOUNG $TEELO', tag:'Photography', img:'/images/steelo-photoshoot-2.webp', href:'/projects.html' },
+            { t:'Withdrawals', a:'Semiah', tag:'Music Video', img:'/images/semiah-withdrawals-thumb.webp', href:'https://www.youtube.com/watch?v=Y1v-IBb2aIA' },
+            { t:'iiMPCT Media', a:'iiMPCT', tag:'Web Series', img:'/images/iimpct-media-thumb.webp', href:'https://www.youtube.com/@iimpctmedia' },
+            { t:'FATE', a:'DUBZY33', tag:'Music Video', img:'/images/dubzy-fate-thumb.webp', href:'https://www.youtube.com/watch?v=EPnVN9riFtI' },
+            { t:'Baby Blue', a:'Godfrey Noir', tag:'Single', img:'/images/godfrey-noir-baby-blue.webp', href:'https://www.youtube.com/watch?v=7-nqVh05kZ8' },
+            { t:'Lucky Charm', a:'Carina', tag:'Reel', img:'/images/carina-lucky-charm-thumb.webp', href:'https://www.instagram.com/p/DXdWvKNDsOA/' },
+            { t:'United MMA', a:'BK Whiskey', tag:'Commercial', img:'/images/bk-whiskey-mma-thumb.webp', href:'https://www.instagram.com/p/DKvf2jXMbRs' },
+            { t:"Surfin'", a:'MARV x Straightdizzy', tag:'Single', img:'/images/surfin-thumb.webp', href:'https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63' },
+            { t:'The Documentary', a:'Rhozeland', tag:'Film', img:'/images/documentary-thumbnail.webp', href:'https://www.youtube.com/watch?v=9rxMdl_mQws' },
+            { t:'True North', a:'Transparency', tag:'Platform', img:'/images/project-truenorth.webp', href:'/projects.html' },
+            { t:'Server Incognito', a:'Indoléstic', tag:'Installation', img:'https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif', href:'https://vectorfestival.org/window-activation' }
+          ];
+          function card(p){
+            var ext = /^https?:/.test(p.href);
+            return '<a class="r-eco-feat-card" href="'+p.href+'"'+(ext?' target="_blank" rel="noopener noreferrer"':'')+' aria-label="'+p.t+' — '+p.a+'">'
+              + '<span class="tag">'+p.tag+'</span>'
+              + '<img src="'+p.img+'" alt="'+p.t+' — '+p.a+'" loading="lazy" />'
+              + '<span class="meta"><span class="t">'+p.t+'</span><span class="a">'+p.a+'</span></span>'
+              + '</a>';
+          }
+          var html = projects.map(card).join('');
+          // Duplicate for seamless marquee loop
+          track.innerHTML = html + html;
         })();
       </script>
         <script>

@@ -3035,22 +3035,12 @@
         <style>
           .r-eco { padding-top: 1.5rem; padding-bottom: 0.75rem; }
           .r-eco .r-eco-inner { max-width: 1180px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); display: flex; flex-direction: column; gap: 0.85rem; }
-          .r-eco .r-eco-lead-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.5rem; }
-          .r-eco .r-eco-lead { display: flex; flex-direction: column; gap: 0.55rem; max-width: 760px; flex: 1; min-width: 0; }
-          /* Compact spinning globe alongside the headline */
-          .r-eco-globe { width: clamp(96px, 11vw, 132px); aspect-ratio: 1 / 1; position: relative; flex-shrink: 0; opacity: 0.92; }
-          .r-eco-globe svg { width: 100%; height: 100%; display: block; overflow: visible; }
-          .r-eco-globe .ring { fill: none; stroke: hsl(var(--ink)); stroke-width: 0.55; opacity: 0.4; }
-          .r-eco-globe .disc { fill: none; stroke: hsl(var(--ink)); stroke-width: 0.9; opacity: 0.75; }
-          .r-eco-globe .spin { transform-box: view-box; transform-origin: 50px 50px; animation: orb-rotate 28s linear infinite; }
-          .r-eco-globe .dot { fill: hsl(var(--accent-pink, 330 70% 60%)); }
-          @media (prefers-reduced-motion: reduce) { .r-eco-globe .spin { animation: none; } }
-          @media (max-width: 720px) { .r-eco-globe { display: none; } }
-          .r-eco .r-eco-lead h1 { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.9rem, 4.6vw, 3.1rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; color: hsl(var(--ink)); margin: 0; }
+          .r-eco .r-eco-lead { display: flex; flex-direction: column; gap: 0.55rem; max-width: 820px; margin: 0 auto; text-align: center; align-items: center; }
+          .r-eco .r-eco-lead h1 { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.9rem, 4.6vw, 3.1rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; color: hsl(var(--ink)); margin: 0; text-align: center; }
           .r-eco .r-eco-lead p { font-size: 0.98rem; color: hsl(var(--muted)); margin: 0; max-width: 540px; line-height: 1.45; }
           /* Inline condensed Our Story */
           .r-eco-story { display: block; margin: 0; padding: 0; border-top: 1px solid hsl(var(--line)); border-bottom: 1px solid hsl(var(--line)); }
-          .r-eco-story summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem 0.1rem; font-family: 'Inter', system-ui, sans-serif; }
+          .r-eco-story summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.7rem 0.1rem; font-family: 'Inter', system-ui, sans-serif; text-align: center; }
           .r-eco-story summary::-webkit-details-marker { display: none; }
           .r-eco-story-line { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
           .r-eco-story-kicker { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--muted)); padding: 0.18rem 0.5rem; border: 1px solid hsl(var(--line)); border-radius: 999px; white-space: nowrap; }
@@ -3133,7 +3123,7 @@
           .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
           .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: none; }
           /* Featured marquee carousel above the panes */
-          .r-eco-feat { position: relative; overflow: hidden; border-radius: calc(var(--radius-lg) - 4px); background: #0f0f0f; margin-bottom: 6px; }
+          .r-eco-feat { position: relative; overflow: hidden; border-radius: calc(var(--radius-lg) - 4px); background: #0f0f0f; margin-top: 6px; }
           .r-eco-feat::before, .r-eco-feat::after { content: ""; position: absolute; top: 0; bottom: 0; width: 72px; z-index: 2; pointer-events: none; }
           .r-eco-feat::before { left: 0; background: linear-gradient(90deg, #0f0f0f, transparent); }
           .r-eco-feat::after { right: 0; background: linear-gradient(-90deg, #0f0f0f, transparent); }
@@ -3147,6 +3137,9 @@
           .r-eco-feat-card:hover { transform: translateY(-3px); }
           .r-eco-feat-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.4); transition: filter 0.4s ease, transform 0.6s ease; }
           .r-eco-feat-card:hover img { filter: none; transform: scale(1.06); }
+          .r-eco-feat-card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.35s ease; z-index: 1; }
+          .r-eco-feat-card.is-playing video { opacity: 1; }
+          .r-eco-feat-card.is-playing img { opacity: 0; }
           .r-eco-feat-card .meta { position: absolute; left: 0; right: 0; bottom: 0; padding: 0.6rem 0.65rem; background: linear-gradient(to top, rgba(0,0,0,0.88), transparent); z-index: 2; }
           .r-eco-feat-card .meta .t { display: block; font-size: 0.74rem; font-weight: 700; line-height: 1.15; }
           .r-eco-feat-card .meta .a { display: block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.78; margin-top: 3px; }
@@ -3181,35 +3174,8 @@
         </style>
 
         <div class="hero-inner r-eco-inner">
-          <div class="r-eco-lead-row">
-            <div class="r-eco-lead">
-              <h1 id="homepage-title">The creative ecosystem for launching culture.</h1>
-            </div>
-            <div class="r-eco-globe" aria-hidden="true">
-              <svg viewBox="0 0 100 100">
-                <defs>
-                  <radialGradient id="rEcoGlobeFill" cx="35%" cy="30%" r="80%">
-                    <stop offset="0%" stop-color="hsl(var(--accent-blue, 220 80% 70%))" stop-opacity="0.18" />
-                    <stop offset="60%" stop-color="hsl(var(--accent-purple, 270 60% 55%))" stop-opacity="0.10" />
-                    <stop offset="100%" stop-color="hsl(var(--ink))" stop-opacity="0.04" />
-                  </radialGradient>
-                </defs>
-                <circle class="ring" cx="50" cy="50" r="48" />
-                <circle cx="50" cy="50" r="44" fill="url(#rEcoGlobeFill)" />
-                <g class="spin">
-                  <circle class="disc" cx="50" cy="50" r="44" />
-                  <ellipse class="ring" cx="50" cy="50" rx="44" ry="18" />
-                  <ellipse class="ring" cx="50" cy="50" rx="44" ry="32" />
-                  <ellipse class="ring" cx="50" cy="50" rx="18" ry="44" />
-                  <ellipse class="ring" cx="50" cy="50" rx="32" ry="44" />
-                  <line class="ring" x1="6" y1="50" x2="94" y2="50" />
-                  <line class="ring" x1="50" y1="6" x2="50" y2="94" />
-                  <circle class="dot" cx="68" cy="36" r="1.6" />
-                  <circle class="dot" cx="34" cy="58" r="1.4" />
-                  <circle class="dot" cx="58" cy="70" r="1.3" />
-                </g>
-              </svg>
-            </div>
+          <div class="r-eco-lead">
+            <h1 id="homepage-title">The creative ecosystem for launching culture.</h1>
           </div>
 
           <details class="r-eco-story" id="rEcoStory">
@@ -3246,22 +3212,16 @@
                     <span class="era-detail-year" id="eraDetailYear">Today</span>
                     <h4 id="eraDetailTitle">A New Era</h4>
                     <p id="eraDetailDesc">A living record of the creators, space, and movement.</p>
-                    <a class="era-detail-watch" href="/about.html" aria-label="Read the full story">Read the full story →</a>
                   </div>
                 </div>
+              </div>
+              <div style="display:flex; justify-content:center; padding: 0.75rem 0 0.25rem;">
+                <a class="era-detail-watch" href="/about.html" aria-label="Read the full story" style="font-size:0.72rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:hsl(var(--ink)); text-decoration:none; border-bottom:1px solid hsl(var(--ink));">Read the full story →</a>
               </div>
             </div>
           </details>
 
           <div class="r-eco-stage">
-            <div class="r-eco-feat" aria-label="Featured work">
-              <span class="r-eco-feat-label">Featured work</span>
-              <div class="r-eco-feat-viewport">
-                <div class="r-eco-feat-track" id="rEcoFeatTrack">
-                  <!-- Cards injected by script (duplicated for seamless marquee) -->
-                </div>
-              </div>
-            </div>
             <div class="r-eco-panes" role="list">
               <!-- Visual -->
               <div class="r-eco-pane is-visual" role="listitem" tabindex="0" aria-label="Visual services">
@@ -3368,6 +3328,15 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
               </a>
             </div>
+
+            <div class="r-eco-feat" aria-label="Featured work">
+              <span class="r-eco-feat-label">Featured work</span>
+              <div class="r-eco-feat-viewport">
+                <div class="r-eco-feat-track" id="rEcoFeatTrack">
+                  <!-- Cards injected by script (duplicated for seamless marquee) -->
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="hero-proof-links" id="proof">
@@ -3398,18 +3367,19 @@
           var track = document.getElementById('rEcoFeatTrack');
           if (!track) return;
           var projects = [
-            { t:'Mansa Musa', a:'MONEE FINGAZ', tag:'Music Video', img:'/images/fingaz-mansa-musa-thumb.webp', href:'https://www.youtube.com/watch?v=w9dYE595cBw' },
-            { t:'Holy Water', a:'Cozal', tag:'Music Video', img:'/images/cozal-holy-water-thumb.webp', href:'https://www.youtube.com/watch?v=VPLyATcs7fE' },
-            { t:'Just Call Me', a:'Ess B', tag:'Music Video', img:'/images/ess-b-just-call-me-thumb.webp', href:'https://www.youtube.com/watch?v=2Nuyr57Xe3o' },
+            { t:'Mansa Musa', a:'MONEE FINGAZ', tag:'Music Video', img:'/images/fingaz-mansa-musa-thumb.webp', vid:'/videos/fingaz-mansa-musa.mp4', href:'https://www.youtube.com/watch?v=w9dYE595cBw' },
+            { t:'Holy Water', a:'Cozal', tag:'Music Video', img:'/images/cozal-holy-water-thumb.webp', vid:'/videos/cozal-holy-water.mp4', href:'https://www.youtube.com/watch?v=VPLyATcs7fE' },
+            { t:'Just Call Me', a:'Ess B', tag:'Music Video', img:'/images/ess-b-just-call-me-thumb.webp', vid:'/videos/ess-b-just-call-me.mp4', href:'https://www.youtube.com/watch?v=2Nuyr57Xe3o' },
             { t:'U OUTTA KNOW', a:'YOUNG $TEELO', tag:'Music Video', img:'/images/steelo-u-outta-know-thumb.webp', href:'https://www.youtube.com/watch?v=JL85Aej4Je4' },
-            { t:'Bombaaa', a:'MONEE FINGAZ x 1CUZZMN', tag:'Music Video', img:'/images/fingaz-bombaaa-thumb.webp', href:'https://www.youtube.com/watch?v=QSFF9jI8f4g' },
+            { t:'Bombaaa', a:'MONEE FINGAZ x 1CUZZMN', tag:'Music Video', img:'/images/fingaz-bombaaa-thumb.webp', vid:'/videos/fingaz-bombaaa-v2.mp4', href:'https://www.youtube.com/watch?v=QSFF9jI8f4g' },
             { t:'Photoshoot', a:'YOUNG $TEELO', tag:'Photography', img:'/images/steelo-photoshoot-2.webp', href:'/projects.html' },
-            { t:'Withdrawals', a:'Semiah', tag:'Music Video', img:'/images/semiah-withdrawals-thumb.webp', href:'https://www.youtube.com/watch?v=Y1v-IBb2aIA' },
+            { t:'Withdrawals', a:'Semiah', tag:'Music Video', img:'/images/semiah-withdrawals-thumb.webp', vid:'/videos/semiah-withdrawals.mp4', href:'https://www.youtube.com/watch?v=Y1v-IBb2aIA' },
             { t:'iiMPCT Media', a:'iiMPCT', tag:'Web Series', img:'/images/iimpct-media-thumb.webp', href:'https://www.youtube.com/@iimpctmedia' },
             { t:'FATE', a:'DUBZY33', tag:'Music Video', img:'/images/dubzy-fate-thumb.webp', href:'https://www.youtube.com/watch?v=EPnVN9riFtI' },
             { t:'Baby Blue', a:'Godfrey Noir', tag:'Single', img:'/images/godfrey-noir-baby-blue.webp', href:'https://www.youtube.com/watch?v=7-nqVh05kZ8' },
-            { t:'Lucky Charm', a:'Carina', tag:'Reel', img:'/images/carina-lucky-charm-thumb.webp', href:'https://www.instagram.com/p/DXdWvKNDsOA/' },
-            { t:'United MMA', a:'BK Whiskey', tag:'Commercial', img:'/images/bk-whiskey-mma-thumb.webp', href:'https://www.instagram.com/p/DKvf2jXMbRs' },
+            { t:'Lucky Charm', a:'Carina', tag:'Reel', img:'/images/carina-lucky-charm-thumb.webp', vid:'/videos/carina-lucky-charm.mp4', href:'https://www.instagram.com/p/DXdWvKNDsOA/' },
+            { t:'United MMA', a:'BK Whiskey', tag:'Commercial', img:'/images/bk-whiskey-mma-thumb.webp', vid:'/videos/bk-whiskey-mma.mp4', href:'https://www.instagram.com/p/DKvf2jXMbRs' },
+            { t:'Night Come', a:'Luckz ft. MARV', tag:'Music Video', img:'/images/luckz-night-come-thumb.webp', vid:'/videos/luckz-night-come.mp4', href:'https://www.youtube.com/watch?v=pDO4sTpWKng' },
             { t:"Surfin'", a:'MARV x Straightdizzy', tag:'Single', img:'/images/surfin-thumb.webp', href:'https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63' },
             { t:'The Documentary', a:'Rhozeland', tag:'Film', img:'/images/documentary-thumbnail.webp', href:'https://www.youtube.com/watch?v=9rxMdl_mQws' },
             { t:'True North', a:'Transparency', tag:'Platform', img:'/images/project-truenorth.webp', href:'/projects.html' },
@@ -3420,12 +3390,27 @@
             return '<a class="r-eco-feat-card" href="'+p.href+'"'+(ext?' target="_blank" rel="noopener noreferrer"':'')+' aria-label="'+p.t+' — '+p.a+'">'
               + '<span class="tag">'+p.tag+'</span>'
               + '<img src="'+p.img+'" alt="'+p.t+' — '+p.a+'" loading="lazy" />'
+              + (p.vid ? '<video data-src="'+p.vid+'" muted loop playsinline preload="none"></video>' : '')
               + '<span class="meta"><span class="t">'+p.t+'</span><span class="a">'+p.a+'</span></span>'
               + '</a>';
           }
           var html = projects.map(card).join('');
           // Duplicate for seamless marquee loop
           track.innerHTML = html + html;
+          // Hover-to-play preview videos (lazy attach src on first hover)
+          track.querySelectorAll('.r-eco-feat-card').forEach(function(card){
+            var vid = card.querySelector('video');
+            if (!vid) return;
+            card.addEventListener('mouseenter', function(){
+              if (!vid.src) vid.src = vid.dataset.src;
+              card.classList.add('is-playing');
+              var p = vid.play(); if (p && p.catch) p.catch(function(){});
+            });
+            card.addEventListener('mouseleave', function(){
+              card.classList.remove('is-playing');
+              try { vid.pause(); } catch(e){}
+            });
+          });
         })();
       </script>
         <script>

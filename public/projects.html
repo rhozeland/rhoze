@@ -801,16 +801,6 @@
       });
     }
 
-    shuffleBtn.addEventListener('click', function() {
-      shuffleBtn.classList.remove('is-shuffling');
-      void shuffleBtn.offsetWidth;
-      shuffleBtn.classList.add('is-shuffling');
-      renderGrid('shuffle');
-    });
-
-    shuffleBtn.addEventListener('animationend', function() {
-      shuffleBtn.classList.remove('is-shuffling');
-    });
 
     function renderArtistBadges(name) {
       var badgeWrap = document.getElementById('artistModalBadges');

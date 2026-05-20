@@ -83,16 +83,6 @@ Deno.serve(async (req) => {
     )
   }
 
-  if (!isServiceRole) {
-    const allowedRecipients = PUBLIC_NOTIFICATION_ALLOWLIST[templateName]
-    if (!allowedRecipients || !allowedRecipients.includes(String(recipientEmail).toLowerCase())) {
-      return new Response(
-        JSON.stringify({ error: 'Forbidden' }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-  }
-
   // Parse request body
   let templateName: string
   let recipientEmail: string
@@ -126,6 +116,16 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     )
+  }
+
+  if (!isServiceRole) {
+    const allowedRecipients = PUBLIC_NOTIFICATION_ALLOWLIST[templateName]
+    if (!allowedRecipients || !allowedRecipients.includes(String(recipientEmail ?? '').toLowerCase())) {
+      return new Response(
+        JSON.stringify({ error: 'Forbidden' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
   }
 
   // 1. Look up template from registry (early — needed to resolve recipient)

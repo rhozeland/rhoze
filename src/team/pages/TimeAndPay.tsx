@@ -161,6 +161,20 @@ export default function TimeAndPay() {
     },
   });
 
+  // Realtime: when any team member (typically an admin) creates, edits, or
+  // deletes a pay period, every other open session sees it without a refresh.
+  useEffect(() => {
+    const channel = supabase
+      .channel("timesheet_periods_sync")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "timesheet_periods" },
+        () => qc.invalidateQueries({ queryKey: ["timesheet_periods"] }),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [qc]);
+
   const periodId = activePeriodId || periods?.[0]?.id || "";
   const activePeriod = periods?.find((p: any) => p.id === periodId);
 

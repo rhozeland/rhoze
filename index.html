@@ -3072,16 +3072,21 @@
           .era-node.is-active .era-bloom .core, .era-node:hover .era-bloom .core { fill:#FFD93D; }
           .era-year-sm { font-family:'Inter',system-ui,sans-serif; font-weight:800; font-size:1.05rem; color:hsl(var(--ink)); line-height:1; }
           .era-title-sm { font-size:0.78rem; font-weight:680; color:hsl(var(--ink)); margin:0; line-height:1.2; }
-          .era-detail { position:relative; z-index:2; display:grid; grid-template-columns:220px minmax(0,1fr); gap:1.1rem; align-items:center; min-height:160px; max-width:760px; margin:0.5rem auto 0; padding:0.85rem 0.5rem 0.3rem; border-top:1px solid hsl(var(--line)); opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .35s ease, transform .35s ease; }
+          .era-detail { position:relative; z-index:2; display:grid; grid-template-columns:minmax(260px, 360px) minmax(0,1fr); gap:1.6rem; align-items:center; justify-content:center; min-height:160px; max-width:980px; margin:0.5rem auto 0; padding:0.85rem 1rem 0.3rem; border-top:1px solid hsl(var(--line)); opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .35s ease, transform .35s ease; }
           .era-line.has-detail .era-detail { opacity:1; transform:translateY(0); pointer-events:auto; }
           .era-detail-media { position:relative; aspect-ratio:4/3; border-radius:var(--radius-md); overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); }
           .era-detail-media img, .era-detail-media iframe { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border:0; }
-          .era-detail-copy { text-align:left; }
+          .era-detail-copy { text-align:left; max-width:520px; }
           .era-detail-year { display:block; font-size:0.66rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:hsl(var(--muted)); margin-bottom:0.28rem; }
           .era-detail-copy h4 { margin:0; color:hsl(var(--ink)); font-size:1.02rem; line-height:1.18; font-weight:700; }
-          .era-detail-copy p { margin:0.4rem 0 0; color:hsl(var(--muted)); font-size:0.82rem; line-height:1.5; max-width:48ch; }
+          .era-detail-copy p { margin:0.4rem 0 0; color:hsl(var(--muted)); font-size:0.88rem; line-height:1.55; max-width:56ch; }
           .era-detail-watch { display:inline-flex; align-items:center; gap:0.35rem; margin-top:0.55rem; color:hsl(var(--ink)); font-size:0.72rem; font-weight:700; text-decoration:underline; text-underline-offset:3px; }
-          @media (max-width:640px) { .era-line-svg{display:none;} .era-line-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.5rem;} .era-node{min-height:108px;} .era-bloom{width:36px;height:36px;} .era-detail{grid-template-columns:1fr; max-width:420px;} }
+          @media (max-width:640px) { .era-line-svg{display:none;} .era-line-grid{grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.5rem;} .era-node{min-height:108px;} .era-bloom{width:36px;height:36px;} .era-detail{grid-template-columns:1fr; max-width:420px; text-align:center;} .era-detail-copy{margin:0 auto;} }
+          /* Smooth Our Story toggle (animates open/close height) */
+          .r-eco-story-panel { overflow:hidden; max-height:0; opacity:0; transition: max-height .55s cubic-bezier(.22,.61,.36,1), opacity .35s ease, padding .35s ease; padding:0 0 0; }
+          .r-eco-story[open] .r-eco-story-panel { max-height:1400px; opacity:1; padding:0.4rem 0 0.9rem; }
+          .r-eco-story-tagline { transition: opacity .35s ease, transform .35s ease; }
+          .r-eco-story-tagline.is-swapping { opacity:0; transform:translateY(-4px); }
           .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 6px; box-shadow: 0 16px 48px -20px rgba(0,0,0,0.45); }
           .r-eco-panes { display: flex; gap: 6px; height: 230px; }
           .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: #FAF9F6; border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex 0.65s cubic-bezier(0.23, 1, 0.32, 1); }
@@ -3128,6 +3133,9 @@
           .r-eco-feat::before { left: 0; background: linear-gradient(90deg, #0f0f0f, transparent); }
           .r-eco-feat::after { right: 0; background: linear-gradient(-90deg, #0f0f0f, transparent); }
           .r-eco-feat-label { position: absolute; top: 10px; left: 14px; z-index: 3; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.7); display: inline-flex; align-items: center; gap: 0.45rem; }
+          .r-eco-feat-all { position: absolute; top: 7px; right: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.35rem 0.7rem; background: #FAF9F6; color: #1a1a1a; border-radius: 999px; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: transform 0.2s ease; }
+          .r-eco-feat-all:hover { transform: translateX(2px); }
+          .r-eco-feat-all svg { width: 0.75rem; height: 0.75rem; }
           .r-eco-feat-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #FFB870; box-shadow: 0 0 0 0 rgba(255,184,112,0.55); animation: rEcoPulse 2s infinite; }
           .r-eco-feat-viewport { overflow-x: auto; overflow-y: hidden; padding: 2.1rem 0 0.8rem; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
           .r-eco-feat-viewport::-webkit-scrollbar { display: none; }
@@ -3151,7 +3159,9 @@
           .r-eco-stage-cta .r-eco-all:hover { transform: translateX(2px); }
           .r-eco-stage-cta .r-eco-all svg { width: 0.8rem; height: 0.8rem; }
           /* Events pane (custom) */
-          .r-eco-events { display: flex; flex-direction: column; gap: 0.45rem; opacity: 0; transform: translateY(8px); transition: opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s; pointer-events: none; }
+          .r-eco-events { display: flex; flex-direction: column; gap: 0.45rem; opacity: 0; transform: translateY(8px); transition: opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s; pointer-events: none; max-height: 168px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; }
+          .r-eco-events::-webkit-scrollbar { width: 4px; }
+          .r-eco-events::-webkit-scrollbar-thumb { background: rgba(26,26,26,0.25); border-radius: 4px; }
           .r-eco-pane:hover .r-eco-events, .r-eco-pane:focus-within .r-eco-events { opacity: 1; transform: translateY(0); pointer-events: auto; }
           .r-eco-event { display: grid; grid-template-columns: 44px 1fr; gap: 0.6rem; padding: 0.55rem 0.6rem; background: rgba(26,26,26,0.04); border: 1px solid rgba(26,26,26,0.08); border-radius: var(--radius-md); text-decoration: none; color: #1a1a1a; transition: background 0.2s ease, transform 0.2s ease; }
           .r-eco-event:hover { background: rgba(26,26,26,0.09); transform: translateX(2px); }
@@ -3322,15 +3332,11 @@
               </div>
             </div>
 
-            <div class="r-eco-stage-cta">
-              <span class="r-eco-count">1000+ creator collaborations</span>
-              <a class="r-eco-all" href="/projects.html">See all projects
+            <div class="r-eco-feat" aria-label="Featured work">
+              <span class="r-eco-feat-label">Featured work · 1000+ creator collaborations</span>
+              <a class="r-eco-feat-all" href="/projects.html">See all projects
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
               </a>
-            </div>
-
-            <div class="r-eco-feat" aria-label="Featured work">
-              <span class="r-eco-feat-label">Featured work</span>
               <div class="r-eco-feat-viewport">
                 <div class="r-eco-feat-track" id="rEcoFeatTrack">
                   <!-- Cards injected by script (duplicated for seamless marquee) -->
@@ -3340,7 +3346,7 @@
           </div>
 
           <div class="hero-proof-links" id="proof">
-            <span class="hero-proof-label">Featured On</span>
+            <span class="hero-proof-label">Recognition &amp; Partners</span>
             <div class="hero-proof-track-wrap" id="proof-scroller">
               <div class="proof-track" id="proof-track">
                 <a class="proof-link" href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=voyagehouston.com&sz=32" alt="" class="proof-favicon" />VoyageHouston Feature</a>
@@ -3452,12 +3458,29 @@
             var defaultNode = el.querySelector('.era-node[data-video]') || nodes[nodes.length - 1];
             // Ensure the default detail panel is visible on load (no empty space pre-hover).
             el.classList.add('has-detail');
+            // Rotating tagline shown in the collapsed Our Story summary
+            var taglineEl = document.querySelector('#rEcoStory .r-eco-story-tagline');
+            var taglines = {
+              '2016': 'It started in 2016 — a circle of friends sharing music, art, and culture.',
+              '2021': 'By 2021, we built the hub — a digital home connecting creators and resources.',
+              '2023': '2023 — the studio opened. A real space to record, produce, and collaborate.',
+              'Today': 'Today — a studio and launchpad for bold creators shaping what comes next.'
+            };
+            function swapTagline(era){
+              if (!taglineEl || !era || !taglines[era]) return;
+              taglineEl.classList.add('is-swapping');
+              setTimeout(function(){
+                taglineEl.textContent = taglines[era];
+                taglineEl.classList.remove('is-swapping');
+              }, 280);
+            }
             function render(node, playVideo) {
               nodes.forEach(function(n){ n.classList.toggle('is-active', n === node); });
               el.classList.add('has-detail');
               if (year) year.textContent = node.dataset.era || '';
               if (title) title.textContent = node.dataset.title || '';
               if (desc) desc.textContent = node.dataset.desc || '';
+              swapTagline(node.dataset.era);
               if (!media) return;
               if (playVideo && node.dataset.video) {
                 media.innerHTML = '<iframe src="'+node.dataset.video+'" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>';
@@ -3476,6 +3499,15 @@
               entries.forEach(function(e){ if (e.isIntersecting) { el.classList.add('is-visible'); io.disconnect(); } });
             }, { threshold: 0.35 });
             io.observe(el);
+            // Auto-cycle the collapsed tagline through eras while Our Story is closed
+            var storyEl = document.getElementById('rEcoStory');
+            var eras = ['2016','2021','2023','Today'];
+            var cycleIdx = 0;
+            setInterval(function(){
+              if (storyEl && storyEl.open) return; // don't fight active hover
+              cycleIdx = (cycleIdx + 1) % eras.length;
+              swapTagline(eras[cycleIdx]);
+            }, 4200);
           })();
         </script>
 

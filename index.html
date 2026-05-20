@@ -3097,9 +3097,9 @@
           .r-eco-pane.is-events { background: linear-gradient(155deg, #FFF1F6 0%, #FFD2E1 55%, #FF8FB8 100%); }
           .r-eco-pane::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 80% at 110% 110%, rgba(26,26,26,0.07), transparent 60%); pointer-events: none; z-index: 1; opacity: 0.55; transition: opacity 0.5s ease; }
           /* Takeover: hovered pane fills, siblings collapse to vertical tabs */
-          .r-eco-panes:hover .r-eco-pane, .r-eco-panes:focus-within .r-eco-pane { flex: 0 0 58px; }
-          .r-eco-panes:hover .r-eco-pane:hover, .r-eco-panes:focus-within .r-eco-pane:focus-within { flex: 1 1 auto; }
-          .r-eco-panes:hover .r-eco-pane:hover::after, .r-eco-panes:focus-within .r-eco-pane:focus-within::after { opacity: 1; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane { flex: 0 0 58px; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible { flex: 1 1 auto; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover::after, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible::after { opacity: 1; }
           .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(0.9rem, 1.6vw, 1.4rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; transition: padding 0.35s ease; }
           .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.05rem, 1.8vw, 1.55rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1; color: #1a1a1a; text-transform: uppercase; margin: 0 0 0.7rem; display: block; white-space: nowrap; overflow: hidden; transition: font-size 0.4s ease, writing-mode 0s, transform 0.3s ease; }
           .r-eco-panes:hover .r-eco-pane:hover .r-eco-cat, .r-eco-panes:focus-within .r-eco-pane:focus-within .r-eco-cat { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }

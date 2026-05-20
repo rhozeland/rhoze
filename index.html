@@ -3061,6 +3061,20 @@
           .r-eco-stage-cta .r-eco-all { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; background: #FAF9F6; color: #1a1a1a; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-decoration: none; letter-spacing: 0.02em; transition: transform 0.2s ease; }
           .r-eco-stage-cta .r-eco-all:hover { transform: translateX(2px); }
           .r-eco-stage-cta .r-eco-all svg { width: 0.8rem; height: 0.8rem; }
+          /* Events pane (custom) */
+          .r-eco-events { display: flex; flex-direction: column; gap: 0.45rem; opacity: 0; transform: translateY(8px); transition: opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s; pointer-events: none; }
+          .r-eco-pane:hover .r-eco-events, .r-eco-pane:focus-within .r-eco-events { opacity: 1; transform: translateY(0); pointer-events: auto; }
+          .r-eco-event { display: grid; grid-template-columns: 44px 1fr; gap: 0.6rem; padding: 0.55rem 0.6rem; background: rgba(26,26,26,0.04); border: 1px solid rgba(26,26,26,0.08); border-radius: var(--radius-md); text-decoration: none; color: #1a1a1a; transition: background 0.2s ease, transform 0.2s ease; }
+          .r-eco-event:hover { background: rgba(26,26,26,0.09); transform: translateX(2px); }
+          .r-eco-event-date { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #1a1a1a; color: #FAF9F6; border-radius: calc(var(--radius-md) - 2px); padding: 0.3rem 0; }
+          .r-eco-event-date .m { font-size: 0.5rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; line-height: 1; margin-bottom: 2px; }
+          .r-eco-event-date .d { font-size: 1rem; font-weight: 800; line-height: 1; }
+          .r-eco-event-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+          .r-eco-event-title { font-size: 0.78rem; font-weight: 700; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+          .r-eco-event-tag { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(26,26,26,0.55); }
+          .r-eco-events-status { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(26,26,26,0.6); margin-bottom: 0.15rem; }
+          .r-eco-events-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #e94560; box-shadow: 0 0 0 0 rgba(233,69,96,0.6); animation: rEcoPulse 2s infinite; }
+          @keyframes rEcoPulse { 0%{box-shadow:0 0 0 0 rgba(233,69,96,0.55);} 70%{box-shadow:0 0 0 6px rgba(233,69,96,0);} 100%{box-shadow:0 0 0 0 rgba(233,69,96,0);} }
           @media (max-width: 860px) {
             .r-eco-panes { flex-direction: column; height: auto; }
             .r-eco-pane { flex: 1 1 auto; min-height: 280px; }
@@ -3073,7 +3087,6 @@
         <div class="hero-inner r-eco-inner">
           <div class="r-eco-lead">
             <h1 id="homepage-title">The creative ecosystem for launching culture.</h1>
-            <p>Studio sessions, content rollouts, and launch infrastructure — one team, every moving part.</p>
           </div>
 
           <div class="r-eco-stage">
@@ -3161,6 +3174,44 @@
                         <img src="/images/timeline-2023.webp" alt="True North Transparency platform" loading="lazy" />
                       </a>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Events (custom view) -->
+              <div class="r-eco-pane" role="listitem" tabindex="0" aria-label="Events and gatherings">
+                <div class="r-eco-pane-body">
+                  <div>
+                    <span class="r-eco-cat">Events</span>
+                    <span class="r-eco-events-status">Live on Luma</span>
+                  </div>
+                  <div class="r-eco-events">
+                    <a class="r-eco-event" href="https://luma.com/301voljx" target="_blank" rel="noopener noreferrer">
+                      <div class="r-eco-event-date"><span class="m">May</span><span class="d">29</span></div>
+                      <div class="r-eco-event-body">
+                        <span class="r-eco-event-title">EMOTE Temple 2.0</span>
+                        <span class="r-eco-event-tag">Gathering · Upcoming</span>
+                      </div>
+                    </a>
+                    <a class="r-eco-event" href="https://www.sourcefromontario.com/en/page/delegate/138483/rhozeland#attendees" target="_blank" rel="noopener noreferrer">
+                      <div class="r-eco-event-date"><span class="m">Apr</span><span class="d">22</span></div>
+                      <div class="r-eco-event-body">
+                        <span class="r-eco-event-title">World IT Show 2026</span>
+                        <span class="r-eco-event-tag">Exhibition</span>
+                      </div>
+                    </a>
+                    <a class="r-eco-event" href="https://luma.com/qlkk1ffg" target="_blank" rel="noopener noreferrer">
+                      <div class="r-eco-event-date"><span class="m">Mar</span><span class="d">31</span></div>
+                      <div class="r-eco-event-body">
+                        <span class="r-eco-event-title">EMOTE Temple x RHOZE</span>
+                        <span class="r-eco-event-tag">Screening</span>
+                      </div>
+                    </a>
+                    <a class="r-eco-event" href="https://luma.com/user/collabrhozeland" target="_blank" rel="noopener noreferrer" style="background:#1a1a1a;color:#FAF9F6;border-color:#1a1a1a;justify-content:center;">
+                      <div class="r-eco-event-body" style="grid-column:1 / -1;text-align:center;">
+                        <span class="r-eco-event-title" style="color:#FAF9F6;">Follow on Luma →</span>
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -3321,40 +3372,6 @@
             io.observe(el);
           })();
         </script>
-        <!-- Events ticker widget -->
-        <div class="events-ticker" style="margin-bottom:1rem;">
-          <div class="events-ticker-row">
-            <span class="ticker-dot ticker-dot--live"></span>
-            <span class="ticker-label">Upcoming</span>
-            <a class="ticker-follow" href="https://luma.com/user/collabrhozeland" target="_blank" rel="noopener noreferrer">Follow on Luma <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:0.85rem;height:0.85rem;"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
-          </div>
-          <a class="events-ticker-row events-ticker-row--link" href="https://luma.com/301voljx" target="_blank" rel="noopener noreferrer">
-            <span class="ticker-date">May 29</span>
-            <span class="ticker-title">EMOTE Temple 2.0</span>
-            <span class="ticker-tag">Gathering</span>
-          </a>
-          <div class="events-ticker-divider"></div>
-          <p class="ticker-section-label">Recent</p>
-          <a class="events-ticker-row events-ticker-row--link" href="https://www.sourcefromontario.com/en/page/delegate/138483/rhozeland#attendees" target="_blank" rel="noopener noreferrer">
-            <span class="ticker-date">Apr 22</span>
-            <span class="ticker-title">World IT Show 2026</span>
-            <span class="ticker-tag">Exhibition</span>
-          </a>
-          <a class="events-ticker-row events-ticker-row--link" href="https://luma.com/qlkk1ffg" target="_blank" rel="noopener noreferrer">
-            <span class="ticker-date">Mar 31</span>
-            <span class="ticker-title">EMOTE Temple x RHOZE</span>
-            <span class="ticker-tag">Screening</span>
-          </a>
-          <a class="events-ticker-row events-ticker-row--link" href="https://luma.com/embed/event/evt-cLEaltiJY1AHWVY/simple" target="_blank" rel="noopener noreferrer">
-            <span class="ticker-date">Mar 20</span>
-            <span class="ticker-title">RHOZE Creative Social</span>
-            <span class="ticker-tag">Social</span>
-          </a>
-          <div class="events-ticker-divider"></div>
-          <div class="events-ticker-row">
-            <a class="hero-primary" style="font-size:0.82rem; padding:0.55rem 1rem;" href="/events.html">All events <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:0.8rem;height:0.8rem;"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg></a>
-          </div>
-        </div>
 
       </section>
 

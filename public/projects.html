@@ -12,6 +12,46 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
+  <style>
+    /* Compact sticky services bar */
+    .services-sticky {
+      position: sticky; top: 0; z-index: 40;
+      margin: 0 -1.25rem 1.25rem; padding: 0.6rem 1.25rem;
+      background: hsl(var(--background) / 0.78);
+      backdrop-filter: saturate(140%) blur(14px);
+      -webkit-backdrop-filter: saturate(140%) blur(14px);
+      border-bottom: 1px solid hsl(var(--ink) / 0.08);
+      display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap;
+    }
+    .services-sticky-lead { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+    .services-sticky-kicker { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--ink) / 0.5); }
+    .services-sticky-tag { font-size: 0.78rem; font-weight: 600; color: hsl(var(--ink) / 0.95); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .services-sticky-pills { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem; background: hsl(var(--ink) / 0.06); border-radius: 999px; }
+    .services-sticky-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.85rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: -0.005em;
+      background: transparent; color: hsl(var(--ink) / 0.7); border: 0;
+      cursor: pointer; transition: background 0.18s ease, color 0.18s ease;
+    }
+    .services-sticky-pill svg { width: 13px; height: 13px; }
+    .services-sticky-pill:hover { color: hsl(var(--ink)); }
+    .services-sticky-pill.active { background: hsl(var(--ink)); color: hsl(var(--background)); }
+    .services-sticky-pill.active { color: hsl(var(--surface-card)); }
+    .services-sticky-cta { min-height: 0 !important; padding: 0.5rem 1rem !important; font-size: 0.75rem !important; gap: 0.4rem !important; white-space: nowrap; color: hsl(var(--surface-card)) !important; }
+    .services-sticky-cta svg { width: 12px !important; height: 12px !important; }
+    @media (max-width: 720px) {
+      .services-sticky { gap: 0.55rem; padding: 0.55rem 1rem; margin: 0 -1rem 1rem; }
+      .services-sticky-lead { display: none; }
+      .services-sticky-pills { flex: 1 1 auto; justify-content: center; padding: 0.2rem; }
+      .services-sticky-pill { padding: 0.4rem 0.7rem; font-size: 0.7rem; }
+      .services-sticky-pill span { display: none; }
+      .services-sticky-pill svg { width: 14px; height: 14px; }
+      .services-sticky-pill.active span { display: inline; }
+      .services-sticky-cta { padding: 0.45rem 0.85rem !important; font-size: 0.7rem !important; flex: 0 0 auto !important; width: auto !important; align-self: center; }
+      .services-sticky-cta svg { width: 11px !important; height: 11px !important; }
+    }
+  </style>
 </head>
 <body class="page-projects">
   <div class="gradient-canvas" aria-hidden="true"></div>
@@ -50,48 +90,31 @@
 
     <main>
 
-      <!-- SERVICES -->
-      <section class="section">
-        <div class="section-head" style="flex-direction:column;align-items:center;text-align:center;margin-bottom:1.2rem;">
-          <div>
-            <span class="section-kicker">Services</span>
-            <h2>We handle every stage of the creative process.</h2>
-          </div>
+      <!-- SERVICES (compact sticky subheader) -->
+      <div class="services-sticky" id="servicesSticky" aria-label="Services">
+        <div class="services-sticky-lead">
+          <span class="services-sticky-kicker">Services</span>
+          <span class="services-sticky-tag">Every stage of the creative process.</span>
         </div>
-        <div class="services-tabs">
-          <div class="services-tab-buttons">
-            <button class="services-tab-btn active" data-tab="visual" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-              <span>Visual</span>
-            </button>
-            <button class="services-tab-btn" data-tab="audio" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-              <span>Audio</span>
-            </button>
-            <button class="services-tab-btn" data-tab="development" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-              <span>Development</span>
-            </button>
-          </div>
-          <div class="services-tab-panels">
-            <div class="services-tab-panel active" data-panel="visual">
-              <ul><li>Photo shoots</li><li>Content editing</li><li>Commercial editing</li><li>Short-form editing</li><li>Music video editing</li></ul>
-            </div>
-            <div class="services-tab-panel" data-panel="audio">
-              <ul><li>Audio recording</li><li>Mixing</li><li>Mastering</li><li>Podcast recording</li></ul>
-            </div>
-            <div class="services-tab-panel" data-panel="development">
-              <ul><li>Graphic design</li><li>Design hour</li><li>Web development</li><li>UI/UX design</li><li>Strategy consult</li></ul>
-            </div>
-          </div>
+        <div class="services-sticky-pills" role="tablist">
+          <button class="services-sticky-pill" data-svc="visual" type="button" aria-label="Visual">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            <span>Visual</span>
+          </button>
+          <button class="services-sticky-pill" data-svc="audio" type="button" aria-label="Audio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <span>Audio</span>
+          </button>
+          <button class="services-sticky-pill" data-svc="development" type="button" aria-label="Development">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>Development</span>
+          </button>
         </div>
-        <div style="display:flex;justify-content:center;margin-top:2rem;">
-          <a href="/start.html" class="btn-dark" style="padding:0.95rem 1.6rem;font-size:0.92rem;">
-            Start a project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-          </a>
-        </div>
-      </section>
+        <a href="/start.html" class="btn-dark services-sticky-cta">
+          Start a project
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+      </div>
 
       <!-- MARQUEE -->
       <div class="projects-marquee">
@@ -606,16 +629,6 @@
 
   <script>
   (function() {
-    /* Services tab toggle */
-    var tabBtns = document.querySelectorAll('.services-tab-btn');
-    tabBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        tabBtns.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        document.querySelectorAll('.services-tab-panel').forEach(function(p) { p.classList.remove('active'); });
-        document.querySelector('.services-tab-panel[data-panel="' + btn.getAttribute('data-tab') + '"]').classList.add('active');
-      });
-    });
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');
@@ -647,8 +660,26 @@
         item.classList.add('active');
         dropdown.classList.remove('open');
         renderGrid();
+        syncServicePills();
       });
     });
+
+    /* Sticky services pills → filter the grid (toggle to clear) */
+    var servicePills = document.querySelectorAll('.services-sticky-pill');
+    function syncServicePills() {
+      servicePills.forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-svc') === currentFilter);
+      });
+    }
+    servicePills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        var svc = pill.getAttribute('data-svc');
+        var target = (currentFilter === svc) ? 'portfolio' : svc;
+        var menuItem = document.querySelector('.filter-dropdown-item[data-filter="' + target + '"]');
+        if (menuItem) menuItem.click();
+      });
+    });
+    syncServicePills();
 
     function syncProjectGridRows() {
       if (!grid) return;

@@ -634,16 +634,6 @@
 
   <script>
   (function() {
-    /* Services tab toggle */
-    var tabBtns = document.querySelectorAll('.services-tab-btn');
-    tabBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        tabBtns.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        document.querySelectorAll('.services-tab-panel').forEach(function(p) { p.classList.remove('active'); });
-        document.querySelector('.services-tab-panel[data-panel="' + btn.getAttribute('data-tab') + '"]').classList.add('active');
-      });
-    });
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');
@@ -675,8 +665,26 @@
         item.classList.add('active');
         dropdown.classList.remove('open');
         renderGrid();
+        syncServicePills();
       });
     });
+
+    /* Sticky services pills → filter the grid (toggle to clear) */
+    var servicePills = document.querySelectorAll('.services-sticky-pill');
+    function syncServicePills() {
+      servicePills.forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-svc') === currentFilter);
+      });
+    }
+    servicePills.forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        var svc = pill.getAttribute('data-svc');
+        var target = (currentFilter === svc) ? 'portfolio' : svc;
+        var menuItem = document.querySelector('.filter-dropdown-item[data-filter="' + target + '"]');
+        if (menuItem) menuItem.click();
+      });
+    });
+    syncServicePills();
 
     function syncProjectGridRows() {
       if (!grid) return;

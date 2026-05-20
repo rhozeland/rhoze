@@ -344,7 +344,7 @@ function PayrollRow({ row, profile, stub, periodId, onChanged }: any) {
     <div className={cn("border rounded-lg bg-card overflow-hidden", paid ? "border-emerald-500/40" : "border-border")}>
       <button onClick={() => setOpen((o) => !o)} className="w-full px-4 py-3 flex items-center gap-4 flex-wrap hover:bg-accent/20 text-left">
         <div className="flex-1 min-w-[180px]">
-          <div className="font-medium text-sm">{profile?.alias || profile?.display_name || profile?.email || "—"}</div>
+          <div className="font-medium text-sm">{profile?.display_name || profile?.alias || profile?.email || "—"}</div>
           <div className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
             <span>Hourly {formatCents(row.hourly_cents)}</span>
             <span>·</span><span>Flat {formatCents(row.flat_cents)}</span>

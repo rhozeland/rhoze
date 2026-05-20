@@ -3038,27 +3038,27 @@
           .r-eco .r-eco-lead { display: flex; flex-direction: column; gap: 0.55rem; max-width: 760px; }
           .r-eco .r-eco-lead h1 { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(2.1rem, 5.2vw, 3.6rem); font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; color: hsl(var(--ink)); margin: 0; }
           .r-eco .r-eco-lead p { font-size: 0.98rem; color: hsl(var(--muted)); margin: 0; max-width: 540px; line-height: 1.45; }
-          .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: hsl(var(--ink)); padding: 6px; box-shadow: 0 16px 48px -20px hsl(var(--ink) / 0.35); }
+          .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 6px; box-shadow: 0 16px 48px -20px rgba(0,0,0,0.45); }
           .r-eco-panes { display: flex; gap: 6px; height: 540px; }
-          .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: hsl(var(--surface-card)); border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex-grow 0.7s cubic-bezier(0.23, 1, 0.32, 1); }
+          .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: #FAF9F6; border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex 0.7s cubic-bezier(0.23, 1, 0.32, 1); }
           .r-eco-pane:hover, .r-eco-pane:focus-within { flex-grow: 2.5; }
           .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(1rem, 1.6vw, 1.5rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; }
-          .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(2.4rem, 4.4vw, 3.6rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: hsl(var(--ink)); text-transform: uppercase; margin: 0 0 0.9rem; opacity: 0.22; transition: opacity 0.5s ease; display: block; }
+          .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.65rem, 3.2vw, 2.6rem); font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; color: #1a1a1a; text-transform: uppercase; margin: 0 0 0.9rem; opacity: 0.24; transition: opacity 0.5s ease; display: block; word-break: break-word; }
           .r-eco-pane:hover .r-eco-cat, .r-eco-pane:focus-within .r-eco-cat { opacity: 1; }
           .r-eco-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; opacity: 0; transform: translateY(8px); transition: opacity 0.45s ease 0.08s, transform 0.45s ease 0.08s; pointer-events: none; }
           .r-eco-pane:hover .r-eco-pills, .r-eco-pane:focus-within .r-eco-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
-          .r-eco-pill { display: inline-flex; align-items: center; padding: 0.35rem 0.7rem; background: hsl(var(--ink)); color: hsl(var(--surface-card)); border-radius: 999px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
+          .r-eco-pill { display: inline-flex; align-items: center; padding: 0.35rem 0.7rem; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; }
           .r-eco-foot { opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease 0.18s, transform 0.5s ease 0.18s; }
           .r-eco-pane:hover .r-eco-foot, .r-eco-pane:focus-within .r-eco-foot { opacity: 1; transform: translateY(0); }
-          .r-eco-foot-label { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); margin: 0 0 0.55rem; display: block; }
+          .r-eco-foot-label { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(26,26,26,0.55); margin: 0 0 0.55rem; display: block; }
           .r-eco-thumbs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
-          .r-eco-thumb { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: var(--radius-md); overflow: hidden; background: hsl(var(--surface)); border: 1px solid hsl(var(--line)); text-decoration: none; }
+          .r-eco-thumb { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: var(--radius-md); overflow: hidden; background: rgba(26,26,26,0.05); border: 1px solid rgba(26,26,26,0.08); text-decoration: none; }
           .r-eco-thumb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 0.5s ease, transform 0.6s ease; }
           .r-eco-thumb:hover img { filter: grayscale(0); transform: scale(1.04); }
-          .r-eco-thumb-tag { position: absolute; top: 6px; left: 6px; padding: 2px 6px; background: hsl(var(--ink) / 0.85); color: hsl(var(--surface-card)); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; }
+          .r-eco-thumb-tag { position: absolute; top: 6px; left: 6px; padding: 2px 6px; background: rgba(26,26,26,0.85); color: #FAF9F6; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border-radius: 4px; }
           .r-eco-stage-cta { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; padding: 0.65rem 0.4rem 0; }
-          .r-eco-stage-cta .r-eco-count { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--surface-card) / 0.6); }
-          .r-eco-stage-cta .r-eco-all { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; background: hsl(var(--surface-card)); color: hsl(var(--ink)); border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-decoration: none; letter-spacing: 0.02em; transition: transform 0.2s ease; }
+          .r-eco-stage-cta .r-eco-count { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(250,249,246,0.6); }
+          .r-eco-stage-cta .r-eco-all { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; background: #FAF9F6; color: #1a1a1a; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-decoration: none; letter-spacing: 0.02em; transition: transform 0.2s ease; }
           .r-eco-stage-cta .r-eco-all:hover { transform: translateX(2px); }
           .r-eco-stage-cta .r-eco-all svg { width: 0.8rem; height: 0.8rem; }
           @media (max-width: 860px) {

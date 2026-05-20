@@ -3242,6 +3242,7 @@
             .r-eco-pane.is-events .r-eco-events,
             .r-eco-pane.is-events:focus-within .r-eco-events,
             .r-eco-pane.is-events.is-open .r-eco-events {
+              display: flex !important; flex-direction: column !important;
               opacity: 1 !important; max-height: none !important; pointer-events: auto !important;
               margin-top: 0.85rem !important; overflow: hidden !important; gap: 0 !important;
               min-width: 0 !important; width: 100% !important;
@@ -3272,6 +3273,7 @@
               background: transparent !important; border: 0 !important;
               border-bottom: 1px solid rgba(26,26,26,0.06) !important;
               border-radius: 0 !important; text-align: left;
+              width: 100%; min-width: 0; overflow: hidden;
             }
             .r-eco-pane.is-events .r-eco-event:hover { background: transparent !important; transform: none !important; }
             .r-eco-pane.is-events .r-eco-event-date {

@@ -3102,20 +3102,20 @@
           .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover::after, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible::after { opacity: 1; }
           .r-eco-pane-body { position: absolute; inset: 0; padding: clamp(0.9rem, 1.6vw, 1.4rem); display: flex; flex-direction: column; justify-content: space-between; z-index: 2; transition: padding 0.35s ease; }
           .r-eco-cat { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1.05rem, 1.8vw, 1.55rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1; color: #1a1a1a; text-transform: uppercase; margin: 0 0 0.7rem; display: block; white-space: nowrap; overflow: hidden; transition: font-size 0.4s ease, writing-mode 0s, transform 0.3s ease; }
-          .r-eco-panes:hover .r-eco-pane:hover .r-eco-cat, .r-eco-panes:focus-within .r-eco-pane:focus-within .r-eco-cat { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:hover .r-eco-cat, .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:focus-visible .r-eco-cat { font-size: clamp(1.8rem, 3.2vw, 2.6rem); }
           /* Collapsed siblings: vertical category, hide body content */
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pane-body,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem 0; justify-content: center; align-items: center; }
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-cat,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; }
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pills,
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-foot,
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events,
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events-status,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pills,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-foot,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events-status { display: none; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-pane-body,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-pane-body { padding: 0.85rem 0; justify-content: center; align-items: center; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-cat,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-cat { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-pills,
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-foot,
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-events,
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-events-status,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-pills,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-foot,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-events,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-events-status { display: none; }
           .r-eco-pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
           @media (min-width: 861px) {
             .r-eco-pills { opacity: 0; transform: translateY(6px); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
@@ -3125,8 +3125,8 @@
           /* Category icon — always visible (except on collapsed sibling panes) */
           .r-eco-icon { display: inline-flex; width: 38px; height: 38px; align-items: center; justify-content: center; border-radius: 10px; background: rgba(26,26,26,0.10); color: #1a1a1a; margin: 0 0 0.6rem; }
           .r-eco-icon svg { width: 20px; height: 20px; }
-          .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
-          .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: none; }
+          .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-icon,
+          .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-icon { display: none; }
           /* Featured marquee carousel above the panes */
           .r-eco-feat { position: relative; overflow: hidden; border-radius: calc(var(--radius-lg) - 4px); background: #0f0f0f; margin-top: 6px; }
           .r-eco-feat::before, .r-eco-feat::after { content: ""; position: absolute; top: 0; bottom: 0; width: 72px; z-index: 2; pointer-events: none; }

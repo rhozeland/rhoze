@@ -3192,6 +3192,9 @@
             .r-eco-icon { grid-area: icon; width: 32px; height: 32px; margin: 0; flex-shrink: 0; }
             .r-eco-icon svg { width: 16px; height: 16px; }
             .r-eco-cat { grid-area: title; font-size: 1rem; margin: 0; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+            .r-eco-panes:hover .r-eco-pane:hover .r-eco-cat,
+            .r-eco-panes:focus-within .r-eco-pane:focus-within .r-eco-cat,
+            .r-eco-pane.is-open .r-eco-cat { font-size: 1rem !important; }
             .r-eco-pills, .r-eco-events { grid-area: body; }
             /* Pills/events hidden by default; reveal when card is :focus-within (tap/click) */
             .r-eco-pills { display: flex; flex-basis: 100%; gap: 0.3rem; justify-content: flex-start; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; }

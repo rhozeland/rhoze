@@ -3132,8 +3132,16 @@
           .r-eco-feat::before, .r-eco-feat::after { content: ""; position: absolute; top: 0; bottom: 0; width: 72px; z-index: 2; pointer-events: none; }
           .r-eco-feat::before { left: 0; background: linear-gradient(90deg, #0f0f0f, transparent); }
           .r-eco-feat::after { right: 0; background: linear-gradient(-90deg, #0f0f0f, transparent); }
-          .r-eco-feat-label { position: absolute; top: 10px; left: 14px; z-index: 3; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.7); display: inline-flex; align-items: center; gap: 0.45rem; }
-          .r-eco-feat-all { position: absolute; top: 10px; right: 14px; z-index: 3; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0; background: transparent; color: rgba(250,249,246,0.85); font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; transition: color 0.2s ease, transform 0.2s ease; border-bottom: 1px solid rgba(250,249,246,0.35); padding-bottom: 2px; }
+          .r-eco-feat-label { position: absolute; top: 10px; left: 14px; z-index: 3; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.7); display: inline-flex; align-items: center; gap: 0.45rem; max-width: calc(100% - 130px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .r-eco-feat-all { position: absolute; top: 10px; right: 14px; z-index: 3; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0 0 2px; background: transparent; color: rgba(250,249,246,0.85); font-size: 0.55rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; transition: color 0.2s ease, transform 0.2s ease; border-bottom: 1px solid rgba(250,249,246,0.35); white-space: nowrap; }
+          @media (max-width: 560px) {
+            .r-eco-feat-label { font-size: 0.5rem; letter-spacing: 0.16em; max-width: calc(100% - 110px); }
+            .r-eco-feat-all { font-size: 0.5rem; letter-spacing: 0.16em; }
+            .r-eco-feat-label-full { display: none; }
+          }
+          @media (min-width: 561px) {
+            .r-eco-feat-label-short { display: none; }
+          }
           .r-eco-feat-all:hover { color: #FAF9F6; border-bottom-color: #FAF9F6; transform: translateX(2px); }
           .r-eco-feat-all svg { width: 0.7rem; height: 0.7rem; }
           .r-eco-feat-label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #FFB870; box-shadow: 0 0 0 0 rgba(255,184,112,0.55); animation: rEcoPulse 2s infinite; }
@@ -3177,33 +3185,36 @@
           @media (max-width: 860px) {
             .r-eco-panes { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 170px; height: auto; gap: 6px; }
             .r-eco-pane { flex: unset; min-height: 0; }
-            .r-eco-pane-body { padding: 0.85rem 0.9rem; justify-content: flex-start; }
-            .r-eco-icon { width: 30px; height: 30px; margin: 0 0 0.45rem; }
-            .r-eco-icon svg { width: 16px; height: 16px; }
-            .r-eco-cat { font-size: 1.05rem; margin: 0 0 0.5rem; }
-            .r-eco-pills { gap: 0.25rem; opacity: 1; transform: none; pointer-events: auto; }
+            /* Centered icon+label, pills hidden until hover/tap — match desktop */
+            .r-eco-pane-body { padding: 0.85rem; justify-content: center; align-items: center; text-align: center; }
+            .r-eco-pane-body > div { display: flex; flex-direction: column; align-items: center; width: 100%; transition: transform 0.3s ease; }
+            .r-eco-icon { width: 34px; height: 34px; margin: 0 0 0.5rem; }
+            .r-eco-icon svg { width: 18px; height: 18px; }
+            .r-eco-cat { font-size: 1.15rem; margin: 0; text-align: center; }
+            .r-eco-pills { gap: 0.25rem; justify-content: center; opacity: 0; max-height: 0; overflow: hidden; transform: translateY(6px); transition: opacity 0.3s ease, max-height 0.4s ease, transform 0.3s ease, margin-top 0.3s ease; pointer-events: none; margin-top: 0; }
+            .r-eco-pane:hover .r-eco-pills, .r-eco-pane:focus-within .r-eco-pills, .r-eco-pane.is-open .r-eco-pills { opacity: 1; max-height: 200px; transform: none; pointer-events: auto; margin-top: 0.6rem; }
             .r-eco-pill { font-size: 0.5rem; padding: 0.22rem 0.5rem; letter-spacing: 0.08em; }
-            .r-eco-events { max-height: 110px; gap: 0.3rem; opacity: 1; transform: none; pointer-events: auto; }
-            .r-eco-event { padding: 0.35rem 0.4rem; grid-template-columns: 34px 1fr; gap: 0.4rem; }
+            .r-eco-events { max-height: 0; gap: 0.3rem; opacity: 0; overflow: hidden; transform: translateY(6px); transition: opacity 0.3s ease, max-height 0.4s ease, transform 0.3s ease, margin-top 0.3s ease; pointer-events: none; margin-top: 0; width: 100%; }
+            .r-eco-pane:hover .r-eco-events, .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 130px; transform: none; pointer-events: auto; margin-top: 0.6rem; overflow-y: auto; }
+            .r-eco-event { padding: 0.35rem 0.4rem; grid-template-columns: 34px 1fr; gap: 0.4rem; text-align: left; }
             .r-eco-event-date .d { font-size: 0.82rem; }
             .r-eco-event-title { font-size: 0.66rem; }
             .r-eco-event-tag { font-size: 0.48rem; }
-            /* Disable takeover behavior on small screens */
+            /* Disable horizontal takeover behavior on small screens */
             .r-eco-panes:hover .r-eco-pane, .r-eco-panes:focus-within .r-eco-pane { flex: unset; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-cat,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: horizontal-tb; transform: none; font-size: 1.05rem; letter-spacing: -0.03em; margin: 0 0 0.5rem; }
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-cat { writing-mode: horizontal-tb; transform: none; font-size: 1.15rem; letter-spacing: -0.03em; margin: 0; }
+            .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: inline-flex; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pills,
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-events,
-            .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-icon,
             .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pills,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-icon { display: revert; }
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events { display: flex; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pane-body,
-            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem 0.9rem; justify-content: flex-start; align-items: stretch; }
+            .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 0.85rem; justify-content: center; align-items: center; }
           }
           @media (max-width: 480px) {
-            .r-eco-panes { grid-template-columns: 1fr; grid-auto-rows: auto; }
-            .r-eco-pane { min-height: 150px; }
+            .r-eco-panes { grid-template-columns: 1fr 1fr; grid-auto-rows: 140px; }
           }
         </style>
 
@@ -3356,7 +3367,7 @@
             </div>
 
             <div class="r-eco-feat" aria-label="Featured work">
-              <span class="r-eco-feat-label">Featured work · 1000+ creator collaborations</span>
+              <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
               <a class="r-eco-feat-all" href="/projects.html">See all projects
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
               </a>

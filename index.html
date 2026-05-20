@@ -3201,7 +3201,7 @@
             .r-eco-pane:focus-within .r-eco-pills, .r-eco-pane.is-open .r-eco-pills { opacity: 1; max-height: 240px; pointer-events: auto; margin-top: 0.5rem; }
             .r-eco-pill { font-size: 0.55rem; padding: 0.25rem 0.6rem; letter-spacing: 0.08em; }
             .r-eco-events { display: flex; flex-basis: 100%; flex-direction: column; gap: 0.5rem; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; width: 100%; padding: 0; }
-            .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 420px; pointer-events: auto; margin-top: 0.65rem; overflow-y: auto; }
+            .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 140px; pointer-events: auto; margin-top: 0.65rem; overflow-y: auto; -webkit-overflow-scrolling: touch; }
             .r-eco-event { padding: 0.6rem 0.7rem; grid-template-columns: 44px 1fr; gap: 0.7rem; text-align: left; }
             .r-eco-event-date { padding: 0.4rem 0; }
             .r-eco-event-date .m { font-size: 0.55rem; }
@@ -3222,6 +3222,22 @@
             .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-events { display: flex; opacity: 0; max-height: 0; margin-top: 0; pointer-events: none; }
             .r-eco-panes:hover .r-eco-pane:not(:hover) .r-eco-pane-body,
             .r-eco-panes:focus-within .r-eco-pane:not(:focus-within) .r-eco-pane-body { padding: 1rem 1.1rem; justify-content: flex-start; align-items: center; }
+            /* Override the desktop :has() takeover rules on mobile/tablet so vertical text and pane-shrinking never apply */
+            .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane,
+            .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane { flex: 1 1 auto !important; }
+            .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-cat,
+            .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-cat { writing-mode: horizontal-tb !important; transform: none !important; font-size: 1rem !important; letter-spacing: -0.02em !important; margin: 0 !important; }
+            .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-icon,
+            .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-icon { display: inline-flex !important; }
+            .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-pane-body,
+            .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-pane-body { padding: 0.95rem 1.1rem !important; justify-content: flex-start !important; align-items: stretch !important; }
+            .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-pills,
+            .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-pills,
+            .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-events,
+            .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-events { display: flex !important; opacity: 0 !important; max-height: 0 !important; margin-top: 0 !important; pointer-events: none !important; }
+            /* Simpler, snappier transitions on mobile to reduce visual glitches */
+            .r-eco-pane, .r-eco-pane-body, .r-eco-cat, .r-eco-icon { transition: none !important; }
+            .r-eco-pills, .r-eco-events { transition: opacity 0.18s ease, max-height 0.22s ease !important; }
           }
         </style>
 

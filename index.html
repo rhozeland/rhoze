@@ -3200,11 +3200,14 @@
             .r-eco-pills { display: flex; flex-basis: 100%; gap: 0.3rem; justify-content: flex-start; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; }
             .r-eco-pane:focus-within .r-eco-pills, .r-eco-pane.is-open .r-eco-pills { opacity: 1; max-height: 240px; pointer-events: auto; margin-top: 0.5rem; }
             .r-eco-pill { font-size: 0.55rem; padding: 0.25rem 0.6rem; letter-spacing: 0.08em; }
-            .r-eco-events { display: flex; flex-basis: 100%; flex-direction: column; gap: 0.35rem; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; width: 100%; padding: 0; }
-            .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 260px; pointer-events: auto; margin-top: 0.5rem; overflow-y: auto; }
-            .r-eco-event { padding: 0.45rem 0.55rem; grid-template-columns: 38px 1fr; gap: 0.55rem; text-align: left; }
-            .r-eco-event-title { font-size: 0.72rem; }
-            .r-eco-event-tag { font-size: 0.52rem; }
+            .r-eco-events { display: flex; flex-basis: 100%; flex-direction: column; gap: 0.5rem; opacity: 0; max-height: 0; overflow: hidden; transform: none; transition: opacity 0.25s ease, max-height 0.35s ease, margin-top 0.25s ease; pointer-events: none; margin-top: 0; width: 100%; padding: 0; }
+            .r-eco-pane:focus-within .r-eco-events, .r-eco-pane.is-open .r-eco-events { opacity: 1; max-height: 420px; pointer-events: auto; margin-top: 0.65rem; overflow-y: auto; }
+            .r-eco-event { padding: 0.6rem 0.7rem; grid-template-columns: 44px 1fr; gap: 0.7rem; text-align: left; }
+            .r-eco-event-date { padding: 0.4rem 0; }
+            .r-eco-event-date .m { font-size: 0.55rem; }
+            .r-eco-event-date .d { font-size: 1.05rem; }
+            .r-eco-event-title { font-size: 0.82rem; white-space: normal; }
+            .r-eco-event-tag { font-size: 0.55rem; }
             /* Hide the events status badge on mobile (already removed in HTML, but ensure) */
             .r-eco-events-status { display: none; }
             /* Hard-disable the desktop horizontal-takeover hover behavior */

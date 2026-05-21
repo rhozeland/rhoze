@@ -410,8 +410,11 @@
             }
           }
           (function(){
-            var b=document.querySelector('[data-wallet-tab="main"]');
+            var b=document.querySelector('[data-wallet-tab="chart"]');
             if(b){ b.style.background='hsl(var(--surface-card))'; b.style.boxShadow='0 1px 3px hsl(var(--shadow) / 0.08)'; }
+            // Default tab is chart — load the iframe immediately
+            var f=document.getElementById('chartFrame');
+            if(f && !f.src && f.dataset.src) f.src=f.dataset.src;
             var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-wallet-tab]'));
             tabs.forEach(function(tab, i){
               tab.addEventListener('click', function(){ switchWalletTab(tab.dataset.walletTab); });

@@ -8,7 +8,8 @@ const wallets = [
     id: "main",
     icon: Wallet,
     label: "Main Wallet",
-    supplyPct: 0.43,
+    supplyPct: 24,
+    unlockedPct: 0.43,
     address: "6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr",
     barColor: "hsl(var(--foreground))",
     lockedPct: 24,
@@ -20,7 +21,8 @@ const wallets = [
     id: "marketing",
     icon: Megaphone,
     label: "Marketing Wallet",
-    supplyPct: 0.83,
+    supplyPct: 6.5,
+    unlockedPct: 0.83,
     address: "6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C",
     barColor: "hsl(var(--foreground) / 0.7)",
     lockedPct: 6.5,
@@ -33,6 +35,7 @@ const wallets = [
     icon: Gift,
     label: "Airdrop Wallet",
     supplyPct: 9.54,
+    unlockedPct: 9.54,
     address: "USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs",
     barColor: "hsl(var(--foreground) / 0.45)",
     lockedPct: null,
@@ -163,10 +166,10 @@ const Tokenomics = () => {
                     {w.lockedPct !== null ? (
                       <>
                         <Lock size={12} />
-                        <span>locked · {w.lockMonths} months left · {w.supplyPct}% of supply</span>
+                        <span>locked · {w.lockMonths} months left · {w.unlockedPct}% of supply unlocked</span>
                       </>
                     ) : (
-                      <span>unlocked · distributed to real-world holders</span>
+                      <span>fully unlocked · distributed to real-world holders</span>
                     )}
                   </div>
 

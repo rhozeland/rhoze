@@ -153,19 +153,20 @@ const Tokenomics = () => {
             {wallets.map((w) => (
               <TabsContent key={w.id} value={w.id} className="mt-6">
                 <div className="p-8 rounded-2xl bg-card border border-border">
-                  <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
-                    <h3 className="text-xl font-medium font-display text-foreground">
-                      {w.label}
-                    </h3>
+                  <h3 className="text-xl font-medium font-display text-foreground mb-3">
+                    {w.label}
+                  </h3>
+                  <div className="text-5xl font-semibold font-display text-foreground tabular-nums leading-none mb-2">
+                    {w.lockedPct !== null ? `${w.lockedPct}%` : `${w.supplyPct}%`}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground font-body mb-5 uppercase tracking-wider">
                     {w.lockedPct !== null ? (
-                      <div className="flex items-center gap-1.5">
-                        <Lock size={14} className="text-foreground" />
-                        <span className="text-sm font-medium text-foreground font-body">
-                          {w.lockedPct}% locked · {w.lockMonths} months left
-                        </span>
-                      </div>
+                      <>
+                        <Lock size={12} />
+                        <span>locked · {w.lockMonths} months left · {w.supplyPct}% of supply</span>
+                      </>
                     ) : (
-                      <span className="text-sm text-muted-foreground font-body">Unlocked · distributed to holders</span>
+                      <span>unlocked · distributed to real-world holders</span>
                     )}
                   </div>
 

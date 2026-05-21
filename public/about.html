@@ -273,8 +273,28 @@
             </button>
           </div>
 
-          <div class="wallet-panel token-card fade-in" id="wpanel-main" role="tabpanel" aria-labelledby="wtab-main" tabindex="0" data-wallet-panel="main">
-            <h3 style="margin-top:0;">Main Wallet</h3>
+          <div class="wallet-panel fade-in" id="wpanel-allocations" role="tabpanel" aria-labelledby="wtab-allocations" tabindex="0" data-wallet-panel="allocations" hidden>
+            <!-- Supply split bar -->
+            <div style="background:hsl(var(--surface-card)); border:1px solid hsl(var(--line)); border-radius:0.75rem; padding:1rem 1.1rem; margin-bottom:1rem;">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; font-size:0.65rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:hsl(var(--muted));">
+                <span>Total supply split</span><span style="font-variant-numeric:tabular-nums;">100%</span>
+              </div>
+              <div style="display:flex; height:14px; width:100%; overflow:hidden; border-radius:999px; background:hsl(var(--surface-alt)); border:1px solid hsl(var(--line));">
+                <div style="width:0.43%; background:hsl(var(--accent-purple)); min-width:2px;" title="Main · 0.43%"></div>
+                <div style="width:0.83%; background:hsl(330 75% 60%); min-width:2px;" title="Marketing · 0.83%"></div>
+                <div style="width:9.54%; background:hsl(265 70% 70%);" title="Airdrop · 9.54%"></div>
+                <div style="width:89.20%; background:hsl(var(--muted) / 0.35);" title="Open market · 89.20%"></div>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:0.5rem 1rem; margin-top:0.9rem; font-size:0.82rem;">
+                <div style="display:flex; align-items:center; gap:0.5rem;"><span style="width:10px;height:10px;border-radius:999px;background:hsl(var(--accent-purple));"></span><span style="color:hsl(var(--ink));font-weight:600;">Main</span><span style="margin-left:auto;color:hsl(var(--muted));font-variant-numeric:tabular-nums;">0.43%</span></div>
+                <div style="display:flex; align-items:center; gap:0.5rem;"><span style="width:10px;height:10px;border-radius:999px;background:hsl(330 75% 60%);"></span><span style="color:hsl(var(--ink));font-weight:600;">Marketing</span><span style="margin-left:auto;color:hsl(var(--muted));font-variant-numeric:tabular-nums;">0.83%</span></div>
+                <div style="display:flex; align-items:center; gap:0.5rem;"><span style="width:10px;height:10px;border-radius:999px;background:hsl(265 70% 70%);"></span><span style="color:hsl(var(--ink));font-weight:600;">Airdrop</span><span style="margin-left:auto;color:hsl(var(--muted));font-variant-numeric:tabular-nums;">9.54%</span></div>
+                <div style="display:flex; align-items:center; gap:0.5rem;"><span style="width:10px;height:10px;border-radius:999px;background:hsl(var(--muted) / 0.5);"></span><span style="color:hsl(var(--ink));font-weight:600;">Open market</span><span style="margin-left:auto;color:hsl(var(--muted));font-variant-numeric:tabular-nums;">89.20%</span></div>
+              </div>
+            </div>
+
+            <div class="token-card" style="margin-bottom:0.9rem;">
+              <h3 style="margin-top:0;">Main Wallet</h3>
             <div class="pct">0.43%</div>
             <div class="lock-badge">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -291,9 +311,9 @@
                 Solscan
               </a>
             </div>
-          </div>
+            </div>
 
-          <div class="wallet-panel token-card fade-in" id="wpanel-marketing" role="tabpanel" aria-labelledby="wtab-marketing" tabindex="0" data-wallet-panel="marketing" hidden>
+            <div class="token-card" style="margin-bottom:0.9rem;">
             <h3 style="margin-top:0;">Marketing Wallet</h3>
             <div class="pct">0.83%</div>
             <div class="lock-badge">
@@ -311,9 +331,9 @@
                 Solscan
               </a>
             </div>
-          </div>
+            </div>
 
-          <div class="wallet-panel token-card fade-in" id="wpanel-airdrop" role="tabpanel" aria-labelledby="wtab-airdrop" tabindex="0" data-wallet-panel="airdrop" hidden>
+            <div class="token-card">
             <h3 style="margin-top:0;">Airdrop Wallet</h3>
             <div class="pct">9.54%</div>
             <p>Providing supply to real-world participants of our network and studio.</p>
@@ -327,9 +347,10 @@
                 Solscan
               </a>
             </div>
+            </div>
           </div>
 
-          <div class="wallet-panel token-card fade-in" id="wpanel-chart" role="tabpanel" aria-labelledby="wtab-chart" tabindex="0" data-wallet-panel="chart" hidden>
+          <div class="wallet-panel token-card fade-in" id="wpanel-chart" role="tabpanel" aria-labelledby="wtab-chart" tabindex="0" data-wallet-panel="chart">
             <h3 style="margin-top:0;">Live $RHOZE Chart</h3>
             <div class="rhoze-stats" id="rhozeStats" aria-live="polite" style="display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:0.5rem; margin:0 0 0.9rem;">
               <div class="rhoze-stat" data-stat="price" style="padding:0.6rem 0.7rem; border:1px solid hsl(var(--line)); border-radius:0.6rem; background:hsl(var(--surface-card));">

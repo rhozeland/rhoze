@@ -5,7 +5,7 @@ import logoBlack from "@/assets/logo-black.webp";
 import logoWhite from "@/assets/logo-white.webp";
 import logoColor from "@/assets/logo-color.webp";
 
-const navLinks = [
+const navLinks: { label: string; href: string; icon: typeof BookOpen; external?: boolean }[] = [
   { label: "About", href: "/about.html", icon: BookOpen },
   { label: "Work", href: "/projects.html", icon: Layers },
   { label: "Connect", href: "/contact.html", icon: MessageCircle },

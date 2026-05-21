@@ -70,15 +70,7 @@ const projects = [
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=EPnVN9riFtI",
     image: "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
-  },
-  {
-    title: "iiMPCT Media",
-    artist: "iiMPCT Media",
-    tag: "Visual",
-    type: "Web Series",
-    icons: ["camera"],
-    href: "https://www.youtube.com/@iimpctmedia",
-    image: "/images/iimpct-media-thumb.webp",
+    video: "/videos/dubzy-fate.mp4",
   },
   {
     title: "United MMA Sponsorship",
@@ -162,6 +154,7 @@ const projects = [
     icons: ["music", "camera"],
     href: "https://www.youtube.com/watch?v=JL85Aej4Je4",
     image: "/images/steelo-u-outta-know-thumb.webp",
+    video: "/videos/steelo-u-outta-know.mp4",
   },
   {
     title: "Saint Flair West",

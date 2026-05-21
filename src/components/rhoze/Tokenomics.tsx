@@ -7,8 +7,10 @@ const wallets = [
     icon: Wallet,
     label: "Main Wallet",
     pct: "0.43%",
+    value: 0.43,
     address: "6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr",
     color: "bg-primary/10",
+    barColor: "hsl(var(--primary))",
     lockInfo: "24% locked, 12 months left",
     description:
       "We are seriously committed to the project with many areas to showcase from the talent within our network.",
@@ -17,8 +19,10 @@ const wallets = [
     icon: Megaphone,
     label: "Marketing Wallet",
     pct: "0.83%",
+    value: 0.83,
     address: "6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C",
     color: "bg-rhoze-pink",
+    barColor: "hsl(330 75% 65%)",
     lockInfo: "6.5% locked, 3 months left",
     description:
       "Our focus is on raising awareness through livestreaming and developing Rhozeland as a credible and recognizable brand. We're pursuing collaborations that uplift and inspire people to achieve their dreams. Any funds used will be announced — building trust through transparency and resourcefulness.",
@@ -27,13 +31,18 @@ const wallets = [
     icon: Gift,
     label: "Airdrop Wallet",
     pct: "9.54%",
+    value: 9.54,
     address: "USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs",
     color: "bg-rhoze-lavender",
+    barColor: "hsl(265 70% 70%)",
     lockInfo: null,
     description:
       "We're providing supply to real-world participants of our network and studio by inviting them to hold the token. Our thesis is that the real diamond holders and advocates will raise awareness of $RHOZE through engagement at our studio. The word of $RHOZE will spread.",
   },
 ];
+
+const COMMUNITY_PCT = +(100 - wallets.reduce((s, w) => s + w.value, 0)).toFixed(2);
+const COMMUNITY_BAR = "hsl(var(--muted-foreground) / 0.35)";
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
@@ -64,14 +73,60 @@ const Tokenomics = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="text-center mb-20"
+          className="text-center mb-12"
         >
           <h2 className="text-4xl sm:text-5xl font-semibold font-display mb-4 text-foreground">
-            Tokenomics
+            Token Allocations
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-body">
-            Full transparency on supply allocation. Every wallet is public, every move is announced.
+            How $RHOZE supply is split between the team, marketing, the community airdrop, and the open market. Every wallet is public, every move is announced.
           </p>
+        </motion.div>
+
+        {/* Supply breakdown bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-12 max-w-3xl mx-auto"
+        >
+          <div className="flex items-center justify-between mb-3 text-xs uppercase tracking-widest text-muted-foreground font-body">
+            <span>Total supply split</span>
+            <span className="tabular-nums">100%</span>
+          </div>
+          <div className="flex h-4 w-full overflow-hidden rounded-full border border-border bg-card">
+            {wallets.map((w) => (
+              <div
+                key={w.label}
+                style={{ width: `${w.value}%`, backgroundColor: w.barColor }}
+                title={`${w.label} · ${w.pct}`}
+                aria-label={`${w.label} ${w.pct}`}
+              />
+            ))}
+            <div
+              style={{ width: `${COMMUNITY_PCT}%`, backgroundColor: COMMUNITY_BAR }}
+              title={`Open market & community · ${COMMUNITY_PCT}%`}
+              aria-label={`Open market and community ${COMMUNITY_PCT}%`}
+            />
+          </div>
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm font-body">
+            {wallets.map((w) => (
+              <div key={w.label} className="flex items-start gap-2">
+                <span className="mt-1.5 h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: w.barColor }} />
+                <div className="min-w-0">
+                  <div className="font-medium text-foreground truncate">{w.label.replace(" Wallet", "")}</div>
+                  <div className="text-muted-foreground tabular-nums text-xs">{w.pct}</div>
+                </div>
+              </div>
+            ))}
+            <div className="flex items-start gap-2">
+              <span className="mt-1.5 h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: COMMUNITY_BAR }} />
+              <div className="min-w-0">
+                <div className="font-medium text-foreground truncate">Open market</div>
+                <div className="text-muted-foreground tabular-nums text-xs">{COMMUNITY_PCT}%</div>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 gap-6">

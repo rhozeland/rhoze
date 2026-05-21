@@ -462,7 +462,9 @@
           })();
           (function(){
             var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
-            var URL = 'https://api.dexscreener.com/latest/dex/tokens/' + TOKEN;
+            var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
+            var GT_URL = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL;
+            var DS_URL = 'https://api.dexscreener.com/latest/dex/tokens/' + TOKEN;
             var root = document.getElementById('rhozeStats');
             if (!root) return;
             var nodes = {
@@ -478,26 +480,39 @@
             var inflight = false;
             function update(){
               if (inflight) return; inflight = true;
-              fetch(URL, { cache: 'no-store' })
-                .then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+              function apply(price, change, mcap, vol){
+                if (nodes.price && isFinite(price)) nodes.price.textContent = fmtPrice(price);
+                if (nodes.change) {
+                  nodes.change.textContent = fmtPct(change);
+                  nodes.change.classList.remove('is-up','is-down');
+                  if (isFinite(change)) nodes.change.classList.add(change>=0?'is-up':'is-down');
+                }
+                if (nodes.mcap) nodes.mcap.textContent = fmtCompact(mcap);
+                if (nodes.vol) nodes.vol.textContent = fmtCompact(vol);
+              }
+              // Try DexScreener first (richer data when indexed), fall back to GeckoTerminal pool.
+              fetch(DS_URL, { cache: 'no-store' })
+                .then(function(r){ return r.ok ? r.json() : null; })
                 .then(function(d){
                   var pairs = (d && d.pairs) || [];
-                  if (!pairs.length) return;
-                  // Pick the highest-liquidity pair
-                  pairs.sort(function(a,b){ return (b.liquidity&&b.liquidity.usd||0) - (a.liquidity&&a.liquidity.usd||0); });
-                  var p = pairs[0];
-                  var price = parseFloat(p.priceUsd);
-                  var change = p.priceChange && parseFloat(p.priceChange.h24);
-                  var mcap = p.marketCap || p.fdv;
-                  var vol = p.volume && parseFloat(p.volume.h24);
-                  if (nodes.price) nodes.price.textContent = fmtPrice(price);
-                  if (nodes.change) {
-                    nodes.change.textContent = fmtPct(change);
-                    nodes.change.classList.remove('is-up','is-down');
-                    if (isFinite(change)) nodes.change.classList.add(change>=0?'is-up':'is-down');
+                  if (pairs.length) {
+                    pairs.sort(function(a,b){ return (b.liquidity&&b.liquidity.usd||0) - (a.liquidity&&a.liquidity.usd||0); });
+                    var p = pairs[0];
+                    apply(parseFloat(p.priceUsd),
+                          p.priceChange ? parseFloat(p.priceChange.h24) : NaN,
+                          p.marketCap || p.fdv,
+                          p.volume ? parseFloat(p.volume.h24) : NaN);
+                    return null;
                   }
-                  if (nodes.mcap) nodes.mcap.textContent = fmtCompact(mcap);
-                  if (nodes.vol) nodes.vol.textContent = fmtCompact(vol);
+                  return fetch(GT_URL, { cache: 'no-store' }).then(function(r){ return r.ok ? r.json() : null; });
+                })
+                .then(function(d){
+                  if (!d || !d.data || !d.data.attributes) return;
+                  var a = d.data.attributes;
+                  apply(parseFloat(a.base_token_price_usd),
+                        a.price_change_percentage ? parseFloat(a.price_change_percentage.h24) : NaN,
+                        parseFloat(a.market_cap_usd || a.fdv_usd),
+                        a.volume_usd ? parseFloat(a.volume_usd.h24) : NaN);
                 })
                 .catch(function(){ /* keep prior values; never throw */ })
                 .finally(function(){ inflight = false; });

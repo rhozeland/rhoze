@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { Copy, Check } from "lucide-react";
 
 const TOKEN = "7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump";
-const API_URL = `https://api.dexscreener.com/latest/dex/tokens/${TOKEN}`;
+const POOL = "C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF";
+const DS_URL = `https://api.dexscreener.com/latest/dex/tokens/${TOKEN}`;
+const GT_URL = `https://api.geckoterminal.com/api/v2/networks/solana/pools/${POOL}`;
 
 type Stats = {
   price: number | null;
@@ -48,18 +50,35 @@ const Chart = () => {
       if (inflight) return;
       inflight = true;
       try {
-        const r = await fetch(API_URL, { cache: "no-store" });
-        if (!r.ok) throw new Error(`http ${r.status}`);
-        const d = await r.json();
-        const pairs: any[] = d?.pairs ?? [];
-        if (!pairs.length || cancelled) return;
-        pairs.sort((a, b) => (b?.liquidity?.usd ?? 0) - (a?.liquidity?.usd ?? 0));
-        const p = pairs[0];
+        // Try DexScreener first (richer data when indexed)
+        const r = await fetch(DS_URL, { cache: "no-store" });
+        if (r.ok) {
+          const d = await r.json();
+          const pairs: any[] = d?.pairs ?? [];
+          if (pairs.length && !cancelled) {
+            pairs.sort((a, b) => (b?.liquidity?.usd ?? 0) - (a?.liquidity?.usd ?? 0));
+            const p = pairs[0];
+            setStats({
+              price: parseFloat(p.priceUsd),
+              change24h: p?.priceChange?.h24 != null ? parseFloat(p.priceChange.h24) : null,
+              marketCap: p?.marketCap ?? p?.fdv ?? null,
+              volume24h: p?.volume?.h24 != null ? parseFloat(p.volume.h24) : null,
+            });
+            return;
+          }
+        }
+        // Fallback: GeckoTerminal pool (works for pre-migration pump.fun tokens)
+        const gr = await fetch(GT_URL, { cache: "no-store" });
+        if (!gr.ok) throw new Error(`gt http ${gr.status}`);
+        const gd = await gr.json();
+        const a = gd?.data?.attributes;
+        if (!a || cancelled) return;
+        const mcapRaw = a.market_cap_usd ?? a.fdv_usd;
         setStats({
-          price: parseFloat(p.priceUsd),
-          change24h: p?.priceChange?.h24 != null ? parseFloat(p.priceChange.h24) : null,
-          marketCap: p?.marketCap ?? p?.fdv ?? null,
-          volume24h: p?.volume?.h24 != null ? parseFloat(p.volume.h24) : null,
+          price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
+          change24h: a?.price_change_percentage?.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
+          marketCap: mcapRaw != null ? parseFloat(mcapRaw) : null,
+          volume24h: a?.volume_usd?.h24 != null ? parseFloat(a.volume_usd.h24) : null,
         });
       } catch {
         // keep prior values

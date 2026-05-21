@@ -1,48 +1,50 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Wallet, Megaphone, Gift, Lock, Copy, Check } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const wallets = [
   {
+    id: "main",
     icon: Wallet,
     label: "Main Wallet",
-    pct: "0.43%",
-    value: 0.43,
+    supplyPct: 0.43,
     address: "6znjR2ttDJ5c6ScePsE4jU8e2g29dChX7cCVk6xjizr",
-    color: "bg-primary/10",
-    barColor: "hsl(var(--primary))",
-    lockInfo: "24% locked, 12 months left",
+    barColor: "hsl(var(--foreground))",
+    lockedPct: 24,
+    lockMonths: 12,
     description:
       "We are seriously committed to the project with many areas to showcase from the talent within our network.",
   },
   {
+    id: "marketing",
     icon: Megaphone,
     label: "Marketing Wallet",
-    pct: "0.83%",
-    value: 0.83,
+    supplyPct: 0.83,
     address: "6PSaZYykqtx5QHMh6jBqotrNnr6RWdgsds3WxSK58W8C",
-    color: "bg-rhoze-pink",
-    barColor: "hsl(330 75% 65%)",
-    lockInfo: "6.5% locked, 3 months left",
+    barColor: "hsl(var(--foreground) / 0.7)",
+    lockedPct: 6.5,
+    lockMonths: 3,
     description:
       "Our focus is on raising awareness through livestreaming and developing Rhozeland as a credible and recognizable brand. We're pursuing collaborations that uplift and inspire people to achieve their dreams. Any funds used will be announced — building trust through transparency and resourcefulness.",
   },
   {
+    id: "airdrop",
     icon: Gift,
     label: "Airdrop Wallet",
-    pct: "9.54%",
-    value: 9.54,
+    supplyPct: 9.54,
     address: "USnKWE4KoyAjXhuueHuFfAhgLZ4PkV67t6nBBwJPFMs",
-    color: "bg-rhoze-lavender",
-    barColor: "hsl(265 70% 70%)",
-    lockInfo: null,
+    barColor: "hsl(var(--foreground) / 0.45)",
+    lockedPct: null,
+    lockMonths: null,
     description:
       "We're providing supply to real-world participants of our network and studio by inviting them to hold the token. Our thesis is that the real diamond holders and advocates will raise awareness of $RHOZE through engagement at our studio. The word of $RHOZE will spread.",
   },
 ];
 
-const COMMUNITY_PCT = +(100 - wallets.reduce((s, w) => s + w.value, 0)).toFixed(2);
-const COMMUNITY_BAR = "hsl(var(--muted-foreground) / 0.35)";
+const TOTAL_SUPPLY = "1,000,000,000";
+const COMMUNITY_PCT = +(100 - wallets.reduce((s, w) => s + w.supplyPct, 0)).toFixed(2);
+const COMMUNITY_BAR = "hsl(var(--foreground) / 0.12)";
 
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
@@ -79,28 +81,28 @@ const Tokenomics = () => {
             Token Allocations
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-body">
-            How $RHOZE supply is split between the team, marketing, the community airdrop, and the open market. Every wallet is public, every move is announced.
+            Total supply: <span className="text-foreground font-medium tabular-nums">{TOTAL_SUPPLY}</span> $RHOZE. The team holds a small slice — most of the supply lives in the open market. Every wallet is public, every move is announced.
           </p>
         </motion.div>
 
-        {/* Supply breakdown bar */}
+        {/* Supply breakdown bar — monochrome, minimal */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-12 max-w-3xl mx-auto"
+          className="mb-14 max-w-3xl mx-auto"
         >
           <div className="flex items-center justify-between mb-3 text-xs uppercase tracking-widest text-muted-foreground font-body">
             <span>Total supply split</span>
-            <span className="tabular-nums">100%</span>
+            <span className="tabular-nums">{TOTAL_SUPPLY}</span>
           </div>
-          <div className="flex h-4 w-full overflow-hidden rounded-full border border-border bg-card">
+          <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-card">
             {wallets.map((w) => (
               <div
                 key={w.label}
-                style={{ width: `${w.value}%`, backgroundColor: w.barColor }}
-                title={`${w.label} · ${w.pct}`}
-                aria-label={`${w.label} ${w.pct}`}
+                style={{ width: `${w.supplyPct}%`, backgroundColor: w.barColor }}
+                title={`${w.label} · ${w.supplyPct}%`}
+                aria-label={`${w.label} ${w.supplyPct}%`}
               />
             ))}
             <div
@@ -109,60 +111,65 @@ const Tokenomics = () => {
               aria-label={`Open market and community ${COMMUNITY_PCT}%`}
             />
           </div>
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm font-body">
-            {wallets.map((w) => (
-              <div key={w.label} className="flex items-start gap-2">
-                <span className="mt-1.5 h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: w.barColor }} />
-                <div className="min-w-0">
-                  <div className="font-medium text-foreground truncate">{w.label.replace(" Wallet", "")}</div>
-                  <div className="text-muted-foreground tabular-nums text-xs">{w.pct}</div>
-                </div>
-              </div>
-            ))}
-            <div className="flex items-start gap-2">
-              <span className="mt-1.5 h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: COMMUNITY_BAR }} />
-              <div className="min-w-0">
-                <div className="font-medium text-foreground truncate">Open market</div>
-                <div className="text-muted-foreground tabular-nums text-xs">{COMMUNITY_PCT}%</div>
-              </div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-xs font-body text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "hsl(var(--foreground))" }} />
+              <span>Team wallets</span>
+              <span className="tabular-nums">{(wallets[0].supplyPct + wallets[1].supplyPct).toFixed(2)}%</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "hsl(var(--foreground) / 0.45)" }} />
+              <span>Airdrop</span>
+              <span className="tabular-nums">{wallets[2].supplyPct}%</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: COMMUNITY_BAR }} />
+              <span>Open market</span>
+              <span className="tabular-nums">{COMMUNITY_PCT}%</span>
             </div>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-6">
-          {wallets.map((w, i) => (
-            <motion.div
-              key={w.label}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.12 * i }}
-              className="group p-8 rounded-2xl bg-card border border-border hover:border-primary/40 transition-all hover:shadow-lift"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-start gap-6">
-                <div className={`w-12 h-12 rounded-xl ${w.color} flex items-center justify-center shrink-0`}>
-                  <w.icon className="text-foreground/70" size={22} />
-                </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="max-w-3xl mx-auto"
+        >
+          <Tabs defaultValue="main" className="w-full">
+            <TabsList className="grid grid-cols-3 w-full h-auto bg-card border border-border p-1">
+              {wallets.map((w) => (
+                <TabsTrigger
+                  key={w.id}
+                  value={w.id}
+                  className="flex items-center gap-2 py-2.5 data-[state=active]:bg-background data-[state=active]:text-foreground"
+                >
+                  <w.icon size={16} />
+                  <span className="hidden sm:inline">{w.label.replace(" Wallet", "")}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap items-baseline gap-3 mb-2">
+            {wallets.map((w) => (
+              <TabsContent key={w.id} value={w.id} className="mt-6">
+                <div className="p-8 rounded-2xl bg-card border border-border">
+                  <div className="flex flex-wrap items-baseline justify-between gap-3 mb-4">
                     <h3 className="text-xl font-medium font-display text-foreground">
                       {w.label}
                     </h3>
-                    <span className="text-2xl font-medium font-display text-primary">
-                      {w.pct}
-                    </span>
+                    {w.lockedPct !== null ? (
+                      <div className="flex items-center gap-1.5">
+                        <Lock size={14} className="text-foreground" />
+                        <span className="text-sm font-medium text-foreground font-body">
+                          {w.lockedPct}% locked · {w.lockMonths} months left
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground font-body">Unlocked · distributed to holders</span>
+                    )}
                   </div>
 
-                  {w.lockInfo && (
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Lock size={14} className="text-primary" />
-                      <span className="text-sm font-medium text-primary font-body">
-                        {w.lockInfo}
-                      </span>
-                    </div>
-                  )}
-
-                  <p className="text-muted-foreground font-body leading-relaxed mb-4">
+                  <p className="text-muted-foreground font-body leading-relaxed mb-5">
                     {w.description}
                   </p>
 
@@ -173,10 +180,10 @@ const Tokenomics = () => {
                     <CopyButton text={w.address} />
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </motion.div>
       </div>
     </section>
   );

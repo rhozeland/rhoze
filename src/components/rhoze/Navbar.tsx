@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Menu, X, Sparkles, ArrowUpRight, BookOpen, Layers, ShoppingBag, MessageCircle } from "lucide-react";
+import { Menu, X, Sparkles, ArrowUpRight, BookOpen, Layers, MessageCircle } from "lucide-react";
 import logoBlack from "@/assets/logo-black.webp";
 import logoWhite from "@/assets/logo-white.webp";
 import logoColor from "@/assets/logo-color.webp";
@@ -9,7 +9,6 @@ const navLinks = [
   { label: "About", href: "/about.html", icon: BookOpen },
   { label: "Work", href: "/projects.html", icon: Layers },
   { label: "Connect", href: "/contact.html", icon: MessageCircle },
-  { label: "Shop", href: "https://rhozeland.shop", external: true, icon: ShoppingBag },
 ];
 
 const Navbar = () => {

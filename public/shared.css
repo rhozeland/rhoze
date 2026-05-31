@@ -840,6 +840,33 @@ button { background: none; border: 0; cursor: pointer; }
 
 /* Old separate arrow removed — now integrated into .work-type-tag::after */
 
+/* View-count / stat badge inside .work-body */
+.work-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: hsl(var(--ink));
+  background: hsl(var(--surface-soft, var(--surface-card)));
+  border: 1px solid hsl(var(--line));
+  border-radius: 999px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.work-views svg {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* ===================== EVENTS ===================== */
 .events-grid {
   display: grid;

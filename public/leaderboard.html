@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>!function(){var o=localStorage.getItem('theme-override');if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}();</script>
+<!--URL-CLEAN--><script>!function(){try{var p=location.pathname;if(/\.html$/i.test(p)){var clean=p.replace(/\.html$/i,"")||"/";history.replaceState(null,"",clean+location.search+location.hash);}}catch(e){}}();</script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rhozeland — Community Leaderboard</title>
+  <meta name="description" content="Live Rhozeland community leaderboard — earn $RHOZE for raids, memes, threads, and video content. Rotating weekly challenges and bonus airdrops for the top movers." />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+  <style>
+    .lb-hero { display:grid; gap:18px; padding:32px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); }
+    .lb-hero .kicker { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-hero h1 { font-size: clamp(34px, 6vw, 56px); line-height:1.02; letter-spacing:-0.02em; color:hsl(var(--ink)); font-weight:700; }
+    .lb-hero .week-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-top:8px; }
+    .lb-stat { padding:14px 16px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); }
+    .lb-stat .label { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-stat .value { font-size:20px; font-weight:600; margin-top:4px; color:hsl(var(--ink)); }
+    .lb-table { width:100%; border-collapse:separate; border-spacing:0; }
+    .lb-table th, .lb-table td { padding:14px 16px; text-align:left; font-size:14px; border-bottom:1px solid hsl(var(--line)); }
+    .lb-table th { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:500; }
+    .lb-table td.rank { font-variant-numeric: tabular-nums; font-weight:600; color:hsl(var(--ink)); width:48px; }
+    .lb-table td.points { font-variant-numeric: tabular-nums; font-weight:600; color:hsl(var(--ink)); text-align:right; }
+    .lb-table tr:hover td { background:hsl(var(--surface-alt)); }
+    .lb-chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .lb-chip { font-size:11px; padding:3px 8px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--muted)); }
+    .lb-medal-1 td.rank { color: hsl(var(--accent-gold)); }
+    .lb-medal-2 td.rank { color: hsl(0 0% 65%); }
+    .lb-medal-3 td.rank { color: hsl(28 70% 55%); }
+    .lb-section { margin-top:36px; }
+    .lb-section h2 { font-size:22px; font-weight:600; color:hsl(var(--ink)); margin-bottom:14px; letter-spacing:-0.01em; }
+    .lb-rules-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    .lb-rule { padding:16px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
+    .lb-rule .pts { font-size:22px; font-weight:600; color:hsl(var(--ink)); font-variant-numeric: tabular-nums; }
+    .lb-rule .act { font-size:13px; color:hsl(var(--ink)); margin-top:4px; font-weight:500; }
+    .lb-rule .note { font-size:11px; color:hsl(var(--muted)); margin-top:4px; }
+    .lb-cal { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+    .lb-cal-card { padding:16px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
+    .lb-cal-card.active { border-color: hsl(var(--accent-green)); box-shadow: 0 0 0 2px hsl(var(--accent-green) / 0.15); }
+    .lb-cal-card .week { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-cal-card .theme { font-size:16px; font-weight:600; color:hsl(var(--ink)); margin-top:4px; }
+    .lb-cal-card .desc { font-size:12px; color:hsl(var(--muted)); margin-top:6px; line-height:1.4; }
+    .lb-cal-card .meta { font-size:11px; color:hsl(var(--muted)); margin-top:10px; display:flex; justify-content:space-between; }
+    .lb-meta-line { font-size:11px; color:hsl(var(--muted)); margin-top:10px; }
+    .lb-empty { padding:32px; text-align:center; color:hsl(var(--muted)); font-size:13px; }
+  </style>
+</head>
+<body class="page-events">
+  <div class="gradient-canvas" aria-hidden="true"></div>
+  <div class="page-shell">
+
+    <!-- NAVBAR -->
+    <nav class="navbar" aria-label="Primary">
+      <a class="brand" href="/" aria-label="Rhozeland home">
+        <div class="brand-logo-wrap"><img src="/images/logo-black.webp" alt="Rhozeland logo" class="logo-dark" /><img src="/images/logo-white.webp" alt="Rhozeland logo" class="logo-light" /><img src="/images/logo-color.webp" alt="Rhozeland Toybox logo" class="logo-color" /></div>
+        <span class="brand-text">Rhozeland</span>
+      </a>
+      <div class="nav-links">
+        <a href="/about.html">About</a>
+        <a href="/projects.html">Work</a>
+        <a href="/contact.html">Connect</a>
+      </div>
+      <a class="nav-cta" href="#create" onclick="event.preventDefault(); openCreateModal && openCreateModal();">
+        Create
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu && toggleMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
+      </button>
+    </nav>
+    <div id="mobileMenu" class="mobile-menu">
+      <a href="/about.html">About</a>
+      <a href="/projects.html">Work</a>
+      <a href="/contact.html">Connect</a>
+    </div>
+
+    <main>
+      <!-- HERO + CURRENT WEEK -->
+      <section class="lb-hero">
+        <div>
+          <span class="kicker">Rhozeland · Community</span>
+          <h1>Leaderboard</h1>
+          <p style="font-size:15px; color:hsl(var(--muted)); margin-top:10px; max-width:62ch;">
+            Earn $RHOZE every week by raiding, memeing, threading, and creating video for the movement.
+            Rotating challenges, weekly snapshots, bonus airdrops for the top movers.
+          </p>
+        </div>
+        <div class="week-grid">
+          <div class="lb-stat"><div class="label">Current week</div><div class="value" id="lb-week-label">—</div></div>
+          <div class="lb-stat"><div class="label">Theme</div><div class="value" id="lb-week-theme">—</div></div>
+          <div class="lb-stat"><div class="label">Multiplier</div><div class="value" id="lb-week-mult">—</div></div>
+          <div class="lb-stat"><div class="label">Ends</div><div class="value" id="lb-week-end">—</div></div>
+        </div>
+        <div class="lb-meta-line" id="lb-week-desc"></div>
+      </section>
+
+      <!-- LEADERBOARD -->
+      <section class="lb-section">
+        <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:14px;">
+          <h2>Top movers</h2>
+          <div class="lb-meta-line" id="lb-updated">Updating…</div>
+        </div>
+        <div style="border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); overflow:hidden; background:hsl(var(--surface-card));">
+          <table class="lb-table">
+            <thead>
+              <tr><th>Rank</th><th>User</th><th>Breakdown</th><th>Challenges</th><th style="text-align:right;">Points</th></tr>
+            </thead>
+            <tbody id="lb-body">
+              <tr><td colspan="5" class="lb-empty">Loading leaderboard…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CHALLENGE CALENDAR -->
+      <section class="lb-section">
+        <h2>4-week challenge calendar</h2>
+        <div class="lb-cal" id="lb-cal"></div>
+      </section>
+
+      <!-- POINTS RULES -->
+      <section class="lb-section">
+        <h2>How points work</h2>
+        <div class="lb-rules-grid" id="lb-rules"></div>
+      </section>
+
+      <section class="lb-section" style="text-align:center; padding:24px;">
+        <p style="font-size:13px; color:hsl(var(--muted));">
+          Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted.
+          Snapshots are published weekly by the Rhozeland marketing team.
+        </p>
+      </section>
+    </main>
+
+    <div id="footerMount"></div>
+  </div>
+
+  <script src="/shared.js" defer></script>
+  <script>
+    (function () {
+      var SUPABASE_URL = "https://hdlpvcsxyxirywjkhsui.supabase.co";
+      var SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w";
+      var headers = { apikey: SUPABASE_ANON, Authorization: "Bearer " + SUPABASE_ANON };
+      function rest(path) {
+        return fetch(SUPABASE_URL + "/rest/v1/" + path, { headers: headers }).then(function (r) { return r.json(); });
+      }
+      function fmtDate(d) {
+        if (!d) return "—";
+        try { return new Date(d).toLocaleDateString(undefined, { month: "short", day: "numeric" }); } catch (e) { return d; }
+      }
+      function escapeHtml(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]; }); }
+
+      function renderLeaderboard(rows) {
+        var body = document.getElementById("lb-body");
+        if (!rows || !rows.length) {
+          body.innerHTML = '<tr><td colspan="5" class="lb-empty">No published leaderboard yet. Check back after the first snapshot.</td></tr>';
+          return;
+        }
+        var latest = rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
+        document.getElementById("lb-updated").textContent = latest ? "Last published " + fmtDate(latest) : "";
+        body.innerHTML = rows.slice(0, 10).map(function (r, i) {
+          var rank = i + 1;
+          var cls = rank === 1 ? "lb-medal-1" : rank === 2 ? "lb-medal-2" : rank === 3 ? "lb-medal-3" : "";
+          var chips = [
+            ["Raids", r.raids], ["Memes", r.memes], ["Threads", r.edu_threads], ["Videos", r.videos]
+          ].filter(function (c) { return c[1] > 0; })
+           .map(function (c) { return '<span class="lb-chip">' + escapeHtml(c[0]) + ' · ' + c[1] + '</span>'; })
+           .join("");
+          return '<tr class="' + cls + '">' +
+            '<td class="rank">' + rank + '</td>' +
+            '<td><strong>' + escapeHtml(r.username) + '</strong></td>' +
+            '<td><div class="lb-chips">' + (chips || '<span class="lb-chip">no activity yet</span>') + '</div></td>' +
+            '<td>' + (r.challenges_completed || 0) + '</td>' +
+            '<td class="points">' + (r.points || 0).toLocaleString() + '</td>' +
+          '</tr>';
+        }).join("");
+      }
+
+      function renderChallenges(list) {
+        var cal = document.getElementById("lb-cal");
+        if (!list || !list.length) { cal.innerHTML = '<div class="lb-empty">No challenges scheduled yet.</div>'; return; }
+        var today = new Date().toISOString().slice(0, 10);
+        var current = list.find(function (c) { return c.is_active; }) ||
+                      list.find(function (c) { return c.start_date <= today && c.end_date >= today; }) ||
+                      list[0];
+        if (current) {
+          document.getElementById("lb-week-label").textContent = current.week_label || "—";
+          document.getElementById("lb-week-theme").textContent = current.theme || "—";
+          document.getElementById("lb-week-mult").textContent = current.multiplier ? current.multiplier + "×" : "1×";
+          document.getElementById("lb-week-end").textContent = fmtDate(current.end_date);
+          document.getElementById("lb-week-desc").textContent = current.description || "";
+        }
+        cal.innerHTML = list.map(function (c) {
+          var isCurrent = current && c.id === current.id;
+          return '<div class="lb-cal-card' + (isCurrent ? ' active' : '') + '">' +
+            '<div class="week">' + escapeHtml(c.week_label) + (isCurrent ? ' · this week' : '') + '</div>' +
+            '<div class="theme">' + escapeHtml(c.theme) + '</div>' +
+            '<div class="desc">' + escapeHtml(c.description || '') + '</div>' +
+            '<div class="meta"><span>' + fmtDate(c.start_date) + ' → ' + fmtDate(c.end_date) + '</span>' +
+            '<span>' + (c.multiplier || 1) + '× pts</span></div>' +
+          '</div>';
+        }).join("");
+      }
+
+      function renderRules(rows) {
+        var el = document.getElementById("lb-rules");
+        if (!rows || !rows.length) { el.innerHTML = '<div class="lb-empty">No rules published.</div>'; return; }
+        el.innerHTML = rows.map(function (r) {
+          return '<div class="lb-rule">' +
+            '<div class="pts">+' + (r.base_points || 0) + '</div>' +
+            '<div class="act">' + escapeHtml(r.activity) + '</div>' +
+            (r.notes ? '<div class="note">' + escapeHtml(r.notes) + '</div>' : '') +
+          '</div>';
+        }).join("");
+      }
+
+      function load() {
+        rest("community_leaderboard?select=*&order=points.desc&limit=25").then(renderLeaderboard).catch(function () {
+          document.getElementById("lb-body").innerHTML = '<tr><td colspan="5" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
+        });
+        rest("community_challenges?select=*&order=start_date.asc").then(renderChallenges);
+        rest("community_points_rules?select=*&order=sort_order.asc").then(renderRules);
+      }
+      load();
+      setInterval(load, 60000);
+    })();
+  </script>
+</body>
+</html>

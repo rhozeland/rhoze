@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Shield, LogOut, Calendar,
   FolderKanban, Inbox, Package, Clock,
-  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare,
+  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,7 @@ const nav = [
   { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/crm", label: "CRM", icon: Users },
   { to: "/docs", label: "Docs & Training", icon: BookOpen },
+  { to: "/leaderboard", label: "Leaderboard", icon: Trophy },
 ];
 
 const adminNav = [

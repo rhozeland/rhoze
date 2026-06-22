@@ -1,5 +1,4 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import TeamLogin from "./pages/TeamLogin";
 import TeamLayout from "./components/TeamLayout";
 import Dashboard from "./pages/Dashboard";
 import CRM from "./pages/CRM";
@@ -15,8 +14,7 @@ import Intake from "./pages/Intake";
 import Requests from "./pages/Requests";
 import TimeAndPay from "./pages/TimeAndPay";
 import ClientPortal from "./pages/ClientPortal";
-import ClientAccess from "./pages/ClientAccess";
-import PortalLanding from "./pages/PortalLanding";
+import Portal from "./pages/Portal";
 import ClientLayout from "./components/ClientLayout";
 import ClientHome from "./pages/ClientHome";
 import ClientProfile from "./pages/ClientProfile";
@@ -51,11 +49,10 @@ function RequireClient({ children }: { children: React.ReactNode }) {
 export default function TeamApp() {
   return (
     <Routes>
-      <Route path="/login" element={<TeamLogin />} />
-      {/* Unified portal entry — two cards (Client Portal / Team Access) */}
-      <Route path="/portal" element={<PortalLanding />} />
-      {/* Client-facing entry — sign up / sign in / redeem project code. No referral required. */}
-      <Route path="/client" element={<ClientAccess />} />
+      {/* Unified portal — single smart router for client + team auth. */}
+      <Route path="/login" element={<Portal />} />
+      <Route path="/portal" element={<Portal />} />
+      <Route path="/client" element={<Portal />} />
       {/* Client-facing portal — wrapped in ClientLayout so signed-in clients
           stay inside the client surface and never land in team pages. */}
       <Route

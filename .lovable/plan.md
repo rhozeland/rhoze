@@ -1,112 +1,68 @@
+## Phase 1 — Portal: one-page smart router
 
----
+Replace the current `/portal` two-card landing with a single sign-in surface that auto-routes by role after auth.
 
-## Team Portal v2 — Phased Restructure (April 2026)
+- One page at `/portal` (and `/client` and `/login` redirect into it). Single email + password form, with "Sign in with Google" and a `Have a project code?` toggle that reveals an optional code field.
+- On submit / on auth state change: read `user_roles`. If `admin` or `employee` → push to `/` (team dashboard). Else → push to `/client/home`. If a project code was entered, redeem it first via the existing `redeem_project_code` RPC, then route.
+- New users get a single "Create account" toggle on the same page (email + password). No separate client vs team signup — team accounts are still invite-only via existing `team_invites` flow, but the form itself is unified.
+- Visually match the rest of the site (Inter, the editorial dark/light tokens already in `index.css`) instead of the current generic shadcn card look. Compact, single column, full-height.
+- Old routes (`/portal`, `/client`, `/login`) all resolve to the same component so existing links keep working.
 
-### Phase 1 — Portal restructure (THIS ROUND)
-- Remove **Messages** tab entirely (sidebar + route + page file).
-- Replace **Activities** with **Priorities** (Eisenhower 2x2 matrix). Personal view default, toggle to Team-wide.
-- Rebuild **Dashboard** as employee hub: tile grid → Marketing, CRM, Payroll, Docs & Training, Settings. Drop CLM-style stats.
-- Expand **Profiles**: role/title, designer/specialist info, bio, avatar. Settings page lets each user edit their own.
-- Sidebar reorganized to match new module structure.
+## Phase 2 — Public leaderboard + team admin editor
 
-### Phase 2 — Docs & Training uploads + CRM tightening
-- Storage bucket `docs-files` for admin uploads (PDFs, slides).
-- Embed support for Google Drive/Docs links inside doc cards.
-- Merge Contacts + Deals into a single tighter CRM workspace (one detail view, inline activities).
-- Incorporate sales-team doc once provided.
+Two surfaces backed by the same Lovable Cloud tables.
 
-### Phase 3 — Google Workspace (workspace-level account)
-- Connect ONE Rhozeland Google account via standard connector.
-- Shared Drive browser inside Docs & Training.
-- Embed Sheets/Docs/Slides directly. Optional: shared calendar feed on Dashboard.
+**Public side** — new static-feeling page at `/leaderboard` (added to `public/` as a real HTML page to match the editorial site, with a small inline script that fetches from the database via the public anon key).
 
-### Phase 4 — Payroll automation
-- Time sheets, reimbursements, hourly specialist projects.
-- Project schedule fees (% allocations per person per project).
-- Admin filters → auto-generate pay periods. Awaiting user's structure example.
+- Hero with the current week's challenge theme + multiplier + countdown to next snapshot.
+- Top-10 leaderboard table: rank, @username, points, challenges completed, last updated.
+- Activity breakdown chips per user (raids / memes / threads / videos) using your XLSX columns.
+- Points-rules section + 4-week rotating challenge calendar pulled from DB.
+- Auto-refreshes every 60s for the "real-time" feel.
 
-### Phase 5 — Client-facing intake on rhozeland.com
-- Project intake flow on public site → lands in Team Portal CRM.
-- À la carte services + predefined credit packages.
-- Estimate generation, contract attachment, payment scheduling.
-- Stripe (Lovable built-in) for payments.
+**Team editor** — new `/leaderboard` page inside the team dashboard (in `src/team/pages`), gated to `admin` + a new `marketing` role.
 
-# Rhozeland — Major Site Expansion Plan
+- Add/edit/remove leaderboard entries (username, points, per-activity counts).
+- Edit weekly challenge (theme, multiplier, dates, description).
+- "Publish snapshot" button that timestamps `last_updated` for all rows so the public page reflects a weekly cadence.
+- Read-only "Points Rules" reference panel.
 
-## ✅ Phase 0 — Navbar Copy (Shipped)
-- Replaced "Create" CTA with "Join Community" across React Navbar + all static HTML headers/footers.
+**Schema** (3 new tables, all with the standard GRANT + RLS pattern, anon SELECT only on leaderboard rows that have been published):
 
----
+```text
+community_leaderboard
+  id, username, points, raids, memes, edu_threads, videos,
+  challenges_completed, last_updated, published_at
 
-## ✅ Phase 1 — Employee Portal + CRM (Shipped MVP)
+community_challenges
+  id, week_label, theme, description, multiplier, start_date, end_date
 
-**Entry**: `/team.html` — separate Vite HTML entry, hash routing, `noindex,nofollow`. Discreet "Team Access" link in every static-site footer.
+community_points_rules
+  id, activity, base_points, notes
+```
 
-**Stack**: Lovable Cloud (Postgres + Auth + RLS + Realtime).
+Seed all three tables from your uploaded `rhoze_community_tracker (1).xlsx` in the same migration. Add `marketing` to the `app_role` enum so you can grant edit access without making someone full admin.
 
-**Auth**: Email/password + Google OAuth. First-ever signup is auto-promoted to `admin` via DB trigger; subsequent signups have no role until an admin grants one in `/team.html#/roles`.
+## Phase 3 — Brand architecture (decision needed before building)
 
-**Roles**: `admin` / `employee` / `client` enum, stored in `user_roles`. `has_role()` + `is_team_member()` security-definer helpers gate all RLS.
+Three viable paths. Quick tradeoff so you can choose without me guessing:
 
-**Modules built**:
-1. **Dashboard** — counts: contacts, open deals, activities, pipeline value
-2. **Contacts** — leads/clients/partners/vendors with CRUD
-3. **Deals** — Kanban pipeline (Lead → Qualified → Proposal → Negotiation → Won/Lost) with inline stage change
-4. **Activities** — call/email/meeting/note/task log
-5. **Docs & Training** — categorized library, search, per-user completion tracking, admin-only writes, `is_required` flag
-6. **Messages** — channel-based realtime team chat (`general` channel seeded)
-7. **Payroll** — admin-managed pay periods + per-user stubs (employees see only their own)
-8. **Roles** — admin-only role manager
+1. **One Rhozeland, two pillars (recommended).** Keep the current homepage. Below the hero, add two large equal-weight panels: **Rhozeland Media** (artists, podcast, vlogs, livestreams, brand partners, services) and **Rhozeland Tech** (app, $Rhoze, Web3, leaderboard). Each panel deep-links to its own subpage. Pros: preserves the compact editorial feel you like, one URL, fastest to ship. Cons: less dramatic separation.
 
-**Files**: `team.html`, `src/main.tsx`, `src/team/**`
+2. **Media-first homepage + `/tech` subhub.** The homepage becomes a real media front page — latest drops ticker, podcast hero, partner logos ticker, services strip, "work with us" CTA. Tokenomics / chart / wallet status all move behind a `/tech` route linked from the nav. Pros: positions Rhozeland publicly as a media house (your MTV/New Yorker framing). Cons: existing Web3 audience loses the front-door token surface.
 
-**Goal**: Internal-only area for Rhozeland team. Footer-only entrance.
+3. **Top-level toggle (Media | Tech).** A persistent nav pill that swaps the whole homepage experience. Pros: cleanest mental model, strongest brand statement. Cons: most work, most duplication, splits SEO.
 
-**Stack**: Lovable Cloud (Postgres, Auth, RLS, Edge Functions).
+I'll ask you to pick one right after Phase 2 ships so we have your reaction to the live leaderboard before reshaping the front page around it.
 
-### Architecture
-- Auth: email/password + Google. Roles stored in dedicated `user_roles` table (admin / employee). Never on profiles.
-- `has_role()` security-definer function for RLS.
-- Footer entrance: small "Team Access" link → `/team/login` (unindexed).
-- Authenticated layout at `/team/*` gated by role check.
+### Cross-cutting
 
-### Modules (MVP)
-1. **Dashboard** — quick stats, announcements feed.
-2. **Payroll** — read-only view of pay periods + downloadable stubs (admin uploads).
-3. **Docs & Training** — categorized library (Markdown/PDF), search, completion tracking.
-4. **Internal Messaging** — channel-based or 1:1 (Realtime).
-5. **CRM**:
-   - Contacts (leads, clients, partners)
-   - Deals/pipeline (Kanban: Lead → Qualified → Proposal → Won/Lost)
-   - Activities log (calls, emails, notes)
-   - Marketing: campaign list, email templates, subscriber lists
+- All three phases use Lovable Cloud (no new external services).
+- `app_role` enum gets `marketing` added; existing `RequireTeam` keeps working unchanged.
+- Nothing on the static editorial pages (`public/*.html`) changes in Phase 1 or 2 except adding `public/leaderboard.html`.
 
-### Suggested footer copy
-- "Team Access" or "Staff Login" — unobtrusive, in footer right column.
+## Sequencing
 
----
-
-## 📋 Phase 2 — Start a Project + Subscription Tiers (planned, awaiting docs)
-
-**Goal**: Move "Start a Project" out of contact page into its own flow with two paths.
-
-### Path A — One-off project intake
-- Dedicated page: `/start`
-- Service selector (audio mix/master, visual, design, web, etc.)
-- Scope/budget/timeline form → email + CRM lead.
-
-### Path B — Subscription (PRIMARY)
-- Monthly tiers, each grants a credit allowance.
-- Credits redeemable against service catalog (variable cost per service).
-- **Awaiting**: user-provided documentation describing tier structure, credit costs, and improvisation rules.
-
-### Stack
-- Stripe (Lovable built-in payments) — subscriptions + customer portal.
-- Cloud DB tables: `subscription_tiers`, `user_subscriptions`, `credit_balance`, `credit_transactions`, `service_catalog`, `service_orders`.
-- Client dashboard: balance, history, redeem credits, manage subscription.
-
-### Pending decisions
-- Tier names + prices + credit allotments (from user docs)
-- Credit cost per service (from user docs)
-- Rollover policy, expiry, top-up packs
+1. Phase 1 (portal) — single PR, frontend only.
+2. Phase 2 (leaderboard) — migration + seed + public page + team editor.
+3. Phase 3 (brand) — only after you pick option 1 / 2 / 3.

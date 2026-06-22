@@ -104,6 +104,123 @@ export type Database = {
         }
         Relationships: []
       }
+      community_challenges: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string
+          id: string
+          is_active: boolean
+          multiplier: number
+          start_date: string
+          theme: string
+          updated_at: string
+          week_label: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date: string
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          start_date: string
+          theme: string
+          updated_at?: string
+          week_label: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          multiplier?: number
+          start_date?: string
+          theme?: string
+          updated_at?: string
+          week_label?: string
+        }
+        Relationships: []
+      }
+      community_leaderboard: {
+        Row: {
+          challenges_completed: number
+          created_at: string
+          edu_threads: number
+          id: string
+          last_updated: string
+          memes: number
+          points: number
+          published_at: string | null
+          raids: number
+          sort_order: number
+          updated_at: string
+          username: string
+          videos: number
+        }
+        Insert: {
+          challenges_completed?: number
+          created_at?: string
+          edu_threads?: number
+          id?: string
+          last_updated?: string
+          memes?: number
+          points?: number
+          published_at?: string | null
+          raids?: number
+          sort_order?: number
+          updated_at?: string
+          username: string
+          videos?: number
+        }
+        Update: {
+          challenges_completed?: number
+          created_at?: string
+          edu_threads?: number
+          id?: string
+          last_updated?: string
+          memes?: number
+          points?: number
+          published_at?: string | null
+          raids?: number
+          sort_order?: number
+          updated_at?: string
+          username?: string
+          videos?: number
+        }
+        Relationships: []
+      }
+      community_points_rules: {
+        Row: {
+          activity: string
+          base_points: number
+          created_at: string
+          id: string
+          notes: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          activity: string
+          base_points: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          activity?: string
+          base_points?: number
+          created_at?: string
+          id?: string
+          notes?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           company: string | null
@@ -1972,6 +2089,7 @@ export type Database = {
         Returns: undefined
       }
       archive_expired_projects: { Args: never; Returns: number }
+      can_edit_community: { Args: { _uid: string }; Returns: boolean }
       consume_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -2089,7 +2207,7 @@ export type Database = {
     }
     Enums: {
       activity_type: "call" | "email" | "meeting" | "note" | "task"
-      app_role: "admin" | "employee" | "client"
+      app_role: "admin" | "employee" | "client" | "marketing"
       contact_type: "lead" | "client" | "partner" | "vendor"
       credit_request_status:
         | "pending_team"
@@ -2245,7 +2363,7 @@ export const Constants = {
   public: {
     Enums: {
       activity_type: ["call", "email", "meeting", "note", "task"],
-      app_role: ["admin", "employee", "client"],
+      app_role: ["admin", "employee", "client", "marketing"],
       contact_type: ["lead", "client", "partner", "vendor"],
       credit_request_status: [
         "pending_team",

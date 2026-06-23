@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>!function(){var o=localStorage.getItem('theme-override');if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}();</script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rhozeland — Mockup 3 · Brutalist Masthead</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+  <style>
+    :root { --bg:#0a0a0a; --fg:#f5f5f0; --line:#262626; --accent:#d4ff2a; --warn:#ff3b1f; }
+    body.preview { background: var(--bg); color: var(--fg); font-family:'Inter', system-ui, sans-serif; }
+    .preview-banner { position:sticky; top:0; z-index:50; background:#000; color:#fff; font:600 11px/1 'JetBrains Mono',monospace; letter-spacing:.18em; text-transform:uppercase; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #1a1a1a; }
+    .preview-banner a { color:#fff; text-decoration:none; opacity:.65; margin-left:14px; }
+    .preview-banner a.active { opacity:1; color: var(--accent); }
+
+    .br-wrap { padding: 0; }
+
+    /* Tape */
+    .br-tape { background: var(--accent); color:#000; overflow:hidden; border-bottom:1px solid #000; }
+    .br-tape-row { display:flex; white-space:nowrap; animation: brTape 55s linear infinite; width:max-content; }
+    @keyframes brTape { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .br-tape-cell { display:flex; gap:10px; padding:8px 18px; border-right:1px solid #000; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; }
+    .br-tape-cell .k { opacity:.55; }
+
+    /* Masthead */
+    .br-mast { display:flex; justify-content:space-between; align-items:center; padding: 18px 24px; border-bottom:1px solid var(--line); }
+    .br-logo { font-family:'Archivo Black',sans-serif; font-size: 22px; letter-spacing:-0.02em; text-transform:uppercase; }
+    .br-nav { display:flex; gap:22px; font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; }
+    .br-nav a { color:var(--fg); text-decoration:none; opacity:.65; }
+    .br-nav a:hover { opacity:1; color: var(--accent); }
+
+    /* Hero: split */
+    .br-hero { display:grid; grid-template-columns:1fr; border-bottom:1px solid var(--line); }
+    @media (min-width: 1024px) { .br-hero { grid-template-columns: 7fr 5fr; } }
+    .br-hero-l { padding: 56px 40px 40px; border-bottom:1px solid var(--line); }
+    @media (min-width: 1024px){ .br-hero-l { border-right:1px solid var(--line); border-bottom:none; } }
+    .br-hero-meta { display:flex; gap:10px; align-items:center; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; margin-bottom: 28px; }
+    .br-pill { background: var(--accent); color:#000; padding:4px 8px; }
+    .br-h1 { font-family:'Archivo Black', sans-serif; text-transform:uppercase; font-size: clamp(56px, 9.5vw, 156px); line-height:.86; letter-spacing:-0.035em; margin: 0; }
+    .br-h1 .stroke { -webkit-text-stroke: 2px var(--fg); color: transparent; }
+    .br-h1 .accent { color: var(--accent); }
+    .br-sub { margin-top: 24px; max-width: 60ch; font-size: 17px; line-height:1.5; color:#bdbdb8; }
+    .br-cta-row { display:flex; gap:12px; margin-top: 32px; flex-wrap:wrap; }
+    .br-cta { padding: 14px 24px; font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; text-decoration:none; border:1px solid var(--fg); color:var(--fg); }
+    .br-cta.primary { background: var(--accent); color:#000; border-color: var(--accent); }
+    .br-cta:hover { background: var(--fg); color: var(--bg); }
+    .br-cta.primary:hover { background: var(--fg); color:#000; border-color: var(--fg); }
+
+    .br-hero-r { padding: 0; position:relative; min-height: 420px; }
+    .br-hero-r iframe { width:100%; height:100%; border:0; position:absolute; inset:0; min-height: 420px; }
+    .br-hero-r .cap { position:absolute; left:14px; bottom:14px; z-index:2; background:#000; color: var(--accent); padding: 6px 10px; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; }
+
+    /* Stats row */
+    .br-stats { display:grid; grid-template-columns: repeat(2, 1fr); border-bottom:1px solid var(--line); }
+    @media (min-width: 768px){ .br-stats { grid-template-columns: repeat(4, 1fr); } }
+    .br-stat { padding: 22px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .br-stat:last-child { border-right:none; }
+    .br-stat .k { font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:#737373; }
+    .br-stat .v { font-family:'Archivo Black', sans-serif; font-size: 36px; line-height:1; margin-top: 8px; letter-spacing:-0.02em; }
+    .br-stat .v.accent { color: var(--accent); }
+
+    /* Three pillars */
+    .br-pillars { display:grid; grid-template-columns:1fr; border-bottom:1px solid var(--line); }
+    @media (min-width: 900px) { .br-pillars { grid-template-columns: repeat(3, 1fr); } }
+    .br-pillar { padding: 32px 28px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); position:relative; overflow:hidden; }
+    .br-pillar:last-child { border-right:none; }
+    .br-pillar:hover { background: #111; }
+    .br-pillar-num { font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.24em; color: var(--accent); margin-bottom: 14px; }
+    .br-pillar h3 { font-family:'Archivo Black', sans-serif; font-size: 44px; line-height:.95; letter-spacing:-0.025em; text-transform:uppercase; margin: 0 0 14px; }
+    .br-pillar p { color:#a3a3a3; font-size: 14px; line-height:1.55; }
+    .br-pillar a { display:inline-flex; align-items:center; gap:8px; margin-top: 18px; font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color: var(--fg); text-decoration:none; border-bottom: 2px solid var(--accent); padding-bottom:4px; }
+    .br-pillar .img { aspect-ratio: 16/9; background:#1a1a1a center/cover; margin-bottom: 22px; filter: grayscale(1) contrast(1.1); }
+
+    /* Work strip */
+    .br-work { padding: 40px 24px; border-bottom:1px solid var(--line); }
+    .br-work-head { display:flex; justify-content:space-between; align-items:end; margin-bottom: 22px; }
+    .br-work-head h2 { font-family:'Archivo Black', sans-serif; font-size: clamp(40px, 5vw, 72px); line-height:.95; letter-spacing:-0.025em; text-transform:uppercase; margin:0; }
+    .br-work-head .meta { font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:#737373; }
+    .br-work-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    @media (min-width: 900px) { .br-work-grid { grid-template-columns: repeat(4, 1fr); } }
+    .br-card { text-decoration:none; color:inherit; display:block; }
+    .br-card .img { aspect-ratio: 4/5; background:#1a1a1a center/cover; transition: filter 200ms; filter: grayscale(.6) contrast(1.05); }
+    .br-card:hover .img { filter: none; }
+    .br-card .meta { padding: 10px 0; display:flex; justify-content:space-between; align-items:end; }
+    .br-card .t { font-family:'Archivo Black', sans-serif; font-size: 16px; text-transform:uppercase; letter-spacing:-0.01em; }
+    .br-card .tag { font:700 9px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color: var(--accent); }
+
+    /* Partners marquee */
+    .br-partners { padding: 22px 0; border-bottom:1px solid var(--line); overflow:hidden; }
+    .br-partners-row { display:flex; gap:48px; white-space:nowrap; animation: brTape 45s linear infinite; width:max-content; padding: 0 24px; }
+    .br-partners-row span { font-family:'Archivo Black', sans-serif; font-size: 28px; text-transform:uppercase; letter-spacing:-0.02em; color:#262626; -webkit-text-stroke: 1px #525252; }
+
+    /* CTA */
+    .br-cta-block { padding: 96px 28px; text-align:center; background: var(--accent); color:#000; }
+    .br-cta-block h2 { font-family:'Archivo Black', sans-serif; font-size: clamp(48px, 8vw, 128px); line-height:.86; letter-spacing:-0.035em; text-transform:uppercase; margin: 0 0 18px; }
+    .br-cta-block p { font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.28em; text-transform:uppercase; margin: 0 0 32px; }
+    .br-cta-block a { display:inline-block; background:#000; color: var(--accent); padding: 16px 44px; font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; border:1px solid #000; }
+
+    .br-foot { padding: 28px; display:flex; justify-content:space-between; align-items:center; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color:#737373; }
+    .br-foot a { color:#737373; text-decoration:none; margin-left:18px; }
+    .br-foot a:hover { color: var(--accent); }
+  </style>
+</head>
+<body class="preview">
+  <div class="preview-banner">
+    <span>MOCKUP 3 · BRUTALIST · /home-preview-3</span>
+    <span>
+      <a href="/home-preview">V1 Broadsheet</a>
+      <a href="/home-preview-2">V2 Newspaper</a>
+      <a href="/home-preview-3" class="active">V3 Brutalist</a>
+      <a href="/">Live</a>
+    </span>
+  </div>
+
+  <div class="br-wrap">
+    <!-- Ticker -->
+    <div class="br-tape">
+      <div class="br-tape-row" id="brTape">
+        <div class="br-tape-cell"><span class="k">$RHOZE</span><span>Live · DexScreener</span></div>
+        <div class="br-tape-cell"><span class="k">Leaderboard #1</span><span>This Week</span></div>
+        <div class="br-tape-cell"><span class="k">Next Event</span><span>Land Sessions · LA</span></div>
+        <div class="br-tape-cell"><span class="k">Drop</span><span>Saint Flair West · Ooak</span></div>
+        <div class="br-tape-cell"><span class="k">Supply</span><span>1,000,000,000 · Locked</span></div>
+        <div class="br-tape-cell"><span class="k">Citizens</span><span>Creators · Collectors · Builders</span></div>
+      </div>
+    </div>
+
+    <!-- Masthead -->
+    <header class="br-mast">
+      <div class="br-logo">Rhozeland◆</div>
+      <nav class="br-nav">
+        <a href="/about">About</a>
+        <a href="/projects">Work</a>
+        <a href="/leaderboard">Leaderboard</a>
+        <a href="/events">Events</a>
+        <a href="/contact">Connect</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="br-hero">
+      <div class="br-hero-l">
+        <div class="br-hero-meta">
+          <span class="br-pill">A New Era</span>
+          <span>Vol. 09 · Solana · 2026</span>
+        </div>
+        <h1 class="br-h1">Launch <span class="accent">culture.</span><br/><span class="stroke">Own</span> the upside.</h1>
+        <p class="br-sub">Rhozeland is the recording, content production, and launch infrastructure for the independent creative economy. Studio + $RHOZE token + live community — built on Solana since 2016.</p>
+        <div class="br-cta-row">
+          <a class="br-cta primary" href="/projects">Enter the Ecosystem →</a>
+          <a class="br-cta" href="mailto:collab@rhozeland.com">Work With Us</a>
+        </div>
+      </div>
+      <div class="br-hero-r">
+        <iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+        <span class="cap">The Rhozeland Documentary</span>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="br-stats">
+      <div class="br-stat"><div class="k">Token Supply</div><div class="v">1B</div></div>
+      <div class="br-stat"><div class="k">Wallet Status</div><div class="v accent">LOCKED</div></div>
+      <div class="br-stat"><div class="k">Founded</div><div class="v">2016</div></div>
+      <div class="br-stat"><div class="k">Chain</div><div class="v">SOL</div></div>
+    </section>
+
+    <!-- Pillars -->
+    <section class="br-pillars">
+      <div class="br-pillar">
+        <div class="img" style="background-image:url('/images/timeline-2023.webp')"></div>
+        <div class="br-pillar-num">01 / Creative</div>
+        <h3>Studio</h3>
+        <p>Recording, music video, photography, campaign and rollout — the production engine behind every Rhozeland release.</p>
+        <a href="/projects">View Work →</a>
+      </div>
+      <div class="br-pillar">
+        <div class="img" style="background:#111; display:flex; align-items:flex-end; padding:18px;">
+          <div style="display:flex;align-items:flex-end;gap:6px;width:100%;height:80%">
+            <div style="flex:1;background:var(--accent);height:42%"></div>
+            <div style="flex:1;background:var(--accent);height:66%"></div>
+            <div style="flex:1;background:var(--accent);height:54%"></div>
+            <div style="flex:1;background:var(--accent);height:82%"></div>
+            <div style="flex:1;background:var(--accent);height:94%"></div>
+            <div style="flex:1;background:var(--accent);height:73%"></div>
+            <div style="flex:1;background:var(--accent);height:88%"></div>
+          </div>
+        </div>
+        <div class="br-pillar-num">02 / Economy</div>
+        <h3>$RHOZE</h3>
+        <p>1,000,000,000 fixed supply. Wallet locked. Live chart, transparent tokenomics, and creator-owned economics.</p>
+        <a href="#chart">See Chart →</a>
+      </div>
+      <div class="br-pillar">
+        <div class="img" style="background-image:url('/images/timeline-2021.webp')"></div>
+        <div class="br-pillar-num">03 / Network</div>
+        <h3>Community</h3>
+        <p>Creators, collectors, and builders. Weekly leaderboard, rotating challenges, bonus airdrops for top movers.</p>
+        <a href="/leaderboard">Enter Hub →</a>
+      </div>
+    </section>
+
+    <!-- Work -->
+    <section class="br-work">
+      <div class="br-work-head">
+        <h2>Selected Work</h2>
+        <span class="meta">2024 → 2026 · Reel</span>
+      </div>
+      <div class="br-work-grid">
+        <a class="br-card" href="/projects"><div class="img" style="background-image:url('/images/ooak-the-mask-thumb.webp')"></div><div class="meta"><span class="t">The Mask</span><span class="tag">Ooak</span></div></a>
+        <a class="br-card" href="/projects"><div class="img" style="background-image:url('/images/fingaz-mansa-musa-thumb.webp')"></div><div class="meta"><span class="t">Mansa Musa</span><span class="tag">Fingaz</span></div></a>
+        <a class="br-card" href="/projects"><div class="img" style="background-image:url('/images/bk-whiskey-mma-thumb.webp')"></div><div class="meta"><span class="t">United MMA</span><span class="tag">BK</span></div></a>
+        <a class="br-card" href="/projects"><div class="img" style="background-image:url('/images/carina-lucky-charm-thumb.webp')"></div><div class="meta"><span class="t">Lucky Charm</span><span class="tag">Carina</span></div></a>
+      </div>
+    </section>
+
+    <!-- Partners marquee -->
+    <section class="br-partners">
+      <div class="br-partners-row">
+        <span>Solana Coliseum</span><span>·</span>
+        <span>Pump.fun Hackathon</span><span>·</span>
+        <span>Luma</span><span>·</span>
+        <span>Source From Ontario</span><span>·</span>
+        <span>Vector Festival</span><span>·</span>
+        <span>WorldIT Show</span><span>·</span>
+        <span>Solana Coliseum</span><span>·</span>
+        <span>Pump.fun Hackathon</span><span>·</span>
+        <span>Luma</span><span>·</span>
+        <span>Source From Ontario</span><span>·</span>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="br-cta-block">
+      <h2>Build with us.</h2>
+      <p>Media Production · Strategy · Creative House</p>
+      <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>
+    </section>
+
+    <footer class="br-foot">
+      <span>© 2026 Rhozeland</span>
+      <span><a href="/about">About</a><a href="/contact">Contact</a><a href="https://instagram.com/rhozeland" target="_blank">Instagram</a></span>
+    </footer>
+  </div>
+
+  <script>(function(){var t=document.getElementById('brTape');if(t)t.innerHTML=t.innerHTML+t.innerHTML;})();</script>
+</body>
+</html>

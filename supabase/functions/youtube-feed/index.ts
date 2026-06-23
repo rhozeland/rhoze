@@ -6,7 +6,7 @@ const LIVE_URL = "https://www.youtube.com/@Rhozeland/streams";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 function decode(s: string) {

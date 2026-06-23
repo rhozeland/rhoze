@@ -64,6 +64,10 @@ const Hero = () => {
   const [videos, setVideos] = useState<Video[]>(fallbackVideos);
   const [featured, setFeatured] = useState<Video>(fallbackVideos[0]);
   const railRef = useRef<HTMLDivElement>(null);
+  const liveLabel = featured.live ? featured.title : "Offline";
+  const displayTickerItems = tickerItems.map((item) =>
+    item.tag === "Podcast" ? { ...item, label: featured.title } : item,
+  );
 
   useEffect(() => {
     let alive = true;
@@ -96,23 +100,23 @@ const Hero = () => {
   return (
     <section className="relative overflow-hidden border-b border-border bg-background px-4 pb-8 pt-28 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl border border-foreground bg-card shadow-[8px_8px_0_0_hsl(var(--foreground))]">
-        <div className="grid border-b border-foreground text-[0.64rem] font-black uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-2">
+        <div className="grid border-b border-foreground text-[0.64rem] font-black uppercase tracking-[0.18em] text-muted-foreground md:grid-cols-[auto_minmax(0,1fr)]">
           <div className="flex items-center gap-3 border-b border-border px-4 py-3 md:border-b-0 md:border-r">
             <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
             <span>Network</span>
             <strong className="text-sm tracking-normal text-foreground">Rhozeland · Solana</strong>
           </div>
-          <div className="relative flex items-center overflow-hidden px-4 py-3">
+          <div className="relative flex items-center overflow-hidden py-3">
             <div
               className="flex gap-8 whitespace-nowrap will-change-transform"
               style={{ animation: "ticker-scroll 45s linear infinite" }}
             >
-              {[...tickerItems, ...tickerItems].map((t, i) => (
+              {[...displayTickerItems, { tag: "Live Stream", label: liveLabel, href: "https://www.youtube.com/@Rhozeland/streams" }, ...displayTickerItems, { tag: "Live Stream", label: liveLabel, href: "https://www.youtube.com/@Rhozeland/streams" }].map((t, i) => (
                 <a
                   key={`${t.tag}-${i}`}
                   href={t.href}
                   {...(t.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="inline-flex items-center gap-2"
+                  className="inline-flex items-center gap-2 px-3"
                 >
                   <span className="border border-border px-2 py-0.5 text-foreground">{t.tag}</span>
                   <span className="tracking-normal normal-case text-muted-foreground">{t.label}</span>

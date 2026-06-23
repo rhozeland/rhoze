@@ -188,11 +188,11 @@
                       list.find(function (c) { return c.start_date <= today && c.end_date >= today; }) ||
                       list[0];
         if (current) {
-          document.getElementById("lb-week-label").textContent = current.week_label || "—";
-          document.getElementById("lb-week-theme").textContent = current.theme || "—";
-          document.getElementById("lb-week-mult").textContent = current.multiplier ? current.multiplier + "×" : "1×";
-          document.getElementById("lb-week-end").textContent = fmtDate(current.end_date);
-          document.getElementById("lb-week-desc").textContent = current.description || "";
+          var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+          setText("lb-week-label", current.week_label || "—");
+          setText("lb-week-mult", current.multiplier ? current.multiplier + "×" : "1×");
+          setText("lb-week-end", fmtDate(current.end_date));
+          setText("lb-week-desc", current.theme ? current.theme + (current.description ? " — " + current.description : "") : (current.description || ""));
         }
         cal.innerHTML = list.map(function (c) {
           var isCurrent = current && c.id === current.id;

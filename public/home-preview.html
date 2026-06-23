@@ -1,308 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
-<script>!function(){var o=localStorage.getItem('theme-override');if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}();</script>
-<script>!function(){try{var p=location.pathname;if(/\.html$/i.test(p)){var clean=p.replace(/\.html$/i,"")||"/";history.replaceState(null,"",clean+location.search+location.hash);}}catch(e){}}();</script>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rhozeland — Editorial Homepage Mockup</title>
+  <title>Rhozeland — Homepage Mockup (V3 · Kinetic Technical)</title>
   <meta name="robots" content="noindex" />
   <link rel="icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/shared.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet" />
   <style>
-    :root { --paper:#f4f4f4; --ink2:#0a0a0a; --rule: hsl(var(--line)); }
-    body.preview { background: var(--paper); color: var(--ink2); font-family: 'Inter', system-ui, sans-serif; }
-    .preview-banner { position:sticky; top:0; z-index:50; background:#0a0a0a; color:#fff; font:600 11px/1 'JetBrains Mono', monospace; letter-spacing:.18em; text-transform:uppercase; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; }
-    .preview-banner a { color:#fff; text-decoration:underline; }
-    .ed-wrap { max-width: 1400px; margin: 24px auto; padding: 0 16px 64px; }
-    .ed-paper { background:#fff; border:1px solid var(--ink2); box-shadow: 8px 8px 0 0 var(--ink2); }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    :root { --bg:#fdfdfd; --ink:#0a0a0a; --muted:#737373; --line:#0a0a0a; --soft:#f5f5f5; --green-bg:#dcfce7; --green-fg:#15803d; }
+    body { background: var(--bg); color: var(--ink); font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+    a { color: inherit; text-decoration: none; }
+    img { display:block; max-width:100%; }
 
-    /* Top ticker (real $RHOZE) */
-    .ed-tape { border-bottom:1px solid var(--ink2); overflow:hidden; }
-    .ed-tape-row { display:flex; white-space:nowrap; animation: edTape 60s linear infinite; width:max-content; }
-    .ed-tape:hover .ed-tape-row { animation-play-state: paused; }
-    @keyframes edTape { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-    .ed-tape-cell { display:flex; align-items:center; gap:8px; padding:10px 18px; border-right:1px solid var(--ink2); font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; color:var(--ink2); }
-    .ed-tape-cell .k { color:#737373; }
-    .ed-tape-cell .up { color:#15803d; }
-    .ed-tape-cell .pill { background:#0a0a0a; color:#fff; padding:3px 6px; font-size:9px; letter-spacing:.16em; }
+    .banner { position:sticky; top:0; z-index:50; background:#000; color:#fff; font:600 11px/1 'JetBrains Mono',monospace; letter-spacing:.18em; text-transform:uppercase; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .banner a { color:#fff; opacity:.65; margin-left:14px; }
+    .banner a.active { opacity:1; text-decoration:underline; }
 
-    /* Masthead row */
-    .ed-masthead { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:14px 20px; border-bottom:1px solid var(--ink2); }
-    .ed-mast-left { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; color:#737373; }
-    .ed-mast-mid { font-family:'Archivo Black', sans-serif; font-size:22px; letter-spacing:-0.02em; text-transform:uppercase; }
-    .ed-mast-right { display:flex; justify-content:flex-end; gap:18px; font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; }
-    .ed-mast-right a { color:var(--ink2); text-decoration:none; }
-    .ed-mast-right a:hover { text-decoration:underline; }
+    .stage { padding: 24px 16px 80px; display:flex; justify-content:center; }
+    .paper { width:100%; max-width: 1280px; background:#fff; border:1px solid var(--ink); box-shadow: 8px 8px 0 0 var(--ink); }
 
-    /* Lede + sidebar */
-    .ed-lede { display:grid; grid-template-columns: 1fr; }
-    @media (min-width: 1024px) { .ed-lede { grid-template-columns: 8fr 4fr; } }
-    .ed-lede-main { padding: 28px 32px; border-bottom:1px solid var(--ink2); display:flex; flex-direction:column; }
-    @media (min-width: 1024px) { .ed-lede-main { border-right:1px solid var(--ink2); border-bottom:none; } }
-    .ed-kicker-row { display:flex; align-items:center; gap:10px; margin-bottom:22px; }
-    .ed-pill { background:#0a0a0a; color:#fff; padding:4px 8px; font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.18em; text-transform:uppercase; }
-    .ed-date { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; color:#a3a3a3; }
-    .ed-h1 { font-family:'Archivo Black', sans-serif; text-transform:uppercase; line-height:.9; letter-spacing:-0.025em; font-size: clamp(40px, 6.4vw, 96px); margin: 0 0 28px; }
-    .ed-media { aspect-ratio: 16/9; background:#e5e5e5; position:relative; margin-bottom: 26px; overflow:hidden; border:1px solid #d4d4d4; }
-    .ed-media iframe, .ed-media img { position:absolute; inset:0; width:100%; height:100%; border:0; object-fit:cover; }
-    .ed-media-cap { position:absolute; left:10px; bottom:8px; font:700 9px/1 'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; color:#fff; background:rgba(0,0,0,.55); padding:4px 6px; }
-    .ed-dek { font-size: clamp(16px, 1.4vw, 22px); line-height:1.35; max-width: 60ch; color:#262626; }
+    /* Header */
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid var(--ink); gap:24px; flex-wrap:wrap; }
+    .nav-l { display:flex; align-items:center; gap:28px; }
+    .brand { font-weight:900; font-size:24px; letter-spacing:-0.04em; text-transform:uppercase; }
+    .nav-links { display:flex; gap:24px; font:500 11px/1 'Inter',sans-serif; letter-spacing:.16em; text-transform:uppercase; }
+    .nav-links a:hover { text-decoration: line-through; }
+    .nav-r { display:flex; align-items:center; gap:18px; }
+    .toggle { display:flex; background:#f3f3f3; padding:4px; border-radius:999px; border:1px solid rgba(0,0,0,.06); }
+    .toggle button { border:0; padding:6px 16px; font:700 10px/1 'Inter',sans-serif; letter-spacing:.16em; text-transform:uppercase; border-radius:999px; cursor:pointer; background:transparent; color:#737373; }
+    .toggle button.on { background:#000; color:#fff; }
+    .est { font:500 10px/1 'JetBrains Mono',monospace; letter-spacing:.14em; text-transform:uppercase; color:#a3a3a3; }
+    @media (max-width: 760px) { .nav-links, .est { display:none; } }
 
-    /* Sidebar drops */
-    .ed-side { padding: 28px 28px; display:flex; flex-direction:column; }
-    .ed-side-head { display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:2px solid var(--ink2); margin-bottom: 22px; }
-    .ed-side-title { font:700 11px/1 'JetBrains Mono', monospace; letter-spacing:.24em; text-transform:uppercase; }
-    .ed-side-more { font:600 10px/1 'JetBrains Mono', monospace; letter-spacing:.18em; text-transform:uppercase; color:#737373; text-decoration:none; }
-    .ed-side-more:hover { color:var(--ink2); text-decoration:underline; }
-    .ed-drop { display:flex; gap:14px; padding: 16px 0; border-bottom:1px solid #e5e5e5; text-decoration:none; color:inherit; }
-    .ed-drop:last-of-type { border-bottom:none; }
-    .ed-drop:hover .ed-drop-t { text-decoration: underline; }
-    .ed-drop-img { width: 88px; height: 88px; flex-shrink:0; background:#e5e5e5; background-size:cover; background-position:center; }
-    .ed-drop-k { font:700 9px/1 'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; color:#a3a3a3; }
-    .ed-drop-t { display:block; margin: 6px 0 4px; font:700 14px/1.15 'Inter', sans-serif; text-transform:uppercase; letter-spacing:-0.01em; color:var(--ink2); }
-    .ed-drop-d { font:400 12px/1.4 'Inter', sans-serif; color:#737373; }
-    .ed-quote { margin-top:auto; padding:18px; border:1px dashed var(--ink2); }
-    .ed-quote p { font: italic 400 13px/1.5 'Inter', sans-serif; color:#404040; margin:0 0 10px; }
-    .ed-quote span { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--ink2); }
+    /* Hero grid */
+    .hero { display:grid; grid-template-columns: 1fr; }
+    @media (min-width: 1024px) { .hero { grid-template-columns: 8fr 4fr; } }
 
-    /* Three column pillars (Studio / Tokenomics / Community) */
-    .ed-cols { display:grid; grid-template-columns: 1fr; border-top:1px solid var(--ink2); }
-    @media (min-width: 900px) { .ed-cols { grid-template-columns: 1fr 1fr 1fr; } }
-    .ed-col { padding: 26px 28px; border-bottom:1px solid var(--ink2); }
-    @media (min-width: 900px) { .ed-col { border-bottom: none; border-right: 1px solid var(--ink2); } .ed-col:last-child { border-right: none; } }
-    .ed-col-img { aspect-ratio: 1/1; background:#e5e5e5; margin-bottom: 18px; position:relative; overflow:hidden; }
-    .ed-col-img img { width:100%; height:100%; object-fit:cover; display:block; }
-    .ed-col-k { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.24em; text-transform:uppercase; color:#737373; margin-bottom: 10px; }
-    .ed-col-h { font-family:'Archivo Black', sans-serif; text-transform:uppercase; letter-spacing:-0.015em; font-size: 22px; line-height: 1; margin: 0 0 12px; }
-    .ed-col-p { font: 400 14px/1.5 'Inter', sans-serif; color:#525252; }
-    .ed-col-cta { display:inline-flex; align-items:center; gap:6px; margin-top:14px; font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--ink2); text-decoration:none; border-bottom:1px solid var(--ink2); padding-bottom:4px; }
-    .ed-col-cta:hover { color:#fff; background:#0a0a0a; padding:6px 8px; border-bottom:none; }
+    .lede { padding: 36px 40px; border-bottom:1px solid var(--ink); }
+    @media (min-width: 1024px) { .lede { border-right:1px solid var(--ink); border-bottom:none; } }
 
-    /* Tokenomics chart bars */
-    .ed-bars { display:flex; align-items:flex-end; gap:6px; height:60%; padding:14px; }
-    .ed-bar { flex:1; background:#0a0a0a; }
+    .kicker-row { display:flex; align-items:center; gap:12px; margin-bottom: 22px; }
+    .pill { background:#000; color:#fff; padding:5px 9px; font:800 9px/1 'Inter',sans-serif; letter-spacing:.08em; text-transform:uppercase; }
+    .date { font:500 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:#a3a3a3; }
 
-    /* Selected work strip */
-    .ed-work { border-top:1px solid var(--ink2); padding: 24px 28px; }
-    .ed-work-head { display:flex; justify-content:space-between; align-items:end; margin-bottom: 18px; }
-    .ed-work-title { font-family:'Archivo Black', sans-serif; text-transform:uppercase; letter-spacing:-0.02em; font-size: 28px; line-height: 1; margin:0; }
-    .ed-work-meta { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.22em; text-transform:uppercase; color:#737373; }
-    .ed-work-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--ink2); border:1px solid var(--ink2); }
-    @media (min-width: 768px) { .ed-work-grid { grid-template-columns: repeat(4, 1fr); } }
-    .ed-work-card { background:#fff; padding: 0; text-decoration:none; color:inherit; display:flex; flex-direction:column; }
-    .ed-work-card .img { aspect-ratio: 4/5; background:#e5e5e5; background-size:cover; background-position:center; }
-    .ed-work-card .meta { padding: 10px 12px; }
-    .ed-work-card .tag { font:700 9px/1 'JetBrains Mono', monospace; letter-spacing:.2em; text-transform:uppercase; color:#a3a3a3; }
-    .ed-work-card .t { display:block; margin-top:6px; font:700 13px/1.2 'Inter'; text-transform:uppercase; }
-    .ed-work-card .a { display:block; margin-top:2px; font:400 11px/1.2 'Inter'; color:#737373; }
+    .h1 { font-weight:900; text-transform:uppercase; letter-spacing:-0.04em; line-height:.9; font-size: clamp(44px, 7.2vw, 100px); margin-bottom: 28px; }
+    .h1 .stroke { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
 
-    /* Partners */
-    .ed-partners { border-top:1px solid var(--ink2); background:#fafafa; padding: 18px 24px; }
-    .ed-partners-head { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.24em; text-transform:uppercase; color:#737373; margin-bottom: 14px; }
-    .ed-partners-row { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap: 16px; opacity:.55; }
-    .ed-partners-row span { font:700 11px/1 'JetBrains Mono', monospace; letter-spacing:.26em; text-transform:uppercase; color:#0a0a0a; }
+    .media { aspect-ratio: 16/9; background:#0a0a0a; position:relative; overflow:hidden; border:1px solid rgba(0,0,0,.08); margin-bottom: 28px; }
+    .media iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+    .live-tag { position:absolute; left:18px; bottom:18px; display:flex; align-items:center; gap:8px; color:#fff; z-index:2; background:rgba(0,0,0,.55); padding:6px 10px; }
+    .live-dot { width:8px; height:8px; border-radius:50%; background:#ef4444; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .live-tag span { font:700 10px/1 'Inter'; letter-spacing:.22em; text-transform:uppercase; }
 
-    /* CTA */
-    .ed-cta { background:#0a0a0a; color:#fff; padding: 72px 24px; text-align:center; }
-    .ed-cta h2 { font-family:'Archivo Black', sans-serif; text-transform:uppercase; letter-spacing:-0.02em; font-size: clamp(32px, 5vw, 64px); line-height: 0.95; margin: 0 0 14px; }
-    .ed-cta p { color:#a3a3a3; font:700 11px/1 'JetBrains Mono', monospace; letter-spacing:.28em; text-transform:uppercase; margin: 0 0 32px; }
-    .ed-cta a { display:inline-block; border:1px solid #fff; padding: 16px 44px; font:700 11px/1 'JetBrains Mono', monospace; letter-spacing:.24em; text-transform:uppercase; color:#fff; text-decoration:none; transition: background 160ms ease, color 160ms ease; }
-    .ed-cta a:hover { background:#fff; color:#0a0a0a; }
+    .dek { max-width: 60ch; font-size: 18px; line-height: 1.55; color:#525252; font-weight:500; }
+    .dek em { font-family:'Playfair Display', serif; font-style: italic; color: var(--ink); font-weight:700; }
 
-    /* Footer */
-    .ed-footer { border-top:1px solid var(--ink2); padding: 28px; background:#fff; }
-    .ed-footer-inner { display:flex; flex-direction:column; align-items:center; gap: 16px; }
-    .ed-footer-social { display:flex; gap: 24px; }
-    .ed-footer-social a { font:700 10px/1 'JetBrains Mono', monospace; letter-spacing:.24em; text-transform:uppercase; color:var(--ink2); text-decoration:none; }
-    .ed-footer-social a:hover { text-decoration:underline; }
-    .ed-footer-legal { display:flex; gap: 18px; font:600 9px/1 'JetBrains Mono', monospace; letter-spacing:.24em; text-transform:uppercase; color:#a3a3a3; }
-    .ed-footer-legal a { color:#a3a3a3; text-decoration:none; }
+    /* Sidebar */
+    .side { display:flex; flex-direction:column; }
+    .stats { padding: 28px; border-bottom:1px solid var(--ink); }
+    .stats-head { display:flex; justify-content:space-between; align-items:end; margin-bottom: 18px; }
+    .stats-label { font:700 11px/1 'Inter'; letter-spacing:.2em; text-transform:uppercase; color:#a3a3a3; }
+    .stats-up { font:600 10px/1 'JetBrains Mono',monospace; background:var(--green-bg); color: var(--green-fg); padding: 3px 8px; border-radius: 4px; letter-spacing:.05em; }
+    .stats-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .stat { border-left: 2px solid var(--ink); padding-left: 14px; }
+    .stat.muted { border-left-color: #e5e5e5; }
+    .stat-k { font:500 10px/1 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:#a3a3a3; margin-bottom: 6px; }
+    .stat-v { font-weight:800; font-size: 28px; letter-spacing:-0.03em; }
+
+    .drops { padding: 28px; flex:1; }
+    .drops-head { display:flex; align-items:center; gap:14px; margin-bottom: 24px; }
+    .drops-head span { font:700 11px/1 'Inter'; letter-spacing:.2em; text-transform:uppercase; }
+    .drops-rule { flex:1; height:1px; background: rgba(0,0,0,.1); }
+    .drop { display:flex; gap:14px; padding: 14px 0; }
+    .drop + .drop { border-top: 1px solid rgba(0,0,0,.06); }
+    .drop-img { width:64px; height:64px; flex-shrink:0; background:#e5e5e5 center/cover; filter: grayscale(1); transition: filter .25s ease; }
+    .drop:hover .drop-img { filter:none; }
+    .drop-k { font:500 9px/1 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; color:#a3a3a3; }
+    .drop-t { display:block; margin: 8px 0 4px; font:700 14px/1.2 'Inter'; text-transform:uppercase; letter-spacing:-0.01em; }
+    .drop:hover .drop-t { text-decoration: underline; }
+    .drop-d { font: 400 11px/1.4 'Inter'; color:#737373; }
+
+    .cta-side { background:#000; color:#fff; padding: 20px; text-align:center; }
+    .cta-side a { display:block; width:100%; font:700 11px/1 'Inter'; letter-spacing:.2em; text-transform:uppercase; transition: letter-spacing .25s ease; padding: 8px 0; }
+    .cta-side a:hover { letter-spacing: .3em; }
+
+    /* Partners marquee */
+    .partners { border-top:1px solid var(--ink); background:#fafafa; padding: 14px 0; overflow:hidden; }
+    .partners-row { display:flex; gap:48px; white-space:nowrap; animation: marq 40s linear infinite; padding: 0 24px; width:max-content; }
+    .partners-row span { font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color:#a3a3a3; }
+    @keyframes marq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    .foot { display:flex; justify-content:space-between; align-items:center; padding: 16px 24px; border-top:1px solid var(--ink); font:500 10px/1 'JetBrains Mono',monospace; letter-spacing:.18em; text-transform:uppercase; color:#a3a3a3; }
+    .foot a:hover { color: var(--ink); }
   </style>
 </head>
-<body class="preview">
-  <div class="preview-banner">
-    <span>MOCKUP · BROADSHEET TECHNICAL · /home-preview</span>
+<body>
+  <div class="banner">
+    <span>V3 KINETIC TECHNICAL · SELECTED · /home-preview</span>
     <span>
-      <a href="/home-preview" style="color:#fff;margin-left:14px;">V1 Broadsheet</a>
-      <a href="/home-preview-2" style="color:#fff;margin-left:14px;opacity:.65;">V2 Newspaper</a>
-      <a href="/home-preview-3" style="color:#fff;margin-left:14px;opacity:.65;">V3 Brutalist</a>
-      <a href="/" style="color:#fff;margin-left:14px;opacity:.65;">Live</a>
+      <a href="/home-preview" class="active">V3 (Selected)</a>
+      <a href="/home-preview-2">V2 Newspaper</a>
+      <a href="/home-preview-3">V3 Brutalist</a>
+      <a href="/">Live site</a>
     </span>
   </div>
 
-  <div class="ed-wrap">
-    <article class="ed-paper">
-
-      <!-- ECOSYSTEM TICKER (real $RHOZE data labels) -->
-      <div class="ed-tape" aria-label="Rhozeland ecosystem ticker">
-        <div class="ed-tape-row" id="edTape">
-          <div class="ed-tape-cell"><span class="k">$RHOZE</span><span>Live on DexScreener</span><span class="up">+ active</span></div>
-          <div class="ed-tape-cell"><span class="k">Leaderboard #1</span><span>This week</span></div>
-          <div class="ed-tape-cell"><span class="k">Next Event</span><span>Land Sessions · LA</span></div>
-          <div class="ed-tape-cell"><span class="k">Latest Drop</span><span>Saint Flair West · Ooak</span></div>
-          <div class="ed-tape-cell"><span class="k">Supply</span><span>1,000,000,000</span><span class="pill">Locked</span></div>
-          <div class="ed-tape-cell"><span class="k">Citizens</span><span>Creators · Collectors · Builders</span></div>
+  <div class="stage">
+    <div class="paper">
+      <header class="nav">
+        <div class="nav-l">
+          <div class="brand">Rhozeland</div>
+          <nav class="nav-links">
+            <a href="/about.html">About</a>
+            <a href="/projects.html">Work</a>
+            <a href="/leaderboard.html">Leaderboard</a>
+            <a href="/events.html">Events</a>
+            <a href="/contact.html">Connect</a>
+          </nav>
         </div>
-      </div>
-
-      <!-- MASTHEAD -->
-      <div class="ed-masthead">
-        <div class="ed-mast-left">Vol. 09 · Solana · 2026</div>
-        <div class="ed-mast-mid">Rhozeland</div>
-        <div class="ed-mast-right">
-          <a href="/about">About</a>
-          <a href="/projects">Work</a>
-          <a href="/leaderboard">Leaderboard</a>
-          <a href="/contact">Connect</a>
-        </div>
-      </div>
-
-      <!-- LEDE + SIDEBAR -->
-      <section class="ed-lede">
-        <div class="ed-lede-main">
-          <div class="ed-kicker-row">
-            <span class="ed-pill">A New Era</span>
-            <span class="ed-date">Today · Rhozeland Studio</span>
+        <div class="nav-r">
+          <div class="toggle" role="tablist" aria-label="Mode">
+            <button class="on" type="button">Media</button>
+            <button type="button">Tech</button>
           </div>
-          <h1 class="ed-h1">The creative ecosystem for launching culture.</h1>
-          <div class="ed-media">
+          <div class="est">Est. MMXVI · Vol. 09</div>
+        </div>
+      </header>
+
+      <section class="hero">
+        <article class="lede">
+          <div class="kicker-row">
+            <span class="pill">A New Era</span>
+            <span class="date">Today · Toronto / LA · Solana</span>
+          </div>
+          <h1 class="h1">Launch <span class="stroke">culture.</span><br/>Own the upside.</h1>
+          <div class="media">
             <iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-            <span class="ed-media-cap">Featured · The Rhozeland Documentary</span>
+            <div class="live-tag"><span class="live-dot"></span><span>Featured · The Documentary</span></div>
           </div>
-          <p class="ed-dek">From a circle of friends in 2016 to a studio and launchpad for bold creators today — recording, content production, and launch infrastructure for the independent creative economy.</p>
-        </div>
+          <p class="dek">From a circle of friends in 2016 to the recording, content, and launch infrastructure for the new <em>independent creative economy</em> — studio, $RHOZE token, and a live community under one roof.</p>
+        </article>
 
-        <aside class="ed-side">
-          <div class="ed-side-head">
-            <span class="ed-side-title">Latest Drops</span>
-            <a class="ed-side-more" href="/projects">See all →</a>
+        <aside class="side">
+          <div class="stats">
+            <div class="stats-head">
+              <span class="stats-label">Ecosystem</span>
+              <span class="stats-up">+ Active</span>
+            </div>
+            <div class="stats-grid">
+              <div class="stat">
+                <div class="stat-k">$RHOZE</div>
+                <div class="stat-v">Live</div>
+              </div>
+              <div class="stat muted">
+                <div class="stat-k">Supply</div>
+                <div class="stat-v">1B · Locked</div>
+              </div>
+            </div>
           </div>
-          <a class="ed-drop" href="/projects">
-            <span class="ed-drop-img" style="background-image:url('/images/ooak-saint-flair-west-thumb.webp')"></span>
-            <span>
-              <span class="ed-drop-k">Album</span>
-              <span class="ed-drop-t">Saint Flair West</span>
-              <span class="ed-drop-d">Ooak — full-length rollout, art direction, and visual world by Rhozeland Studio.</span>
-            </span>
-          </a>
-          <a class="ed-drop" href="/projects">
-            <span class="ed-drop-img" style="background-image:url('/images/rhozeland-fus-thumb.webp')"></span>
-            <span>
-              <span class="ed-drop-k">EP</span>
-              <span class="ed-drop-t">FUS — Rhozeland</span>
-              <span class="ed-drop-d">Original sound from the collective. Streaming now across all platforms.</span>
-            </span>
-          </a>
-          <a class="ed-drop" href="/leaderboard">
-            <span class="ed-drop-img" style="background-image:url('/images/timeline-2023.webp')"></span>
-            <span>
-              <span class="ed-drop-k">Community</span>
-              <span class="ed-drop-t">Weekly Leaderboard · Live</span>
-              <span class="ed-drop-d">Raids, memes, threads, video — earn $RHOZE for moving the movement.</span>
-            </span>
-          </a>
-          <div class="ed-quote">
-            <p>"We aren't just building a label — we're building a creative ecosystem for launching culture."</p>
-            <span>— Founder Notes</span>
+
+          <div class="drops">
+            <div class="drops-head"><span>Latest Drops</span><div class="drops-rule"></div></div>
+
+            <a class="drop" href="/projects.html">
+              <div class="drop-img" style="background-image:url('/images/ooak-saint-flair-west-thumb.webp')"></div>
+              <div>
+                <div class="drop-k">Album · Ooak</div>
+                <div class="drop-t">Saint Flair West</div>
+                <div class="drop-d">Full-length rollout — art direction, visual world.</div>
+              </div>
+            </a>
+
+            <a class="drop" href="/projects.html">
+              <div class="drop-img" style="background-image:url('/images/rhozeland-fus-thumb.webp')"></div>
+              <div>
+                <div class="drop-k">EP · Rhozeland</div>
+                <div class="drop-t">FUS</div>
+                <div class="drop-d">Original sound from the collective. Streaming now.</div>
+              </div>
+            </a>
+
+            <a class="drop" href="/leaderboard.html">
+              <div class="drop-img" style="background-image:url('/images/timeline-2023.webp')"></div>
+              <div>
+                <div class="drop-k">Community · Live</div>
+                <div class="drop-t">Weekly Leaderboard</div>
+                <div class="drop-d">Earn $RHOZE for moving the movement.</div>
+              </div>
+            </a>
+          </div>
+
+          <div class="cta-side">
+            <a href="mailto:collab@rhozeland.com">Access Infrastructure →</a>
           </div>
         </aside>
       </section>
 
-      <!-- THREE PILLARS -->
-      <section class="ed-cols">
-        <div class="ed-col">
-          <div class="ed-col-img"><img src="/images/timeline-2023.webp" alt="Studio" loading="lazy" /></div>
-          <div class="ed-col-k">01 · Creative</div>
-          <h3 class="ed-col-h">Studio</h3>
-          <p class="ed-col-p">Recording, music video, photography, campaign and rollout — the production engine behind every Rhozeland release.</p>
-          <a class="ed-col-cta" href="/projects">View Work →</a>
+      <div class="partners">
+        <div class="partners-row">
+          <span>Solana Coliseum</span><span>Luma</span><span>Founder Institute</span><span>Vector Festival</span><span>CAPACOA</span><span>VoyageHouston</span><span>Pump.fun</span>
+          <span>Solana Coliseum</span><span>Luma</span><span>Founder Institute</span><span>Vector Festival</span><span>CAPACOA</span><span>VoyageHouston</span><span>Pump.fun</span>
         </div>
-        <div class="ed-col">
-          <div class="ed-col-img" style="display:flex; flex-direction:column; justify-content:flex-end; background:#f5f5f5;">
-            <div class="ed-bars">
-              <div class="ed-bar" style="height:42%"></div>
-              <div class="ed-bar" style="height:68%"></div>
-              <div class="ed-bar" style="height:54%"></div>
-              <div class="ed-bar" style="height:82%"></div>
-              <div class="ed-bar" style="height:96%"></div>
-              <div class="ed-bar" style="height:73%"></div>
-              <div class="ed-bar" style="height:88%"></div>
-            </div>
-          </div>
-          <div class="ed-col-k">02 · Economy</div>
-          <h3 class="ed-col-h">$RHOZE Token</h3>
-          <p class="ed-col-p">1,000,000,000 fixed supply. Wallet locked. Live chart, transparent tokenomics, and creator-owned economics.</p>
-          <a class="ed-col-cta" href="#chart">See Chart →</a>
-        </div>
-        <div class="ed-col">
-          <div class="ed-col-img"><img src="/images/timeline-2021.webp" alt="Community" loading="lazy" /></div>
-          <div class="ed-col-k">03 · Network</div>
-          <h3 class="ed-col-h">Community</h3>
-          <p class="ed-col-p">Creators, collectors, and builders. Weekly leaderboard, rotating challenges, bonus airdrops for the top movers.</p>
-          <a class="ed-col-cta" href="/leaderboard">Enter Hub →</a>
-        </div>
-      </section>
+      </div>
 
-      <!-- SELECTED WORK STRIP -->
-      <section class="ed-work">
-        <div class="ed-work-head">
-          <h2 class="ed-work-title">Selected Work</h2>
-          <span class="ed-work-meta">2024 → 2026 · Reel</span>
-        </div>
-        <div class="ed-work-grid">
-          <a class="ed-work-card" href="/projects"><span class="img" style="background-image:url('/images/ooak-the-mask-thumb.webp')"></span><span class="meta"><span class="tag">Music Video</span><span class="t">The Mask</span><span class="a">Ooak</span></span></a>
-          <a class="ed-work-card" href="/projects"><span class="img" style="background-image:url('/images/fingaz-mansa-musa-thumb.webp')"></span><span class="meta"><span class="tag">Music Video</span><span class="t">Mansa Musa</span><span class="a">MONEE FINGAZ</span></span></a>
-          <a class="ed-work-card" href="/projects"><span class="img" style="background-image:url('/images/bk-whiskey-mma-thumb.webp')"></span><span class="meta"><span class="tag">Campaign</span><span class="t">United MMA</span><span class="a">BK Whiskey</span></span></a>
-          <a class="ed-work-card" href="/projects"><span class="img" style="background-image:url('/images/carina-lucky-charm-thumb.webp')"></span><span class="meta"><span class="tag">Music Video</span><span class="t">Lucky Charm</span><span class="a">Carina</span></span></a>
-        </div>
-      </section>
-
-      <!-- PARTNERS -->
-      <section class="ed-partners">
-        <div class="ed-partners-head">Recognition &amp; Partners</div>
-        <div class="ed-partners-row">
-          <span>Solana Coliseum</span>
-          <span>Pump.fun Hackathon</span>
-          <span>Luma</span>
-          <span>Source From Ontario</span>
-          <span>Vector Festival</span>
-          <span>WorldIT Show</span>
-        </div>
-      </section>
-
-      <!-- CTA -->
-      <section class="ed-cta">
-        <h2>Ready to build with us?</h2>
-        <p>Media Production · Strategy · Creative House</p>
-        <a href="mailto:collab@rhozeland.com">Get in touch</a>
-      </section>
-
-      <!-- FOOTER -->
-      <footer class="ed-footer">
-        <div class="ed-footer-inner">
-          <div class="ed-footer-social">
-            <a href="https://instagram.com/rhozeland" target="_blank" rel="noopener">Instagram</a>
-            <a href="https://x.com/rhozeland" target="_blank" rel="noopener">X / Twitter</a>
-            <a href="https://discord.gg/rhozeland" target="_blank" rel="noopener">Discord</a>
-          </div>
-          <div class="ed-footer-legal">
-            <span>© 2026 Rhozeland</span>
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-          </div>
-        </div>
-      </footer>
-
-    </article>
+      <div class="foot">
+        <span>collab@rhozeland.com</span>
+        <span><a href="/">View live site</a></span>
+      </div>
+    </div>
   </div>
-
-  <script>
-    // duplicate tape for seamless scroll
-    (function(){ var t = document.getElementById('edTape'); if (t) t.innerHTML = t.innerHTML + t.innerHTML; })();
-  </script>
 </body>
 </html>

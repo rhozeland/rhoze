@@ -3220,9 +3220,9 @@
           .r-eco-story-tagline.is-swapping { opacity:0; transform:translateY(-4px); }
           .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 10px; box-shadow: 0 22px 60px -22px rgba(0,0,0,0.5); }
           /* Sidebar Explore grid — full-bleed quadrant tiles with hover service reveal */
-          .r-eco-side-explore { margin-top: 14px; padding-top: 14px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
-          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 10px; width: 100%; min-height: 280px; }
-          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; border-radius: 16px; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); aspect-ratio: 1 / 1; }
+          .r-eco-side-explore { margin-top: 10px; padding-top: 10px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
+          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 2px; width: 100%; min-height: 460px; border-radius: 16px; overflow: hidden; }
+          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; border-radius: 0; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: none; aspect-ratio: auto; min-height: 220px; }
           .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; }
           .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fff1de 0%, #f6b97a 100%); }
           .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #e6edff 0%, #b8c8f5 100%); }
@@ -3234,7 +3234,7 @@
           .r-eco-side-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; max-height: 0; overflow: hidden; }
           .r-eco-side-tile:hover .r-eco-side-pills, .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: none; max-height: 200px; }
           .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
-          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { aspect-ratio: auto; min-height: 110px; } .r-eco-side-pills { opacity: 1; transform: none; max-height: none; pointer-events: auto; } }
+          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 140px; } .r-eco-side-pills { opacity: 1; transform: none; max-height: none; pointer-events: auto; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }
@@ -3640,109 +3640,14 @@
             </div>
           </div>
 
-          <div class="r-eco-stage">
-            <div class="r-eco-panes" role="list" hidden>
-              <!-- Visual -->
-              <div class="r-eco-pane is-visual" role="listitem" tabindex="0" aria-label="Visual services">
-                <div class="r-eco-pane-body">
-                  <div>
-                    <span class="r-eco-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    </span>
-                    <span class="r-eco-cat">Visual</span>
-                    <div class="r-eco-pills">
-                      <span class="r-eco-pill">Photo shoots</span>
-                      <span class="r-eco-pill">Content editing</span>
-                      <span class="r-eco-pill">Commercial editing</span>
-                      <span class="r-eco-pill">Short-form editing</span>
-                      <span class="r-eco-pill">Music video editing</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Audio -->
-              <div class="r-eco-pane is-audio" role="listitem" tabindex="0" aria-label="Audio services">
-                <div class="r-eco-pane-body">
-                  <div>
-                    <span class="r-eco-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="4" y2="12"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="20" y1="11" x2="20" y2="13"/></svg>
-                    </span>
-                    <span class="r-eco-cat">Audio</span>
-                    <div class="r-eco-pills">
-                      <span class="r-eco-pill">Recording</span>
-                      <span class="r-eco-pill">Mixing</span>
-                      <span class="r-eco-pill">Mastering</span>
-                      <span class="r-eco-pill">Music production</span>
-                      <span class="r-eco-pill">Artist development</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Development -->
-              <div class="r-eco-pane is-dev" role="listitem" tabindex="0" aria-label="Development services">
-                <div class="r-eco-pane-body">
-                  <div>
-                    <span class="r-eco-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                    </span>
-                    <span class="r-eco-cat">Development</span>
-                    <div class="r-eco-pills">
-                      <span class="r-eco-pill">Web &amp; app dev</span>
-                      <span class="r-eco-pill">Brand systems</span>
-                      <span class="r-eco-pill">Launch strategy</span>
-                      <span class="r-eco-pill">Grant writing</span>
-                      <span class="r-eco-pill">Creator tooling</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Events (custom view) -->
-              <div class="r-eco-pane is-events" role="listitem" tabindex="0" aria-label="Events and gatherings">
-                <div class="r-eco-pane-body">
-                  <div>
-                    <span class="r-eco-icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </span>
-                    <span class="r-eco-cat">Events</span>
-                  </div>
-                  <div class="r-eco-events">
-                    <div class="r-eco-events-head" aria-hidden="false">
-                      <span class="r-eco-events-up"><span class="dot"></span>Upcoming</span>
-                      <a class="r-eco-events-luma" href="https://luma.com/user/rhozeland" target="_blank" rel="noopener noreferrer">Follow on Luma
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:10px;height:10px;margin-left:3px;vertical-align:-1px;"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                      </a>
-                    </div>
-                    <a class="r-eco-event" href="https://luma.com/qlkk1ffg" target="_blank" rel="noopener noreferrer">
-                      <div class="r-eco-event-date"><span class="m">Mar</span><span class="d">31</span></div>
-                      <div class="r-eco-event-body">
-                        <span class="r-eco-event-title">EMOTE Temple x RHOZE</span>
-                        <span class="r-eco-event-tag">Event</span>
-                      </div>
-                    </a>
-                    <a class="r-eco-event r-eco-event-all" href="/events.html">
-                      <div class="r-eco-event-body" style="grid-column:1 / -1;">
-                        <span class="r-eco-event-title">All events
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:11px;height:11px;margin-left:4px;vertical-align:-1px;"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-                        </span>
-                      </div>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="r-eco-feat" aria-label="Featured work">
-              <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
-              <a class="r-eco-feat-all" href="/projects.html">See all projects
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-              </a>
-              <div class="r-eco-feat-viewport">
-                <div class="r-eco-feat-track" id="rEcoFeatTrack">
-                  <!-- Cards injected by script (duplicated for seamless marquee) -->
-                </div>
+          <div class="r-eco-feat r-eco-feat--standalone" aria-label="Featured work" style="margin-top:14px;background:#1a1a1a;border-radius:var(--radius-lg);padding:14px;box-shadow:0 22px 60px -22px rgba(0,0,0,0.5);">
+            <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
+            <a class="r-eco-feat-all" href="/projects.html">See all projects
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+            <div class="r-eco-feat-viewport">
+              <div class="r-eco-feat-track" id="rEcoFeatTrack">
+                <!-- Cards injected by script (duplicated for seamless marquee) -->
               </div>
             </div>
           </div>

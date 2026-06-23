@@ -3414,35 +3414,84 @@
 
         <div class="hero-inner r-eco-inner">
           <div class="r-eco-lead">
-            <div class="r-eco-issue-top">
-              <strong>Rhozeland · Selected direction</strong>
-              <span>Kinetic technical editorial · Live homepage</span>
+            <div class="r-eco-ticker" role="region" aria-label="Rhozeland network identity">
+              <div class="r-eco-tick">
+                <span class="r-eco-net-dot" aria-hidden="true"></span>
+                <span class="r-eco-tick-k">Network</span>
+                <span class="r-eco-tick-v">Rhozeland · Solana</span>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Live Stream</span>
+                <span id="rEcoLiveSlot" class="r-eco-live-pill is-off" data-live="false">Offline</span>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Drop</span>
+                <span class="r-eco-tick-v">Saint Flair West · Ooak</span>
+                <a class="r-eco-tick-link" href="/projects.html">View</a>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Supply</span>
+                <span class="r-eco-tick-v mono">1,000,000,000 <span style="color:hsl(var(--muted));font-weight:600;font-style:italic">Locked</span></span>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Citizens</span>
+                <span class="r-eco-tick-v">Creators · Collectors</span>
+              </div>
+              <div class="r-eco-tick is-foot">
+                <span><span id="rEcoTickerStatus">Syncing ecosystem data…</span></span>
+                <span>Updated <span id="rEcoTickerTime">—</span></span>
+              </div>
             </div>
             <div class="r-eco-issue-grid">
               <article class="r-eco-issue-main">
                 <div class="r-eco-kicker-row">
-                  <span class="r-eco-kicker">A New Era</span>
-                  <span class="r-eco-date">Today · Toronto / LA · Solana</span>
+                  <span class="r-eco-kicker">The Channel</span>
+                  <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto / LA</span>
                 </div>
-                <h1 class="r-eco-title" id="homepage-title">Launch <span class="r-eco-title-stroke">culture.</span><br>Own the upside.</h1>
+                <h1 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h1>
                 <div class="r-eco-video">
-                  <iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&amp;mute=1&amp;rel=0&amp;modestbranding=1&amp;loop=1&amp;playlist=9rxMdl_mQws" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-                  <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span>Featured · Documentary</span>
+                  <iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                  <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Featured · Latest Episode</span></span>
                 </div>
-                <p class="r-eco-dek">From a circle of friends in 2016 to the recording, content, and launch infrastructure for the new <em>independent creative economy</em> — studio, $RHOZE token, and a live community under one roof.</p>
+                <p class="r-eco-dek" id="rEcoFeaturedDek">Rhozeland is becoming a media channel — documentaries, podcasts, and live streams from the studio. <em>New episode every Sunday.</em></p>
+                <div class="r-eco-episodes" aria-label="Recent episodes">
+                  <div class="r-eco-eps-head">
+                    <span class="r-eco-eps-label">Recent Episodes</span>
+                    <a class="r-eco-eps-all" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">All on YouTube →</a>
+                  </div>
+                  <div class="r-eco-eps-grid" id="rEcoEpsGrid">
+                    <!-- Skeleton fallbacks; replaced by YouTube RSS on load -->
+                    <a class="r-eco-ep" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-ep-thumb" style="background-image:url('https://i.ytimg.com/vi/9rxMdl_mQws/hqdefault.jpg')"><span class="r-eco-ep-play">▶ Watch</span></span><span class="r-eco-ep-k">Documentary</span><span class="r-eco-ep-t">How Rhozeland Started: The Story</span></a>
+                    <a class="r-eco-ep" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-ep-thumb" style="background-image:url('/images/rhozeland-fus-thumb.webp')"><span class="r-eco-ep-play">▶ Watch</span></span><span class="r-eco-ep-k">Episode</span><span class="r-eco-ep-t">More from the Rhozeland channel</span></a>
+                    <a class="r-eco-ep" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-ep-thumb" style="background-image:url('/images/timeline-2023.webp')"><span class="r-eco-ep-play">▶ Watch</span></span><span class="r-eco-ep-k">Episode</span><span class="r-eco-ep-t">Loading latest uploads…</span></a>
+                  </div>
+                </div>
               </article>
               <aside class="r-eco-issue-side" aria-label="Rhozeland ecosystem snapshot">
-                <div class="r-eco-stats">
-                  <div class="r-eco-stats-head"><span class="r-eco-stats-label">Ecosystem</span><span class="r-eco-status">+ Active</span></div>
-                  <div class="r-eco-stats-grid">
-                    <div class="r-eco-stat"><div class="r-eco-stat-k">$RHOZE</div><div class="r-eco-stat-v">Live</div></div>
-                    <div class="r-eco-stat is-muted"><div class="r-eco-stat-k">Supply</div><div class="r-eco-stat-v">1B · Locked</div></div>
+                <div class="r-eco-stats" id="rEcoMiniTicker" aria-live="polite">
+                  <div class="r-eco-stats-head">
+                    <span class="r-eco-stats-label">$RHOZE · Live</span>
+                    <span class="r-eco-status" id="rEcoMiniStatus">+ Active</span>
                   </div>
+                  <div class="r-eco-mini">
+                    <div class="r-eco-mini-price" id="rEcoMiniPrice">—</div>
+                    <div class="r-eco-mini-chg flat" id="rEcoMiniChg">—</div>
+                  </div>
+                  <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true">
+                    <path id="rEcoSparkFill" d="" fill="hsl(var(--ink) / 0.08)" stroke="none"/>
+                    <path id="rEcoSparkLine" d="" fill="none" stroke="hsl(var(--ink))" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+                  </svg>
+                  <div class="r-eco-mini-row">
+                    <div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div>
+                    <div class="r-eco-mini-cell r-eco-stat is-muted"><div class="r-eco-stat-k">24h Vol</div><div class="r-eco-stat-v" id="rEcoMiniVol">—</div></div>
+                  </div>
+                  <a class="r-eco-mini-cta" href="#chart">Full chart →</a>
                 </div>
                 <div class="r-eco-drops">
                   <div class="r-eco-drops-head"><span class="r-eco-drops-label">Latest Drops</span></div>
                   <a class="r-eco-drop" href="/projects.html"><span class="r-eco-drop-img" style="background-image:url('/images/ooak-saint-flair-west-thumb.webp')"></span><span><span class="r-eco-drop-k">Album · Ooak</span><strong class="r-eco-drop-t">Saint Flair West</strong><span class="r-eco-drop-d">Full-length rollout — art direction, visual world.</span></span></a>
                   <a class="r-eco-drop" href="/projects.html"><span class="r-eco-drop-img" style="background-image:url('/images/rhozeland-fus-thumb.webp')"></span><span><span class="r-eco-drop-k">EP · Rhozeland</span><strong class="r-eco-drop-t">FUS</strong><span class="r-eco-drop-d">Original sound from the collective. Streaming now.</span></span></a>
+                  <a class="r-eco-drop" href="https://www.youtube.com/@Rhozeland/streams" target="_blank" rel="noopener"><span class="r-eco-drop-img" style="background-image:url('https://i.ytimg.com/vi/9rxMdl_mQws/hqdefault.jpg')"></span><span><span class="r-eco-drop-k">Live Stream · YouTube</span><strong class="r-eco-drop-t">Studio Live</strong><span class="r-eco-drop-d">Catch live sessions from the Rhozeland studio.</span></span></a>
                   <a class="r-eco-drop" href="/leaderboard.html"><span class="r-eco-drop-img" style="background-image:url('/images/timeline-2023.webp')"></span><span><span class="r-eco-drop-k">Community · Live</span><strong class="r-eco-drop-t">Weekly Leaderboard</strong><span class="r-eco-drop-d">Earn $RHOZE for moving the movement.</span></span></a>
                 </div>
               </aside>

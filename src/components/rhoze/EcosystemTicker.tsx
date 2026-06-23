@@ -27,7 +27,7 @@ export default function EcosystemTicker() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8, delay: 0.2 }}
-      className="relative z-40 border-b border-border/60 bg-background/70 backdrop-blur-md"
+      className="fixed left-0 right-0 top-[64px] z-40 border-b border-border/60 bg-background/70 backdrop-blur-md"
       aria-label="Rhozeland ecosystem activity"
     >
       <div className="flex items-stretch">

@@ -3038,6 +3038,16 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
         Build
       </a>
+      <a class="nav-portal" href="/team.html#/portal" aria-label="Client & team portal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Portal
+      </a>
+      <style>
+        .nav-portal { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; margin-left: 6px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); border-radius: 999px; text-decoration: none; transition: color 160ms ease, border-color 160ms ease; }
+        .nav-portal:hover { color: hsl(var(--ink)); border-color: hsl(var(--ink)); }
+        .nav-portal svg { width: 12px; height: 12px; }
+        @media (max-width: 860px) { .nav-portal { display: none; } }
+      </style>
 
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
@@ -3053,6 +3063,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
         Build
       </a>
+      <a href="/team.html#/portal" onclick="closeMenu()"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></span><span class="nav-label">Portal</span></a>
     </div>
 
     <main>
@@ -3207,8 +3218,13 @@
           .r-eco-story[open] .r-eco-story-panel { max-height:1400px; opacity:1; padding:0.4rem 0 0.9rem; }
           .r-eco-story-tagline { transition: opacity .35s ease, transform .35s ease; }
           .r-eco-story-tagline.is-swapping { opacity:0; transform:translateY(-4px); }
-          .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 6px; box-shadow: 0 16px 48px -20px rgba(0,0,0,0.45); }
-          .r-eco-panes { display: flex; gap: 6px; height: 230px; }
+          .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 10px; box-shadow: 0 22px 60px -22px rgba(0,0,0,0.5); }
+          .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
+          .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
+          .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }
+          .r-eco-stage-head .d { color: rgba(250,249,246,0.55); font-size: 0.72rem; font-weight: 500; max-width: 38ch; text-align: right; }
+          @media (max-width: 720px) { .r-eco-stage-head { flex-direction: column; align-items: flex-start; } .r-eco-stage-head .d { text-align: left; } }
+          .r-eco-panes { display: flex; gap: 8px; height: 360px; }
           .r-eco-pane { position: relative; flex: 1 1 0; min-width: 0; background: #FAF9F6; border-radius: calc(var(--radius-lg) - 4px); overflow: hidden; cursor: pointer; transition: flex 0.65s cubic-bezier(0.23, 1, 0.32, 1); }
           /* Logo-aligned palette: Visual=Orange, Audio=Blue, Development=Yellow, Events=Pink */
           .r-eco-pane.is-visual { background: linear-gradient(155deg, #FFF6EC 0%, #FFE2C2 55%, #FFB870 100%); }
@@ -3541,20 +3557,19 @@
                     <div class="r-eco-mini-cell r-eco-stat is-muted"><div class="r-eco-stat-k">24h Vol</div><div class="r-eco-stat-v" id="rEcoMiniVol">—</div></div>
                   </div>
                 </div>
-                <div class="r-eco-drops">
-                  <div class="r-eco-drops-head"><span class="r-eco-drops-label">Explore Rhozeland</span></div>
-                  <div class="r-eco-drops-grid">
-                    <a class="r-eco-drop is-tile" href="/projects.html"><span class="r-eco-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><span><span class="r-eco-drop-k">Visual</span><strong class="r-eco-drop-t">Film & photo</strong><span class="r-eco-drop-d">Direction, edits, rollout assets.</span></span></a>
-                    <a class="r-eco-drop is-tile" href="/projects.html"><span class="r-eco-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span><span class="r-eco-drop-k">Audio</span><strong class="r-eco-drop-t">Music & podcasts</strong><span class="r-eco-drop-d">Recording, mixing, sessions.</span></span></a>
-                    <a class="r-eco-drop is-tile" href="/start.html"><span class="r-eco-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span><span class="r-eco-drop-k">Development</span><strong class="r-eco-drop-t">Tools & launch</strong><span class="r-eco-drop-d">Web, systems, strategy.</span></span></a>
-                    <a class="r-eco-drop is-tile" href="/events.html"><span class="r-eco-drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span><span class="r-eco-drop-k">Events</span><strong class="r-eco-drop-t">Live sessions</strong><span class="r-eco-drop-d">Meetups, streams, activations.</span></span></a>
-                  </div>
-                </div>
+                <!-- Sidebar Explore tiles removed — Explore Rhozeland now lives in the large accordion stage below. -->
               </aside>
             </div>
           </div>
 
           <div class="r-eco-stage">
+            <div class="r-eco-stage-head">
+              <div>
+                <span class="k">Explore Rhozeland</span>
+                <h2 class="t">Four lanes. One ecosystem.</h2>
+              </div>
+              <p class="d">Hover or tap a lane to expand it. Each one is a service we run end-to-end — from idea to launch.</p>
+            </div>
             <div class="r-eco-panes" role="list">
               <!-- Visual -->
               <div class="r-eco-pane is-visual" role="listitem" tabindex="0" aria-label="Visual services">
@@ -3663,88 +3678,6 @@
 
         </div>
       </section>
-      <!-- ECOSYSTEM HUB BAND -->
-      <section class="r-hub" aria-label="Rhozeland ecosystem live feed">
-        <div class="r-hub-shell">
-          <div class="r-hub-ident">
-            <span class="r-hub-dot" aria-hidden="true"></span>
-            <div class="r-hub-ident-meta">
-              <span class="r-hub-kicker">Network identity</span>
-              <div class="r-hub-ident-line">
-                <span class="r-hub-ident-name">RHOZELAND · SOLANA</span>
-                <span class="r-hub-verified">Live</span>
-              </div>
-            </div>
-          </div>
-          <div class="r-hub-ticker-wrap" id="rHubTickerWrap">
-            <div class="r-hub-ticker" id="rHubTicker">
-              <a class="r-hub-item" href="#chart"><span class="r-hub-k">$RHOZE</span><span class="r-hub-v">Live Chart</span><span class="r-hub-tag r-hub-up">DexScreener</span></a>
-              <a class="r-hub-item" href="/leaderboard.html"><span class="r-hub-k">Leaderboard #1</span><span class="r-hub-v r-hub-serif">This week</span></a>
-              <a class="r-hub-item" href="/events.html"><span class="r-hub-k">Next Event</span><span class="r-hub-v">Land Sessions</span><span class="r-hub-meta">RSVP open</span></a>
-              <a class="r-hub-item" href="/projects.html"><span class="r-hub-k">Latest Drop</span><span class="r-hub-v">Saint Flair West · Ooak</span><span class="r-hub-pill">View</span></a>
-              <a class="r-hub-item" href="#tokenomics"><span class="r-hub-k">Supply</span><span class="r-hub-v">1,000,000,000</span><span class="r-hub-meta">Locked</span></a>
-              <a class="r-hub-item" href="/about.html"><span class="r-hub-k">Citizens</span><span class="r-hub-v">Creators · Collectors · Builders</span></a>
-            </div>
-          </div>
-          <a class="r-hub-cta" href="/leaderboard.html">
-            Enter Hub
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
-        </div>
-        <div class="r-hub-subline">
-          <div class="r-hub-sub-left">
-            <span>Network · Solana</span>
-            <span>Uptime · 99.98%</span>
-          </div>
-          <span class="r-hub-sub-right">Syncing ecosystem data…</span>
-        </div>
-      </section>
-      <style>
-        .r-hub { margin: 14px auto 0; padding: 0 6px; max-width: 1200px; }
-        .r-hub-shell { display: flex; align-items: stretch; border: 1px solid hsl(var(--line)); background: hsl(var(--surface-card)); border-radius: 6px; overflow: hidden; }
-        .r-hub-ident { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-right: 1px solid hsl(var(--line)); background: hsl(var(--surface-alt)); flex-shrink: 0; }
-        .r-hub-dot { width: 7px; height: 7px; border-radius: 999px; background: hsl(var(--accent-green)); box-shadow: 0 0 0 3px hsl(var(--accent-green) / 0.18); animation: rHubPulse 2.4s ease-in-out infinite; }
-        @keyframes rHubPulse { 0%,100%{opacity:1} 50%{opacity:.55} }
-        .r-hub-ident-meta { display: flex; flex-direction: column; gap: 3px; }
-        .r-hub-kicker { font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .18em; text-transform: uppercase; color: hsl(var(--muted)); }
-        .r-hub-ident-line { display: flex; align-items: center; gap: 8px; }
-        .r-hub-ident-name { font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .04em; color: hsl(var(--ink)); }
-        .r-hub-verified { font: 700 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; padding: 3px 6px; border-radius: 3px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
-        .r-hub-ticker-wrap { flex: 1; overflow: hidden; position: relative; }
-        .r-hub-ticker-wrap::before, .r-hub-ticker-wrap::after { content:""; position:absolute; top:0; bottom:0; width:36px; z-index:2; pointer-events:none; }
-        .r-hub-ticker-wrap::before { left:0; background: linear-gradient(90deg, hsl(var(--surface-card)), transparent); }
-        .r-hub-ticker-wrap::after { right:0; background: linear-gradient(-90deg, hsl(var(--surface-card)), transparent); }
-        .r-hub-ticker { display: flex; align-items: center; width: max-content; animation: rHubScroll 48s linear infinite; }
-        .r-hub-ticker-wrap:hover .r-hub-ticker { animation-play-state: paused; }
-        @keyframes rHubScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-        .r-hub-item { display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-right: 1px solid hsl(var(--line) / 0.5); text-decoration: none; white-space: nowrap; transition: background 160ms ease; }
-        .r-hub-item:hover { background: hsl(var(--surface-alt)); }
-        .r-hub-k { font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; color: hsl(var(--muted)); }
-        .r-hub-v { font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: hsl(var(--ink)); }
-        .r-hub-serif { font-family: ui-serif, Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 13px; color: hsl(var(--accent-gold)); }
-        .r-hub-up { color: hsl(var(--accent-green)); font: 600 10px/1 ui-monospace, monospace; }
-        .r-hub-tag { font: 600 9px/1 ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
-        .r-hub-meta { font: 500 10px/1 ui-monospace, monospace; color: hsl(var(--muted)); font-style: italic; }
-        .r-hub-pill { font: 700 9px/1 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; padding: 4px 7px; border: 1px solid hsl(var(--ink)); color: hsl(var(--ink)); transition: all 160ms ease; }
-        .r-hub-item:hover .r-hub-pill { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
-        .r-hub-cta { display: none; align-items: center; gap: 8px; padding: 0 22px; background: hsl(var(--surface-alt)); border-left: 1px solid hsl(var(--line)); text-decoration: none; color: hsl(var(--ink)); font: 700 10px/1 ui-monospace, monospace; letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; transition: background 160ms ease; flex-shrink: 0; }
-        .r-hub-cta:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
-        .r-hub-cta svg { transition: transform 160ms ease; }
-        .r-hub-cta:hover svg { transform: translateX(3px); }
-        @media (min-width: 1024px) { .r-hub-cta { display: inline-flex; } }
-        .r-hub-subline { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 0; font: 500 9px/1 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: hsl(var(--muted) / 0.7); }
-        .r-hub-sub-left { display: flex; gap: 16px; }
-        .r-hub-sub-right { font-style: italic; text-transform: none; letter-spacing: .04em; }
-        @media (max-width: 720px) { .r-hub-ident { padding: 8px 12px; } .r-hub-item { padding: 9px 16px; gap: 8px; } .r-hub-subline { font-size: 8px; } }
-      </style>
-      <script>
-        (function(){
-          var t = document.getElementById('rHubTicker');
-          if (!t) return;
-          // duplicate for seamless loop
-          t.innerHTML = t.innerHTML + t.innerHTML;
-        })();
-      </script>
       <script>
         (function(){
           var track = document.getElementById('rEcoFeatTrack');
@@ -3963,7 +3896,40 @@
         <div class="build-modal">
           <button class="build-modal-close" onclick="document.getElementById('buildModal').classList.remove('open')" aria-label="Close">&times;</button>
           <h3>Start a Project</h3>
-          <p>Tell us a bit about your project and we'll get back to you within 48 hours.</p>
+          <p>Pick a lane — we'll route you to the right team.</p>
+          <div class="bm-triage" role="list">
+            <button type="button" class="bm-triage-card" role="listitem" onclick="(function(){var s=document.getElementById('bm-type'); if(s){s.value='music-production'; s.scrollIntoView({behavior:'smooth',block:'center'});}})()">
+              <span class="bm-triage-k">Produce</span>
+              <strong>Make something new</strong>
+              <span class="bm-triage-d">Music, video, photo, design, web.</span>
+            </button>
+            <button type="button" class="bm-triage-card" role="listitem" onclick="(function(){var s=document.getElementById('bm-type'); if(s){s.value='marketing'; s.scrollIntoView({behavior:'smooth',block:'center'});}})()">
+              <span class="bm-triage-k">Distribute</span>
+              <strong>Launch &amp; grow it</strong>
+              <span class="bm-triage-d">Rollout, marketing, events, press.</span>
+            </button>
+            <a class="bm-triage-card bm-triage-card--portal" role="listitem" href="/team.html#/portal">
+              <span class="bm-triage-k">Client Portal</span>
+              <strong>Existing project</strong>
+              <span class="bm-triage-d">Sign in to track work in progress.</span>
+            </a>
+          </div>
+          <div class="bm-triage-divider"><span>Or fill out the brief</span></div>
+          <style>
+            .bm-triage { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin: 14px 0 18px; }
+            .bm-triage-card { display: flex; flex-direction: column; gap: 4px; padding: 14px 12px; background: hsl(var(--surface-alt)); border: 1px solid hsl(var(--line)); border-radius: 10px; text-align: left; cursor: pointer; text-decoration: none; color: hsl(var(--ink)); transition: border-color 160ms ease, transform 160ms ease, background 160ms ease; font-family: inherit; }
+            .bm-triage-card:hover { border-color: hsl(var(--ink)); transform: translateY(-1px); background: hsl(var(--surface-card)); }
+            .bm-triage-card .bm-triage-k { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted)); }
+            .bm-triage-card strong { font-size: 0.92rem; font-weight: 800; line-height: 1.15; }
+            .bm-triage-card .bm-triage-d { font-size: 0.72rem; color: hsl(var(--muted)); line-height: 1.35; }
+            .bm-triage-card--portal { background: hsl(var(--ink)); color: hsl(var(--surface-card)); border-color: hsl(var(--ink)); }
+            .bm-triage-card--portal .bm-triage-k, .bm-triage-card--portal .bm-triage-d { color: hsl(var(--surface-card) / 0.7); }
+            .bm-triage-card--portal:hover { background: hsl(var(--surface-card)); color: hsl(var(--ink)); }
+            .bm-triage-card--portal:hover .bm-triage-k, .bm-triage-card--portal:hover .bm-triage-d { color: hsl(var(--muted)); }
+            .bm-triage-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0 14px; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); }
+            .bm-triage-divider::before, .bm-triage-divider::after { content:""; flex:1; height:1px; background: hsl(var(--line)); }
+            @media (max-width: 560px) { .bm-triage { grid-template-columns: 1fr; } }
+          </style>
           <form class="build-modal-form" onsubmit="handleBuildForm(event)">
             <div>
               <label for="bm-fullname">Full Name</label>
@@ -4046,7 +4012,7 @@
         </div>
       </div>
 
-      <div class="footer-bottom"><a class="footer-link-inline team-access-link" href="/team.html#/portal" style="font-size:0.75rem;opacity:0.55;margin-right:1rem;">Portal</a><span class="footer-copyright">Copyright &copy; 2026 Rhozeland</span><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg><span>Light</span></button></div>
+      <div class="footer-bottom"><span class="footer-copyright">Copyright &copy; 2026 Rhozeland</span><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg><span>Light</span></button></div>
     </footer>
   </div>
 

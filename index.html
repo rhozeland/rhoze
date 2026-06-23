@@ -3061,21 +3061,59 @@
           .r-eco { padding-top: 1.25rem; padding-bottom: 0.75rem; }
           .r-eco .r-eco-inner { max-width: 1240px; margin: 0 auto; padding: 0 2rem; display: flex; flex-direction: column; gap: 0.85rem; }
           .r-eco .r-eco-lead { width: 100%; border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); box-shadow: 8px 8px 0 0 hsl(var(--ink)); overflow: hidden; }
-          .r-eco-issue-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid hsl(var(--ink)); padding: 0.7rem 1rem; font-family: 'Inter', system-ui, sans-serif; font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: hsl(var(--muted)); }
-          .r-eco-issue-top strong { color: hsl(var(--ink)); font-weight: 900; }
+          /* Network identity ticker masthead */
+          .r-eco-ticker { display: flex; flex-direction: column; border-bottom: 1px solid hsl(var(--ink)); font-family: 'Inter', system-ui, sans-serif; }
+          .r-eco-ticker-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: stretch; }
+          .r-eco-tick { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 1rem; min-width: 0; border-right: 1px solid hsl(var(--ink) / 0.18); }
+          .r-eco-tick:last-child { border-right: 0; }
+          .r-eco-tick-k { color: hsl(var(--muted)); font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; white-space: nowrap; }
+          .r-eco-tick-v { color: hsl(var(--ink)); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+          .r-eco-tick-v.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+          .r-eco-live-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: hsl(var(--ink)); color: hsl(var(--surface-card)); padding: 0.18rem 0.42rem; font-size: 0.58rem; font-weight: 900; letter-spacing: 0.12em; }
+          .r-eco-live-pill.is-off { background: transparent; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); }
+          .r-eco-net-dot { width: 0.45rem; height: 0.45rem; border-radius: 999px; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.55); animation: rEcoPulse 2.2s infinite; }
+          .r-eco-tick-link { color: inherit; text-decoration: none; border: 1px solid hsl(var(--ink)); padding: 0.12rem 0.4rem; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 0.4rem; }
+          .r-eco-tick-link:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-eco-tick.is-foot { padding: 0.45rem 1rem; border-top: 1px solid hsl(var(--line)); border-right: 0; background: linear-gradient(90deg, hsl(var(--surface-card)) 0%, hsl(var(--surface-alt)) 50%, hsl(var(--surface-card)) 100%); color: hsl(var(--muted)); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 1rem; }
+          @media (max-width: 980px) { .r-eco-ticker-row { grid-auto-flow: row; grid-auto-columns: auto; } .r-eco-tick { border-right: 0; border-bottom: 1px solid hsl(var(--ink) / 0.12); } }
           .r-eco-issue-grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(280px, 4fr); }
           .r-eco-issue-main { border-right: 1px solid hsl(var(--ink)); padding: 2rem; }
           .r-eco-kicker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 1.15rem; }
           .r-eco-kicker { display: inline-flex; background: hsl(var(--ink)); color: hsl(var(--surface-card)); padding: 0.38rem 0.6rem; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
           .r-eco-date { color: hsl(var(--muted)); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-          .r-eco .r-eco-title { font-family: 'Inter', system-ui, sans-serif; font-size: 4.9rem; line-height: 0.94; font-weight: 900; letter-spacing: 0; text-transform: uppercase; color: hsl(var(--ink)); max-width: 12ch; margin: 0 0 1.35rem; background: none; -webkit-background-clip: initial; background-clip: initial; -webkit-text-fill-color: hsl(var(--ink)); animation: none; }
-          .r-eco .r-eco-title-stroke { color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.4px hsl(var(--ink)); }
+          .r-eco .r-eco-title { font-family: 'Inter', system-ui, sans-serif; font-size: 2.1rem; line-height: 1.05; font-weight: 900; letter-spacing: -0.01em; text-transform: none; color: hsl(var(--ink)); max-width: 28ch; margin: 0 0 1rem; background: none; -webkit-background-clip: initial; background-clip: initial; -webkit-text-fill-color: hsl(var(--ink)); animation: none; }
+          .r-eco .r-eco-title em { font-style: normal; color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px hsl(var(--ink)); }
           .r-eco-video { position: relative; aspect-ratio: 16 / 9; background: hsl(var(--ink)); border: 1px solid hsl(var(--ink) / 0.2); overflow: hidden; margin-bottom: 1.25rem; }
           .r-eco-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
           .r-eco-live-tag { position: absolute; left: 1rem; bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.65rem; background: hsl(var(--ink) / 0.72); color: hsl(var(--surface-card)); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
           .r-eco-live-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #e94560; box-shadow: 0 0 0 0 rgba(233,69,96,0.65); animation: rEcoPulse 2s infinite; }
           .r-eco-dek { max-width: 62ch; color: hsl(var(--muted)); font-size: 1rem; font-weight: 600; line-height: 1.6; margin: 0; }
           .r-eco-dek em { color: hsl(var(--ink)); font-style: italic; font-weight: 800; }
+          /* Episodes grid below featured video */
+          .r-eco-episodes { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid hsl(var(--line)); }
+          .r-eco-eps-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.85rem; }
+          .r-eco-eps-label { color: hsl(var(--muted)); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+          .r-eco-eps-all { color: hsl(var(--ink)); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); }
+          .r-eco-eps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.85rem; }
+          .r-eco-ep { display: flex; flex-direction: column; gap: 0.5rem; color: inherit; text-decoration: none; }
+          .r-eco-ep-thumb { position: relative; aspect-ratio: 16 / 9; background: hsl(var(--surface-alt)) center / cover no-repeat; border: 1px solid hsl(var(--line)); overflow: hidden; transition: transform 0.2s ease; }
+          .r-eco-ep:hover .r-eco-ep-thumb { transform: translateY(-2px); border-color: hsl(var(--ink)); }
+          .r-eco-ep-play { position: absolute; right: 0.4rem; bottom: 0.4rem; background: hsl(var(--ink) / 0.85); color: hsl(var(--surface-card)); font-size: 0.5rem; font-weight: 900; letter-spacing: 0.14em; padding: 0.2rem 0.4rem; }
+          .r-eco-ep-k { color: hsl(var(--muted)); font-size: 0.55rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+          .r-eco-ep-t { color: hsl(var(--ink)); font-size: 0.78rem; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+          @media (max-width: 720px) { .r-eco-eps-grid { grid-template-columns: 1fr 1fr; } .r-eco-ep:nth-child(3) { display: none; } }
+          /* Live ecosystem mini-ticker (right rail) */
+          .r-eco-mini { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; align-items: end; margin-bottom: 0.85rem; }
+          .r-eco-mini-price { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.65rem; font-weight: 800; color: hsl(var(--ink)); line-height: 1; letter-spacing: -0.01em; }
+          .r-eco-mini-chg { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.78rem; font-weight: 800; padding: 0.18rem 0.4rem; border-radius: 3px; }
+          .r-eco-mini-chg.up { background: #dcfce7; color: #15803d; }
+          .r-eco-mini-chg.dn { background: #fee2e2; color: #b91c1c; }
+          .r-eco-mini-chg.flat { background: hsl(var(--surface-alt)); color: hsl(var(--muted)); }
+          .r-eco-spark { width: 100%; height: 44px; display: block; margin: 0.35rem 0 0.7rem; }
+          .r-eco-mini-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed hsl(var(--line)); }
+          .r-eco-mini-cell .r-eco-stat-k { margin-bottom: 0.2rem; }
+          .r-eco-mini-cell .r-eco-stat-v { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.92rem; font-weight: 800; }
+          .r-eco-mini-cta { display: inline-flex; margin-top: 0.7rem; align-items: center; gap: 0.35rem; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); padding-bottom: 1px; }
           .r-eco-issue-side { display: flex; flex-direction: column; min-width: 0; }
           .r-eco-stats { padding: 1.35rem; border-bottom: 1px solid hsl(var(--ink)); }
           .r-eco-stats-head, .r-eco-drops-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.8rem; margin-bottom: 1rem; }
@@ -3377,35 +3415,86 @@
 
         <div class="hero-inner r-eco-inner">
           <div class="r-eco-lead">
-            <div class="r-eco-issue-top">
-              <strong>Rhozeland · Selected direction</strong>
-              <span>Kinetic technical editorial · Live homepage</span>
+            <div class="r-eco-ticker" role="region" aria-label="Rhozeland network identity">
+              <div class="r-eco-ticker-row">
+              <div class="r-eco-tick">
+                <span class="r-eco-net-dot" aria-hidden="true"></span>
+                <span class="r-eco-tick-k">Network</span>
+                <span class="r-eco-tick-v">Rhozeland · Solana</span>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Live Stream</span>
+                <span id="rEcoLiveSlot" class="r-eco-live-pill is-off" data-live="false">Offline</span>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Drop</span>
+                <span class="r-eco-tick-v">Saint Flair West · Ooak</span>
+                <a class="r-eco-tick-link" href="/projects.html">View</a>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Supply</span>
+                <span class="r-eco-tick-v mono">1,000,000,000 <span style="color:hsl(var(--muted));font-weight:600;font-style:italic">Locked</span></span>
+              </div>
+              <div class="r-eco-tick">
+                <span class="r-eco-tick-k">Citizens</span>
+                <span class="r-eco-tick-v">Creators · Collectors</span>
+              </div>
+              </div>
+              <div class="r-eco-tick is-foot">
+                <span><span id="rEcoTickerStatus">Syncing ecosystem data…</span></span>
+                <span>Updated <span id="rEcoTickerTime">—</span></span>
+              </div>
             </div>
             <div class="r-eco-issue-grid">
               <article class="r-eco-issue-main">
                 <div class="r-eco-kicker-row">
-                  <span class="r-eco-kicker">A New Era</span>
-                  <span class="r-eco-date">Today · Toronto / LA · Solana</span>
+                  <span class="r-eco-kicker">The Channel</span>
+                  <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto / LA</span>
                 </div>
-                <h1 class="r-eco-title" id="homepage-title">Launch <span class="r-eco-title-stroke">culture.</span><br>Own the upside.</h1>
+                <h1 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h1>
                 <div class="r-eco-video">
-                  <iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&amp;mute=1&amp;rel=0&amp;modestbranding=1&amp;loop=1&amp;playlist=9rxMdl_mQws" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
-                  <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span>Featured · Documentary</span>
+                  <iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+                  <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Featured · Latest Episode</span></span>
                 </div>
-                <p class="r-eco-dek">From a circle of friends in 2016 to the recording, content, and launch infrastructure for the new <em>independent creative economy</em> — studio, $RHOZE token, and a live community under one roof.</p>
+                <p class="r-eco-dek" id="rEcoFeaturedDek">Rhozeland is becoming a media channel — documentaries, podcasts, and live streams from the studio. <em>New episode every Sunday.</em></p>
+                <div class="r-eco-episodes" aria-label="Recent episodes">
+                  <div class="r-eco-eps-head">
+                    <span class="r-eco-eps-label">Recent Episodes</span>
+                    <a class="r-eco-eps-all" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">All on YouTube →</a>
+                  </div>
+                  <div class="r-eco-eps-grid" id="rEcoEpsGrid">
+                    <!-- Skeleton fallbacks; replaced by YouTube RSS on load -->
+                    <a class="r-eco-ep" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-ep-thumb" style="background-image:url('https://i.ytimg.com/vi/9rxMdl_mQws/hqdefault.jpg')"><span class="r-eco-ep-play">▶ Watch</span></span><span class="r-eco-ep-k">Documentary</span><span class="r-eco-ep-t">How Rhozeland Started: The Story</span></a>
+                    <a class="r-eco-ep" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-ep-thumb" style="background-image:url('/images/rhozeland-fus-thumb.webp')"><span class="r-eco-ep-play">▶ Watch</span></span><span class="r-eco-ep-k">Episode</span><span class="r-eco-ep-t">More from the Rhozeland channel</span></a>
+                    <a class="r-eco-ep" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-ep-thumb" style="background-image:url('/images/timeline-2023.webp')"><span class="r-eco-ep-play">▶ Watch</span></span><span class="r-eco-ep-k">Episode</span><span class="r-eco-ep-t">Loading latest uploads…</span></a>
+                  </div>
+                </div>
               </article>
               <aside class="r-eco-issue-side" aria-label="Rhozeland ecosystem snapshot">
-                <div class="r-eco-stats">
-                  <div class="r-eco-stats-head"><span class="r-eco-stats-label">Ecosystem</span><span class="r-eco-status">+ Active</span></div>
-                  <div class="r-eco-stats-grid">
-                    <div class="r-eco-stat"><div class="r-eco-stat-k">$RHOZE</div><div class="r-eco-stat-v">Live</div></div>
-                    <div class="r-eco-stat is-muted"><div class="r-eco-stat-k">Supply</div><div class="r-eco-stat-v">1B · Locked</div></div>
+                <div class="r-eco-stats" id="rEcoMiniTicker" aria-live="polite">
+                  <div class="r-eco-stats-head">
+                    <span class="r-eco-stats-label">$RHOZE · Live</span>
+                    <span class="r-eco-status" id="rEcoMiniStatus">+ Active</span>
                   </div>
+                  <div class="r-eco-mini">
+                    <div class="r-eco-mini-price" id="rEcoMiniPrice">—</div>
+                    <div class="r-eco-mini-chg flat" id="rEcoMiniChg">—</div>
+                  </div>
+                  <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true">
+                    <path id="rEcoSparkFill" d="" fill="hsl(var(--ink) / 0.08)" stroke="none"/>
+                    <path id="rEcoSparkLine" d="" fill="none" stroke="hsl(var(--ink))" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+                  </svg>
+                  <div class="r-eco-mini-row">
+                    <div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div>
+                    <div class="r-eco-mini-cell r-eco-stat is-muted"><div class="r-eco-stat-k">24h Vol</div><div class="r-eco-stat-v" id="rEcoMiniVol">—</div></div>
+                  </div>
+                  <a class="r-eco-mini-cta" href="#chart">Full chart →</a>
                 </div>
                 <div class="r-eco-drops">
                   <div class="r-eco-drops-head"><span class="r-eco-drops-label">Latest Drops</span></div>
                   <a class="r-eco-drop" href="/projects.html"><span class="r-eco-drop-img" style="background-image:url('/images/ooak-saint-flair-west-thumb.webp')"></span><span><span class="r-eco-drop-k">Album · Ooak</span><strong class="r-eco-drop-t">Saint Flair West</strong><span class="r-eco-drop-d">Full-length rollout — art direction, visual world.</span></span></a>
                   <a class="r-eco-drop" href="/projects.html"><span class="r-eco-drop-img" style="background-image:url('/images/rhozeland-fus-thumb.webp')"></span><span><span class="r-eco-drop-k">EP · Rhozeland</span><strong class="r-eco-drop-t">FUS</strong><span class="r-eco-drop-d">Original sound from the collective. Streaming now.</span></span></a>
+                  <a class="r-eco-drop" href="https://www.youtube.com/@Rhozeland/streams" target="_blank" rel="noopener"><span class="r-eco-drop-img" style="background-image:url('https://i.ytimg.com/vi/9rxMdl_mQws/hqdefault.jpg')"></span><span><span class="r-eco-drop-k">Live Stream · YouTube</span><strong class="r-eco-drop-t">Studio Live</strong><span class="r-eco-drop-d">Catch live sessions from the Rhozeland studio.</span></span></a>
                   <a class="r-eco-drop" href="/leaderboard.html"><span class="r-eco-drop-img" style="background-image:url('/images/timeline-2023.webp')"></span><span><span class="r-eco-drop-k">Community · Live</span><strong class="r-eco-drop-t">Weekly Leaderboard</strong><span class="r-eco-drop-d">Earn $RHOZE for moving the movement.</span></span></a>
                 </div>
               </aside>
@@ -4392,6 +4481,183 @@
         i = (i + 1) % skins.length;
         skins.forEach(function(el, idx){ el.classList.toggle('is-active', idx === i); });
       }, 5200);
+    })();
+  </script>
+  <script>
+    /* === Rhozeland homepage: YouTube channel + live $RHOZE ticker === */
+    (function(){
+      var FEED_API = 'https://hdlpvcsxyxirywjkhsui.functions.supabase.co/youtube-feed';
+      var TIME_AGO = function(iso){
+        if (!iso) return '';
+        // Edge function returns YouTube's human string ("2 days ago"); pass through.
+        if (/[a-zA-Z]/.test(iso)) return iso;
+        try {
+          var d = new Date(iso); var s = (Date.now() - d.getTime())/1000;
+          if (s < 60) return 'just now';
+          if (s < 3600) return Math.floor(s/60) + 'm ago';
+          if (s < 86400) return Math.floor(s/3600) + 'h ago';
+          if (s < 604800) return Math.floor(s/86400) + 'd ago';
+          return d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+        } catch(e){ return ''; }
+      };
+
+      function fetchFeed(){
+        return fetch(FEED_API, { cache: 'no-store' })
+          .then(function(r){ if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+          .then(function(d){ return (d && d.videos) || []; });
+      }
+
+      function renderChannel(videos){
+        if (!videos.length) return;
+        var latest = videos[0];
+        var iframe = document.getElementById('rEcoFeatured');
+        if (iframe) {
+          iframe.src = 'https://www.youtube.com/embed/' + latest.id + '?rel=0&modestbranding=1';
+          iframe.title = latest.title;
+        }
+        var tag = document.getElementById('rEcoFeaturedTag');
+        if (tag) tag.textContent = (latest.live ? 'LIVE NOW · ' : 'Latest · ') + TIME_AGO(latest.published);
+        var dek = document.getElementById('rEcoFeaturedDek');
+        if (dek) dek.innerHTML = '<em>' + (latest.title || 'Latest episode').replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — fresh on the Rhozeland channel. New episode every Sunday.';
+        var ep = document.getElementById('rEcoEpDate');
+        if (ep) ep.textContent = 'Updated ' + TIME_AGO(latest.published) + ' · Toronto / LA';
+
+        // Episodes grid: next 3 after the featured one
+        var grid = document.getElementById('rEcoEpsGrid');
+        if (grid) {
+          var picks = videos.slice(1, 4);
+          if (!picks.length) picks = [latest];
+          grid.innerHTML = picks.map(function(v){
+            var safe = (v.title || '').replace(/[<>&"]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});
+            var kicker = v.live ? 'Live · YouTube' : 'Episode · ' + TIME_AGO(v.published);
+            return '<a class="r-eco-ep" href="https://www.youtube.com/watch?v=' + v.id + '" target="_blank" rel="noopener">' +
+              '<span class="r-eco-ep-thumb" style="background-image:url(\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\')"><span class="r-eco-ep-play">' + (v.live ? '● LIVE' : '▶ Watch') + '</span></span>' +
+              '<span class="r-eco-ep-k">' + kicker + '</span>' +
+              '<span class="r-eco-ep-t">' + safe + '</span>' +
+              '</a>';
+          }).join('');
+        }
+
+        // Live-stream slot in masthead
+        var slot = document.getElementById('rEcoLiveSlot');
+        if (slot) {
+          if (latest.live) {
+            slot.className = 'r-eco-live-pill';
+            slot.innerHTML = '<span class="r-eco-live-dot" aria-hidden="true"></span>ON AIR';
+            slot.style.cursor = 'pointer';
+            slot.onclick = function(){ window.open('https://www.youtube.com/watch?v=' + latest.id, '_blank'); };
+          } else {
+            slot.className = 'r-eco-live-pill is-off';
+            slot.textContent = 'Offline';
+          }
+        }
+      }
+
+      function loadChannel(){
+        fetchFeed().then(renderChannel).catch(function(){ /* keep skeleton */ });
+      }
+
+      /* === $RHOZE live ticker + sparkline === */
+      var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
+      var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
+
+      function fmtPrice(n){
+        if (n == null || !isFinite(n)) return '—';
+        if (n >= 1) return '$' + n.toFixed(4);
+        if (n >= 0.01) return '$' + n.toFixed(5);
+        return '$' + Number(n).toPrecision(3);
+      }
+      function fmtCompact(n){
+        if (n == null || !isFinite(n) || n <= 0) return '—';
+        var u = ['','K','M','B','T']; var i = 0; var v = n;
+        while (v >= 1000 && i < u.length - 1) { v /= 1000; i++; }
+        return '$' + (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + u[i];
+      }
+      function fmtPct(n){ if (n == null || !isFinite(n)) return '—'; return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+
+      function paintTicker(stats){
+        var p = document.getElementById('rEcoMiniPrice'); if (p) p.textContent = fmtPrice(stats.price);
+        var c = document.getElementById('rEcoMiniChg');
+        if (c) {
+          c.textContent = fmtPct(stats.change24h);
+          c.className = 'r-eco-mini-chg ' + (stats.change24h == null ? 'flat' : (stats.change24h >= 0 ? 'up' : 'dn'));
+        }
+        var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
+        var vol = document.getElementById('rEcoMiniVol'); if (vol) vol.textContent = fmtCompact(stats.volume24h);
+        var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';
+        var tt = document.getElementById('rEcoTickerTime'); if (tt) tt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
+
+      function loadTicker(){
+        fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache:'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){
+            var pairs = d && d.pairs ? d.pairs.slice() : [];
+            if (pairs.length) {
+              pairs.sort(function(a,b){ return (b.liquidity && b.liquidity.usd || 0) - (a.liquidity && a.liquidity.usd || 0); });
+              var p = pairs[0];
+              paintTicker({
+                price: parseFloat(p.priceUsd),
+                change24h: p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null,
+                marketCap: p.marketCap || p.fdv || null,
+                volume24h: p.volume && p.volume.h24 != null ? parseFloat(p.volume.h24) : null
+              });
+              return;
+            }
+            // Fallback to GeckoTerminal pool
+            return fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache:'no-store' })
+              .then(function(r){ return r.ok ? r.json() : null; })
+              .then(function(gd){
+                var a = gd && gd.data && gd.data.attributes; if (!a) return;
+                paintTicker({
+                  price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
+                  change24h: a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
+                  marketCap: (a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null)),
+                  volume24h: a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null
+                });
+              });
+          })
+          .catch(function(){});
+      }
+
+      function loadSpark(){
+        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
+        fetch(url, { cache:'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){
+            var arr = d && d.data && d.data.attributes && d.data.attributes.ohlcv_list;
+            if (!arr || !arr.length) return;
+            // ohlcv_list: [[ts, o, h, l, c, v], ...] sorted newest first → reverse
+            var pts = arr.slice().reverse().map(function(r){ return parseFloat(r[4]); }).filter(function(v){ return isFinite(v); });
+            if (pts.length < 2) return;
+            var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts);
+            var range = (max - min) || 1;
+            var W = 200, H = 44, pad = 2;
+            var step = (W - pad*2) / (pts.length - 1);
+            var line = pts.map(function(v, i){
+              var x = pad + i * step;
+              var y = pad + (H - pad*2) * (1 - (v - min) / range);
+              return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+            }).join(' ');
+            var fill = line + ' L' + (W - pad).toFixed(1) + ' ' + (H - pad) + ' L' + pad + ' ' + (H - pad) + ' Z';
+            var l = document.getElementById('rEcoSparkLine'); if (l) l.setAttribute('d', line);
+            var f = document.getElementById('rEcoSparkFill'); if (f) f.setAttribute('d', fill);
+            var up = pts[pts.length-1] >= pts[0];
+            if (l) l.setAttribute('stroke', up ? '#15803d' : '#b91c1c');
+            if (f) f.setAttribute('fill', up ? 'rgba(21,128,61,0.10)' : 'rgba(185,28,28,0.10)');
+          })
+          .catch(function(){});
+      }
+
+      function start(){
+        loadChannel();
+        loadTicker(); loadSpark();
+        setInterval(loadTicker, 30000);
+        setInterval(loadSpark, 120000);
+        setInterval(loadChannel, 15 * 60 * 1000); // re-check feed every 15 min
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+      else start();
     })();
   </script>
 </body>

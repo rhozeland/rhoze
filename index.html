@@ -3220,9 +3220,9 @@
           .r-eco-story-tagline.is-swapping { opacity:0; transform:translateY(-4px); }
           .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 10px; box-shadow: 0 22px 60px -22px rgba(0,0,0,0.5); }
           /* Sidebar Explore grid — full-bleed quadrant tiles with hover service reveal */
-          .r-eco-side-explore { margin-top: 14px; padding-top: 14px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
-          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 10px; width: 100%; min-height: 280px; }
-          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; border-radius: 16px; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); aspect-ratio: 1 / 1; }
+          .r-eco-side-explore { margin-top: 10px; padding-top: 10px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
+          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 2px; width: 100%; min-height: 460px; border-radius: 16px; overflow: hidden; }
+          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; border-radius: 0; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: none; aspect-ratio: auto; min-height: 220px; }
           .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; }
           .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fff1de 0%, #f6b97a 100%); }
           .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #e6edff 0%, #b8c8f5 100%); }
@@ -3234,7 +3234,7 @@
           .r-eco-side-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; max-height: 0; overflow: hidden; }
           .r-eco-side-tile:hover .r-eco-side-pills, .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: none; max-height: 200px; }
           .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
-          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { aspect-ratio: auto; min-height: 110px; } .r-eco-side-pills { opacity: 1; transform: none; max-height: none; pointer-events: auto; } }
+          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 140px; } .r-eco-side-pills { opacity: 1; transform: none; max-height: none; pointer-events: auto; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }

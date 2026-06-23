@@ -1,29 +1,45 @@
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Camera, AudioLines, Activity, CalendarDays } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const drops = [
+const pillars = [
   {
     href: "/projects.html",
-    image: "/images/ooak-saint-flair-west-thumb.webp",
-    kicker: "Album · Ooak",
-    title: "Saint Flair West",
-    desc: "Full-length rollout — art direction, visual world.",
+    label: "Visual",
+    desc: "Film, photo, art direction.",
+    Icon: Camera,
+    gradient: "linear-gradient(135deg, hsl(28 100% 88%), hsl(20 95% 78%))",
   },
   {
     href: "/projects.html",
-    image: "/images/rhozeland-fus-thumb.webp",
-    kicker: "EP · Rhozeland",
-    title: "FUS",
-    desc: "Original sound from the collective. Streaming now.",
+    label: "Audio",
+    desc: "Music, podcasts, sound.",
+    Icon: AudioLines,
+    gradient: "linear-gradient(135deg, hsl(220 100% 92%), hsl(230 95% 84%))",
   },
   {
-    href: "/leaderboard.html",
-    image: "/images/timeline-2023.webp",
-    kicker: "Community · Live",
-    title: "Weekly Leaderboard",
-    desc: "Earn $RHOZE for moving the movement.",
+    href: "/start.html",
+    label: "Development",
+    desc: "Tools, web3, the app.",
+    Icon: Activity,
+    gradient: "linear-gradient(135deg, hsl(50 100% 88%), hsl(45 95% 78%))",
   },
+  {
+    href: "/events.html",
+    label: "Events",
+    desc: "Live sessions & meetups.",
+    Icon: CalendarDays,
+    gradient: "linear-gradient(135deg, hsl(340 100% 92%), hsl(330 95% 84%))",
+  },
+];
+
+const tickerItems = [
+  { tag: "Leaderboard", label: "Weekly snapshot · live", href: "/leaderboard.html" },
+  { tag: "Next Event", label: "Land Sessions · LA", href: "/events.html" },
+  { tag: "Live Chart", label: "$RHOZE on Solana", href: "#chart" },
+  { tag: "Drop", label: "Saint Flair West · Ooak", href: "/projects.html" },
+  { tag: "Podcast", label: "Rhoze Podcast Ep. 6", href: "https://www.youtube.com/@Rhozeland" },
 ];
 
 type Video = { id: string; title: string; published?: string; live?: boolean };
@@ -38,16 +54,15 @@ const fallbackVideos: Video[] = [
 ];
 
 const storyItems = [
-  { year: "2016", title: "Origin", desc: "A circle of friends sharing music, art, and culture.", image: "/images/timeline-2016.webp" },
-  { year: "2021", title: "The hub", desc: "A digital home connecting creators, projects, and resources.", image: "/images/timeline-2021.webp" },
-  { year: "2023", title: "Studio", desc: "A physical space to record, produce, and collaborate.", image: "/images/timeline-2023.webp" },
-  { year: "Today", title: "New era", desc: "A living channel, studio, and launchpad for bold creators.", image: "/images/documentary-thumbnail.webp" },
+  { year: "2016", title: "The origin story", desc: "A circle of friends sharing music, art, and culture.", image: "/images/timeline-2016.webp" },
+  { year: "2021", title: "Building the hub", desc: "A digital home connecting creators, projects, and resources.", image: "/images/timeline-2021.webp" },
+  { year: "2023", title: "Studio launch", desc: "A physical space to record, produce, and collaborate.", image: "/images/timeline-2023.webp" },
+  { year: "Today", title: "A New Era", desc: "A living record of the creators, space, and movement.", image: "/images/documentary-thumbnail.webp" },
 ];
 
 const Hero = () => {
   const [videos, setVideos] = useState<Video[]>(fallbackVideos);
   const [featured, setFeatured] = useState<Video>(fallbackVideos[0]);
-  const [activeStory, setActiveStory] = useState(storyItems[3]);
   const railRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -87,9 +102,24 @@ const Hero = () => {
             <span>Network</span>
             <strong className="text-sm tracking-normal text-foreground">Rhozeland · Solana</strong>
           </div>
-          <div className="flex items-center gap-3 px-4 py-3">
-            <span>Live Stream</span>
-            <span className="border border-border px-3 py-1 text-foreground">{featured.live ? "On Air" : "Offline"}</span>
+          <div className="relative flex items-center overflow-hidden px-4 py-3">
+            <div
+              className="flex gap-8 whitespace-nowrap will-change-transform"
+              style={{ animation: "ticker-scroll 45s linear infinite" }}
+            >
+              {[...tickerItems, ...tickerItems].map((t, i) => (
+                <a
+                  key={`${t.tag}-${i}`}
+                  href={t.href}
+                  {...(t.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="inline-flex items-center gap-2"
+                >
+                  <span className="border border-border px-2 py-0.5 text-foreground">{t.tag}</span>
+                  <span className="tracking-normal normal-case text-muted-foreground">{t.label}</span>
+                </a>
+              ))}
+            </div>
+            <span className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card to-transparent" />
           </div>
         </div>
 
@@ -107,12 +137,9 @@ const Hero = () => {
           </div>
           <div className="grid gap-2 md:grid-cols-4">
             {storyItems.map((item) => (
-              <button
+              <div
                 key={item.year}
-                type="button"
-                onClick={() => setActiveStory(item)}
-                onMouseEnter={() => setActiveStory(item)}
-                className={`group grid grid-cols-[3.25rem_minmax(0,1fr)] items-center gap-3 border p-2 text-left transition-colors ${activeStory.year === item.year ? "border-foreground bg-muted" : "border-border bg-background/40 hover:border-foreground"}`}
+                className="group relative grid grid-cols-[3.25rem_minmax(0,1fr)] items-center gap-3 border border-border bg-background/40 p-2 text-left transition-colors hover:border-foreground hover:bg-muted"
               >
                 <span className="relative block aspect-square overflow-hidden border border-border bg-muted">
                   <img src={item.image} alt={`${item.year} Rhozeland story`} className="h-full w-full object-cover grayscale transition duration-300 group-hover:grayscale-0" loading="lazy" />
@@ -120,9 +147,14 @@ const Hero = () => {
                 <span className="min-w-0">
                   <span className="block text-lg font-black leading-none text-foreground">{item.year}</span>
                   <span className="mt-1 block text-xs font-black uppercase tracking-[0.08em] text-muted-foreground">{item.title}</span>
-                  <span className="mt-1 block text-xs leading-snug text-muted-foreground">{item.desc}</span>
                 </span>
-              </button>
+                <span
+                  role="tooltip"
+                  className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 border border-foreground bg-card px-3 py-2 text-[0.7rem] font-medium leading-snug text-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] group-hover:block"
+                >
+                  {item.desc}
+                </span>
+              </div>
             ))}
           </div>
         </div>
@@ -211,26 +243,30 @@ const Hero = () => {
             </div>
 
             <div className="p-5">
-              <div className="mb-4 text-[0.68rem] font-black uppercase tracking-[0.18em] text-muted-foreground">Latest Drops</div>
-              <div className="space-y-0">
-                {drops.map((drop) => (
-                  <a key={drop.title} href={drop.href} className="grid grid-cols-[4rem_minmax(0,1fr)] gap-3 border-t border-border py-3 first:border-t-0">
-                    <span className="h-16 w-16 bg-cover bg-center grayscale transition-all hover:grayscale-0" style={{ backgroundImage: `url('${drop.image}')` }} />
+              <div className="mb-4 text-[0.68rem] font-black uppercase tracking-[0.18em] text-muted-foreground">Explore Rhozeland</div>
+              <div className="grid grid-cols-2 gap-3">
+                {pillars.map(({ href, label, desc, Icon, gradient }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    className="group relative flex aspect-square flex-col justify-between overflow-hidden rounded-2xl border border-foreground/10 p-3 shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-transform hover:-translate-y-0.5"
+                    style={{ backgroundImage: gradient }}
+                  >
+                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-background/70 text-foreground backdrop-blur-sm">
+                      <Icon size={16} strokeWidth={2.2} />
+                    </span>
                     <span>
-                      <span className="text-[0.58rem] font-black uppercase tracking-[0.1em] text-muted-foreground">{drop.kicker}</span>
-                      <strong className="mt-1 block text-sm font-black uppercase leading-tight text-foreground">{drop.title}</strong>
-                      <span className="mt-1 block text-xs leading-snug text-muted-foreground">{drop.desc}</span>
+                      <span className="block text-sm font-black uppercase tracking-[0.08em] text-foreground">{label}</span>
+                      <span className="mt-0.5 block text-[0.62rem] font-semibold leading-snug text-foreground/70">{desc}</span>
                     </span>
                   </a>
                 ))}
               </div>
-              <a href="/projects.html" className="mt-4 inline-flex items-center gap-2 text-sm font-black text-foreground">
-                See all projects <ArrowUpRight size={15} />
-              </a>
             </div>
           </aside>
         </div>
       </div>
+      <style>{`@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
     </section>
   );
 };

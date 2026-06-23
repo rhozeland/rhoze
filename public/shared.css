@@ -268,7 +268,7 @@ button { background: none; border: 0; cursor: pointer; }
 
 .nav-links a:hover .nav-label,
 .nav-links a:focus .nav-label {
-  max-width: 70px;
+  max-width: 140px;
   opacity: 1;
   margin-left: 0.4rem;
   margin-right: 0.35rem;

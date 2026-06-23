@@ -3280,7 +3280,9 @@
           .r-eco-panes:has(.r-eco-pane:hover) .r-eco-pane:not(:hover) .r-eco-icon,
           .r-eco-panes:has(.r-eco-pane:focus-visible) .r-eco-pane:not(:focus-visible) .r-eco-icon { display: none; }
           /* Featured marquee carousel above the panes */
-          .r-eco-feat { position: relative; overflow: hidden; border-radius: calc(var(--radius-lg) - 4px); background: #0f0f0f; margin-top: 6px; }
+         .r-eco-feat { position: relative; overflow: hidden; border-radius: calc(var(--radius-lg) - 4px); background: #0f0f0f; margin-top: 6px; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+         .r-eco-feat--standalone { width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box; overflow: hidden !important; }
+         .r-eco-feat-viewport { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
           .r-eco-feat::before, .r-eco-feat::after { content: ""; position: absolute; top: 0; bottom: 0; width: 72px; z-index: 2; pointer-events: none; }
           .r-eco-feat::before { left: 0; background: linear-gradient(90deg, #0f0f0f, transparent); }
           .r-eco-feat::after { right: 0; background: linear-gradient(-90deg, #0f0f0f, transparent); }

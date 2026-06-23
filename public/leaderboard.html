@@ -33,8 +33,9 @@
     .lb-medal-1 td.rank { color: hsl(var(--accent-gold)); }
     .lb-medal-2 td.rank { color: hsl(0 0% 65%); }
     .lb-medal-3 td.rank { color: hsl(28 70% 55%); }
-    .lb-section { margin-top:22px; }
-    .lb-section h2 { font-size:18px; font-weight:600; color:hsl(var(--ink)); margin-bottom:10px; letter-spacing:-0.01em; }
+    .lb-section { margin-top:22px; padding-left:6px; padding-right:6px; }
+    .lb-section h2 { font-size:18px; font-weight:600; color:hsl(var(--ink)); margin-bottom:12px; margin-left:2px; letter-spacing:-0.01em; }
+    @media (min-width: 720px) { .lb-section { padding-left:10px; padding-right:10px; } .lb-section h2 { margin-left:4px; } }
     .lb-rules-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; }
     .lb-rule { padding:12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
     .lb-rule .pts { font-size:18px; font-weight:600; color:hsl(var(--ink)); font-variant-numeric: tabular-nums; }

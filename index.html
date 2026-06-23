@@ -4485,6 +4485,9 @@
     (function(){
       var FEED_API = 'https://hdlpvcsxyxirywjkhsui.functions.supabase.co/youtube-feed';
       var TIME_AGO = function(iso){
+        if (!iso) return '';
+        // Edge function returns YouTube's human string ("2 days ago"); pass through.
+        if (/[a-zA-Z]/.test(iso)) return iso;
         try {
           var d = new Date(iso); var s = (Date.now() - d.getTime())/1000;
           if (s < 60) return 'just now';

@@ -1,4 +1,5 @@
 import Navbar from "@/components/rhoze/Navbar";
+import EcosystemTicker from "@/components/rhoze/EcosystemTicker";
 import Hero from "@/components/rhoze/Hero";
 import About from "@/components/rhoze/About";
 import BrandPillars from "@/components/rhoze/BrandPillars";
@@ -21,6 +22,7 @@ const Index = () => {
         }}
       />
       <Navbar />
+      <div className="pt-[68px]"><EcosystemTicker /></div>
       <Hero />
       <BrandPillars />
       <About />

@@ -9,25 +9,33 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "content-type",
 };
 
-function scrapeVideos(html: string, isLiveSection = false) {
+function decode(s: string) {
+  return s.replace(/\\u0026/g, "&").replace(/\\"/g, '"').replace(/\\\//g, "/");
+}
+
+function scrapeVideos(html: string) {
   const out: any[] = [];
   const seen = new Set<string>();
-  // Match richItemRenderer blocks → each contains videoId + title + publishedTimeText + (optional) badges (LIVE)
-  const itemRe = /"videoRenderer":\{[\s\S]*?"videoId":"([a-zA-Z0-9_-]{11})"[\s\S]*?"title":\{(?:"runs":\[\{"text":"([^"]+)"|"simpleText":"([^"]+)")[\s\S]*?(?:"publishedTimeText":\{"simpleText":"([^"]+)"\})?[\s\S]*?(?:"thumbnailOverlayTimeStatusRenderer":\{[\s\S]*?"style":"([A-Z]+)")?/g;
+  // Each upload is wrapped in a lockupViewModel block.
+  const blockRe = /"lockupViewModel":\{([\s\S]*?)"lockupMetadataViewModel":\{([\s\S]*?)\}\}\}/g;
   let m: RegExpExecArray | null;
-  while ((m = itemRe.exec(html)) !== null) {
-    const id = m[1];
+  while ((m = blockRe.exec(html)) !== null) {
+    const head = m[1];
+    const meta = m[2];
+    const idMatch = head.match(/i\.ytimg\.com\/vi\/([\w-]{11})\//);
+    if (!idMatch) continue;
+    const id = idMatch[1];
     if (seen.has(id)) continue;
     seen.add(id);
-    const title = (m[2] || m[3] || "").replace(/\\u0026/g, "&").replace(/\\"/g, '"');
-    const published = m[4] || "";
-    const style = m[5] || "";
-    out.push({
-      id,
-      title,
-      published, // human string like "2 days ago" — RSS-style ISO not available from scrape
-      live: isLiveSection || style === "LIVE",
-    });
+    const titleMatch = meta.match(/"title":\{"content":"((?:[^"\\]|\\.)+)"/);
+    if (!titleMatch) continue;
+    const title = decode(titleMatch[1]);
+    // Last "ago" / "Streamed" text is the published string
+    const agoMatches = [...meta.matchAll(/"content":"([^"]*?\bago)"/g)];
+    const streamedMatch = meta.match(/"content":"(Streamed [^"]+)"/);
+    const published = streamedMatch ? streamedMatch[1] : (agoMatches.length ? agoMatches[agoMatches.length - 1][1] : "");
+    const live = /THUMBNAIL_OVERLAY_BADGE_STYLE_LIVE|\bLIVE NOW\b|"text":"LIVE"/i.test(head);
+    out.push({ id, title, published, live });
     if (out.length >= 12) break;
   }
   return out;
@@ -42,11 +50,11 @@ Deno.serve(async (req) => {
       fetch(LIVE_URL, { headers: { "User-Agent": ua, "Accept-Language": "en-US,en;q=0.9" } }).catch(() => null),
     ]);
     if (!vidsRes.ok) throw new Error(`upstream ${vidsRes.status}`);
-    const videos = scrapeVideos(await vidsRes.text(), false).slice(0, 8);
+    const videos = scrapeVideos(await vidsRes.text()).slice(0, 8);
     // Check live section: if any item there has style LIVE, mark it on top.
     let liveNow: any = null;
     if (liveRes && liveRes.ok) {
-      const liveItems = scrapeVideos(await liveRes.text(), false);
+      const liveItems = scrapeVideos(await liveRes.text());
       const onAir = liveItems.find((v) => v.live);
       if (onAir) liveNow = onAir;
     }

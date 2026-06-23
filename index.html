@@ -3494,6 +3494,88 @@
           </div>
         </div>
       </section>
+      <!-- ECOSYSTEM HUB BAND -->
+      <section class="r-hub" aria-label="Rhozeland ecosystem live feed">
+        <div class="r-hub-shell">
+          <div class="r-hub-ident">
+            <span class="r-hub-dot" aria-hidden="true"></span>
+            <div class="r-hub-ident-meta">
+              <span class="r-hub-kicker">Network identity</span>
+              <div class="r-hub-ident-line">
+                <span class="r-hub-ident-name">RHOZELAND · SOLANA</span>
+                <span class="r-hub-verified">Live</span>
+              </div>
+            </div>
+          </div>
+          <div class="r-hub-ticker-wrap" id="rHubTickerWrap">
+            <div class="r-hub-ticker" id="rHubTicker">
+              <a class="r-hub-item" href="#chart"><span class="r-hub-k">$RHOZE</span><span class="r-hub-v">Live Chart</span><span class="r-hub-tag r-hub-up">DexScreener</span></a>
+              <a class="r-hub-item" href="/leaderboard.html"><span class="r-hub-k">Leaderboard #1</span><span class="r-hub-v r-hub-serif">This week</span></a>
+              <a class="r-hub-item" href="/events.html"><span class="r-hub-k">Next Event</span><span class="r-hub-v">Land Sessions</span><span class="r-hub-meta">RSVP open</span></a>
+              <a class="r-hub-item" href="/projects.html"><span class="r-hub-k">Latest Drop</span><span class="r-hub-v">Saint Flair West · Ooak</span><span class="r-hub-pill">View</span></a>
+              <a class="r-hub-item" href="#tokenomics"><span class="r-hub-k">Supply</span><span class="r-hub-v">1,000,000,000</span><span class="r-hub-meta">Locked</span></a>
+              <a class="r-hub-item" href="/about.html"><span class="r-hub-k">Citizens</span><span class="r-hub-v">Creators · Collectors · Builders</span></a>
+            </div>
+          </div>
+          <a class="r-hub-cta" href="/leaderboard.html">
+            Enter Hub
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+        <div class="r-hub-subline">
+          <div class="r-hub-sub-left">
+            <span>Network · Solana</span>
+            <span>Uptime · 99.98%</span>
+          </div>
+          <span class="r-hub-sub-right">Syncing ecosystem data…</span>
+        </div>
+      </section>
+      <style>
+        .r-hub { margin: 14px auto 0; padding: 0 6px; max-width: 1200px; }
+        .r-hub-shell { display: flex; align-items: stretch; border: 1px solid hsl(var(--line)); background: hsl(var(--surface-card)); border-radius: 6px; overflow: hidden; }
+        .r-hub-ident { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-right: 1px solid hsl(var(--line)); background: hsl(var(--surface-alt)); flex-shrink: 0; }
+        .r-hub-dot { width: 7px; height: 7px; border-radius: 999px; background: hsl(var(--accent-green)); box-shadow: 0 0 0 3px hsl(var(--accent-green) / 0.18); animation: rHubPulse 2.4s ease-in-out infinite; }
+        @keyframes rHubPulse { 0%,100%{opacity:1} 50%{opacity:.55} }
+        .r-hub-ident-meta { display: flex; flex-direction: column; gap: 3px; }
+        .r-hub-kicker { font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .18em; text-transform: uppercase; color: hsl(var(--muted)); }
+        .r-hub-ident-line { display: flex; align-items: center; gap: 8px; }
+        .r-hub-ident-name { font: 700 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .04em; color: hsl(var(--ink)); }
+        .r-hub-verified { font: 700 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; padding: 3px 6px; border-radius: 3px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+        .r-hub-ticker-wrap { flex: 1; overflow: hidden; position: relative; }
+        .r-hub-ticker-wrap::before, .r-hub-ticker-wrap::after { content:""; position:absolute; top:0; bottom:0; width:36px; z-index:2; pointer-events:none; }
+        .r-hub-ticker-wrap::before { left:0; background: linear-gradient(90deg, hsl(var(--surface-card)), transparent); }
+        .r-hub-ticker-wrap::after { right:0; background: linear-gradient(-90deg, hsl(var(--surface-card)), transparent); }
+        .r-hub-ticker { display: flex; align-items: center; width: max-content; animation: rHubScroll 48s linear infinite; }
+        .r-hub-ticker-wrap:hover .r-hub-ticker { animation-play-state: paused; }
+        @keyframes rHubScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+        .r-hub-item { display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px; border-right: 1px solid hsl(var(--line) / 0.5); text-decoration: none; white-space: nowrap; transition: background 160ms ease; }
+        .r-hub-item:hover { background: hsl(var(--surface-alt)); }
+        .r-hub-k { font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; color: hsl(var(--muted)); }
+        .r-hub-v { font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: hsl(var(--ink)); }
+        .r-hub-serif { font-family: ui-serif, Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 500; font-size: 13px; color: hsl(var(--accent-gold)); }
+        .r-hub-up { color: hsl(var(--accent-green)); font: 600 10px/1 ui-monospace, monospace; }
+        .r-hub-tag { font: 600 9px/1 ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
+        .r-hub-meta { font: 500 10px/1 ui-monospace, monospace; color: hsl(var(--muted)); font-style: italic; }
+        .r-hub-pill { font: 700 9px/1 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; padding: 4px 7px; border: 1px solid hsl(var(--ink)); color: hsl(var(--ink)); transition: all 160ms ease; }
+        .r-hub-item:hover .r-hub-pill { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+        .r-hub-cta { display: none; align-items: center; gap: 8px; padding: 0 22px; background: hsl(var(--surface-alt)); border-left: 1px solid hsl(var(--line)); text-decoration: none; color: hsl(var(--ink)); font: 700 10px/1 ui-monospace, monospace; letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; transition: background 160ms ease; flex-shrink: 0; }
+        .r-hub-cta:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+        .r-hub-cta svg { transition: transform 160ms ease; }
+        .r-hub-cta:hover svg { transform: translateX(3px); }
+        @media (min-width: 1024px) { .r-hub-cta { display: inline-flex; } }
+        .r-hub-subline { display: flex; justify-content: space-between; align-items: center; padding: 6px 4px 0; font: 500 9px/1 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: hsl(var(--muted) / 0.7); }
+        .r-hub-sub-left { display: flex; gap: 16px; }
+        .r-hub-sub-right { font-style: italic; text-transform: none; letter-spacing: .04em; }
+        @media (max-width: 720px) { .r-hub-ident { padding: 8px 12px; } .r-hub-item { padding: 9px 16px; gap: 8px; } .r-hub-subline { font-size: 8px; } }
+      </style>
+      <script>
+        (function(){
+          var t = document.getElementById('rHubTicker');
+          if (!t) return;
+          // duplicate for seamless loop
+          t.innerHTML = t.innerHTML + t.innerHTML;
+        })();
+      </script>
       <script>
         (function(){
           var track = document.getElementById('rEcoFeatTrack');

@@ -3749,6 +3749,48 @@
 
         </div>
       </section>
+      <!-- Recognition & Partners — scrolling brand strip -->
+      <section class="r-partners reveal" aria-label="Recognition and partners">
+        <style>
+          .r-partners { padding: 28px 0 40px; background: transparent; }
+          .r-partners-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
+          .r-partners-label { display: block; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: hsl(var(--ink) / 0.6); margin: 0 0 14px; }
+          .r-partners-wrap { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); }
+          .r-partners-track { display: flex; gap: 0.75rem; width: max-content; animation: r-partners-scroll 60s linear infinite; }
+          .r-partners-wrap:hover .r-partners-track { animation-play-state: paused; }
+          @keyframes r-partners-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+          .r-partners-link { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 2.7rem; padding: 0.7rem 1rem; border-radius: 999px; border: 1px solid hsl(var(--line, var(--ink) / 0.12)); background: hsl(var(--surface-card, var(--bg)) / 0.72); color: hsl(var(--ink)); font-size: 0.84rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; backdrop-filter: blur(10px); white-space: nowrap; }
+          .r-partners-link:hover { transform: translateY(-1px); border-color: hsl(var(--ink) / 0.35); }
+          .r-partners-favicon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; object-fit: contain; }
+        </style>
+        <div class="r-partners-inner">
+          <span class="r-partners-label">Recognition &amp; Partners</span>
+          <div class="r-partners-wrap">
+            <div class="r-partners-track" id="rPartnersTrack"></div>
+          </div>
+        </div>
+        <script>
+          (function(){
+            var items = [
+              { t:'VoyageHouston Feature', d:'voyagehouston.com', h:'https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/' },
+              { t:'Founder Institute Alumni', d:'fi.co', h:'https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups' },
+              { t:'Vector Festival Participant', d:'vectorfestival.org', h:'https://vectorfestival.org/window-activation' },
+              { t:'WIS 2026 Attendee', d:'sourcefromontario.com', h:'https://www.sourcefromontario.com/en/page/event/138483/ontario-wis-2026#attendees' },
+              { t:'CAPACOA Program Cohort', d:'capacoa.ca', h:'https://capacoa.ca/en/programs/digital-discoverability-program/past-cohorts/' },
+              { t:'Pump.fun Hackathon Participant', d:'pump.fun', h:'https://hackathon.pump.fun/' },
+              { t:'Colosseum Participant', d:'colosseum.org', h:'https://arena.colosseum.org/projects/explore/rhozeland' }
+            ];
+            function row(p){
+              return '<a class="r-partners-link" href="'+p.h+'" target="_blank" rel="noopener noreferrer">'
+                + '<img class="r-partners-favicon" src="https://www.google.com/s2/favicons?domain='+p.d+'&sz=32" alt="" loading="lazy" />'
+                + p.t + '</a>';
+            }
+            var html = items.map(row).join('');
+            var track = document.getElementById('rPartnersTrack');
+            if (track) track.innerHTML = html + html;
+          })();
+        </script>
+      </section>
       <script>
         (function(){
           var track = document.getElementById('rEcoFeatTrack');

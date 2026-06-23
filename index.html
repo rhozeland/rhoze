@@ -4521,38 +4521,76 @@
         var ep = document.getElementById('rEcoEpDate');
         if (ep) ep.textContent = 'Updated ' + TIME_AGO(latest.published) + ' · Toronto / LA';
 
-        // Episodes grid: next 3 after the featured one
+        // Episodes rail: up to 8 items, horizontally scrollable, with fade-swap interaction
         var grid = document.getElementById('rEcoEpsGrid');
-        if (grid) {
-          var picks = videos.slice(1, 4);
-          if (!picks.length) picks = [latest];
-          grid.innerHTML = picks.map(function(v){
-            var safe = (v.title || '').replace(/[<>&"]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});
-            var kicker = v.live ? 'Live · YouTube' : 'Episode · ' + TIME_AGO(v.published);
-            return '<button type="button" class="r-eco-ep" data-vid="' + v.id + '" data-title="' + safe + '" data-published="' + (v.published || '') + '" data-live="' + (v.live ? '1' : '0') + '" aria-label="Play ' + safe + '">' +
-              '<span class="r-eco-ep-thumb" style="background-image:url(\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\')"><span class="r-eco-ep-play">' + (v.live ? '● LIVE' : '▶ Watch') + '</span></span>' +
-              '<span class="r-eco-ep-k">' + kicker + '</span>' +
-              '<span class="r-eco-ep-t">' + safe + '</span>' +
-              '</button>';
-          }).join('');
-          grid.querySelectorAll('button.r-eco-ep').forEach(function(btn){
-            btn.addEventListener('click', function(){
-              var id = btn.getAttribute('data-vid');
-              var title = btn.getAttribute('data-title') || '';
-              var pub = btn.getAttribute('data-published') || '';
-              var live = btn.getAttribute('data-live') === '1';
-              var iframe = document.getElementById('rEcoFeatured');
+        function escAttr(s){ return (s || '').replace(/[<>&"]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];}); }
+        function epHtml(v){
+          var safe = escAttr(v.title);
+          var kicker = v.live ? 'Live · YouTube' : 'Video · ' + TIME_AGO(v.published);
+          return '<button type="button" class="r-eco-ep" data-vid="' + v.id + '" data-title="' + safe + '" data-published="' + escAttr(v.published || '') + '" data-live="' + (v.live ? '1' : '0') + '" aria-label="Play ' + safe + '">' +
+            '<span class="r-eco-ep-thumb" style="background-image:url(\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\')"><span class="r-eco-ep-play">' + (v.live ? '● LIVE' : '▶ Watch') + '</span></span>' +
+            '<span class="r-eco-ep-k">' + kicker + '</span>' +
+            '<span class="r-eco-ep-t">' + safe + '</span>' +
+            '</button>';
+        }
+        function wireEp(btn){
+          btn.addEventListener('click', function(){
+            var clickedId = btn.getAttribute('data-vid');
+            var clickedTitle = btn.getAttribute('data-title') || '';
+            var clickedPub = btn.getAttribute('data-published') || '';
+            var clickedLive = btn.getAttribute('data-live') === '1';
+            var videoWrap = document.querySelector('.r-eco-video');
+            var iframe = document.getElementById('rEcoFeatured');
+            var tag = document.getElementById('rEcoFeaturedTag');
+            var dek = document.getElementById('rEcoFeaturedDek');
+            // Capture currently featured video so we can swap it back into the grid slot
+            var oldId = (iframe && (iframe.src.match(/embed\/([\w-]{11})/) || [])[1]) || '';
+            var oldTitle = iframe ? (iframe.title || '') : '';
+            // Fade out, swap, fade in
+            if (videoWrap) videoWrap.classList.add('is-swapping');
+            setTimeout(function(){
               if (iframe) {
-                iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
-                iframe.title = title;
+                iframe.src = 'https://www.youtube.com/embed/' + clickedId + '?autoplay=1&rel=0&modestbranding=1';
+                iframe.title = clickedTitle;
               }
-              var tag = document.getElementById('rEcoFeaturedTag');
-              if (tag) tag.textContent = (live ? 'LIVE NOW · ' : 'Now Playing · ') + TIME_AGO(pub);
-              var dek = document.getElementById('rEcoFeaturedDek');
-              if (dek) dek.innerHTML = '<em>' + title.replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — from the Rhozeland channel. New episode every Sunday.';
-              try { iframe && iframe.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e){}
-            });
+              if (tag) tag.textContent = (clickedLive ? 'LIVE NOW · ' : 'Now Playing · ') + TIME_AGO(clickedPub);
+              if (dek) dek.innerHTML = '<em>' + clickedTitle.replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — from the Rhozeland channel. New episode every Sunday.';
+              // Swap old featured into this button slot so it stays reachable
+              if (oldId && oldId !== clickedId) {
+                var replacement = epHtml({ id: oldId, title: oldTitle, published: '', live: false });
+                var tmp = document.createElement('div');
+                tmp.innerHTML = replacement.trim();
+                var newBtn = tmp.firstChild;
+                btn.parentNode.replaceChild(newBtn, btn);
+                wireEp(newBtn);
+              }
+              if (videoWrap) videoWrap.classList.remove('is-swapping');
+            }, 320);
           });
+        }
+        if (grid) {
+          var picks = videos.slice(1, 9); // up to 8 recent videos after the featured
+          if (!picks.length) picks = [latest];
+          grid.innerHTML = picks.map(epHtml).join('');
+          grid.querySelectorAll('button.r-eco-ep').forEach(wireEp);
+          // Prev / next scroll controls
+          var prev = document.getElementById('rEcoEpsPrev');
+          var next = document.getElementById('rEcoEpsNext');
+          function updateNav(){
+            if (!prev || !next) return;
+            var max = grid.scrollWidth - grid.clientWidth - 1;
+            prev.disabled = grid.scrollLeft <= 1;
+            next.disabled = grid.scrollLeft >= max;
+          }
+          function step(dir){
+            var card = grid.querySelector('.r-eco-ep');
+            var w = card ? card.getBoundingClientRect().width + 14 : grid.clientWidth * 0.6;
+            grid.scrollBy({ left: dir * w, behavior: 'smooth' });
+          }
+          if (prev) prev.onclick = function(){ step(-1); };
+          if (next) next.onclick = function(){ step(1); };
+          grid.addEventListener('scroll', updateNav, { passive: true });
+          setTimeout(updateNav, 50);
         }
 
         // Live-stream slot in masthead

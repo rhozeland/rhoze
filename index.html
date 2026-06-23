@@ -4584,15 +4584,18 @@
         }
 
         // Live-stream slot in masthead
+        var newsTrack = document.getElementById('rEcoNewsTrack');
+        if (newsTrack && !newsTrack.dataset.looped) {
+          newsTrack.innerHTML = newsTrack.innerHTML + newsTrack.innerHTML;
+          newsTrack.dataset.looped = '1';
+        }
+        var podcastItems = newsTrack ? newsTrack.querySelectorAll('.r-eco-news-item[href*="youtube.com/@Rhozeland"] .r-eco-news-v') : [];
+        podcastItems.forEach(function(item){ item.textContent = latest.title || 'Latest video'; });
         var slot = document.getElementById('rEcoLiveSlot');
         if (slot) {
           if (latest.live) {
-            slot.className = 'r-eco-live-pill';
-            slot.innerHTML = '<span class="r-eco-live-dot" aria-hidden="true"></span>ON AIR';
-            slot.style.cursor = 'pointer';
-            slot.onclick = function(){ window.open('https://www.youtube.com/watch?v=' + latest.id, '_blank'); };
+            slot.textContent = 'ON AIR · ' + (latest.title || 'Studio Live');
           } else {
-            slot.className = 'r-eco-live-pill is-off';
             slot.textContent = 'Offline';
           }
         }

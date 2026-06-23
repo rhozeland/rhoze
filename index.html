@@ -3061,21 +3061,58 @@
           .r-eco { padding-top: 1.25rem; padding-bottom: 0.75rem; }
           .r-eco .r-eco-inner { max-width: 1240px; margin: 0 auto; padding: 0 2rem; display: flex; flex-direction: column; gap: 0.85rem; }
           .r-eco .r-eco-lead { width: 100%; border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); box-shadow: 8px 8px 0 0 hsl(var(--ink)); overflow: hidden; }
-          .r-eco-issue-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid hsl(var(--ink)); padding: 0.7rem 1rem; font-family: 'Inter', system-ui, sans-serif; font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: hsl(var(--muted)); }
-          .r-eco-issue-top strong { color: hsl(var(--ink)); font-weight: 900; }
+          /* Network identity ticker masthead */
+          .r-eco-ticker { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); align-items: stretch; border-bottom: 1px solid hsl(var(--ink)); font-family: 'Inter', system-ui, sans-serif; }
+          .r-eco-tick { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 1rem; min-width: 0; border-right: 1px solid hsl(var(--ink) / 0.18); }
+          .r-eco-tick:last-child { border-right: 0; }
+          .r-eco-tick-k { color: hsl(var(--muted)); font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; white-space: nowrap; }
+          .r-eco-tick-v { color: hsl(var(--ink)); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+          .r-eco-tick-v.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+          .r-eco-live-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: hsl(var(--ink)); color: hsl(var(--surface-card)); padding: 0.18rem 0.42rem; font-size: 0.58rem; font-weight: 900; letter-spacing: 0.12em; }
+          .r-eco-live-pill.is-off { background: transparent; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); }
+          .r-eco-net-dot { width: 0.45rem; height: 0.45rem; border-radius: 999px; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.55); animation: rEcoPulse 2.2s infinite; }
+          .r-eco-tick-link { color: inherit; text-decoration: none; border: 1px solid hsl(var(--ink)); padding: 0.12rem 0.4rem; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 0.4rem; }
+          .r-eco-tick-link:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-eco-tick.is-foot { grid-column: 1 / -1; padding: 0.45rem 1rem; border-top: 1px solid hsl(var(--line)); border-right: 0; background: linear-gradient(90deg, hsl(var(--surface-card)) 0%, hsl(var(--surface-alt)) 50%, hsl(var(--surface-card)) 100%); color: hsl(var(--muted)); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 1rem; }
+          @media (max-width: 980px) { .r-eco-ticker { grid-auto-flow: row; grid-auto-columns: auto; } .r-eco-tick { border-right: 0; border-bottom: 1px solid hsl(var(--ink) / 0.12); } }
           .r-eco-issue-grid { display: grid; grid-template-columns: minmax(0, 8fr) minmax(280px, 4fr); }
           .r-eco-issue-main { border-right: 1px solid hsl(var(--ink)); padding: 2rem; }
           .r-eco-kicker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 1.15rem; }
           .r-eco-kicker { display: inline-flex; background: hsl(var(--ink)); color: hsl(var(--surface-card)); padding: 0.38rem 0.6rem; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
           .r-eco-date { color: hsl(var(--muted)); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-          .r-eco .r-eco-title { font-family: 'Inter', system-ui, sans-serif; font-size: 4.9rem; line-height: 0.94; font-weight: 900; letter-spacing: 0; text-transform: uppercase; color: hsl(var(--ink)); max-width: 12ch; margin: 0 0 1.35rem; background: none; -webkit-background-clip: initial; background-clip: initial; -webkit-text-fill-color: hsl(var(--ink)); animation: none; }
-          .r-eco .r-eco-title-stroke { color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1.4px hsl(var(--ink)); }
+          .r-eco .r-eco-title { font-family: 'Inter', system-ui, sans-serif; font-size: 2.1rem; line-height: 1.05; font-weight: 900; letter-spacing: -0.01em; text-transform: none; color: hsl(var(--ink)); max-width: 28ch; margin: 0 0 1rem; background: none; -webkit-background-clip: initial; background-clip: initial; -webkit-text-fill-color: hsl(var(--ink)); animation: none; }
+          .r-eco .r-eco-title em { font-style: normal; color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px hsl(var(--ink)); }
           .r-eco-video { position: relative; aspect-ratio: 16 / 9; background: hsl(var(--ink)); border: 1px solid hsl(var(--ink) / 0.2); overflow: hidden; margin-bottom: 1.25rem; }
           .r-eco-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
           .r-eco-live-tag { position: absolute; left: 1rem; bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.65rem; background: hsl(var(--ink) / 0.72); color: hsl(var(--surface-card)); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
           .r-eco-live-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #e94560; box-shadow: 0 0 0 0 rgba(233,69,96,0.65); animation: rEcoPulse 2s infinite; }
           .r-eco-dek { max-width: 62ch; color: hsl(var(--muted)); font-size: 1rem; font-weight: 600; line-height: 1.6; margin: 0; }
           .r-eco-dek em { color: hsl(var(--ink)); font-style: italic; font-weight: 800; }
+          /* Episodes grid below featured video */
+          .r-eco-episodes { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid hsl(var(--line)); }
+          .r-eco-eps-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.85rem; }
+          .r-eco-eps-label { color: hsl(var(--muted)); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+          .r-eco-eps-all { color: hsl(var(--ink)); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); }
+          .r-eco-eps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.85rem; }
+          .r-eco-ep { display: flex; flex-direction: column; gap: 0.5rem; color: inherit; text-decoration: none; }
+          .r-eco-ep-thumb { position: relative; aspect-ratio: 16 / 9; background: hsl(var(--surface-alt)) center / cover no-repeat; border: 1px solid hsl(var(--line)); overflow: hidden; transition: transform 0.2s ease; }
+          .r-eco-ep:hover .r-eco-ep-thumb { transform: translateY(-2px); border-color: hsl(var(--ink)); }
+          .r-eco-ep-play { position: absolute; right: 0.4rem; bottom: 0.4rem; background: hsl(var(--ink) / 0.85); color: hsl(var(--surface-card)); font-size: 0.5rem; font-weight: 900; letter-spacing: 0.14em; padding: 0.2rem 0.4rem; }
+          .r-eco-ep-k { color: hsl(var(--muted)); font-size: 0.55rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+          .r-eco-ep-t { color: hsl(var(--ink)); font-size: 0.78rem; font-weight: 800; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+          @media (max-width: 720px) { .r-eco-eps-grid { grid-template-columns: 1fr 1fr; } .r-eco-ep:nth-child(3) { display: none; } }
+          /* Live ecosystem mini-ticker (right rail) */
+          .r-eco-mini { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; align-items: end; margin-bottom: 0.85rem; }
+          .r-eco-mini-price { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 1.65rem; font-weight: 800; color: hsl(var(--ink)); line-height: 1; letter-spacing: -0.01em; }
+          .r-eco-mini-chg { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.78rem; font-weight: 800; padding: 0.18rem 0.4rem; border-radius: 3px; }
+          .r-eco-mini-chg.up { background: #dcfce7; color: #15803d; }
+          .r-eco-mini-chg.dn { background: #fee2e2; color: #b91c1c; }
+          .r-eco-mini-chg.flat { background: hsl(var(--surface-alt)); color: hsl(var(--muted)); }
+          .r-eco-spark { width: 100%; height: 44px; display: block; margin: 0.35rem 0 0.7rem; }
+          .r-eco-mini-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed hsl(var(--line)); }
+          .r-eco-mini-cell .r-eco-stat-k { margin-bottom: 0.2rem; }
+          .r-eco-mini-cell .r-eco-stat-v { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.92rem; font-weight: 800; }
+          .r-eco-mini-cta { display: inline-flex; margin-top: 0.7rem; align-items: center; gap: 0.35rem; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); padding-bottom: 1px; }
           .r-eco-issue-side { display: flex; flex-direction: column; min-width: 0; }
           .r-eco-stats { padding: 1.35rem; border-bottom: 1px solid hsl(var(--ink)); }
           .r-eco-stats-head, .r-eco-drops-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.8rem; margin-bottom: 1rem; }

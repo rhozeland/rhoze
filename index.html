@@ -4480,5 +4480,209 @@
       }, 5200);
     })();
   </script>
+  <script>
+    /* === Rhozeland homepage: YouTube channel + live $RHOZE ticker === */
+    (function(){
+      var CHANNEL_ID = 'UCv1XLhcDG8YIk1spe2J3TqQ';
+      var FEED_URL = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID;
+      // Public CORS proxies — try in order, fall back to skeleton.
+      var PROXIES = [
+        function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
+        function(u){ return 'https://corsproxy.io/?' + encodeURIComponent(u); }
+      ];
+      var TIME_AGO = function(iso){
+        try {
+          var d = new Date(iso); var s = (Date.now() - d.getTime())/1000;
+          if (s < 60) return 'just now';
+          if (s < 3600) return Math.floor(s/60) + 'm ago';
+          if (s < 86400) return Math.floor(s/3600) + 'h ago';
+          if (s < 604800) return Math.floor(s/86400) + 'd ago';
+          return d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+        } catch(e){ return ''; }
+      };
+
+      function fetchFeed(idx){
+        idx = idx || 0;
+        if (idx >= PROXIES.length) return Promise.reject(new Error('no proxy'));
+        return fetch(PROXIES[idx](FEED_URL), { cache: 'no-store' })
+          .then(function(r){ if (!r.ok) throw new Error('http ' + r.status); return r.text(); })
+          .catch(function(){ return fetchFeed(idx + 1); });
+      }
+
+      function parseFeed(xml){
+        var doc = new DOMParser().parseFromString(xml, 'application/xml');
+        var entries = [].slice.call(doc.getElementsByTagName('entry'));
+        return entries.map(function(e){
+          var ns = 'http://www.youtube.com/xml/schemas/2015';
+          var vid = e.getElementsByTagNameNS(ns, 'videoId')[0];
+          var grp = e.getElementsByTagName('media:group')[0] || e.getElementsByTagName('group')[0];
+          var title = e.getElementsByTagName('title')[0];
+          var pub = e.getElementsByTagName('published')[0];
+          var live = false;
+          // YouTube doesn't surface live state via this feed reliably; we detect "LIVE" or "LIVESTREAM" in title.
+          var t = title ? title.textContent : '';
+          if (/\blive\b/i.test(t) && !/\b(was|recap)\b/i.test(t)) live = true;
+          return {
+            id: vid ? vid.textContent : '',
+            title: t,
+            published: pub ? pub.textContent : '',
+            live: live
+          };
+        }).filter(function(v){ return v.id; });
+      }
+
+      function renderChannel(videos){
+        if (!videos.length) return;
+        var latest = videos[0];
+        var iframe = document.getElementById('rEcoFeatured');
+        if (iframe) {
+          iframe.src = 'https://www.youtube.com/embed/' + latest.id + '?rel=0&modestbranding=1';
+          iframe.title = latest.title;
+        }
+        var tag = document.getElementById('rEcoFeaturedTag');
+        if (tag) tag.textContent = (latest.live ? 'LIVE NOW · ' : 'Latest · ') + TIME_AGO(latest.published);
+        var dek = document.getElementById('rEcoFeaturedDek');
+        if (dek) dek.innerHTML = '<em>' + (latest.title || 'Latest episode').replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — fresh on the Rhozeland channel. New episode every Sunday.';
+        var ep = document.getElementById('rEcoEpDate');
+        if (ep) ep.textContent = 'Updated ' + TIME_AGO(latest.published) + ' · Toronto / LA';
+
+        // Episodes grid: next 3 after the featured one
+        var grid = document.getElementById('rEcoEpsGrid');
+        if (grid) {
+          var picks = videos.slice(1, 4);
+          if (!picks.length) picks = [latest];
+          grid.innerHTML = picks.map(function(v){
+            var safe = (v.title || '').replace(/[<>&"]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});
+            var kicker = v.live ? 'Live · YouTube' : 'Episode · ' + TIME_AGO(v.published);
+            return '<a class="r-eco-ep" href="https://www.youtube.com/watch?v=' + v.id + '" target="_blank" rel="noopener">' +
+              '<span class="r-eco-ep-thumb" style="background-image:url(\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\')"><span class="r-eco-ep-play">' + (v.live ? '● LIVE' : '▶ Watch') + '</span></span>' +
+              '<span class="r-eco-ep-k">' + kicker + '</span>' +
+              '<span class="r-eco-ep-t">' + safe + '</span>' +
+              '</a>';
+          }).join('');
+        }
+
+        // Live-stream slot in masthead
+        var slot = document.getElementById('rEcoLiveSlot');
+        if (slot) {
+          if (latest.live) {
+            slot.className = 'r-eco-live-pill';
+            slot.innerHTML = '<span class="r-eco-live-dot" aria-hidden="true"></span>ON AIR';
+            slot.style.cursor = 'pointer';
+            slot.onclick = function(){ window.open('https://www.youtube.com/watch?v=' + latest.id, '_blank'); };
+          } else {
+            slot.className = 'r-eco-live-pill is-off';
+            slot.textContent = 'Offline';
+          }
+        }
+      }
+
+      function loadChannel(){
+        fetchFeed().then(parseFeed).then(renderChannel).catch(function(){ /* keep skeleton */ });
+      }
+
+      /* === $RHOZE live ticker + sparkline === */
+      var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
+      var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
+
+      function fmtPrice(n){
+        if (n == null || !isFinite(n)) return '—';
+        if (n >= 1) return '$' + n.toFixed(4);
+        if (n >= 0.01) return '$' + n.toFixed(5);
+        return '$' + Number(n).toPrecision(3);
+      }
+      function fmtCompact(n){
+        if (n == null || !isFinite(n) || n <= 0) return '—';
+        var u = ['','K','M','B','T']; var i = 0; var v = n;
+        while (v >= 1000 && i < u.length - 1) { v /= 1000; i++; }
+        return '$' + (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + u[i];
+      }
+      function fmtPct(n){ if (n == null || !isFinite(n)) return '—'; return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+
+      function paintTicker(stats){
+        var p = document.getElementById('rEcoMiniPrice'); if (p) p.textContent = fmtPrice(stats.price);
+        var c = document.getElementById('rEcoMiniChg');
+        if (c) {
+          c.textContent = fmtPct(stats.change24h);
+          c.className = 'r-eco-mini-chg ' + (stats.change24h == null ? 'flat' : (stats.change24h >= 0 ? 'up' : 'dn'));
+        }
+        var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
+        var vol = document.getElementById('rEcoMiniVol'); if (vol) vol.textContent = fmtCompact(stats.volume24h);
+        var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';
+        var tt = document.getElementById('rEcoTickerTime'); if (tt) tt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      }
+
+      function loadTicker(){
+        fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache:'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){
+            var pairs = d && d.pairs ? d.pairs.slice() : [];
+            if (pairs.length) {
+              pairs.sort(function(a,b){ return (b.liquidity && b.liquidity.usd || 0) - (a.liquidity && a.liquidity.usd || 0); });
+              var p = pairs[0];
+              paintTicker({
+                price: parseFloat(p.priceUsd),
+                change24h: p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null,
+                marketCap: p.marketCap || p.fdv || null,
+                volume24h: p.volume && p.volume.h24 != null ? parseFloat(p.volume.h24) : null
+              });
+              return;
+            }
+            // Fallback to GeckoTerminal pool
+            return fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache:'no-store' })
+              .then(function(r){ return r.ok ? r.json() : null; })
+              .then(function(gd){
+                var a = gd && gd.data && gd.data.attributes; if (!a) return;
+                paintTicker({
+                  price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
+                  change24h: a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
+                  marketCap: (a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null)),
+                  volume24h: a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null
+                });
+              });
+          })
+          .catch(function(){});
+      }
+
+      function loadSpark(){
+        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
+        fetch(url, { cache:'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){
+            var arr = d && d.data && d.data.attributes && d.data.attributes.ohlcv_list;
+            if (!arr || !arr.length) return;
+            // ohlcv_list: [[ts, o, h, l, c, v], ...] sorted newest first → reverse
+            var pts = arr.slice().reverse().map(function(r){ return parseFloat(r[4]); }).filter(function(v){ return isFinite(v); });
+            if (pts.length < 2) return;
+            var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts);
+            var range = (max - min) || 1;
+            var W = 200, H = 44, pad = 2;
+            var step = (W - pad*2) / (pts.length - 1);
+            var line = pts.map(function(v, i){
+              var x = pad + i * step;
+              var y = pad + (H - pad*2) * (1 - (v - min) / range);
+              return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+            }).join(' ');
+            var fill = line + ' L' + (W - pad).toFixed(1) + ' ' + (H - pad) + ' L' + pad + ' ' + (H - pad) + ' Z';
+            var l = document.getElementById('rEcoSparkLine'); if (l) l.setAttribute('d', line);
+            var f = document.getElementById('rEcoSparkFill'); if (f) f.setAttribute('d', fill);
+            var up = pts[pts.length-1] >= pts[0];
+            if (l) l.setAttribute('stroke', up ? '#15803d' : '#b91c1c');
+            if (f) f.setAttribute('fill', up ? 'rgba(21,128,61,0.10)' : 'rgba(185,28,28,0.10)');
+          })
+          .catch(function(){});
+      }
+
+      function start(){
+        loadChannel();
+        loadTicker(); loadSpark();
+        setInterval(loadTicker, 30000);
+        setInterval(loadSpark, 120000);
+        setInterval(loadChannel, 15 * 60 * 1000); // re-check feed every 15 min
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+      else start();
+    })();
+  </script>
 </body>
 </html>

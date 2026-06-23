@@ -280,6 +280,9 @@
       transition: color 0.2s ease;
     }
 
+    .nav-links a { white-space: nowrap; }
+    .nav-links a .nav-label { display: inline-block; }
+
     .nav-links a:hover,
     .mobile-menu a:not(.mobile-cta):hover { color: hsl(var(--ink)); }
 
@@ -2882,6 +2885,12 @@
       }
       .event-list--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 1060px) {
+      .nav-links { gap: 1rem; margin-right: 0.5rem; }
+      .nav-links a { font-size: 0.86rem; }
+      .nav-cta { padding-left: 0.9rem; padding-right: 0.9rem; }
     }
 
     @media (max-width: 860px) {

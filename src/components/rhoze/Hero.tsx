@@ -177,7 +177,7 @@ const Hero = () => {
                 </button>
                 <div ref={railRef} className="scrollbar-hide flex snap-x gap-3 overflow-x-auto pb-2">
                   {railVideos.map((video) => (
-                    <button key={video.id} type="button" onClick={() => playVideo(video)} className="w-[72%] flex-none snap-start text-left sm:w-[calc((100%-1.5rem)/3)] sm:min-w-[190px]">
+                    <button key={video.id} type="button" onClick={() => playVideo(video)} className="w-[72%] flex-none snap-start text-left sm:w-56 lg:w-60">
                       <span className="relative block aspect-video overflow-hidden border border-border bg-muted">
                         <img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt={video.title} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
                         <span className="absolute bottom-2 right-2 bg-foreground px-2 py-1 text-[0.5rem] font-black uppercase tracking-[0.14em] text-background">{video.live ? "● Live" : "▶ Watch"}</span>

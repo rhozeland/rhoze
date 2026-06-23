@@ -152,12 +152,13 @@ const Navbar = () => {
                 key={link.label}
                 href={link.href}
                 {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="group flex items-center gap-0 text-muted-foreground hover:text-foreground transition-colors"
+                className="group inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                title={link.label}
               >
                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-transparent group-hover:border-border/60 group-hover:bg-muted/30 transition-all">
                   <Icon size={18} strokeWidth={1.8} />
                 </span>
-                <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap text-xs font-medium group-hover:max-w-[60px] group-hover:opacity-100 group-hover:ml-1.5 transition-all duration-300 ease-out">
+                <span className="text-xs font-medium tracking-wide">
                   {link.label}
                 </span>
               </a>

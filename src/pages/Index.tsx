@@ -4,9 +4,6 @@ import Hero from "@/components/rhoze/Hero";
 import About from "@/components/rhoze/About";
 import BrandPillars from "@/components/rhoze/BrandPillars";
 import SelectedWork from "@/components/rhoze/SelectedWork";
-import Categories from "@/components/rhoze/Categories";
-import Recognition from "@/components/rhoze/Recognition";
-import SupportOrbit from "@/components/rhoze/SupportOrbit";
 import Tokenomics from "@/components/rhoze/Tokenomics";
 import Chart from "@/components/rhoze/Chart";
 import Footer from "@/components/rhoze/Footer";
@@ -28,13 +25,10 @@ const Index = () => {
       <EcosystemTicker />
       <Hero />
       <BrandPillars />
-      <Categories />
       <About />
       <SelectedWork />
-      <Recognition />
       <Chart />
       <Tokenomics />
-      <SupportOrbit />
       <Footer />
     </div>
   );

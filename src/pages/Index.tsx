@@ -22,7 +22,7 @@ const Index = () => {
         }}
       />
       <Navbar />
-      <div className="pt-[68px]"><EcosystemTicker /></div>
+      <EcosystemTicker />
       <Hero />
       <BrandPillars />
       <About />

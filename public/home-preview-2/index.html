@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<script>!function(){var o=localStorage.getItem('theme-override');if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark')}();</script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rhozeland — Mockup 2 · Newspaper Grid</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+  <style>
+    :root { --paper:#f6f3ec; --ink2:#0a0a0a; }
+    body.preview { background: var(--paper); color: var(--ink2); font-family: 'Inter', system-ui, sans-serif; }
+    .preview-banner { position:sticky; top:0; z-index:50; background:#0a0a0a; color:#fff; font:600 11px/1 'JetBrains Mono', monospace; letter-spacing:.18em; text-transform:uppercase; padding:8px 16px; display:flex; justify-content:space-between; align-items:center; }
+    .preview-banner a { color:#fff; text-decoration:underline; }
+    .nav-row { display:flex; gap:14px; }
+    .nav-row a { color:#fff; text-decoration:none; opacity:.7; }
+    .nav-row a.active { opacity:1; text-decoration:underline; }
+
+    .np-wrap { max-width:1400px; margin: 0 auto; padding: 24px 28px 64px; }
+
+    /* Masthead */
+    .np-mast { border-bottom: 4px double var(--ink2); padding: 16px 0 18px; }
+    .np-mast-top { display:flex; justify-content:space-between; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color:#525252; }
+    .np-title { font-family:'Playfair Display', serif; font-weight:900; font-size: clamp(64px, 11vw, 168px); line-height:.9; letter-spacing:-0.03em; text-align:center; margin: 8px 0 4px; }
+    .np-strap { display:flex; justify-content:space-between; align-items:center; font:600 11px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color:#0a0a0a; padding-top:6px; }
+    .np-strap nav { display:flex; gap:22px; }
+    .np-strap a { color:#0a0a0a; text-decoration:none; }
+    .np-strap a:hover { text-decoration:underline; }
+
+    /* Ticker */
+    .np-tape { border-bottom:1px solid var(--ink2); overflow:hidden; background:#eee9dd; }
+    .np-tape-row { display:flex; white-space:nowrap; animation: npTape 70s linear infinite; width:max-content; }
+    @keyframes npTape { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .np-tape-cell { display:flex; gap:10px; padding:9px 18px; border-right:1px solid #c9c2af; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; }
+    .np-tape-cell .k { color:#8a8160; }
+    .np-tape-cell .up { color:#15803d; }
+
+    /* Lede grid */
+    .np-lede { display:grid; grid-template-columns: 1fr; gap: 28px; padding: 28px 0 24px; border-bottom:1px solid var(--ink2); }
+    @media (min-width:1024px) { .np-lede { grid-template-columns: 7fr 5fr; gap: 36px; } }
+    .np-headline { font-family:'Playfair Display', serif; font-weight:900; font-size: clamp(40px, 5.4vw, 84px); line-height:.96; letter-spacing:-0.02em; text-transform:none; }
+    .np-headline em { font-style: italic; color:#525252; }
+    .np-kicker { font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:#525252; margin-bottom:10px; }
+    .np-media { aspect-ratio:16/9; background:#e5e1d4; margin: 22px 0 14px; position:relative; }
+    .np-media iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+    .np-byline { font:italic 400 13px/1.5 'Playfair Display', serif; color:#525252; }
+    .np-dek { columns: 2; column-gap: 24px; font-size: 15px; line-height:1.55; color:#262626; margin-top: 14px; }
+    .np-dek p { break-inside: avoid; margin: 0 0 10px; }
+    .np-dek p:first-child::first-letter { font-family:'Playfair Display', serif; font-weight:900; font-size: 56px; line-height:.85; float:left; padding: 6px 10px 0 0; }
+
+    /* Sidebar */
+    .np-side { display:flex; flex-direction:column; gap:18px; border-left:1px solid var(--ink2); padding-left: 24px; }
+    @media (max-width:1023px){ .np-side { border-left:0; padding-left:0; border-top:1px solid var(--ink2); padding-top: 22px; } }
+    .np-side-h { font-family:'Playfair Display', serif; font-weight:900; font-size: 22px; letter-spacing:-0.01em; border-bottom:2px solid var(--ink2); padding-bottom:6px; }
+    .np-drop { display:flex; gap:14px; padding: 14px 0; border-bottom:1px dotted #b8b1a0; }
+    .np-drop:last-child { border-bottom:none; }
+    .np-drop-img { width:92px; height:92px; flex-shrink:0; background:#dcd6c5 center/cover; }
+    .np-drop-k { font:700 9px/1 'JetBrains Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:#8a8160; }
+    .np-drop-t { display:block; margin:6px 0 4px; font-family:'Playfair Display', serif; font-weight:700; font-size: 18px; line-height:1.1; }
+    .np-drop-d { font: 400 12px/1.4 'Inter'; color:#525252; }
+
+    /* Three column pillars */
+    .np-cols { display:grid; grid-template-columns:1fr; gap:0; padding: 28px 0; border-bottom:1px solid var(--ink2); }
+    @media (min-width:900px){ .np-cols { grid-template-columns: 1fr 1fr 1fr; } }
+    .np-col { padding: 0 22px; border-right:1px solid #c9c2af; }
+    .np-col:first-child { padding-left:0; } .np-col:last-child { border-right:none; padding-right:0; }
+    .np-col-k { font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:#8a8160; margin-bottom:8px; }
+    .np-col-h { font-family:'Playfair Display', serif; font-weight:900; font-size: 30px; line-height:1; margin: 0 0 10px; letter-spacing:-0.01em; }
+    .np-col-img { aspect-ratio:4/3; background:#e5e1d4; margin-bottom:14px; overflow:hidden; }
+    .np-col-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .np-col-p { font:400 14px/1.55 'Inter'; color:#404040; }
+    .np-col-cta { display:inline-block; margin-top:12px; font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.22em; text-transform:uppercase; color:var(--ink2); border-bottom:1px solid var(--ink2); padding-bottom:3px; text-decoration:none; }
+
+    /* Work */
+    .np-work { padding: 30px 0 24px; border-bottom:1px solid var(--ink2); }
+    .np-work h2 { font-family:'Playfair Display', serif; font-weight:900; font-size: 36px; letter-spacing:-0.02em; margin: 0 0 16px; }
+    .np-grid { display:grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    @media (min-width:768px){ .np-grid { grid-template-columns: repeat(4,1fr); } }
+    .np-card { text-decoration:none; color:inherit; }
+    .np-card .img { aspect-ratio:4/5; background:#e5e1d4 center/cover; margin-bottom:8px; }
+    .np-card .tag { font:700 9px/1 'JetBrains Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:#8a8160; }
+    .np-card .t { display:block; margin-top:4px; font-family:'Playfair Display', serif; font-weight:700; font-size:18px; line-height:1.1; }
+    .np-card .a { font:400 12px/1.3 'Inter'; color:#525252; }
+
+    /* Partners */
+    .np-partners { padding: 18px 0; border-bottom:1px solid var(--ink2); display:flex; flex-wrap:wrap; gap: 24px; justify-content:space-between; align-items:center; }
+    .np-partners-h { font:700 10px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; color:#525252; }
+    .np-partners span { font:600 13px/1 'Playfair Display',serif; font-style:italic; color:#0a0a0a; opacity:.7; }
+
+    /* CTA */
+    .np-cta { background:#0a0a0a; color:#f6f3ec; padding: 64px 28px; margin-top: 28px; text-align:center; }
+    .np-cta h2 { font-family:'Playfair Display', serif; font-weight:900; font-size: clamp(36px, 5vw, 72px); letter-spacing:-0.02em; margin: 0 0 12px; }
+    .np-cta p { font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.28em; text-transform:uppercase; color:#a3a3a3; margin: 0 0 28px; }
+    .np-cta a { display:inline-block; background:#f6f3ec; color:#0a0a0a; padding: 14px 42px; font:700 11px/1 'JetBrains Mono',monospace; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; }
+  </style>
+</head>
+<body class="preview">
+  <div class="preview-banner">
+    <span>MOCKUP 2 · NEWSPAPER GRID · /home-preview-2</span>
+    <nav class="nav-row">
+      <a href="/home-preview">V1 Broadsheet</a>
+      <a href="/home-preview-2" class="active">V2 Newspaper</a>
+      <a href="/home-preview-3">V3 Brutalist</a>
+      <a href="/">Live site</a>
+    </nav>
+  </div>
+
+  <div class="np-wrap">
+    <header class="np-mast">
+      <div class="np-mast-top"><span>Vol. 09 · Solana · Toronto / LA</span><span>Tuesday, June 23, 2026</span></div>
+      <h1 class="np-title">Rhozeland</h1>
+      <div class="np-strap">
+        <span>The Creative Ecosystem Gazette</span>
+        <nav><a href="/about">About</a><a href="/projects">Work</a><a href="/leaderboard">Leaderboard</a><a href="/events">Events</a><a href="/contact">Connect</a></nav>
+      </div>
+    </header>
+
+    <div class="np-tape">
+      <div class="np-tape-row" id="npTape">
+        <div class="np-tape-cell"><span class="k">$RHOZE</span><span>Live on DexScreener</span><span class="up">+ active</span></div>
+        <div class="np-tape-cell"><span class="k">Leaderboard #1</span><span>This week</span></div>
+        <div class="np-tape-cell"><span class="k">Next Event</span><span>Land Sessions · LA</span></div>
+        <div class="np-tape-cell"><span class="k">Latest Drop</span><span>Saint Flair West · Ooak</span></div>
+        <div class="np-tape-cell"><span class="k">Supply</span><span>1,000,000,000 · Locked</span></div>
+        <div class="np-tape-cell"><span class="k">Citizens</span><span>Creators · Collectors · Builders</span></div>
+      </div>
+    </div>
+
+    <section class="np-lede">
+      <article>
+        <div class="np-kicker">A New Era · Lead Story</div>
+        <h2 class="np-headline">The creative ecosystem <em>for launching culture.</em></h2>
+        <div class="np-media">
+          <iframe src="https://www.youtube.com/embed/9rxMdl_mQws?autoplay=1&mute=1&rel=0&modestbranding=1&loop=1&playlist=9rxMdl_mQws" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <p class="np-byline">By Rhozeland Studio · Reporting from Toronto &amp; Los Angeles</p>
+        <div class="np-dek">
+          <p>From a circle of friends in 2016 to a studio and launchpad for bold creators today — Rhozeland is the recording, content production, and launch infrastructure for the independent creative economy.</p>
+          <p>Recording sessions, music videos, campaign rollouts, on-chain economics, and a live community leaderboard — all under one roof. Independent by design, owned by the artists who build it.</p>
+        </div>
+      </article>
+      <aside class="np-side">
+        <div class="np-side-h">Latest Drops</div>
+        <a class="np-drop" href="/projects">
+          <span class="np-drop-img" style="background-image:url('/images/ooak-saint-flair-west-thumb.webp')"></span>
+          <span><span class="np-drop-k">Album</span><span class="np-drop-t">Saint Flair West</span><span class="np-drop-d">Ooak — full-length rollout, art direction, visual world.</span></span>
+        </a>
+        <a class="np-drop" href="/projects">
+          <span class="np-drop-img" style="background-image:url('/images/rhozeland-fus-thumb.webp')"></span>
+          <span><span class="np-drop-k">EP</span><span class="np-drop-t">FUS — Rhozeland</span><span class="np-drop-d">Original sound from the collective. Streaming now.</span></span>
+        </a>
+        <a class="np-drop" href="/leaderboard">
+          <span class="np-drop-img" style="background-image:url('/images/timeline-2023.webp')"></span>
+          <span><span class="np-drop-k">Community</span><span class="np-drop-t">Weekly Leaderboard</span><span class="np-drop-d">Earn $RHOZE for moving the movement.</span></span>
+        </a>
+      </aside>
+    </section>
+
+    <section class="np-cols">
+      <div class="np-col">
+        <div class="np-col-img"><img src="/images/timeline-2023.webp" alt="Studio" loading="lazy" /></div>
+        <div class="np-col-k">01 · Creative</div>
+        <h3 class="np-col-h">Studio</h3>
+        <p class="np-col-p">Recording, music video, photography, campaign and rollout — the production engine behind every Rhozeland release.</p>
+        <a class="np-col-cta" href="/projects">View Work →</a>
+      </div>
+      <div class="np-col">
+        <div class="np-col-img" style="display:flex;align-items:flex-end;padding:14px;background:#ece6d4">
+          <div style="display:flex;align-items:flex-end;gap:6px;width:100%;height:80%">
+            <div style="flex:1;background:#0a0a0a;height:42%"></div>
+            <div style="flex:1;background:#0a0a0a;height:66%"></div>
+            <div style="flex:1;background:#0a0a0a;height:54%"></div>
+            <div style="flex:1;background:#0a0a0a;height:82%"></div>
+            <div style="flex:1;background:#0a0a0a;height:94%"></div>
+            <div style="flex:1;background:#0a0a0a;height:73%"></div>
+            <div style="flex:1;background:#0a0a0a;height:88%"></div>
+          </div>
+        </div>
+        <div class="np-col-k">02 · Economy</div>
+        <h3 class="np-col-h">$RHOZE Token</h3>
+        <p class="np-col-p">1,000,000,000 fixed supply. Wallet locked. Live chart, transparent tokenomics, and creator-owned economics.</p>
+        <a class="np-col-cta" href="#chart">See Chart →</a>
+      </div>
+      <div class="np-col">
+        <div class="np-col-img"><img src="/images/timeline-2021.webp" alt="Community" loading="lazy" /></div>
+        <div class="np-col-k">03 · Network</div>
+        <h3 class="np-col-h">Community</h3>
+        <p class="np-col-p">Creators, collectors, and builders. Weekly leaderboard, rotating challenges, bonus airdrops for the top movers.</p>
+        <a class="np-col-cta" href="/leaderboard">Enter Hub →</a>
+      </div>
+    </section>
+
+    <section class="np-work">
+      <h2>Selected Work · 2024–2026</h2>
+      <div class="np-grid">
+        <a class="np-card" href="/projects"><span class="img" style="background-image:url('/images/ooak-the-mask-thumb.webp')"></span><span class="tag">Music Video</span><span class="t">The Mask</span><span class="a">Ooak</span></a>
+        <a class="np-card" href="/projects"><span class="img" style="background-image:url('/images/fingaz-mansa-musa-thumb.webp')"></span><span class="tag">Music Video</span><span class="t">Mansa Musa</span><span class="a">MONEE FINGAZ</span></a>
+        <a class="np-card" href="/projects"><span class="img" style="background-image:url('/images/bk-whiskey-mma-thumb.webp')"></span><span class="tag">Campaign</span><span class="t">United MMA</span><span class="a">BK Whiskey</span></a>
+        <a class="np-card" href="/projects"><span class="img" style="background-image:url('/images/carina-lucky-charm-thumb.webp')"></span><span class="tag">Music Video</span><span class="t">Lucky Charm</span><span class="a">Carina</span></a>
+      </div>
+    </section>
+
+    <section class="np-partners">
+      <div class="np-partners-h">Recognition &amp; Partners</div>
+      <span>Solana Coliseum</span><span>Pump.fun Hackathon</span><span>Luma</span><span>Source From Ontario</span><span>Vector Festival</span><span>WorldIT Show</span>
+    </section>
+
+    <section class="np-cta">
+      <h2>Ready to build with us?</h2>
+      <p>Media Production · Strategy · Creative House</p>
+      <a href="mailto:collab@rhozeland.com">Get in touch</a>
+    </section>
+  </div>
+
+  <script>(function(){var t=document.getElementById('npTape');if(t)t.innerHTML=t.innerHTML+t.innerHTML;})();</script>
+</body>
+</html>

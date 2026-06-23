@@ -4514,12 +4514,30 @@
           grid.innerHTML = picks.map(function(v){
             var safe = (v.title || '').replace(/[<>&"]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];});
             var kicker = v.live ? 'Live · YouTube' : 'Episode · ' + TIME_AGO(v.published);
-            return '<a class="r-eco-ep" href="https://www.youtube.com/watch?v=' + v.id + '" target="_blank" rel="noopener">' +
+            return '<button type="button" class="r-eco-ep" data-vid="' + v.id + '" data-title="' + safe + '" data-published="' + (v.published || '') + '" data-live="' + (v.live ? '1' : '0') + '" aria-label="Play ' + safe + '">' +
               '<span class="r-eco-ep-thumb" style="background-image:url(\'https://i.ytimg.com/vi/' + v.id + '/hqdefault.jpg\')"><span class="r-eco-ep-play">' + (v.live ? '● LIVE' : '▶ Watch') + '</span></span>' +
               '<span class="r-eco-ep-k">' + kicker + '</span>' +
               '<span class="r-eco-ep-t">' + safe + '</span>' +
-              '</a>';
+              '</button>';
           }).join('');
+          grid.querySelectorAll('button.r-eco-ep').forEach(function(btn){
+            btn.addEventListener('click', function(){
+              var id = btn.getAttribute('data-vid');
+              var title = btn.getAttribute('data-title') || '';
+              var pub = btn.getAttribute('data-published') || '';
+              var live = btn.getAttribute('data-live') === '1';
+              var iframe = document.getElementById('rEcoFeatured');
+              if (iframe) {
+                iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+                iframe.title = title;
+              }
+              var tag = document.getElementById('rEcoFeaturedTag');
+              if (tag) tag.textContent = (live ? 'LIVE NOW · ' : 'Now Playing · ') + TIME_AGO(pub);
+              var dek = document.getElementById('rEcoFeaturedDek');
+              if (dek) dek.innerHTML = '<em>' + title.replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — from the Rhozeland channel. New episode every Sunday.';
+              try { iframe && iframe.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e){}
+            });
+          });
         }
 
         // Live-stream slot in masthead

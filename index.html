@@ -4483,13 +4483,7 @@
   <script>
     /* === Rhozeland homepage: YouTube channel + live $RHOZE ticker === */
     (function(){
-      var CHANNEL_ID = 'UCv1XLhcDG8YIk1spe2J3TqQ';
-      var FEED_URL = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID;
-      // Public CORS proxies — try in order, fall back to skeleton.
-      var PROXIES = [
-        function(u){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); },
-        function(u){ return 'https://corsproxy.io/?' + encodeURIComponent(u); }
-      ];
+      var FEED_API = 'https://hdlpvcsxyxirywjkhsui.functions.supabase.co/youtube-feed';
       var TIME_AGO = function(iso){
         try {
           var d = new Date(iso); var s = (Date.now() - d.getTime())/1000;
@@ -4501,34 +4495,10 @@
         } catch(e){ return ''; }
       };
 
-      function fetchFeed(idx){
-        idx = idx || 0;
-        if (idx >= PROXIES.length) return Promise.reject(new Error('no proxy'));
-        return fetch(PROXIES[idx](FEED_URL), { cache: 'no-store' })
-          .then(function(r){ if (!r.ok) throw new Error('http ' + r.status); return r.text(); })
-          .catch(function(){ return fetchFeed(idx + 1); });
-      }
-
-      function parseFeed(xml){
-        var doc = new DOMParser().parseFromString(xml, 'application/xml');
-        var entries = [].slice.call(doc.getElementsByTagName('entry'));
-        return entries.map(function(e){
-          var ns = 'http://www.youtube.com/xml/schemas/2015';
-          var vid = e.getElementsByTagNameNS(ns, 'videoId')[0];
-          var grp = e.getElementsByTagName('media:group')[0] || e.getElementsByTagName('group')[0];
-          var title = e.getElementsByTagName('title')[0];
-          var pub = e.getElementsByTagName('published')[0];
-          var live = false;
-          // YouTube doesn't surface live state via this feed reliably; we detect "LIVE" or "LIVESTREAM" in title.
-          var t = title ? title.textContent : '';
-          if (/\blive\b/i.test(t) && !/\b(was|recap)\b/i.test(t)) live = true;
-          return {
-            id: vid ? vid.textContent : '',
-            title: t,
-            published: pub ? pub.textContent : '',
-            live: live
-          };
-        }).filter(function(v){ return v.id; });
+      function fetchFeed(){
+        return fetch(FEED_API, { cache: 'no-store' })
+          .then(function(r){ if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+          .then(function(d){ return (d && d.videos) || []; });
       }
 
       function renderChannel(videos){
@@ -4578,7 +4548,7 @@
       }
 
       function loadChannel(){
-        fetchFeed().then(parseFeed).then(renderChannel).catch(function(){ /* keep skeleton */ });
+        fetchFeed().then(renderChannel).catch(function(){ /* keep skeleton */ });
       }
 
       /* === $RHOZE live ticker + sparkline === */

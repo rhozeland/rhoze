@@ -3219,21 +3219,22 @@
           .r-eco-story-tagline { transition: opacity .35s ease, transform .35s ease; }
           .r-eco-story-tagline.is-swapping { opacity:0; transform:translateY(-4px); }
           .r-eco-stage { position: relative; width: 100%; border-radius: var(--radius-lg); overflow: hidden; background: #1a1a1a; padding: 10px; box-shadow: 0 22px 60px -22px rgba(0,0,0,0.5); }
-          /* Sidebar Explore Rhozeland — compact pastel pillars */
-          .r-eco-side-explore { margin-top: 14px; padding-top: 14px; border-top: 1px solid hsl(var(--ink) / 0.08); }
-          .r-eco-side-explore-head { padding: 0 2px 10px; }
-          .r-eco-side-explore-head .k { display: block; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--ink) / 0.55); }
-          .r-eco-side-explore-head .t { margin: 4px 0 0; color: hsl(var(--ink)); font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
-          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 110px; padding: 10px; border-radius: 14px; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-          .r-eco-side-tile:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(0,0,0,0.25); }
-          .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fde4c4 0%, #f4b27a 100%); }
-          .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #dbe4ff 0%, #b8c8f5 100%); }
-          .r-eco-side-tile.is-dev     { background: linear-gradient(160deg, #fff4b8 0%, #f4dc7a 100%); }
-          .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #fbe1ec 0%, #f3b8d0 100%); }
-          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.55); color: #1a1a1a; }
-          .r-eco-side-ico svg { width: 14px; height: 14px; }
-          .r-eco-side-cat { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; }
+          /* Sidebar Explore grid — full-bleed quadrant tiles with hover service reveal */
+          .r-eco-side-explore { margin-top: 14px; padding-top: 14px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
+          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 10px; width: 100%; min-height: 280px; }
+          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 14px; border-radius: 16px; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); aspect-ratio: 1 / 1; }
+          .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; }
+          .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fff1de 0%, #f6b97a 100%); }
+          .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #e6edff 0%, #b8c8f5 100%); }
+          .r-eco-side-tile.is-dev     { background: linear-gradient(160deg, #fff8c8 0%, #f4dc6a 100%); }
+          .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #ffe7f0 0%, #f3b8d0 100%); }
+          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 9px; background: rgba(255,255,255,0.6); color: #1a1a1a; }
+          .r-eco-side-ico svg { width: 16px; height: 16px; }
+          .r-eco-side-cat { font-size: 0.92rem; font-weight: 900; letter-spacing: 0.02em; color: #1a1a1a; text-transform: uppercase; line-height: 1; }
+          .r-eco-side-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; opacity: 0; transform: translateY(4px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; max-height: 0; overflow: hidden; }
+          .r-eco-side-tile:hover .r-eco-side-pills, .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: none; max-height: 200px; }
+          .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.56rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { aspect-ratio: auto; min-height: 110px; } .r-eco-side-pills { opacity: 1; transform: none; max-height: none; pointer-events: auto; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }
@@ -3572,36 +3573,66 @@
                     <div class="r-eco-mini-cell r-eco-stat is-muted"><div class="r-eco-stat-k">24h Vol</div><div class="r-eco-stat-v" id="rEcoMiniVol">—</div></div>
                   </div>
                 </div>
-                <!-- Explore Rhozeland — compact pastel pillars fitted to the sidebar -->
+                <!-- Explore grid — quadrant tiles, hover reveals services -->
                 <div class="r-eco-side-explore" aria-label="Explore Rhozeland">
-                  <div class="r-eco-side-explore-head">
-                    <span class="k">Explore Rhozeland</span>
-                    <h3 class="t">Four lanes. One ecosystem.</h3>
-                  </div>
                   <div class="r-eco-side-grid">
                     <a class="r-eco-side-tile is-visual" href="/projects.html">
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                       </span>
-                      <span class="r-eco-side-cat">Visual</span>
+                      <span>
+                        <span class="r-eco-side-cat">Visual</span>
+                        <span class="r-eco-side-pills">
+                          <span class="r-eco-side-pill">Photo shoots</span>
+                          <span class="r-eco-side-pill">Content editing</span>
+                          <span class="r-eco-side-pill">Commercial</span>
+                          <span class="r-eco-side-pill">Short-form</span>
+                          <span class="r-eco-side-pill">Music video</span>
+                        </span>
+                      </span>
                     </a>
                     <a class="r-eco-side-tile is-audio" href="/podcast.html">
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="4" y2="12"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="20" y1="11" x2="20" y2="13"/></svg>
                       </span>
-                      <span class="r-eco-side-cat">Audio</span>
+                      <span>
+                        <span class="r-eco-side-cat">Audio</span>
+                        <span class="r-eco-side-pills">
+                          <span class="r-eco-side-pill">Recording</span>
+                          <span class="r-eco-side-pill">Mixing</span>
+                          <span class="r-eco-side-pill">Mastering</span>
+                          <span class="r-eco-side-pill">Production</span>
+                          <span class="r-eco-side-pill">Podcasts</span>
+                        </span>
+                      </span>
                     </a>
                     <a class="r-eco-side-tile is-dev" href="/build.html">
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                       </span>
-                      <span class="r-eco-side-cat">Development</span>
+                      <span>
+                        <span class="r-eco-side-cat">Development</span>
+                        <span class="r-eco-side-pills">
+                          <span class="r-eco-side-pill">Web &amp; app</span>
+                          <span class="r-eco-side-pill">Brand systems</span>
+                          <span class="r-eco-side-pill">Launch strategy</span>
+                          <span class="r-eco-side-pill">Creator tooling</span>
+                        </span>
+                      </span>
                     </a>
                     <a class="r-eco-side-tile is-events" href="/events.html">
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                       </span>
-                      <span class="r-eco-side-cat">Events</span>
+                      <span>
+                        <span class="r-eco-side-cat">Events</span>
+                        <span class="r-eco-side-pills">
+                          <span class="r-eco-side-pill">Land Sessions</span>
+                          <span class="r-eco-side-pill">Pop-ups</span>
+                          <span class="r-eco-side-pill">Livestreams</span>
+                          <span class="r-eco-side-pill">Meetups</span>
+                        </span>
+                      </span>
                     </a>
                   </div>
                 </div>
@@ -3717,6 +3748,48 @@
           </div>
 
         </div>
+      </section>
+      <!-- Recognition & Partners — scrolling brand strip -->
+      <section class="r-partners reveal" aria-label="Recognition and partners">
+        <style>
+          .r-partners { padding: 28px 0 40px; background: transparent; }
+          .r-partners-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
+          .r-partners-label { display: block; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: hsl(var(--ink) / 0.6); margin: 0 0 14px; }
+          .r-partners-wrap { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); }
+          .r-partners-track { display: flex; gap: 0.75rem; width: max-content; animation: r-partners-scroll 60s linear infinite; }
+          .r-partners-wrap:hover .r-partners-track { animation-play-state: paused; }
+          @keyframes r-partners-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+          .r-partners-link { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 2.7rem; padding: 0.7rem 1rem; border-radius: 999px; border: 1px solid hsl(var(--line, var(--ink) / 0.12)); background: hsl(var(--surface-card, var(--bg)) / 0.72); color: hsl(var(--ink)); font-size: 0.84rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; backdrop-filter: blur(10px); white-space: nowrap; }
+          .r-partners-link:hover { transform: translateY(-1px); border-color: hsl(var(--ink) / 0.35); }
+          .r-partners-favicon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; object-fit: contain; }
+        </style>
+        <div class="r-partners-inner">
+          <span class="r-partners-label">Recognition &amp; Partners</span>
+          <div class="r-partners-wrap">
+            <div class="r-partners-track" id="rPartnersTrack"></div>
+          </div>
+        </div>
+        <script>
+          (function(){
+            var items = [
+              { t:'VoyageHouston Feature', d:'voyagehouston.com', h:'https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/' },
+              { t:'Founder Institute Alumni', d:'fi.co', h:'https://fi.co/insight/founder-institute-toronto-sv-virtual-spring-2022-launches-new-tech-startups' },
+              { t:'Vector Festival Participant', d:'vectorfestival.org', h:'https://vectorfestival.org/window-activation' },
+              { t:'WIS 2026 Attendee', d:'sourcefromontario.com', h:'https://www.sourcefromontario.com/en/page/event/138483/ontario-wis-2026#attendees' },
+              { t:'CAPACOA Program Cohort', d:'capacoa.ca', h:'https://capacoa.ca/en/programs/digital-discoverability-program/past-cohorts/' },
+              { t:'Pump.fun Hackathon Participant', d:'pump.fun', h:'https://hackathon.pump.fun/' },
+              { t:'Colosseum Participant', d:'colosseum.org', h:'https://arena.colosseum.org/projects/explore/rhozeland' }
+            ];
+            function row(p){
+              return '<a class="r-partners-link" href="'+p.h+'" target="_blank" rel="noopener noreferrer">'
+                + '<img class="r-partners-favicon" src="https://www.google.com/s2/favicons?domain='+p.d+'&sz=32" alt="" loading="lazy" />'
+                + p.t + '</a>';
+            }
+            var html = items.map(row).join('');
+            var track = document.getElementById('rPartnersTrack');
+            if (track) track.innerHTML = html + html;
+          })();
+        </script>
       </section>
       <script>
         (function(){

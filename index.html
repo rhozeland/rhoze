@@ -4476,6 +4476,16 @@
     /* === Rhozeland homepage: YouTube channel + live $RHOZE ticker === */
     (function(){
       var FEED_API = 'https://hdlpvcsxyxirywjkhsui.functions.supabase.co/youtube-feed';
+      var FALLBACK_VIDEOS = [
+        { id:'9rxMdl_mQws', title:'How Rhozeland Started: The Story', published:'Featured', live:false },
+        { id:'Pc6TTaGEoIA', title:'Rhoze Podcast Ep. 6', published:'Latest', live:false },
+        { id:'mRu1YrGEznY', title:'Rhoze Podcast Ep. 5', published:'Recent', live:false },
+        { id:'tPISGwjo6Vk', title:'Rhoze Podcast Ep. 4', published:'Recent', live:false },
+        { id:'q9cZCbjAZ18', title:'A Week With Rhozeland', published:'Recent', live:false },
+        { id:'hzb8rHOAAaM', title:'Rhoze Podcast Ep. 2', published:'Recent', live:false },
+        { id:'9rxMdl_mQws', title:'Rhozeland Documentary', published:'Channel', live:false },
+        { id:'Pc6TTaGEoIA', title:'Studio Sessions', published:'Channel', live:false }
+      ];
       var TIME_AGO = function(iso){
         if (!iso) return '';
         // Edge function returns YouTube's human string ("2 days ago"); pass through.
@@ -4602,7 +4612,7 @@
       }
 
       function loadChannel(){
-        fetchFeed().then(renderChannel).catch(function(){ /* keep skeleton */ });
+        fetchFeed().then(function(videos){ renderChannel(videos.length ? videos : FALLBACK_VIDEOS); }).catch(function(){ renderChannel(FALLBACK_VIDEOS); });
       }
 
       /* === $RHOZE live ticker + sparkline === */

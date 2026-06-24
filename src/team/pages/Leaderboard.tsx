@@ -4,7 +4,6 @@ import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Save, ExternalLink, Check, X } from "lucide-react";
 
@@ -20,25 +19,6 @@ type Row = {
   last_updated?: string;
   published_at?: string | null;
   sort_order?: number;
-};
-
-type Challenge = {
-  id?: string;
-  week_label: string;
-  theme: string;
-  description?: string | null;
-  multiplier: number;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-};
-
-type Rule = {
-  id: string;
-  activity: string;
-  base_points: number;
-  notes?: string | null;
-  sort_order: number;
 };
 
 type Submission = {
@@ -58,8 +38,6 @@ export default function Leaderboard() {
   const canEdit = isAdmin || roles.includes("marketing" as any);
 
   const [rows, setRows] = useState<Row[]>([]);
-  const [challenges, setChallenges] = useState<Challenge[]>([]);
-  const [rules, setRules] = useState<Rule[]>([]);
   const [subs, setSubs] = useState<Submission[]>([]);
   const [pointsDraft, setPointsDraft] = useState<Record<string, number>>({});
   const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
@@ -68,15 +46,11 @@ export default function Leaderboard() {
 
   async function load() {
     setLoading(true);
-    const [a, b, c, d] = await Promise.all([
+    const [a, d] = await Promise.all([
       supabase.from("community_leaderboard").select("*").order("points", { ascending: false }),
-      supabase.from("community_challenges").select("*").order("start_date", { ascending: true }),
-      supabase.from("community_points_rules").select("*").order("sort_order", { ascending: true }),
       supabase.from("community_submissions").select("*").order("created_at", { ascending: false }).limit(100),
     ]);
     if (a.data) setRows(a.data as any);
-    if (b.data) setChallenges(b.data as any);
-    if (c.data) setRules(c.data as any);
     if (d.data) setSubs(d.data as any);
     setLoading(false);
   }
@@ -138,35 +112,6 @@ export default function Leaderboard() {
     } finally { setBusy(false); }
   }
 
-  function updateChallenge(i: number, patch: Partial<Challenge>) {
-    setChallenges((c) => c.map((x, idx) => (idx === i ? { ...x, ...patch } : x)));
-  }
-  async function saveChallenge(ch: Challenge) {
-    setBusy(true);
-    try {
-      const { error } = ch.id
-        ? await supabase.from("community_challenges").update(ch).eq("id", ch.id)
-        : await supabase.from("community_challenges").insert(ch);
-      if (error) throw error;
-      toast({ title: "Saved" });
-      await load();
-    } catch (e: any) {
-      toast({ title: "Save failed", description: e.message, variant: "destructive" });
-    } finally { setBusy(false); }
-  }
-  async function setActiveChallenge(ch: Challenge) {
-    setBusy(true);
-    try {
-      // Clear all then set one as active.
-      await supabase.from("community_challenges").update({ is_active: false }).not("id", "is", null);
-      await supabase.from("community_challenges").update({ is_active: true }).eq("id", ch.id!);
-      toast({ title: `${ch.week_label} is now active` });
-      await load();
-    } catch (e: any) {
-      toast({ title: "Failed", description: e.message, variant: "destructive" });
-    } finally { setBusy(false); }
-  }
-
   function defaultPointsFor(cat: Submission["category"]) {
     const map: Record<string, number> = { raid: 10, meme: 15, thread: 25, video: 40 };
     return map[cat] ?? 10;
@@ -219,14 +164,14 @@ export default function Leaderboard() {
 
   return (
     <div className="space-y-10">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Community Leaderboard</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Edit weekly points, rotate challenges, and publish a snapshot to push the public view live.
+            Approve community submissions, edit weekly points, then publish a snapshot to push the public page live. Mirrors the public leaderboard exactly.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <a href="/leaderboard.html" target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm"><ExternalLink size={14} /> Open public page</Button>
           </a>
@@ -300,96 +245,43 @@ export default function Leaderboard() {
 
       {/* Leaderboard rows */}
       <section className="space-y-3">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-2">
           <h2 className="text-sm uppercase tracking-widest text-muted-foreground">Entries</h2>
           <Button onClick={addRow} variant="outline" size="sm"><Plus size={14} /> Add user</Button>
         </div>
+        <p className="text-xs text-muted-foreground">
+          Existing community member? Their row updates in place by handle. Approving a submission auto-bumps points — manual edits are for corrections.
+        </p>
         {loading ? (
           <div className="text-sm text-muted-foreground">Loading…</div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {rows.map((r, i) => (
-              <div key={r.id ?? `new-${i}`} className="grid grid-cols-12 gap-2 items-end border border-border rounded-lg p-3 bg-card">
-                <div className="col-span-12 sm:col-span-3">
-                  <Label className="text-[10px]">Username</Label>
-                  <Input value={r.username} onChange={(e) => updateRow(i, { username: e.target.value })} />
+              <div key={r.id ?? `new-${i}`} className="border border-border rounded-lg p-3 bg-card space-y-2">
+                <div className="flex flex-wrap items-end gap-2">
+                  <div className="flex-1 min-w-[180px]">
+                    <Label className="text-[10px]">Handle</Label>
+                    <Input value={r.username} onChange={(e) => updateRow(i, { username: e.target.value })} />
+                  </div>
+                  <div className="w-20">
+                    <Label className="text-[10px]">Points</Label>
+                    <Input type="number" value={r.points} onChange={(e) => updateRow(i, { points: +e.target.value })} />
+                  </div>
+                  <div className="flex gap-2 ml-auto">
+                    <Button onClick={() => saveRow(r)} size="sm" disabled={busy}><Save size={14} /> Save</Button>
+                    {r.id && <Button onClick={() => deleteRow(r)} size="sm" variant="outline"><Trash2 size={14} /></Button>}
+                  </div>
                 </div>
-                <div className="col-span-3 sm:col-span-1">
-                  <Label className="text-[10px]">Points</Label>
-                  <Input type="number" value={r.points} onChange={(e) => updateRow(i, { points: +e.target.value })} />
-                </div>
-                <div className="col-span-3 sm:col-span-1">
-                  <Label className="text-[10px]">Raids</Label>
-                  <Input type="number" value={r.raids} onChange={(e) => updateRow(i, { raids: +e.target.value })} />
-                </div>
-                <div className="col-span-3 sm:col-span-1">
-                  <Label className="text-[10px]">Memes</Label>
-                  <Input type="number" value={r.memes} onChange={(e) => updateRow(i, { memes: +e.target.value })} />
-                </div>
-                <div className="col-span-3 sm:col-span-1">
-                  <Label className="text-[10px]">Threads</Label>
-                  <Input type="number" value={r.edu_threads} onChange={(e) => updateRow(i, { edu_threads: +e.target.value })} />
-                </div>
-                <div className="col-span-3 sm:col-span-1">
-                  <Label className="text-[10px]">Videos</Label>
-                  <Input type="number" value={r.videos} onChange={(e) => updateRow(i, { videos: +e.target.value })} />
-                </div>
-                <div className="col-span-3 sm:col-span-1">
-                  <Label className="text-[10px]">Done</Label>
-                  <Input type="number" value={r.challenges_completed} onChange={(e) => updateRow(i, { challenges_completed: +e.target.value })} />
-                </div>
-                <div className="col-span-6 sm:col-span-3 flex gap-2 justify-end">
-                  <Button onClick={() => saveRow(r)} size="sm" disabled={busy}><Save size={14} /> Save</Button>
-                  {r.id && <Button onClick={() => deleteRow(r)} size="sm" variant="outline"><Trash2 size={14} /></Button>}
+                <div className="grid grid-cols-4 gap-2">
+                  <div><Label className="text-[10px]">Raids</Label><Input type="number" value={r.raids} onChange={(e) => updateRow(i, { raids: +e.target.value })} /></div>
+                  <div><Label className="text-[10px]">Memes</Label><Input type="number" value={r.memes} onChange={(e) => updateRow(i, { memes: +e.target.value })} /></div>
+                  <div><Label className="text-[10px]">Threads</Label><Input type="number" value={r.edu_threads} onChange={(e) => updateRow(i, { edu_threads: +e.target.value })} /></div>
+                  <div><Label className="text-[10px]">Videos</Label><Input type="number" value={r.videos} onChange={(e) => updateRow(i, { videos: +e.target.value })} /></div>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </section>
-
-      {/* Challenges */}
-      <section className="space-y-3">
-        <h2 className="text-sm uppercase tracking-widest text-muted-foreground">Weekly challenges</h2>
-        <div className="grid sm:grid-cols-2 gap-3">
-          {challenges.map((c, i) => (
-            <div key={c.id ?? `c-${i}`} className="border border-border rounded-lg p-4 bg-card space-y-2">
-              <div className="flex items-center justify-between">
-                <Input className="max-w-[120px]" value={c.week_label} onChange={(e) => updateChallenge(i, { week_label: e.target.value })} />
-                {c.is_active && <span className="text-[11px] uppercase tracking-widest text-primary">Active</span>}
-              </div>
-              <Input placeholder="Theme" value={c.theme} onChange={(e) => updateChallenge(i, { theme: e.target.value })} />
-              <Textarea placeholder="Description" rows={2} value={c.description ?? ""} onChange={(e) => updateChallenge(i, { description: e.target.value })} />
-              <div className="grid grid-cols-3 gap-2">
-                <div><Label className="text-[10px]">Multiplier</Label><Input type="number" step="0.1" value={c.multiplier} onChange={(e) => updateChallenge(i, { multiplier: +e.target.value })} /></div>
-                <div><Label className="text-[10px]">Start</Label><Input type="date" value={c.start_date} onChange={(e) => updateChallenge(i, { start_date: e.target.value })} /></div>
-                <div><Label className="text-[10px]">End</Label><Input type="date" value={c.end_date} onChange={(e) => updateChallenge(i, { end_date: e.target.value })} /></div>
-              </div>
-              <div className="flex justify-end gap-2 pt-1">
-                {!c.is_active && c.id && (
-                  <Button onClick={() => setActiveChallenge(c)} size="sm" variant="outline">Mark active</Button>
-                )}
-                <Button onClick={() => saveChallenge(c)} size="sm" disabled={busy}><Save size={14} /> Save</Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Rules (reference) */}
-      <section className="space-y-3">
-        <h2 className="text-sm uppercase tracking-widest text-muted-foreground">Points rules (reference)</h2>
-        <div className="border border-border rounded-lg bg-card divide-y divide-border">
-          {rules.map((r) => (
-            <div key={r.id} className="p-3 flex items-center justify-between gap-4">
-              <div>
-                <div className="text-sm font-medium">{r.activity}</div>
-                {r.notes && <div className="text-xs text-muted-foreground">{r.notes}</div>}
-              </div>
-              <div className="text-sm font-semibold tabular-nums">+{r.base_points}</div>
-            </div>
-          ))}
-        </div>
       </section>
     </div>
   );

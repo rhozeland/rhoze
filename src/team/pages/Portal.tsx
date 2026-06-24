@@ -28,6 +28,10 @@ export default function Portal() {
   const [audience, setAudience] = useState<"client" | "team">(
     params.get("as") === "team" ? "team" : "client",
   );
+  // What the user explicitly picked at sign-in time. This wins over the
+  // automatic role-based routing so a team member signing in via the Team
+  // tab never gets dumped into the client portal (and vice versa).
+  const [intent, setIntent] = useState<"client" | "team" | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -69,18 +73,35 @@ export default function Portal() {
         }
         setRedeeming(false);
       }
-      // Role-based routing — only auto-route when the user has a single
-      // surface. Users with both team and client roles (or marketing) see
-      // an explicit chooser so they can pick which side to enter.
+      // Route by explicit intent first (what they picked on the form),
+      // then fall back to roles.
       const hasClient = roles.includes("client");
-      if (isTeam && !hasClient) {
+      const stashed = (localStorage.getItem("portal_intent") as
+        | "team"
+        | "client"
+        | null) ?? intent;
+      if (stashed === "team" && isTeam) {
+        localStorage.removeItem("portal_intent");
         navigate("/", { replace: true });
-      } else if (hasClient && !isTeam) {
-        navigate("/client/home", { replace: true });
-      } else if (!isTeam && !hasClient && roles.length === 0) {
-        navigate("/client/home", { replace: true });
+        return;
       }
-      // else: keep them on Portal to choose (chooser UI below).
+      if (stashed === "client") {
+        localStorage.removeItem("portal_intent");
+        navigate("/client/home", { replace: true });
+        return;
+      }
+      if (stashed === "team" && !isTeam) {
+        // They asked for team but have no team role — keep them on the
+        // chooser so they see the explanation, don't silently demote.
+        localStorage.removeItem("portal_intent");
+        return;
+      }
+      // No explicit intent → single-surface auto-route.
+      if (isTeam && !hasClient) navigate("/", { replace: true });
+      else if (hasClient && !isTeam) navigate("/client/home", { replace: true });
+      else if (!isTeam && !hasClient && roles.length === 0)
+        navigate("/client/home", { replace: true });
+      // else: dual-role user with no explicit intent → chooser UI below.
     })();
     return () => {
       cancelled = true;
@@ -102,6 +123,10 @@ export default function Portal() {
     setBusy(true);
     try {
       if (mode === "signin") {
+        // Stash intent BEFORE auth so the post-auth effect (which may run
+        // in a different tab after email confirmation) can read it.
+        localStorage.setItem("portal_intent", audience);
+        setIntent(audience);
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         // Stash codes so the post-auth effect picks them up.
@@ -109,6 +134,8 @@ export default function Portal() {
         if (referral.trim()) localStorage.setItem("pending_referral_code", referral.trim());
         toast({ title: "Welcome back" });
       } else {
+        localStorage.setItem("portal_intent", audience);
+        setIntent(audience);
         const { data, error } = await supabase.auth.signUp({
           email,
           password,

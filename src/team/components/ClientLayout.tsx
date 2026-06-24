@@ -55,7 +55,7 @@ export default function ClientLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       <header className="border-b border-border bg-card/60 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6 py-2.5 flex items-center justify-between gap-4 flex-wrap">
+        <div className="max-w-4xl mx-auto px-3 sm:px-6 py-2 flex items-center justify-between gap-2 sm:gap-4 flex-wrap">
           <a
             href="https://www.rhozeland.com"
             target="_blank"
@@ -63,16 +63,16 @@ export default function ClientLayout() {
             className="flex items-center gap-2 group"
             title="Visit rhozeland.com"
           >
-            <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">Rhozeland</span>
+            <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">Rhozeland</span>
             <span className="text-xs text-muted-foreground">·</span>
-            <span className="text-xs font-medium">Client portal</span>
+            <span className="text-[11px] sm:text-xs font-medium">Client portal</span>
           </a>
-          <nav className="flex items-center gap-1">
+          <nav className="flex items-center gap-1 flex-wrap justify-end">
             <NavLink to="/client/home" end className={linkCls}>
-              <FolderOpen size={12} /> Projects
+              <FolderOpen size={12} /> <span className="hidden sm:inline">Projects</span>
             </NavLink>
             <NavLink to="/client/requests" className={linkCls}>
-              <Plus size={12} /> Requests
+              <Plus size={12} /> <span className="hidden sm:inline">Requests</span>
             </NavLink>
             <span
               className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-foreground text-background tabular-nums"
@@ -81,16 +81,17 @@ export default function ClientLayout() {
               <Coins size={12} /> {totalCredits} cr
             </span>
             <span
-              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-accent/40 text-foreground"
+              className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-accent/40 text-foreground tabular-nums"
               title="Your total $RHOZE balance across all projects"
             >
-              <Sparkles size={12} /> {Number(totalRhoze).toLocaleString()} $RHOZE
+              <Sparkles size={12} /> {Number(totalRhoze).toLocaleString()}
+              <span className="hidden sm:inline">&nbsp;$RHOZE</span>
             </span>
             <NavLink to="/client/profile" className={linkCls}>
-              <UserCircle2 size={12} /> Profile
+              <UserCircle2 size={12} /> <span className="hidden sm:inline">Profile</span>
             </NavLink>
             <Button onClick={handleSignOut} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-              <LogOut size={12} /> Sign out
+              <LogOut size={12} /> <span className="hidden sm:inline">Sign out</span>
             </Button>
           </nav>
         </div>

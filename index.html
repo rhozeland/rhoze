@@ -3840,52 +3840,6 @@
         </div>
       </div>
 
-      <!-- Build With Us Modal -->
-      <div id="buildModal" class="build-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
-        <div class="build-modal">
-          <button class="build-modal-close" onclick="document.getElementById('buildModal').classList.remove('open')" aria-label="Close">&times;</button>
-          <h3>Start a Project</h3>
-          <p>Tell us about your project — we'll route it to the right team. Already working with us? <a href="/team.html#/portal" style="color:hsl(var(--ink));text-decoration:underline;">Sign in</a>.</p>
-          <form class="build-modal-form" onsubmit="handleBuildForm(event)">
-            <div>
-              <label for="bm-fullname">Full Name</label>
-              <input type="text" id="bm-fullname" name="fullname" placeholder="Jane Doe" required />
-            </div>
-            <div>
-              <label for="bm-email">Email</label>
-              <input type="email" id="bm-email" name="email" placeholder="you@example.com" required />
-            </div>
-            <div>
-              <label for="bm-type">Project Type</label>
-              <select id="bm-type" name="project-type" required>
-                <option value="" disabled selected>Select a category</option>
-                <option value="music-production">Music Production</option>
-                <option value="video-production">Video & Film Production</option>
-                <option value="photography">Photography</option>
-                <option value="graphic-design">Graphic Design & Branding</option>
-                <option value="web-development">Web & App Development</option>
-                <option value="marketing">Marketing & Social Media</option>
-                <option value="event-production">Event Production</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label for="bm-message">Brief Message</label>
-              <textarea id="bm-message" name="message" rows="3" placeholder="What are you working on?" required></textarea>
-            </div>
-            <div class="build-modal-actions">
-              <button type="submit" class="btn-dark">
-                Submit Inquiry
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-              </button>
-              <a href="/book.html" target="_blank" rel="noopener noreferrer" class="bm-call-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Book a Call
-              </a>
-            </div>
-          </form>
-        </div>
-      </div>
     </section>
 
     <footer class="footer">

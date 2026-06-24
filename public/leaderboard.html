@@ -320,56 +320,59 @@
       }
       function escapeHtml(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]; }); }
 
-      function renderLeaderboard(rows) {
+      // ===== Leaderboard with weekly/all-time tabs + pagination =====
+      var PAGE_SIZE = 10;
+      var state = { mode: "weekly", page: 0, rows: [] };
+
+      function sortRows(rows, mode) {
+        var key = mode === "weekly" ? "weekly_points" : "points";
+        return rows.slice().sort(function (a, b) { return (b[key] || 0) - (a[key] || 0); });
+      }
+
+      function renderLeaderboard() {
         var body = document.getElementById("lb-body");
-        if (!rows || !rows.length) {
-          body.innerHTML = '<tr><td colspan="5" class="lb-empty">No published leaderboard yet. Check back after the first snapshot.</td></tr>';
+        var rally = document.getElementById("lb-rally-wrap");
+        var pager = document.getElementById("lb-pager");
+        var key = state.mode === "weekly" ? "weekly_points" : "points";
+        var sorted = sortRows(state.rows, state.mode).filter(function (r) { return (r[key] || 0) > 0 || state.mode === "alltime"; });
+        // Show rally CTA whenever fewer than 10 participants on the board
+        rally.style.display = sorted.length < 10 ? "" : "none";
+
+        if (!sorted.length) {
+          body.innerHTML = '<tr><td colspan="4" class="lb-empty">No ' + (state.mode === "weekly" ? "weekly" : "all-time") + ' points yet. Sign up on the right to get the first slot.</td></tr>';
+          pager.style.display = "none";
+          var latest = state.rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
+          document.getElementById("lb-updated").textContent = latest ? "Last updated " + fmtDate(latest) : "Awaiting first submissions";
           return;
         }
-        var latest = rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
-        document.getElementById("lb-updated").textContent = latest ? "Last published " + fmtDate(latest) : "";
-        body.innerHTML = rows.slice(0, 10).map(function (r, i) {
-          var rank = i + 1;
+
+        var totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+        if (state.page >= totalPages) state.page = totalPages - 1;
+        var start = state.page * PAGE_SIZE;
+        var slice = sorted.slice(start, start + PAGE_SIZE);
+
+        body.innerHTML = slice.map(function (r, i) {
+          var rank = start + i + 1;
           var cls = rank === 1 ? "lb-medal-1" : rank === 2 ? "lb-medal-2" : rank === 3 ? "lb-medal-3" : "";
-          var chips = [
-            ["Raids", r.raids], ["Memes", r.memes], ["Threads", r.edu_threads], ["Videos", r.videos]
-          ].filter(function (c) { return c[1] > 0; })
-           .map(function (c) { return '<span class="lb-chip">' + escapeHtml(c[0]) + ' · ' + c[1] + '</span>'; })
-           .join("");
+          var pts = (r[key] || 0).toLocaleString();
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
             '<td><strong>' + escapeHtml(r.username) + '</strong></td>' +
-            '<td><div class="lb-chips">' + (chips || '<span class="lb-chip">no activity yet</span>') + '</div></td>' +
             '<td>' + (r.challenges_completed || 0) + '</td>' +
-            '<td class="points">' + (r.points || 0).toLocaleString() + '</td>' +
+            '<td class="points">' + pts + '</td>' +
           '</tr>';
         }).join("");
-      }
 
-      function renderChallenges(list) {
-        var cal = document.getElementById("lb-cal");
-        if (!list || !list.length) { cal.innerHTML = '<div class="lb-empty">No challenges scheduled yet.</div>'; return; }
-        var today = new Date().toISOString().slice(0, 10);
-        var current = list.find(function (c) { return c.is_active; }) ||
-                      list.find(function (c) { return c.start_date <= today && c.end_date >= today; }) ||
-                      list[0];
-        if (current) {
-          var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-          setText("lb-week-label", current.week_label || "—");
-          setText("lb-week-mult", current.multiplier ? current.multiplier + "×" : "1×");
-          setText("lb-week-end", fmtDate(current.end_date));
-          setText("lb-week-desc", current.theme ? current.theme + (current.description ? " — " + current.description : "") : (current.description || ""));
-        }
-        cal.innerHTML = list.map(function (c) {
-          var isCurrent = current && c.id === current.id;
-          return '<div class="lb-cal-card' + (isCurrent ? ' active' : '') + '">' +
-            '<div class="week">' + escapeHtml(c.week_label) + (isCurrent ? ' · this week' : '') + '</div>' +
-            '<div class="theme">' + escapeHtml(c.theme) + '</div>' +
-            '<div class="desc">' + escapeHtml(c.description || '') + '</div>' +
-            '<div class="meta"><span>' + fmtDate(c.start_date) + ' → ' + fmtDate(c.end_date) + '</span>' +
-            '<span>' + (c.multiplier || 1) + '× pts</span></div>' +
-          '</div>';
-        }).join("");
+        if (sorted.length > PAGE_SIZE) {
+          pager.style.display = "";
+          document.getElementById("lb-pager-count").textContent =
+            "Showing " + (start + 1) + "–" + (start + slice.length) + " of " + sorted.length;
+          document.getElementById("lb-prev").disabled = state.page === 0;
+          document.getElementById("lb-next").disabled = state.page >= totalPages - 1;
+        } else { pager.style.display = "none"; }
+
+        var latest = state.rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
+        document.getElementById("lb-updated").textContent = latest ? "Last updated " + fmtDate(latest) : "";
       }
 
       function renderRules(rows) {
@@ -385,42 +388,76 @@
       }
 
       function load() {
-        rest("community_leaderboard?select=*&order=points.desc&limit=25").then(renderLeaderboard).catch(function () {
-          document.getElementById("lb-body").innerHTML = '<tr><td colspan="5" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
+        rest("community_leaderboard?select=*&limit=500").then(function (rows) {
+          state.rows = Array.isArray(rows) ? rows : [];
+          renderLeaderboard();
+        }).catch(function () {
+          document.getElementById("lb-body").innerHTML = '<tr><td colspan="4" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
         });
         rest("community_points_rules?select=*&order=sort_order.asc").then(renderRules);
       }
       load();
       setInterval(load, 60000);
 
-      // ===== Magic-link auth + submissions =====
+      // ===== Tabs / pagination wiring =====
       var $ = function (id) { return document.getElementById(id); };
+      Array.prototype.forEach.call(document.querySelectorAll(".lb-tabs button"), function (b) {
+        b.addEventListener("click", function () {
+          Array.prototype.forEach.call(document.querySelectorAll(".lb-tabs button"), function (x) { x.classList.remove("active"); });
+          b.classList.add("active");
+          state.mode = b.getAttribute("data-mode"); state.page = 0;
+          renderLeaderboard();
+        });
+      });
+      $("lb-prev").addEventListener("click", function () { if (state.page > 0) { state.page--; renderLeaderboard(); } });
+      $("lb-next").addEventListener("click", function () { state.page++; renderLeaderboard(); });
+
+      // ===== Email + password auth =====
       var msgEl = $("lb-msg"), whoEl = $("lb-who");
-      var authForm = $("lb-auth-form"), submitForm = $("lb-submit-form");
+      var signupForm = $("lb-signup-form"), loginForm = $("lb-login-form"), signedIn = $("lb-signed-in");
       function setMsg(t, kind) { msgEl.textContent = t || ""; msgEl.className = "lb-msg" + (kind ? " " + kind : ""); }
+      function show(el, mode) { el.style.display = mode || ""; }
 
       function refreshUI(session) {
         if (session && session.user) {
-          authForm.style.display = "none";
-          submitForm.style.display = "";
-          whoEl.textContent = "Signed in as " + session.user.email;
-          var stored = localStorage.getItem("rhz-handle");
-          if (stored) $("lb-handle").value = stored;
+          signupForm.style.display = "none";
+          loginForm.style.display = "none";
+          signedIn.style.display = "grid";
+          $("lb-acct-title").textContent = "Your account";
+          $("lb-acct-sub").textContent = "Submit posts for points and keep your reward info up to date.";
+          whoEl.textContent = session.user.email;
+          loadProfile();
           loadMine();
         } else {
-          authForm.style.display = "";
-          submitForm.style.display = "none";
+          signedIn.style.display = "none";
+          loginForm.style.display = "none";
+          signupForm.style.display = "grid";
+          $("lb-acct-title").textContent = "Join the leaderboard";
+          $("lb-acct-sub").textContent = "Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.";
           whoEl.textContent = "Not signed in";
           $("lb-mine").innerHTML = "";
         }
+      }
+
+      function loadProfile() {
+        if (!sb) return;
+        sb.auth.getUser().then(function (u) {
+          var uid = u.data.user && u.data.user.id; if (!uid) return;
+          sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name").eq("id", uid).maybeSingle()
+            .then(function (res) {
+              var p = res.data || {};
+              $("lb-pf-user").value = p.community_username || p.alias || "";
+              $("lb-pf-social").value = p.social_handle || "";
+              $("lb-pf-pay").value = p.payment_email || "";
+            });
+        });
       }
 
       function loadMine() {
         if (!sb) return;
         sb.from("community_submissions")
           .select("id,handle,category,post_url,status,awarded_points,reviewer_notes,created_at")
-          .order("created_at", { ascending: false })
-          .limit(10)
+          .order("created_at", { ascending: false }).limit(10)
           .then(function (res) {
             var rows = res.data || [];
             var el = $("lb-mine");
@@ -431,44 +468,85 @@
                 var pts = r.status === "approved" ? " · +" + (r.awarded_points || 0) + " pts" : "";
                 return '<div class="lb-mine-row">' +
                   '<span class="cat">' + escapeHtml(r.category) + '</span>' +
-                  '<a href="' + escapeHtml(r.post_url) + '" target="_blank" rel="noopener" style="color:inherit;">' + escapeHtml(r.post_url) + '</a>' +
+                  '<a href="' + escapeHtml(r.post_url) + '" target="_blank" rel="noopener" style="color:inherit; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:140px;">' + escapeHtml(r.post_url) + '</a>' +
                   '<span class="st ' + stCls + '">' + escapeHtml(r.status) + pts + '</span>' +
                 '</div>';
               }).join("");
           });
       }
 
+      function normalizeHandle(h) { h = (h || "").trim(); if (h && h[0] !== "@") h = "@" + h; return h; }
+
       if (sb) {
         sb.auth.getSession().then(function (r) { refreshUI(r.data.session); });
         sb.auth.onAuthStateChange(function (_e, s) { refreshUI(s); });
 
-        authForm.addEventListener("submit", function (e) {
+        $("lb-show-login").addEventListener("click", function () { signupForm.style.display = "none"; loginForm.style.display = "grid"; setMsg(""); });
+        $("lb-show-signup").addEventListener("click", function () { loginForm.style.display = "none"; signupForm.style.display = "grid"; setMsg(""); });
+
+        signupForm.addEventListener("submit", function (e) {
           e.preventDefault();
-          var email = $("lb-email").value.trim();
-          if (!email) return;
-          var btn = $("lb-auth-btn"); btn.disabled = true; setMsg("Sending magic link…");
-          sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + "/leaderboard" } })
+          var email = $("lb-su-email").value.trim();
+          var pass = $("lb-su-pass").value;
+          var user = normalizeHandle($("lb-su-user").value);
+          var social = $("lb-su-social").value.trim();
+          var pay = $("lb-su-pay").value.trim();
+          if (!email || pass.length < 8 || !user) { setMsg("Email, password (8+), and username are required.", "err"); return; }
+          var btn = $("lb-su-btn"); btn.disabled = true; setMsg("Creating account…");
+          sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: window.location.origin + "/leaderboard" } })
+            .then(function (r) {
+              if (r.error) { btn.disabled = false; setMsg(r.error.message, "err"); return null; }
+              var uid = r.data.user && r.data.user.id;
+              if (!uid) { btn.disabled = false; setMsg("Account created. Check your email if confirmation is required.", "ok"); return null; }
+              return sb.from("profiles").update({
+                community_username: user, social_handle: social || null, payment_email: pay || null
+              }).eq("id", uid);
+            })
             .then(function (r) {
               btn.disabled = false;
-              if (r.error) setMsg(r.error.message, "err");
-              else setMsg("Check your email for the magic link to finish signing in.", "ok");
+              if (r && r.error) { setMsg("Account created, but profile didn't save: " + r.error.message, "err"); return; }
+              setMsg("Account created — you're in!", "ok");
             });
+        });
+
+        loginForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var email = $("lb-li-email").value.trim();
+          var pass = $("lb-li-pass").value;
+          if (!email || !pass) return;
+          var btn = $("lb-li-btn"); btn.disabled = true; setMsg("Signing in…");
+          sb.auth.signInWithPassword({ email: email, password: pass }).then(function (r) {
+            btn.disabled = false;
+            if (r.error) setMsg(r.error.message, "err"); else setMsg("Welcome back.", "ok");
+          });
+        });
+
+        $("lb-save-profile").addEventListener("click", function () {
+          sb.auth.getUser().then(function (u) {
+            var uid = u.data.user && u.data.user.id; if (!uid) return;
+            var user = normalizeHandle($("lb-pf-user").value);
+            setMsg("Saving…");
+            sb.from("profiles").update({
+              community_username: user, social_handle: $("lb-pf-social").value.trim() || null,
+              payment_email: $("lb-pf-pay").value.trim() || null
+            }).eq("id", uid).then(function (r) {
+              if (r.error) setMsg(r.error.message, "err"); else setMsg("Profile saved.", "ok");
+            });
+          });
         });
 
         $("lb-signout-btn").addEventListener("click", function () {
           sb.auth.signOut().then(function () { setMsg("Signed out.", "ok"); });
         });
 
-        submitForm.addEventListener("submit", function (e) {
+        $("lb-submit-form").addEventListener("submit", function (e) {
           e.preventDefault();
-          var handle = $("lb-handle").value.trim();
           var category = $("lb-category").value;
           var post_url = $("lb-url").value.trim();
-          if (!handle || !post_url) return;
-          if (handle[0] !== "@") handle = "@" + handle;
-          if (handle.length > 64 || post_url.length > 500) { setMsg("Too long.", "err"); return; }
+          var handle = normalizeHandle($("lb-pf-user").value);
+          if (!handle) { setMsg("Set a username in your profile first.", "err"); return; }
           if (!/^https?:\/\//i.test(post_url)) { setMsg("Post URL must start with http(s)://", "err"); return; }
-          localStorage.setItem("rhz-handle", handle);
+          if (handle.length > 64 || post_url.length > 500) { setMsg("Too long.", "err"); return; }
           var btn = $("lb-submit-btn"); btn.disabled = true; setMsg("Submitting…");
           sb.auth.getUser().then(function (u) {
             var uid = u.data.user && u.data.user.id;

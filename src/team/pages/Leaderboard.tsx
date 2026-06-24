@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Save, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Save, ExternalLink, Check, X } from "lucide-react";
 
 type Row = {
   id?: string;
@@ -41,6 +41,18 @@ type Rule = {
   sort_order: number;
 };
 
+type Submission = {
+  id: string;
+  user_id: string | null;
+  handle: string;
+  category: "raid" | "meme" | "thread" | "video";
+  post_url: string;
+  status: "pending" | "approved" | "rejected";
+  awarded_points: number;
+  reviewer_notes: string | null;
+  created_at: string;
+};
+
 export default function Leaderboard() {
   const { roles, isAdmin } = useAuth();
   const canEdit = isAdmin || roles.includes("marketing" as any);
@@ -48,19 +60,24 @@ export default function Leaderboard() {
   const [rows, setRows] = useState<Row[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
+  const [subs, setSubs] = useState<Submission[]>([]);
+  const [pointsDraft, setPointsDraft] = useState<Record<string, number>>({});
+  const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
   async function load() {
     setLoading(true);
-    const [a, b, c] = await Promise.all([
+    const [a, b, c, d] = await Promise.all([
       supabase.from("community_leaderboard").select("*").order("points", { ascending: false }),
       supabase.from("community_challenges").select("*").order("start_date", { ascending: true }),
       supabase.from("community_points_rules").select("*").order("sort_order", { ascending: true }),
+      supabase.from("community_submissions").select("*").order("created_at", { ascending: false }).limit(100),
     ]);
     if (a.data) setRows(a.data as any);
     if (b.data) setChallenges(b.data as any);
     if (c.data) setRules(c.data as any);
+    if (d.data) setSubs(d.data as any);
     setLoading(false);
   }
 
@@ -150,6 +167,44 @@ export default function Leaderboard() {
     } finally { setBusy(false); }
   }
 
+  function defaultPointsFor(cat: Submission["category"]) {
+    const map: Record<string, number> = { raid: 10, meme: 15, thread: 25, video: 40 };
+    return map[cat] ?? 10;
+  }
+
+  async function approveSubmission(s: Submission) {
+    const pts = pointsDraft[s.id] ?? defaultPointsFor(s.category);
+    if (!Number.isFinite(pts) || pts < 0) {
+      toast({ title: "Enter valid points", variant: "destructive" });
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.rpc("community_submission_approve", {
+        _submission_id: s.id, _points: pts, _notes: notesDraft[s.id] || null,
+      });
+      if (error) throw error;
+      toast({ title: `Approved · +${pts} pts to ${s.handle}` });
+      await load();
+    } catch (e: any) {
+      toast({ title: "Approve failed", description: e.message, variant: "destructive" });
+    } finally { setBusy(false); }
+  }
+
+  async function rejectSubmission(s: Submission) {
+    setBusy(true);
+    try {
+      const { error } = await supabase.rpc("community_submission_reject", {
+        _submission_id: s.id, _notes: notesDraft[s.id] || null,
+      });
+      if (error) throw error;
+      toast({ title: "Rejected" });
+      await load();
+    } catch (e: any) {
+      toast({ title: "Reject failed", description: e.message, variant: "destructive" });
+    } finally { setBusy(false); }
+  }
+
   if (!canEdit) {
     return (
       <div className="space-y-3">
@@ -178,6 +233,70 @@ export default function Leaderboard() {
           <Button onClick={publishSnapshot} disabled={busy} size="sm">Publish snapshot</Button>
         </div>
       </div>
+
+      {/* Incoming submissions */}
+      <section className="space-y-3">
+        <h2 className="text-sm uppercase tracking-widest text-muted-foreground">
+          Incoming submissions{subs.filter((s) => s.status === "pending").length > 0 && (
+            <span className="ml-2 text-foreground">({subs.filter((s) => s.status === "pending").length} pending)</span>
+          )}
+        </h2>
+        {subs.length === 0 ? (
+          <div className="text-sm text-muted-foreground border border-border rounded-lg p-4 bg-card">
+            No community submissions yet.
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {subs.map((s) => {
+              const isPending = s.status === "pending";
+              return (
+                <div key={s.id} className="border border-border rounded-lg p-3 bg-card grid gap-2 sm:grid-cols-12 sm:items-center">
+                  <div className="sm:col-span-3">
+                    <div className="text-sm font-medium">{s.handle}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.category}</div>
+                  </div>
+                  <a
+                    href={s.post_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="sm:col-span-5 text-xs text-muted-foreground hover:text-foreground truncate"
+                  >
+                    {s.post_url}
+                  </a>
+                  {isPending ? (
+                    <>
+                      <Input
+                        type="number"
+                        className="sm:col-span-1"
+                        placeholder={String(defaultPointsFor(s.category))}
+                        value={pointsDraft[s.id] ?? ""}
+                        onChange={(e) => setPointsDraft((p) => ({ ...p, [s.id]: +e.target.value }))}
+                      />
+                      <Input
+                        className="sm:col-span-2"
+                        placeholder="Note (optional)"
+                        value={notesDraft[s.id] ?? ""}
+                        onChange={(e) => setNotesDraft((p) => ({ ...p, [s.id]: e.target.value }))}
+                      />
+                      <div className="sm:col-span-1 flex gap-1 justify-end">
+                        <Button size="sm" onClick={() => approveSubmission(s)} disabled={busy}><Check size={14} /></Button>
+                        <Button size="sm" variant="outline" onClick={() => rejectSubmission(s)} disabled={busy}><X size={14} /></Button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="sm:col-span-4 text-right text-xs text-muted-foreground">
+                      <span className={s.status === "approved" ? "text-foreground font-medium" : ""}>
+                        {s.status === "approved" ? `Approved · +${s.awarded_points} pts` : "Rejected"}
+                      </span>
+                      {s.reviewer_notes && <span className="block italic">{s.reviewer_notes}</span>}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       {/* Leaderboard rows */}
       <section className="space-y-3">

@@ -221,6 +221,51 @@ export type Database = {
         }
         Relationships: []
       }
+      community_submissions: {
+        Row: {
+          awarded_points: number
+          category: Database["public"]["Enums"]["community_submission_category"]
+          created_at: string
+          handle: string
+          id: string
+          post_url: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          reviewer_notes: string | null
+          status: Database["public"]["Enums"]["community_submission_status"]
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          awarded_points?: number
+          category: Database["public"]["Enums"]["community_submission_category"]
+          created_at?: string
+          handle: string
+          id?: string
+          post_url: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: Database["public"]["Enums"]["community_submission_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          awarded_points?: number
+          category?: Database["public"]["Enums"]["community_submission_category"]
+          created_at?: string
+          handle?: string
+          id?: string
+          post_url?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          reviewer_notes?: string | null
+          status?: Database["public"]["Enums"]["community_submission_status"]
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           company: string | null
@@ -2090,6 +2135,14 @@ export type Database = {
       }
       archive_expired_projects: { Args: never; Returns: number }
       can_edit_community: { Args: { _uid: string }; Returns: boolean }
+      community_submission_approve: {
+        Args: { _notes?: string; _points: number; _submission_id: string }
+        Returns: undefined
+      }
+      community_submission_reject: {
+        Args: { _notes?: string; _submission_id: string }
+        Returns: undefined
+      }
       consume_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -2208,6 +2261,8 @@ export type Database = {
     Enums: {
       activity_type: "call" | "email" | "meeting" | "note" | "task"
       app_role: "admin" | "employee" | "client" | "marketing"
+      community_submission_category: "raid" | "meme" | "thread" | "video"
+      community_submission_status: "pending" | "approved" | "rejected"
       contact_type: "lead" | "client" | "partner" | "vendor"
       credit_request_status:
         | "pending_team"
@@ -2364,6 +2419,8 @@ export const Constants = {
     Enums: {
       activity_type: ["call", "email", "meeting", "note", "task"],
       app_role: ["admin", "employee", "client", "marketing"],
+      community_submission_category: ["raid", "meme", "thread", "video"],
+      community_submission_status: ["pending", "approved", "rejected"],
       contact_type: ["lead", "client", "partner", "vendor"],
       credit_request_status: [
         "pending_team",

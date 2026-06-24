@@ -50,6 +50,28 @@
     .lb-cal-card .meta { font-size:11px; color:hsl(var(--muted)); margin-top:10px; display:flex; justify-content:space-between; }
     .lb-meta-line { font-size:11px; color:hsl(var(--muted)); margin-top:10px; }
     .lb-empty { padding:32px; text-align:center; color:hsl(var(--muted)); font-size:13px; }
+    /* Submit / Account panel */
+    .lb-account { margin-top:14px; padding:18px 20px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); display:grid; gap:12px; }
+    .lb-account .row { display:grid; grid-template-columns: 1fr; gap:8px; }
+    @media (min-width: 640px) { .lb-account .row { grid-template-columns: 1fr 1fr auto; align-items:end; } }
+    .lb-field { display:grid; gap:4px; }
+    .lb-field label { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-field input, .lb-field select { padding:9px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface)); color:hsl(var(--ink)); font-size:13px; font-family:inherit; }
+    .lb-btn { padding:9px 16px; border-radius:var(--radius-md); border:1px solid hsl(var(--ink)); background:hsl(var(--ink)); color:hsl(var(--surface)); font-size:12px; font-weight:600; letter-spacing:.04em; cursor:pointer; }
+    .lb-btn.ghost { background:transparent; color:hsl(var(--ink)); }
+    .lb-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .lb-acct-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .lb-acct-head h2 { font-size:15px; font-weight:600; color:hsl(var(--ink)); }
+    .lb-acct-head .who { font-size:11px; color:hsl(var(--muted)); }
+    .lb-msg { font-size:12px; color:hsl(var(--muted)); }
+    .lb-msg.ok { color: hsl(var(--accent-green)); }
+    .lb-msg.err { color: hsl(0 70% 55%); }
+    .lb-mine { margin-top:10px; display:grid; gap:6px; }
+    .lb-mine-row { display:flex; gap:8px; align-items:center; font-size:12px; padding:8px 10px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface)); }
+    .lb-mine-row .cat { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-mine-row .st { margin-left:auto; font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:2px 8px; border-radius:999px; border:1px solid hsl(var(--line)); }
+    .lb-mine-row .st.approved { color: hsl(var(--accent-green)); border-color: hsl(var(--accent-green) / 0.5); }
+    .lb-mine-row .st.rejected { color: hsl(0 70% 55%); border-color: hsl(0 70% 55% / 0.5); }
   </style>
 </head>
 <body class="page-events">
@@ -97,6 +119,49 @@
 
       <!-- LEADERBOARD -->
       <section class="lb-section">
+        <!-- ACCOUNT + SUBMISSION -->
+        <div class="lb-account" id="lb-account">
+          <div class="lb-acct-head">
+            <h2>Submit for points</h2>
+            <span class="who" id="lb-who">Not signed in</span>
+          </div>
+
+          <!-- Signed-out view: magic-link form -->
+          <form id="lb-auth-form" class="row" autocomplete="on">
+            <div class="lb-field" style="grid-column: 1 / -2;">
+              <label for="lb-email">Email — we'll send you a magic link</label>
+              <input id="lb-email" type="email" required placeholder="you@example.com" />
+            </div>
+            <button class="lb-btn" type="submit" id="lb-auth-btn">Send link</button>
+          </form>
+
+          <!-- Signed-in view: submission form -->
+          <form id="lb-submit-form" class="row" style="display:none;">
+            <div class="lb-field">
+              <label for="lb-handle">@handle</label>
+              <input id="lb-handle" type="text" required placeholder="@yourname" />
+            </div>
+            <div class="lb-field">
+              <label for="lb-category">Category</label>
+              <select id="lb-category" required>
+                <option value="raid">Raid</option>
+                <option value="meme">Meme</option>
+                <option value="thread">Educational thread</option>
+                <option value="video">Video / clip</option>
+              </select>
+            </div>
+            <div class="lb-field" style="grid-column: 1 / -1;">
+              <label for="lb-url">Post URL</label>
+              <input id="lb-url" type="url" required placeholder="https://x.com/..." />
+            </div>
+            <button class="lb-btn" type="submit" id="lb-submit-btn" style="grid-column: 1 / -1; justify-self:start;">Submit for review</button>
+            <button class="lb-btn ghost" type="button" id="lb-signout-btn" style="grid-column: 1 / -1; justify-self:start;">Sign out</button>
+          </form>
+
+          <div id="lb-msg" class="lb-msg"></div>
+          <div id="lb-mine" class="lb-mine"></div>
+        </div>
+
         <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:14px;">
           <h2>Top movers</h2>
           <div class="lb-meta-line" id="lb-updated">Updating…</div>
@@ -163,11 +228,15 @@
   </div>
 
   <script src="/shared.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     (function () {
       var SUPABASE_URL = "https://hdlpvcsxyxirywjkhsui.supabase.co";
       var SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w";
       var headers = { apikey: SUPABASE_ANON, Authorization: "Bearer " + SUPABASE_ANON };
+      var sb = (window.supabase && window.supabase.createClient)
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, storageKey: 'rhz-community-auth' } })
+        : null;
       function rest(path) {
         return fetch(SUPABASE_URL + "/rest/v1/" + path, { headers: headers }).then(function (r) { return r.json(); });
       }
@@ -245,11 +314,102 @@
         rest("community_leaderboard?select=*&order=points.desc&limit=25").then(renderLeaderboard).catch(function () {
           document.getElementById("lb-body").innerHTML = '<tr><td colspan="5" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
         });
-        rest("community_challenges?select=*&order=start_date.asc").then(renderChallenges);
         rest("community_points_rules?select=*&order=sort_order.asc").then(renderRules);
       }
       load();
       setInterval(load, 60000);
+
+      // ===== Magic-link auth + submissions =====
+      var $ = function (id) { return document.getElementById(id); };
+      var msgEl = $("lb-msg"), whoEl = $("lb-who");
+      var authForm = $("lb-auth-form"), submitForm = $("lb-submit-form");
+      function setMsg(t, kind) { msgEl.textContent = t || ""; msgEl.className = "lb-msg" + (kind ? " " + kind : ""); }
+
+      function refreshUI(session) {
+        if (session && session.user) {
+          authForm.style.display = "none";
+          submitForm.style.display = "";
+          whoEl.textContent = "Signed in as " + session.user.email;
+          var stored = localStorage.getItem("rhz-handle");
+          if (stored) $("lb-handle").value = stored;
+          loadMine();
+        } else {
+          authForm.style.display = "";
+          submitForm.style.display = "none";
+          whoEl.textContent = "Not signed in";
+          $("lb-mine").innerHTML = "";
+        }
+      }
+
+      function loadMine() {
+        if (!sb) return;
+        sb.from("community_submissions")
+          .select("id,handle,category,post_url,status,awarded_points,reviewer_notes,created_at")
+          .order("created_at", { ascending: false })
+          .limit(10)
+          .then(function (res) {
+            var rows = res.data || [];
+            var el = $("lb-mine");
+            if (!rows.length) { el.innerHTML = '<div class="lb-msg">No submissions yet — drop your first one above.</div>'; return; }
+            el.innerHTML = '<div class="lb-msg" style="margin-bottom:4px;">Your recent submissions</div>' +
+              rows.map(function (r) {
+                var stCls = r.status === "approved" ? "approved" : r.status === "rejected" ? "rejected" : "";
+                var pts = r.status === "approved" ? " · +" + (r.awarded_points || 0) + " pts" : "";
+                return '<div class="lb-mine-row">' +
+                  '<span class="cat">' + escapeHtml(r.category) + '</span>' +
+                  '<a href="' + escapeHtml(r.post_url) + '" target="_blank" rel="noopener" style="color:inherit;">' + escapeHtml(r.post_url) + '</a>' +
+                  '<span class="st ' + stCls + '">' + escapeHtml(r.status) + pts + '</span>' +
+                '</div>';
+              }).join("");
+          });
+      }
+
+      if (sb) {
+        sb.auth.getSession().then(function (r) { refreshUI(r.data.session); });
+        sb.auth.onAuthStateChange(function (_e, s) { refreshUI(s); });
+
+        authForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var email = $("lb-email").value.trim();
+          if (!email) return;
+          var btn = $("lb-auth-btn"); btn.disabled = true; setMsg("Sending magic link…");
+          sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + "/leaderboard" } })
+            .then(function (r) {
+              btn.disabled = false;
+              if (r.error) setMsg(r.error.message, "err");
+              else setMsg("Check your email for the magic link to finish signing in.", "ok");
+            });
+        });
+
+        $("lb-signout-btn").addEventListener("click", function () {
+          sb.auth.signOut().then(function () { setMsg("Signed out.", "ok"); });
+        });
+
+        submitForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var handle = $("lb-handle").value.trim();
+          var category = $("lb-category").value;
+          var post_url = $("lb-url").value.trim();
+          if (!handle || !post_url) return;
+          if (handle[0] !== "@") handle = "@" + handle;
+          if (handle.length > 64 || post_url.length > 500) { setMsg("Too long.", "err"); return; }
+          if (!/^https?:\/\//i.test(post_url)) { setMsg("Post URL must start with http(s)://", "err"); return; }
+          localStorage.setItem("rhz-handle", handle);
+          var btn = $("lb-submit-btn"); btn.disabled = true; setMsg("Submitting…");
+          sb.auth.getUser().then(function (u) {
+            var uid = u.data.user && u.data.user.id;
+            return sb.from("community_submissions").insert({
+              user_id: uid, handle: handle, category: category, post_url: post_url
+            });
+          }).then(function (r) {
+            btn.disabled = false;
+            if (r.error) { setMsg(r.error.message, "err"); return; }
+            setMsg("Submitted — the team will review and award points.", "ok");
+            $("lb-url").value = "";
+            loadMine();
+          });
+        });
+      }
     })();
   </script>
 </body>

@@ -3650,8 +3650,8 @@
 
         </div>
       </section>
-       <!-- Featured work (standalone) — moved back to the bottom of the hero/intro area -->
-       <section class="reveal" aria-label="Featured work" style="padding: 12px 0 8px;">
+       <!-- Featured work + Recognition & Partners (combined) -->
+       <section class="reveal" aria-label="Featured work" style="padding: 0 0 32px;">
          <div class="hero-inner" style="max-width: var(--container-max); margin: 0 auto;">
            <div class="r-eco-feat r-eco-feat--standalone" aria-label="Featured work" style="background:#1a1a1a;border-radius:var(--radius-lg);padding:14px;box-shadow:0 22px 60px -22px rgba(0,0,0,0.5);">
              <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
@@ -3663,29 +3663,25 @@
                  <!-- Cards injected by script -->
                </div>
              </div>
+             <style>
+               .r-eco-feat-partners { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(250,249,246,0.12); }
+               .r-eco-feat-partners-label { display: block; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.22em; color: rgba(250,249,246,0.55); margin: 0 0 10px; padding: 0 4px; }
+               .r-partners-wrap { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%); }
+               .r-partners-track { display: flex; gap: 0.5rem; width: max-content; animation: r-partners-scroll 60s linear infinite; }
+               .r-partners-wrap:hover .r-partners-track { animation-play-state: paused; }
+               @keyframes r-partners-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+               .r-partners-link { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.2rem; padding: 0.5rem 0.85rem; border-radius: 999px; border: 1px solid rgba(250,249,246,0.16); background: rgba(250,249,246,0.06); color: #FAF9F6; font-size: 0.78rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; white-space: nowrap; }
+               .r-partners-link:hover { transform: translateY(-1px); border-color: rgba(250,249,246,0.4); background: rgba(250,249,246,0.1); }
+               .r-partners-favicon { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; object-fit: contain; background: #fff; }
+             </style>
+             <div class="r-eco-feat-partners" aria-label="Recognition and partners">
+               <span class="r-eco-feat-partners-label">Recognition &amp; Partners</span>
+               <div class="r-partners-wrap">
+                 <div class="r-partners-track" id="rPartnersTrack"></div>
+               </div>
+             </div>
            </div>
          </div>
-       </section>
-       <!-- Recognition & Partners — scrolling brand strip -->
-       <section class="r-partners reveal" aria-label="Recognition and partners">
-        <style>
-          .r-partners { padding: 28px 0 40px; background: transparent; }
-          .r-partners-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
-          .r-partners-label { display: block; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: hsl(var(--ink) / 0.6); margin: 0 0 14px; }
-          .r-partners-wrap { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); }
-          .r-partners-track { display: flex; gap: 0.75rem; width: max-content; animation: r-partners-scroll 60s linear infinite; }
-          .r-partners-wrap:hover .r-partners-track { animation-play-state: paused; }
-          @keyframes r-partners-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-          .r-partners-link { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 2.7rem; padding: 0.7rem 1rem; border-radius: 999px; border: 1px solid hsl(var(--line, var(--ink) / 0.12)); background: hsl(var(--surface-card, var(--bg)) / 0.72); color: hsl(var(--ink)); font-size: 0.84rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; backdrop-filter: blur(10px); white-space: nowrap; }
-          .r-partners-link:hover { transform: translateY(-1px); border-color: hsl(var(--ink) / 0.35); }
-          .r-partners-favicon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; object-fit: contain; }
-        </style>
-        <div class="r-partners-inner">
-          <span class="r-partners-label">Recognition &amp; Partners</span>
-          <div class="r-partners-wrap">
-            <div class="r-partners-track" id="rPartnersTrack"></div>
-          </div>
-        </div>
         <script>
           (function(){
             var items = [

@@ -3222,24 +3222,25 @@
           /* Sidebar Explore grid — full-bleed quadrant tiles with hover service reveal */
          .r-eco-side-explore { margin-top: 10px; padding-top: 10px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 2px; width: 100%; min-height: 480px; border-radius: 16px; overflow: hidden; }
-          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px 14px 18px; border-radius: 0; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: none; min-height: 230px; }
-          .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; z-index: 2; }
+         .r-eco-side-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 18px 14px 16px; border-radius: 0; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: none; min-height: 230px; }
+         .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; z-index: 2; }
           .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fff1de 0%, #f6b97a 100%); }
           .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #e6edff 0%, #b8c8f5 100%); }
           .r-eco-side-tile.is-dev     { background: linear-gradient(160deg, #fff8c8 0%, #f4dc6a 100%); }
           .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #ffe7f0 0%, #f3b8d0 100%); }
-          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.78); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 10px; transition: transform 0.35s cubic-bezier(.25,.8,.25,1); }
-          .r-eco-side-ico svg { width: 18px; height: 18px; }
-          .r-eco-side-main { display: flex; flex-direction: column; align-items: center; transition: transform 0.35s cubic-bezier(.25,.8,.25,1); }
-          .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 0; }
-          .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; position: absolute; bottom: 16px; left: 0; right: 0; padding: 0 8px; margin: 0 auto; max-width: calc(100% - 12px); opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
-          .r-eco-side-tile:hover .r-eco-side-ico,
-          .r-eco-side-tile:hover .r-eco-side-main { transform: translateY(-26px); }
-          .r-eco-side-tile:hover .r-eco-side-pills,
-          .r-eco-side-tile:focus-visible .r-eco-side-pills,
-          .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
-          .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; justify-content: flex-start; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } .r-eco-side-pills { opacity: 1; transform: none; pointer-events: auto; } }
+         .r-eco-side-swap { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 88px; margin-bottom: 12px; }
+         .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.85); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); opacity: 1; transition: opacity 0.35s ease, transform 0.35s ease; }
+         .r-eco-side-ico svg { width: 20px; height: 20px; }
+         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin: 0; }
+         .r-eco-side-pills { position: absolute; inset: 0; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 4px; padding: 0 10px; opacity: 0; transform: scale(0.96); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
+         .r-eco-side-tile:hover .r-eco-side-ico,
+         .r-eco-side-tile:focus-visible .r-eco-side-ico,
+         .r-eco-side-tile:focus-within .r-eco-side-ico { opacity: 0; transform: scale(0.9); }
+         .r-eco-side-tile:hover .r-eco-side-pills,
+         .r-eco-side-tile:focus-visible .r-eco-side-pills,
+         .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: scale(1); pointer-events: auto; }
+         .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+         @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-swap { min-height: 70px; margin-bottom: 8px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }
@@ -3584,11 +3585,10 @@
                 <div class="r-eco-side-explore" aria-label="Explore Rhozeland">
                   <div class="r-eco-side-grid">
                     <a class="r-eco-side-tile is-visual" href="/projects.html">
-                      <span class="r-eco-side-ico" aria-hidden="true">
+                      <span class="r-eco-side-swap">
+                        <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                       </span>
-                       <span class="r-eco-side-main">
-                        <span class="r-eco-side-cat">Visual</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Photo shoots</span>
                           <span class="r-eco-side-pill">Content editing</span>
@@ -3597,13 +3597,13 @@
                           <span class="r-eco-side-pill">Music video</span>
                         </span>
                       </span>
+                      <span class="r-eco-side-cat">Visual</span>
                     </a>
                     <a class="r-eco-side-tile is-audio" href="/projects.html">
-                      <span class="r-eco-side-ico" aria-hidden="true">
+                      <span class="r-eco-side-swap">
+                        <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="4" y2="12"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="20" y1="11" x2="20" y2="13"/></svg>
                       </span>
-                       <span class="r-eco-side-main">
-                        <span class="r-eco-side-cat">Audio</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Recording</span>
                           <span class="r-eco-side-pill">Mixing</span>
@@ -3612,13 +3612,13 @@
                           <span class="r-eco-side-pill">Podcasts</span>
                         </span>
                       </span>
+                      <span class="r-eco-side-cat">Audio</span>
                     </a>
                     <a class="r-eco-side-tile is-dev" href="/projects.html">
-                      <span class="r-eco-side-ico" aria-hidden="true">
+                      <span class="r-eco-side-swap">
+                        <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                       </span>
-                       <span class="r-eco-side-main">
-                        <span class="r-eco-side-cat">Development</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Web &amp; app</span>
                           <span class="r-eco-side-pill">Brand systems</span>
@@ -3626,13 +3626,13 @@
                           <span class="r-eco-side-pill">Creator tooling</span>
                         </span>
                       </span>
+                      <span class="r-eco-side-cat">Development</span>
                     </a>
                     <a class="r-eco-side-tile is-events" href="/events.html">
-                      <span class="r-eco-side-ico" aria-hidden="true">
+                      <span class="r-eco-side-swap">
+                        <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                       </span>
-                       <span class="r-eco-side-main">
-                        <span class="r-eco-side-cat">Events</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Land Sessions</span>
                           <span class="r-eco-side-pill">Pop-ups</span>
@@ -3640,6 +3640,7 @@
                           <span class="r-eco-side-pill">Meetups</span>
                         </span>
                       </span>
+                      <span class="r-eco-side-cat">Events</span>
                     </a>
                   </div>
                 </div>
@@ -3649,8 +3650,8 @@
 
         </div>
       </section>
-       <!-- Featured work (standalone) — moved back to the bottom of the hero/intro area -->
-       <section class="reveal" aria-label="Featured work" style="padding: 12px 0 8px;">
+       <!-- Featured work + Recognition & Partners (combined) -->
+       <section class="reveal" aria-label="Featured work" style="padding: 0 0 32px;">
          <div class="hero-inner" style="max-width: var(--container-max); margin: 0 auto;">
            <div class="r-eco-feat r-eco-feat--standalone" aria-label="Featured work" style="background:#1a1a1a;border-radius:var(--radius-lg);padding:14px;box-shadow:0 22px 60px -22px rgba(0,0,0,0.5);">
              <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
@@ -3662,29 +3663,25 @@
                  <!-- Cards injected by script -->
                </div>
              </div>
+             <style>
+               .r-eco-feat-partners { margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(250,249,246,0.12); }
+               .r-eco-feat-partners-label { display: block; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.22em; color: rgba(250,249,246,0.55); margin: 0 0 10px; padding: 0 4px; }
+               .r-partners-wrap { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%); }
+               .r-partners-track { display: flex; gap: 0.5rem; width: max-content; animation: r-partners-scroll 60s linear infinite; }
+               .r-partners-wrap:hover .r-partners-track { animation-play-state: paused; }
+               @keyframes r-partners-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+               .r-partners-link { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.2rem; padding: 0.5rem 0.85rem; border-radius: 999px; border: 1px solid rgba(250,249,246,0.16); background: rgba(250,249,246,0.06); color: #FAF9F6; font-size: 0.78rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; white-space: nowrap; }
+               .r-partners-link:hover { transform: translateY(-1px); border-color: rgba(250,249,246,0.4); background: rgba(250,249,246,0.1); }
+               .r-partners-favicon { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; object-fit: contain; background: #fff; }
+             </style>
+             <div class="r-eco-feat-partners" aria-label="Recognition and partners">
+               <span class="r-eco-feat-partners-label">Recognition &amp; Partners</span>
+               <div class="r-partners-wrap">
+                 <div class="r-partners-track" id="rPartnersTrack"></div>
+               </div>
+             </div>
            </div>
          </div>
-       </section>
-       <!-- Recognition & Partners — scrolling brand strip -->
-       <section class="r-partners reveal" aria-label="Recognition and partners">
-        <style>
-          .r-partners { padding: 28px 0 40px; background: transparent; }
-          .r-partners-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }
-          .r-partners-label { display: block; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: hsl(var(--ink) / 0.6); margin: 0 0 14px; }
-          .r-partners-wrap { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%); }
-          .r-partners-track { display: flex; gap: 0.75rem; width: max-content; animation: r-partners-scroll 60s linear infinite; }
-          .r-partners-wrap:hover .r-partners-track { animation-play-state: paused; }
-          @keyframes r-partners-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-          .r-partners-link { display: inline-flex; align-items: center; gap: 0.55rem; min-height: 2.7rem; padding: 0.7rem 1rem; border-radius: 999px; border: 1px solid hsl(var(--line, var(--ink) / 0.12)); background: hsl(var(--surface-card, var(--bg)) / 0.72); color: hsl(var(--ink)); font-size: 0.84rem; font-weight: 500; letter-spacing: -0.01em; text-decoration: none; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease; backdrop-filter: blur(10px); white-space: nowrap; }
-          .r-partners-link:hover { transform: translateY(-1px); border-color: hsl(var(--ink) / 0.35); }
-          .r-partners-favicon { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; object-fit: contain; }
-        </style>
-        <div class="r-partners-inner">
-          <span class="r-partners-label">Recognition &amp; Partners</span>
-          <div class="r-partners-wrap">
-            <div class="r-partners-track" id="rPartnersTrack"></div>
-          </div>
-        </div>
         <script>
           (function(){
             var items = [
@@ -3869,42 +3866,33 @@
 
     </main>
 
-    <!-- ===================== 3-WAY CTA ===================== -->
-    <section class="cta-triptych reveal" id="engage">
-      <div class="cta-hub">
-        <span class="cta-hub-label">Ecosystem</span>
-        <h2>Support Rhozeland</h2>
-        <button class="cta-hub-trigger" id="ctaToggle" onclick="document.getElementById('ctaCards').classList.toggle('visible'); this.classList.toggle('active');">
-          Get involved
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
-      </div>
-
-      <div class="cta-cards" id="ctaCards">
-        <svg class="cta-map-lines" viewBox="0 0 980 720" preserveAspectRatio="none" aria-hidden="true">
-          <line x1="490" y1="365" x2="190" y2="200"></line>
-          <line x1="490" y1="365" x2="790" y2="200"></line>
-          <line x1="490" y1="365" x2="490" y2="590"></line>
-        </svg>
-        <div class="cta-map-core" aria-hidden="true"><span>Support</span></div>
-
-        <div class="cta-card cta-card--loop" onclick="document.getElementById('newsletterModal').classList.add('open')" role="button" tabindex="0" aria-label="Stay in the loop">
-          <span class="cta-card-num">01</span>
-          <h3>Stay in the loop</h3>
-          <p>Get releases, events, and updates first.</p>
+    <!-- ===================== START A PROJECT CTA ===================== -->
+    <section class="r-start reveal" id="engage" aria-label="Start a project">
+      <style>
+        .r-start { padding: 56px 0 72px; }
+        .r-start-inner { max-width: 920px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); text-align: center; }
+        .r-start-kicker { display: inline-block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--muted)); margin: 0 0 14px; }
+        .r-start h2 { font-family: var(--font-display, inherit); font-size: clamp(2.2rem, 5.4vw, 3.6rem); font-weight: 900; line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 14px; color: hsl(var(--ink)); }
+        .r-start p { font-size: clamp(0.98rem, 1.5vw, 1.1rem); line-height: 1.5; color: hsl(var(--muted)); margin: 0 auto 26px; max-width: 560px; }
+        .r-start-actions { display: inline-flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .r-start-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.95rem 1.6rem; border-radius: 999px; font-size: 0.92rem; font-weight: 700; letter-spacing: -0.005em; text-decoration: none; cursor: pointer; border: 1px solid hsl(var(--ink)); transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease; font-family: inherit; }
+        .r-start-btn--primary { background: hsl(var(--ink)); color: hsl(var(--surface-card, var(--bg))); }
+        .r-start-btn--primary:hover { transform: translateY(-2px); }
+        .r-start-btn--ghost { background: transparent; color: hsl(var(--ink)); }
+        .r-start-btn--ghost:hover { background: hsl(var(--ink) / 0.06); transform: translateY(-2px); }
+        .r-start-btn svg { width: 1rem; height: 1rem; }
+      </style>
+      <div class="r-start-inner">
+        <span class="r-start-kicker">Work with us</span>
+        <h2>Start a project with Rhozeland</h2>
+        <p>Bring a release, a brand, an event, or an idea. We'll route you to the right team and shape the launch with you.</p>
+        <div class="r-start-actions">
+          <button type="button" class="r-start-btn r-start-btn--primary" onclick="document.getElementById('buildModal').classList.add('open')">
+            Start a project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+          </button>
+          <button type="button" class="r-start-btn r-start-btn--ghost" onclick="document.getElementById('newsletterModal').classList.add('open')">Stay in the loop</button>
         </div>
-
-        <div class="cta-card cta-card--build" onclick="document.getElementById('buildModal').classList.add('open')" role="button" tabindex="0" aria-label="Build with us">
-          <span class="cta-card-num">02</span>
-          <h3>Build with us</h3>
-          <p>Bring a project and we'll shape the launch.</p>
-        </div>
-
-        <a class="cta-card cta-card--back" href="/about.html#tokenized" aria-label="Back the ecosystem">
-          <span class="cta-card-num">03</span>
-          <h3>Back the ecosystem</h3>
-          <p>$RHOZE helps power the ecosystem.</p>
-        </a>
       </div>
 
       <!-- Newsletter Modal -->

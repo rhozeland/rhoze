@@ -2588,6 +2588,7 @@
     .newsletter-modal {
       background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line));
       border-radius: 1.5rem; padding: 2.5rem 2rem; max-width: 380px; width: 90%;
+      max-height: 88vh; overflow-y: auto; overscroll-behavior: contain;
       text-align: center; position: relative;
       box-shadow: 0 30px 80px -20px rgba(0,0,0,0.3);
       transform: scale(0.92) translateY(12px); transition: transform 0.3s ease;
@@ -2638,7 +2639,8 @@
     }
     .build-modal {
       background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line));
-      border-radius: 1.5rem; padding: 2.5rem 2rem; max-width: 440px; width: 92%;
+      border-radius: 1.5rem; padding: 2rem 1.75rem; max-width: 440px; width: 92%;
+      max-height: 88vh; overflow-y: auto; overscroll-behavior: contain;
       position: relative; text-align: center;
       transform: scale(0.92) translateY(12px); transition: transform 0.3s ease;
     }

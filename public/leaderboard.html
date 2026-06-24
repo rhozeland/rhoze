@@ -13,13 +13,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
   <style>
-    .lb-hero { display:grid; gap:14px; padding:24px 28px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); }
+    .lb-hero { display:grid; gap:10px; padding:22px 26px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); }
     .lb-hero .kicker { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
-    .lb-hero h1 { font-size: clamp(28px, 4.4vw, 40px); line-height:1.05; letter-spacing:-0.02em; color:hsl(var(--ink)); font-weight:700; margin-top:2px; }
-    .lb-hero .week-grid { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:8px; margin-top:4px; }
-    .lb-stat { padding:10px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); }
-    .lb-stat .label { font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
-    .lb-stat .value { font-size:16px; font-weight:600; margin-top:2px; color:hsl(var(--ink)); }
+    .lb-hero h1 { font-size: clamp(26px, 4vw, 36px); line-height:1.05; letter-spacing:-0.02em; color:hsl(var(--ink)); font-weight:700; margin-top:2px; }
+    /* Split grid: leaderboard + account */
+    .lb-split { display:grid; grid-template-columns: 1fr; gap:18px; margin-top:16px; align-items:start; }
+    @media (min-width: 980px) { .lb-split { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap:22px; } }
+    .lb-card { border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); overflow:hidden; }
+    .lb-card-pad { padding:18px 20px; }
+    .lb-tabs { display:inline-flex; padding:3px; gap:2px; border:1px solid hsl(var(--line)); border-radius:999px; background:hsl(var(--surface-alt)); }
+    .lb-tabs button { padding:6px 14px; font-size:12px; font-weight:600; letter-spacing:.02em; border-radius:999px; border:0; background:transparent; color:hsl(var(--muted)); cursor:pointer; }
+    .lb-tabs button.active { background:hsl(var(--ink)); color:hsl(var(--surface)); }
     .lb-table { width:100%; border-collapse:separate; border-spacing:0; }
     .lb-table th, .lb-table td { padding:14px 20px; text-align:left; font-size:13px; border-bottom:1px solid hsl(var(--line)); }
     .lb-table th { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:500; }
@@ -28,38 +32,49 @@
     .lb-table th:last-child, .lb-table td:last-child { padding-right:24px; }
     .lb-table td.points { font-variant-numeric: tabular-nums; font-weight:600; color:hsl(var(--ink)); text-align:right; }
     .lb-table tr:hover td { background:hsl(var(--surface-alt)); }
-    .lb-chips { display:flex; gap:6px; flex-wrap:wrap; }
-    .lb-chip { font-size:11px; padding:3px 8px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--muted)); }
+    .lb-table tr:last-child td { border-bottom:0; }
     .lb-medal-1 td.rank { color: hsl(var(--accent-gold)); }
     .lb-medal-2 td.rank { color: hsl(0 0% 65%); }
     .lb-medal-3 td.rank { color: hsl(28 70% 55%); }
+    .lb-pager { display:flex; justify-content:space-between; align-items:center; padding:12px 20px; border-top:1px solid hsl(var(--line)); font-size:12px; color:hsl(var(--muted)); }
+    .lb-pager .pbtns { display:flex; gap:6px; }
+    .lb-pager button { padding:5px 12px; font-size:12px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--ink)); border-radius:var(--radius-md); cursor:pointer; }
+    .lb-pager button:disabled { opacity:.4; cursor:not-allowed; }
     .lb-section { margin-top:22px; padding-left:6px; padding-right:6px; }
     .lb-section h2 { font-size:18px; font-weight:600; color:hsl(var(--ink)); margin-bottom:12px; margin-left:2px; letter-spacing:-0.01em; }
     @media (min-width: 720px) { .lb-section { padding-left:10px; padding-right:10px; } .lb-section h2 { margin-left:4px; } }
     .lb-rules-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:8px; }
+    @media (min-width: 720px) { .lb-rules-row { grid-template-columns: 1fr 1fr !important; } }
     .lb-rule { padding:12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
     .lb-rule .pts { font-size:18px; font-weight:600; color:hsl(var(--ink)); font-variant-numeric: tabular-nums; }
     .lb-rule .act { font-size:12.5px; color:hsl(var(--ink)); margin-top:2px; font-weight:500; }
     .lb-rule .note { font-size:11px; color:hsl(var(--muted)); margin-top:2px; }
-    .lb-cal { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:8px; }
-    .lb-cal-card { padding:18px 20px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
-    .lb-cal-card.active { border-color: hsl(var(--accent-green)); box-shadow: 0 0 0 2px hsl(var(--accent-green) / 0.15); }
-    .lb-cal-card .week { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
-    .lb-cal-card .theme { font-size:16px; font-weight:600; color:hsl(var(--ink)); margin-top:4px; }
-    .lb-cal-card .desc { font-size:12px; color:hsl(var(--muted)); margin-top:6px; line-height:1.4; }
-    .lb-cal-card .meta { font-size:11px; color:hsl(var(--muted)); margin-top:10px; display:flex; justify-content:space-between; }
+    .lb-rewards { display:grid; gap:8px; }
+    .lb-reward { display:flex; gap:10px; align-items:flex-start; padding:11px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
+    .lb-reward .dot { width:8px; height:8px; border-radius:999px; background:hsl(var(--accent-green)); margin-top:6px; flex-shrink:0; }
+    .lb-reward .ttl { font-size:13px; font-weight:600; color:hsl(var(--ink)); }
+    .lb-reward .sub { font-size:11.5px; color:hsl(var(--muted)); margin-top:2px; line-height:1.4; }
     .lb-meta-line { font-size:11px; color:hsl(var(--muted)); margin-top:10px; }
     .lb-empty { padding:32px; text-align:center; color:hsl(var(--muted)); font-size:13px; }
-    /* Submit / Account panel */
-    .lb-account { margin-top:14px; padding:18px 20px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); display:grid; gap:12px; }
+    /* Low-volume CTA banner */
+    .lb-rally { padding:18px 20px; border:1px dashed hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); display:grid; gap:8px; }
+    .lb-rally .badge { font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--accent-green)); font-weight:700; }
+    .lb-rally h3 { font-size:15px; font-weight:600; color:hsl(var(--ink)); }
+    .lb-rally p { font-size:12.5px; color:hsl(var(--muted)); line-height:1.5; }
+    /* Account panel */
+    .lb-account { display:grid; gap:12px; }
     .lb-account .row { display:grid; grid-template-columns: 1fr; gap:8px; }
-    @media (min-width: 640px) { .lb-account .row { grid-template-columns: 1fr 1fr auto; align-items:end; } }
     .lb-field { display:grid; gap:4px; }
     .lb-field label { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); }
     .lb-field input, .lb-field select { padding:9px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface)); color:hsl(var(--ink)); font-size:13px; font-family:inherit; }
-    .lb-btn { padding:9px 16px; border-radius:var(--radius-md); border:1px solid hsl(var(--ink)); background:hsl(var(--ink)); color:hsl(var(--surface)); font-size:12px; font-weight:600; letter-spacing:.04em; cursor:pointer; }
+    .lb-btn { padding:10px 16px; border-radius:var(--radius-md); border:1px solid hsl(var(--ink)); background:hsl(var(--ink)); color:hsl(var(--surface)); font-size:12.5px; font-weight:600; letter-spacing:.04em; cursor:pointer; width:100%; }
     .lb-btn.ghost { background:transparent; color:hsl(var(--ink)); }
+    .lb-btn.sm { padding:7px 12px; width:auto; font-size:11.5px; }
     .lb-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .lb-divider { display:flex; align-items:center; gap:8px; color:hsl(var(--muted)); font-size:10px; letter-spacing:.18em; text-transform:uppercase; margin:4px 0; }
+    .lb-divider::before, .lb-divider::after { content:""; flex:1; height:1px; background:hsl(var(--line)); }
+    .lb-tablink { font-size:11px; color:hsl(var(--muted)); background:none; border:0; cursor:pointer; padding:0; text-decoration:underline; }
+    .lb-tablink:hover { color:hsl(var(--ink)); }
     .lb-acct-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
     .lb-acct-head h2 { font-size:15px; font-weight:600; color:hsl(var(--ink)); }
     .lb-acct-head .who { font-size:11px; color:hsl(var(--muted)); }
@@ -106,89 +121,149 @@
     </div>
 
     <main>
-      <!-- HERO + CURRENT WEEK -->
+      <!-- HERO -->
       <section class="lb-hero">
         <div>
           <span class="kicker">Rhozeland · Community</span>
           <h1>Leaderboard</h1>
-          <p style="font-size:13.5px; color:hsl(var(--muted)); margin-top:6px; line-height:1.5;">
-            Earn $RHOZE every week — raid, thread, ship video. Weekly snapshots, bonus airdrops for the top movers.
+          <p style="font-size:13.5px; color:hsl(var(--muted)); margin-top:4px; line-height:1.5; max-width:60ch;">
+            Earn cash, $RHOZE, store credit, and merch every week. Raid posts, drop memes, write threads, ship video — every approved submission climbs the board.
           </p>
         </div>
       </section>
 
-      <!-- LEADERBOARD -->
-      <section class="lb-section">
-        <!-- ACCOUNT + SUBMISSION -->
-        <div class="lb-account" id="lb-account">
-          <div class="lb-acct-head">
-            <h2>Submit for points</h2>
-            <span class="who" id="lb-who">Not signed in</span>
+      <!-- SPLIT: leaderboard + account -->
+      <section class="lb-split">
+        <!-- LEFT: leaderboard + rules + rewards -->
+        <div style="display:grid; gap:18px; min-width:0;">
+          <div class="lb-card">
+            <div class="lb-card-pad" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div>
+                <h2 style="font-size:16px; font-weight:600; color:hsl(var(--ink));">Top movers</h2>
+                <div class="lb-meta-line" id="lb-updated" style="margin-top:2px;">Updating…</div>
+              </div>
+              <div class="lb-tabs" role="tablist">
+                <button type="button" class="active" data-mode="weekly" role="tab">Weekly</button>
+                <button type="button" data-mode="alltime" role="tab">All-time</button>
+              </div>
+            </div>
+            <table class="lb-table">
+              <thead>
+                <tr><th>Rank</th><th>User</th><th>Challenges</th><th style="text-align:right;">Points</th></tr>
+              </thead>
+              <tbody id="lb-body">
+                <tr><td colspan="4" class="lb-empty">Loading leaderboard…</td></tr>
+              </tbody>
+            </table>
+            <div class="lb-pager" id="lb-pager" style="display:none;">
+              <span id="lb-pager-count">—</span>
+              <div class="pbtns">
+                <button type="button" id="lb-prev">Prev</button>
+                <button type="button" id="lb-next">Next</button>
+              </div>
+            </div>
           </div>
 
-          <!-- Signed-out view: magic-link form -->
-          <form id="lb-auth-form" class="row" autocomplete="on">
-            <div class="lb-field" style="grid-column: 1 / -2;">
-              <label for="lb-email">Email — we'll send you a magic link</label>
-              <input id="lb-email" type="email" required placeholder="you@example.com" />
+          <!-- Low-volume rally CTA (shown only when few participants) -->
+          <div id="lb-rally-wrap" style="display:none;">
+            <div class="lb-rally">
+              <span class="badge">Early days · seats wide open</span>
+              <h3>Be one of the first ten on the board.</h3>
+              <p>The leaderboard is fresh. Sign up on the right, drop your first post, and you'll likely land in the top 3 this week — meaning real cash, $RHOZE, or merch in your hands.</p>
             </div>
-            <button class="lb-btn" type="submit" id="lb-auth-btn">Send link</button>
+          </div>
+
+          <!-- Rules + Rewards side-by-side -->
+          <div style="display:grid; grid-template-columns:1fr; gap:14px;" class="lb-rules-row">
+            <div class="lb-card lb-card-pad">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
+                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
+              </div>
+              <div class="lb-rules-grid" id="lb-rules"></div>
+            </div>
+            <div class="lb-card lb-card-pad">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
+                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
+              </div>
+              <div class="lb-rewards">
+                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer — your choice.</div></div></div>
+                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
+                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size:12px; color:hsl(var(--muted)); text-align:center; padding:8px 12px;">
+            Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted. Snapshots are reviewed weekly by the Rhozeland marketing team.
+          </p>
+        </div>
+
+        <!-- RIGHT: sticky account panel -->
+        <aside class="lb-card lb-card-pad lb-account" id="lb-account" style="position:sticky; top:96px;">
+          <div class="lb-acct-head">
+            <h2 id="lb-acct-title">Join the leaderboard</h2>
+            <span class="who" id="lb-who">Not signed in</span>
+          </div>
+          <p id="lb-acct-sub" style="font-size:12.5px; color:hsl(var(--muted)); line-height:1.5;">
+            Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.
+          </p>
+
+          <!-- SIGNUP -->
+          <form id="lb-signup-form" autocomplete="on" style="display:grid; gap:10px;">
+            <div class="lb-field"><label for="lb-su-email">Email</label><input id="lb-su-email" type="email" required placeholder="name@example.com" /></div>
+            <div class="lb-field"><label for="lb-su-pass">Password</label><input id="lb-su-pass" type="password" required minlength="8" placeholder="At least 8 characters" /></div>
+            <div class="lb-field"><label for="lb-su-user">Username</label><input id="lb-su-user" type="text" required placeholder="@yourname" /></div>
+            <div class="lb-field"><label for="lb-su-social">Social handle</label><input id="lb-su-social" type="text" placeholder="X / IG / TikTok handle" /></div>
+            <div class="lb-field"><label for="lb-su-pay">Payment email <span style="text-transform:none; letter-spacing:0; color:hsl(var(--muted));">(PayPal / Solana addr / e-transfer)</span></label><input id="lb-su-pay" type="text" placeholder="Where rewards get sent" /></div>
+            <button class="lb-btn" type="submit" id="lb-su-btn">Create account</button>
+            <div class="lb-divider">or</div>
+            <button class="lb-btn ghost" type="button" id="lb-show-login">Log in instead</button>
           </form>
 
-          <!-- Signed-in view: submission form -->
-          <form id="lb-submit-form" class="row" style="display:none;">
-            <div class="lb-field">
-              <label for="lb-handle">@handle</label>
-              <input id="lb-handle" type="text" required placeholder="@yourname" />
-            </div>
-            <div class="lb-field">
-              <label for="lb-category">Category</label>
-              <select id="lb-category" required>
-                <option value="raid">Raid</option>
-                <option value="meme">Meme</option>
-                <option value="thread">Educational thread</option>
-                <option value="video">Video / clip</option>
-              </select>
-            </div>
-            <div class="lb-field" style="grid-column: 1 / -1;">
-              <label for="lb-url">Post URL</label>
-              <input id="lb-url" type="url" required placeholder="https://x.com/..." />
-            </div>
-            <button class="lb-btn" type="submit" id="lb-submit-btn" style="grid-column: 1 / -1; justify-self:start;">Submit for review</button>
-            <button class="lb-btn ghost" type="button" id="lb-signout-btn" style="grid-column: 1 / -1; justify-self:start;">Sign out</button>
+          <!-- LOGIN -->
+          <form id="lb-login-form" autocomplete="on" style="display:none; gap:10px;">
+            <div class="lb-field"><label for="lb-li-email">Email</label><input id="lb-li-email" type="email" required placeholder="name@example.com" /></div>
+            <div class="lb-field"><label for="lb-li-pass">Password</label><input id="lb-li-pass" type="password" required placeholder="••••••••" /></div>
+            <button class="lb-btn" type="submit" id="lb-li-btn">Log in</button>
+            <div class="lb-divider">or</div>
+            <button class="lb-btn ghost" type="button" id="lb-show-signup">Create a new account</button>
           </form>
 
-          <div id="lb-msg" class="lb-msg"></div>
+          <!-- SIGNED-IN: profile + submit -->
+          <div id="lb-signed-in" style="display:none; gap:14px; grid-template-columns:1fr;">
+            <div class="lb-field"><label>Profile</label>
+              <div style="display:grid; gap:6px;">
+                <input id="lb-pf-user" type="text" placeholder="Username (@yourname)" />
+                <input id="lb-pf-social" type="text" placeholder="Social handle" />
+                <input id="lb-pf-pay" type="text" placeholder="Payment email / address" />
+                <button class="lb-btn ghost sm" type="button" id="lb-save-profile" style="justify-self:start;">Save profile</button>
+              </div>
+            </div>
+
+            <form id="lb-submit-form" style="display:grid; gap:8px;">
+              <div class="lb-field"><label for="lb-category">Submit post · category</label>
+                <select id="lb-category" required>
+                  <option value="raid">Raid (reply / comment / reshare) · 5</option>
+                  <option value="meme">Meme reply · 10</option>
+                  <option value="tweet">Original tweet · 15</option>
+                  <option value="thread">Thread (4+ posts) · 25</option>
+                  <option value="infographic">Infographic · 35</option>
+                  <option value="video">Video · 45</option>
+                  <option value="bounty">Bounty entry · 50</option>
+                </select>
+              </div>
+              <div class="lb-field"><label for="lb-url">Post URL</label><input id="lb-url" type="url" required placeholder="https://x.com/..." /></div>
+              <button class="lb-btn" type="submit" id="lb-submit-btn">Submit for review</button>
+            </form>
+
+            <button class="lb-tablink" type="button" id="lb-signout-btn" style="justify-self:start;">Sign out</button>
+          </div>
+
+          <div id="lb-msg" class="lb-msg" aria-live="polite"></div>
           <div id="lb-mine" class="lb-mine"></div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:14px;">
-          <h2>Top movers</h2>
-          <div class="lb-meta-line" id="lb-updated">Updating…</div>
-        </div>
-        <div style="border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); overflow:hidden; background:hsl(var(--surface-card));">
-          <table class="lb-table">
-            <thead>
-              <tr><th>Rank</th><th>User</th><th>Breakdown</th><th>Challenges</th><th style="text-align:right;">Points</th></tr>
-            </thead>
-            <tbody id="lb-body">
-              <tr><td colspan="5" class="lb-empty">Loading leaderboard…</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- POINTS RULES -->
-      <section class="lb-section">
-        <h2>How points work</h2>
-        <div class="lb-rules-grid" id="lb-rules"></div>
-      </section>
-
-      <section class="lb-section" style="text-align:center; padding:24px;">
-        <p style="font-size:13px; color:hsl(var(--muted));">
-          Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted.
-          Snapshots are published weekly by the Rhozeland marketing team.
-        </p>
+        </aside>
       </section>
     </main>
 
@@ -246,56 +321,59 @@
       }
       function escapeHtml(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c]; }); }
 
-      function renderLeaderboard(rows) {
+      // ===== Leaderboard with weekly/all-time tabs + pagination =====
+      var PAGE_SIZE = 10;
+      var state = { mode: "weekly", page: 0, rows: [] };
+
+      function sortRows(rows, mode) {
+        var key = mode === "weekly" ? "weekly_points" : "points";
+        return rows.slice().sort(function (a, b) { return (b[key] || 0) - (a[key] || 0); });
+      }
+
+      function renderLeaderboard() {
         var body = document.getElementById("lb-body");
-        if (!rows || !rows.length) {
-          body.innerHTML = '<tr><td colspan="5" class="lb-empty">No published leaderboard yet. Check back after the first snapshot.</td></tr>';
+        var rally = document.getElementById("lb-rally-wrap");
+        var pager = document.getElementById("lb-pager");
+        var key = state.mode === "weekly" ? "weekly_points" : "points";
+        var sorted = sortRows(state.rows, state.mode).filter(function (r) { return (r[key] || 0) > 0 || state.mode === "alltime"; });
+        // Show rally CTA whenever fewer than 10 participants on the board
+        rally.style.display = sorted.length < 10 ? "" : "none";
+
+        if (!sorted.length) {
+          body.innerHTML = '<tr><td colspan="4" class="lb-empty">No ' + (state.mode === "weekly" ? "weekly" : "all-time") + ' points yet. Sign up on the right to get the first slot.</td></tr>';
+          pager.style.display = "none";
+          var latest = state.rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
+          document.getElementById("lb-updated").textContent = latest ? "Last updated " + fmtDate(latest) : "Awaiting first submissions";
           return;
         }
-        var latest = rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
-        document.getElementById("lb-updated").textContent = latest ? "Last published " + fmtDate(latest) : "";
-        body.innerHTML = rows.slice(0, 10).map(function (r, i) {
-          var rank = i + 1;
+
+        var totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+        if (state.page >= totalPages) state.page = totalPages - 1;
+        var start = state.page * PAGE_SIZE;
+        var slice = sorted.slice(start, start + PAGE_SIZE);
+
+        body.innerHTML = slice.map(function (r, i) {
+          var rank = start + i + 1;
           var cls = rank === 1 ? "lb-medal-1" : rank === 2 ? "lb-medal-2" : rank === 3 ? "lb-medal-3" : "";
-          var chips = [
-            ["Raids", r.raids], ["Memes", r.memes], ["Threads", r.edu_threads], ["Videos", r.videos]
-          ].filter(function (c) { return c[1] > 0; })
-           .map(function (c) { return '<span class="lb-chip">' + escapeHtml(c[0]) + ' · ' + c[1] + '</span>'; })
-           .join("");
+          var pts = (r[key] || 0).toLocaleString();
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
             '<td><strong>' + escapeHtml(r.username) + '</strong></td>' +
-            '<td><div class="lb-chips">' + (chips || '<span class="lb-chip">no activity yet</span>') + '</div></td>' +
             '<td>' + (r.challenges_completed || 0) + '</td>' +
-            '<td class="points">' + (r.points || 0).toLocaleString() + '</td>' +
+            '<td class="points">' + pts + '</td>' +
           '</tr>';
         }).join("");
-      }
 
-      function renderChallenges(list) {
-        var cal = document.getElementById("lb-cal");
-        if (!list || !list.length) { cal.innerHTML = '<div class="lb-empty">No challenges scheduled yet.</div>'; return; }
-        var today = new Date().toISOString().slice(0, 10);
-        var current = list.find(function (c) { return c.is_active; }) ||
-                      list.find(function (c) { return c.start_date <= today && c.end_date >= today; }) ||
-                      list[0];
-        if (current) {
-          var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
-          setText("lb-week-label", current.week_label || "—");
-          setText("lb-week-mult", current.multiplier ? current.multiplier + "×" : "1×");
-          setText("lb-week-end", fmtDate(current.end_date));
-          setText("lb-week-desc", current.theme ? current.theme + (current.description ? " — " + current.description : "") : (current.description || ""));
-        }
-        cal.innerHTML = list.map(function (c) {
-          var isCurrent = current && c.id === current.id;
-          return '<div class="lb-cal-card' + (isCurrent ? ' active' : '') + '">' +
-            '<div class="week">' + escapeHtml(c.week_label) + (isCurrent ? ' · this week' : '') + '</div>' +
-            '<div class="theme">' + escapeHtml(c.theme) + '</div>' +
-            '<div class="desc">' + escapeHtml(c.description || '') + '</div>' +
-            '<div class="meta"><span>' + fmtDate(c.start_date) + ' → ' + fmtDate(c.end_date) + '</span>' +
-            '<span>' + (c.multiplier || 1) + '× pts</span></div>' +
-          '</div>';
-        }).join("");
+        if (sorted.length > PAGE_SIZE) {
+          pager.style.display = "";
+          document.getElementById("lb-pager-count").textContent =
+            "Showing " + (start + 1) + "–" + (start + slice.length) + " of " + sorted.length;
+          document.getElementById("lb-prev").disabled = state.page === 0;
+          document.getElementById("lb-next").disabled = state.page >= totalPages - 1;
+        } else { pager.style.display = "none"; }
+
+        var latest = state.rows.reduce(function (acc, r) { return (r.last_updated && (!acc || r.last_updated > acc)) ? r.last_updated : acc; }, null);
+        document.getElementById("lb-updated").textContent = latest ? "Last updated " + fmtDate(latest) : "";
       }
 
       function renderRules(rows) {
@@ -311,42 +389,76 @@
       }
 
       function load() {
-        rest("community_leaderboard?select=*&order=points.desc&limit=25").then(renderLeaderboard).catch(function () {
-          document.getElementById("lb-body").innerHTML = '<tr><td colspan="5" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
+        rest("community_leaderboard?select=*&limit=500").then(function (rows) {
+          state.rows = Array.isArray(rows) ? rows : [];
+          renderLeaderboard();
+        }).catch(function () {
+          document.getElementById("lb-body").innerHTML = '<tr><td colspan="4" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
         });
         rest("community_points_rules?select=*&order=sort_order.asc").then(renderRules);
       }
       load();
       setInterval(load, 60000);
 
-      // ===== Magic-link auth + submissions =====
+      // ===== Tabs / pagination wiring =====
       var $ = function (id) { return document.getElementById(id); };
+      Array.prototype.forEach.call(document.querySelectorAll(".lb-tabs button"), function (b) {
+        b.addEventListener("click", function () {
+          Array.prototype.forEach.call(document.querySelectorAll(".lb-tabs button"), function (x) { x.classList.remove("active"); });
+          b.classList.add("active");
+          state.mode = b.getAttribute("data-mode"); state.page = 0;
+          renderLeaderboard();
+        });
+      });
+      $("lb-prev").addEventListener("click", function () { if (state.page > 0) { state.page--; renderLeaderboard(); } });
+      $("lb-next").addEventListener("click", function () { state.page++; renderLeaderboard(); });
+
+      // ===== Email + password auth =====
       var msgEl = $("lb-msg"), whoEl = $("lb-who");
-      var authForm = $("lb-auth-form"), submitForm = $("lb-submit-form");
+      var signupForm = $("lb-signup-form"), loginForm = $("lb-login-form"), signedIn = $("lb-signed-in");
       function setMsg(t, kind) { msgEl.textContent = t || ""; msgEl.className = "lb-msg" + (kind ? " " + kind : ""); }
+      function show(el, mode) { el.style.display = mode || ""; }
 
       function refreshUI(session) {
         if (session && session.user) {
-          authForm.style.display = "none";
-          submitForm.style.display = "";
-          whoEl.textContent = "Signed in as " + session.user.email;
-          var stored = localStorage.getItem("rhz-handle");
-          if (stored) $("lb-handle").value = stored;
+          signupForm.style.display = "none";
+          loginForm.style.display = "none";
+          signedIn.style.display = "grid";
+          $("lb-acct-title").textContent = "Your account";
+          $("lb-acct-sub").textContent = "Submit posts for points and keep your reward info up to date.";
+          whoEl.textContent = session.user.email;
+          loadProfile();
           loadMine();
         } else {
-          authForm.style.display = "";
-          submitForm.style.display = "none";
+          signedIn.style.display = "none";
+          loginForm.style.display = "none";
+          signupForm.style.display = "grid";
+          $("lb-acct-title").textContent = "Join the leaderboard";
+          $("lb-acct-sub").textContent = "Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.";
           whoEl.textContent = "Not signed in";
           $("lb-mine").innerHTML = "";
         }
+      }
+
+      function loadProfile() {
+        if (!sb) return;
+        sb.auth.getUser().then(function (u) {
+          var uid = u.data.user && u.data.user.id; if (!uid) return;
+          sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name").eq("id", uid).maybeSingle()
+            .then(function (res) {
+              var p = res.data || {};
+              $("lb-pf-user").value = p.community_username || p.alias || "";
+              $("lb-pf-social").value = p.social_handle || "";
+              $("lb-pf-pay").value = p.payment_email || "";
+            });
+        });
       }
 
       function loadMine() {
         if (!sb) return;
         sb.from("community_submissions")
           .select("id,handle,category,post_url,status,awarded_points,reviewer_notes,created_at")
-          .order("created_at", { ascending: false })
-          .limit(10)
+          .order("created_at", { ascending: false }).limit(10)
           .then(function (res) {
             var rows = res.data || [];
             var el = $("lb-mine");
@@ -357,44 +469,85 @@
                 var pts = r.status === "approved" ? " · +" + (r.awarded_points || 0) + " pts" : "";
                 return '<div class="lb-mine-row">' +
                   '<span class="cat">' + escapeHtml(r.category) + '</span>' +
-                  '<a href="' + escapeHtml(r.post_url) + '" target="_blank" rel="noopener" style="color:inherit;">' + escapeHtml(r.post_url) + '</a>' +
+                  '<a href="' + escapeHtml(r.post_url) + '" target="_blank" rel="noopener" style="color:inherit; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:140px;">' + escapeHtml(r.post_url) + '</a>' +
                   '<span class="st ' + stCls + '">' + escapeHtml(r.status) + pts + '</span>' +
                 '</div>';
               }).join("");
           });
       }
 
+      function normalizeHandle(h) { h = (h || "").trim(); if (h && h[0] !== "@") h = "@" + h; return h; }
+
       if (sb) {
         sb.auth.getSession().then(function (r) { refreshUI(r.data.session); });
         sb.auth.onAuthStateChange(function (_e, s) { refreshUI(s); });
 
-        authForm.addEventListener("submit", function (e) {
+        $("lb-show-login").addEventListener("click", function () { signupForm.style.display = "none"; loginForm.style.display = "grid"; setMsg(""); });
+        $("lb-show-signup").addEventListener("click", function () { loginForm.style.display = "none"; signupForm.style.display = "grid"; setMsg(""); });
+
+        signupForm.addEventListener("submit", function (e) {
           e.preventDefault();
-          var email = $("lb-email").value.trim();
-          if (!email) return;
-          var btn = $("lb-auth-btn"); btn.disabled = true; setMsg("Sending magic link…");
-          sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: window.location.origin + "/leaderboard" } })
+          var email = $("lb-su-email").value.trim();
+          var pass = $("lb-su-pass").value;
+          var user = normalizeHandle($("lb-su-user").value);
+          var social = $("lb-su-social").value.trim();
+          var pay = $("lb-su-pay").value.trim();
+          if (!email || pass.length < 8 || !user) { setMsg("Email, password (8+), and username are required.", "err"); return; }
+          var btn = $("lb-su-btn"); btn.disabled = true; setMsg("Creating account…");
+          sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: window.location.origin + "/leaderboard" } })
+            .then(function (r) {
+              if (r.error) { btn.disabled = false; setMsg(r.error.message, "err"); return null; }
+              var uid = r.data.user && r.data.user.id;
+              if (!uid) { btn.disabled = false; setMsg("Account created. Check your email if confirmation is required.", "ok"); return null; }
+              return sb.from("profiles").update({
+                community_username: user, social_handle: social || null, payment_email: pay || null
+              }).eq("id", uid);
+            })
             .then(function (r) {
               btn.disabled = false;
-              if (r.error) setMsg(r.error.message, "err");
-              else setMsg("Check your email for the magic link to finish signing in.", "ok");
+              if (r && r.error) { setMsg("Account created, but profile didn't save: " + r.error.message, "err"); return; }
+              setMsg("Account created — you're in!", "ok");
             });
+        });
+
+        loginForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          var email = $("lb-li-email").value.trim();
+          var pass = $("lb-li-pass").value;
+          if (!email || !pass) return;
+          var btn = $("lb-li-btn"); btn.disabled = true; setMsg("Signing in…");
+          sb.auth.signInWithPassword({ email: email, password: pass }).then(function (r) {
+            btn.disabled = false;
+            if (r.error) setMsg(r.error.message, "err"); else setMsg("Welcome back.", "ok");
+          });
+        });
+
+        $("lb-save-profile").addEventListener("click", function () {
+          sb.auth.getUser().then(function (u) {
+            var uid = u.data.user && u.data.user.id; if (!uid) return;
+            var user = normalizeHandle($("lb-pf-user").value);
+            setMsg("Saving…");
+            sb.from("profiles").update({
+              community_username: user, social_handle: $("lb-pf-social").value.trim() || null,
+              payment_email: $("lb-pf-pay").value.trim() || null
+            }).eq("id", uid).then(function (r) {
+              if (r.error) setMsg(r.error.message, "err"); else setMsg("Profile saved.", "ok");
+            });
+          });
         });
 
         $("lb-signout-btn").addEventListener("click", function () {
           sb.auth.signOut().then(function () { setMsg("Signed out.", "ok"); });
         });
 
-        submitForm.addEventListener("submit", function (e) {
+        $("lb-submit-form").addEventListener("submit", function (e) {
           e.preventDefault();
-          var handle = $("lb-handle").value.trim();
           var category = $("lb-category").value;
           var post_url = $("lb-url").value.trim();
-          if (!handle || !post_url) return;
-          if (handle[0] !== "@") handle = "@" + handle;
-          if (handle.length > 64 || post_url.length > 500) { setMsg("Too long.", "err"); return; }
+          var handle = normalizeHandle($("lb-pf-user").value);
+          if (!handle) { setMsg("Set a username in your profile first.", "err"); return; }
           if (!/^https?:\/\//i.test(post_url)) { setMsg("Post URL must start with http(s)://", "err"); return; }
-          localStorage.setItem("rhz-handle", handle);
+          if (handle.length > 64 || post_url.length > 500) { setMsg("Too long.", "err"); return; }
           var btn = $("lb-submit-btn"); btn.disabled = true; setMsg("Submitting…");
           sb.auth.getUser().then(function (u) {
             var uid = u.data.user && u.data.user.id;

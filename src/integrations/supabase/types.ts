@@ -158,6 +158,7 @@ export type Database = {
           updated_at: string
           username: string
           videos: number
+          weekly_points: number
         }
         Insert: {
           challenges_completed?: number
@@ -173,6 +174,7 @@ export type Database = {
           updated_at?: string
           username: string
           videos?: number
+          weekly_points?: number
         }
         Update: {
           challenges_completed?: number
@@ -188,6 +190,7 @@ export type Database = {
           updated_at?: string
           username?: string
           videos?: number
+          weekly_points?: number
         }
         Relationships: []
       }
@@ -972,6 +975,7 @@ export type Database = {
           alias: string | null
           avatar_url: string | null
           bio: string | null
+          community_username: string | null
           created_at: string
           date_of_birth: string | null
           department: Database["public"]["Enums"]["department"] | null
@@ -987,11 +991,13 @@ export type Database = {
           id: string
           internal_notes: string | null
           job_title: string | null
+          payment_email: string | null
           payment_method: string | null
           phone: string | null
           portfolio_url: string | null
           program: string | null
           pronouns: string | null
+          social_handle: string | null
           specialty: string | null
           started_at: string | null
           updated_at: string
@@ -1004,6 +1010,7 @@ export type Database = {
           alias?: string | null
           avatar_url?: string | null
           bio?: string | null
+          community_username?: string | null
           created_at?: string
           date_of_birth?: string | null
           department?: Database["public"]["Enums"]["department"] | null
@@ -1019,11 +1026,13 @@ export type Database = {
           id: string
           internal_notes?: string | null
           job_title?: string | null
+          payment_email?: string | null
           payment_method?: string | null
           phone?: string | null
           portfolio_url?: string | null
           program?: string | null
           pronouns?: string | null
+          social_handle?: string | null
           specialty?: string | null
           started_at?: string | null
           updated_at?: string
@@ -1036,6 +1045,7 @@ export type Database = {
           alias?: string | null
           avatar_url?: string | null
           bio?: string | null
+          community_username?: string | null
           created_at?: string
           date_of_birth?: string | null
           department?: Database["public"]["Enums"]["department"] | null
@@ -1051,11 +1061,13 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           job_title?: string | null
+          payment_email?: string | null
           payment_method?: string | null
           phone?: string | null
           portfolio_url?: string | null
           program?: string | null
           pronouns?: string | null
+          social_handle?: string | null
           specialty?: string | null
           started_at?: string | null
           updated_at?: string
@@ -2135,6 +2147,7 @@ export type Database = {
       }
       archive_expired_projects: { Args: never; Returns: number }
       can_edit_community: { Args: { _uid: string }; Returns: boolean }
+      community_reset_weekly_points: { Args: never; Returns: undefined }
       community_submission_approve: {
         Args: { _notes?: string; _points: number; _submission_id: string }
         Returns: undefined
@@ -2261,7 +2274,14 @@ export type Database = {
     Enums: {
       activity_type: "call" | "email" | "meeting" | "note" | "task"
       app_role: "admin" | "employee" | "client" | "marketing"
-      community_submission_category: "raid" | "meme" | "thread" | "video"
+      community_submission_category:
+        | "raid"
+        | "meme"
+        | "tweet"
+        | "thread"
+        | "infographic"
+        | "video"
+        | "bounty"
       community_submission_status: "pending" | "approved" | "rejected"
       contact_type: "lead" | "client" | "partner" | "vendor"
       credit_request_status:
@@ -2419,7 +2439,15 @@ export const Constants = {
     Enums: {
       activity_type: ["call", "email", "meeting", "note", "task"],
       app_role: ["admin", "employee", "client", "marketing"],
-      community_submission_category: ["raid", "meme", "thread", "video"],
+      community_submission_category: [
+        "raid",
+        "meme",
+        "tweet",
+        "thread",
+        "infographic",
+        "video",
+        "bounty",
+      ],
       community_submission_status: ["pending", "approved", "rejected"],
       contact_type: ["lead", "client", "partner", "vendor"],
       credit_request_status: [

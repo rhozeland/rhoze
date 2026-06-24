@@ -3543,7 +3543,7 @@
               <article class="r-eco-issue-main">
                 <div class="r-eco-kicker-row">
                   <span class="r-eco-kicker">The Channel</span>
-                  <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto / LA</span>
+                  <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto</span>
                 </div>
                 <h1 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h1>
                 <div class="r-eco-video">
@@ -4504,7 +4504,7 @@
         var dek = document.getElementById('rEcoFeaturedDek');
         if (dek) dek.innerHTML = '<em>' + (latest.title || 'Latest episode').replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — fresh on the Rhozeland channel. New episode every Sunday.';
         var ep = document.getElementById('rEcoEpDate');
-        if (ep) ep.textContent = 'Updated ' + TIME_AGO(latest.published) + ' · Toronto / LA';
+        if (ep) ep.textContent = 'Updated ' + TIME_AGO(latest.published) + ' · Toronto';
 
         // Episodes rail: up to 8 items, horizontally scrollable, with fade-swap interaction
         var grid = document.getElementById('rEcoEpsGrid');

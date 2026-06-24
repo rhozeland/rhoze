@@ -3923,40 +3923,7 @@
         <div class="build-modal">
           <button class="build-modal-close" onclick="document.getElementById('buildModal').classList.remove('open')" aria-label="Close">&times;</button>
           <h3>Start a Project</h3>
-          <p>Pick a lane — we'll route you to the right team.</p>
-          <div class="bm-triage" role="list">
-            <button type="button" class="bm-triage-card" role="listitem" onclick="(function(){var s=document.getElementById('bm-type'); if(s){s.value='music-production'; s.scrollIntoView({behavior:'smooth',block:'center'});}})()">
-              <span class="bm-triage-k">Produce</span>
-              <strong>Make something new</strong>
-              <span class="bm-triage-d">Music, video, photo, design, web.</span>
-            </button>
-            <button type="button" class="bm-triage-card" role="listitem" onclick="(function(){var s=document.getElementById('bm-type'); if(s){s.value='marketing'; s.scrollIntoView({behavior:'smooth',block:'center'});}})()">
-              <span class="bm-triage-k">Distribute</span>
-              <strong>Launch &amp; grow it</strong>
-              <span class="bm-triage-d">Rollout, marketing, events, press.</span>
-            </button>
-            <a class="bm-triage-card bm-triage-card--portal" role="listitem" href="/team.html#/portal">
-              <span class="bm-triage-k">Client Portal</span>
-              <strong>Existing project</strong>
-              <span class="bm-triage-d">Sign in to track work in progress.</span>
-            </a>
-          </div>
-          <div class="bm-triage-divider"><span>Or fill out the brief</span></div>
-          <style>
-            .bm-triage { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin: 14px 0 18px; }
-            .bm-triage-card { display: flex; flex-direction: column; gap: 4px; padding: 14px 12px; background: hsl(var(--surface-alt)); border: 1px solid hsl(var(--line)); border-radius: 10px; text-align: left; cursor: pointer; text-decoration: none; color: hsl(var(--ink)); transition: border-color 160ms ease, transform 160ms ease, background 160ms ease; font-family: inherit; }
-            .bm-triage-card:hover { border-color: hsl(var(--ink)); transform: translateY(-1px); background: hsl(var(--surface-card)); }
-            .bm-triage-card .bm-triage-k { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: hsl(var(--muted)); }
-            .bm-triage-card strong { font-size: 0.92rem; font-weight: 800; line-height: 1.15; }
-            .bm-triage-card .bm-triage-d { font-size: 0.72rem; color: hsl(var(--muted)); line-height: 1.35; }
-            .bm-triage-card--portal { background: hsl(var(--ink)); color: hsl(var(--surface-card)); border-color: hsl(var(--ink)); }
-            .bm-triage-card--portal .bm-triage-k, .bm-triage-card--portal .bm-triage-d { color: hsl(var(--surface-card) / 0.7); }
-            .bm-triage-card--portal:hover { background: hsl(var(--surface-card)); color: hsl(var(--ink)); }
-            .bm-triage-card--portal:hover .bm-triage-k, .bm-triage-card--portal:hover .bm-triage-d { color: hsl(var(--muted)); }
-            .bm-triage-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0 14px; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); }
-            .bm-triage-divider::before, .bm-triage-divider::after { content:""; flex:1; height:1px; background: hsl(var(--line)); }
-            @media (max-width: 560px) { .bm-triage { grid-template-columns: 1fr; } }
-          </style>
+          <p>Tell us about your project — we'll route it to the right team. Already working with us? <a href="/team.html#/portal" style="color:hsl(var(--ink));text-decoration:underline;">Sign in</a>.</p>
           <form class="build-modal-form" onsubmit="handleBuildForm(event)">
             <div>
               <label for="bm-fullname">Full Name</label>

@@ -3231,11 +3231,14 @@
          .r-eco-side-swap { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; min-height: 88px; margin-bottom: 12px; }
          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.85); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); opacity: 1; transition: opacity 0.35s ease, transform 0.35s ease; }
          .r-eco-side-ico svg { width: 20px; height: 20px; }
-         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin: 0; }
+         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin: 0; opacity: 1; transition: opacity 0.35s ease, transform 0.35s ease; }
          .r-eco-side-pills { position: absolute; inset: 0; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 4px; padding: 0 10px; opacity: 0; transform: scale(0.96); transition: opacity 0.35s ease, transform 0.35s ease; pointer-events: none; }
          .r-eco-side-tile:hover .r-eco-side-ico,
          .r-eco-side-tile:focus-visible .r-eco-side-ico,
          .r-eco-side-tile:focus-within .r-eco-side-ico { opacity: 0; transform: scale(0.9); }
+         .r-eco-side-tile:hover .r-eco-side-cat,
+         .r-eco-side-tile:focus-visible .r-eco-side-cat,
+         .r-eco-side-tile:focus-within .r-eco-side-cat { opacity: 0; transform: translateY(4px); }
          .r-eco-side-tile:hover .r-eco-side-pills,
          .r-eco-side-tile:focus-visible .r-eco-side-pills,
          .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: scale(1); pointer-events: auto; }

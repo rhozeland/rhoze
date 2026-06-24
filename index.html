@@ -3222,23 +3222,24 @@
           /* Sidebar Explore grid — full-bleed quadrant tiles with hover service reveal */
          .r-eco-side-explore { margin-top: 10px; padding-top: 10px; border-top: 1px solid hsl(var(--ink) / 0.08); flex: 1; display: flex; }
          .r-eco-side-grid { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 2px; width: 100%; min-height: 480px; border-radius: 16px; overflow: hidden; }
-         .r-eco-side-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; padding: 16px 14px 18px; border-radius: 0; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: none; min-height: 230px; }
-         .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; z-index: 2; }
-         .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fff1de 0%, #f6b97a 100%); }
-         .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #e6edff 0%, #b8c8f5 100%); }
-         .r-eco-side-tile.is-dev     { background: linear-gradient(160deg, #fff8c8 0%, #f4dc6a 100%); }
-         .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #ffe7f0 0%, #f3b8d0 100%); }
-         .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.78); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 10px; }
-         .r-eco-side-ico svg { width: 18px; height: 18px; }
-         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 10px; transition: transform 0.25s ease; }
-         .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 0; max-width: 100%; opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; }
-         .r-eco-side-tile:hover .r-eco-side-pills,
-         .r-eco-side-tile:focus-visible .r-eco-side-pills,
-         .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
-         .r-eco-side-tile:hover .r-eco-side-cat,
-         .r-eco-side-tile:focus-visible .r-eco-side-cat { transform: translateY(-2px); }
-         .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-         @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } .r-eco-side-pills { opacity: 1; transform: none; pointer-events: auto; } }
+          .r-eco-side-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px 14px 18px; border-radius: 0; text-decoration: none; color: #1a1a1a; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: none; min-height: 230px; }
+          .r-eco-side-tile:hover, .r-eco-side-tile:focus-visible { transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,0.28); outline: none; z-index: 2; }
+          .r-eco-side-tile.is-visual  { background: linear-gradient(160deg, #fff1de 0%, #f6b97a 100%); }
+          .r-eco-side-tile.is-audio   { background: linear-gradient(160deg, #e6edff 0%, #b8c8f5 100%); }
+          .r-eco-side-tile.is-dev     { background: linear-gradient(160deg, #fff8c8 0%, #f4dc6a 100%); }
+          .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #ffe7f0 0%, #f3b8d0 100%); }
+          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.78); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 10px; transition: transform 0.35s cubic-bezier(.25,.8,.25,1); }
+          .r-eco-side-ico svg { width: 18px; height: 18px; }
+          .r-eco-side-main { display: flex; flex-direction: column; align-items: center; transition: transform 0.35s cubic-bezier(.25,.8,.25,1); }
+          .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 0; }
+          .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; position: absolute; bottom: 16px; left: 0; right: 0; padding: 0 8px; margin: 0 auto; max-width: calc(100% - 12px); opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none; }
+          .r-eco-side-tile:hover .r-eco-side-ico,
+          .r-eco-side-tile:hover .r-eco-side-main { transform: translateY(-26px); }
+          .r-eco-side-tile:hover .r-eco-side-pills,
+          .r-eco-side-tile:focus-visible .r-eco-side-pills,
+          .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
+          .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; justify-content: flex-start; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } .r-eco-side-pills { opacity: 1; transform: none; pointer-events: auto; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }
@@ -3586,7 +3587,7 @@
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                       </span>
-                      <span>
+                       <span class="r-eco-side-main">
                         <span class="r-eco-side-cat">Visual</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Photo shoots</span>
@@ -3601,7 +3602,7 @@
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="4" y2="12"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="20" y1="11" x2="20" y2="13"/></svg>
                       </span>
-                      <span>
+                       <span class="r-eco-side-main">
                         <span class="r-eco-side-cat">Audio</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Recording</span>
@@ -3616,7 +3617,7 @@
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                       </span>
-                      <span>
+                       <span class="r-eco-side-main">
                         <span class="r-eco-side-cat">Development</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Web &amp; app</span>
@@ -3630,7 +3631,7 @@
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                       </span>
-                      <span>
+                       <span class="r-eco-side-main">
                         <span class="r-eco-side-cat">Events</span>
                         <span class="r-eco-side-pills">
                           <span class="r-eco-side-pill">Land Sessions</span>

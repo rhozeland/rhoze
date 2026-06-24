@@ -25,15 +25,19 @@ export default function Portal() {
   const { session, loading, roles, isTeam, refreshRoles } = useAuth();
 
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [audience, setAudience] = useState<"client" | "team">(
+    params.get("as") === "team" ? "team" : "client",
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [code, setCode] = useState(params.get("code") ?? "");
   const [referral, setReferral] = useState(params.get("ref") ?? "");
-  const [showCode, setShowCode] = useState(!!params.get("code"));
-  const [showReferral, setShowReferral] = useState(!!params.get("ref"));
   const [busy, setBusy] = useState(false);
   const [redeeming, setRedeeming] = useState(false);
+
+  const showCode = audience === "client";
+  const showReferral = audience === "team";
 
   // Smart router: once we know the session + roles, send the user where they belong.
   useEffect(() => {
@@ -65,12 +69,18 @@ export default function Portal() {
         }
         setRedeeming(false);
       }
-      // Role-based routing.
-      if (isTeam) {
+      // Role-based routing — only auto-route when the user has a single
+      // surface. Users with both team and client roles (or marketing) see
+      // an explicit chooser so they can pick which side to enter.
+      const hasClient = roles.includes("client");
+      if (isTeam && !hasClient) {
         navigate("/", { replace: true });
-      } else if (roles.includes("client") || roles.length === 0) {
+      } else if (hasClient && !isTeam) {
+        navigate("/client/home", { replace: true });
+      } else if (!isTeam && !hasClient && roles.length === 0) {
         navigate("/client/home", { replace: true });
       }
+      // else: keep them on Portal to choose (chooser UI below).
     })();
     return () => {
       cancelled = true;
@@ -142,26 +152,63 @@ export default function Portal() {
     );
   }
 
-  // Signed-in: show interstitial while smart-router decides.
+  // Signed-in: show interstitial / chooser. Users with both roles pick.
   if (session) {
+    const hasClient = roles.includes("client");
+    const showChooser = isTeam && hasClient;
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-6">
-        <div className="w-full max-w-sm space-y-4 text-center">
+        <div className="w-full max-w-sm space-y-5 text-center">
+          <a
+            href="/"
+            className="inline-block text-xs text-muted-foreground hover:text-foreground"
+          >
+            ← Back to Rhozeland
+          </a>
           <div className="text-xs uppercase tracking-widest text-muted-foreground">
             Rhozeland
           </div>
-          <h1 className="text-2xl font-semibold">Signing you in…</h1>
-          <p className="text-sm text-muted-foreground">
-            If this takes more than a moment, you can{" "}
+          <h1 className="text-2xl font-semibold">
+            {showChooser ? "Where are you going?" : "Signing you in…"}
+          </h1>
+          {showChooser ? (
+            <div className="space-y-2">
+              <Button className="w-full" onClick={() => navigate("/", { replace: true })}>
+                Team dashboard
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate("/client/home", { replace: true })}
+              >
+                Client portal
+              </Button>
+              <p className="text-[11px] text-muted-foreground pt-2">
+                Signed in as {session.user.email}
+              </p>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              If this takes more than a moment, you can{" "}
+              <button
+                type="button"
+                className="underline"
+                onClick={() => supabase.auth.signOut()}
+              >
+                sign out
+              </button>{" "}
+              and try again.
+            </p>
+          )}
+          {showChooser && (
             <button
               type="button"
-              className="underline"
+              className="text-xs text-muted-foreground hover:text-foreground underline"
               onClick={() => supabase.auth.signOut()}
             >
               sign out
-            </button>{" "}
-            and try again.
-          </p>
+            </button>
+          )}
         </div>
       </div>
     );
@@ -170,6 +217,12 @@ export default function Portal() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-6 py-12">
       <div className="w-full max-w-sm space-y-6">
+        <a
+          href="/"
+          className="inline-block text-xs text-muted-foreground hover:text-foreground"
+        >
+          ← Back to Rhozeland
+        </a>
         <div className="space-y-1">
           <div className="text-xs uppercase tracking-widest text-muted-foreground">
             Rhozeland
@@ -178,8 +231,36 @@ export default function Portal() {
             {mode === "signin" ? "Sign in" : "Create account"}
           </h1>
           <p className="text-sm text-muted-foreground">
-            One door for clients and team. We'll route you to the right place.
+            {audience === "client"
+              ? "Access your project, balance, and requests."
+              : "Staff and contractor access. You'll need a referral code to create a team account."}
           </p>
+        </div>
+
+        {/* Audience toggle */}
+        <div className="grid grid-cols-2 rounded-md border border-border p-1 text-xs">
+          <button
+            type="button"
+            onClick={() => setAudience("client")}
+            className={`py-1.5 rounded-sm transition-colors ${
+              audience === "client"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Client
+          </button>
+          <button
+            type="button"
+            onClick={() => setAudience("team")}
+            className={`py-1.5 rounded-sm transition-colors ${
+              audience === "team"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Team
+          </button>
         </div>
 
         <form onSubmit={onSubmit} className="space-y-3">
@@ -221,7 +302,9 @@ export default function Portal() {
 
           {showCode ? (
             <div className="space-y-1.5">
-              <Label htmlFor="code">Project code</Label>
+              <Label htmlFor="code">
+                Project code <span className="text-muted-foreground font-normal">(optional)</span>
+              </Label>
               <Input
                 id="code"
                 placeholder="RHZ-XXXX-XXXX"
@@ -232,19 +315,16 @@ export default function Portal() {
                 From your payment confirmation. Links the project to your account.
               </p>
             </div>
-          ) : (
-            <button
-              type="button"
-              className="text-xs text-muted-foreground hover:text-foreground"
-              onClick={() => setShowCode(true)}
-            >
-              + Have a project code?
-            </button>
-          )}
+          ) : null}
 
           {showReferral ? (
             <div className="space-y-1.5">
-              <Label htmlFor="ref">Team referral code</Label>
+              <Label htmlFor="ref">
+                Referral code{" "}
+                <span className="text-muted-foreground font-normal">
+                  {mode === "signup" ? "(required for new team accounts)" : "(optional)"}
+                </span>
+              </Label>
               <Input
                 id="ref"
                 autoComplete="off"
@@ -252,18 +332,10 @@ export default function Portal() {
                 onChange={(e) => setReferral(e.target.value)}
               />
               <p className="text-[11px] text-muted-foreground">
-                Required for staff / contractor access. Ask an admin.
+                Ask an admin if you don't have one.
               </p>
             </div>
-          ) : (
-            <button
-              type="button"
-              className="text-xs text-muted-foreground hover:text-foreground block"
-              onClick={() => setShowReferral(true)}
-            >
-              + Joining the team? Add referral code
-            </button>
-          )}
+          ) : null}
 
           <Button type="submit" className="w-full" disabled={busy}>
             {busy

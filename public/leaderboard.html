@@ -120,89 +120,149 @@
     </div>
 
     <main>
-      <!-- HERO + CURRENT WEEK -->
+      <!-- HERO -->
       <section class="lb-hero">
         <div>
           <span class="kicker">Rhozeland · Community</span>
           <h1>Leaderboard</h1>
-          <p style="font-size:13.5px; color:hsl(var(--muted)); margin-top:6px; line-height:1.5;">
-            Earn $RHOZE every week — raid, thread, ship video. Weekly snapshots, bonus airdrops for the top movers.
+          <p style="font-size:13.5px; color:hsl(var(--muted)); margin-top:4px; line-height:1.5; max-width:60ch;">
+            Earn cash, $RHOZE, store credit, and merch every week. Raid posts, drop memes, write threads, ship video — every approved submission climbs the board.
           </p>
         </div>
       </section>
 
-      <!-- LEADERBOARD -->
-      <section class="lb-section">
-        <!-- ACCOUNT + SUBMISSION -->
-        <div class="lb-account" id="lb-account">
-          <div class="lb-acct-head">
-            <h2>Submit for points</h2>
-            <span class="who" id="lb-who">Not signed in</span>
+      <!-- SPLIT: leaderboard + account -->
+      <section class="lb-split">
+        <!-- LEFT: leaderboard + rules + rewards -->
+        <div style="display:grid; gap:18px; min-width:0;">
+          <div class="lb-card">
+            <div class="lb-card-pad" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div>
+                <h2 style="font-size:16px; font-weight:600; color:hsl(var(--ink));">Top movers</h2>
+                <div class="lb-meta-line" id="lb-updated" style="margin-top:2px;">Updating…</div>
+              </div>
+              <div class="lb-tabs" role="tablist">
+                <button type="button" class="active" data-mode="weekly" role="tab">Weekly</button>
+                <button type="button" data-mode="alltime" role="tab">All-time</button>
+              </div>
+            </div>
+            <table class="lb-table">
+              <thead>
+                <tr><th>Rank</th><th>User</th><th>Challenges</th><th style="text-align:right;">Points</th></tr>
+              </thead>
+              <tbody id="lb-body">
+                <tr><td colspan="4" class="lb-empty">Loading leaderboard…</td></tr>
+              </tbody>
+            </table>
+            <div class="lb-pager" id="lb-pager" style="display:none;">
+              <span id="lb-pager-count">—</span>
+              <div class="pbtns">
+                <button type="button" id="lb-prev">Prev</button>
+                <button type="button" id="lb-next">Next</button>
+              </div>
+            </div>
           </div>
 
-          <!-- Signed-out view: magic-link form -->
-          <form id="lb-auth-form" class="row" autocomplete="on">
-            <div class="lb-field" style="grid-column: 1 / -2;">
-              <label for="lb-email">Email — we'll send you a magic link</label>
-              <input id="lb-email" type="email" required placeholder="you@example.com" />
+          <!-- Low-volume rally CTA (shown only when few participants) -->
+          <div id="lb-rally-wrap" style="display:none;">
+            <div class="lb-rally">
+              <span class="badge">Early days · seats wide open</span>
+              <h3>Be one of the first ten on the board.</h3>
+              <p>The leaderboard is fresh. Sign up on the right, drop your first post, and you'll likely land in the top 3 this week — meaning real cash, $RHOZE, or merch in your hands.</p>
             </div>
-            <button class="lb-btn" type="submit" id="lb-auth-btn">Send link</button>
+          </div>
+
+          <!-- Rules + Rewards side-by-side -->
+          <div style="display:grid; grid-template-columns:1fr; gap:14px;" class="lb-rules-row">
+            <div class="lb-card lb-card-pad">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
+                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
+              </div>
+              <div class="lb-rules-grid" id="lb-rules"></div>
+            </div>
+            <div class="lb-card lb-card-pad">
+              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
+                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
+              </div>
+              <div class="lb-rewards">
+                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer — your choice.</div></div></div>
+                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
+                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size:12px; color:hsl(var(--muted)); text-align:center; padding:8px 12px;">
+            Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted. Snapshots are reviewed weekly by the Rhozeland marketing team.
+          </p>
+        </div>
+
+        <!-- RIGHT: sticky account panel -->
+        <aside class="lb-card lb-card-pad lb-account" id="lb-account" style="position:sticky; top:96px;">
+          <div class="lb-acct-head">
+            <h2 id="lb-acct-title">Join the leaderboard</h2>
+            <span class="who" id="lb-who">Not signed in</span>
+          </div>
+          <p id="lb-acct-sub" style="font-size:12.5px; color:hsl(var(--muted)); line-height:1.5;">
+            Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.
+          </p>
+
+          <!-- SIGNUP -->
+          <form id="lb-signup-form" autocomplete="on" style="display:grid; gap:10px;">
+            <div class="lb-field"><label for="lb-su-email">Email</label><input id="lb-su-email" type="email" required placeholder="name@example.com" /></div>
+            <div class="lb-field"><label for="lb-su-pass">Password</label><input id="lb-su-pass" type="password" required minlength="8" placeholder="At least 8 characters" /></div>
+            <div class="lb-field"><label for="lb-su-user">Username</label><input id="lb-su-user" type="text" required placeholder="@yourname" /></div>
+            <div class="lb-field"><label for="lb-su-social">Social handle</label><input id="lb-su-social" type="text" placeholder="X / IG / TikTok handle" /></div>
+            <div class="lb-field"><label for="lb-su-pay">Payment email <span style="text-transform:none; letter-spacing:0; color:hsl(var(--muted));">(PayPal / Solana addr / e-transfer)</span></label><input id="lb-su-pay" type="text" placeholder="Where rewards get sent" /></div>
+            <button class="lb-btn" type="submit" id="lb-su-btn">Create account</button>
+            <div class="lb-divider">or</div>
+            <button class="lb-btn ghost" type="button" id="lb-show-login">Log in instead</button>
           </form>
 
-          <!-- Signed-in view: submission form -->
-          <form id="lb-submit-form" class="row" style="display:none;">
-            <div class="lb-field">
-              <label for="lb-handle">@handle</label>
-              <input id="lb-handle" type="text" required placeholder="@yourname" />
-            </div>
-            <div class="lb-field">
-              <label for="lb-category">Category</label>
-              <select id="lb-category" required>
-                <option value="raid">Raid</option>
-                <option value="meme">Meme</option>
-                <option value="thread">Educational thread</option>
-                <option value="video">Video / clip</option>
-              </select>
-            </div>
-            <div class="lb-field" style="grid-column: 1 / -1;">
-              <label for="lb-url">Post URL</label>
-              <input id="lb-url" type="url" required placeholder="https://x.com/..." />
-            </div>
-            <button class="lb-btn" type="submit" id="lb-submit-btn" style="grid-column: 1 / -1; justify-self:start;">Submit for review</button>
-            <button class="lb-btn ghost" type="button" id="lb-signout-btn" style="grid-column: 1 / -1; justify-self:start;">Sign out</button>
+          <!-- LOGIN -->
+          <form id="lb-login-form" autocomplete="on" style="display:none; gap:10px;">
+            <div class="lb-field"><label for="lb-li-email">Email</label><input id="lb-li-email" type="email" required placeholder="name@example.com" /></div>
+            <div class="lb-field"><label for="lb-li-pass">Password</label><input id="lb-li-pass" type="password" required placeholder="••••••••" /></div>
+            <button class="lb-btn" type="submit" id="lb-li-btn">Log in</button>
+            <div class="lb-divider">or</div>
+            <button class="lb-btn ghost" type="button" id="lb-show-signup">Create a new account</button>
           </form>
 
-          <div id="lb-msg" class="lb-msg"></div>
+          <!-- SIGNED-IN: profile + submit -->
+          <div id="lb-signed-in" style="display:none; gap:14px; grid-template-columns:1fr;">
+            <div class="lb-field"><label>Profile</label>
+              <div style="display:grid; gap:6px;">
+                <input id="lb-pf-user" type="text" placeholder="Username (@yourname)" />
+                <input id="lb-pf-social" type="text" placeholder="Social handle" />
+                <input id="lb-pf-pay" type="text" placeholder="Payment email / address" />
+                <button class="lb-btn ghost sm" type="button" id="lb-save-profile" style="justify-self:start;">Save profile</button>
+              </div>
+            </div>
+
+            <form id="lb-submit-form" style="display:grid; gap:8px;">
+              <div class="lb-field"><label for="lb-category">Submit post · category</label>
+                <select id="lb-category" required>
+                  <option value="raid">Raid (reply / comment / reshare) · 5</option>
+                  <option value="meme">Meme reply · 10</option>
+                  <option value="tweet">Original tweet · 15</option>
+                  <option value="thread">Thread (4+ posts) · 25</option>
+                  <option value="infographic">Infographic · 35</option>
+                  <option value="video">Video · 45</option>
+                  <option value="bounty">Bounty entry · 50</option>
+                </select>
+              </div>
+              <div class="lb-field"><label for="lb-url">Post URL</label><input id="lb-url" type="url" required placeholder="https://x.com/..." /></div>
+              <button class="lb-btn" type="submit" id="lb-submit-btn">Submit for review</button>
+            </form>
+
+            <button class="lb-tablink" type="button" id="lb-signout-btn" style="justify-self:start;">Sign out</button>
+          </div>
+
+          <div id="lb-msg" class="lb-msg" aria-live="polite"></div>
           <div id="lb-mine" class="lb-mine"></div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:14px;">
-          <h2>Top movers</h2>
-          <div class="lb-meta-line" id="lb-updated">Updating…</div>
-        </div>
-        <div style="border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); overflow:hidden; background:hsl(var(--surface-card));">
-          <table class="lb-table">
-            <thead>
-              <tr><th>Rank</th><th>User</th><th>Breakdown</th><th>Challenges</th><th style="text-align:right;">Points</th></tr>
-            </thead>
-            <tbody id="lb-body">
-              <tr><td colspan="5" class="lb-empty">Loading leaderboard…</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- POINTS RULES -->
-      <section class="lb-section">
-        <h2>How points work</h2>
-        <div class="lb-rules-grid" id="lb-rules"></div>
-      </section>
-
-      <section class="lb-section" style="text-align:center; padding:24px;">
-        <p style="font-size:13px; color:hsl(var(--muted));">
-          Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted.
-          Snapshots are published weekly by the Rhozeland marketing team.
-        </p>
+        </aside>
       </section>
     </main>
 

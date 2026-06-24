@@ -406,17 +406,38 @@
         document.getElementById("lb-updated").textContent = latest ? "Last updated " + fmtDate(latest) : "";
       }
 
-      function renderRules(rows) {
+      // ===== Points rules: tabbed, with icons =====
+      // Static catalog drives icons + tiers; numbers stay in sync with community_submission_approve.
+      var RULES_CATALOG = [
+        { tier:"quick",  pts:5,  activity:"Raid",            icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>' },
+        { tier:"quick",  pts:10, activity:"Meme reply",      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>' },
+        { tier:"quick",  pts:15, activity:"Original tweet",  icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
+        { tier:"create", pts:25, activity:"Thread (4+)",     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="14" y2="18"/></svg>' },
+        { tier:"create", pts:35, activity:"Infographic",     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="15" y1="21" x2="15" y2="13"/></svg>' },
+        { tier:"create", pts:45, activity:"Video",           icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>' },
+        { tier:"big",    pts:50, activity:"Rhozeland bounty",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>' }
+      ];
+      function renderRules(tier) {
         var el = document.getElementById("lb-rules");
-        if (!rows || !rows.length) { el.innerHTML = '<div class="lb-empty">No rules published.</div>'; return; }
-        el.innerHTML = rows.map(function (r) {
+        var list = RULES_CATALOG.filter(function(r){ return r.tier === tier; });
+        el.innerHTML = list.map(function (r) {
           return '<div class="lb-rule">' +
-            '<div class="pts">+' + (r.base_points || 0) + '</div>' +
-            '<div class="act">' + escapeHtml(r.activity) + '</div>' +
-            (r.notes ? '<div class="note">' + escapeHtml(r.notes) + '</div>' : '') +
+            '<span class="ico">' + r.icon + '</span>' +
+            '<span class="body">' +
+              '<span class="act">' + escapeHtml(r.activity) + '</span>' +
+              '<span class="pts">+' + r.pts + ' pts</span>' +
+            '</span>' +
           '</div>';
         }).join("");
       }
+      renderRules("quick");
+      Array.prototype.forEach.call(document.querySelectorAll("#lb-rules-tabs button"), function (b) {
+        b.addEventListener("click", function () {
+          Array.prototype.forEach.call(document.querySelectorAll("#lb-rules-tabs button"), function (x) { x.classList.remove("active"); });
+          b.classList.add("active");
+          renderRules(b.getAttribute("data-tier"));
+        });
+      });
 
       function load() {
         rest("community_leaderboard?select=*&limit=500").then(function (rows) {
@@ -425,7 +446,6 @@
         }).catch(function () {
           document.getElementById("lb-body").innerHTML = '<tr><td colspan="4" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
         });
-        rest("community_points_rules?select=*&order=sort_order.asc").then(renderRules);
       }
       load();
       setInterval(load, 60000);
@@ -470,16 +490,54 @@
         }
       }
 
+      function parseSocials(raw) {
+        if (!raw) return {};
+        try { var o = JSON.parse(raw); if (o && typeof o === "object") return o; } catch (e) {}
+        return { x: raw }; // legacy single-string fallback
+      }
+      function applySocialUI(socials) {
+        ["x","ig","tt","yt"].forEach(function (k) {
+          var v = (socials[k] || "").trim();
+          var btn = document.querySelector('.lb-soc-btn[data-soc="' + k + '"]');
+          var inp = document.querySelector('[data-soc-input="' + k + '"]');
+          if (btn) btn.classList.toggle("has-value", !!v);
+          if (inp) inp.value = v;
+        });
+      }
+      function readSocialsFromUI() {
+        var out = {};
+        ["x","ig","tt","yt"].forEach(function (k) {
+          var v = (document.querySelector('[data-soc-input="' + k + '"]').value || "").trim();
+          if (v) out[k] = v;
+        });
+        return out;
+      }
+      // Toggle a social input panel when its icon is clicked.
+      Array.prototype.forEach.call(document.querySelectorAll(".lb-soc-btn"), function (b) {
+        b.addEventListener("click", function () {
+          var k = b.getAttribute("data-soc");
+          var panel = document.getElementById("lb-soc-input-" + k);
+          if (panel) {
+            var willOpen = !panel.classList.contains("open");
+            // close others for tidy single-input view
+            Array.prototype.forEach.call(document.querySelectorAll(".lb-soc-input"), function (p) { p.classList.remove("open"); });
+            if (willOpen) { panel.classList.add("open"); var inp = panel.querySelector("input"); if (inp) inp.focus(); }
+          }
+        });
+      });
+
       function loadProfile() {
         if (!sb) return;
         sb.auth.getUser().then(function (u) {
-          var uid = u.data.user && u.data.user.id; if (!uid) return;
+          var user = u.data.user; if (!user) return;
+          var uid = user.id;
           sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name").eq("id", uid).maybeSingle()
             .then(function (res) {
               var p = res.data || {};
               $("lb-pf-user").value = p.community_username || p.alias || "";
-              $("lb-pf-social").value = p.social_handle || "";
+              $("lb-pf-email").value = user.email || "";
               $("lb-pf-pay").value = p.payment_email || "";
+              applySocialUI(parseSocials(p.social_handle));
             });
         });
       }
@@ -520,8 +578,6 @@
           var email = $("lb-su-email").value.trim();
           var pass = $("lb-su-pass").value;
           var user = normalizeHandle($("lb-su-user").value);
-          var social = $("lb-su-social").value.trim();
-          var pay = $("lb-su-pay").value.trim();
           if (!email || pass.length < 8 || !user) { setMsg("Email, password (8+), and username are required.", "err"); return; }
           var btn = $("lb-su-btn"); btn.disabled = true; setMsg("Creating account…");
           sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: window.location.origin + "/leaderboard" } })
@@ -529,9 +585,7 @@
               if (r.error) { btn.disabled = false; setMsg(r.error.message, "err"); return null; }
               var uid = r.data.user && r.data.user.id;
               if (!uid) { btn.disabled = false; setMsg("Account created. Check your email if confirmation is required.", "ok"); return null; }
-              return sb.from("profiles").update({
-                community_username: user, social_handle: social || null, payment_email: pay || null
-              }).eq("id", uid);
+              return sb.from("profiles").update({ community_username: user }).eq("id", uid);
             })
             .then(function (r) {
               btn.disabled = false;
@@ -556,12 +610,16 @@
           sb.auth.getUser().then(function (u) {
             var uid = u.data.user && u.data.user.id; if (!uid) return;
             var user = normalizeHandle($("lb-pf-user").value);
+            var socials = readSocialsFromUI();
+            var socialJson = Object.keys(socials).length ? JSON.stringify(socials) : null;
             setMsg("Saving…");
             sb.from("profiles").update({
-              community_username: user, social_handle: $("lb-pf-social").value.trim() || null,
+              community_username: user, social_handle: socialJson,
               payment_email: $("lb-pf-pay").value.trim() || null
             }).eq("id", uid).then(function (r) {
-              if (r.error) setMsg(r.error.message, "err"); else setMsg("Profile saved.", "ok");
+              if (r.error) { setMsg(r.error.message, "err"); return; }
+              applySocialUI(socials);
+              setMsg("Profile saved.", "ok");
             });
           });
         });

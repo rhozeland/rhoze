@@ -3244,6 +3244,11 @@
          .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: scale(1); pointer-events: auto; }
          .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
          @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-swap { min-height: 70px; margin-bottom: 8px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } }
+         @media (hover: none) {
+           .r-eco-side-ico { opacity: 0; }
+           .r-eco-side-cat { opacity: 0; }
+           .r-eco-side-pills { opacity: 1; transform: none; pointer-events: auto; }
+         }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }

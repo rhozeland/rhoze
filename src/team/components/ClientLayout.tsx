@@ -69,10 +69,10 @@ export default function ClientLayout() {
           </a>
           <nav className="flex items-center gap-1 flex-wrap justify-end">
             <NavLink to="/client/home" end className={linkCls}>
-              <FolderOpen size={12} /> <span className="hidden xs:inline">Projects</span>
+              <FolderOpen size={12} /> <span className="hidden sm:inline">Projects</span>
             </NavLink>
             <NavLink to="/client/requests" className={linkCls}>
-              <Plus size={12} /> <span className="hidden xs:inline">Requests</span>
+              <Plus size={12} /> <span className="hidden sm:inline">Requests</span>
             </NavLink>
             <span
               className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-md bg-foreground text-background tabular-nums"
@@ -88,10 +88,10 @@ export default function ClientLayout() {
               <span className="hidden sm:inline">&nbsp;$RHOZE</span>
             </span>
             <NavLink to="/client/profile" className={linkCls}>
-              <UserCircle2 size={12} /> <span className="hidden xs:inline">Profile</span>
+              <UserCircle2 size={12} /> <span className="hidden sm:inline">Profile</span>
             </NavLink>
             <Button onClick={handleSignOut} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-              <LogOut size={12} /> <span className="hidden xs:inline">Sign out</span>
+              <LogOut size={12} /> <span className="hidden sm:inline">Sign out</span>
             </Button>
           </nav>
         </div>

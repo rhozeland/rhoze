@@ -50,6 +50,28 @@
     .lb-cal-card .meta { font-size:11px; color:hsl(var(--muted)); margin-top:10px; display:flex; justify-content:space-between; }
     .lb-meta-line { font-size:11px; color:hsl(var(--muted)); margin-top:10px; }
     .lb-empty { padding:32px; text-align:center; color:hsl(var(--muted)); font-size:13px; }
+    /* Submit / Account panel */
+    .lb-account { margin-top:14px; padding:18px 20px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); display:grid; gap:12px; }
+    .lb-account .row { display:grid; grid-template-columns: 1fr; gap:8px; }
+    @media (min-width: 640px) { .lb-account .row { grid-template-columns: 1fr 1fr auto; align-items:end; } }
+    .lb-field { display:grid; gap:4px; }
+    .lb-field label { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-field input, .lb-field select { padding:9px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface)); color:hsl(var(--ink)); font-size:13px; font-family:inherit; }
+    .lb-btn { padding:9px 16px; border-radius:var(--radius-md); border:1px solid hsl(var(--ink)); background:hsl(var(--ink)); color:hsl(var(--surface)); font-size:12px; font-weight:600; letter-spacing:.04em; cursor:pointer; }
+    .lb-btn.ghost { background:transparent; color:hsl(var(--ink)); }
+    .lb-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .lb-acct-head { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+    .lb-acct-head h2 { font-size:15px; font-weight:600; color:hsl(var(--ink)); }
+    .lb-acct-head .who { font-size:11px; color:hsl(var(--muted)); }
+    .lb-msg { font-size:12px; color:hsl(var(--muted)); }
+    .lb-msg.ok { color: hsl(var(--accent-green)); }
+    .lb-msg.err { color: hsl(0 70% 55%); }
+    .lb-mine { margin-top:10px; display:grid; gap:6px; }
+    .lb-mine-row { display:flex; gap:8px; align-items:center; font-size:12px; padding:8px 10px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface)); }
+    .lb-mine-row .cat { font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:hsl(var(--muted)); }
+    .lb-mine-row .st { margin-left:auto; font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:2px 8px; border-radius:999px; border:1px solid hsl(var(--line)); }
+    .lb-mine-row .st.approved { color: hsl(var(--accent-green)); border-color: hsl(var(--accent-green) / 0.5); }
+    .lb-mine-row .st.rejected { color: hsl(0 70% 55%); border-color: hsl(0 70% 55% / 0.5); }
   </style>
 </head>
 <body class="page-events">
@@ -97,6 +119,49 @@
 
       <!-- LEADERBOARD -->
       <section class="lb-section">
+        <!-- ACCOUNT + SUBMISSION -->
+        <div class="lb-account" id="lb-account">
+          <div class="lb-acct-head">
+            <h2>Submit for points</h2>
+            <span class="who" id="lb-who">Not signed in</span>
+          </div>
+
+          <!-- Signed-out view: magic-link form -->
+          <form id="lb-auth-form" class="row" autocomplete="on">
+            <div class="lb-field" style="grid-column: 1 / -2;">
+              <label for="lb-email">Email — we'll send you a magic link</label>
+              <input id="lb-email" type="email" required placeholder="you@example.com" />
+            </div>
+            <button class="lb-btn" type="submit" id="lb-auth-btn">Send link</button>
+          </form>
+
+          <!-- Signed-in view: submission form -->
+          <form id="lb-submit-form" class="row" style="display:none;">
+            <div class="lb-field">
+              <label for="lb-handle">@handle</label>
+              <input id="lb-handle" type="text" required placeholder="@yourname" />
+            </div>
+            <div class="lb-field">
+              <label for="lb-category">Category</label>
+              <select id="lb-category" required>
+                <option value="raid">Raid</option>
+                <option value="meme">Meme</option>
+                <option value="thread">Educational thread</option>
+                <option value="video">Video / clip</option>
+              </select>
+            </div>
+            <div class="lb-field" style="grid-column: 1 / -1;">
+              <label for="lb-url">Post URL</label>
+              <input id="lb-url" type="url" required placeholder="https://x.com/..." />
+            </div>
+            <button class="lb-btn" type="submit" id="lb-submit-btn" style="grid-column: 1 / -1; justify-self:start;">Submit for review</button>
+            <button class="lb-btn ghost" type="button" id="lb-signout-btn" style="grid-column: 1 / -1; justify-self:start;">Sign out</button>
+          </form>
+
+          <div id="lb-msg" class="lb-msg"></div>
+          <div id="lb-mine" class="lb-mine"></div>
+        </div>
+
         <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom:14px;">
           <h2>Top movers</h2>
           <div class="lb-meta-line" id="lb-updated">Updating…</div>

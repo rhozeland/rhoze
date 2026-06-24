@@ -1,10 +1,10 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Shield, LogOut, Calendar,
   FolderKanban, Inbox, Package, Clock,
-  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy,
+  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy, Menu, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -51,10 +51,15 @@ function collapsedNavClass({ isActive }: { isActive: boolean }) {
 export default function TeamLayout() {
   const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("team-sidebar-collapsed") === "1";
   });
+  // Mobile drawer is separate state — sidebar collapse only applies on md+.
+  const [mobileOpen, setMobileOpen] = useState(false);
+  // Close the drawer whenever the route changes.
+  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
   useEffect(() => {
     localStorage.setItem("team-sidebar-collapsed", collapsed ? "1" : "0");
   }, [collapsed]);
@@ -89,11 +94,47 @@ export default function TeamLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-background text-foreground md:flex">
+      {/* Mobile top bar */}
+      <header className="md:hidden sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card px-4 py-2.5">
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open menu"
+          className="h-9 w-9 inline-flex items-center justify-center rounded-md text-foreground hover:bg-accent"
+        >
+          <Menu size={18} />
+        </button>
+        <div className="flex items-center gap-2">
+          <img src={rhozelandLogo} alt="" className="h-6 w-6 object-contain" />
+          <span className="text-xs font-semibold tracking-wider uppercase">Rhozeland</span>
+        </div>
+        <NavLink
+          to="/settings"
+          className="h-9 w-9 inline-flex items-center justify-center rounded-md"
+          aria-label="My account"
+        >
+          <Avatar className="h-7 w-7">
+            {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
+            <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
+          </Avatar>
+        </NavLink>
+      </header>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-foreground/40 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden
+        />
+      )}
       <aside
         className={cn(
-          "border-r border-border bg-card flex flex-col transition-[width] duration-200",
-          collapsed ? "w-14" : "w-60",
+          "border-r border-border bg-card flex flex-col transition-transform duration-200",
+          // Mobile: off-canvas drawer
+          "fixed inset-y-0 left-0 z-50 w-64 md:static md:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          // Desktop width — respects the collapse toggle
+          collapsed ? "md:w-14" : "md:w-60",
         )}
       >
         <div
@@ -119,16 +160,27 @@ export default function TeamLayout() {
               </div>
             </NavLink>
           )}
-          <Button
-            onClick={() => setCollapsed((c) => !c)}
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              onClick={() => setCollapsed((c) => !c)}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 hidden md:inline-flex"
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+            </Button>
+            <Button
+              onClick={() => setMobileOpen(false)}
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0 md:hidden"
+              aria-label="Close menu"
+            >
+              <X size={16} />
+            </Button>
+          </div>
         </div>
         <nav className={cn("flex-1 space-y-1 overflow-y-auto", collapsed ? "p-2" : "p-3")}>
           <NavLink to="/settings" className={collapsed ? collapsedNavClass : navClass} title={collapsed ? accountLabel : undefined}>
@@ -187,8 +239,8 @@ export default function TeamLayout() {
           </Button>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto p-8">
+      <main className="flex-1 overflow-auto min-w-0">
+        <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8">
           <Outlet />
         </div>
       </main>

@@ -3230,10 +3230,15 @@
          .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #ffe7f0 0%, #f3b8d0 100%); }
          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.78); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 10px; }
          .r-eco-side-ico svg { width: 18px; height: 18px; }
-         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 10px; }
-         .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 0; max-width: 100%; }
+         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 10px; transition: transform 0.25s ease; }
+         .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 0; max-width: 100%; opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; }
+         .r-eco-side-tile:hover .r-eco-side-pills,
+         .r-eco-side-tile:focus-visible .r-eco-side-pills,
+         .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
+         .r-eco-side-tile:hover .r-eco-side-cat,
+         .r-eco-side-tile:focus-visible .r-eco-side-cat { transform: translateY(-2px); }
          .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-         @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } }
+         @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } .r-eco-side-pills { opacity: 1; transform: none; pointer-events: auto; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }
@@ -3476,30 +3481,19 @@
               <div class="r-eco-ticker-row">
               <div class="r-eco-tick">
                 <span class="r-eco-net-dot" aria-hidden="true"></span>
-                <span class="r-eco-tick-k">Network</span>
-                <span class="r-eco-tick-v">Rhozeland · Solana</span>
+                <span class="r-eco-tick-k">News</span>
+                <span class="r-eco-tick-v">Latest from Rhozeland</span>
               </div>
-              <div class="r-eco-tick is-news" aria-label="Rhozeland live updates">
+              <div class="r-eco-tick is-news" aria-label="Latest news from Rhozeland">
                 <div class="r-eco-news-track" id="rEcoNewsTrack">
-                  <a class="r-eco-news-item" href="/leaderboard.html"><span class="r-eco-news-k">Leaderboard</span><span class="r-eco-news-v">Weekly snapshot · live</span></a>
-                  <a class="r-eco-news-item" href="/events.html"><span class="r-eco-news-k">Next Event</span><span class="r-eco-news-v">Land Sessions · RSVP</span></a>
-                  <a class="r-eco-news-item" href="#chart"><span class="r-eco-news-k">Live Chart</span><span class="r-eco-news-v">$RHOZE on Solana</span></a>
-                  <a class="r-eco-news-item" href="https://www.youtube.com/@Rhozeland/streams" target="_blank" rel="noopener"><span class="r-eco-news-k">Live Stream</span><span class="r-eco-news-v" id="rEcoLiveSlot" data-live="false">Offline</span></a>
-                  <a class="r-eco-news-item" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-news-k">Podcast</span><span class="r-eco-news-v">Latest video loading…</span></a>
+                  <a class="r-eco-news-item" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-eco-news-k">Podcast</span><span class="r-eco-news-v">Rhoze Podcast Ep. 6 · Ooak & Michael</span></a>
+                  <a class="r-eco-news-item" href="https://vectorfestival.org/window-activation" target="_blank" rel="noopener"><span class="r-eco-news-k">Exhibition</span><span class="r-eco-news-v">Indoléstic · Server Incognito at Vector Festival</span></a>
+                  <a class="r-eco-news-item" href="/about.html"><span class="r-eco-news-k">Hackathon</span><span class="r-eco-news-v">Submitted to Solana Coliseum Frontier</span></a>
+                  <a class="r-eco-news-item" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener"><span class="r-eco-news-k">Release</span><span class="r-eco-news-v">Cozal — “Holy Water” music video out now</span></a>
+                  <a class="r-eco-news-item" href="/leaderboard.html"><span class="r-eco-news-k">Community</span><span class="r-eco-news-v">Weekly leaderboard snapshot live</span></a>
                 </div>
               </div>
               </div>
-             <div class="r-eco-feat r-eco-feat--standalone r-eco-feat--inline" aria-label="Featured work" style="margin:10px 0 12px;background:#1a1a1a;border-radius:var(--radius-lg);padding:14px;box-shadow:0 22px 60px -22px rgba(0,0,0,0.5);">
-               <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
-               <a class="r-eco-feat-all" href="/projects.html">See all projects
-                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-               </a>
-               <div class="r-eco-feat-viewport">
-                 <div class="r-eco-feat-track" id="rEcoFeatTrackTop">
-                   <!-- Cards injected by script -->
-                 </div>
-               </div>
-             </div>
              <details class="r-eco-story" id="rEcoStory">
               <summary aria-label="Our story (expand)">
                 <span class="r-eco-story-line">
@@ -3603,7 +3597,7 @@
                         </span>
                       </span>
                     </a>
-                    <a class="r-eco-side-tile is-audio" href="/podcast.html">
+                    <a class="r-eco-side-tile is-audio" href="/projects.html">
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="4" y2="12"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="20" y1="11" x2="20" y2="13"/></svg>
                       </span>
@@ -3618,7 +3612,7 @@
                         </span>
                       </span>
                     </a>
-                    <a class="r-eco-side-tile is-dev" href="/build.html">
+                    <a class="r-eco-side-tile is-dev" href="/projects.html">
                       <span class="r-eco-side-ico" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                       </span>
@@ -3654,8 +3648,24 @@
 
         </div>
       </section>
-      <!-- Recognition & Partners — scrolling brand strip -->
-      <section class="r-partners reveal" aria-label="Recognition and partners">
+       <!-- Featured work (standalone) — moved back to the bottom of the hero/intro area -->
+       <section class="reveal" aria-label="Featured work" style="padding: 12px 0 8px;">
+         <div class="hero-inner" style="max-width: var(--container-max); margin: 0 auto;">
+           <div class="r-eco-feat r-eco-feat--standalone" aria-label="Featured work" style="background:#1a1a1a;border-radius:var(--radius-lg);padding:14px;box-shadow:0 22px 60px -22px rgba(0,0,0,0.5);">
+             <span class="r-eco-feat-label"><span class="r-eco-feat-label-full">Featured work · 1000+ creator collaborations</span><span class="r-eco-feat-label-short">Featured work</span></span>
+             <a class="r-eco-feat-all" href="/projects.html">See all projects
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+             </a>
+             <div class="r-eco-feat-viewport">
+               <div class="r-eco-feat-track" id="rEcoFeatTrackTop">
+                 <!-- Cards injected by script -->
+               </div>
+             </div>
+           </div>
+         </div>
+       </section>
+       <!-- Recognition & Partners — scrolling brand strip -->
+       <section class="r-partners reveal" aria-label="Recognition and partners">
         <style>
           .r-partners { padding: 28px 0 40px; background: transparent; }
           .r-partners-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); }

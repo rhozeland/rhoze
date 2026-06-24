@@ -3230,10 +3230,15 @@
          .r-eco-side-tile.is-events  { background: linear-gradient(160deg, #ffe7f0 0%, #f3b8d0 100%); }
          .r-eco-side-ico { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.78); color: #1a1a1a; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 10px; }
          .r-eco-side-ico svg { width: 18px; height: 18px; }
-         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 10px; }
-         .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 0; max-width: 100%; }
+         .r-eco-side-cat { display: block; font-size: 0.95rem; font-weight: 900; letter-spacing: 0.04em; color: #1a1a1a; text-transform: uppercase; line-height: 1; margin-bottom: 10px; transition: transform 0.25s ease; }
+         .r-eco-side-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 0; max-width: 100%; opacity: 0; transform: translateY(6px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; }
+         .r-eco-side-tile:hover .r-eco-side-pills,
+         .r-eco-side-tile:focus-visible .r-eco-side-pills,
+         .r-eco-side-tile:focus-within .r-eco-side-pills { opacity: 1; transform: translateY(0); pointer-events: auto; }
+         .r-eco-side-tile:hover .r-eco-side-cat,
+         .r-eco-side-tile:focus-visible .r-eco-side-cat { transform: translateY(-2px); }
          .r-eco-side-pill { display: inline-flex; align-items: center; padding: 4px 8px; background: #1a1a1a; color: #FAF9F6; border-radius: 999px; font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
-         @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } }
+         @media (max-width: 720px) { .r-eco-side-grid { min-height: 0; } .r-eco-side-tile { min-height: 170px; padding: 14px 10px; } .r-eco-side-cat { font-size: 0.8rem; } .r-eco-side-pill { font-size: 0.5rem; padding: 3px 6px; } .r-eco-side-pills { opacity: 1; transform: none; pointer-events: auto; } }
           .r-eco-stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding: 4px 8px 12px; }
           .r-eco-stage-head .k { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(250,249,246,0.65); }
           .r-eco-stage-head .t { color: #FAF9F6; font-size: 1.4rem; font-weight: 900; letter-spacing: -0.02em; margin: 4px 0 0; }

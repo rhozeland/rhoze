@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Save, ExternalLink, Check, X, Pencil } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 type Row = {
   id?: string;
@@ -44,6 +45,24 @@ type Profile = {
   created_at: string;
 };
 
+type Socials = { x?: string; ig?: string; tt?: string; yt?: string };
+function parseSocials(raw: string | null): Socials {
+  if (!raw) return {};
+  try {
+    const o = JSON.parse(raw);
+    if (o && typeof o === "object") return o as Socials;
+  } catch {}
+  return { x: raw };
+}
+function stringifySocials(s: Socials): string | null {
+  const cleaned: Socials = {};
+  (Object.keys(s) as (keyof Socials)[]).forEach((k) => {
+    const v = (s[k] || "").trim();
+    if (v) cleaned[k] = v;
+  });
+  return Object.keys(cleaned).length ? JSON.stringify(cleaned) : null;
+}
+
 export default function Leaderboard() {
   const { roles, isAdmin } = useAuth();
   const canEdit = isAdmin || roles.includes("marketing" as any);
@@ -52,6 +71,8 @@ export default function Leaderboard() {
   const [subs, setSubs] = useState<Submission[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [profileFilter, setProfileFilter] = useState("");
+  const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
+  const [editDraft, setEditDraft] = useState<{ username: string; email: string; pay: string; socials: Socials }>({ username: "", email: "", pay: "", socials: {} });
   const [pointsDraft, setPointsDraft] = useState<Record<string, number>>({});
   const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
   const [editingSub, setEditingSub] = useState<string | null>(null);
@@ -69,6 +90,35 @@ export default function Leaderboard() {
     if (d.data) setSubs(d.data as any);
     if (p.data) setProfiles(p.data as any);
     setLoading(false);
+  }
+
+  function openEditProfile(p: Profile) {
+    setEditingProfile(p);
+    setEditDraft({
+      username: p.community_username || p.display_name || "",
+      email: p.email || "",
+      pay: p.payment_email || "",
+      socials: parseSocials(p.social_handle),
+    });
+  }
+
+  async function saveProfileEdit() {
+    if (!editingProfile) return;
+    setBusy(true);
+    try {
+      const { error } = await supabase.from("profiles").update({
+        community_username: editDraft.username.trim() || null,
+        email: editDraft.email.trim() || null,
+        payment_email: editDraft.pay.trim() || null,
+        social_handle: stringifySocials(editDraft.socials),
+      }).eq("id", editingProfile.id);
+      if (error) throw error;
+      toast({ title: "Profile updated" });
+      setEditingProfile(null);
+      await load();
+    } catch (e: any) {
+      toast({ title: "Update failed", description: e.message, variant: "destructive" });
+    } finally { setBusy(false); }
   }
 
   useEffect(() => { load(); }, []);
@@ -331,30 +381,69 @@ export default function Leaderboard() {
               No matching profiles.
             </div>
           ) : (
-            <div className="border border-border rounded-lg bg-card divide-y divide-border">
-              {filteredProfiles.map((p) => (
-                <div key={p.id} className="p-3 grid gap-1 sm:grid-cols-12 sm:items-center text-sm">
-                  <div className="sm:col-span-3">
-                    <div className="font-medium">{p.community_username || p.display_name || "—"}</div>
-                    {p.display_name && p.community_username && (
-                      <div className="text-[11px] text-muted-foreground">{p.display_name}</div>
-                    )}
+            <div className="border border-border rounded-lg bg-card divide-y divide-border overflow-hidden">
+              {filteredProfiles.map((p) => {
+                const socials = parseSocials(p.social_handle);
+                const socialLabels: { key: keyof Socials; label: string }[] = [
+                  { key: "x", label: "X" }, { key: "ig", label: "IG" }, { key: "tt", label: "TT" }, { key: "yt", label: "YT" },
+                ];
+                return (
+                  <div key={p.id} className="p-3 flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-3 text-sm">
+                    <div className="lg:w-44 min-w-0">
+                      <div className="font-medium truncate">{p.community_username || p.display_name || "—"}</div>
+                      {p.display_name && p.community_username && (
+                        <div className="text-[11px] text-muted-foreground truncate">{p.display_name}</div>
+                      )}
+                    </div>
+                    <div className="lg:flex-1 min-w-0 text-xs text-muted-foreground truncate" title={p.email || ""}>
+                      <span className="uppercase tracking-widest text-[9px] mr-1">email</span>{p.email || "—"}
+                    </div>
+                    <div className="lg:flex-1 min-w-0 text-xs text-muted-foreground truncate" title={p.payment_email || ""}>
+                      <span className="uppercase tracking-widest text-[9px] mr-1">pay</span>{p.payment_email || "—"}
+                    </div>
+                    <div className="lg:w-56 min-w-0 flex flex-wrap gap-1">
+                      {socialLabels.filter((s) => socials[s.key]).length === 0 ? (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      ) : socialLabels.filter((s) => socials[s.key]).map((s) => (
+                        <span key={s.key} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-foreground/80 max-w-[150px] truncate">
+                          <span className="font-semibold mr-1">{s.label}</span>{socials[s.key]}
+                        </span>
+                      ))}
+                    </div>
+                    <Button size="sm" variant="ghost" onClick={() => openEditProfile(p)} className="self-start lg:self-auto">
+                      <Pencil size={12} /> Edit
+                    </Button>
                   </div>
-                  <div className="sm:col-span-3 text-xs text-muted-foreground truncate">{p.email || "—"}</div>
-                  <div className="sm:col-span-3 text-xs text-muted-foreground truncate">
-                    <span className="uppercase tracking-widest text-[9px] mr-1">pay</span>
-                    {p.payment_email || "—"}
-                  </div>
-                  <div className="sm:col-span-3 text-xs text-muted-foreground truncate">
-                    <span className="uppercase tracking-widest text-[9px] mr-1">social</span>
-                    {p.social_handle || "—"}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </TabsContent>
       </Tabs>
+
+      <Dialog open={!!editingProfile} onOpenChange={(o) => !o && setEditingProfile(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Edit community profile</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label className="text-xs">Username</Label><Input value={editDraft.username} onChange={(e) => setEditDraft((d) => ({ ...d, username: e.target.value }))} /></div>
+            <div><Label className="text-xs">Contact email</Label><Input type="email" value={editDraft.email} onChange={(e) => setEditDraft((d) => ({ ...d, email: e.target.value }))} /></div>
+            <div><Label className="text-xs">Payment email / address</Label><Input value={editDraft.pay} onChange={(e) => setEditDraft((d) => ({ ...d, pay: e.target.value }))} /></div>
+            <div className="grid grid-cols-2 gap-2">
+              {([["x","X / Twitter"],["ig","Instagram"],["tt","TikTok"],["yt","YouTube"]] as const).map(([k, label]) => (
+                <div key={k}>
+                  <Label className="text-xs">{label}</Label>
+                  <Input value={(editDraft.socials as any)[k] || ""} onChange={(e) => setEditDraft((d) => ({ ...d, socials: { ...d.socials, [k]: e.target.value } }))} placeholder="@handle" />
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground">Changing the contact email here only updates the profile row. The user's login email is managed by auth and they can change it from their account.</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingProfile(null)}>Cancel</Button>
+            <Button onClick={saveProfileEdit} disabled={busy}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

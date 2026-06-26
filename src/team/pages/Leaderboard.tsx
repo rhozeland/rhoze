@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, Save, ExternalLink, Check, X } from "lucide-react";
+import { Plus, Trash2, Save, ExternalLink, Check, X, Pencil } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 type Row = {
   id?: string;
@@ -33,25 +34,40 @@ type Submission = {
   created_at: string;
 };
 
+type Profile = {
+  id: string;
+  display_name: string | null;
+  community_username: string | null;
+  email: string | null;
+  payment_email: string | null;
+  social_handle: string | null;
+  created_at: string;
+};
+
 export default function Leaderboard() {
   const { roles, isAdmin } = useAuth();
   const canEdit = isAdmin || roles.includes("marketing" as any);
 
   const [rows, setRows] = useState<Row[]>([]);
   const [subs, setSubs] = useState<Submission[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [profileFilter, setProfileFilter] = useState("");
   const [pointsDraft, setPointsDraft] = useState<Record<string, number>>({});
   const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
+  const [editingSub, setEditingSub] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
 
   async function load() {
     setLoading(true);
-    const [a, d] = await Promise.all([
+    const [a, d, p] = await Promise.all([
       supabase.from("community_leaderboard").select("*").order("points", { ascending: false }),
       supabase.from("community_submissions").select("*").order("created_at", { ascending: false }).limit(100),
+      supabase.from("profiles").select("id,display_name,community_username,email,payment_email,social_handle,created_at").order("created_at", { ascending: false }),
     ]);
     if (a.data) setRows(a.data as any);
     if (d.data) setSubs(d.data as any);
+    if (p.data) setProfiles(p.data as any);
     setLoading(false);
   }
 
@@ -162,13 +178,21 @@ export default function Leaderboard() {
     );
   }
 
+  const pendingCount = subs.filter((s) => s.status === "pending").length;
+  const filteredProfiles = profiles.filter((p) => {
+    if (!profileFilter.trim()) return true;
+    const q = profileFilter.toLowerCase();
+    return [p.display_name, p.community_username, p.email, p.payment_email, p.social_handle]
+      .some((v) => (v || "").toLowerCase().includes(q));
+  });
+
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Community Leaderboard</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Approve community submissions, edit weekly points, then publish a snapshot to push the public page live. Mirrors the public leaderboard exactly.
+            Review submissions, manage leaderboard entries, and browse community profiles. Publish a snapshot to push changes live.
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -179,13 +203,16 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      {/* Incoming submissions */}
-      <section className="space-y-3">
-        <h2 className="text-sm uppercase tracking-widest text-muted-foreground">
-          Incoming submissions{subs.filter((s) => s.status === "pending").length > 0 && (
-            <span className="ml-2 text-foreground">({subs.filter((s) => s.status === "pending").length} pending)</span>
-          )}
-        </h2>
+      <Tabs defaultValue="submissions" className="space-y-5">
+        <TabsList>
+          <TabsTrigger value="submissions">
+            Submissions{pendingCount > 0 && <span className="ml-1.5 text-xs">({pendingCount})</span>}
+          </TabsTrigger>
+          <TabsTrigger value="entries">Entries ({rows.length})</TabsTrigger>
+          <TabsTrigger value="users">Users ({profiles.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="submissions" className="space-y-3">
         {subs.length === 0 ? (
           <div className="text-sm text-muted-foreground border border-border rounded-lg p-4 bg-card">
             No community submissions yet.
@@ -194,6 +221,8 @@ export default function Leaderboard() {
           <div className="space-y-2">
             {subs.map((s) => {
               const isPending = s.status === "pending";
+              const isEditing = editingSub === s.id;
+              const showForm = isPending || isEditing;
               return (
                 <div key={s.id} className="border border-border rounded-lg p-3 bg-card grid gap-2 sm:grid-cols-12 sm:items-center">
                   <div className="sm:col-span-3">
@@ -208,32 +237,37 @@ export default function Leaderboard() {
                   >
                     {s.post_url}
                   </a>
-                  {isPending ? (
+                  {showForm ? (
                     <>
                       <Input
                         type="number"
                         className="sm:col-span-1"
-                        placeholder={String(defaultPointsFor(s.category))}
+                        placeholder={String(s.awarded_points || defaultPointsFor(s.category))}
                         value={pointsDraft[s.id] ?? ""}
                         onChange={(e) => setPointsDraft((p) => ({ ...p, [s.id]: +e.target.value }))}
                       />
                       <Input
                         className="sm:col-span-2"
-                        placeholder="Note (optional)"
+                        placeholder={s.reviewer_notes || "Note (optional)"}
                         value={notesDraft[s.id] ?? ""}
                         onChange={(e) => setNotesDraft((p) => ({ ...p, [s.id]: e.target.value }))}
                       />
                       <div className="sm:col-span-1 flex gap-1 justify-end">
-                        <Button size="sm" onClick={() => approveSubmission(s)} disabled={busy}><Check size={14} /></Button>
+                        <Button size="sm" onClick={async () => { await approveSubmission(s); setEditingSub(null); }} disabled={busy}><Check size={14} /></Button>
                         <Button size="sm" variant="outline" onClick={() => rejectSubmission(s)} disabled={busy}><X size={14} /></Button>
                       </div>
                     </>
                   ) : (
-                    <div className="sm:col-span-4 text-right text-xs text-muted-foreground">
-                      <span className={s.status === "approved" ? "text-foreground font-medium" : ""}>
-                        {s.status === "approved" ? `Approved · +${s.awarded_points} pts` : "Rejected"}
-                      </span>
-                      {s.reviewer_notes && <span className="block italic">{s.reviewer_notes}</span>}
+                    <div className="sm:col-span-4 flex items-center justify-end gap-2 text-xs text-muted-foreground">
+                      <div className="text-right">
+                        <span className={s.status === "approved" ? "text-foreground font-medium" : ""}>
+                          {s.status === "approved" ? `Approved · +${s.awarded_points} pts` : "Rejected"}
+                        </span>
+                        {s.reviewer_notes && <span className="block italic">{s.reviewer_notes}</span>}
+                      </div>
+                      <Button size="sm" variant="ghost" onClick={() => { setEditingSub(s.id); setPointsDraft((p) => ({ ...p, [s.id]: s.awarded_points || defaultPointsFor(s.category) })); }}>
+                        <Pencil size={12} />
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -241,17 +275,15 @@ export default function Leaderboard() {
             })}
           </div>
         )}
-      </section>
+        </TabsContent>
 
-      {/* Leaderboard rows */}
-      <section className="space-y-3">
+        <TabsContent value="entries" className="space-y-3">
         <div className="flex justify-between items-center gap-2">
-          <h2 className="text-sm uppercase tracking-widest text-muted-foreground">Entries</h2>
+          <p className="text-xs text-muted-foreground">
+            Approving a submission auto-bumps points. Use manual edits for corrections only.
+          </p>
           <Button onClick={addRow} variant="outline" size="sm"><Plus size={14} /> Add user</Button>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Existing community member? Their row updates in place by handle. Approving a submission auto-bumps points — manual edits are for corrections.
-        </p>
         {loading ? (
           <div className="text-sm text-muted-foreground">Loading…</div>
         ) : (
@@ -282,7 +314,47 @@ export default function Leaderboard() {
             ))}
           </div>
         )}
-      </section>
+        </TabsContent>
+
+        <TabsContent value="users" className="space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <Input
+              placeholder="Search handle, email, payment address…"
+              value={profileFilter}
+              onChange={(e) => setProfileFilter(e.target.value)}
+              className="max-w-sm"
+            />
+            <span className="text-xs text-muted-foreground">{filteredProfiles.length} / {profiles.length}</span>
+          </div>
+          {filteredProfiles.length === 0 ? (
+            <div className="text-sm text-muted-foreground border border-border rounded-lg p-4 bg-card">
+              No matching profiles.
+            </div>
+          ) : (
+            <div className="border border-border rounded-lg bg-card divide-y divide-border">
+              {filteredProfiles.map((p) => (
+                <div key={p.id} className="p-3 grid gap-1 sm:grid-cols-12 sm:items-center text-sm">
+                  <div className="sm:col-span-3">
+                    <div className="font-medium">{p.community_username || p.display_name || "—"}</div>
+                    {p.display_name && p.community_username && (
+                      <div className="text-[11px] text-muted-foreground">{p.display_name}</div>
+                    )}
+                  </div>
+                  <div className="sm:col-span-3 text-xs text-muted-foreground truncate">{p.email || "—"}</div>
+                  <div className="sm:col-span-3 text-xs text-muted-foreground truncate">
+                    <span className="uppercase tracking-widest text-[9px] mr-1">pay</span>
+                    {p.payment_email || "—"}
+                  </div>
+                  <div className="sm:col-span-3 text-xs text-muted-foreground truncate">
+                    <span className="uppercase tracking-widest text-[9px] mr-1">social</span>
+                    {p.social_handle || "—"}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

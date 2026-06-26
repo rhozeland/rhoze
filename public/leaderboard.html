@@ -245,8 +245,16 @@
             <div class="lb-field"><label for="lb-li-email">Email</label><input id="lb-li-email" type="email" required placeholder="name@example.com" /></div>
             <div class="lb-field"><label for="lb-li-pass">Password</label><input id="lb-li-pass" type="password" required placeholder="••••••••" /></div>
             <button class="lb-btn" type="submit" id="lb-li-btn">Log in</button>
+            <button class="lb-btn ghost sm" type="button" id="lb-forgot-btn" style="font-size:0.75rem;">Forgot password?</button>
             <div class="lb-divider">or</div>
             <button class="lb-btn ghost" type="button" id="lb-show-signup">Create a new account</button>
+          </form>
+
+          <!-- RECOVERY: set a new password after clicking the email link -->
+          <form id="lb-recovery-form" autocomplete="off" style="display:none; gap:10px;">
+            <div class="lb-msg ok">Set a new password for your account.</div>
+            <div class="lb-field"><label for="lb-rc-pass">New password</label><input id="lb-rc-pass" type="password" required minlength="8" placeholder="At least 8 characters" /></div>
+            <button class="lb-btn" type="submit" id="lb-rc-btn">Update password</button>
           </form>
 
           <!-- SIGNED-IN: profile + submit -->
@@ -271,6 +279,14 @@
               <div class="lb-soc-input" id="lb-soc-input-yt"><input type="text" data-soc-input="yt" placeholder="@channel on YouTube" /></div>
             </div>
             <button class="lb-btn ghost sm" type="button" id="lb-save-profile" style="justify-self:start;">Save profile</button>
+
+            <details style="border:1px solid hsl(var(--border)); border-radius:10px; padding:8px 10px;">
+              <summary style="cursor:pointer; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Change password</summary>
+              <div style="display:grid; gap:8px; margin-top:8px;">
+                <input id="lb-cp-pass" type="password" minlength="8" placeholder="New password (8+ chars)" />
+                <button class="lb-btn ghost sm" type="button" id="lb-cp-btn" style="justify-self:start;">Update password</button>
+              </div>
+            </details>
 
             <form id="lb-submit-form" style="display:grid; gap:8px;">
               <div class="lb-field"><label for="lb-category">Submit post · category</label>
@@ -473,6 +489,7 @@
         if (session && session.user) {
           signupForm.style.display = "none";
           loginForm.style.display = "none";
+          $("lb-recovery-form").style.display = "none";
           signedIn.style.display = "grid";
           $("lb-acct-title").textContent = "Your account";
           $("lb-acct-sub").textContent = "Submit posts for points and keep your reward info up to date.";
@@ -483,6 +500,7 @@
           signedIn.style.display = "none";
           loginForm.style.display = "none";
           signupForm.style.display = "grid";
+          $("lb-recovery-form").style.display = "none";
           $("lb-acct-title").textContent = "Join the leaderboard";
           $("lb-acct-sub").textContent = "Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.";
           whoEl.textContent = "Not signed in";
@@ -567,8 +585,62 @@
       function normalizeHandle(h) { h = (h || "").trim(); if (h && h[0] !== "@") h = "@" + h; return h; }
 
       if (sb) {
-        sb.auth.getSession().then(function (r) { refreshUI(r.data.session); });
-        sb.auth.onAuthStateChange(function (_e, s) { refreshUI(s); });
+        // Detect password recovery link (Supabase puts type=recovery in the URL hash)
+        var inRecovery = /[#&?]type=recovery/.test(window.location.hash) || /[?&]type=recovery/.test(window.location.search);
+        function showRecovery() {
+          signupForm.style.display = "none";
+          loginForm.style.display = "none";
+          signedIn.style.display = "none";
+          $("lb-recovery-form").style.display = "grid";
+          $("lb-acct-title").textContent = "Reset your password";
+          $("lb-acct-sub").textContent = "Choose a new password to finish signing in.";
+        }
+        sb.auth.getSession().then(function (r) {
+          if (inRecovery) showRecovery(); else refreshUI(r.data.session);
+        });
+        sb.auth.onAuthStateChange(function (e, s) {
+          if (e === "PASSWORD_RECOVERY") { showRecovery(); return; }
+          if (inRecovery && e !== "SIGNED_OUT") return; // stay on recovery form until user updates
+          refreshUI(s);
+        });
+
+        $("lb-forgot-btn").addEventListener("click", function () {
+          var email = ($("lb-li-email").value || "").trim();
+          if (!email) { setMsg("Enter your email above, then tap Forgot password.", "err"); return; }
+          setMsg("Sending reset link…");
+          sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/leaderboard.html" })
+            .then(function (r) {
+              if (r.error) setMsg(r.error.message, "err");
+              else setMsg("Check your email for a reset link.", "ok");
+            });
+        });
+
+        $("lb-recovery-form").addEventListener("submit", function (e) {
+          e.preventDefault();
+          var pass = $("lb-rc-pass").value;
+          if (!pass || pass.length < 8) { setMsg("Password must be at least 8 characters.", "err"); return; }
+          var btn = $("lb-rc-btn"); btn.disabled = true; setMsg("Updating password…");
+          sb.auth.updateUser({ password: pass }).then(function (r) {
+            btn.disabled = false;
+            if (r.error) { setMsg(r.error.message, "err"); return; }
+            // Clear recovery hash so a refresh doesn't put us back in recovery mode.
+            inRecovery = false;
+            history.replaceState(null, "", window.location.pathname);
+            setMsg("Password updated — you're signed in.", "ok");
+            sb.auth.getSession().then(function (s) { refreshUI(s.data.session); });
+          });
+        });
+
+        $("lb-cp-btn") && $("lb-cp-btn").addEventListener("click", function () {
+          var pass = $("lb-cp-pass").value;
+          if (!pass || pass.length < 8) { setMsg("Password must be at least 8 characters.", "err"); return; }
+          setMsg("Updating password…");
+          sb.auth.updateUser({ password: pass }).then(function (r) {
+            if (r.error) { setMsg(r.error.message, "err"); return; }
+            $("lb-cp-pass").value = "";
+            setMsg("Password updated.", "ok");
+          });
+        });
 
         $("lb-show-login").addEventListener("click", function () { signupForm.style.display = "none"; loginForm.style.display = "grid"; setMsg(""); });
         $("lb-show-signup").addEventListener("click", function () { loginForm.style.display = "none"; signupForm.style.display = "grid"; setMsg(""); });

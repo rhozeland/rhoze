@@ -389,7 +389,7 @@
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
             '<td><strong>' + escapeHtml(r.username) + '</strong></td>' +
-            '<td>' + (r.challenges_completed || 0) + '</td>' +
+            '<td>' + ((r.raids||0)+(r.memes||0)+(r.edu_threads||0)+(r.videos||0)) + '</td>' +
             '<td class="points">' + pts + '</td>' +
           '</tr>';
         }).join("");

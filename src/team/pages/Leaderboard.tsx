@@ -178,6 +178,19 @@ export default function Leaderboard() {
     } finally { setBusy(false); }
   }
 
+  async function resetWeekly() {
+    if (!confirm("Reset the WEEKLY leaderboard to zero?\n\nAll-time points and category counters are untouched. Use this at the start of each new week (typically Monday) after rewards have been paid out.")) return;
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("community_reset_weekly");
+      if (error) throw error;
+      toast({ title: "Weekly reset", description: `Cleared weekly points on ${data ?? 0} entries.` });
+      await load();
+    } catch (e: any) {
+      toast({ title: "Reset failed", description: e.message, variant: "destructive" });
+    } finally { setBusy(false); }
+  }
+
   function defaultPointsFor(cat: Submission["category"]) {
     const map: Record<string, number> = { raid: 10, meme: 15, thread: 25, video: 40 };
     return map[cat] ?? 10;
@@ -249,6 +262,7 @@ export default function Leaderboard() {
           <a href="/leaderboard.html" target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm"><ExternalLink size={14} /> Open public page</Button>
           </a>
+          <Button onClick={resetWeekly} disabled={busy} size="sm" variant="outline">Reset weekly</Button>
           <Button onClick={publishSnapshot} disabled={busy} size="sm">Publish snapshot</Button>
         </div>
       </div>

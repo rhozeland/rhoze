@@ -164,14 +164,13 @@ const Navbar = () => {
               </a>
             );
           })}
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
+          <a
+            href="/start.html"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
           >
             <Sparkles size={15} />
             <span>Build</span>
-          </button>
+          </a>
         </div>
 
         <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>

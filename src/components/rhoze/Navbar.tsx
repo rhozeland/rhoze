@@ -199,14 +199,14 @@ const Navbar = () => {
               </a>
             );
           })}
-          <button
-            type="button"
-            onClick={() => { setOpen(false); setCreateOpen(true); }}
+          <a
+            href="/start.html"
+            onClick={() => setOpen(false)}
             className="mt-3 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-mint text-sm font-semibold text-primary-foreground"
           >
             <Sparkles size={15} />
             Build
-          </button>
+          </a>
         </motion.div>
       )}
 

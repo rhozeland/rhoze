@@ -182,7 +182,7 @@ export default function Leaderboard() {
     if (!confirm("Reset the WEEKLY leaderboard to zero?\n\nAll-time points and category counters are untouched. Use this at the start of each new week (typically Monday) after rewards have been paid out.")) return;
     setBusy(true);
     try {
-      const { data, error } = await supabase.rpc("community_reset_weekly");
+      const { data, error } = await (supabase as any).rpc("community_reset_weekly");
       if (error) throw error;
       toast({ title: "Weekly reset", description: `Cleared weekly points on ${data ?? 0} entries.` });
       await load();

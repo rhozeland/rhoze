@@ -2147,6 +2147,7 @@ export type Database = {
       }
       archive_expired_projects: { Args: never; Returns: number }
       can_edit_community: { Args: { _uid: string }; Returns: boolean }
+      community_reset_weekly: { Args: never; Returns: number }
       community_reset_weekly_points: { Args: never; Returns: undefined }
       community_submission_approve: {
         Args: { _notes?: string; _points: number; _submission_id: string }

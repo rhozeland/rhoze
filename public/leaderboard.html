@@ -553,9 +553,12 @@
 
       function loadMine() {
         if (!sb) return;
-        sb.from("community_submissions")
-          .select("id,handle,category,post_url,status,awarded_points,reviewer_notes,created_at")
-          .order("created_at", { ascending: false }).limit(10)
+        sb.auth.getUser().then(function (u) {
+          var user = u.data.user; if (!user) return;
+          sb.from("community_submissions")
+            .select("id,handle,category,post_url,status,awarded_points,reviewer_notes,created_at")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }).limit(10)
           .then(function (res) {
             var rows = res.data || [];
             var el = $("lb-mine");
@@ -571,6 +574,7 @@
                 '</div>';
               }).join("");
           });
+        });
       }
 
       function normalizeHandle(h) { h = (h || "").trim(); if (h && h[0] !== "@") h = "@" + h; return h; }

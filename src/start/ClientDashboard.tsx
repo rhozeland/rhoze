@@ -76,7 +76,7 @@ export default function ClientDashboard() {
         .from("project_milestones")
         .select("id,title,due_date,status")
         .eq("project_id", active.id)
-        .neq("status", "completed")
+        .neq("status", "approved")
         .order("due_date", { ascending: true, nullsFirst: false })
         .limit(1);
       setNextMilestone((ms?.[0] as Milestone) ?? null);

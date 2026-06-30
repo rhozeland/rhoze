@@ -375,8 +375,7 @@
         var pager = document.getElementById("lb-pager");
         var key = state.mode === "weekly" ? "weekly_points" : "points";
         var sorted = sortRows(state.rows, state.mode).filter(function (r) { return (r[key] || 0) > 0 || state.mode === "alltime"; });
-        // Show rally CTA whenever fewer than 10 participants on the board
-        rally.style.display = sorted.length < 10 ? "" : "none";
+        if (rally) rally.style.display = sorted.length < 10 ? "" : "none";
 
         if (!sorted.length) {
           body.innerHTML = '<tr><td colspan="4" class="lb-empty">No ' + (state.mode === "weekly" ? "weekly" : "all-time") + ' points yet. Sign up on the right to get the first slot.</td></tr>';

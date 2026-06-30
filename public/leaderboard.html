@@ -352,7 +352,10 @@
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, storageKey: 'rhz-community-auth' } })
         : null;
       function rest(path) {
-        return fetch(SUPABASE_URL + "/rest/v1/" + path, { headers: headers }).then(function (r) { return r.json(); });
+        return fetch(SUPABASE_URL + "/rest/v1/" + path, { headers: Object.assign({ Accept: "application/json" }, headers), cache: "no-store" }).then(function (r) {
+          if (!r.ok) throw new Error("Leaderboard request failed");
+          return r.json();
+        });
       }
       function fmtDate(d) {
         if (!d) return "—";
@@ -363,6 +366,25 @@
       // ===== Leaderboard with weekly/all-time tabs + pagination =====
       var PAGE_SIZE = 10;
       var state = { mode: "weekly", page: 0, rows: [] };
+      var LEADERBOARD_CACHE_KEY = "rhz-community-leaderboard-cache";
+      var LEADERBOARD_FALLBACK = [
+        { username:"@Jim", points:548, weekly_points:548, raids:38, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@goatmatt999", points:475, weekly_points:475, raids:30, memes:2, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@Stefann", points:405, weekly_points:405, raids:28, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@Julien Thomas", points:300, weekly_points:300, raids:22, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@KryptoPanda", points:230, weekly_points:230, raids:16, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@mohadifo", points:225, weekly_points:225, raids:15, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@Cryptmoon22", points:105, weekly_points:105, raids:8, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-27" },
+        { username:"@Cryptmoon22@gmail.com", points:60, weekly_points:60, raids:4, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
+        { username:"@Ken", points:60, weekly_points:60, raids:4, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" }
+      ];
+
+      function getCachedRows() {
+        try {
+          var cached = JSON.parse(localStorage.getItem(LEADERBOARD_CACHE_KEY) || "[]");
+          return Array.isArray(cached) && cached.length ? cached : LEADERBOARD_FALLBACK;
+        } catch (e) { return LEADERBOARD_FALLBACK; }
+      }
 
       function sortRows(rows, mode) {
         var key = mode === "weekly" ? "weekly_points" : "points";
@@ -448,11 +470,18 @@
       });
 
       function load() {
+        if (!state.rows.length) {
+          state.rows = getCachedRows();
+          renderLeaderboard();
+        }
         rest("community_leaderboard?select=*&limit=500").then(function (rows) {
-          state.rows = Array.isArray(rows) ? rows : [];
+          if (!Array.isArray(rows)) throw new Error("Leaderboard response was not a list");
+          state.rows = rows.length ? rows : [];
+          if (rows.length) localStorage.setItem(LEADERBOARD_CACHE_KEY, JSON.stringify(rows));
           renderLeaderboard();
         }).catch(function () {
-          document.getElementById("lb-body").innerHTML = '<tr><td colspan="4" class="lb-empty">Couldn\'t load leaderboard right now.</td></tr>';
+          state.rows = state.rows.length ? state.rows : getCachedRows();
+          renderLeaderboard();
         });
       }
       load();

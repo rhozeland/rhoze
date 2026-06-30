@@ -11,6 +11,7 @@ import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import logoWhite from "@/assets/logo-white.webp";
+import ClientDashboard from "@/start/ClientDashboard";
 
 type Pkg = {
   id: string; slug: string; name: string; kind: string; category: string | null;
@@ -346,6 +347,10 @@ export default function StartPage() {
 
           <div className="text-xs text-muted-foreground pt-2 max-w-md mx-auto">
             1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.
+          </div>
+
+          <div id="dashboard" className="pt-10 md:pt-14">
+            <ClientDashboard />
           </div>
         </div>
       </div>

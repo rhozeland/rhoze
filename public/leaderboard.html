@@ -102,6 +102,44 @@
     .lb-mine-row .st { margin-left:auto; font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:2px 8px; border-radius:999px; border:1px solid hsl(var(--line)); }
     .lb-mine-row .st.approved { color: hsl(var(--accent-green)); border-color: hsl(var(--accent-green) / 0.5); }
     .lb-mine-row .st.rejected { color: hsl(0 70% 55%); border-color: hsl(0 70% 55% / 0.5); }
+    /* Combined info strip below hero: points rules + weekly rewards */
+    .lb-top-info { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+    @media (min-width: 860px) { .lb-top-info { grid-template-columns:1.15fr 1fr; gap:18px; } }
+    /* Equal-height split */
+    .lb-split { align-items:stretch; }
+    .lb-split > * { display:flex; flex-direction:column; }
+    .lb-account { height:100%; }
+    /* Stats mini-cards inside account */
+    .lb-stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+    .lb-stat { padding:10px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); text-align:left; }
+    .lb-stat .k { font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; }
+    .lb-stat .v { font-size:18px; font-weight:700; color:hsl(var(--ink)); font-variant-numeric:tabular-nums; margin-top:2px; letter-spacing:-0.01em; }
+    .lb-stat .s { font-size:10.5px; color:hsl(var(--muted)); margin-top:1px; }
+    /* ToyBox customizer */
+    .lb-tb { border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); padding:14px; display:grid; gap:10px; }
+    .lb-tb-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+    .lb-tb-head h3 { font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em; }
+    .lb-tb-head .hint { font-size:10.5px; color:hsl(var(--muted)); }
+    .lb-tb-stage { display:flex; align-items:center; justify-content:center; padding:10px; border-radius:14px; background:hsl(var(--surface)); border:1px solid hsl(var(--line)); min-height:180px; }
+    .lb-tb-stage svg { width:150px; height:150px; }
+    .lb-tb-stage svg path[data-section] { cursor:pointer; transition:filter .15s ease; }
+    .lb-tb-stage svg path[data-section]:hover { filter:brightness(0.94); }
+    .lb-tb-pills { display:flex; gap:6px; flex-wrap:wrap; }
+    .lb-tb-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--muted)); font-size:11px; font-weight:600; cursor:pointer; }
+    .lb-tb-pill.active { background:hsl(var(--ink)); color:hsl(var(--surface)); border-color:hsl(var(--ink)); }
+    .lb-tb-pill .sw { width:12px; height:12px; border-radius:999px; border:1px solid hsl(var(--line) / .6); background:#fff; }
+    .lb-tb-modes { display:inline-flex; padding:2px; gap:2px; border:1px solid hsl(var(--line)); border-radius:999px; background:hsl(var(--surface)); }
+    .lb-tb-modes button { padding:4px 10px; font-size:10.5px; font-weight:600; letter-spacing:.03em; border-radius:999px; border:0; background:transparent; color:hsl(var(--muted)); cursor:pointer; }
+    .lb-tb-modes button.active { background:hsl(var(--ink)); color:hsl(var(--surface)); }
+    .lb-tb-swatches { display:grid; grid-template-columns:repeat(8,1fr); gap:6px; }
+    .lb-tb-sw { aspect-ratio:1/1; border-radius:10px; border:2px solid hsl(var(--line) / .5); cursor:pointer; transition:transform .12s ease; }
+    .lb-tb-sw:hover { transform:scale(1.06); }
+    .lb-tb-sw.active { border-color:hsl(var(--ink)); transform:scale(1.08); }
+    .lb-tb-actions { display:flex; gap:6px; flex-wrap:wrap; }
+    .lb-tb-actions button { padding:7px 11px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--ink)); font-size:11.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; }
+    .lb-tb-actions button.primary { background:hsl(var(--ink)); color:hsl(var(--surface)); border-color:hsl(var(--ink)); }
+    .lb-tb-actions button:hover { filter:brightness(0.96); }
+    .lb-tb-label { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; }
   </style>
 </head>
 <body class="page-events">
@@ -147,9 +185,36 @@
         </div>
       </section>
 
+      <!-- INFO STRIP: Points rules + Weekly rewards, promoted to the top -->
+      <section class="lb-top-info">
+        <div class="lb-card lb-card-pad">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+            <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
+            <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
+          </div>
+          <div class="lb-rules-tabs" role="tablist" id="lb-rules-tabs">
+            <button type="button" class="active" data-tier="quick">Quick wins</button>
+            <button type="button" data-tier="create">Create</button>
+            <button type="button" data-tier="big">Big plays</button>
+          </div>
+          <div class="lb-rules-grid" id="lb-rules"></div>
+        </div>
+        <div class="lb-card lb-card-pad">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+            <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
+            <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
+          </div>
+          <div class="lb-rewards">
+            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer. Your choice.</div></div></div>
+            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
+            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
+          </div>
+        </div>
+      </section>
+
       <!-- SPLIT: leaderboard + account -->
       <section class="lb-split">
-        <!-- LEFT: leaderboard + rules + rewards -->
+        <!-- LEFT: leaderboard (top movers) -->
         <div style="display:grid; gap:18px; min-width:0;">
           <div class="lb-card">
             <div class="lb-card-pad" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
@@ -179,40 +244,13 @@
             </div>
           </div>
 
-          <!-- Rules + Rewards side-by-side -->
-          <div style="display:grid; grid-template-columns:1fr; gap:14px;" class="lb-rules-row">
-            <div class="lb-card lb-card-pad">
-              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
-                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
-              </div>
-              <div class="lb-rules-tabs" role="tablist" id="lb-rules-tabs">
-                <button type="button" class="active" data-tier="quick">Quick wins</button>
-                <button type="button" data-tier="create">Create</button>
-                <button type="button" data-tier="big">Big plays</button>
-              </div>
-              <div class="lb-rules-grid" id="lb-rules"></div>
-            </div>
-            <div class="lb-card lb-card-pad">
-              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
-                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
-              </div>
-              <div class="lb-rewards">
-                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer. Your choice.</div></div></div>
-                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
-                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
-              </div>
-            </div>
-          </div>
-
           <p style="font-size:12px; color:hsl(var(--muted)); text-align:center; padding:8px 12px;">
             Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted. Snapshots are reviewed weekly by the Rhozeland marketing team.
           </p>
         </div>
 
-        <!-- RIGHT: sticky account panel -->
-        <aside class="lb-card lb-card-pad lb-account" id="lb-account" style="position:sticky; top:96px;">
+        <!-- RIGHT: account panel (equal-height with Top Movers) -->
+        <aside class="lb-card lb-card-pad lb-account" id="lb-account">
           <div class="lb-acct-head">
             <h2 id="lb-acct-title">Join the leaderboard</h2>
             <span class="who" id="lb-who">Not signed in</span>
@@ -270,6 +308,46 @@
               <div class="lb-soc-input" id="lb-soc-input-yt"><input type="text" data-soc-input="yt" placeholder="@channel on YouTube" /></div>
             </div>
             <button class="lb-btn ghost sm" type="button" id="lb-save-profile" style="justify-self:start;">Save profile</button>
+
+            <!-- STATS: gamified snapshot -->
+            <div>
+              <div class="lb-tb-label" style="margin-bottom:6px;">Your rank</div>
+              <div class="lb-stats" id="lb-stats">
+                <div class="lb-stat"><div class="k">Rank</div><div class="v" id="lb-st-rank">—</div><div class="s" id="lb-st-rank-sub">of 0</div></div>
+                <div class="lb-stat"><div class="k">Weekly</div><div class="v" id="lb-st-weekly">0</div><div class="s">pts this week</div></div>
+                <div class="lb-stat"><div class="k">All-time</div><div class="v" id="lb-st-alltime">0</div><div class="s">pts total</div></div>
+              </div>
+            </div>
+
+            <!-- TOYBOX CUSTOMIZER: personal PFP generator -->
+            <div class="lb-tb" id="lb-tb">
+              <div class="lb-tb-head">
+                <div>
+                  <h3>Your Toybox PFP</h3>
+                  <div class="hint">Design a logo that's yours. Export it, or set it as your Rhozeland avatar.</div>
+                </div>
+                <div class="lb-tb-modes" id="lb-tb-modes">
+                  <button type="button" class="active" data-mode="solid">Solid</button>
+                  <button type="button" data-mode="gradient">Gradient</button>
+                  <button type="button" data-mode="pattern">Pattern</button>
+                </div>
+              </div>
+              <div class="lb-tb-stage"><div id="lb-tb-svg"></div></div>
+              <div>
+                <div class="lb-tb-label" style="margin-bottom:6px;">Piece</div>
+                <div class="lb-tb-pills" id="lb-tb-pills"></div>
+              </div>
+              <div>
+                <div class="lb-tb-label" style="margin-bottom:6px;" id="lb-tb-swatch-label">Colors</div>
+                <div class="lb-tb-swatches" id="lb-tb-swatches"></div>
+              </div>
+              <div class="lb-tb-actions">
+                <button type="button" id="lb-tb-random">🎲 Randomize</button>
+                <button type="button" id="lb-tb-reset">Reset</button>
+                <button type="button" id="lb-tb-export">⬇ Export PNG</button>
+                <button type="button" id="lb-tb-save" class="primary">Set as display picture</button>
+              </div>
+            </div>
 
             <details style="border:1px solid hsl(var(--border)); border-radius:10px; padding:8px 10px;">
               <summary style="cursor:pointer; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Change password</summary>
@@ -747,6 +825,260 @@
             loadMine();
           });
         });
+
+        // ===== Stats: rank + weekly + all-time from community_leaderboard =====
+        function loadStats() {
+          sb.auth.getUser().then(function (u) {
+            var user = u.data.user; if (!user) return;
+            var handle = normalizeHandle($("lb-pf-user").value);
+            var sorted = sortRows(state.rows, "alltime");
+            var total = sorted.length;
+            var idx = -1, row = null;
+            if (handle) {
+              for (var i = 0; i < sorted.length; i++) {
+                if ((sorted[i].username || "").toLowerCase() === handle.toLowerCase()) { idx = i; row = sorted[i]; break; }
+              }
+            }
+            $("lb-st-rank").textContent = idx >= 0 ? "#" + (idx + 1) : "—";
+            $("lb-st-rank-sub").textContent = "of " + total;
+            $("lb-st-weekly").textContent = ((row && row.weekly_points) || 0).toLocaleString();
+            $("lb-st-alltime").textContent = ((row && row.points) || 0).toLocaleString();
+          });
+        }
+        // Recompute stats whenever rows refresh or profile loads
+        var _origRender = renderLeaderboard;
+        renderLeaderboard = function () { _origRender(); try { loadStats(); } catch (e) {} };
+
+        // ===== ToyBox PFP Customizer =====
+        var TB_PATHS = {
+          boxFront: "M8.69714 62.3362 L110.377 62.3362 L110.377 155.646 L110.377 184.479 C110.377 190.864 105.201 196.041 98.815 196.041 L20.2595 196.041 C13.8738 196.041 8.69713 190.864 8.69713 184.479 L8.69713 155.646 Z",
+          boxLid:   "M8.69714 62.3362 L59.6897 11.3436 C61.8581 9.17521 64.7991 7.95704 67.8656 7.95704 L164.757 7.95704 L110.377 62.3362 Z",
+          tag:      "M110.377 155.646 L164.757 101.267 L191.127 127.638 C195.643 132.153 195.643 139.474 191.127 143.99 L153.1 182.017 C148.584 186.533 141.263 186.532 136.748 182.017 Z",
+          sidePanel:"M110.377 62.3362 L164.757 7.95704 L164.757 101.267 L110.377 155.646 Z"
+        };
+        var TB_OUTLINE = "M8.69714 62.3362L8.69713 155.646L8.69713 184.479C8.69713 190.864 13.8738 196.041 20.2595 196.041L98.815 196.041C105.201 196.041 110.377 190.864 110.377 184.479L110.377 155.646M8.69714 62.3362L110.377 62.3362M8.69714 62.3362L59.6897 11.3436C61.8581 9.17521 64.7991 7.95704 67.8656 7.95704L164.757 7.95704M110.377 62.3362L164.757 7.95704M110.377 62.3362L110.377 155.646M164.757 7.95704L164.757 101.267M110.377 155.646L164.757 101.267M110.377 155.646L136.748 182.017C141.263 186.532 148.584 186.533 153.1 182.017L191.127 143.99C195.643 139.474 195.643 132.153 191.127 127.638L164.757 101.267";
+        var TB_SECTIONS = [
+          { key:"background", label:"Background" },
+          { key:"boxFront",   label:"Box front" },
+          { key:"boxLid",     label:"Box lid" },
+          { key:"sidePanel",  label:"Side panel" },
+          { key:"tag",        label:"Tag" }
+        ];
+        var TB_COLORS = ["#F5B8B0","#F7C8A0","#F5E6A0","#B8E4B4","#A6D8E8","#B8C4F5","#D4B8F5","#F5B8D8","#FFFFFF","#1F1F24","#E85A4F","#F58F3B","#F0C93B","#38B26B","#2E8FE0","#5B5BE0","#8A3AD6","#EC5DA6","#8AA0B4","#4A5568"];
+        var TB_GRADIENTS = [
+          ["#FF7E5F","#FEB47B"], ["#FFB199","#EDC7B7"], ["#A18CD1","#FBC2EB"],
+          ["#FAD0C4","#FFD1FF"], ["#84FAB0","#8FD3F4"], ["#5EE7DF","#B490CA"],
+          ["#FDCB6E","#E17055"], ["#00B4DB","#0083B0"], ["#F857A6","#FF5858"],
+          ["#43CEA2","#185A9D"], ["#FFAFBD","#FFC3A0"], ["#C6FFDD","#FBD786"],
+          ["#FFE29F","#FFA99F"], ["#DA22FF","#9733EE"], ["#F953C6","#B91D73"],
+          ["#4568DC","#B06AB3"]
+        ];
+        var TB_PATTERNS = [
+          { id:"dots-sm",   label:"Dots", def:'<pattern id="{ID}" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="{BG}"/><circle cx="4" cy="4" r="1.4" fill="{FG}"/></pattern>' },
+          { id:"dots-lg",   label:"Big dots", def:'<pattern id="{ID}" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="{BG}"/><circle cx="7" cy="7" r="2.5" fill="{FG}"/></pattern>' },
+          { id:"stripes",   label:"Stripes", def:'<pattern id="{ID}" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="{BG}"/><rect width="4" height="8" fill="{FG}"/></pattern>' },
+          { id:"grid",      label:"Grid", def:'<pattern id="{ID}" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="{BG}"/><path d="M10 0H0V10" stroke="{FG}" stroke-width="1" fill="none"/></pattern>' },
+          { id:"cross",     label:"Cross", def:'<pattern id="{ID}" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="{BG}"/><path d="M6 2v8M2 6h8" stroke="{FG}" stroke-width="1.4"/></pattern>' },
+          { id:"waves",     label:"Waves", def:'<pattern id="{ID}" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="20" height="10" fill="{BG}"/><path d="M0 5 Q5 0 10 5 T20 5" stroke="{FG}" stroke-width="1.4" fill="none"/></pattern>' },
+          { id:"triangles", label:"Triangles", def:'<pattern id="{ID}" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="{BG}"/><polygon points="5,2 8,8 2,8" fill="{FG}"/></pattern>' },
+          { id:"stars",     label:"Stars", def:'<pattern id="{ID}" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="{BG}"/><path d="M8 3l1.2 3.2L12.5 7l-2.6 2 .9 3.3L8 10.6 5.2 12.3l.9-3.3L3.5 7l3.3-.8z" fill="{FG}"/></pattern>' }
+        ];
+        var TB_DEFAULT = {
+          background: { mode:"solid", color:"#FFFFFF" },
+          boxFront:   { mode:"solid", color:"#F5B8B0" },
+          boxLid:     { mode:"solid", color:"#F7C8A0" },
+          sidePanel:  { mode:"solid", color:"#B8C4F5" },
+          tag:        { mode:"solid", color:"#F5E6A0" }
+        };
+        var tbState = { active:"boxFront", mode:"solid", cfg: JSON.parse(JSON.stringify(TB_DEFAULT)) };
+
+        function tbFillFor(section) {
+          var c = tbState.cfg[section];
+          if (!c) return "#FFFFFF";
+          if (c.mode === "gradient") return "url(#tb-grad-" + section + ")";
+          if (c.mode === "pattern")  return "url(#tb-pat-" + section + ")";
+          return c.color || "#FFFFFF";
+        }
+        function tbDefs() {
+          var out = "";
+          Object.keys(tbState.cfg).forEach(function (sec) {
+            var c = tbState.cfg[sec];
+            if (c.mode === "gradient" && c.colors) {
+              out += '<linearGradient id="tb-grad-' + sec + '" x1="0" y1="0" x2="1" y2="1">' +
+                '<stop offset="0%" stop-color="' + c.colors[0] + '"/>' +
+                '<stop offset="100%" stop-color="' + c.colors[1] + '"/></linearGradient>';
+            } else if (c.mode === "pattern" && c.pattern) {
+              var p = TB_PATTERNS.find(function (x) { return x.id === c.pattern.id; });
+              if (p) out += p.def.replace(/\{ID\}/g, "tb-pat-" + sec).replace(/\{BG\}/g, c.pattern.bg).replace(/\{FG\}/g, c.pattern.fg);
+            }
+          });
+          return out;
+        }
+        function tbRender() {
+          var host = document.getElementById("lb-tb-svg"); if (!host) return;
+          var bg = tbFillFor("background");
+          var svg = '<svg viewBox="0 0 200 204" xmlns="http://www.w3.org/2000/svg">' +
+            '<defs>' + tbDefs() + '</defs>' +
+            '<rect x="0" y="0" width="200" height="204" rx="24" fill="' + bg + '"/>' +
+            '<path data-section="boxFront"  d="' + TB_PATHS.boxFront  + '" fill="' + tbFillFor("boxFront")  + '"/>' +
+            '<path data-section="boxLid"    d="' + TB_PATHS.boxLid    + '" fill="' + tbFillFor("boxLid")    + '"/>' +
+            '<path data-section="sidePanel" d="' + TB_PATHS.sidePanel + '" fill="' + tbFillFor("sidePanel") + '"/>' +
+            '<path data-section="tag"       d="' + TB_PATHS.tag       + '" fill="' + tbFillFor("tag")       + '"/>' +
+            '<path d="' + TB_OUTLINE + '" fill="none" stroke="#1F1F24" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>' +
+          '</svg>';
+          host.innerHTML = svg;
+          Array.prototype.forEach.call(host.querySelectorAll("path[data-section]"), function (p) {
+            p.addEventListener("click", function () { tbSetActive(p.getAttribute("data-section")); });
+          });
+        }
+        function tbRenderPills() {
+          document.getElementById("lb-tb-pills").innerHTML = TB_SECTIONS.map(function (s) {
+            var c = tbState.cfg[s.key];
+            var sw = c.mode === "solid" ? c.color : (c.mode === "gradient" ? (c.colors && c.colors[0]) : (c.pattern && c.pattern.bg));
+            return '<button type="button" class="lb-tb-pill' + (tbState.active === s.key ? ' active' : '') +
+              '" data-sec="' + s.key + '"><span class="sw" style="background:' + (sw || "#FFF") + '"></span>' + s.label + '</button>';
+          }).join("");
+          Array.prototype.forEach.call(document.querySelectorAll("#lb-tb-pills .lb-tb-pill"), function (b) {
+            b.addEventListener("click", function () { tbSetActive(b.getAttribute("data-sec")); });
+          });
+        }
+        function tbRenderSwatches() {
+          var host = document.getElementById("lb-tb-swatches");
+          var label = document.getElementById("lb-tb-swatch-label");
+          var cur = tbState.cfg[tbState.active];
+          if (tbState.mode === "solid") {
+            label.textContent = "Colors";
+            host.style.gridTemplateColumns = "repeat(8,1fr)";
+            host.innerHTML = TB_COLORS.map(function (c) {
+              var active = cur.mode === "solid" && cur.color === c ? " active" : "";
+              return '<button type="button" class="lb-tb-sw' + active + '" data-color="' + c + '" style="background:' + c + '" aria-label="' + c + '"></button>';
+            }).join("");
+            Array.prototype.forEach.call(host.querySelectorAll(".lb-tb-sw"), function (b) {
+              b.addEventListener("click", function () {
+                tbState.cfg[tbState.active] = { mode:"solid", color: b.getAttribute("data-color") };
+                tbRender(); tbRenderPills(); tbRenderSwatches();
+              });
+            });
+          } else if (tbState.mode === "gradient") {
+            label.textContent = "Gradients";
+            host.style.gridTemplateColumns = "repeat(4,1fr)";
+            host.innerHTML = TB_GRADIENTS.map(function (g, i) {
+              var active = cur.mode === "gradient" && cur.colors && cur.colors[0] === g[0] && cur.colors[1] === g[1] ? " active" : "";
+              return '<button type="button" class="lb-tb-sw' + active + '" data-gi="' + i + '" style="background:linear-gradient(135deg,' + g[0] + ',' + g[1] + ')"></button>';
+            }).join("");
+            Array.prototype.forEach.call(host.querySelectorAll(".lb-tb-sw"), function (b) {
+              b.addEventListener("click", function () {
+                var g = TB_GRADIENTS[parseInt(b.getAttribute("data-gi"), 10)];
+                tbState.cfg[tbState.active] = { mode:"gradient", colors: g };
+                tbRender(); tbRenderPills(); tbRenderSwatches();
+              });
+            });
+          } else {
+            label.textContent = "Patterns · click twice to rotate colors";
+            host.style.gridTemplateColumns = "repeat(4,1fr)";
+            host.innerHTML = TB_PATTERNS.map(function (p) {
+              var bg = "#FFFFFF", fg = "#1F1F24";
+              if (cur.mode === "pattern" && cur.pattern) { bg = cur.pattern.bg; fg = cur.pattern.fg; }
+              var previewDef = p.def.replace(/\{ID\}/g, "prev-" + p.id + "-" + tbState.active).replace(/\{BG\}/g, "#f3f3f5").replace(/\{FG\}/g, "#1F1F24");
+              var active = cur.mode === "pattern" && cur.pattern && cur.pattern.id === p.id ? " active" : "";
+              return '<button type="button" class="lb-tb-sw' + active + '" data-pid="' + p.id + '" title="' + p.label + '" style="padding:0;overflow:hidden;">' +
+                '<svg viewBox="0 0 40 40" width="100%" height="100%"><defs>' + previewDef + '</defs>' +
+                '<rect width="40" height="40" fill="url(#prev-' + p.id + "-" + tbState.active + ')"/></svg></button>';
+            }).join("");
+            Array.prototype.forEach.call(host.querySelectorAll(".lb-tb-sw"), function (b) {
+              b.addEventListener("click", function () {
+                var pid = b.getAttribute("data-pid");
+                var current = tbState.cfg[tbState.active];
+                var bg = "#FFFFFF", fg = "#1F1F24";
+                if (current.mode === "pattern" && current.pattern && current.pattern.id === pid) {
+                  // rotate palette
+                  var i = TB_COLORS.indexOf(current.pattern.bg);
+                  bg = TB_COLORS[(i + 1) % TB_COLORS.length];
+                  var j = TB_COLORS.indexOf(current.pattern.fg);
+                  fg = TB_COLORS[(j + 2) % TB_COLORS.length];
+                }
+                tbState.cfg[tbState.active] = { mode:"pattern", pattern: { id: pid, bg: bg, fg: fg } };
+                tbRender(); tbRenderPills(); tbRenderSwatches();
+              });
+            });
+          }
+        }
+        function tbSetActive(key) { tbState.active = key; tbRenderPills(); tbRenderSwatches(); }
+        function tbSetMode(m) {
+          tbState.mode = m;
+          Array.prototype.forEach.call(document.querySelectorAll("#lb-tb-modes button"), function (b) {
+            b.classList.toggle("active", b.getAttribute("data-mode") === m);
+          });
+          tbRenderSwatches();
+        }
+        function tbRandomize() {
+          Object.keys(tbState.cfg).forEach(function (sec) {
+            var pick = Math.random();
+            if (pick < 0.6) { tbState.cfg[sec] = { mode:"solid", color: TB_COLORS[Math.floor(Math.random()*TB_COLORS.length)] }; }
+            else if (pick < 0.85) { tbState.cfg[sec] = { mode:"gradient", colors: TB_GRADIENTS[Math.floor(Math.random()*TB_GRADIENTS.length)] }; }
+            else {
+              var p = TB_PATTERNS[Math.floor(Math.random()*TB_PATTERNS.length)];
+              tbState.cfg[sec] = { mode:"pattern", pattern:{ id:p.id, bg:TB_COLORS[Math.floor(Math.random()*TB_COLORS.length)], fg:TB_COLORS[Math.floor(Math.random()*TB_COLORS.length)] } };
+            }
+          });
+          tbRender(); tbRenderPills(); tbRenderSwatches();
+        }
+        function tbReset() { tbState.cfg = JSON.parse(JSON.stringify(TB_DEFAULT)); tbRender(); tbRenderPills(); tbRenderSwatches(); }
+        function tbToPngBlob(size) {
+          return new Promise(function (resolve, reject) {
+            var svgEl = document.querySelector("#lb-tb-svg svg"); if (!svgEl) return reject(new Error("No SVG"));
+            var xml = new XMLSerializer().serializeToString(svgEl);
+            var svg64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+            var img = new Image();
+            img.onload = function () {
+              var canvas = document.createElement("canvas");
+              canvas.width = size; canvas.height = size;
+              var ctx = canvas.getContext("2d");
+              ctx.fillStyle = tbState.cfg.background.color || "#FFFFFF";
+              // For gradient/pattern backgrounds we still get them baked from the SVG
+              ctx.drawImage(img, 0, 0, size, size);
+              canvas.toBlob(function (b) { b ? resolve(b) : reject(new Error("toBlob failed")); }, "image/png");
+            };
+            img.onerror = function () { reject(new Error("Image load failed")); };
+            img.src = svg64;
+          });
+        }
+        function tbExport() {
+          tbToPngBlob(1024).then(function (blob) {
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url; a.download = "rhozeland-toybox.png";
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+          }).catch(function (e) { setMsg("Export failed: " + e.message, "err"); });
+        }
+        function tbSaveAsAvatar() {
+          sb.auth.getUser().then(function (u) {
+            var user = u.data.user; if (!user) { setMsg("Sign in to set your display picture.", "err"); return; }
+            setMsg("Saving your Toybox…");
+            tbToPngBlob(512).then(function (blob) {
+              var path = user.id + "/toybox-" + Date.now() + ".png";
+              return sb.storage.from("avatars").upload(path, blob, { contentType:"image/png", upsert:true }).then(function (r) {
+                if (r.error) throw r.error;
+                var pub = sb.storage.from("avatars").getPublicUrl(path);
+                var url = pub.data && pub.data.publicUrl;
+                return sb.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+              });
+            }).then(function (r) {
+              if (r && r.error) { setMsg(r.error.message, "err"); return; }
+              setMsg("Display picture updated!", "ok");
+            }).catch(function (e) { setMsg("Save failed: " + (e.message || e), "err"); });
+          });
+        }
+
+        document.getElementById("lb-tb-modes") && Array.prototype.forEach.call(document.querySelectorAll("#lb-tb-modes button"), function (b) {
+          b.addEventListener("click", function () { tbSetMode(b.getAttribute("data-mode")); });
+        });
+        var _btnRand = document.getElementById("lb-tb-random");   if (_btnRand)   _btnRand.addEventListener("click", tbRandomize);
+        var _btnReset= document.getElementById("lb-tb-reset");    if (_btnReset)  _btnReset.addEventListener("click", tbReset);
+        var _btnExp  = document.getElementById("lb-tb-export");   if (_btnExp)    _btnExp.addEventListener("click", tbExport);
+        var _btnSave = document.getElementById("lb-tb-save");     if (_btnSave)   _btnSave.addEventListener("click", tbSaveAsAvatar);
+        tbRender(); tbRenderPills(); tbRenderSwatches();
       }
     })();
   </script>

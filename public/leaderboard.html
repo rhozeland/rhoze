@@ -309,6 +309,46 @@
             </div>
             <button class="lb-btn ghost sm" type="button" id="lb-save-profile" style="justify-self:start;">Save profile</button>
 
+            <!-- STATS: gamified snapshot -->
+            <div>
+              <div class="lb-tb-label" style="margin-bottom:6px;">Your rank</div>
+              <div class="lb-stats" id="lb-stats">
+                <div class="lb-stat"><div class="k">Rank</div><div class="v" id="lb-st-rank">—</div><div class="s" id="lb-st-rank-sub">of 0</div></div>
+                <div class="lb-stat"><div class="k">Weekly</div><div class="v" id="lb-st-weekly">0</div><div class="s">pts this week</div></div>
+                <div class="lb-stat"><div class="k">All-time</div><div class="v" id="lb-st-alltime">0</div><div class="s">pts total</div></div>
+              </div>
+            </div>
+
+            <!-- TOYBOX CUSTOMIZER: personal PFP generator -->
+            <div class="lb-tb" id="lb-tb">
+              <div class="lb-tb-head">
+                <div>
+                  <h3>Your Toybox PFP</h3>
+                  <div class="hint">Design a logo that's yours. Export it, or set it as your Rhozeland avatar.</div>
+                </div>
+                <div class="lb-tb-modes" id="lb-tb-modes">
+                  <button type="button" class="active" data-mode="solid">Solid</button>
+                  <button type="button" data-mode="gradient">Gradient</button>
+                  <button type="button" data-mode="pattern">Pattern</button>
+                </div>
+              </div>
+              <div class="lb-tb-stage"><div id="lb-tb-svg"></div></div>
+              <div>
+                <div class="lb-tb-label" style="margin-bottom:6px;">Piece</div>
+                <div class="lb-tb-pills" id="lb-tb-pills"></div>
+              </div>
+              <div>
+                <div class="lb-tb-label" style="margin-bottom:6px;" id="lb-tb-swatch-label">Colors</div>
+                <div class="lb-tb-swatches" id="lb-tb-swatches"></div>
+              </div>
+              <div class="lb-tb-actions">
+                <button type="button" id="lb-tb-random">🎲 Randomize</button>
+                <button type="button" id="lb-tb-reset">Reset</button>
+                <button type="button" id="lb-tb-export">⬇ Export PNG</button>
+                <button type="button" id="lb-tb-save" class="primary">Set as display picture</button>
+              </div>
+            </div>
+
             <details style="border:1px solid hsl(var(--border)); border-radius:10px; padding:8px 10px;">
               <summary style="cursor:pointer; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.08em; color:hsl(var(--muted));">Change password</summary>
               <div style="display:grid; gap:8px; margin-top:8px;">

@@ -102,6 +102,44 @@
     .lb-mine-row .st { margin-left:auto; font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:2px 8px; border-radius:999px; border:1px solid hsl(var(--line)); }
     .lb-mine-row .st.approved { color: hsl(var(--accent-green)); border-color: hsl(var(--accent-green) / 0.5); }
     .lb-mine-row .st.rejected { color: hsl(0 70% 55%); border-color: hsl(0 70% 55% / 0.5); }
+    /* Combined info strip below hero: points rules + weekly rewards */
+    .lb-top-info { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
+    @media (min-width: 860px) { .lb-top-info { grid-template-columns:1.15fr 1fr; gap:18px; } }
+    /* Equal-height split */
+    .lb-split { align-items:stretch; }
+    .lb-split > * { display:flex; flex-direction:column; }
+    .lb-account { height:100%; }
+    /* Stats mini-cards inside account */
+    .lb-stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+    .lb-stat { padding:10px 12px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); text-align:left; }
+    .lb-stat .k { font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; }
+    .lb-stat .v { font-size:18px; font-weight:700; color:hsl(var(--ink)); font-variant-numeric:tabular-nums; margin-top:2px; letter-spacing:-0.01em; }
+    .lb-stat .s { font-size:10.5px; color:hsl(var(--muted)); margin-top:1px; }
+    /* ToyBox customizer */
+    .lb-tb { border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-alt)); padding:14px; display:grid; gap:10px; }
+    .lb-tb-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+    .lb-tb-head h3 { font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em; }
+    .lb-tb-head .hint { font-size:10.5px; color:hsl(var(--muted)); }
+    .lb-tb-stage { display:flex; align-items:center; justify-content:center; padding:10px; border-radius:14px; background:hsl(var(--surface)); border:1px solid hsl(var(--line)); min-height:180px; }
+    .lb-tb-stage svg { width:150px; height:150px; }
+    .lb-tb-stage svg path[data-section] { cursor:pointer; transition:filter .15s ease; }
+    .lb-tb-stage svg path[data-section]:hover { filter:brightness(0.94); }
+    .lb-tb-pills { display:flex; gap:6px; flex-wrap:wrap; }
+    .lb-tb-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--muted)); font-size:11px; font-weight:600; cursor:pointer; }
+    .lb-tb-pill.active { background:hsl(var(--ink)); color:hsl(var(--surface)); border-color:hsl(var(--ink)); }
+    .lb-tb-pill .sw { width:12px; height:12px; border-radius:999px; border:1px solid hsl(var(--line) / .6); background:#fff; }
+    .lb-tb-modes { display:inline-flex; padding:2px; gap:2px; border:1px solid hsl(var(--line)); border-radius:999px; background:hsl(var(--surface)); }
+    .lb-tb-modes button { padding:4px 10px; font-size:10.5px; font-weight:600; letter-spacing:.03em; border-radius:999px; border:0; background:transparent; color:hsl(var(--muted)); cursor:pointer; }
+    .lb-tb-modes button.active { background:hsl(var(--ink)); color:hsl(var(--surface)); }
+    .lb-tb-swatches { display:grid; grid-template-columns:repeat(8,1fr); gap:6px; }
+    .lb-tb-sw { aspect-ratio:1/1; border-radius:10px; border:2px solid hsl(var(--line) / .5); cursor:pointer; transition:transform .12s ease; }
+    .lb-tb-sw:hover { transform:scale(1.06); }
+    .lb-tb-sw.active { border-color:hsl(var(--ink)); transform:scale(1.08); }
+    .lb-tb-actions { display:flex; gap:6px; flex-wrap:wrap; }
+    .lb-tb-actions button { padding:7px 11px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--ink)); font-size:11.5px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:5px; }
+    .lb-tb-actions button.primary { background:hsl(var(--ink)); color:hsl(var(--surface)); border-color:hsl(var(--ink)); }
+    .lb-tb-actions button:hover { filter:brightness(0.96); }
+    .lb-tb-label { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; }
   </style>
 </head>
 <body class="page-events">

@@ -185,9 +185,36 @@
         </div>
       </section>
 
+      <!-- INFO STRIP: Points rules + Weekly rewards, promoted to the top -->
+      <section class="lb-top-info">
+        <div class="lb-card lb-card-pad">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+            <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
+            <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
+          </div>
+          <div class="lb-rules-tabs" role="tablist" id="lb-rules-tabs">
+            <button type="button" class="active" data-tier="quick">Quick wins</button>
+            <button type="button" data-tier="create">Create</button>
+            <button type="button" data-tier="big">Big plays</button>
+          </div>
+          <div class="lb-rules-grid" id="lb-rules"></div>
+        </div>
+        <div class="lb-card lb-card-pad">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+            <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
+            <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
+          </div>
+          <div class="lb-rewards">
+            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer. Your choice.</div></div></div>
+            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
+            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
+          </div>
+        </div>
+      </section>
+
       <!-- SPLIT: leaderboard + account -->
       <section class="lb-split">
-        <!-- LEFT: leaderboard + rules + rewards -->
+        <!-- LEFT: leaderboard (top movers) -->
         <div style="display:grid; gap:18px; min-width:0;">
           <div class="lb-card">
             <div class="lb-card-pad" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
@@ -217,40 +244,13 @@
             </div>
           </div>
 
-          <!-- Rules + Rewards side-by-side -->
-          <div style="display:grid; grid-template-columns:1fr; gap:14px;" class="lb-rules-row">
-            <div class="lb-card lb-card-pad">
-              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
-                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
-              </div>
-              <div class="lb-rules-tabs" role="tablist" id="lb-rules-tabs">
-                <button type="button" class="active" data-tier="quick">Quick wins</button>
-                <button type="button" data-tier="create">Create</button>
-                <button type="button" data-tier="big">Big plays</button>
-              </div>
-              <div class="lb-rules-grid" id="lb-rules"></div>
-            </div>
-            <div class="lb-card lb-card-pad">
-              <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-                <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
-                <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
-              </div>
-              <div class="lb-rewards">
-                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer. Your choice.</div></div></div>
-                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
-                <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
-              </div>
-            </div>
-          </div>
-
           <p style="font-size:12px; color:hsl(var(--muted)); text-align:center; padding:8px 12px;">
             Tag <strong>@rhozeland</strong> and <strong>$RHOZE</strong> in your posts to be counted. Snapshots are reviewed weekly by the Rhozeland marketing team.
           </p>
         </div>
 
-        <!-- RIGHT: sticky account panel -->
-        <aside class="lb-card lb-card-pad lb-account" id="lb-account" style="position:sticky; top:96px;">
+        <!-- RIGHT: account panel (equal-height with Top Movers) -->
+        <aside class="lb-card lb-card-pad lb-account" id="lb-account">
           <div class="lb-acct-head">
             <h2 id="lb-acct-title">Join the leaderboard</h2>
             <span class="who" id="lb-who">Not signed in</span>

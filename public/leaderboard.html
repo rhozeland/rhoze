@@ -718,13 +718,23 @@
         sb.auth.getUser().then(function (u) {
           var user = u.data.user; if (!user) return;
           var uid = user.id;
-          sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name").eq("id", uid).maybeSingle()
+          sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name,avatar_url").eq("id", uid).maybeSingle()
             .then(function (res) {
               var p = res.data || {};
               $("lb-pf-user").value = p.community_username || p.alias || "";
               $("lb-pf-email").value = user.email || "";
               $("lb-pf-pay").value = p.payment_email || "";
               applySocialUI(parseSocials(p.social_handle));
+              var av = $("lb-acct-avatar");
+              if (av) {
+                var name = p.community_username || p.alias || user.email || "?";
+                var letter = String(name).replace(/^@/, "").charAt(0).toUpperCase() || "?";
+                if (p.avatar_url) {
+                  av.innerHTML = '<img src="' + escapeHtml(p.avatar_url) + '" alt="" />';
+                } else {
+                  av.textContent = letter;
+                }
+              }
             });
         });
       }

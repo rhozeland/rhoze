@@ -766,7 +766,13 @@
         });
       }
 
-      function normalizeHandle(h) { h = (h || "").trim(); if (h && h[0] !== "@") h = "@" + h; return h; }
+      function normalizeHandle(h) {
+        h = (h || "").trim();
+        // Strip anything after an "@domain.tld" style suffix so emails don't get stored as public handles
+        h = h.replace(/@[^@\s]+\.[^@\s]+$/, "");
+        if (h && h[0] !== "@") h = "@" + h;
+        return h;
+      }
 
       if (sb) {
         // Detect password recovery link (Supabase puts type=recovery in the URL hash)

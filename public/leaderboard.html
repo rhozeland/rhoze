@@ -122,6 +122,45 @@
     .lb-tb-head .hint { font-size:10.5px; color:hsl(var(--muted)); }
     .lb-tb-stage { display:flex; align-items:center; justify-content:center; padding:10px; border-radius:14px; background:hsl(var(--surface)); border:1px solid hsl(var(--line)); min-height:180px; }
     .lb-tb-stage svg { width:150px; height:150px; }
+    /* Row avatars in Top Movers */
+    .lb-row-user { display:flex; align-items:center; gap:10px; min-width:0; }
+    .lb-row-avatar { width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:hsl(var(--ink)); border:1.5px solid hsl(var(--ink) / 0.85); background:hsl(var(--surface-alt)); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+    .lb-row-user .name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:hsl(var(--ink)); }
+    /* Account header avatar */
+    .lb-acct-head { align-items:center; }
+    .lb-acct-avatar { width:44px; height:44px; border-radius:12px; border:2px solid hsl(var(--ink)); background:hsl(var(--surface-alt)); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:hsl(var(--ink)); }
+    .lb-acct-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .lb-acct-head-left { display:flex; align-items:center; gap:12px; min-width:0; }
+    /* Unified info card (merged rules + rewards) */
+    .lb-info-unified { margin-top:14px; padding:20px 22px; display:grid; gap:18px; }
+    .lb-info-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    .lb-info-head h3 { font-size:15px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em; }
+    .lb-info-head .sub { font-size:11.5px; color:hsl(var(--muted)); margin-top:2px; line-height:1.45; max-width:52ch; }
+    .lb-info-grid { display:grid; gap:18px; grid-template-columns:1fr; }
+    @media (min-width: 900px) { .lb-info-grid { grid-template-columns: 1.35fr 1fr; } }
+    .lb-info-divider { height:1px; background:hsl(var(--line)); }
+    @media (min-width: 900px) { .lb-info-divider { width:1px; height:auto; } }
+    /* Tooltip on rules — reveals context on hover/focus */
+    .lb-rule { position:relative; cursor:help; }
+    .lb-rule[data-tip]:hover::after,
+    .lb-rule[data-tip]:focus-within::after { opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+    .lb-rule[data-tip]::after {
+      content:attr(data-tip); position:absolute; left:50%; bottom:calc(100% + 6px); transform:translate(-50%, 4px);
+      background:hsl(var(--ink)); color:hsl(var(--surface)); font-size:11px; font-weight:500; letter-spacing:0; text-transform:none;
+      padding:7px 10px; border-radius:8px; width:max-content; max-width:230px; line-height:1.4;
+      opacity:0; pointer-events:none; transition:opacity .15s ease, transform .15s ease; z-index:20; box-shadow:0 6px 20px hsl(0 0% 0% / 0.15);
+    }
+    /* Bonus callout row (PFP = 200 pts) */
+    .lb-bonus { display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid hsl(var(--accent-green) / 0.4); background:hsl(var(--accent-green) / 0.08); border-radius:var(--radius-md); }
+    .lb-bonus .b-ico { width:32px; height:32px; border-radius:10px; background:hsl(var(--surface)); border:1.5px solid hsl(var(--ink)); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .lb-bonus .b-txt { font-size:12.5px; color:hsl(var(--ink)); line-height:1.45; flex:1; }
+    .lb-bonus .b-pts { font-size:12px; font-weight:700; color:hsl(var(--accent-green)); background:hsl(var(--surface)); padding:4px 10px; border-radius:999px; border:1px solid hsl(var(--accent-green) / 0.4); white-space:nowrap; }
+    /* Official social row inside the info card */
+    .lb-info-socials { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-top:4px; }
+    .lb-info-socials .lbl { font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; margin-right:2px; }
+    .lb-info-socials a { width:30px; height:30px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); color:hsl(var(--muted)); display:flex; align-items:center; justify-content:center; transition:all .15s ease; }
+    .lb-info-socials a:hover { color:hsl(var(--ink)); border-color:hsl(var(--ink)); }
+    .lb-info-socials a svg { width:13px; height:13px; }
     .lb-tb-stage svg path[data-section] { cursor:pointer; transition:filter .15s ease; }
     .lb-tb-stage svg path[data-section]:hover { filter:brightness(0.94); }
     .lb-tb-pills { display:flex; gap:6px; flex-wrap:wrap; }
@@ -185,29 +224,44 @@
         </div>
       </section>
 
-      <!-- INFO STRIP: Points rules + Weekly rewards, promoted to the top -->
-      <section class="lb-top-info">
-        <div class="lb-card lb-card-pad">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-            <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Points rules</h3>
-            <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">How to earn</span>
+      <!-- UNIFIED INFO: Points rules + Weekly rewards + PFP bonus, in one card -->
+      <section class="lb-card lb-info-unified">
+        <div class="lb-info-head">
+          <div>
+            <h3>How points &amp; rewards work</h3>
+            <div class="sub">Earn points every week by raiding, posting, and creating for Rhozeland. Top movers win cash, $RHOZE, and store credit. Hover any action for what counts.</div>
           </div>
-          <div class="lb-rules-tabs" role="tablist" id="lb-rules-tabs">
-            <button type="button" class="active" data-tier="quick">Quick wins</button>
-            <button type="button" data-tier="create">Create</button>
-            <button type="button" data-tier="big">Big plays</button>
+          <div class="lb-info-socials" aria-label="Official Rhozeland socials">
+            <span class="lbl">Tag us</span>
+            <a href="https://x.com/rhozeland" target="_blank" rel="noopener" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="https://www.instagram.com/rhozeland/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+            <a href="https://www.tiktok.com/@rhozeland" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.83a8.16 8.16 0 0 0 4.77 1.52V6.9a4.85 4.85 0 0 1-1.84-.21z"/></svg></a>
+            <a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/></svg></a>
           </div>
-          <div class="lb-rules-grid" id="lb-rules"></div>
         </div>
-        <div class="lb-card lb-card-pad">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-            <h3 style="font-size:13px; font-weight:600; color:hsl(var(--ink)); letter-spacing:-0.01em;">Weekly rewards</h3>
-            <span style="font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted));">Winners every week</span>
+
+        <div class="lb-info-grid">
+          <div>
+            <div class="lb-tb-label" style="margin-bottom:8px;">Ways to earn <span style="text-transform:none; letter-spacing:0; color:hsl(var(--muted)); font-weight:500;">— tap a tier, hover any action</span></div>
+            <div class="lb-rules-tabs" role="tablist" id="lb-rules-tabs" style="margin-bottom:10px;">
+              <button type="button" class="active" data-tier="quick">Quick wins</button>
+              <button type="button" data-tier="create">Create</button>
+              <button type="button" data-tier="big">Big plays</button>
+            </div>
+            <div class="lb-rules-grid" id="lb-rules"></div>
+            <div class="lb-bonus" style="margin-top:12px;">
+              <span class="b-ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.8 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg></span>
+              <span class="b-txt">Build a <strong>Toybox PFP</strong> and use it across your socials — one-time <strong>+200 pts</strong> bonus.</span>
+              <span class="b-pts">+200 pts</span>
+            </div>
           </div>
-          <div class="lb-rewards">
-            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer. Your choice.</div></div></div>
-            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
-            <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit & merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
+          <div>
+            <div class="lb-tb-label" style="margin-bottom:8px;">Weekly rewards</div>
+            <div class="lb-rewards">
+              <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Cash · $15–$20 USD</div><div class="sub">Paid via Solana, PayPal, or Canadian e-transfer. Your choice.</div></div></div>
+              <div class="lb-reward"><span class="dot"></span><div><div class="ttl">$RHOZE token</div><div class="sub">$5–$20 USD value airdropped to your wallet.</div></div></div>
+              <div class="lb-reward"><span class="dot"></span><div><div class="ttl">Store credit &amp; merch</div><div class="sub">Spend on Rhozeland events, services, or grab from existing merch drops.</div></div></div>
+            </div>
           </div>
         </div>
       </section>
@@ -252,8 +306,13 @@
         <!-- RIGHT: account panel (equal-height with Top Movers) -->
         <aside class="lb-card lb-card-pad lb-account" id="lb-account">
           <div class="lb-acct-head">
-            <h2 id="lb-acct-title">Join the leaderboard</h2>
-            <span class="who" id="lb-who">Not signed in</span>
+            <div class="lb-acct-head-left">
+              <div class="lb-acct-avatar" id="lb-acct-avatar" aria-hidden="true">?</div>
+              <div style="min-width:0;">
+                <h2 id="lb-acct-title">Join the leaderboard</h2>
+                <span class="who" id="lb-who">Not signed in</span>
+              </div>
+            </div>
           </div>
           <p id="lb-acct-sub" style="font-size:12.5px; color:hsl(var(--muted)); line-height:1.5;">
             Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.
@@ -490,13 +549,24 @@
         var start = state.page * PAGE_SIZE;
         var slice = sorted.slice(start, start + PAGE_SIZE);
 
+        function initialOf(name) {
+          var s = String(name || "").replace(/^@/, "").trim();
+          return (s.charAt(0) || "?").toUpperCase();
+        }
+        function hueOf(name) {
+          var s = String(name || ""), h = 0;
+          for (var k = 0; k < s.length; k++) h = (h * 31 + s.charCodeAt(k)) >>> 0;
+          return h % 360;
+        }
         body.innerHTML = slice.map(function (r, i) {
           var rank = start + i + 1;
           var cls = rank === 1 ? "lb-medal-1" : rank === 2 ? "lb-medal-2" : rank === 3 ? "lb-medal-3" : "";
           var pts = (r[key] || 0).toLocaleString();
+          var hue = hueOf(r.username);
+          var av  = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' + escapeHtml(initialOf(r.username)) + '</span>';
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
-            '<td><strong>' + escapeHtml(r.username) + '</strong></td>' +
+            '<td><div class="lb-row-user">' + av + '<span class="name">' + escapeHtml(r.username) + '</span></div></td>' +
             '<td>' + ((r.raids||0)+(r.memes||0)+(r.edu_threads||0)+(r.videos||0)) + '</td>' +
             '<td class="points">' + pts + '</td>' +
           '</tr>';
@@ -517,19 +587,19 @@
       // ===== Points rules: tabbed, with icons =====
       // Static catalog drives icons + tiers; numbers stay in sync with community_submission_approve.
       var RULES_CATALOG = [
-        { tier:"quick",  pts:5,  activity:"Raid",            icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>' },
-        { tier:"quick",  pts:10, activity:"Meme reply",      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>' },
-        { tier:"quick",  pts:15, activity:"Original tweet",  icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
-        { tier:"create", pts:25, activity:"Thread (4+)",     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="14" y2="18"/></svg>' },
-        { tier:"create", pts:35, activity:"Infographic",     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="15" y1="21" x2="15" y2="13"/></svg>' },
-        { tier:"create", pts:45, activity:"Video",           icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>' },
-        { tier:"big",    pts:50, activity:"Rhozeland bounty",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>' }
+        { tier:"quick",  pts:5,  activity:"Raid",            tip:"Reply, comment, or reshare a Rhozeland post on X, IG, TikTok, or YouTube. Counts across every platform.", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>' },
+        { tier:"quick",  pts:10, activity:"Meme reply",      tip:"Post a meme in reply to a Rhozeland post — image, video, or GIF. Must tag @rhozeland and $RHOZE.", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>' },
+        { tier:"quick",  pts:15, activity:"Original tweet",  tip:"A standalone post about Rhozeland or $RHOZE that tags us. No reposts.", icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
+        { tier:"create", pts:25, activity:"Thread (4+)",     tip:"A connected thread of 4 or more posts breaking down Rhozeland, the ecosystem, or $RHOZE.", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="14" y2="18"/></svg>' },
+        { tier:"create", pts:35, activity:"Infographic",     tip:"An original graphic, chart, or carousel explaining Rhozeland. Must be your own art.", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="21" x2="9" y2="9"/><line x1="15" y1="21" x2="15" y2="13"/></svg>' },
+        { tier:"create", pts:45, activity:"Video",           tip:"Original short-form or long-form video on TikTok, IG Reels, YouTube, or X. 15s minimum.", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>' },
+        { tier:"big",    pts:50, activity:"Rhozeland bounty",tip:"Special weekly missions posted by the Rhozeland team. Points can stack with content bonuses.", icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>' }
       ];
       function renderRules(tier) {
         var el = document.getElementById("lb-rules");
         var list = RULES_CATALOG.filter(function(r){ return r.tier === tier; });
         el.innerHTML = list.map(function (r) {
-          return '<div class="lb-rule">' +
+          return '<div class="lb-rule" tabindex="0" data-tip="' + escapeHtml(r.tip || "") + '">' +
             '<span class="ico">' + r.icon + '</span>' +
             '<span class="body">' +
               '<span class="act">' + escapeHtml(r.activity) + '</span>' +
@@ -604,6 +674,7 @@
           $("lb-acct-sub").textContent = "Create an account in under a minute. Track your submissions, get notified when points land, and tell us where to send your rewards.";
           whoEl.textContent = "Not signed in";
           $("lb-mine").innerHTML = "";
+          var av = $("lb-acct-avatar"); if (av) { av.textContent = "?"; }
         }
       }
 
@@ -648,13 +719,23 @@
         sb.auth.getUser().then(function (u) {
           var user = u.data.user; if (!user) return;
           var uid = user.id;
-          sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name").eq("id", uid).maybeSingle()
+          sb.from("profiles").select("community_username,social_handle,payment_email,alias,display_name,avatar_url").eq("id", uid).maybeSingle()
             .then(function (res) {
               var p = res.data || {};
               $("lb-pf-user").value = p.community_username || p.alias || "";
               $("lb-pf-email").value = user.email || "";
               $("lb-pf-pay").value = p.payment_email || "";
               applySocialUI(parseSocials(p.social_handle));
+              var av = $("lb-acct-avatar");
+              if (av) {
+                var name = p.community_username || p.alias || user.email || "?";
+                var letter = String(name).replace(/^@/, "").charAt(0).toUpperCase() || "?";
+                if (p.avatar_url) {
+                  av.innerHTML = '<img src="' + escapeHtml(p.avatar_url) + '" alt="" />';
+                } else {
+                  av.textContent = letter;
+                }
+              }
             });
         });
       }
@@ -924,7 +1005,7 @@
             '<path data-section="boxLid"    d="' + TB_PATHS.boxLid    + '" fill="' + tbFillFor("boxLid")    + '"/>' +
             '<path data-section="sidePanel" d="' + TB_PATHS.sidePanel + '" fill="' + tbFillFor("sidePanel") + '"/>' +
             '<path data-section="tag"       d="' + TB_PATHS.tag       + '" fill="' + tbFillFor("tag")       + '"/>' +
-            '<path d="' + TB_OUTLINE + '" fill="none" stroke="#1F1F24" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>' +
+            '<path d="' + TB_OUTLINE + '" fill="none" stroke="#1F1F24" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"/>' +
           '</svg>';
           host.innerHTML = svg;
           Array.prototype.forEach.call(host.querySelectorAll("path[data-section]"), function (p) {

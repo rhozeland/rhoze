@@ -549,13 +549,24 @@
         var start = state.page * PAGE_SIZE;
         var slice = sorted.slice(start, start + PAGE_SIZE);
 
+        function initialOf(name) {
+          var s = String(name || "").replace(/^@/, "").trim();
+          return (s.charAt(0) || "?").toUpperCase();
+        }
+        function hueOf(name) {
+          var s = String(name || ""), h = 0;
+          for (var k = 0; k < s.length; k++) h = (h * 31 + s.charCodeAt(k)) >>> 0;
+          return h % 360;
+        }
         body.innerHTML = slice.map(function (r, i) {
           var rank = start + i + 1;
           var cls = rank === 1 ? "lb-medal-1" : rank === 2 ? "lb-medal-2" : rank === 3 ? "lb-medal-3" : "";
           var pts = (r[key] || 0).toLocaleString();
+          var hue = hueOf(r.username);
+          var av  = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' + escapeHtml(initialOf(r.username)) + '</span>';
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
-            '<td><strong>' + escapeHtml(r.username) + '</strong></td>' +
+            '<td><div class="lb-row-user">' + av + '<span class="name">' + escapeHtml(r.username) + '</span></div></td>' +
             '<td>' + ((r.raids||0)+(r.memes||0)+(r.edu_threads||0)+(r.videos||0)) + '</td>' +
             '<td class="points">' + pts + '</td>' +
           '</tr>';

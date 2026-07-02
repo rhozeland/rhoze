@@ -4,6 +4,16 @@ import { ArrowUpRight, Music, Camera, Video } from "lucide-react";
 
 const projects = [
   {
+    title: "Sefra",
+    artist: "Cozal",
+    tag: "Audio & Visual",
+    type: "Music Video",
+    icons: ["music", "camera"],
+    href: "https://www.youtube.com/watch?v=WLpDRh8JsxY",
+    image: "/images/cozal-sefra-thumb.jpg",
+    video: "/__l5e/assets-v1/c61cdc0d-14ef-4698-a361-3cbe05ac8be6/cozal-sefra.mp4",
+  },
+  {
     title: "Just Call Me",
     artist: "Ess B",
     tag: "Audio & Visual",

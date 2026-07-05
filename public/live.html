@@ -860,23 +860,26 @@ function buildWire(){
 }
 buildWire();
 
-/* ================= Ambient Radio ================= */
-var audio = document.getElementById('radio-audio');
-var toggle = document.getElementById('radio-toggle');
-var eq = document.getElementById('eq');
-toggle.addEventListener('click', function(){
-  if (audio.paused){
-    audio.volume = 0.35;
-    audio.play().then(function(){
-      toggle.classList.remove('off');
-      eq.classList.remove('off');
-    }).catch(function(){});
-  } else {
-    audio.pause();
-    toggle.classList.add('off');
-    eq.classList.add('off');
-  }
-});
+/* ================= Merch slideshow ================= */
+var MERCH = [
+  { n: 'Essential Wear', p: 'The essentials',              tag: 'Drop 01', img: '/__l5e/assets-v1/1c7bcbe0-19e0-4845-b98a-262ba21be682/toybox-essential-wear.jpg' },
+  { n: 'Sunfade Hoodie', p: 'Heavyweight · Oversized',     tag: 'Hoodie',  img: '/__l5e/assets-v1/fe93dbc4-6a91-4c5a-8591-521d608d2b1e/toybox-hoodie-sunfade.jpg' },
+  { n: "Worker's Jacket", p: 'Workwear 2026',              tag: 'Jacket',  img: '/__l5e/assets-v1/cc3fb4d7-cf73-44a6-b26d-651870427028/toybox-jacket.jpg' },
+  { n: 'Earth Tone Tee', p: 'Heavyweight · Cotton',        tag: 'Tee',     img: '/__l5e/assets-v1/2ed75e92-254e-46e7-9d63-11b93e97a337/toybox-tee-earth.jpg' },
+  { n: 'Rhozeland Base Tee', p: 'Logo · Everyday wear',    tag: 'Tee',     img: '/__l5e/assets-v1/541ef798-890f-49bd-a882-e007d002513f/toybox-tee-logo.jpg' },
+  { n: 'Heavyweight Vest', p: 'Essential · Layered',       tag: 'Vest',    img: '/__l5e/assets-v1/2384d4b6-56ec-48eb-af5b-c5281ecdc7cf/toybox-vest.jpg' },
+];
+(function renderMerch(){
+  var strip = document.getElementById('merch-strip');
+  var html = MERCH.map(function(m){
+    return '<div class="merch-slide" style="background-image:url(\'' + m.img + '\')">'
+      + '<span class="tag">' + m.tag + '</span>'
+      + '<div class="cap"><div class="n">' + m.n + '</div><div class="p">' + m.p + '</div></div>'
+      + '</div>';
+  }).join('');
+  // Duplicate for seamless marquee
+  strip.innerHTML = html + html;
+})();
 </script>
 </body>
 </html>

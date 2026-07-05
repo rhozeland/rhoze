@@ -240,7 +240,7 @@
           </div>
         </section>
         <section class="pulse-panel">
-          <div class="kicker"><span>Social Feed</span><span class="sub" id="pulse-source">Live · X · LI</span></div>
+          <div class="kicker"><span>Social Feed</span><span class="sub" id="pulse-source">Live · X · LI · IG</span></div>
           <div class="pulse-list" id="pulse-list"></div>
         </section>
       </div>
@@ -249,11 +249,11 @@
       <section class="merch-rail">
         <div class="merch-rail-head">
           <div>
-            <div class="k1">Toy Box · SS 26</div>
-            <div class="k2">Wear the<br/>Ecosystem</div>
-            <div class="k3">Real people. Real fits. Rhozeland's in-house apparel line — funded by the community.</div>
+            <div class="k1" id="merch-eyebrow">Toy Box · SS 26</div>
+            <div class="k2" id="merch-headline">Wear the<br/>Ecosystem</div>
+            <div class="k3" id="merch-description">Real people. Real fits. Rhozeland's in-house apparel line — funded by the community.</div>
           </div>
-          <div class="k4">→ Drop coming soon</div>
+          <div class="k4" id="merch-cta">→ Drop coming soon</div>
         </div>
         <div class="merch-viewport">
           <div class="merch-strip" id="merch-strip"></div>
@@ -292,8 +292,8 @@
       </div>
 
       <div class="sched">
-        <div class="sched-hd"><span class="l">Broadcast Schedule</span><span class="r">All times UTC</span></div>
-        <div class="sched-list">
+        <div class="sched-hd"><span class="l">Broadcast Schedule</span><span class="r" id="sched-zone">All times UTC</span></div>
+        <div class="sched-list" id="sched-list">
           <div class="sched-item"><span class="day">SUN</span><div class="col"><span class="what">New Release · Video</span><span class="when">20:00 UTC</span></div></div>
           <div class="sched-item"><span class="day">MON</span><div class="col"><span class="what">89-32 Podcast · Live</span><span class="when">18:00 UTC</span></div></div>
           <div class="sched-item"><span class="day">TUE</span><div class="col"><span class="what">Artist Sessions</span><span class="when">19:00 UTC</span></div></div>
@@ -306,11 +306,11 @@
       <!-- MERGED: Creator OS = the Rhozeland App -->
       <div class="os" style="margin-top:auto;">
         <div class="os-head">
-          <span class="os-eyebrow">Creator OS · The Rhozeland App</span>
+          <span class="os-eyebrow" id="os-eyebrow">Creator OS · The Rhozeland App</span>
           <span class="os-live">Live</span>
         </div>
-        <div class="os-title">Own Your <span>Sound</span></div>
-        <div class="os-sub">The always-on operating system for independent artists — verify IP on-chain, attach a creator coin, and back the artists you love.</div>
+        <div class="os-title" id="os-title">Own Your <span>Sound</span></div>
+        <div class="os-sub" id="os-sub">The always-on operating system for independent artists — verify IP on-chain, attach a creator coin, and back the artists you love.</div>
         <div class="os-mock">
           <div class="os-phone" aria-hidden="true">
             <div class="notch"></div>
@@ -329,13 +329,13 @@
           </div>
         </div>
         <div class="os-qr-block">
-          <div class="os-qr-lg"><img alt="Scan to open the Rhozeland app" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
+          <div class="os-qr-lg"><img id="os-qr-img" alt="Scan to open the Rhozeland app" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
           <div class="os-qr-cap">
-            <div class="k">Scan to open</div>
+            <div class="k" id="os-qr-cap">Scan to open</div>
             <div class="v">Point your camera to get on-chain, attach a creator coin, and start dripping $RHOZE.</div>
           </div>
         </div>
-        <div class="os-socials">
+        <div class="os-socials" id="os-socials">
           <a href="https://x.com/rhozeland" target="_blank" rel="noopener" aria-label="X">X</a>
           <a href="https://instagram.com/rhozeland" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
           <a href="https://linkedin.com/company/rhozeland" target="_blank" rel="noopener" aria-label="LinkedIn">LI</a>

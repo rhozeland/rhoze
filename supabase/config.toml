@@ -41,3 +41,6 @@ verify_jwt = true
 
 [functions.youtube-feed]
 verify_jwt = false
+
+[functions.live-social-feed]
+verify_jwt = false

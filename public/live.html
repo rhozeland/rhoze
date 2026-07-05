@@ -393,23 +393,28 @@ var PORTFOLIO = [
 var spotIdx = 0;
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function renderSpotlight(){
-  var row = document.getElementById('spot-row');
+  var heroEl = document.getElementById('spot-hero');
+  var railEl = document.getElementById('spot-rail');
   var idxEl = document.getElementById('spot-index');
   var len = PORTFOLIO.length;
-  var cards = [0,1,2].map(function(o){
+  var hero = PORTFOLIO[spotIdx % len];
+  var media = hero.video
+    ? '<video autoplay muted loop playsinline preload="auto" src="' + hero.video + '" poster="' + esc(hero.img) + '"></video>'
+    : '<img loading="lazy" src="' + esc(hero.img) + '" alt="' + esc(hero.t) + '" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" />';
+  heroEl.innerHTML =
+      '<span class="tag">' + esc(hero.tag) + '</span>'
+    + '<span class="live-pill-hero">On Air</span>'
+    + media
+    + '<div class="plate"><div class="a">' + esc(hero.a) + '</div><div class="t">' + esc(hero.t) + '</div></div>';
+  var rail = [1,2,3,4].map(function(o){
     var p = PORTFOLIO[(spotIdx + o) % len];
-    var hero = o === 0 ? ' hero' : ' dim';
-    var media = (o === 0 && p.video)
-      ? '<video autoplay muted loop playsinline preload="auto" src="' + p.video + '" poster="' + esc(p.img) + '"></video>'
-      : '<img loading="lazy" src="' + esc(p.img) + '" alt="' + esc(p.t) + '" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" />';
-    return '<div class="spot-card' + hero + '">'
-      + '<span class="tag">' + esc(p.tag) + '</span>'
-      + media
-      + '<div class="plate"><div class="t">' + esc(p.t) + ' <span class="a">/ ' + esc(p.a) + '</span></div></div>'
+    return '<div class="spot-mini">'
+      + '<div class="thumb"><img loading="lazy" src="' + esc(p.img) + '" alt="" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" /></div>'
+      + '<div class="info"><div class="n">' + esc(p.t) + '</div><div class="a">' + esc(p.a) + '</div><div class="tag">' + esc(p.tag) + '</div></div>'
       + '</div>';
   }).join('');
-  row.innerHTML = cards;
-  idxEl.textContent = String(spotIdx + 1).padStart(2,'0') + ' / ' + String(len).padStart(2,'0');
+  railEl.innerHTML = rail;
+  idxEl.textContent = String((spotIdx % len) + 1).padStart(2,'0') + ' / ' + String(len).padStart(2,'0');
 }
 renderSpotlight();
 setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotlight(); }, 6000);
@@ -432,17 +437,16 @@ function renderPulse(){
   var items = [0,1,2,3].map(function(o){
     var p = PULSE[(pulseIdx + o) % PULSE.length];
     var platCls = (p.plat || 'X').toLowerCase();
-    var thumbCls = 'pulse-thumb' + (p.img ? '' : ' no-img');
-    var thumbStyle = p.img ? (' style="background-image:url(\'' + p.img + '\')"') : '';
-    return '<div class="pulse-card' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="' + thumbCls + '"' + thumbStyle + '>'
-      +   '<span class="pulse-plat ' + platCls + '">' + esc(p.plat || '') + '</span>'
-      +   (p.hot ? '<span class="pulse-live">LIVE</span>' : '<span class="pulse-live" style="color:#fff;background:rgba(0,0,0,0.55);">' + esc(p.h) + '</span>')
+    var thumb = p.img
+      ? '<img loading="lazy" src="' + esc(p.img) + '" alt="" />'
+      : '';
+    return '<div class="pulse-item' + (p.hot ? ' hot' : '') + '">'
+      + '<div class="thumb">' + thumb + '</div>'
+      + '<div class="body">'
+      +   '<div class="head"><span class="plat ' + platCls + '">' + esc(p.plat || '') + '</span><span class="who">' + esc(p.who) + '</span></div>'
+      +   '<div class="msg">' + esc(p.msg) + '</div>'
       + '</div>'
-      + '<div class="pulse-body">'
-      +   '<div class="pulse-who">' + esc(p.who) + '</div>'
-      +   '<div class="pulse-msg">' + esc(p.msg) + '</div>'
-      + '</div>'
+      + '<div class="when">' + (p.hot ? 'LIVE' : esc(p.h)) + '</div>'
       + '</div>';
   }).join('');
   el.innerHTML = items;

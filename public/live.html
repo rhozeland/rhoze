@@ -10,478 +10,194 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto+Condensed:wght@700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #0a0a0a;
-    --panel: #0d0d0d;
-    --panel-2: #111;
-    --panel-3: #1a1a1a;
-    --line: #262626;
-    --line-strong: #333;
-    --text: #ececec;
-    --muted: #8a8a8a;
-    --dim: #5a5a5a;
-    --turq: #3ec3b8;
-    --turq-2: #22e3c4;
-    --lime: #22e39a;
-    --pop: #22e3c4;
-    --live: #dc2626;
-    --up: #22c55e;
-    --down: #ef4444;
+    --ink: #0a0a0a; --panel: #0d0d0d; --panel-2: #111; --panel-3: #1a1a1a;
+    --line: #262626; --line-strong: #333;
+    --text: #ececec; --muted: #8a8a8a; --dim: #5a5a5a;
+    --turq: #3ec3b8; --turq-2: #22e3c4; --lime: #22e39a; --pop: #22e3c4;
+    --live: #dc2626; --up: #22c55e; --down: #ef4444;
   }
   *, *::before, *::after { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; height: 100%; }
-  body {
-    background: var(--ink);
-    color: var(--text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    overflow: hidden;
-    -webkit-font-smoothing: antialiased;
-  }
-  .shell {
-    height: 100vh;
-    display: grid;
-    grid-template-rows: 56px 1fr 64px;
-  }
+  html, body { margin:0; padding:0; height:100%; }
+  body { background: var(--ink); color: var(--text); font-family:'Inter',sans-serif; overflow:hidden; -webkit-font-smoothing:antialiased; }
+  .shell { height:100vh; display:grid; grid-template-rows:56px 1fr 60px; }
 
-  /* ======= HEADER ======= */
-  .hdr {
-    display: flex; align-items: center; gap: 24px;
-    padding: 0 16px;
-    background: var(--ink);
-    border-bottom: 1px solid var(--line-strong);
-  }
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-mark {
-    width: 34px; height: 34px;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--turq);
-    padding: 4px;
-  }
-  .brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; filter: brightness(0); }
-  .brand-name {
-    font-weight: 900; font-size: 20px;
-    letter-spacing: -0.02em; text-transform: uppercase;
-    font-style: italic;
-  }
-  .brand-name .slash { color: var(--turq); }
-  .brand-name .live-word { color: var(--turq); }
-  .divider { width: 1px; height: 24px; background: var(--line-strong); }
+  /* HEADER */
+  .hdr { display:flex; align-items:center; gap:22px; padding:0 16px; background:var(--ink); border-bottom:1px solid var(--line-strong); }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .brand-mark { width:34px; height:34px; display:flex; align-items:center; justify-content:center; background:var(--turq); padding:4px; }
+  .brand-mark img { width:100%; height:100%; object-fit:contain; filter:brightness(0); }
+  .brand-name { font-weight:900; font-size:20px; letter-spacing:-0.02em; text-transform:uppercase; font-style:italic; }
+  .brand-name .slash, .brand-name .live-word { color:var(--turq); }
+  .divider { width:1px; height:24px; background:var(--line-strong); }
+  .metrics { display:flex; gap:28px; align-items:center; }
+  .metric { display:flex; flex-direction:column; line-height:1.15; }
+  .metric .lbl { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:0.16em; font-weight:700; }
+  .metric .val { font-size:13px; font-weight:700; letter-spacing:0.04em; font-variant-numeric:tabular-nums; text-transform:uppercase; }
+  .metric .val.gold { color:var(--turq); }
+  .metric .val.up { color:var(--up); }
+  .metric .val.down { color:var(--down); }
+  .hdr-right { margin-left:auto; display:flex; align-items:center; gap:18px; }
+  .live-pill { display:flex; align-items:center; gap:8px; }
+  .live-dot { width:8px; height:8px; border-radius:50%; background:var(--live); animation:pulse 1.4s ease-in-out infinite; }
+  .live-pill span { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.2em; }
+  .clock { background:var(--panel-3); border:1px solid var(--line-strong); padding:6px 12px; font-family:'JetBrains Mono',monospace; font-size:11px; display:flex; align-items:center; gap:8px; }
+  .clock .tz { color:var(--turq); }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-  .metrics { display: flex; gap: 32px; align-items: center; }
-  .metric { display: flex; flex-direction: column; line-height: 1.15; }
-  .metric .lbl {
-    color: var(--muted); font-size: 10px;
-    text-transform: uppercase; letter-spacing: 0.16em; font-weight: 700;
-  }
-  .metric .val {
-    font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
-    font-variant-numeric: tabular-nums; text-transform: uppercase;
-  }
-  .metric .val.gold { color: var(--turq); }
-  .metric .val.up { color: var(--up); }
-  .metric .val.down { color: var(--down); }
+  /* MAIN */
+  .main { display:grid; grid-template-columns:1fr 360px; min-height:0; }
+  .col-left { display:grid; grid-template-rows:170px 1fr 190px; min-height:0; border-right:1px solid var(--line-strong); }
 
-  .hdr-right { margin-left: auto; display: flex; align-items: center; gap: 20px; }
-  .live-pill { display: flex; align-items: center; gap: 8px; }
-  .live-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--live); animation: pulse 1.4s ease-in-out infinite;
-  }
-  .live-pill span {
-    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
-  }
-  .clock {
-    background: var(--panel-3);
-    border: 1px solid var(--line-strong);
-    padding: 6px 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .clock .tz { color: var(--turq); }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  /* CHART ROW — chart half-width, sidecar right */
+  .chart-row { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--line-strong); min-height:0; }
+  .chart-panel { position:relative; background:var(--panel-2); overflow:hidden; min-height:0; border-right:1px solid var(--line-strong); }
+  .chart-panel iframe { width:100%; height:100%; border:0; display:block; }
+  .chart-tag { position:absolute; top:10px; left:10px; z-index:10; background:rgba(10,10,10,0.85); backdrop-filter:blur(6px); border:1px solid var(--line-strong); padding:5px 9px; display:flex; gap:10px; align-items:center; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; }
+  .chart-tag .g { color:var(--turq); }
+  .chart-tag .m { color:var(--muted); }
 
-  /* ======= MAIN ======= */
-  .main {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    min-height: 0;
-  }
-  .col-left {
-    display: grid;
-    grid-template-rows: 240px 1fr 210px;
-    min-height: 0;
-    border-right: 1px solid var(--line-strong);
-  }
-  .chart-panel {
-    position: relative;
-    background: var(--panel-2);
-    overflow: hidden;
-    min-height: 0;
-    border-bottom: 1px solid var(--line-strong);
-  }
-  .chart-panel iframe { width: 100%; height: 100%; border: 0; display: block; }
-  .chart-tag {
-    position: absolute; top: 12px; left: 12px; z-index: 10;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(6px);
-    border: 1px solid var(--line-strong);
-    padding: 6px 10px;
-    display: flex; gap: 12px; align-items: center;
-    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
-  }
-  .chart-tag .g { color: var(--turq); }
-  .chart-tag .m { color: var(--muted); }
+  /* Broadcast Card — sits next to chart */
+  .bcast { position:relative; background:linear-gradient(135deg,#0a0a0a 0%,#0d201e 100%); padding:14px 18px; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; }
+  .bcast::before { content:""; position:absolute; inset:0; background:radial-gradient(circle at 100% 0%, rgba(62,195,184,0.15), transparent 55%); pointer-events:none; }
+  .bcast-head { display:flex; justify-content:space-between; align-items:center; position:relative; z-index:1; }
+  .bcast-kicker { font-size:10px; font-weight:900; letter-spacing:0.24em; color:var(--turq); text-transform:uppercase; }
+  .bcast-live { display:flex; align-items:center; gap:6px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.16em; color:#fff; }
+  .bcast-live::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--live); animation:pulse 1.4s ease-in-out infinite; }
+  .bcast-title { font-family:'Roboto Condensed',sans-serif; font-size:26px; font-weight:900; line-height:1; letter-spacing:-0.02em; text-transform:uppercase; color:#fff; margin:6px 0 4px; position:relative; z-index:1; }
+  .bcast-title span { color:var(--turq); }
+  .bcast-sub { font-size:11px; color:#cfcfcf; line-height:1.4; position:relative; z-index:1; }
+  .bcast-sched { display:grid; grid-template-columns:1fr 1fr; gap:8px; position:relative; z-index:1; margin-top:8px; }
+  .bcast-cell { background:rgba(255,255,255,0.04); border:1px solid rgba(62,195,184,0.28); padding:6px 8px; }
+  .bcast-cell .b1 { font-size:9px; letter-spacing:0.18em; color:var(--turq); font-weight:900; text-transform:uppercase; }
+  .bcast-cell .b2 { font-size:12px; font-weight:800; color:#fff; margin-top:2px; }
+  .bcast-cell .b3 { font-size:10px; color:var(--muted); margin-top:1px; }
 
-  .sub-row {
-    display: grid; grid-template-columns: 1.4fr 1fr;
-    min-height: 0;
-  }
-  .spotlight {
-    padding: 14px 16px;
-    border-right: 1px solid var(--line-strong);
-    display: flex; flex-direction: column; min-height: 0;
-  }
-  .kicker {
-    font-size: 10px; font-weight: 900;
-    text-transform: uppercase; letter-spacing: 0.24em;
-    color: var(--turq);
-    margin-bottom: 10px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .kicker .sub { color: var(--dim); letter-spacing: 0.16em; font-weight: 700; }
-  .spot-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
-  .spot-card {
-    position: relative;
-    background: var(--panel-3);
-    border: 1px solid var(--line-strong);
-    overflow: hidden;
-    transition: opacity 0.6s ease;
-  }
-  .spot-card.dim { opacity: 0.35; }
-  .spot-card img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    filter: grayscale(30%);
-  }
-  .spot-card .plate {
-    position: absolute; inset: auto 0 0 0;
-    padding: 10px 12px;
-    background: linear-gradient(to top, rgba(0,0,0,0.92), transparent);
-  }
-  .spot-card .t { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
-  .spot-card .t .a { color: var(--muted); font-weight: 600; }
-  .spot-card .tag {
-    position: absolute; top: 8px; left: 8px;
-    background: var(--turq); color: #000;
-    font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;
-    padding: 2px 6px;
-  }
+  /* SUB ROW: Spotlight + Pulse */
+  .sub-row { display:grid; grid-template-columns:1.15fr 1fr; min-height:0; }
+  .spotlight { padding:14px 16px; border-right:1px solid var(--line-strong); display:flex; flex-direction:column; min-height:0; }
+  .kicker { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.24em; color:var(--turq); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+  .kicker .sub { color:var(--dim); letter-spacing:0.16em; font-weight:700; }
+  .spot-row { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; flex:1; min-height:0; }
+  .spot-card { position:relative; background:var(--panel-3); border:1px solid var(--line-strong); overflow:hidden; aspect-ratio:1/1; align-self:stretch; }
+  .spot-card.dim { opacity:0.55; }
+  .spot-card.dim::after { content:""; position:absolute; inset:0; background:rgba(0,0,0,0.35); pointer-events:none; }
+  .spot-card.hero { grid-column:1; }
+  .spot-card img, .spot-card video { width:100%; height:100%; object-fit:cover; display:block; }
+  .spot-card img { filter:grayscale(20%); }
+  .spot-card.hero img, .spot-card.hero video { filter:none; }
+  .spot-card .plate { position:absolute; inset:auto 0 0 0; padding:10px 12px; background:linear-gradient(to top, rgba(0,0,0,0.94), transparent); }
+  .spot-card .t { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:-0.01em; }
+  .spot-card .t .a { color:var(--muted); font-weight:600; }
+  .spot-card .tag { position:absolute; top:8px; left:8px; background:var(--turq); color:#000; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:0.12em; padding:2px 6px; }
+  .spot-card.hero .tag { background:#fff; }
+  .spot-card.hero { box-shadow:inset 0 0 0 2px var(--turq); animation:hero-glow 3.6s ease-in-out infinite; }
+  @keyframes hero-glow { 0%,100% { box-shadow:inset 0 0 0 2px var(--turq), 0 0 0 0 rgba(62,195,184,0); } 50% { box-shadow:inset 0 0 0 2px var(--turq), 0 0 22px 0 rgba(62,195,184,0.35); } }
 
-  .pulse-panel {
-    padding: 14px 16px;
-    display: flex; flex-direction: column; min-height: 0;
-  }
-  .pulse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
-  .pulse-card {
-    position: relative;
-    background: var(--panel-3);
-    border: 1px solid var(--line-strong);
-    display: flex; flex-direction: column;
-    overflow: hidden;
-    min-height: 0;
-  }
-  .pulse-card.hot { border-color: var(--turq); box-shadow: inset 0 0 0 1px var(--turq); }
-  .pulse-thumb {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    background: #000 center/cover no-repeat;
-    overflow: hidden;
-  }
-  .pulse-thumb::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 55%);
-  }
-  .pulse-plat {
-    position: absolute; top: 6px; left: 6px; z-index: 2;
-    background: rgba(0,0,0,0.75);
-    padding: 3px 7px;
-    font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.14em;
-    color: var(--turq);
-  }
-  .pulse-plat.ig { color: #f472b6; }
-  .pulse-plat.x  { color: #e5e5e5; }
-  .pulse-plat.li { color: #7dd3fc; }
-  .pulse-plat.yt { color: #f87171; }
-  .pulse-time {
-    position: absolute; top: 6px; right: 6px; z-index: 2;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; color: #fff;
-    background: rgba(0,0,0,0.6);
-    padding: 2px 6px;
-  }
-  .pulse-body { padding: 8px 10px; }
-  .pulse-who { font-size: 10px; font-weight: 800; letter-spacing: 0.04em; color: var(--turq); text-transform: uppercase; }
-  .pulse-msg {
-    font-size: 11px; color: #d5d5d5; margin-top: 3px; line-height: 1.4;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  }
+  .pulse-panel { padding:14px 16px; display:flex; flex-direction:column; min-height:0; }
+  .pulse-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; flex:1; min-height:0; }
+  .pulse-card { position:relative; background:var(--panel-3); border:1px solid var(--line-strong); display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+  .pulse-card.hot { border-color:var(--turq); box-shadow:inset 0 0 0 1px var(--turq); }
+  .pulse-thumb { position:relative; aspect-ratio:16/9; background:#000 center/cover no-repeat; overflow:hidden; }
+  .pulse-thumb.no-img { background:linear-gradient(135deg,#111 0%,#1e2b2a 100%); }
+  .pulse-thumb::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.85), transparent 55%); }
+  .pulse-plat { position:absolute; top:6px; left:6px; z-index:2; background:rgba(0,0,0,0.75); padding:3px 7px; font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:0.14em; color:var(--turq); }
+  .pulse-plat.ig { color:#f472b6; }
+  .pulse-plat.x  { color:#e5e5e5; }
+  .pulse-plat.li { color:#7dd3fc; }
+  .pulse-plat.yt { color:#f87171; }
+  .pulse-live { position:absolute; top:6px; right:6px; z-index:2; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--turq); background:rgba(0,0,0,0.7); padding:2px 6px; font-weight:900; letter-spacing:0.12em; }
+  .pulse-body { padding:8px 10px; }
+  .pulse-who { font-size:10px; font-weight:800; letter-spacing:0.04em; color:var(--turq); text-transform:uppercase; }
+  .pulse-msg { font-size:11px; color:#d5d5d5; margin-top:3px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 
-  /* ======= SIDEBAR ======= */
-  .side {
-    background: var(--panel);
-    display: flex; flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-  }
-  .side-block { padding: 14px 16px; border-bottom: 1px solid var(--line-strong); }
-  .lb-caption { font-size: 10px; color: var(--muted); line-height: 1.5; margin: 6px 0 10px; }
-  .lb-caption b { color: var(--turq); font-weight: 700; }
-  .lb-list { display: flex; flex-direction: column; gap: 6px; }
-  .lb-row {
-    display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center;
-    padding: 8px 10px;
-    background: var(--panel-2);
-    border: 1px solid var(--line-strong);
-    font-size: 11px;
-  }
-  .lb-row.top { background: var(--panel-3); }
-  .lb-row .rk { color: var(--dim); font-weight: 900; font-family: 'JetBrains Mono', monospace; }
-  .lb-row.top .rk { color: var(--turq); }
-  .lb-row .nm { font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
-  .lb-row:not(.top) .nm { color: #bbb; font-weight: 600; }
-  .lb-row .pts { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-  .lb-row.top .pts { color: var(--turq); font-weight: 700; }
-  .lb-empty { font-size: 11px; color: var(--dim); padding: 8px 0; }
+  /* SIDEBAR */
+  .side { background:var(--panel); display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+  .side-block { padding:12px 16px; border-bottom:1px solid var(--line-strong); }
+  .lb-caption { font-size:10px; color:var(--muted); line-height:1.5; margin:4px 0 8px; }
+  .lb-caption b { color:var(--turq); font-weight:700; }
+  .lb-list { display:flex; flex-direction:column; gap:5px; }
+  .lb-row { display:grid; grid-template-columns:20px 1fr auto; gap:10px; align-items:center; padding:6px 10px; background:var(--panel-2); border:1px solid var(--line-strong); font-size:11px; }
+  .lb-row.top { background:var(--panel-3); }
+  .lb-row .rk { color:var(--dim); font-weight:900; font-family:'JetBrains Mono',monospace; }
+  .lb-row.top .rk { color:var(--turq); }
+  .lb-row .nm { font-weight:700; text-transform:uppercase; letter-spacing:0.02em; }
+  .lb-row:not(.top) .nm { color:#bbb; font-weight:600; }
+  .lb-row .pts { font-family:'JetBrains Mono',monospace; font-size:11px; }
+  .lb-row.top .pts { color:var(--turq); font-weight:700; }
+  .lb-empty { font-size:11px; color:var(--dim); padding:6px 0; }
 
-  .dyk {
-    padding: 14px 16px;
-    background: #0d0d0d;
-    display: flex; flex-direction: column; min-height: 0;
-    border-bottom: 1px solid var(--line-strong);
-    flex: 0 0 auto;
-  }
-  .dyk-body {
-    background: var(--panel-3);
-    border-left: 4px solid var(--turq);
-    padding: 14px 16px;
-    display: flex; flex-direction: column; gap: 8px;
-    transition: opacity 0.4s;
-    min-height: 96px;
-  }
-  .dyk-cat {
-    font-size: 9px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--turq);
-  }
-  .dyk-text {
-    font-size: 15px; line-height: 1.55;
-    color: #eee; font-weight: 500;
-    font-family: 'Inter', sans-serif;
-  }
-  .dyk-text strong { color: var(--turq); font-weight: 700; }
+  .dyk { padding:12px 16px; background:#0d0d0d; display:flex; flex-direction:column; min-height:0; border-bottom:1px solid var(--line-strong); flex:0 0 auto; }
+  .dyk-body { background:var(--panel-3); border-left:4px solid var(--turq); padding:12px 14px; display:flex; flex-direction:column; gap:6px; transition:opacity 0.4s; min-height:84px; }
+  .dyk-cat { font-size:9px; font-weight:900; letter-spacing:0.2em; text-transform:uppercase; color:var(--turq); }
+  .dyk-text { font-size:14px; line-height:1.5; color:#eee; font-weight:500; }
+  .dyk-text strong { color:var(--turq); font-weight:700; }
 
-  /* ======= QR / CTA panel ======= */
-  .cta-panel {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--line-strong);
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    background: var(--panel-2);
-  }
-  .cta-tile {
-    background: var(--panel-3);
-    border: 1px solid var(--line-strong);
-    padding: 6px;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    text-align: center;
-  }
-  .cta-tile .qr {
-    width: 88px; height: 88px;
-    background: #fff;
-    padding: 4px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .cta-tile .qr img { width: 100%; height: 100%; display: block; }
-  .cta-tile .lbl {
-    font-size: 9px; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--turq);
-  }
-  .cta-tile .sub-lbl { font-size: 10px; color: var(--muted); line-height: 1.3; }
+  /* QR row */
+  .cta-panel { padding:10px 14px; border-bottom:1px solid var(--line-strong); display:grid; grid-template-columns:1fr 1fr; gap:10px; background:var(--panel-2); }
+  .cta-tile { background:var(--panel-3); border:1px solid var(--line-strong); padding:6px; display:flex; flex-direction:column; align-items:center; gap:5px; text-align:center; }
+  .cta-tile .qr { width:78px; height:78px; background:#fff; padding:4px; display:flex; align-items:center; justify-content:center; }
+  .cta-tile .qr img { width:100%; height:100%; display:block; }
+  .cta-tile .lbl { font-size:9px; font-weight:900; letter-spacing:0.16em; text-transform:uppercase; color:var(--turq); }
+  .cta-tile .sub-lbl { font-size:10px; color:var(--muted); line-height:1.2; }
 
-  /* ======= Merch strip ======= */
-  .merch {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--line-strong);
-  }
-  .merch-row {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-    margin-top: 8px;
-  }
-  .merch-tile {
-    aspect-ratio: 1;
-    background: var(--panel-3) center/cover no-repeat;
-    border: 1px solid var(--line-strong);
-    position: relative;
-    overflow: hidden;
-  }
-  .merch-tile.empty {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 8px; font-weight: 900; letter-spacing: 0.18em;
-    color: var(--dim); text-transform: uppercase;
-    background: repeating-linear-gradient(45deg, #141414, #141414 6px, #0d0d0d 6px, #0d0d0d 12px);
-  }
+  /* Sunday schedule strip (fills what was empty) */
+  .sched { padding:10px 14px 12px; border-bottom:1px solid var(--line-strong); background:var(--panel); }
+  .sched-hd { display:flex; justify-content:space-between; align-items:center; }
+  .sched-hd .l { font-size:10px; font-weight:900; letter-spacing:0.2em; text-transform:uppercase; color:var(--turq); }
+  .sched-hd .r { font-size:9px; letter-spacing:0.18em; color:var(--dim); text-transform:uppercase; font-weight:700; }
+  .sched-list { margin-top:8px; display:flex; flex-direction:column; gap:5px; }
+  .sched-item { display:grid; grid-template-columns:44px 1fr auto; gap:8px; align-items:center; padding:6px 8px; background:var(--panel-2); border:1px solid var(--line-strong); border-left:3px solid var(--turq); }
+  .sched-item .day { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:900; color:var(--turq); letter-spacing:0.06em; }
+  .sched-item .what { font-size:11px; font-weight:700; color:#eee; text-transform:uppercase; letter-spacing:0.02em; }
+  .sched-item .when { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); }
 
-  /* ======= App CTA (big) ======= */
-  .appcta {
-    position: relative;
-    padding: 16px 16px 14px;
-    background: linear-gradient(135deg, #0d0d0d 0%, #0a2624 100%);
-    border-top: 2px solid var(--turq);
-    display: grid; grid-template-columns: 1fr 92px; gap: 12px; align-items: center;
-  }
-  .appcta::before {
-    content: ""; position: absolute; inset: 0;
-    background: radial-gradient(circle at 100% 0%, rgba(62,195,184,0.18), transparent 60%);
-    pointer-events: none;
-  }
-  .appcta-body { position: relative; z-index: 1; }
-  .appcta-eyebrow {
-    font-size: 9px; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--turq);
-  }
-  .appcta-title {
-    font-size: 20px; font-weight: 900; font-style: italic; letter-spacing: -0.02em;
-    text-transform: uppercase; line-height: 1.05; margin: 4px 0 6px;
-    color: #fff;
-  }
-  .appcta-sub {
-    font-size: 11px; line-height: 1.4; color: #cfcfcf;
-  }
-  .appcta-btn {
-    display: inline-block; margin-top: 8px;
-    background: var(--turq); color: #000;
-    font-weight: 900; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 7px 12px; text-decoration: none;
-  }
-  .appcta-qr {
-    position: relative; z-index: 1;
-    background: #fff; padding: 5px; width: 92px; height: 92px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .appcta-qr img { width: 100%; height: 100%; display: block; }
+  /* Big App CTA */
+  .appcta { position:relative; padding:14px 16px 14px; background:linear-gradient(135deg,#0d0d0d 0%,#0a2624 100%); border-top:2px solid var(--turq); display:grid; grid-template-columns:1fr 84px; gap:12px; align-items:center; }
+  .appcta::before { content:""; position:absolute; inset:0; background:radial-gradient(circle at 100% 0%, rgba(62,195,184,0.22), transparent 60%); pointer-events:none; }
+  .appcta-body { position:relative; z-index:1; }
+  .appcta-eyebrow { font-size:9px; font-weight:900; letter-spacing:0.22em; text-transform:uppercase; color:var(--turq); }
+  .appcta-title { font-size:19px; font-weight:900; font-style:italic; letter-spacing:-0.02em; text-transform:uppercase; line-height:1.05; margin:4px 0 5px; color:#fff; }
+  .appcta-sub { font-size:11px; line-height:1.4; color:#cfcfcf; }
+  .appcta-tags { margin-top:6px; display:flex; gap:4px; flex-wrap:wrap; }
+  .appcta-tags span { font-size:8px; font-weight:900; letter-spacing:0.14em; text-transform:uppercase; padding:2px 5px; border:1px solid rgba(62,195,184,0.4); color:var(--turq); background:rgba(62,195,184,0.06); }
+  .appcta-btn { display:inline-block; margin-top:8px; background:var(--turq); color:#000; font-weight:900; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; padding:7px 12px; text-decoration:none; }
+  .appcta-qr { position:relative; z-index:1; background:#fff; padding:5px; width:84px; height:84px; display:flex; align-items:center; justify-content:center; }
+  .appcta-qr img { width:100%; height:100%; display:block; }
 
-  /* ======= Merch slideshow (bottom left rail) ======= */
-  .merch-rail {
-    background: #050505;
-    border-top: 1px solid var(--line-strong);
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: 0;
-    overflow: hidden;
-  }
-  .merch-rail-head {
-    padding: 14px 18px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    background: var(--panel);
-    border-right: 1px solid var(--line-strong);
-    min-width: 0;
-  }
-  .merch-rail-head .k1 {
-    font-size: 9px; font-weight: 900; letter-spacing: 0.24em; text-transform: uppercase;
-    color: var(--turq);
-  }
-  .merch-rail-head .k2 {
-    font-family: 'Roboto Condensed', sans-serif;
-    font-size: 26px; font-weight: 900; line-height: 0.95; text-transform: uppercase;
-    letter-spacing: -0.02em; color: #fff; margin-top: 6px;
-  }
-  .merch-rail-head .k3 {
-    font-size: 11px; color: var(--muted); line-height: 1.45; margin-top: 6px;
-  }
-  .merch-rail-head .k4 {
-    font-size: 10px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--turq); margin-top: auto;
-  }
-  .merch-strip {
-    display: flex; gap: 0; overflow: hidden;
-    animation: merch-scroll 40s linear infinite;
-  }
-  .merch-slide {
-    position: relative;
-    flex: 0 0 260px;
-    height: 100%;
-    background: #0a0a0a center/cover no-repeat;
-    border-right: 1px solid var(--line-strong);
-  }
-  .merch-slide::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 45%);
-  }
-  .merch-slide .cap {
-    position: absolute; left: 12px; right: 12px; bottom: 10px; z-index: 1;
-  }
-  .merch-slide .cap .n {
-    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #fff;
-  }
-  .merch-slide .cap .p {
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--turq);
-  }
-  .merch-slide .tag {
-    position: absolute; top: 8px; left: 8px; z-index: 1;
-    background: var(--turq); color: #000;
-    font-size: 8px; font-weight: 900; letter-spacing: 0.14em; padding: 3px 6px;
-    text-transform: uppercase;
-  }
-  @keyframes merch-scroll {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-  }
+  /* MERCH slideshow (bottom-left rail) */
+  .merch-rail { background:#050505; border-top:1px solid var(--line-strong); display:grid; grid-template-columns:240px 1fr; min-height:0; overflow:hidden; }
+  .merch-rail-head { padding:12px 16px; display:flex; flex-direction:column; justify-content:space-between; background:var(--panel); border-right:1px solid var(--line-strong); min-width:0; }
+  .merch-rail-head .k1 { font-size:9px; font-weight:900; letter-spacing:0.24em; text-transform:uppercase; color:var(--turq); }
+  .merch-rail-head .k2 { font-family:'Roboto Condensed',sans-serif; font-size:24px; font-weight:900; line-height:0.95; text-transform:uppercase; letter-spacing:-0.02em; color:#fff; margin-top:6px; }
+  .merch-rail-head .k3 { font-size:11px; color:var(--muted); line-height:1.45; margin-top:6px; }
+  .merch-rail-head .k4 { font-size:10px; font-weight:900; letter-spacing:0.18em; text-transform:uppercase; color:var(--turq); margin-top:auto; }
+  .merch-viewport { position:relative; overflow:hidden; }
+  .merch-strip { display:flex; gap:0; width:max-content; height:100%; animation:merch-scroll 55s linear infinite; }
+  .merch-slide { position:relative; flex:0 0 240px; height:100%; background:#0a0a0a; border-right:1px solid var(--line-strong); overflow:hidden; }
+  .merch-slide img, .merch-slide video { width:100%; height:100%; object-fit:cover; display:block; }
+  .merch-slide::after { content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.85), transparent 45%); pointer-events:none; }
+  .merch-slide .cap { position:absolute; left:12px; right:12px; bottom:10px; z-index:1; }
+  .merch-slide .cap .n { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; color:#fff; }
+  .merch-slide .cap .p { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--turq); }
+  .merch-slide .tag { position:absolute; top:8px; left:8px; z-index:1; background:var(--turq); color:#000; font-size:8px; font-weight:900; letter-spacing:0.14em; padding:3px 6px; text-transform:uppercase; }
+  .merch-slide.editorial .tag { background:#fff; }
+  @keyframes merch-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 
-  /* Sidebar merch (small strip) removed — moved to bottom-left rail. Keep tile styles for potential reuse. */
-
-  /* ======= WIRE ======= */
-  .wire {
-    display: grid; grid-template-columns: auto 1fr auto;
-    background: var(--turq);
-    overflow: hidden;
-  }
-  .wire-brand {
-    background: #000; color: #fff;
-    padding: 0 22px;
-    display: flex; flex-direction: column; justify-content: center;
-    border-right: 4px solid #fff;
-  }
-  .wire-brand .l1 { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; }
-  .wire-brand .l2 { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -0.03em; line-height: 1; }
-  .wire-track-wrap { overflow: hidden; display: flex; align-items: center; }
-  .wire-track {
-    display: inline-flex; gap: 44px; align-items: center;
-    white-space: nowrap;
-    animation: marquee 55s linear infinite;
-    padding-left: 24px;
-    font-family: 'Roboto Condensed', 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    text-transform: uppercase;
-    color: #000;
-  }
-  .wire-item { display: inline-flex; align-items: center; gap: 12px; }
-  .wire-time {
-    background: #000; color: var(--turq);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px; padding: 2px 8px; font-weight: 700;
-  }
-  .wire-sep { color: rgba(0,0,0,0.35); font-weight: 900; }
-  .wire-side {
-    background: #000; color: var(--turq);
-    padding: 0 18px;
-    display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
-    font-family: 'JetBrains Mono', monospace;
-    border-left: 4px solid #fff;
-  }
-  .wire-side .r1 { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em; }
-  .wire-side .r2 { font-size: 15px; font-weight: 700; }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
+  /* WIRE */
+  .wire { display:grid; grid-template-columns:auto 1fr auto; background:var(--turq); overflow:hidden; }
+  .wire-brand { background:#000; color:#fff; padding:0 20px; display:flex; flex-direction:column; justify-content:center; border-right:4px solid #fff; }
+  .wire-brand .l1 { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.02em; line-height:1; }
+  .wire-brand .l2 { font-size:22px; font-weight:900; font-style:italic; letter-spacing:-0.03em; line-height:1; }
+  .wire-track-wrap { overflow:hidden; display:flex; align-items:center; }
+  .wire-track { display:inline-flex; gap:36px; align-items:center; white-space:nowrap; animation:marquee 55s linear infinite; padding-left:22px; font-family:'Roboto Condensed','Inter',sans-serif; font-weight:700; font-size:22px; text-transform:uppercase; color:#000; }
+  .wire-item { display:inline-flex; align-items:center; gap:12px; }
+  /* Turquoise "mark" replaces the old black timestamp box */
+  .wire-mark { width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; background:#000; color:var(--turq); font-weight:900; font-style:italic; font-family:'Inter',sans-serif; font-size:16px; line-height:1; letter-spacing:-0.04em; flex-shrink:0; }
+  .wire-sep { color:rgba(0,0,0,0.35); font-weight:900; }
+  .wire-side { background:#000; color:var(--turq); padding:0 18px; display:flex; flex-direction:column; justify-content:center; align-items:flex-end; font-family:'JetBrains Mono',monospace; border-left:4px solid #fff; }
+  .wire-side .r1 { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.2em; }
+  .wire-side .r2 { font-size:15px; font-weight:700; }
+  @keyframes marquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
 </style>
 </head>
 <body>
@@ -511,18 +227,34 @@
   <main class="main">
     <div class="col-left">
 
-      <!-- CHART -->
-      <div class="chart-panel">
-        <div class="chart-tag">
-          <span class="g">Chart · Birdeye</span>
-          <span class="m">$RHOZE / SOL</span>
-          <span class="g" id="chart-tag-change">—</span>
+      <!-- CHART + BROADCAST CARD -->
+      <div class="chart-row">
+        <div class="chart-panel">
+          <div class="chart-tag">
+            <span class="g">Chart · Birdeye</span>
+            <span class="m">$RHOZE / SOL</span>
+            <span class="g" id="chart-tag-change">—</span>
+          </div>
+          <iframe
+            src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark"
+            title="Birdeye $RHOZE Chart"
+            loading="lazy"
+          ></iframe>
         </div>
-        <iframe
-          src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark"
-          title="Birdeye $RHOZE Chart"
-          loading="lazy"
-        ></iframe>
+        <aside class="bcast">
+          <div class="bcast-head">
+            <span class="bcast-kicker">On Air Now</span>
+            <span class="bcast-live">Rhozeland/LIVE</span>
+          </div>
+          <div>
+            <div class="bcast-title">Creator OS · <span>Live Feed</span></div>
+            <div class="bcast-sub">The always-on window into Rhozeland — market data, community activity, releases &amp; drops, straight from the studio.</div>
+          </div>
+          <div class="bcast-sched">
+            <div class="bcast-cell"><div class="b1">Next Drop</div><div class="b2" id="sched-next">Sunday 20:00</div><div class="b3">New release + video</div></div>
+            <div class="bcast-cell"><div class="b1">Podcast</div><div class="b2">89-32 · Mon</div><div class="b3">Studio session</div></div>
+          </div>
+        </aside>
       </div>
 
       <!-- SUB ROW: Spotlight + Pulse -->
@@ -532,7 +264,7 @@
           <div class="spot-row" id="spot-row"></div>
         </section>
         <section class="pulse-panel">
-          <div class="kicker"><span>Social Feed</span><span class="sub">IG · X · LI · YT</span></div>
+          <div class="kicker"><span>Social Feed</span><span class="sub" id="pulse-source">Live · X · LI</span></div>
           <div class="pulse-grid" id="pulse-list"></div>
         </section>
       </div>
@@ -541,13 +273,15 @@
       <section class="merch-rail">
         <div class="merch-rail-head">
           <div>
-            <div class="k1">Toy Box · Workwear 2026</div>
+            <div class="k1">Toy Box · SS 26</div>
             <div class="k2">Wear the<br/>Ecosystem</div>
-            <div class="k3">Rhozeland's in-house apparel line. Built for creators, funded by the community.</div>
+            <div class="k3">Real people. Real fits. Rhozeland's in-house apparel line — funded by the community.</div>
           </div>
           <div class="k4">→ Drop coming soon</div>
         </div>
-        <div class="merch-strip" id="merch-strip"><!-- filled --></div>
+        <div class="merch-viewport">
+          <div class="merch-strip" id="merch-strip"></div>
+        </div>
       </section>
     </div>
 
@@ -555,14 +289,12 @@
     <aside class="side">
       <div class="side-block">
         <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 6</span></div>
-        <div class="lb-caption">Earn <b>points</b> for raids, memes, threads, and videos. Weekly winners get <b>$RHOZE</b>, merch drops &amp; studio time. Join at <b>rhozeland.com</b>.</div>
-        <div class="lb-list" id="lb-list">
-          <div class="lb-empty">Loading leaderboard…</div>
-        </div>
+        <div class="lb-caption">Earn <b>points</b> for raids, memes, threads &amp; videos. Weekly winners get <b>$RHOZE</b>, merch drops &amp; studio time. Join at <b>rhozeland.com</b>.</div>
+        <div class="lb-list" id="lb-list"><div class="lb-empty">Loading leaderboard…</div></div>
       </div>
 
       <div class="dyk">
-        <div class="kicker" style="margin-bottom:8px;"><span>Did You Know?</span><span class="sub" id="dyk-index">01</span></div>
+        <div class="kicker" style="margin-bottom:6px;"><span>Did You Know?</span><span class="sub" id="dyk-index">01</span></div>
         <div class="dyk-body" id="dyk-body">
           <div class="dyk-cat" id="dyk-cat">Ecosystem</div>
           <div class="dyk-text" id="dyk-text">Rhozeland is a <strong>creator-owned</strong> ecosystem — recording, content, and launch infrastructure for independent artists, all under one roof.</div>
@@ -582,11 +314,22 @@
         </div>
       </div>
 
+      <div class="sched">
+        <div class="sched-hd"><span class="l">Broadcast Schedule</span><span class="r">All times UTC</span></div>
+        <div class="sched-list">
+          <div class="sched-item"><span class="day">SUN</span><span class="what">New Release · Music Video</span><span class="when">20:00</span></div>
+          <div class="sched-item"><span class="day">MON</span><span class="what">89-32 Podcast · Live</span><span class="when">18:00</span></div>
+          <div class="sched-item"><span class="day">WED</span><span class="what">Studio Session Stream</span><span class="when">22:00</span></div>
+          <div class="sched-item"><span class="day">FRI</span><span class="what">Community Raid + $RHOZE</span><span class="when">17:00</span></div>
+        </div>
+      </div>
+
       <div class="appcta" style="margin-top:auto;">
         <div class="appcta-body">
           <div class="appcta-eyebrow">The Rhozeland App</div>
-          <div class="appcta-title">Start a Project</div>
-          <div class="appcta-sub">Book studio time, launch a music video, or subscribe to a retainer tier. Everything runs through your client portal.</div>
+          <div class="appcta-title">Own Your Sound</div>
+          <div class="appcta-sub">Verify your IP on-chain, attach a creator coin, and back the artists you love. Every action drips $RHOZE credits.</div>
+          <div class="appcta-tags"><span>Verified IP</span><span>Attach Coin</span><span>$RHOZE</span></div>
           <a class="appcta-btn" href="https://rhozeland.com/start" target="_blank" rel="noopener">Open the App →</a>
         </div>
         <div class="appcta-qr">
@@ -603,7 +346,7 @@
       <span class="l2">WIRE</span>
     </div>
     <div class="wire-track-wrap">
-      <div class="wire-track" id="wire-track"><!-- filled --></div>
+      <div class="wire-track" id="wire-track"></div>
     </div>
     <div class="wire-side">
       <span class="r1">Auto · 30s</span>
@@ -619,9 +362,12 @@ var POOL  = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
 var SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
 
-/* ================= Portfolio (auto-rotating spotlight) ================= */
+/* Real people + stock merch mix (real from Google Drive AI shots) */
+var HERO_VIDEO = '/__l5e/assets-v1/90b14679-dba6-4ff7-97a4-fccc9bdb91cd/fashion-ad.mp4';
+
+/* ================= Portfolio spotlight ================= */
 var PORTFOLIO = [
-  { t:'Sefra',              a:'Cozal',                  tag:'Music Video', img:'/images/cozal-sefra-thumb.jpg' },
+  { t:'Sefra',              a:'Cozal',                  tag:'Music Video', img:'/images/cozal-sefra-thumb.jpg',           video:'/videos/cozal-sefra.mp4' },
   { t:'Just Call Me',       a:'Ess B',                  tag:'Single',      img:'/images/ess-b-just-call-me-thumb.webp' },
   { t:'The Mask',           a:'Ooak',                   tag:'Release',     img:'/images/ooak-the-mask-thumb.webp' },
   { t:'Mansa Musa',         a:'Monee Fingaz',           tag:'Release',     img:'/images/fingaz-mansa-musa-thumb.webp' },
@@ -638,54 +384,57 @@ var PORTFOLIO = [
   { t:'Surfin\u2019',       a:'MARV \u00D7 Straightdizzy', tag:'Single',   img:'/images/surfin-thumb.webp' },
 ];
 var spotIdx = 0;
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function renderSpotlight(){
   var row = document.getElementById('spot-row');
   var idxEl = document.getElementById('spot-index');
   var len = PORTFOLIO.length;
   var cards = [0,1,2].map(function(o){
     var p = PORTFOLIO[(spotIdx + o) % len];
-    var dim = o === 0 ? '' : ' dim';
-    return '<div class="spot-card' + dim + '">'
-      + '<span class="tag">' + p.tag + '</span>'
-      + '<img loading="lazy" src="' + p.img + '" alt="' + p.t + '" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" />'
-      + '<div class="plate"><div class="t">' + p.t + ' <span class="a">/ ' + p.a + '</span></div></div>'
+    var hero = o === 0 ? ' hero' : ' dim';
+    var media = (o === 0 && p.video)
+      ? '<video autoplay muted loop playsinline preload="auto" src="' + p.video + '" poster="' + esc(p.img) + '"></video>'
+      : '<img loading="lazy" src="' + esc(p.img) + '" alt="' + esc(p.t) + '" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" />';
+    return '<div class="spot-card' + hero + '">'
+      + '<span class="tag">' + esc(p.tag) + '</span>'
+      + media
+      + '<div class="plate"><div class="t">' + esc(p.t) + ' <span class="a">/ ' + esc(p.a) + '</span></div></div>'
       + '</div>';
   }).join('');
   row.innerHTML = cards;
   idxEl.textContent = String(spotIdx + 1).padStart(2,'0') + ' / ' + String(len).padStart(2,'0');
 }
 renderSpotlight();
-setInterval(function(){
-  spotIdx = (spotIdx + 1) % PORTFOLIO.length;
-  renderSpotlight();
-}, 6000);
+setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotlight(); }, 6000);
 
-/* ================= Social Pulse (curated static rotation) ================= */
-var PULSE = [
-  { who: '@rhozeland', plat: 'X',  h: '2m',  msg: 'New release week — Sefra by Cozal is live on YouTube. Tap in.', img: '/images/cozal-sefra-thumb.jpg', hot: true },
-  { who: 'Cozal',      plat: 'IG', h: '12m', msg: 'Studio session tonight. Bring headphones.',                        img: '/images/cozal-holy-water-thumb.webp' },
-  { who: 'Rhozeland',  plat: 'YT', h: '34m', msg: 'New drop this Sunday — subscribe on youtube.com/@rhozeland.',      img: '/images/ooak-the-mask-thumb.webp' },
-  { who: 'Ooak',       plat: 'IG', h: '1h',  msg: 'Rollout for the next visual dropping Sunday.',                     img: '/images/ooak-saint-flair-west-thumb.webp' },
-  { who: 'Ess B',      plat: 'IG', h: '2h',  msg: 'Behind the scenes on the Just Call Me video shoot.',               img: '/images/ess-b-just-call-me-thumb.webp' },
-  { who: '@rhozeland', plat: 'LI', h: '2h',  msg: 'Rhozeland is building the operating system for independent artists.', img: '/images/rhozeland-flywheel.webp' },
-  { who: '@rhozeland', plat: 'X',  h: '3h',  msg: '$RHOZE supply is locked. Creator economy, transparent by default.', img: '/images/rhozeland_official_logo_2025.webp' },
-  { who: 'Semiah',     plat: 'IG', h: '5h',  msg: 'Withdrawals video hit 10k views this morning. Thank you.',          img: '/images/semiah-withdrawals-thumb.webp' },
-  { who: 'Monee Fingaz', plat:'IG',h: '6h',  msg: 'Mansa Musa video keeps climbing. Real ones only.',                 img: '/images/fingaz-mansa-musa-thumb.webp' },
+/* ================= Social Pulse — fetch real X + LinkedIn ================= */
+var PULSE_FALLBACK = [
+  { who:'@rhozeland', plat:'X',  h:'live', msg:'New release week — Sefra by Cozal is live on YouTube. Tap in.',                   img:'/images/cozal-sefra-thumb.jpg', hot:true },
+  { who:'Rhozeland',  plat:'LI', h:'today',msg:'Rhozeland is building the operating system for independent artists.',            img:'/images/rhozeland_official_logo_2025.webp' },
+  { who:'Rhozeland',  plat:'YT', h:'34m',  msg:'New drop this Sunday — subscribe on youtube.com/@rhozeland.',                    img:'/images/ooak-the-mask-thumb.webp' },
+  { who:'Ooak',       plat:'IG', h:'1h',   msg:'Rollout for the next visual dropping Sunday.',                                    img:'/images/ooak-saint-flair-west-thumb.webp' },
+  { who:'Ess B',      plat:'IG', h:'2h',   msg:'Behind the scenes on the Just Call Me video shoot.',                              img:'/images/ess-b-just-call-me-thumb.webp' },
+  { who:'@rhozeland', plat:'X',  h:'3h',   msg:'$RHOZE supply is locked. Creator economy, transparent by default.',              img:'/images/rhozeland_official_logo_2025.webp' },
+  { who:'Semiah',     plat:'IG', h:'5h',   msg:'Withdrawals video hit 10k views this morning. Thank you.',                        img:'/images/semiah-withdrawals-thumb.webp' },
+  { who:'Monee Fingaz', plat:'IG',h:'6h',  msg:'Mansa Musa video keeps climbing. Real ones only.',                               img:'/images/fingaz-mansa-musa-thumb.webp' },
 ];
+var PULSE = PULSE_FALLBACK.slice();
 var pulseIdx = 0;
 function renderPulse(){
   var el = document.getElementById('pulse-list');
   var items = [0,1,2,3].map(function(o){
     var p = PULSE[(pulseIdx + o) % PULSE.length];
     var platCls = (p.plat || 'X').toLowerCase();
+    var thumbCls = 'pulse-thumb' + (p.img ? '' : ' no-img');
+    var thumbStyle = p.img ? (' style="background-image:url(\'' + p.img + '\')"') : '';
     return '<div class="pulse-card' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="pulse-thumb" style="background-image:url(\'' + (p.img || '') + '\')">'
-      +   '<span class="pulse-plat ' + platCls + '">' + (p.plat || '') + '</span>'
-      +   '<span class="pulse-time">' + p.h + '</span>'
+      + '<div class="' + thumbCls + '"' + thumbStyle + '>'
+      +   '<span class="pulse-plat ' + platCls + '">' + esc(p.plat || '') + '</span>'
+      +   (p.hot ? '<span class="pulse-live">LIVE</span>' : '<span class="pulse-live" style="color:#fff;background:rgba(0,0,0,0.55);">' + esc(p.h) + '</span>')
       + '</div>'
       + '<div class="pulse-body">'
-      +   '<div class="pulse-who">' + p.who + '</div>'
-      +   '<div class="pulse-msg">' + p.msg + '</div>'
+      +   '<div class="pulse-who">' + esc(p.who) + '</div>'
+      +   '<div class="pulse-msg">' + esc(p.msg) + '</div>'
       + '</div>'
       + '</div>';
   }).join('');
@@ -694,48 +443,66 @@ function renderPulse(){
 renderPulse();
 setInterval(function(){ pulseIdx = (pulseIdx + 1) % PULSE.length; renderPulse(); }, 7000);
 
+async function loadSocial(){
+  try {
+    var r = await fetch(SUPABASE_URL + '/functions/v1/live-social-feed', {
+      headers: { Authorization: 'Bearer ' + SUPABASE_ANON, apikey: SUPABASE_ANON },
+      cache: 'no-store'
+    });
+    if (!r.ok) return;
+    var d = await r.json();
+    if (d && d.posts && d.posts.length) {
+      // Merge live posts on top of fallback so the feed always feels full.
+      var live = d.posts.slice(0, 6).map(function(p, i){
+        return { who:p.who, plat:p.plat, h:p.h || 'live', msg:p.msg, img:p.img || null, hot: i === 0 };
+      });
+      var fill = PULSE_FALLBACK.filter(function(f){
+        return !live.some(function(l){ return l.who === f.who && l.plat === f.plat; });
+      });
+      PULSE = live.concat(fill).slice(0, 12);
+      pulseIdx = 0;
+      renderPulse();
+      document.getElementById('pulse-source').textContent = 'Live · ' + live.length + ' posts';
+    }
+  } catch(e){ /* keep fallback */ }
+}
+loadSocial();
+setInterval(loadSocial, 300000);
+
 /* ================= Clock ================= */
 function tickClock(){
   var d = new Date();
   function p(n){ return String(n).padStart(2,'0'); }
-  document.getElementById('clock').textContent =
-    p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds());
+  document.getElementById('clock').textContent = p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds());
 }
 tickClock(); setInterval(tickClock, 1000);
+
+/* ================= Next Sunday ================= */
+(function nextSunday(){
+  var d = new Date();
+  var days = (7 - d.getUTCDay()) % 7 || 7;
+  var t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + days, 20, 0, 0));
+  var opts = { weekday:'short', month:'short', day:'numeric' };
+  document.getElementById('sched-next').textContent = t.toLocaleDateString('en-US', opts) + ' · 20:00';
+})();
 
 /* ================= CA copy ================= */
 document.getElementById('m-ca').addEventListener('click', function(){
   navigator.clipboard.writeText(TOKEN);
-  var el = this;
-  var orig = el.textContent;
-  el.textContent = 'copied';
+  var el = this; var orig = el.textContent; el.textContent = 'copied';
   setTimeout(function(){ el.textContent = orig; }, 1400);
 });
 
 /* ================= $RHOZE stats ================= */
-function fmtPrice(n){
-  if (n == null || !isFinite(n)) return '$—';
-  if (n >= 1) return '$' + n.toFixed(4);
-  if (n >= 0.01) return '$' + n.toFixed(5);
-  return '$' + n.toPrecision(3);
-}
-function fmtCompact(n){
-  if (n == null || !isFinite(n) || n <= 0) return '—';
-  var u = ['','K','M','B','T'], i = 0, v = n;
-  while (v >= 1000 && i < u.length - 1){ v /= 1000; i++; }
-  return '$' + (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + u[i];
-}
-function fmtPct(n){
-  if (n == null || !isFinite(n)) return '—';
-  return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
-}
+function fmtPrice(n){ if (n == null || !isFinite(n)) return '$—'; if (n >= 1) return '$' + n.toFixed(4); if (n >= 0.01) return '$' + n.toFixed(5); return '$' + n.toPrecision(3); }
+function fmtCompact(n){ if (n == null || !isFinite(n) || n <= 0) return '—'; var u = ['','K','M','B','T'], i = 0, v = n; while (v >= 1000 && i < u.length - 1){ v /= 1000; i++; } return '$' + (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + u[i]; }
+function fmtPct(n){ if (n == null || !isFinite(n)) return '—'; return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
 var lastStats = null;
 function paint(s){
   lastStats = s;
   document.getElementById('m-price').textContent = fmtPrice(s.price);
   var c = document.getElementById('m-change');
-  c.textContent = fmtPct(s.change24h);
-  c.classList.remove('up','down');
+  c.textContent = fmtPct(s.change24h); c.classList.remove('up','down');
   if (s.change24h != null) c.classList.add(s.change24h >= 0 ? 'up' : 'down');
   document.getElementById('m-mcap').textContent = fmtCompact(s.marketCap);
   document.getElementById('m-vol').textContent  = fmtCompact(s.volume24h);
@@ -747,32 +514,19 @@ function paint(s){
 }
 async function loadStats(){
   try {
-    var r = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache: 'no-store' });
+    var r = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache:'no-store' });
     if (r.ok){
-      var d = await r.json();
-      var pairs = (d && d.pairs) || [];
+      var d = await r.json(); var pairs = (d && d.pairs) || [];
       if (pairs.length){
         pairs.sort(function(a,b){ return ((b.liquidity && b.liquidity.usd) || 0) - ((a.liquidity && a.liquidity.usd) || 0); });
         var p = pairs[0];
-        return paint({
-          price: parseFloat(p.priceUsd),
-          change24h: p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null,
-          marketCap: p.marketCap != null ? p.marketCap : p.fdv,
-          volume24h: p.volume && p.volume.h24 != null ? parseFloat(p.volume.h24) : null
-        });
+        return paint({ price:parseFloat(p.priceUsd), change24h:p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null, marketCap:p.marketCap != null ? p.marketCap : p.fdv, volume24h:p.volume && p.volume.h24 != null ? parseFloat(p.volume.h24) : null });
       }
     }
-    var gr = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache: 'no-store' });
+    var gr = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache:'no-store' });
     if (!gr.ok) return;
-    var gd = await gr.json();
-    var a = gd && gd.data && gd.data.attributes;
-    if (!a) return;
-    paint({
-      price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
-      change24h: a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
-      marketCap: a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null),
-      volume24h: a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null
-    });
+    var gd = await gr.json(); var a = gd && gd.data && gd.data.attributes; if (!a) return;
+    paint({ price:a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null, change24h:a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null, marketCap:a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null), volume24h:a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null });
   } catch(e){}
 }
 loadStats(); setInterval(loadStats, 30000);
@@ -781,7 +535,7 @@ loadStats(); setInterval(loadStats, 30000);
 async function loadLeaderboard(){
   try {
     var url = SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&published_at=not.is.null&order=points.desc&limit=6';
-    var r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON, Accept: 'application/json' }, cache: 'no-store' });
+    var r = await fetch(url, { headers: { apikey:SUPABASE_ANON, Authorization:'Bearer ' + SUPABASE_ANON, Accept:'application/json' }, cache:'no-store' });
     if (!r.ok) return;
     var rows = await r.json();
     var el = document.getElementById('lb-list');
@@ -790,35 +544,29 @@ async function loadLeaderboard(){
     el.innerHTML = rows.map(function(row, i){
       var top = i === 0 ? ' top' : '';
       var pts = (row.points || 0).toLocaleString();
-      return '<div class="lb-row' + top + '">'
-        + '<span class="rk">' + String(i+1).padStart(2,'0') + '</span>'
-        + '<span class="nm">' + (row.username || 'anon').slice(0, 18) + '</span>'
-        + '<span class="pts">' + pts + ' pts</span>'
-        + '</div>';
+      return '<div class="lb-row' + top + '"><span class="rk">' + String(i+1).padStart(2,'0') + '</span><span class="nm">' + esc((row.username || 'anon').slice(0, 18)) + '</span><span class="pts">' + pts + ' pts</span></div>';
     }).join('');
-  } catch(e){
-    document.getElementById('lb-list').innerHTML = '<div class="lb-empty">Leaderboard offline.</div>';
-  }
+  } catch(e){ document.getElementById('lb-list').innerHTML = '<div class="lb-empty">Leaderboard offline.</div>'; }
 }
 loadLeaderboard(); setInterval(loadLeaderboard, 60000);
 
 /* ================= Did You Know ================= */
 var FACTS = [
   { c:'The Lore',    t:'Rhozeland started as a group of Toronto creatives sharing one studio. Today it\'s a <strong>creator-owned network</strong> spanning music, video, podcasts, and Web3.' },
-  { c:'$RHOZE',      t:'The <strong>$RHOZE</strong> token is the fuel for the ecosystem — it powers bounties, creator payouts, community rewards, and merch drops.' },
+  { c:'$RHOZE',      t:'The <strong>$RHOZE</strong> token is the fuel for the ecosystem — powering bounties, creator payouts, community rewards, and merch drops.' },
   { c:'Supply',      t:'The Rhozeland dev wallet is <strong>locked</strong>. Supply is transparent and verifiable on-chain — no rug, no unlocks.' },
   { c:'Studio',      t:'Every project runs through <strong>Rhoze Studio</strong> — recording, mixing, mastering, video, and rollout under one roof.' },
   { c:'Releases',    t:'New drops every <strong>Sunday</strong>. Recent: Sefra by Cozal, The Mask by Ooak, Mansa Musa by Monee Fingaz, Withdrawals by Semiah.' },
   { c:'Toy Box',     t:'<strong>Toy Box</strong> is the Rhozeland merch line — apparel drops built for the community, funded by the ecosystem.' },
-  { c:'Community',   t:'The leaderboard rewards <strong>raids, memes, threads, and videos</strong>. Top ranks each week earn $RHOZE, merch, and studio time.' },
+  { c:'Community',   t:'The leaderboard rewards <strong>raids, memes, threads &amp; videos</strong>. Top ranks each week earn $RHOZE, merch, and studio time.' },
   { c:'Podcast',     t:'The <strong>Angry Mortgage</strong> podcast is part of the Rhozeland network — real conversations, new episodes weekly.' },
   { c:'Network',     t:'Rhozeland runs the <strong>89-32</strong> podcast series, event coverage, artist docs, and brand campaigns — all in-house.' },
-  { c:'Web3',        t:'Rhozeland is a <strong>Solana Coliseum Frontier</strong> hackathon project — a proof that creator economies can be transparent by default.' },
-  { c:'Team',        t:'Core team spans <strong>engineering, direction, A&amp;R, video, and community</strong>. Real people, real names — no anons at the top.' },
+  { c:'Web3',        t:'Rhozeland is a <strong>Solana Coliseum Frontier</strong> hackathon project — proof creator economies can be transparent by default.' },
+  { c:'Team',        t:'Core team spans <strong>engineering, direction, A&amp;R, video &amp; community</strong>. Real people, real names — no anons at the top.' },
   { c:'Contact',     t:'Want to collab, sponsor, or join a session? <strong>collab@rhozeland.com</strong> — the team reads every message.' },
   { c:'Wallet',      t:'Contract: <strong>7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</strong> — always verify on Birdeye or Solscan before you ape.' },
-  { c:'Model',       t:'Rhozeland is <strong>label-free</strong>. Artists keep ownership; the ecosystem handles infrastructure, funding, and audience.' },
-  { c:'Roadmap',     t:'Next up: expanded artist intake, live sessions on this feed, and merch drops tied to community milestones.' },
+  { c:'Model',       t:'Rhozeland is <strong>label-free</strong>. Artists keep ownership; the ecosystem handles infrastructure, funding &amp; audience.' },
+  { c:'Roadmap',     t:'Next up: expanded artist intake, live sessions on this feed &amp; merch drops tied to community milestones.' },
 ];
 var factIdx = 0;
 setInterval(function(){
@@ -827,11 +575,7 @@ setInterval(function(){
   var cat  = document.getElementById('dyk-cat');
   var txt  = document.getElementById('dyk-text');
   body.style.opacity = 0;
-  setTimeout(function(){
-    cat.textContent = FACTS[factIdx].c;
-    txt.innerHTML   = FACTS[factIdx].t;
-    body.style.opacity = 1;
-  }, 400);
+  setTimeout(function(){ cat.textContent = FACTS[factIdx].c; txt.innerHTML = FACTS[factIdx].t; body.style.opacity = 1; }, 400);
   document.getElementById('dyk-index').textContent = String(factIdx + 1).padStart(2,'0');
 }, 8000);
 
@@ -847,38 +591,46 @@ var HEADLINES = [
   'Rhozeland x independent creators · one economy, transparent by default',
 ];
 function buildWire(){
-  function timeStamp(){ var d=new Date(); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); }
   var items = [];
   if (lastStats){
-    items.push({ t: timeStamp(), h: '$RHOZE ' + fmtPrice(lastStats.price) + ' · ' + fmtPct(lastStats.change24h) });
-    items.push({ t: timeStamp(), h: 'MCAP ' + fmtCompact(lastStats.marketCap) + ' · 24H VOL ' + fmtCompact(lastStats.volume24h) });
+    items.push('$RHOZE ' + fmtPrice(lastStats.price) + ' · ' + fmtPct(lastStats.change24h));
+    items.push('MCAP ' + fmtCompact(lastStats.marketCap) + ' · 24H VOL ' + fmtCompact(lastStats.volume24h));
   }
-  HEADLINES.forEach(function(h){ items.push({ t: timeStamp(), h: h }); });
-  var html = items.map(function(x){
-    return '<span class="wire-item"><span class="wire-time">' + x.t + '</span><span>' + x.h + '</span></span><span class="wire-sep">◆</span>';
+  HEADLINES.forEach(function(h){ items.push(h); });
+  var html = items.map(function(h){
+    return '<span class="wire-item"><span class="wire-mark" aria-hidden="true">R</span><span>' + esc(h) + '</span></span><span class="wire-sep">◆</span>';
   }).join('');
   document.getElementById('wire-track').innerHTML = html + html;
 }
 buildWire();
 
-/* ================= Merch slideshow ================= */
+/* ================= Merch slideshow — real people + stock ================= */
 var MERCH = [
-  { n: 'Essential Wear', p: 'The essentials',              tag: 'Drop 01', img: '/__l5e/assets-v1/1c7bcbe0-19e0-4845-b98a-262ba21be682/toybox-essential-wear.jpg' },
-  { n: 'Sunfade Hoodie', p: 'Heavyweight · Oversized',     tag: 'Hoodie',  img: '/__l5e/assets-v1/fe93dbc4-6a91-4c5a-8591-521d608d2b1e/toybox-hoodie-sunfade.jpg' },
-  { n: "Worker's Jacket", p: 'Workwear 2026',              tag: 'Jacket',  img: '/__l5e/assets-v1/cc3fb4d7-cf73-44a6-b26d-651870427028/toybox-jacket.jpg' },
-  { n: 'Earth Tone Tee', p: 'Heavyweight · Cotton',        tag: 'Tee',     img: '/__l5e/assets-v1/2ed75e92-254e-46e7-9d63-11b93e97a337/toybox-tee-earth.jpg' },
-  { n: 'Rhozeland Base Tee', p: 'Logo · Everyday wear',    tag: 'Tee',     img: '/__l5e/assets-v1/541ef798-890f-49bd-a882-e007d002513f/toybox-tee-logo.jpg' },
-  { n: 'Heavyweight Vest', p: 'Essential · Layered',       tag: 'Vest',    img: '/__l5e/assets-v1/2384d4b6-56ec-48eb-af5b-c5281ecdc7cf/toybox-vest.jpg' },
+  { n:'Two Women · Editorial',   p:'AI shoot · SS 26',           tag:'Editorial', img:'/__l5e/assets-v1/3789e1d9-359a-4cd7-a68a-ba5f69875719/two-women.jpg', editorial:true },
+  { n:'Essential Wear',          p:'The essentials',             tag:'Drop 01',   img:'/__l5e/assets-v1/1c7bcbe0-19e0-4845-b98a-262ba21be682/toybox-essential-wear.jpg' },
+  { n:'Sunfade Hoodie',          p:'Heavyweight · Oversized',    tag:'Hoodie',    img:'/__l5e/assets-v1/fe93dbc4-6a91-4c5a-8591-521d608d2b1e/toybox-hoodie-sunfade.jpg' },
+  { n:'Worn Hoodie',             p:'Real fit · Everyday',        tag:'On Body',   img:'/__l5e/assets-v1/44f86c05-0bed-4f7c-9cf6-8ad6f9492952/woman-hoodie.jpg', editorial:true },
+  { n:"Worker's Jacket",         p:'Workwear 2026',              tag:'Jacket',    img:'/__l5e/assets-v1/cc3fb4d7-cf73-44a6-b26d-651870427028/toybox-jacket.jpg' },
+  { n:'Fashion Ad',              p:'SS 26 Campaign',             tag:'Campaign',  video:'/__l5e/assets-v1/90b14679-dba6-4ff7-97a4-fccc9bdb91cd/fashion-ad.mp4', editorial:true },
+  { n:'Earth Tone Tee',          p:'Heavyweight · Cotton',       tag:'Tee',       img:'/__l5e/assets-v1/2ed75e92-254e-46e7-9d63-11b93e97a337/toybox-tee-earth.jpg' },
+  { n:'Worn Jacket',             p:'Real fit · Layered',         tag:'On Body',   img:'/__l5e/assets-v1/80287180-c63b-4f32-818b-8998cdb41b31/woman-jacket.jpg', editorial:true },
+  { n:'Rhozeland Base Tee',      p:'Logo · Everyday wear',       tag:'Tee',       img:'/__l5e/assets-v1/541ef798-890f-49bd-a882-e007d002513f/toybox-tee-logo.jpg' },
+  { n:'Two Women · Video',       p:'Motion · Editorial',         tag:'Motion',    video:'/__l5e/assets-v1/836e475d-0f1f-4b04-8575-a2a7a0164b29/two-women.mp4', editorial:true },
+  { n:'Heavyweight Vest',        p:'Essential · Layered',        tag:'Vest',      img:'/__l5e/assets-v1/2384d4b6-56ec-48eb-af5b-c5281ecdc7cf/toybox-vest.jpg' },
+  { n:'Glasses · Editorial',     p:'Portrait · SS 26',           tag:'Editorial', img:'/__l5e/assets-v1/28c09cbe-a71b-4508-a67a-e37cd1609f97/woman-glasses.jpg', editorial:true },
 ];
 (function renderMerch(){
   var strip = document.getElementById('merch-strip');
   var html = MERCH.map(function(m){
-    return '<div class="merch-slide" style="background-image:url(\'' + m.img + '\')">'
-      + '<span class="tag">' + m.tag + '</span>'
-      + '<div class="cap"><div class="n">' + m.n + '</div><div class="p">' + m.p + '</div></div>'
+    var media = m.video
+      ? '<video autoplay muted loop playsinline preload="auto" src="' + m.video + '"></video>'
+      : '<img loading="lazy" src="' + m.img + '" alt="' + esc(m.n) + '" />';
+    return '<div class="merch-slide' + (m.editorial ? ' editorial' : '') + '">'
+      + '<span class="tag">' + esc(m.tag) + '</span>'
+      + media
+      + '<div class="cap"><div class="n">' + esc(m.n) + '</div><div class="p">' + esc(m.p) + '</div></div>'
       + '</div>';
   }).join('');
-  // Duplicate for seamless marquee
   strip.innerHTML = html + html;
 })();
 </script>

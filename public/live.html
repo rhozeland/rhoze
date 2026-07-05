@@ -19,7 +19,7 @@
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin:0; padding:0; height:100%; }
   body { background: var(--ink); color: var(--text); font-family:'Inter',sans-serif; overflow:hidden; -webkit-font-smoothing:antialiased; }
-  .shell { height:100vh; display:grid; grid-template-rows:56px 1fr 60px; }
+  .shell { height:100vh; display:grid; grid-template-rows:52px 1fr 52px; }
 
   /* HEADER */
   .hdr { display:flex; align-items:center; gap:22px; padding:0 16px; background:var(--ink); border-bottom:1px solid var(--line-strong); }
@@ -46,14 +46,13 @@
 
   /* MAIN */
   .main { display:grid; grid-template-columns:1fr 360px; min-height:0; }
-  .col-left { display:grid; grid-template-rows:150px 1fr 200px; min-height:0; border-right:1px solid var(--line-strong); }
+  .col-left { display:grid; grid-template-rows:1fr 210px; min-height:0; border-right:1px solid var(--line-strong); }
 
-  /* CHART ROW — chart full width now (bcast merged into sidebar app panel) */
-  .chart-row { display:block; border-bottom:1px solid var(--line-strong); min-height:0; position:relative; }
-  .chart-panel { position:relative; background:var(--panel-2); overflow:hidden; height:100%; }
-  .chart-panel iframe { width:100%; height:100%; border:0; display:block; }
+  /* Sidebar chart panel (moved from left) */
+  .side-chart { position:relative; background:var(--panel-2); overflow:hidden; height:180px; border-bottom:1px solid var(--line-strong); }
+  .side-chart iframe { width:100%; height:100%; border:0; display:block; }
   .chart-tag { position:absolute; top:10px; left:10px; z-index:10; background:rgba(10,10,10,0.85); backdrop-filter:blur(6px); border:1px solid var(--line-strong); padding:5px 9px; display:flex; gap:10px; align-items:center; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; }
-  .chart-tag .g { color:var(--turq); }
+  .chart-tag .g { color:var(--turq); font-weight:900; }
   .chart-tag .m { color:var(--muted); }
 
   /* SUB ROW: Spotlight + Pulse — spotlight = big hero + rail, pulse = clean 4-up */

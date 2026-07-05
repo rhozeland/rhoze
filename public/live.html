@@ -476,6 +476,65 @@ async function loadSocial(){
 loadSocial();
 setInterval(loadSocial, 300000);
 
+async function loadLiveContent(){
+  try {
+    var url = SUPABASE_URL + '/rest/v1/live_dashboard_content?select=section_key,payload&is_published=eq.true';
+    var r = await fetch(url, { headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer ' + SUPABASE_ANON, Accept:'application/json' }, cache:'no-store' });
+    if (!r.ok) return;
+    var rows = await r.json();
+    rows.forEach(function(row){ LIVE_CONTENT[row.section_key] = row.payload || {}; });
+    applyLiveContent();
+  } catch(e) {}
+}
+
+function applyLiveContent(){
+  var spot = LIVE_CONTENT.project_spotlight;
+  if (spot && Array.isArray(spot.items) && spot.items.length) {
+    PORTFOLIO = spot.items.map(function(p){ return { t:p.title || p.t || 'Untitled', a:p.artist || p.a || 'Rhozeland', tag:p.tag || 'Release', img:p.image || p.img || '/images/logo-black.webp', video:p.video || '' }; });
+    spotIdx = 0; renderSpotlight();
+  }
+  var social = LIVE_CONTENT.social_feed;
+  if (social && Array.isArray(social.fallbackPosts) && social.fallbackPosts.length) {
+    PULSE_FALLBACK = social.fallbackPosts.map(function(p){ return { who:p.who || '@rhozeland', plat:p.platform || p.plat || 'IG', h:p.time || p.h || 'today', msg:p.message || p.msg || '', url:p.url || null, hot:!!p.hot }; }).filter(function(p){ return p.msg; });
+    if (PULSE_FALLBACK.length) { PULSE = PULSE_FALLBACK.slice(); pulseIdx = 0; renderPulse(); }
+  }
+  var facts = LIVE_CONTENT.did_you_know;
+  if (facts && Array.isArray(facts.items) && facts.items.length) {
+    FACTS = facts.items.map(function(f){ return { c:f.category || 'Update', t:safeFactText(f.text || '') }; }).filter(function(f){ return f.t; });
+    factIdx = 0;
+    if (FACTS.length) { setText('dyk-cat', FACTS[0].c); setHTML('dyk-text', FACTS[0].t); setText('dyk-index', '01'); }
+  }
+  var sched = LIVE_CONTENT.broadcast_schedule;
+  if (sched && Array.isArray(sched.items)) {
+    setText('sched-zone', 'All times ' + (sched.timezone || 'UTC'));
+    var sl = document.getElementById('sched-list');
+    if (sl) sl.innerHTML = sched.items.map(function(s){ return '<div class="sched-item"><span class="day">' + esc(s.day || '') + '</span><div class="col"><span class="what">' + esc(s.title || '') + '</span><span class="when">' + esc(s.time || '') + '</span></div></div>'; }).join('');
+  }
+  var app = LIVE_CONTENT.app_panel;
+  if (app) {
+    setText('os-eyebrow', app.eyebrow);
+    setHTML('os-title', esc(app.title || 'Own Your Sound').replace(/(Sound|RHOZE|App)$/i, '<span>$1</span>'));
+    setText('os-sub', app.description);
+    var qr = document.getElementById('os-qr-img'); if (qr && app.qrUrl) qr.src = app.qrUrl;
+    setText('os-qr-cap', app.qrCaption);
+    var soc = document.getElementById('os-socials');
+    if (soc && Array.isArray(app.socials)) soc.innerHTML = app.socials.map(function(a){ return '<a href="' + esc(a.url || '#') + '" target="_blank" rel="noopener">' + esc(a.label || 'LINK') + '</a>'; }).join('');
+  }
+  var wire = LIVE_CONTENT.latest_wire;
+  if (wire && Array.isArray(wire.items)) { HEADLINES = wire.items.filter(Boolean); buildWire(); }
+  var clothing = LIVE_CONTENT.clothing_rail;
+  if (clothing) {
+    setText('merch-eyebrow', clothing.eyebrow);
+    setHTML('merch-headline', esc(clothing.headline || 'Wear the Ecosystem').replace(/ /g, '<br/>'));
+    setText('merch-description', clothing.description);
+    setText('merch-cta', clothing.cta ? '→ ' + clothing.cta.replace(/^→\s*/, '') : '');
+    if (Array.isArray(clothing.items) && clothing.items.length) {
+      MERCH = clothing.items.map(function(m){ return { n:m.name || 'Rhozeland', p:m.price || 'Preview', tag:m.tag || 'Drop', img:(m.type === 'video' ? '' : m.src), video:(m.type === 'video' ? m.src : ''), editorial:true }; }).filter(function(m){ return m.img || m.video; });
+      renderMerch();
+    }
+  }
+}
+
 /* Clock + wire-side removed per design */
 
 /* ================= Next Sunday ================= */
@@ -618,7 +677,7 @@ var MERCH = [
   { n:'Essential Wear',          p:'The essentials',             tag:'Drop 01',    img:'/__l5e/assets-v1/1c7bcbe0-19e0-4845-b98a-262ba21be682/toybox-essential-wear.jpg' },
   { n:'Earth Tone Tee',          p:'Heavyweight · Cotton',       tag:'Tee',        img:'/__l5e/assets-v1/2ed75e92-254e-46e7-9d63-11b93e97a337/toybox-tee-earth.jpg' },
 ];
-(function renderMerch(){
+function renderMerch(){
   var strip = document.getElementById('merch-strip');
   var html = MERCH.map(function(m){
     var media = m.video
@@ -631,7 +690,10 @@ var MERCH = [
       + '</div>';
   }).join('');
   strip.innerHTML = html + html;
-})();
+}
+renderMerch();
+loadLiveContent();
+setInterval(loadLiveContent, 120000);
 </script>
 </body>
 </html>

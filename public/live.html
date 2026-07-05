@@ -19,7 +19,10 @@
     --text: #ececec;
     --muted: #8a8a8a;
     --dim: #5a5a5a;
-    --gold: #D4AF37;
+    --turq: #3ec3b8;
+    --turq-2: #22e3c4;
+    --lime: #22e39a;
+    --pop: #22e3c4;
     --live: #dc2626;
     --up: #22c55e;
     --down: #ef4444;
@@ -48,22 +51,19 @@
   }
   .brand { display: flex; align-items: center; gap: 12px; }
   .brand-mark {
-    width: 32px; height: 32px;
-    background: var(--gold);
+    width: 34px; height: 34px;
     display: flex; align-items: center; justify-content: center;
+    background: var(--turq);
+    padding: 4px;
   }
-  .brand-mark::after {
-    content: "";
-    width: 14px; height: 14px;
-    border: 2px solid #000;
-    transform: rotate(45deg);
-  }
+  .brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; filter: brightness(0); }
   .brand-name {
     font-weight: 900; font-size: 20px;
     letter-spacing: -0.02em; text-transform: uppercase;
     font-style: italic;
   }
-  .brand-name .slash { color: var(--gold); }
+  .brand-name .slash { color: var(--turq); }
+  .brand-name .live-word { color: var(--turq); }
   .divider { width: 1px; height: 24px; background: var(--line-strong); }
 
   .metrics { display: flex; gap: 32px; align-items: center; }
@@ -76,7 +76,7 @@
     font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums; text-transform: uppercase;
   }
-  .metric .val.gold { color: var(--gold); }
+  .metric .val.gold { color: var(--turq); }
   .metric .val.up { color: var(--up); }
   .metric .val.down { color: var(--down); }
 
@@ -97,18 +97,18 @@
     font-size: 11px;
     display: flex; align-items: center; gap: 8px;
   }
-  .clock .tz { color: var(--gold); }
+  .clock .tz { color: var(--turq); }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   /* ======= MAIN ======= */
   .main {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: 1fr 360px;
     min-height: 0;
   }
   .col-left {
     display: grid;
-    grid-template-rows: 1fr 280px;
+    grid-template-rows: 320px 1fr;
     min-height: 0;
     border-right: 1px solid var(--line-strong);
   }
@@ -117,6 +117,7 @@
     background: var(--panel-2);
     overflow: hidden;
     min-height: 0;
+    border-bottom: 1px solid var(--line-strong);
   }
   .chart-panel iframe { width: 100%; height: 100%; border: 0; display: block; }
   .chart-tag {
@@ -128,12 +129,11 @@
     display: flex; gap: 12px; align-items: center;
     font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
   }
-  .chart-tag .g { color: var(--gold); }
+  .chart-tag .g { color: var(--turq); }
   .chart-tag .m { color: var(--muted); }
 
   .sub-row {
-    display: grid; grid-template-columns: 1fr 320px;
-    border-top: 1px solid var(--line-strong);
+    display: grid; grid-template-columns: 1.4fr 1fr;
     min-height: 0;
   }
   .spotlight {
@@ -144,12 +144,12 @@
   .kicker {
     font-size: 10px; font-weight: 900;
     text-transform: uppercase; letter-spacing: 0.24em;
-    color: var(--gold);
+    color: var(--turq);
     margin-bottom: 10px;
     display: flex; justify-content: space-between; align-items: center;
   }
   .kicker .sub { color: var(--dim); letter-spacing: 0.16em; font-weight: 700; }
-  .spot-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; min-height: 0; }
+  .spot-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
   .spot-card {
     position: relative;
     background: var(--panel-3);
@@ -171,7 +171,7 @@
   .spot-card .t .a { color: var(--muted); font-weight: 600; }
   .spot-card .tag {
     position: absolute; top: 8px; left: 8px;
-    background: var(--gold); color: #000;
+    background: var(--turq); color: #000;
     font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;
     padding: 2px 6px;
   }
@@ -180,25 +180,61 @@
     padding: 14px 16px;
     display: flex; flex-direction: column; min-height: 0;
   }
-  .pulse-list { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
-  .pulse-item {
-    border-left: 2px solid var(--line-strong);
-    padding: 4px 0 4px 10px;
+  .pulse-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; }
+  .pulse-card {
+    position: relative;
+    background: var(--panel-3);
+    border: 1px solid var(--line-strong);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
   }
-  .pulse-item.hot { border-left-color: var(--gold); }
-  .pulse-item .who { font-size: 10px; font-weight: 800; letter-spacing: 0.04em; }
-  .pulse-item .who .h { color: var(--muted); font-weight: 500; margin-left: 6px; }
-  .pulse-item .msg { font-size: 11px; color: #c5c5c5; margin-top: 2px; line-height: 1.4;
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pulse-card.hot { border-color: var(--turq); box-shadow: inset 0 0 0 1px var(--turq); }
+  .pulse-thumb {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000 center/cover no-repeat;
+    overflow: hidden;
+  }
+  .pulse-thumb::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent 55%);
+  }
+  .pulse-plat {
+    position: absolute; top: 6px; left: 6px; z-index: 2;
+    background: rgba(0,0,0,0.75);
+    padding: 3px 7px;
+    font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.14em;
+    color: var(--turq);
+  }
+  .pulse-plat.ig { color: #f472b6; }
+  .pulse-plat.x  { color: #e5e5e5; }
+  .pulse-plat.li { color: #7dd3fc; }
+  .pulse-plat.yt { color: #f87171; }
+  .pulse-time {
+    position: absolute; top: 6px; right: 6px; z-index: 2;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: #fff;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 6px;
+  }
+  .pulse-body { padding: 8px 10px; }
+  .pulse-who { font-size: 10px; font-weight: 800; letter-spacing: 0.04em; color: var(--turq); text-transform: uppercase; }
+  .pulse-msg {
+    font-size: 11px; color: #d5d5d5; margin-top: 3px; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
 
   /* ======= SIDEBAR ======= */
   .side {
     background: var(--panel);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
+    display: flex; flex-direction: column;
     min-height: 0;
+    overflow: hidden;
   }
   .side-block { padding: 14px 16px; border-bottom: 1px solid var(--line-strong); }
+  .lb-caption { font-size: 10px; color: var(--muted); line-height: 1.5; margin: 6px 0 10px; }
+  .lb-caption b { color: var(--turq); font-weight: 700; }
   .lb-list { display: flex; flex-direction: column; gap: 6px; }
   .lb-row {
     display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center;
@@ -209,11 +245,11 @@
   }
   .lb-row.top { background: var(--panel-3); }
   .lb-row .rk { color: var(--dim); font-weight: 900; font-family: 'JetBrains Mono', monospace; }
-  .lb-row.top .rk { color: var(--gold); }
+  .lb-row.top .rk { color: var(--turq); }
   .lb-row .nm { font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
   .lb-row:not(.top) .nm { color: #bbb; font-weight: 600; }
   .lb-row .pts { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
-  .lb-row.top .pts { color: var(--gold); font-weight: 700; }
+  .lb-row.top .pts { color: var(--turq); font-weight: 700; }
   .lb-empty { font-size: 11px; color: var(--dim); padding: 8px 0; }
 
   .dyk {
@@ -221,15 +257,75 @@
     background: #0d0d0d;
     display: flex; flex-direction: column; min-height: 0;
     border-bottom: 1px solid var(--line-strong);
+    flex: 0 0 auto;
   }
   .dyk-body {
     background: var(--panel-3);
-    border-left: 4px solid var(--gold);
-    padding: 12px 14px;
-    flex: 1;
-    font-size: 12px; font-style: italic; line-height: 1.55;
-    color: #d5d5d5; font-weight: 500;
+    border-left: 4px solid var(--turq);
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 8px;
     transition: opacity 0.4s;
+    min-height: 96px;
+  }
+  .dyk-cat {
+    font-size: 9px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--turq);
+  }
+  .dyk-text {
+    font-size: 15px; line-height: 1.55;
+    color: #eee; font-weight: 500;
+    font-family: 'Inter', sans-serif;
+  }
+  .dyk-text strong { color: var(--turq); font-weight: 700; }
+
+  /* ======= QR / CTA panel ======= */
+  .cta-panel {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line-strong);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    background: var(--panel-2);
+  }
+  .cta-tile {
+    background: var(--panel-3);
+    border: 1px solid var(--line-strong);
+    padding: 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    text-align: center;
+  }
+  .cta-tile .qr {
+    width: 88px; height: 88px;
+    background: #fff;
+    padding: 4px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cta-tile .qr img { width: 100%; height: 100%; display: block; }
+  .cta-tile .lbl {
+    font-size: 9px; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--turq);
+  }
+  .cta-tile .sub-lbl { font-size: 10px; color: var(--muted); line-height: 1.3; }
+
+  /* ======= Merch strip ======= */
+  .merch {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .merch-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    margin-top: 8px;
+  }
+  .merch-tile {
+    aspect-ratio: 1;
+    background: var(--panel-3) center/cover no-repeat;
+    border: 1px solid var(--line-strong);
+    position: relative;
+    overflow: hidden;
+  }
+  .merch-tile.empty {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 900; letter-spacing: 0.18em;
+    color: var(--dim); text-transform: uppercase;
+    background: repeating-linear-gradient(45deg, #141414, #141414 6px, #0d0d0d 6px, #0d0d0d 12px);
   }
 
   .radio {
@@ -240,7 +336,7 @@
   .radio-l { display: flex; align-items: center; gap: 10px; }
   .eq { display: flex; gap: 2px; align-items: flex-end; height: 14px; }
   .eq span {
-    display: block; width: 2px; background: var(--gold);
+    display: block; width: 2px; background: var(--turq);
   }
   .eq span:nth-child(1) { height: 6px; animation: eq 0.9s ease-in-out infinite; }
   .eq span:nth-child(2) { height: 12px; animation: eq 1.2s ease-in-out infinite; }
@@ -250,7 +346,7 @@
   @keyframes eq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
   .radio-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
   .toggle {
-    width: 44px; height: 22px; background: var(--gold); border-radius: 999px;
+    width: 44px; height: 22px; background: var(--turq); border-radius: 999px;
     position: relative; cursor: pointer; transition: background 0.2s;
     border: 0; padding: 0;
   }
@@ -265,7 +361,7 @@
   /* ======= WIRE ======= */
   .wire {
     display: grid; grid-template-columns: auto 1fr auto;
-    background: var(--gold);
+    background: var(--turq);
     overflow: hidden;
   }
   .wire-brand {
@@ -290,13 +386,13 @@
   }
   .wire-item { display: inline-flex; align-items: center; gap: 12px; }
   .wire-time {
-    background: #000; color: var(--gold);
+    background: #000; color: var(--turq);
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px; padding: 2px 8px; font-weight: 700;
   }
   .wire-sep { color: rgba(0,0,0,0.35); font-weight: 900; }
   .wire-side {
-    background: #000; color: var(--gold);
+    background: #000; color: var(--turq);
     padding: 0 18px;
     display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
     font-family: 'JetBrains Mono', monospace;
@@ -316,8 +412,8 @@
   <!-- HEADER -->
   <header class="hdr">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"></div>
-      <div class="brand-name">Rhozeland<span class="slash">/LIVE</span></div>
+      <div class="brand-mark" aria-hidden="true"><img src="/images/logo-white.webp" alt="" /></div>
+      <div class="brand-name">Rhozeland<span class="slash">/</span><span class="live-word">LIVE</span></div>
     </div>
     <div class="divider"></div>
     <div class="metrics">
@@ -358,8 +454,8 @@
           <div class="spot-row" id="spot-row"></div>
         </section>
         <section class="pulse-panel">
-          <div class="kicker"><span>Social Pulse</span><span class="sub">@rhozeland</span></div>
-          <div class="pulse-list" id="pulse-list"></div>
+          <div class="kicker"><span>Social Feed</span><span class="sub">IG · X · LI · YT</span></div>
+          <div class="pulse-grid" id="pulse-list"></div>
         </section>
       </div>
     </div>
@@ -367,7 +463,8 @@
     <!-- SIDE -->
     <aside class="side">
       <div class="side-block">
-        <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 5</span></div>
+        <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 6</span></div>
+        <div class="lb-caption">Earn <b>points</b> for raids, memes, threads, and videos. Weekly winners get <b>$RHOZE</b>, merch drops &amp; studio time. Join at <b>rhozeland.com</b>.</div>
         <div class="lb-list" id="lb-list">
           <div class="lb-empty">Loading leaderboard…</div>
         </div>
@@ -376,11 +473,34 @@
       <div class="dyk">
         <div class="kicker" style="margin-bottom:8px;"><span>Did You Know?</span><span class="sub" id="dyk-index">01</span></div>
         <div class="dyk-body" id="dyk-body">
-          Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists all under one roof.
+          <div class="dyk-cat" id="dyk-cat">Ecosystem</div>
+          <div class="dyk-text" id="dyk-text">Rhozeland is a <strong>creator-owned</strong> ecosystem — recording, content, and launch infrastructure for independent artists, all under one roof.</div>
         </div>
       </div>
 
-      <div class="radio">
+      <div class="cta-panel">
+        <div class="cta-tile">
+          <div class="qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com" /></div>
+          <div class="lbl">Join the Club</div>
+          <div class="sub-lbl">rhozeland.com</div>
+        </div>
+        <div class="cta-tile">
+          <div class="qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Fyoutube.com%2F%40rhozeland" /></div>
+          <div class="lbl">Subscribe</div>
+          <div class="sub-lbl">youtube.com/@rhozeland</div>
+        </div>
+      </div>
+
+      <div class="merch">
+        <div class="kicker"><span>Toy Box · Merch</span><span class="sub">Drop soon</span></div>
+        <div class="merch-row" id="merch-row">
+          <div class="merch-tile" style="background-image:url('/images/toybox_logo_white.webp');"></div>
+          <div class="merch-tile empty">Coming Soon</div>
+          <div class="merch-tile" style="background-image:url('/images/toybox-silhouette.webp');"></div>
+        </div>
+      </div>
+
+      <div class="radio" style="margin-top:auto;">
         <div class="radio-l">
           <div class="eq off" id="eq"><span></span><span></span><span></span><span></span></div>
           <span class="radio-lbl">Ambient Radio</span>
@@ -459,22 +579,31 @@ setInterval(function(){
 
 /* ================= Social Pulse (curated static rotation) ================= */
 var PULSE = [
-  { who: '@rhozeland', h: 'X · 2m',   msg: 'New release week — Sefra by Cozal is live on YouTube. Tap in.', hot: true },
-  { who: 'Cozal',      h: 'IG · 12m', msg: 'Studio session tonight. Bring headphones.' },
-  { who: '@rhozeland', h: 'X · 34m',  msg: 'Weekly leaderboard snapshot published. Points reset Monday.' },
-  { who: 'Ooak',       h: 'IG · 1h',  msg: 'Rollout for the next visual dropping Sunday.' },
-  { who: 'Ess B',      h: 'IG · 2h',  msg: 'Behind the scenes on the Just Call Me video shoot.' },
-  { who: '@rhozeland', h: 'X · 3h',   msg: '$RHOZE supply is locked. Creator economy, transparent by default.' },
-  { who: 'Semiah',     h: 'IG · 5h',  msg: 'Withdrawals video hit 10k views this morning. Thank you.' },
+  { who: '@rhozeland', plat: 'X',  h: '2m',  msg: 'New release week — Sefra by Cozal is live on YouTube. Tap in.', img: '/images/cozal-sefra-thumb.jpg', hot: true },
+  { who: 'Cozal',      plat: 'IG', h: '12m', msg: 'Studio session tonight. Bring headphones.',                        img: '/images/cozal-holy-water-thumb.webp' },
+  { who: 'Rhozeland',  plat: 'YT', h: '34m', msg: 'New drop this Sunday — subscribe on youtube.com/@rhozeland.',      img: '/images/ooak-the-mask-thumb.webp' },
+  { who: 'Ooak',       plat: 'IG', h: '1h',  msg: 'Rollout for the next visual dropping Sunday.',                     img: '/images/ooak-saint-flair-west-thumb.webp' },
+  { who: 'Ess B',      plat: 'IG', h: '2h',  msg: 'Behind the scenes on the Just Call Me video shoot.',               img: '/images/ess-b-just-call-me-thumb.webp' },
+  { who: '@rhozeland', plat: 'LI', h: '2h',  msg: 'Rhozeland is building the operating system for independent artists.', img: '/images/rhozeland-flywheel.webp' },
+  { who: '@rhozeland', plat: 'X',  h: '3h',  msg: '$RHOZE supply is locked. Creator economy, transparent by default.', img: '/images/rhozeland_official_logo_2025.webp' },
+  { who: 'Semiah',     plat: 'IG', h: '5h',  msg: 'Withdrawals video hit 10k views this morning. Thank you.',          img: '/images/semiah-withdrawals-thumb.webp' },
+  { who: 'Monee Fingaz', plat:'IG',h: '6h',  msg: 'Mansa Musa video keeps climbing. Real ones only.',                 img: '/images/fingaz-mansa-musa-thumb.webp' },
 ];
 var pulseIdx = 0;
 function renderPulse(){
   var el = document.getElementById('pulse-list');
   var items = [0,1,2,3].map(function(o){
     var p = PULSE[(pulseIdx + o) % PULSE.length];
-    return '<div class="pulse-item' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="who">' + p.who + '<span class="h">· ' + p.h + '</span></div>'
-      + '<div class="msg">' + p.msg + '</div>'
+    var platCls = (p.plat || 'X').toLowerCase();
+    return '<div class="pulse-card' + (p.hot ? ' hot' : '') + '">'
+      + '<div class="pulse-thumb" style="background-image:url(\'' + (p.img || '') + '\')">'
+      +   '<span class="pulse-plat ' + platCls + '">' + (p.plat || '') + '</span>'
+      +   '<span class="pulse-time">' + p.h + '</span>'
+      + '</div>'
+      + '<div class="pulse-body">'
+      +   '<div class="pulse-who">' + p.who + '</div>'
+      +   '<div class="pulse-msg">' + p.msg + '</div>'
+      + '</div>'
       + '</div>';
   }).join('');
   el.innerHTML = items;
@@ -568,20 +697,20 @@ loadStats(); setInterval(loadStats, 30000);
 /* ================= Leaderboard ================= */
 async function loadLeaderboard(){
   try {
-    var url = SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&published_at=not.is.null&order=points.desc&limit=8';
+    var url = SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&published_at=not.is.null&order=points.desc&limit=6';
     var r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON, Accept: 'application/json' }, cache: 'no-store' });
     if (!r.ok) return;
     var rows = await r.json();
     var el = document.getElementById('lb-list');
     if (!rows.length){ el.innerHTML = '<div class="lb-empty">Leaderboard snapshot pending.</div>'; return; }
-    document.getElementById('lb-sub').textContent = 'Top ' + Math.min(8, rows.length);
+    document.getElementById('lb-sub').textContent = 'Top ' + Math.min(6, rows.length);
     el.innerHTML = rows.map(function(row, i){
       var top = i === 0 ? ' top' : '';
       var pts = (row.points || 0).toLocaleString();
       return '<div class="lb-row' + top + '">'
         + '<span class="rk">' + String(i+1).padStart(2,'0') + '</span>'
         + '<span class="nm">' + (row.username || 'anon').slice(0, 18) + '</span>'
-        + '<span class="pts">' + pts + ' RP</span>'
+        + '<span class="pts">' + pts + ' pts</span>'
         + '</div>';
     }).join('');
   } catch(e){
@@ -592,28 +721,36 @@ loadLeaderboard(); setInterval(loadLeaderboard, 60000);
 
 /* ================= Did You Know ================= */
 var FACTS = [
-  'Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists.',
-  '$RHOZE fuels bounties, collaborations, and creator payouts across the ecosystem.',
-  'The community leaderboard rewards raids, memes, threads, videos, and completed challenges every week.',
-  'New releases drop every Sunday on youtube.com/@rhozeland.',
-  'The Rhozeland dev wallet is locked — supply is transparent and on-chain verifiable.',
-  'Contract: 7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump',
-  'The Angry Mortgage podcast is part of the Rhozeland network — new episodes drop weekly.',
-  'Reach the team any time at collab@rhozeland.com.',
-  'Rhozeland shipped Sefra by Cozal, The Mask by Ooak, Mansa Musa by Monee Fingaz, and dozens more.',
-  'Every project runs through Rhoze Studio — mixing, mastering, video, and rollout in one place.',
+  { c:'The Lore',    t:'Rhozeland started as a group of Toronto creatives sharing one studio. Today it\'s a <strong>creator-owned network</strong> spanning music, video, podcasts, and Web3.' },
+  { c:'$RHOZE',      t:'The <strong>$RHOZE</strong> token is the fuel for the ecosystem — it powers bounties, creator payouts, community rewards, and merch drops.' },
+  { c:'Supply',      t:'The Rhozeland dev wallet is <strong>locked</strong>. Supply is transparent and verifiable on-chain — no rug, no unlocks.' },
+  { c:'Studio',      t:'Every project runs through <strong>Rhoze Studio</strong> — recording, mixing, mastering, video, and rollout under one roof.' },
+  { c:'Releases',    t:'New drops every <strong>Sunday</strong>. Recent: Sefra by Cozal, The Mask by Ooak, Mansa Musa by Monee Fingaz, Withdrawals by Semiah.' },
+  { c:'Toy Box',     t:'<strong>Toy Box</strong> is the Rhozeland merch line — apparel drops built for the community, funded by the ecosystem.' },
+  { c:'Community',   t:'The leaderboard rewards <strong>raids, memes, threads, and videos</strong>. Top ranks each week earn $RHOZE, merch, and studio time.' },
+  { c:'Podcast',     t:'The <strong>Angry Mortgage</strong> podcast is part of the Rhozeland network — real conversations, new episodes weekly.' },
+  { c:'Network',     t:'Rhozeland runs the <strong>89-32</strong> podcast series, event coverage, artist docs, and brand campaigns — all in-house.' },
+  { c:'Web3',        t:'Rhozeland is a <strong>Solana Coliseum Frontier</strong> hackathon project — a proof that creator economies can be transparent by default.' },
+  { c:'Team',        t:'Core team spans <strong>engineering, direction, A&amp;R, video, and community</strong>. Real people, real names — no anons at the top.' },
+  { c:'Contact',     t:'Want to collab, sponsor, or join a session? <strong>collab@rhozeland.com</strong> — the team reads every message.' },
+  { c:'Wallet',      t:'Contract: <strong>7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</strong> — always verify on Birdeye or Solscan before you ape.' },
+  { c:'Model',       t:'Rhozeland is <strong>label-free</strong>. Artists keep ownership; the ecosystem handles infrastructure, funding, and audience.' },
+  { c:'Roadmap',     t:'Next up: expanded artist intake, live sessions on this feed, and merch drops tied to community milestones.' },
 ];
 var factIdx = 0;
 setInterval(function(){
   factIdx = (factIdx + 1) % FACTS.length;
-  var el = document.getElementById('dyk-body');
-  el.style.opacity = 0;
+  var body = document.getElementById('dyk-body');
+  var cat  = document.getElementById('dyk-cat');
+  var txt  = document.getElementById('dyk-text');
+  body.style.opacity = 0;
   setTimeout(function(){
-    el.textContent = FACTS[factIdx];
-    el.style.opacity = 1;
+    cat.textContent = FACTS[factIdx].c;
+    txt.innerHTML   = FACTS[factIdx].t;
+    body.style.opacity = 1;
   }, 400);
   document.getElementById('dyk-index').textContent = String(factIdx + 1).padStart(2,'0');
-}, 9000);
+}, 8000);
 
 /* ================= Wire Ticker ================= */
 var HEADLINES = [

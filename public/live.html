@@ -257,16 +257,15 @@
     background: #0d0d0d;
     display: flex; flex-direction: column; min-height: 0;
     border-bottom: 1px solid var(--line-strong);
-    flex: 1;
+    flex: 0 0 auto;
   }
   .dyk-body {
     background: var(--panel-3);
     border-left: 4px solid var(--turq);
-    padding: 16px 18px;
-    flex: 1;
+    padding: 14px 16px;
     display: flex; flex-direction: column; gap: 8px;
     transition: opacity 0.4s;
-    min-height: 0;
+    min-height: 96px;
   }
   .dyk-cat {
     font-size: 9px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase;
@@ -289,14 +288,14 @@
   .cta-tile {
     background: var(--panel-3);
     border: 1px solid var(--line-strong);
-    padding: 8px;
+    padding: 6px;
     display: flex; flex-direction: column; align-items: center; gap: 6px;
     text-align: center;
   }
   .cta-tile .qr {
-    width: 100%; aspect-ratio: 1;
+    width: 88px; height: 88px;
     background: #fff;
-    padding: 6px;
+    padding: 4px;
     display: flex; align-items: center; justify-content: center;
   }
   .cta-tile .qr img { width: 100%; height: 100%; display: block; }

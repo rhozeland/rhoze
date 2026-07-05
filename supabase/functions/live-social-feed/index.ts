@@ -87,9 +87,8 @@ async function fetchLinkedIn(lovableKey: string, liKey: string): Promise<Post[]>
 }
 
 async function fetchEditorSocialFallback(): Promise<Post[]> {
-  const url = Deno.env.get("SUPABASE_URL") || PUBLIC_BACKEND_URL;
-  const anon = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || PUBLIC_ANON_KEY;
-  if (!url || !anon) return [];
+  const url = PUBLIC_BACKEND_URL;
+  const anon = PUBLIC_ANON_KEY;
 
   const res = await fetch(
     `${url}/rest/v1/live_dashboard_content?select=payload&section_key=eq.social_feed&is_published=eq.true&limit=1`,

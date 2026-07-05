@@ -228,9 +228,9 @@
   /* ======= SIDEBAR ======= */
   .side {
     background: var(--panel);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
+    display: flex; flex-direction: column;
     min-height: 0;
+    overflow: hidden;
   }
   .side-block { padding: 14px 16px; border-bottom: 1px solid var(--line-strong); }
   .lb-caption { font-size: 10px; color: var(--muted); line-height: 1.5; margin: 6px 0 10px; }

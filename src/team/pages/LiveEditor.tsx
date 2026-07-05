@@ -163,7 +163,7 @@ export default function LiveEditor() {
   function renderField(section: Section, field: Field, item?: any, itemIndex?: number, arrayPath?: string) {
     const value = item ? getAt(item, field.path) : getAt(rows[section.key].payload, field.path);
     const onChange = (nextValue: string) => patch(section.key, (draft) => {
-      if (item && arrayPath) {
+      if (arrayPath && itemIndex !== undefined) {
         const items = getAt(draft, arrayPath) ?? [];
         const nextItem = copy(items[itemIndex ?? 0]);
         items[itemIndex ?? 0] = setAt(nextItem, field.path, field.kind === "number" ? Number(nextValue) : nextValue);

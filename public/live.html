@@ -580,22 +580,31 @@ setInterval(function(){
 
 /* ================= Social Pulse (curated static rotation) ================= */
 var PULSE = [
-  { who: '@rhozeland', h: 'X · 2m',   msg: 'New release week — Sefra by Cozal is live on YouTube. Tap in.', hot: true },
-  { who: 'Cozal',      h: 'IG · 12m', msg: 'Studio session tonight. Bring headphones.' },
-  { who: '@rhozeland', h: 'X · 34m',  msg: 'Weekly leaderboard snapshot published. Points reset Monday.' },
-  { who: 'Ooak',       h: 'IG · 1h',  msg: 'Rollout for the next visual dropping Sunday.' },
-  { who: 'Ess B',      h: 'IG · 2h',  msg: 'Behind the scenes on the Just Call Me video shoot.' },
-  { who: '@rhozeland', h: 'X · 3h',   msg: '$RHOZE supply is locked. Creator economy, transparent by default.' },
-  { who: 'Semiah',     h: 'IG · 5h',  msg: 'Withdrawals video hit 10k views this morning. Thank you.' },
+  { who: '@rhozeland', plat: 'X',  h: '2m',  msg: 'New release week — Sefra by Cozal is live on YouTube. Tap in.', img: '/images/cozal-sefra-thumb.jpg', hot: true },
+  { who: 'Cozal',      plat: 'IG', h: '12m', msg: 'Studio session tonight. Bring headphones.',                        img: '/images/cozal-holy-water-thumb.webp' },
+  { who: 'Rhozeland',  plat: 'YT', h: '34m', msg: 'New drop this Sunday — subscribe on youtube.com/@rhozeland.',      img: '/images/ooak-the-mask-thumb.webp' },
+  { who: 'Ooak',       plat: 'IG', h: '1h',  msg: 'Rollout for the next visual dropping Sunday.',                     img: '/images/ooak-saint-flair-west-thumb.webp' },
+  { who: 'Ess B',      plat: 'IG', h: '2h',  msg: 'Behind the scenes on the Just Call Me video shoot.',               img: '/images/ess-b-just-call-me-thumb.webp' },
+  { who: '@rhozeland', plat: 'LI', h: '2h',  msg: 'Rhozeland is building the operating system for independent artists.', img: '/images/rhozeland-flywheel.webp' },
+  { who: '@rhozeland', plat: 'X',  h: '3h',  msg: '$RHOZE supply is locked. Creator economy, transparent by default.', img: '/images/rhozeland_official_logo_2025.webp' },
+  { who: 'Semiah',     plat: 'IG', h: '5h',  msg: 'Withdrawals video hit 10k views this morning. Thank you.',          img: '/images/semiah-withdrawals-thumb.webp' },
+  { who: 'Monee Fingaz', plat:'IG',h: '6h',  msg: 'Mansa Musa video keeps climbing. Real ones only.',                 img: '/images/fingaz-mansa-musa-thumb.webp' },
 ];
 var pulseIdx = 0;
 function renderPulse(){
   var el = document.getElementById('pulse-list');
   var items = [0,1,2,3].map(function(o){
     var p = PULSE[(pulseIdx + o) % PULSE.length];
-    return '<div class="pulse-item' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="who">' + p.who + '<span class="h">· ' + p.h + '</span></div>'
-      + '<div class="msg">' + p.msg + '</div>'
+    var platCls = (p.plat || 'X').toLowerCase();
+    return '<div class="pulse-card' + (p.hot ? ' hot' : '') + '">'
+      + '<div class="pulse-thumb" style="background-image:url(\'' + (p.img || '') + '\')">'
+      +   '<span class="pulse-plat ' + platCls + '">' + (p.plat || '') + '</span>'
+      +   '<span class="pulse-time">' + p.h + '</span>'
+      + '</div>'
+      + '<div class="pulse-body">'
+      +   '<div class="pulse-who">' + p.who + '</div>'
+      +   '<div class="pulse-msg">' + p.msg + '</div>'
+      + '</div>'
       + '</div>';
   }).join('');
   el.innerHTML = items;

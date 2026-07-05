@@ -490,11 +490,13 @@ tickClock(); setInterval(tickClock, 1000);
 
 /* ================= Next Sunday ================= */
 (function nextSunday(){
+  var el = document.getElementById('sched-next');
+  if (!el) return;
   var d = new Date();
   var days = (7 - d.getUTCDay()) % 7 || 7;
   var t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + days, 20, 0, 0));
   var opts = { weekday:'short', month:'short', day:'numeric' };
-  document.getElementById('sched-next').textContent = t.toLocaleDateString('en-US', opts) + ' · 20:00';
+  el.textContent = t.toLocaleDateString('en-US', opts) + ' · 20:00';
 })();
 
 /* ================= CA copy ================= */

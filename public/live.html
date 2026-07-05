@@ -1,367 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-  (function(){
-    var o=localStorage.getItem('theme-override');
-    if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}
-    if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('dark');
-  })();
-</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Rhozeland • LIVE</title>
-<meta name="description" content="Rhozeland live broadcast dashboard — stream, $RHOZE chart, community stats, and news ticker in one CP24-style view." />
+<title>Rhozeland • LIVE Broadcast</title>
+<meta name="description" content="Rhozeland live broadcast HUD — $RHOZE market data, community leaderboard, portfolio spotlight, and news wire in one CP24-style dashboard." />
 <meta name="robots" content="noindex" />
 <link rel="icon" href="/images/logo-black.webp" />
-<link rel="stylesheet" href="/shared.css" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Roboto+Condensed:wght@700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  html, body { height: 100%; }
-  body {
-    background: hsl(var(--page-bg));
-    color: hsl(var(--ink));
-    overflow: hidden;
-    font-family: "Neue Haas Grotesk Display Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  :root {
+    --ink: #0a0a0a;
+    --panel: #0d0d0d;
+    --panel-2: #111;
+    --panel-3: #1a1a1a;
+    --line: #262626;
+    --line-strong: #333;
+    --text: #ececec;
+    --muted: #8a8a8a;
+    --dim: #5a5a5a;
+    --gold: #D4AF37;
+    --live: #dc2626;
+    --up: #22c55e;
+    --down: #ef4444;
   }
-  .live-shell {
-    position: relative;
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .shell {
     height: 100vh;
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    isolation: isolate;
+    grid-template-rows: 56px 1fr 64px;
   }
-  .live-shell::before {
+
+  /* ======= HEADER ======= */
+  .hdr {
+    display: flex; align-items: center; gap: 24px;
+    padding: 0 16px;
+    background: var(--ink);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    width: 32px; height: 32px;
+    background: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-mark::after {
     content: "";
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(circle at 12% 18%, hsl(var(--page-blob-1a) / 0.55) 0%, transparent 40%),
-      radial-gradient(circle at 88% 22%, hsl(var(--page-blob-2a) / 0.45) 0%, transparent 42%),
-      radial-gradient(circle at 50% 90%, hsl(var(--page-blob-3a) / 0.4) 0%, transparent 45%);
-    z-index: -1;
-    filter: blur(40px);
+    width: 14px; height: 14px;
+    border: 2px solid #000;
+    transform: rotate(45deg);
   }
+  .brand-name {
+    font-weight: 900; font-size: 20px;
+    letter-spacing: -0.02em; text-transform: uppercase;
+    font-style: italic;
+  }
+  .brand-name .slash { color: var(--gold); }
+  .divider { width: 1px; height: 24px; background: var(--line-strong); }
 
-  /* ============ TOP BAR ============ */
-  .live-top {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.9rem 1.4rem;
-    background: hsl(var(--ink));
-    color: hsl(var(--surface-card));
-    border-bottom: 3px solid hsl(var(--accent-gold));
+  .metrics { display: flex; gap: 32px; align-items: center; }
+  .metric { display: flex; flex-direction: column; line-height: 1.15; }
+  .metric .lbl {
+    color: var(--muted); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.16em; font-weight: 700;
   }
-  .live-brand { display: flex; align-items: center; gap: 0.75rem; }
-  .live-brand img { height: 28px; width: auto; }
-  .live-brand .wordmark {
-    font-weight: 600; letter-spacing: -0.02em; font-size: 1.05rem;
+  .metric .val {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums; text-transform: uppercase;
   }
-  .live-brand .divider { opacity: 0.4; }
-  .live-brand .section {
-    font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.7;
-  }
-  .live-meta { display: flex; align-items: center; gap: 1.25rem; font-size: 0.78rem; }
-  .live-badge {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    padding: 0.35rem 0.7rem; border-radius: 999px;
-    background: hsl(0 84% 55%); color: white; font-weight: 700;
-    letter-spacing: 0.14em; font-size: 0.72rem; text-transform: uppercase;
-  }
-  .live-badge .dot {
-    width: 8px; height: 8px; border-radius: 50%; background: white;
-    animation: pulse 1.4s ease-in-out infinite;
-  }
-  .live-badge.off { background: hsl(var(--muted)); }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.3)} }
-  .live-clock { font-variant-numeric: tabular-nums; opacity: 0.85; }
+  .metric .val.gold { color: var(--gold); }
+  .metric .val.up { color: var(--up); }
+  .metric .val.down { color: var(--down); }
 
-  /* ============ MAIN GRID ============ */
-  .live-main {
+  .hdr-right { margin-left: auto; display: flex; align-items: center; gap: 20px; }
+  .live-pill { display: flex; align-items: center; gap: 8px; }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--live); animation: pulse 1.4s ease-in-out infinite;
+  }
+  .live-pill span {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em;
+  }
+  .clock {
+    background: var(--panel-3);
+    border: 1px solid var(--line-strong);
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .clock .tz { color: var(--gold); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* ======= MAIN ======= */
+  .main {
     display: grid;
-    grid-template-columns: minmax(0, 1.9fr) minmax(320px, 1fr);
-    gap: 1rem;
-    padding: 1rem;
+    grid-template-columns: 1fr 340px;
     min-height: 0;
   }
-  .live-stage {
+  .col-left {
+    display: grid;
+    grid-template-rows: 1fr 280px;
+    min-height: 0;
+    border-right: 1px solid var(--line-strong);
+  }
+  .chart-panel {
     position: relative;
-    border-radius: var(--radius-lg);
+    background: var(--panel-2);
     overflow: hidden;
-    background: #000;
-    border: 1px solid hsl(var(--line));
-    box-shadow: 0 20px 60px -30px hsl(var(--shadow) / 0.5);
     min-height: 0;
   }
-  .live-stage iframe { width: 100%; height: 100%; border: 0; display: block; }
-  .stage-overlay {
-    position: absolute; left: 1rem; bottom: 1rem;
-    display: flex; flex-direction: column; gap: 0.35rem;
-    padding: 0.75rem 1rem;
-    background: hsl(0 0% 0% / 0.55);
-    backdrop-filter: blur(10px);
-    color: white;
-    border-radius: var(--radius-md);
-    max-width: 60%;
+  .chart-panel iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .chart-tag {
+    position: absolute; top: 12px; left: 12px; z-index: 10;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--line-strong);
+    padding: 6px 10px;
+    display: flex; gap: 12px; align-items: center;
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
   }
-  .stage-overlay .lower-third {
-    font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em;
-  }
-  .stage-overlay .lower-sub { font-size: 0.78rem; opacity: 0.8; }
+  .chart-tag .g { color: var(--gold); }
+  .chart-tag .m { color: var(--muted); }
 
-  .live-rail {
+  .sub-row {
+    display: grid; grid-template-columns: 1fr 320px;
+    border-top: 1px solid var(--line-strong);
+    min-height: 0;
+  }
+  .spotlight {
+    padding: 14px 16px;
+    border-right: 1px solid var(--line-strong);
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .kicker {
+    font-size: 10px; font-weight: 900;
+    text-transform: uppercase; letter-spacing: 0.24em;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .kicker .sub { color: var(--dim); letter-spacing: 0.16em; font-weight: 700; }
+  .spot-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; min-height: 0; }
+  .spot-card {
+    position: relative;
+    background: var(--panel-3);
+    border: 1px solid var(--line-strong);
+    overflow: hidden;
+    transition: opacity 0.6s ease;
+  }
+  .spot-card.dim { opacity: 0.35; }
+  .spot-card img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: grayscale(30%);
+  }
+  .spot-card .plate {
+    position: absolute; inset: auto 0 0 0;
+    padding: 10px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.92), transparent);
+  }
+  .spot-card .t { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; }
+  .spot-card .t .a { color: var(--muted); font-weight: 600; }
+  .spot-card .tag {
+    position: absolute; top: 8px; left: 8px;
+    background: var(--gold); color: #000;
+    font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em;
+    padding: 2px 6px;
+  }
+
+  .pulse-panel {
+    padding: 14px 16px;
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  .pulse-list { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  .pulse-item {
+    border-left: 2px solid var(--line-strong);
+    padding: 4px 0 4px 10px;
+  }
+  .pulse-item.hot { border-left-color: var(--gold); }
+  .pulse-item .who { font-size: 10px; font-weight: 800; letter-spacing: 0.04em; }
+  .pulse-item .who .h { color: var(--muted); font-weight: 500; margin-left: 6px; }
+  .pulse-item .msg { font-size: 11px; color: #c5c5c5; margin-top: 2px; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ======= SIDEBAR ======= */
+  .side {
+    background: var(--panel);
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    gap: 0.9rem;
+    grid-template-rows: auto 1fr auto;
     min-height: 0;
   }
-  .rail-card {
-    background: hsl(var(--surface-card));
-    border: 1px solid hsl(var(--line));
-    border-radius: var(--radius-md);
-    padding: 0.9rem 1rem;
-    box-shadow: 0 10px 30px -20px hsl(var(--shadow) / 0.4);
-    min-height: 0;
+  .side-block { padding: 14px 16px; border-bottom: 1px solid var(--line-strong); }
+  .lb-list { display: flex; flex-direction: column; gap: 6px; }
+  .lb-row {
+    display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: center;
+    padding: 8px 10px;
+    background: var(--panel-2);
+    border: 1px solid var(--line-strong);
+    font-size: 11px;
   }
-  .rail-card h3 {
-    font-size: 0.7rem; letter-spacing: 0.24em; text-transform: uppercase;
-    color: hsl(var(--muted)); margin-bottom: 0.6rem; font-weight: 700;
-  }
-  .rail-card.dense { padding: 0.7rem 0.85rem; }
+  .lb-row.top { background: var(--panel-3); }
+  .lb-row .rk { color: var(--dim); font-weight: 900; font-family: 'JetBrains Mono', monospace; }
+  .lb-row.top .rk { color: var(--gold); }
+  .lb-row .nm { font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+  .lb-row:not(.top) .nm { color: #bbb; font-weight: 600; }
+  .lb-row .pts { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+  .lb-row.top .pts { color: var(--gold); font-weight: 700; }
+  .lb-empty { font-size: 11px; color: var(--dim); padding: 8px 0; }
 
-  .price-row {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem;
+  .dyk {
+    padding: 14px 16px;
+    background: #0d0d0d;
+    display: flex; flex-direction: column; min-height: 0;
+    border-bottom: 1px solid var(--line-strong);
   }
-  .price-main {
-    font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-  }
-  .price-change { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 0.95rem; }
-  .change-up { color: hsl(150 70% 40%); }
-  .change-down { color: hsl(0 78% 55%); }
-  .price-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.7rem;
-  }
-  .price-grid .cell {
-    background: hsl(var(--surface-alt));
-    border-radius: var(--radius-sm, 10px);
-    padding: 0.5rem 0.65rem;
-  }
-  .cell .label {
-    font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: hsl(var(--muted)); font-weight: 700;
-  }
-  .cell .value {
-    font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px;
+  .dyk-body {
+    background: var(--panel-3);
+    border-left: 4px solid var(--gold);
+    padding: 12px 14px;
+    flex: 1;
+    font-size: 12px; font-style: italic; line-height: 1.55;
+    color: #d5d5d5; font-weight: 500;
+    transition: opacity 0.4s;
   }
 
-  .chart-card {
-    padding: 0; overflow: hidden; display: flex; flex-direction: column; min-height: 0;
+  .radio {
+    padding: 12px 16px;
+    background: var(--panel-2);
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .chart-card .head { padding: 0.7rem 0.95rem 0.5rem; }
-  .chart-card iframe { flex: 1; width: 100%; border: 0; min-height: 260px; }
+  .radio-l { display: flex; align-items: center; gap: 10px; }
+  .eq { display: flex; gap: 2px; align-items: flex-end; height: 14px; }
+  .eq span {
+    display: block; width: 2px; background: var(--gold);
+  }
+  .eq span:nth-child(1) { height: 6px; animation: eq 0.9s ease-in-out infinite; }
+  .eq span:nth-child(2) { height: 12px; animation: eq 1.2s ease-in-out infinite; }
+  .eq span:nth-child(3) { height: 4px; animation: eq 0.7s ease-in-out infinite; }
+  .eq span:nth-child(4) { height: 10px; animation: eq 1.1s ease-in-out infinite; }
+  .eq.off span { animation: none !important; height: 3px !important; opacity: 0.3; }
+  @keyframes eq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+  .radio-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+  .toggle {
+    width: 44px; height: 22px; background: var(--gold); border-radius: 999px;
+    position: relative; cursor: pointer; transition: background 0.2s;
+    border: 0; padding: 0;
+  }
+  .toggle.off { background: var(--line-strong); }
+  .toggle::after {
+    content: ""; position: absolute; top: 3px; right: 3px;
+    width: 16px; height: 16px; border-radius: 50%; background: #000;
+    transition: transform 0.2s;
+  }
+  .toggle.off::after { transform: translateX(-22px); background: var(--muted); }
 
-  .ca-strip {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.55rem 0.75rem;
-    background: hsl(var(--surface-alt));
-    border: 1px dashed hsl(var(--line-strong));
-    border-radius: var(--radius-sm, 10px);
-    font-family: "SF Mono", ui-monospace, monospace;
-    font-size: 0.72rem; color: hsl(var(--ink));
-    cursor: pointer;
+  /* ======= WIRE ======= */
+  .wire {
+    display: grid; grid-template-columns: auto 1fr auto;
+    background: var(--gold);
+    overflow: hidden;
   }
-  .ca-strip .tag {
-    font-family: inherit;
-    font-size: 0.55rem; letter-spacing: 0.24em; text-transform: uppercase;
-    color: hsl(var(--muted)); font-weight: 700;
+  .wire-brand {
+    background: #000; color: #fff;
+    padding: 0 22px;
+    display: flex; flex-direction: column; justify-content: center;
+    border-right: 4px solid #fff;
   }
-  .ca-strip code { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  .links-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-  .link-chip {
-    display: inline-flex; align-items: center; gap: 0.35rem;
-    padding: 0.4rem 0.7rem; border-radius: 999px;
-    background: hsl(var(--ink)); color: hsl(var(--surface-card));
-    font-size: 0.72rem; font-weight: 600; text-decoration: none;
+  .wire-brand .l1 { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; line-height: 1; }
+  .wire-brand .l2 { font-size: 22px; font-weight: 900; font-style: italic; letter-spacing: -0.03em; line-height: 1; }
+  .wire-track-wrap { overflow: hidden; display: flex; align-items: center; }
+  .wire-track {
+    display: inline-flex; gap: 44px; align-items: center;
+    white-space: nowrap;
+    animation: marquee 55s linear infinite;
+    padding-left: 24px;
+    font-family: 'Roboto Condensed', 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    color: #000;
   }
-  .link-chip.ghost {
-    background: transparent; color: hsl(var(--ink));
-    border: 1px solid hsl(var(--line-strong));
+  .wire-item { display: inline-flex; align-items: center; gap: 12px; }
+  .wire-time {
+    background: #000; color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; padding: 2px 8px; font-weight: 700;
   }
-
-  /* ============ BOTTOM TICKER ============ */
-  .live-bottom {
-    background: hsl(var(--ink));
-    color: hsl(var(--surface-card));
-    border-top: 3px solid hsl(var(--accent-gold));
-    display: grid; grid-template-columns: auto 1fr auto; align-items: stretch;
+  .wire-sep { color: rgba(0,0,0,0.35); font-weight: 900; }
+  .wire-side {
+    background: #000; color: var(--gold);
+    padding: 0 18px;
+    display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+    font-family: 'JetBrains Mono', monospace;
+    border-left: 4px solid #fff;
   }
-  .ticker-label {
-    background: hsl(0 84% 55%);
-    color: white;
-    padding: 0.75rem 1.1rem;
-    font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.75rem;
-    display: flex; align-items: center; gap: 0.5rem;
-  }
-  .ticker-viewport { overflow: hidden; padding: 0.75rem 0; }
-  .ticker-track {
-    display: inline-flex; gap: 3rem; white-space: nowrap;
-    animation: marquee 60s linear infinite;
-    padding-left: 2rem;
-    font-size: 0.85rem;
-  }
-  .ticker-track span b { color: hsl(var(--accent-gold)); font-weight: 700; }
-  .ticker-track .sep { opacity: 0.4; }
-  .ticker-right {
-    padding: 0.6rem 1rem;
-    display: flex; align-items: center; gap: 0.75rem;
-    font-size: 0.78rem; font-variant-numeric: tabular-nums;
-    border-left: 1px solid hsl(0 0% 100% / 0.1);
-  }
-
-  @media (max-width: 900px) {
-    .live-main { grid-template-columns: 1fr; }
-    body { overflow: auto; }
-    .live-shell { height: auto; }
-    .live-stage { min-height: 260px; }
+  .wire-side .r1 { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.2em; }
+  .wire-side .r2 { font-size: 15px; font-weight: 700; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 </style>
 </head>
 <body>
-<div class="live-shell">
+<div class="shell">
 
-  <!-- TOP BAR -->
-  <header class="live-top">
-    <div class="live-brand">
-      <img id="brand-mark" src="/images/logo-white.webp" alt="Rhozeland" />
-      <span class="wordmark">Rhozeland</span>
-      <span class="divider">/</span>
-      <span class="section">Live Broadcast</span>
+  <!-- HEADER -->
+  <header class="hdr">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div class="brand-name">Rhozeland<span class="slash">/LIVE</span></div>
     </div>
-    <div class="live-meta">
-      <span class="live-clock" id="clock">—</span>
-      <span class="live-badge" id="live-badge"><span class="dot"></span> On Air</span>
+    <div class="divider"></div>
+    <div class="metrics">
+      <div class="metric"><span class="lbl">Price</span><span class="val gold" id="m-price">$—</span></div>
+      <div class="metric"><span class="lbl">24h</span><span class="val" id="m-change">—</span></div>
+      <div class="metric"><span class="lbl">Market Cap</span><span class="val" id="m-mcap">—</span></div>
+      <div class="metric"><span class="lbl">24h Vol</span><span class="val" id="m-vol">—</span></div>
+      <div class="metric"><span class="lbl">Contract</span><span class="val" id="m-ca" title="Click to copy" style="cursor:pointer;font-family:'JetBrains Mono',monospace;text-transform:none;letter-spacing:0;">7khG…pump</span></div>
+    </div>
+    <div class="hdr-right">
+      <div class="live-pill"><span class="live-dot"></span><span>Broadcast Live</span></div>
+      <div class="clock"><span class="tz">UTC</span><span id="clock">—</span></div>
     </div>
   </header>
 
   <!-- MAIN -->
-  <main class="live-main">
+  <main class="main">
+    <div class="col-left">
 
-    <!-- STAGE: YouTube live embed -->
-    <section class="live-stage">
-      <iframe
-        id="yt-live"
-        src="https://www.youtube.com/embed/live_stream?channel=@rhozeland&autoplay=1&mute=1"
-        title="Rhozeland Live"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen
-      ></iframe>
-      <div class="stage-overlay">
-        <div class="lower-third" id="lower-third">Rhozeland Live</div>
-        <div class="lower-sub" id="lower-sub">Independent artists · creative ecosystem · $RHOZE</div>
-      </div>
-    </section>
-
-    <!-- RAIL -->
-    <aside class="live-rail">
-
-      <!-- Price card -->
-      <div class="rail-card">
-        <h3>$RHOZE · Live Price</h3>
-        <div class="price-row">
-          <div class="price-main" id="p-price">$—</div>
-          <div class="price-change" id="p-change">—</div>
+      <!-- CHART -->
+      <div class="chart-panel">
+        <div class="chart-tag">
+          <span class="g">Chart · Birdeye</span>
+          <span class="m">$RHOZE / SOL</span>
+          <span class="g" id="chart-tag-change">—</span>
         </div>
-        <div class="price-grid">
-          <div class="cell"><div class="label">Market Cap</div><div class="value" id="p-mcap">—</div></div>
-          <div class="cell"><div class="label">24h Volume</div><div class="value" id="p-vol">—</div></div>
-        </div>
-      </div>
-
-      <!-- CA + links -->
-      <div class="rail-card dense">
-        <div class="ca-strip" id="ca-strip" title="Copy contract address">
-          <span class="tag">CA</span>
-          <code id="ca-code">7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</code>
-          <span id="ca-status" style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:hsl(var(--muted));font-family:inherit;">copy</span>
-        </div>
-        <div class="links-row" style="margin-top:0.55rem;">
-          <a class="link-chip" target="_blank" rel="noopener" href="https://pump.fun/coin/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump">Pump.fun</a>
-          <a class="link-chip ghost" target="_blank" rel="noopener" href="https://birdeye.so/token/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana">Birdeye</a>
-          <a class="link-chip ghost" target="_blank" rel="noopener" href="https://x.com/rhozeland">X</a>
-          <a class="link-chip ghost" target="_blank" rel="noopener" href="https://www.youtube.com/@rhozeland">YouTube</a>
-        </div>
-      </div>
-
-      <!-- Live chart -->
-      <div class="rail-card chart-card">
-        <div class="head"><h3 style="margin-bottom:0;">Chart · 15m</h3></div>
         <iframe
-          src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=light"
+          src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark"
           title="Birdeye $RHOZE Chart"
           loading="lazy"
-          allowfullscreen
         ></iframe>
       </div>
 
-      <!-- Did you know -->
-      <div class="rail-card">
-        <h3>Did you know</h3>
-        <div id="fact" style="font-size:0.92rem; line-height:1.4; letter-spacing:-0.01em;">
-          Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists.
+      <!-- SUB ROW: Spotlight + Pulse -->
+      <div class="sub-row">
+        <section class="spotlight">
+          <div class="kicker"><span>Project Spotlight</span><span class="sub" id="spot-index">01 / —</span></div>
+          <div class="spot-row" id="spot-row"></div>
+        </section>
+        <section class="pulse-panel">
+          <div class="kicker"><span>Social Pulse</span><span class="sub">@rhozeland</span></div>
+          <div class="pulse-list" id="pulse-list"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- SIDE -->
+    <aside class="side">
+      <div class="side-block">
+        <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 5</span></div>
+        <div class="lb-list" id="lb-list">
+          <div class="lb-empty">Loading leaderboard…</div>
         </div>
+      </div>
+
+      <div class="dyk">
+        <div class="kicker" style="margin-bottom:8px;"><span>Did You Know?</span><span class="sub" id="dyk-index">01</span></div>
+        <div class="dyk-body" id="dyk-body">
+          Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists all under one roof.
+        </div>
+      </div>
+
+      <div class="radio">
+        <div class="radio-l">
+          <div class="eq off" id="eq"><span></span><span></span><span></span><span></span></div>
+          <span class="radio-lbl">Ambient Radio</span>
+        </div>
+        <button class="toggle off" id="radio-toggle" aria-label="Toggle ambient radio"></button>
+        <audio id="radio-audio" loop preload="none">
+          <source src="/videos/cozal-sefra.mp4" type="video/mp4">
+        </audio>
       </div>
     </aside>
   </main>
 
-  <!-- BOTTOM TICKER -->
-  <footer class="live-bottom">
-    <div class="ticker-label"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:white;display:inline-block;animation:pulse 1.4s ease-in-out infinite;"></span> Rhoze Wire</div>
-    <div class="ticker-viewport">
-      <div class="ticker-track" id="ticker">
-        <!-- filled by JS -->
-      </div>
+  <!-- WIRE -->
+  <footer class="wire">
+    <div class="wire-brand">
+      <span class="l1">Latest</span>
+      <span class="l2">WIRE</span>
     </div>
-    <div class="ticker-right">
-      <span>Auto-refresh 30s</span>
-      <span class="sep" style="opacity:0.4">·</span>
-      <span id="last-update">just now</span>
+    <div class="wire-track-wrap">
+      <div class="wire-track" id="wire-track"><!-- filled --></div>
+    </div>
+    <div class="wire-side">
+      <span class="r1">Auto · 30s</span>
+      <span class="r2" id="wire-updated">—</span>
     </div>
   </footer>
 </div>
 
 <script>
-/* ---------- Theme-aware brand mark ---------- */
-(function(){
-  var isDark = document.documentElement.classList.contains('dark');
-  var mark = document.getElementById('brand-mark');
-  // Header is dark: always use white mark
-  mark.src = '/images/logo-white.webp';
-})();
-
-/* ---------- Clock ---------- */
-(function(){
-  var el = document.getElementById('clock');
-  function tick(){
-    var d = new Date();
-    el.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · LIVE';
-  }
-  tick(); setInterval(tick, 30000);
-})();
-
-/* ---------- CA copy ---------- */
-document.getElementById('ca-strip').addEventListener('click', function(){
-  var code = document.getElementById('ca-code').textContent;
-  navigator.clipboard.writeText(code);
-  var s = document.getElementById('ca-status');
-  s.textContent = 'copied';
-  setTimeout(function(){ s.textContent = 'copy'; }, 1600);
-});
-
-/* ---------- $RHOZE live stats ---------- */
+/* ================= Config ================= */
 var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
 var POOL  = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
-var DS_URL = 'https://api.dexscreener.com/latest/dex/tokens/' + TOKEN;
-var GT_URL = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL;
+var SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
+var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
 
+/* ================= Portfolio (auto-rotating spotlight) ================= */
+var PORTFOLIO = [
+  { t:'Sefra',              a:'Cozal',                  tag:'Music Video', img:'/images/cozal-sefra-thumb.jpg' },
+  { t:'Just Call Me',       a:'Ess B',                  tag:'Single',      img:'/images/ess-b-just-call-me-thumb.webp' },
+  { t:'The Mask',           a:'Ooak',                   tag:'Release',     img:'/images/ooak-the-mask-thumb.webp' },
+  { t:'Mansa Musa',         a:'Monee Fingaz',           tag:'Release',     img:'/images/fingaz-mansa-musa-thumb.webp' },
+  { t:'Feel Like Superhero',a:'Monee Fingaz',           tag:'Single',      img:'/images/fingaz-superhero-thumb.webp' },
+  { t:'Holy Water',         a:'Cozal',                  tag:'Release',     img:'/images/cozal-holy-water-thumb.webp' },
+  { t:'United MMA',         a:'BK Whiskey',             tag:'Sponsorship', img:'/images/bk-whiskey-mma-thumb.webp' },
+  { t:'Telephone',          a:'Runner\u2019s Club',     tag:'Release',     img:'/images/rc1-thumb.webp' },
+  { t:'Photoshoot',         a:'Young $teelo',           tag:'Visual',      img:'/images/steelo-photoshoot-2.webp' },
+  { t:'Withdrawals',        a:'Semiah',                 tag:'Release',     img:'/images/semiah-withdrawals-thumb.webp' },
+  { t:'Sensimelia',         a:'JulzMadeThisOne',        tag:'Release',     img:'/images/julz-sensimelia.webp' },
+  { t:'Baby Blue',          a:'Godfrey Noir',           tag:'Single',      img:'/images/godfrey-noir-baby-blue.webp' },
+  { t:'U Outta Know',       a:'Young $teelo',           tag:'Single',      img:'/images/steelo-u-outta-know-thumb.webp' },
+  { t:'Saint Flair West',   a:'Ooak',                   tag:'Release',     img:'/images/ooak-saint-flair-west-thumb.webp' },
+  { t:'Surfin\u2019',       a:'MARV \u00D7 Straightdizzy', tag:'Single',   img:'/images/surfin-thumb.webp' },
+];
+var spotIdx = 0;
+function renderSpotlight(){
+  var row = document.getElementById('spot-row');
+  var idxEl = document.getElementById('spot-index');
+  var len = PORTFOLIO.length;
+  var cards = [0,1,2].map(function(o){
+    var p = PORTFOLIO[(spotIdx + o) % len];
+    var dim = o === 0 ? '' : ' dim';
+    return '<div class="spot-card' + dim + '">'
+      + '<span class="tag">' + p.tag + '</span>'
+      + '<img loading="lazy" src="' + p.img + '" alt="' + p.t + '" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" />'
+      + '<div class="plate"><div class="t">' + p.t + ' <span class="a">/ ' + p.a + '</span></div></div>'
+      + '</div>';
+  }).join('');
+  row.innerHTML = cards;
+  idxEl.textContent = String(spotIdx + 1).padStart(2,'0') + ' / ' + String(len).padStart(2,'0');
+}
+renderSpotlight();
+setInterval(function(){
+  spotIdx = (spotIdx + 1) % PORTFOLIO.length;
+  renderSpotlight();
+}, 6000);
+
+/* ================= Social Pulse (curated static rotation) ================= */
+var PULSE = [
+  { who: '@rhozeland', h: 'X · 2m',   msg: 'New release week — Sefra by Cozal is live on YouTube. Tap in.', hot: true },
+  { who: 'Cozal',      h: 'IG · 12m', msg: 'Studio session tonight. Bring headphones.' },
+  { who: '@rhozeland', h: 'X · 34m',  msg: 'Weekly leaderboard snapshot published. Points reset Monday.' },
+  { who: 'Ooak',       h: 'IG · 1h',  msg: 'Rollout for the next visual dropping Sunday.' },
+  { who: 'Ess B',      h: 'IG · 2h',  msg: 'Behind the scenes on the Just Call Me video shoot.' },
+  { who: '@rhozeland', h: 'X · 3h',   msg: '$RHOZE supply is locked. Creator economy, transparent by default.' },
+  { who: 'Semiah',     h: 'IG · 5h',  msg: 'Withdrawals video hit 10k views this morning. Thank you.' },
+];
+var pulseIdx = 0;
+function renderPulse(){
+  var el = document.getElementById('pulse-list');
+  var items = [0,1,2,3].map(function(o){
+    var p = PULSE[(pulseIdx + o) % PULSE.length];
+    return '<div class="pulse-item' + (p.hot ? ' hot' : '') + '">'
+      + '<div class="who">' + p.who + '<span class="h">· ' + p.h + '</span></div>'
+      + '<div class="msg">' + p.msg + '</div>'
+      + '</div>';
+  }).join('');
+  el.innerHTML = items;
+}
+renderPulse();
+setInterval(function(){ pulseIdx = (pulseIdx + 1) % PULSE.length; renderPulse(); }, 7000);
+
+/* ================= Clock ================= */
+function tickClock(){
+  var d = new Date();
+  function p(n){ return String(n).padStart(2,'0'); }
+  document.getElementById('clock').textContent =
+    p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds());
+}
+tickClock(); setInterval(tickClock, 1000);
+
+/* ================= CA copy ================= */
+document.getElementById('m-ca').addEventListener('click', function(){
+  navigator.clipboard.writeText(TOKEN);
+  var el = this;
+  var orig = el.textContent;
+  el.textContent = 'copied';
+  setTimeout(function(){ el.textContent = orig; }, 1400);
+});
+
+/* ================= $RHOZE stats ================= */
 function fmtPrice(n){
   if (n == null || !isFinite(n)) return '$—';
   if (n >= 1) return '$' + n.toFixed(4);
@@ -378,40 +517,40 @@ function fmtPct(n){
   if (n == null || !isFinite(n)) return '—';
   return (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
 }
-
+var lastStats = null;
 function paint(s){
-  document.getElementById('p-price').textContent = fmtPrice(s.price);
-  var c = document.getElementById('p-change');
+  lastStats = s;
+  document.getElementById('m-price').textContent = fmtPrice(s.price);
+  var c = document.getElementById('m-change');
   c.textContent = fmtPct(s.change24h);
-  c.classList.remove('change-up','change-down');
-  if (s.change24h != null) c.classList.add(s.change24h >= 0 ? 'change-up' : 'change-down');
-  document.getElementById('p-mcap').textContent = fmtCompact(s.marketCap);
-  document.getElementById('p-vol').textContent  = fmtCompact(s.volume24h);
-
-  // Update ticker with fresh values
-  buildTicker(s);
-  document.getElementById('last-update').textContent = 'updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  c.classList.remove('up','down');
+  if (s.change24h != null) c.classList.add(s.change24h >= 0 ? 'up' : 'down');
+  document.getElementById('m-mcap').textContent = fmtCompact(s.marketCap);
+  document.getElementById('m-vol').textContent  = fmtCompact(s.volume24h);
+  var ct = document.getElementById('chart-tag-change');
+  ct.textContent = fmtPct(s.change24h);
+  ct.style.color = s.change24h != null && s.change24h < 0 ? '#ef4444' : '#22c55e';
+  buildWire();
+  document.getElementById('wire-updated').textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
 }
-
 async function loadStats(){
   try {
-    var r = await fetch(DS_URL, { cache: 'no-store' });
+    var r = await fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache: 'no-store' });
     if (r.ok){
       var d = await r.json();
       var pairs = (d && d.pairs) || [];
       if (pairs.length){
         pairs.sort(function(a,b){ return ((b.liquidity && b.liquidity.usd) || 0) - ((a.liquidity && a.liquidity.usd) || 0); });
         var p = pairs[0];
-        paint({
+        return paint({
           price: parseFloat(p.priceUsd),
           change24h: p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null,
           marketCap: p.marketCap != null ? p.marketCap : p.fdv,
           volume24h: p.volume && p.volume.h24 != null ? parseFloat(p.volume.h24) : null
         });
-        return;
       }
     }
-    var gr = await fetch(GT_URL, { cache: 'no-store' });
+    var gr = await fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache: 'no-store' });
     if (!gr.ok) return;
     var gd = await gr.json();
     var a = gd && gd.data && gd.data.attributes;
@@ -419,48 +558,106 @@ async function loadStats(){
     paint({
       price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
       change24h: a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
-      marketCap: (a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null)),
+      marketCap: a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null),
       volume24h: a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null
     });
-  } catch(e){ /* keep prior */ }
+  } catch(e){}
 }
-loadStats();
-setInterval(loadStats, 30000);
+loadStats(); setInterval(loadStats, 30000);
 
-/* ---------- Ticker ---------- */
+/* ================= Leaderboard ================= */
+async function loadLeaderboard(){
+  try {
+    var url = SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&published_at=not.is.null&order=points.desc&limit=8';
+    var r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON, Accept: 'application/json' }, cache: 'no-store' });
+    if (!r.ok) return;
+    var rows = await r.json();
+    var el = document.getElementById('lb-list');
+    if (!rows.length){ el.innerHTML = '<div class="lb-empty">Leaderboard snapshot pending.</div>'; return; }
+    document.getElementById('lb-sub').textContent = 'Top ' + Math.min(8, rows.length);
+    el.innerHTML = rows.map(function(row, i){
+      var top = i === 0 ? ' top' : '';
+      var pts = (row.points || 0).toLocaleString();
+      return '<div class="lb-row' + top + '">'
+        + '<span class="rk">' + String(i+1).padStart(2,'0') + '</span>'
+        + '<span class="nm">' + (row.username || 'anon').slice(0, 18) + '</span>'
+        + '<span class="pts">' + pts + ' RP</span>'
+        + '</div>';
+    }).join('');
+  } catch(e){
+    document.getElementById('lb-list').innerHTML = '<div class="lb-empty">Leaderboard offline.</div>';
+  }
+}
+loadLeaderboard(); setInterval(loadLeaderboard, 60000);
+
+/* ================= Did You Know ================= */
 var FACTS = [
-  'Rhozeland is a creator-owned ecosystem for independent artists',
-  'Recording · content · launch infrastructure — all under one roof',
-  'Community leaderboard rewards creators every week',
-  'New releases drop every Sunday on youtube.com/@rhozeland',
-  '$RHOZE fuels bounties, collaborations, and creator payouts',
-  'Contact: collab@rhozeland.com'
+  'Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists.',
+  '$RHOZE fuels bounties, collaborations, and creator payouts across the ecosystem.',
+  'The community leaderboard rewards raids, memes, threads, videos, and completed challenges every week.',
+  'New releases drop every Sunday on youtube.com/@rhozeland.',
+  'The Rhozeland dev wallet is locked — supply is transparent and on-chain verifiable.',
+  'Contract: 7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump',
+  'The Angry Mortgage podcast is part of the Rhozeland network — new episodes drop weekly.',
+  'Reach the team any time at collab@rhozeland.com.',
+  'Rhozeland shipped Sefra by Cozal, The Mask by Ooak, Mansa Musa by Monee Fingaz, and dozens more.',
+  'Every project runs through Rhoze Studio — mixing, mastering, video, and rollout in one place.',
 ];
-function buildTicker(s){
-  var t = document.getElementById('ticker');
-  var items = [
-    '<b>$RHOZE</b> ' + fmtPrice(s ? s.price : null) + ' <span style="color:' + (s && s.change24h != null && s.change24h < 0 ? '#ff6b6b' : '#4ade80') + '">' + fmtPct(s ? s.change24h : null) + '</span>',
-    '<b>MCAP</b> ' + fmtCompact(s ? s.marketCap : null),
-    '<b>24h VOL</b> ' + fmtCompact(s ? s.volume24h : null),
-    '<b>LIVE</b> Rhozeland broadcast on YouTube',
-    '<b>CA</b> ' + TOKEN.slice(0,6) + '…' + TOKEN.slice(-6)
-  ].concat(FACTS.map(function(f){ return f; }));
-  var html = items.map(function(x){ return '<span>' + x + '</span><span class="sep">◆</span>'; }).join('');
-  // Duplicate for seamless loop
-  t.innerHTML = html + html;
-}
-buildTicker(null);
+var factIdx = 0;
+setInterval(function(){
+  factIdx = (factIdx + 1) % FACTS.length;
+  var el = document.getElementById('dyk-body');
+  el.style.opacity = 0;
+  setTimeout(function(){
+    el.textContent = FACTS[factIdx];
+    el.style.opacity = 1;
+  }, 400);
+  document.getElementById('dyk-index').textContent = String(factIdx + 1).padStart(2,'0');
+}, 9000);
 
-/* ---------- Rotate "Did you know" ---------- */
-(function(){
-  var el = document.getElementById('fact');
-  var i = 0;
-  setInterval(function(){
-    i = (i + 1) % FACTS.length;
-    el.style.opacity = 0;
-    setTimeout(function(){ el.textContent = FACTS[i]; el.style.transition = 'opacity 0.4s'; el.style.opacity = 1; }, 400);
-  }, 8000);
-})();
+/* ================= Wire Ticker ================= */
+var HEADLINES = [
+  'New release · Sefra by Cozal now streaming',
+  'The Mask by Ooak · music video out now',
+  'Weekly leaderboard snapshot published',
+  'Rhoze Studio open for new artist intake',
+  'The Angry Mortgage · new episode this week',
+  'Podcast network expanding — reach out to collab@rhozeland.com',
+  'Community challenges refresh Monday 00:00 UTC',
+  'Rhozeland x independent creators · one economy, transparent by default',
+];
+function buildWire(){
+  function timeStamp(){ var d=new Date(); return String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0'); }
+  var items = [];
+  if (lastStats){
+    items.push({ t: timeStamp(), h: '$RHOZE ' + fmtPrice(lastStats.price) + ' · ' + fmtPct(lastStats.change24h) });
+    items.push({ t: timeStamp(), h: 'MCAP ' + fmtCompact(lastStats.marketCap) + ' · 24H VOL ' + fmtCompact(lastStats.volume24h) });
+  }
+  HEADLINES.forEach(function(h){ items.push({ t: timeStamp(), h: h }); });
+  var html = items.map(function(x){
+    return '<span class="wire-item"><span class="wire-time">' + x.t + '</span><span>' + x.h + '</span></span><span class="wire-sep">◆</span>';
+  }).join('');
+  document.getElementById('wire-track').innerHTML = html + html;
+}
+buildWire();
+
+/* ================= Ambient Radio ================= */
+var audio = document.getElementById('radio-audio');
+var toggle = document.getElementById('radio-toggle');
+var eq = document.getElementById('eq');
+toggle.addEventListener('click', function(){
+  if (audio.paused){
+    audio.volume = 0.35;
+    audio.play().then(function(){
+      toggle.classList.remove('off');
+      eq.classList.remove('off');
+    }).catch(function(){});
+  } else {
+    audio.pause();
+    toggle.classList.add('off');
+    eq.classList.add('off');
+  }
+});
 </script>
 </body>
 </html>

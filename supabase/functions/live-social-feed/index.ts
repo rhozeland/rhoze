@@ -1,5 +1,5 @@
 // Public edge function: fetches recent posts from X and LinkedIn for the
-// Rhozeland livestream dashboard. Returns a normalized `posts` array.
+// Rhozeland livestream dashboard and blends in editor-managed IG/LI fallbacks.
 // No auth required — this is a public broadcast feed.
 
 const corsHeaders = {
@@ -16,8 +16,8 @@ type Post = {
   plat: "X" | "LI" | "IG" | "YT";
   h: string;
   msg: string;
-  img?: string;
   url?: string;
+  source?: "live" | "editor";
 };
 
 function humanAgo(iso: string): string {
@@ -49,20 +49,14 @@ async function fetchX(lovableKey: string, xKey: string): Promise<Post[]> {
   );
   if (!tRes.ok) throw new Error(`x tweets ${tRes.status}`);
   const t = await tRes.json();
-  const media = new Map<string, string>();
-  for (const m of t?.includes?.media ?? []) {
-    const img = m.url || m.preview_image_url;
-    if (img) media.set(m.media_key, img);
-  }
   return (t?.data ?? []).slice(0, 8).map((tw: any): Post => {
-    const key = tw.attachments?.media_keys?.[0];
     return {
       who: "@" + uname,
       plat: "X",
       h: humanAgo(tw.created_at),
       msg: (tw.text || "").replace(/https?:\/\/\S+/g, "").trim().slice(0, 200),
-      img: key ? media.get(key) : undefined,
       url: `https://x.com/${uname}/status/${tw.id}`,
+      source: "live",
     };
   });
 }
@@ -85,8 +79,41 @@ async function fetchLinkedIn(lovableKey: string, liKey: string): Promise<Post[]>
       h: "today",
       msg: "Rhozeland is building the operating system for independent artists — recording, video, launch, and rewards, all in one place.",
       url: "https://www.linkedin.com/company/rhozeland",
+      source: "live",
     },
   ];
+}
+
+async function fetchEditorSocialFallback(): Promise<Post[]> {
+  const url = Deno.env.get("SUPABASE_URL");
+  const anon = Deno.env.get("SUPABASE_ANON_KEY");
+  if (!url || !anon) return [];
+
+  const res = await fetch(
+    `${url}/rest/v1/live_dashboard_content?select=payload&section_key=eq.social_feed&is_published=eq.true&limit=1`,
+    { headers: { apikey: anon, Authorization: `Bearer ${anon}`, Accept: "application/json" } },
+  );
+  if (!res.ok) return [];
+  const rows = await res.json();
+  const fallbackPosts = rows?.[0]?.payload?.fallbackPosts;
+  if (!Array.isArray(fallbackPosts)) return [];
+
+  return fallbackPosts
+    .map((p: any): Post | null => {
+      const plat = String(p.platform || p.plat || "IG").toUpperCase();
+      if (!["X", "LI", "IG", "YT"].includes(plat)) return null;
+      const msg = String(p.message || p.msg || "").trim();
+      if (!msg) return null;
+      return {
+        who: String(p.who || p.handle || "@rhozeland"),
+        plat: plat as Post["plat"],
+        h: String(p.time || p.h || "today"),
+        msg: msg.slice(0, 220),
+        url: typeof p.url === "string" ? p.url : undefined,
+        source: "editor",
+      };
+    })
+    .filter(Boolean) as Post[];
 }
 
 Deno.serve(async (req) => {
@@ -98,12 +125,21 @@ Deno.serve(async (req) => {
   const results = await Promise.allSettled([
     xKey && lovableKey ? fetchX(lovableKey, xKey) : Promise.resolve([]),
     liKey && lovableKey ? fetchLinkedIn(lovableKey, liKey) : Promise.resolve([]),
+    fetchEditorSocialFallback(),
   ]);
 
   const posts: Post[] = [];
   for (const r of results) if (r.status === "fulfilled") posts.push(...r.value);
 
-  return new Response(JSON.stringify({ posts, updated_at: new Date().toISOString() }), {
+  const seen = new Set<string>();
+  const unique = posts.filter((p) => {
+    const key = `${p.plat}:${p.who}:${p.msg}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return new Response(JSON.stringify({ posts: unique.slice(0, 16), updated_at: new Date().toISOString() }), {
     headers: {
       ...corsHeaders,
       "content-type": "application/json",

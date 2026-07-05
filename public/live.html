@@ -711,7 +711,7 @@ async function loadLeaderboard(){
       return '<div class="lb-row' + top + '">'
         + '<span class="rk">' + String(i+1).padStart(2,'0') + '</span>'
         + '<span class="nm">' + (row.username || 'anon').slice(0, 18) + '</span>'
-        + '<span class="pts">' + pts + ' RP</span>'
+        + '<span class="pts">' + pts + ' pts</span>'
         + '</div>';
     }).join('');
   } catch(e){
@@ -722,28 +722,36 @@ loadLeaderboard(); setInterval(loadLeaderboard, 60000);
 
 /* ================= Did You Know ================= */
 var FACTS = [
-  'Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists.',
-  '$RHOZE fuels bounties, collaborations, and creator payouts across the ecosystem.',
-  'The community leaderboard rewards raids, memes, threads, videos, and completed challenges every week.',
-  'New releases drop every Sunday on youtube.com/@rhozeland.',
-  'The Rhozeland dev wallet is locked — supply is transparent and on-chain verifiable.',
-  'Contract: 7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump',
-  'The Angry Mortgage podcast is part of the Rhozeland network — new episodes drop weekly.',
-  'Reach the team any time at collab@rhozeland.com.',
-  'Rhozeland shipped Sefra by Cozal, The Mask by Ooak, Mansa Musa by Monee Fingaz, and dozens more.',
-  'Every project runs through Rhoze Studio — mixing, mastering, video, and rollout in one place.',
+  { c:'The Lore',    t:'Rhozeland started as a group of Toronto creatives sharing one studio. Today it\'s a <strong>creator-owned network</strong> spanning music, video, podcasts, and Web3.' },
+  { c:'$RHOZE',      t:'The <strong>$RHOZE</strong> token is the fuel for the ecosystem — it powers bounties, creator payouts, community rewards, and merch drops.' },
+  { c:'Supply',      t:'The Rhozeland dev wallet is <strong>locked</strong>. Supply is transparent and verifiable on-chain — no rug, no unlocks.' },
+  { c:'Studio',      t:'Every project runs through <strong>Rhoze Studio</strong> — recording, mixing, mastering, video, and rollout under one roof.' },
+  { c:'Releases',    t:'New drops every <strong>Sunday</strong>. Recent: Sefra by Cozal, The Mask by Ooak, Mansa Musa by Monee Fingaz, Withdrawals by Semiah.' },
+  { c:'Toy Box',     t:'<strong>Toy Box</strong> is the Rhozeland merch line — apparel drops built for the community, funded by the ecosystem.' },
+  { c:'Community',   t:'The leaderboard rewards <strong>raids, memes, threads, and videos</strong>. Top ranks each week earn $RHOZE, merch, and studio time.' },
+  { c:'Podcast',     t:'The <strong>Angry Mortgage</strong> podcast is part of the Rhozeland network — real conversations, new episodes weekly.' },
+  { c:'Network',     t:'Rhozeland runs the <strong>89-32</strong> podcast series, event coverage, artist docs, and brand campaigns — all in-house.' },
+  { c:'Web3',        t:'Rhozeland is a <strong>Solana Coliseum Frontier</strong> hackathon project — a proof that creator economies can be transparent by default.' },
+  { c:'Team',        t:'Core team spans <strong>engineering, direction, A&amp;R, video, and community</strong>. Real people, real names — no anons at the top.' },
+  { c:'Contact',     t:'Want to collab, sponsor, or join a session? <strong>collab@rhozeland.com</strong> — the team reads every message.' },
+  { c:'Wallet',      t:'Contract: <strong>7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump</strong> — always verify on Birdeye or Solscan before you ape.' },
+  { c:'Model',       t:'Rhozeland is <strong>label-free</strong>. Artists keep ownership; the ecosystem handles infrastructure, funding, and audience.' },
+  { c:'Roadmap',     t:'Next up: expanded artist intake, live sessions on this feed, and merch drops tied to community milestones.' },
 ];
 var factIdx = 0;
 setInterval(function(){
   factIdx = (factIdx + 1) % FACTS.length;
-  var el = document.getElementById('dyk-body');
-  el.style.opacity = 0;
+  var body = document.getElementById('dyk-body');
+  var cat  = document.getElementById('dyk-cat');
+  var txt  = document.getElementById('dyk-text');
+  body.style.opacity = 0;
   setTimeout(function(){
-    el.textContent = FACTS[factIdx];
-    el.style.opacity = 1;
+    cat.textContent = FACTS[factIdx].c;
+    txt.innerHTML   = FACTS[factIdx].t;
+    body.style.opacity = 1;
   }, 400);
   document.getElementById('dyk-index').textContent = String(factIdx + 1).padStart(2,'0');
-}, 9000);
+}, 8000);
 
 /* ================= Wire Ticker ================= */
 var HEADLINES = [

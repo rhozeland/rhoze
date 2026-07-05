@@ -364,6 +364,7 @@ var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
 var POOL  = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
 var SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
+var LIVE_CONTENT = {};
 
 /* Real people + stock merch mix (real from Google Drive AI shots) */
 var HERO_VIDEO = '/__l5e/assets-v1/90b14679-dba6-4ff7-97a4-fccc9bdb91cd/fashion-ad.mp4';
@@ -417,33 +418,29 @@ setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotli
 
 /* ================= Social Pulse — fetch real X + LinkedIn ================= */
 var PULSE_FALLBACK = [
-  { who:'@rhozeland', plat:'X',  h:'live', msg:'New release week — Sefra by Cozal is live on YouTube. Tap in.',                   img:'/images/cozal-sefra-thumb.jpg', hot:true },
-  { who:'Rhozeland',  plat:'LI', h:'today',msg:'Rhozeland is building the operating system for independent artists.',            img:'/images/rhozeland_official_logo_2025.webp' },
-  { who:'Rhozeland',  plat:'YT', h:'34m',  msg:'New drop this Sunday — subscribe on youtube.com/@rhozeland.',                    img:'/images/ooak-the-mask-thumb.webp' },
-  { who:'Ooak',       plat:'IG', h:'1h',   msg:'Rollout for the next visual dropping Sunday.',                                    img:'/images/ooak-saint-flair-west-thumb.webp' },
-  { who:'Ess B',      plat:'IG', h:'2h',   msg:'Behind the scenes on the Just Call Me video shoot.',                              img:'/images/ess-b-just-call-me-thumb.webp' },
-  { who:'@rhozeland', plat:'X',  h:'3h',   msg:'$RHOZE supply is locked. Creator economy, transparent by default.',              img:'/images/rhozeland_official_logo_2025.webp' },
-  { who:'Semiah',     plat:'IG', h:'5h',   msg:'Withdrawals video hit 10k views this morning. Thank you.',                        img:'/images/semiah-withdrawals-thumb.webp' },
-  { who:'Monee Fingaz', plat:'IG',h:'6h',  msg:'Mansa Musa video keeps climbing. Real ones only.',                               img:'/images/fingaz-mansa-musa-thumb.webp' },
+  { who:'@rhozeland', plat:'X',  h:'live', msg:'New release week — Sefra by Cozal is live on YouTube. Tap in.', hot:true },
+  { who:'Rhozeland',  plat:'LI', h:'today',msg:'Building the operating system for independent artists — recording, video, launch, rights, rewards.' },
+  { who:'@rhozeland', plat:'IG', h:'1h',   msg:'Behind the scenes from the latest creator sessions and Toy Box fittings.' },
+  { who:'@rhozeland', plat:'X',  h:'3h',   msg:'$RHOZE supply is locked. Creator economy, transparent by default.' },
+  { who:'Rhozeland',  plat:'YT', h:'34m',  msg:'New drop this Sunday — subscribe on youtube.com/@rhozeland.' },
 ];
 var PULSE = PULSE_FALLBACK.slice();
 var pulseIdx = 0;
 function renderPulse(){
   var el = document.getElementById('pulse-list');
-  var items = [0,1,2,3].map(function(o){
+  var items = [0,1,2,3,4].map(function(o){
     var p = PULSE[(pulseIdx + o) % PULSE.length];
     var platCls = (p.plat || 'X').toLowerCase();
-    var thumb = p.img
-      ? '<img loading="lazy" src="' + esc(p.img) + '" alt="" />'
-      : '';
-    return '<div class="pulse-item' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="thumb">' + thumb + '</div>'
+    var tag = p.url ? 'a' : 'div';
+    var href = p.url ? ' href="' + esc(p.url) + '" target="_blank" rel="noopener"' : '';
+    return '<' + tag + href + ' class="pulse-item' + (p.hot ? ' hot' : '') + '">'
+      + '<div class="pulse-badge">' + esc(p.plat || 'X') + '</div>'
       + '<div class="body">'
       +   '<div class="head"><span class="plat ' + platCls + '">' + esc(p.plat || '') + '</span><span class="who">' + esc(p.who) + '</span></div>'
       +   '<div class="msg">' + esc(p.msg) + '</div>'
       + '</div>'
       + '<div class="when">' + (p.hot ? 'LIVE' : esc(p.h)) + '</div>'
-      + '</div>';
+      + '</' + tag + '>';
   }).join('');
   el.innerHTML = items;
 }
@@ -460,8 +457,8 @@ async function loadSocial(){
     var d = await r.json();
     if (d && d.posts && d.posts.length) {
       // Merge live posts on top of fallback so the feed always feels full.
-      var live = d.posts.slice(0, 6).map(function(p, i){
-        return { who:p.who, plat:p.plat, h:p.h || 'live', msg:p.msg, img:p.img || null, hot: i === 0 };
+      var live = d.posts.slice(0, 8).map(function(p, i){
+        return { who:p.who, plat:p.plat, h:p.h || 'live', msg:p.msg, url:p.url || null, hot: i === 0 };
       });
       var fill = PULSE_FALLBACK.filter(function(f){
         return !live.some(function(l){ return l.who === f.who && l.plat === f.plat; });

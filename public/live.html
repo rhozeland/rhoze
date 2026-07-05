@@ -248,31 +248,20 @@
             loading="lazy"
           ></iframe>
         </div>
-        <aside class="bcast">
-          <div class="bcast-head">
-            <span class="bcast-kicker">On Air Now</span>
-            <span class="bcast-live">Rhozeland/LIVE</span>
-          </div>
-          <div>
-            <div class="bcast-title">Creator OS · <span>Live Feed</span></div>
-            <div class="bcast-sub">The always-on window into Rhozeland — market data, community activity, releases &amp; drops, straight from the studio.</div>
-          </div>
-          <div class="bcast-sched">
-            <div class="bcast-cell"><div class="b1">Next Drop</div><div class="b2" id="sched-next">Sunday 20:00</div><div class="b3">New release + video</div></div>
-            <div class="bcast-cell"><div class="b1">Podcast</div><div class="b2">89-32 · Mon</div><div class="b3">Studio session</div></div>
-          </div>
-        </aside>
       </div>
 
       <!-- SUB ROW: Spotlight + Pulse -->
       <div class="sub-row">
         <section class="spotlight">
           <div class="kicker"><span>Project Spotlight</span><span class="sub" id="spot-index">01 / —</span></div>
-          <div class="spot-row" id="spot-row"></div>
+          <div class="spot-layout">
+            <div class="spot-hero" id="spot-hero"></div>
+            <div class="spot-rail" id="spot-rail"></div>
+          </div>
         </section>
         <section class="pulse-panel">
           <div class="kicker"><span>Social Feed</span><span class="sub" id="pulse-source">Live · X · LI</span></div>
-          <div class="pulse-grid" id="pulse-list"></div>
+          <div class="pulse-list" id="pulse-list"></div>
         </section>
       </div>
 
@@ -308,39 +297,50 @@
         </div>
       </div>
 
-      <div class="cta-panel">
-        <div class="cta-tile">
-          <div class="qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com" /></div>
-          <div class="lbl">Join the Club</div>
-          <div class="sub-lbl">rhozeland.com</div>
-        </div>
-        <div class="cta-tile">
-          <div class="qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Fyoutube.com%2F%40rhozeland" /></div>
-          <div class="lbl">Subscribe</div>
-          <div class="sub-lbl">youtube.com/@rhozeland</div>
-        </div>
-      </div>
-
       <div class="sched">
         <div class="sched-hd"><span class="l">Broadcast Schedule</span><span class="r">All times UTC</span></div>
         <div class="sched-list">
-          <div class="sched-item"><span class="day">SUN</span><span class="what">New Release · Music Video</span><span class="when">20:00</span></div>
-          <div class="sched-item"><span class="day">MON</span><span class="what">89-32 Podcast · Live</span><span class="when">18:00</span></div>
-          <div class="sched-item"><span class="day">WED</span><span class="what">Studio Session Stream</span><span class="when">22:00</span></div>
-          <div class="sched-item"><span class="day">FRI</span><span class="what">Community Raid + $RHOZE</span><span class="when">17:00</span></div>
+          <div class="sched-item"><span class="day">SUN</span><div class="col"><span class="what">New Release · Video</span><span class="when">20:00 UTC</span></div></div>
+          <div class="sched-item"><span class="day">MON</span><div class="col"><span class="what">89-32 Podcast · Live</span><span class="when">18:00 UTC</span></div></div>
+          <div class="sched-item"><span class="day">TUE</span><div class="col"><span class="what">Artist Sessions</span><span class="when">19:00 UTC</span></div></div>
+          <div class="sched-item"><span class="day">WED</span><div class="col"><span class="what">Studio Stream</span><span class="when">22:00 UTC</span></div></div>
+          <div class="sched-item"><span class="day">THU</span><div class="col"><span class="what">Angry Mortgage</span><span class="when">20:00 UTC</span></div></div>
+          <div class="sched-item"><span class="day">FRI</span><div class="col"><span class="what">Raid · $RHOZE</span><span class="when">17:00 UTC</span></div></div>
         </div>
       </div>
 
-      <div class="appcta" style="margin-top:auto;">
-        <div class="appcta-body">
-          <div class="appcta-eyebrow">The Rhozeland App</div>
-          <div class="appcta-title">Own Your Sound</div>
-          <div class="appcta-sub">Verify your IP on-chain, attach a creator coin, and back the artists you love. Every action drips $RHOZE credits.</div>
-          <div class="appcta-tags"><span>Verified IP</span><span>Attach Coin</span><span>$RHOZE</span></div>
-          <a class="appcta-btn" href="https://rhozeland.com/start" target="_blank" rel="noopener">Open the App →</a>
+      <!-- MERGED: Creator OS = the Rhozeland App -->
+      <div class="os" style="margin-top:auto;">
+        <div class="os-head">
+          <span class="os-eyebrow">Creator OS · The Rhozeland App</span>
+          <span class="os-live">Live</span>
         </div>
-        <div class="appcta-qr">
-          <img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" />
+        <div class="os-title">Own Your <span>Sound</span></div>
+        <div class="os-sub">The always-on operating system for independent artists — verify IP on-chain, attach a creator coin, and back the artists you love.</div>
+        <div class="os-mock">
+          <div class="os-phone" aria-hidden="true">
+            <div class="notch"></div>
+            <div class="row big">$RHOZE · 0.0138</div>
+            <div class="row a"></div>
+            <div class="row b"></div>
+            <div class="grid"><div></div><div></div><div></div><div></div></div>
+          </div>
+          <div class="os-mock-body">
+            <div class="os-features">
+              <div class="os-feat"><div class="fk">Verified IP</div><div class="fv">On-chain rights</div></div>
+              <div class="os-feat"><div class="fk">Creator Coin</div><div class="fv">Attach &amp; back</div></div>
+              <div class="os-feat"><div class="fk">Drops</div><div class="fv">Weekly · Sunday</div></div>
+              <div class="os-feat"><div class="fk">$RHOZE</div><div class="fv">Every action drips</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="os-cta-row">
+          <a class="os-btn" href="https://rhozeland.com/start" target="_blank" rel="noopener">Open the App →</a>
+          <div class="os-qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
+        </div>
+        <div class="os-links">
+          <a class="os-link" href="https://rhozeland.com" target="_blank" rel="noopener">rhozeland.com</a>
+          <a class="os-link" href="https://youtube.com/@rhozeland" target="_blank" rel="noopener">yt/@rhozeland</a>
         </div>
       </div>
     </aside>

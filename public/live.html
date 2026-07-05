@@ -413,8 +413,8 @@
   <!-- HEADER -->
   <header class="hdr">
     <div class="brand">
-      <div class="brand-mark" aria-hidden="true"></div>
-      <div class="brand-name">Rhozeland<span class="slash">/LIVE</span></div>
+      <div class="brand-mark" aria-hidden="true"><img src="/images/logo-white.webp" alt="" /></div>
+      <div class="brand-name">Rhozeland<span class="slash">/</span><span class="live-word">LIVE</span></div>
     </div>
     <div class="divider"></div>
     <div class="metrics">
@@ -455,8 +455,8 @@
           <div class="spot-row" id="spot-row"></div>
         </section>
         <section class="pulse-panel">
-          <div class="kicker"><span>Social Pulse</span><span class="sub">@rhozeland</span></div>
-          <div class="pulse-list" id="pulse-list"></div>
+          <div class="kicker"><span>Social Feed</span><span class="sub">IG · X · LI · YT</span></div>
+          <div class="pulse-grid" id="pulse-list"></div>
         </section>
       </div>
     </div>
@@ -464,7 +464,8 @@
     <!-- SIDE -->
     <aside class="side">
       <div class="side-block">
-        <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 5</span></div>
+        <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 6</span></div>
+        <div class="lb-caption">Earn <b>points</b> for raids, memes, threads, and videos. Weekly winners get <b>$RHOZE</b>, merch drops &amp; studio time. Join at <b>rhozeland.com</b>.</div>
         <div class="lb-list" id="lb-list">
           <div class="lb-empty">Loading leaderboard…</div>
         </div>
@@ -473,11 +474,34 @@
       <div class="dyk">
         <div class="kicker" style="margin-bottom:8px;"><span>Did You Know?</span><span class="sub" id="dyk-index">01</span></div>
         <div class="dyk-body" id="dyk-body">
-          Rhozeland is a creator-owned ecosystem — recording, content, and launch infrastructure for independent artists all under one roof.
+          <div class="dyk-cat" id="dyk-cat">Ecosystem</div>
+          <div class="dyk-text" id="dyk-text">Rhozeland is a <strong>creator-owned</strong> ecosystem — recording, content, and launch infrastructure for independent artists, all under one roof.</div>
         </div>
       </div>
 
-      <div class="radio">
+      <div class="cta-panel">
+        <div class="cta-tile">
+          <div class="qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com" /></div>
+          <div class="lbl">Join the Club</div>
+          <div class="sub-lbl">rhozeland.com</div>
+        </div>
+        <div class="cta-tile">
+          <div class="qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Fyoutube.com%2F%40rhozeland" /></div>
+          <div class="lbl">Subscribe</div>
+          <div class="sub-lbl">youtube.com/@rhozeland</div>
+        </div>
+      </div>
+
+      <div class="merch">
+        <div class="kicker"><span>Toy Box · Merch</span><span class="sub">Drop soon</span></div>
+        <div class="merch-row" id="merch-row">
+          <div class="merch-tile" style="background-image:url('/images/toybox_logo_white.webp');"></div>
+          <div class="merch-tile empty">Coming Soon</div>
+          <div class="merch-tile" style="background-image:url('/images/toybox-silhouette.webp');"></div>
+        </div>
+      </div>
+
+      <div class="radio" style="margin-top:auto;">
         <div class="radio-l">
           <div class="eq off" id="eq"><span></span><span></span><span></span><span></span></div>
           <span class="radio-lbl">Ambient Radio</span>

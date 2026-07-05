@@ -224,29 +224,12 @@
     </div>
     <div class="hdr-right">
       <div class="live-pill"><span class="live-dot"></span><span>Broadcast Live</span></div>
-      <div class="clock"><span class="tz">UTC</span><span id="clock">—</span></div>
     </div>
   </header>
 
   <!-- MAIN -->
   <main class="main">
     <div class="col-left">
-
-      <!-- CHART + BROADCAST CARD -->
-      <div class="chart-row">
-        <div class="chart-panel">
-          <div class="chart-tag">
-            <span class="g">Chart · Birdeye</span>
-            <span class="m">$RHOZE / SOL</span>
-            <span class="g" id="chart-tag-change">—</span>
-          </div>
-          <iframe
-            src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark"
-            title="Birdeye $RHOZE Chart"
-            loading="lazy"
-          ></iframe>
-        </div>
-      </div>
 
       <!-- SUB ROW: Spotlight + Pulse -->
       <div class="sub-row">
@@ -281,6 +264,20 @@
 
     <!-- SIDE -->
     <aside class="side">
+      <!-- CHART (moved from left column) -->
+      <div class="side-chart">
+        <div class="chart-tag">
+          <span class="g">Chart · $RHOZE</span>
+          <span class="m">/ SOL</span>
+          <span class="g" id="chart-tag-change">—</span>
+        </div>
+        <iframe
+          src="https://birdeye.so/tv-widget/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark"
+          title="Birdeye $RHOZE Chart"
+          loading="lazy"
+        ></iframe>
+      </div>
+
       <div class="side-block">
         <div class="kicker"><span>Community Leaderboard</span><span class="sub" id="lb-sub">Top 6</span></div>
         <div class="lb-caption">Earn <b>points</b> for raids, memes, threads &amp; videos. Weekly winners get <b>$RHOZE</b>, merch drops &amp; studio time. Join at <b>rhozeland.com</b>.</div>
@@ -332,13 +329,19 @@
             </div>
           </div>
         </div>
-        <div class="os-cta-row">
-          <a class="os-btn" href="https://rhozeland.com/start" target="_blank" rel="noopener">Open the App →</a>
-          <div class="os-qr"><img alt="" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
+        <div class="os-qr-block">
+          <div class="os-qr-lg"><img alt="Scan to open the Rhozeland app" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
+          <div class="os-qr-cap">
+            <div class="k">Scan to open</div>
+            <div class="v">Point your camera to get on-chain, attach a creator coin, and start dripping $RHOZE.</div>
+          </div>
         </div>
-        <div class="os-links">
-          <a class="os-link" href="https://rhozeland.com" target="_blank" rel="noopener">rhozeland.com</a>
-          <a class="os-link" href="https://youtube.com/@rhozeland" target="_blank" rel="noopener">yt/@rhozeland</a>
+        <div class="os-socials">
+          <a href="https://x.com/rhozeland" target="_blank" rel="noopener" aria-label="X">X</a>
+          <a href="https://instagram.com/rhozeland" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+          <a href="https://linkedin.com/company/rhozeland" target="_blank" rel="noopener" aria-label="LinkedIn">LI</a>
+          <a href="https://youtube.com/@rhozeland" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+          <a href="https://tiktok.com/@rhozeland" target="_blank" rel="noopener" aria-label="TikTok">TT</a>
         </div>
       </div>
     </aside>
@@ -352,10 +355,6 @@
     </div>
     <div class="wire-track-wrap">
       <div class="wire-track" id="wire-track"></div>
-    </div>
-    <div class="wire-side">
-      <span class="r1">Auto · 30s</span>
-      <span class="r2" id="wire-updated">—</span>
     </div>
   </footer>
 </div>

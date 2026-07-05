@@ -51,22 +51,19 @@
   }
   .brand { display: flex; align-items: center; gap: 12px; }
   .brand-mark {
-    width: 32px; height: 32px;
-    background: var(--turq);
+    width: 34px; height: 34px;
     display: flex; align-items: center; justify-content: center;
+    background: var(--turq);
+    padding: 4px;
   }
-  .brand-mark::after {
-    content: "";
-    width: 14px; height: 14px;
-    border: 2px solid #000;
-    transform: rotate(45deg);
-  }
+  .brand-mark img { width: 100%; height: 100%; object-fit: contain; display: block; filter: brightness(0); }
   .brand-name {
     font-weight: 900; font-size: 20px;
     letter-spacing: -0.02em; text-transform: uppercase;
     font-style: italic;
   }
   .brand-name .slash { color: var(--turq); }
+  .brand-name .live-word { color: var(--turq); }
   .divider { width: 1px; height: 24px; background: var(--line-strong); }
 
   .metrics { display: flex; gap: 32px; align-items: center; }

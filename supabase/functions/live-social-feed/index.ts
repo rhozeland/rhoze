@@ -10,6 +10,7 @@ const corsHeaders = {
 
 const GATEWAY = "https://connector-gateway.lovable.dev";
 const X_USERNAME = "rhozeland";
+const PUBLIC_BACKEND_URL = "https://hdlpvcsxyxirywjkhsui.supabase.co";
 const PUBLIC_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w";
 
 type Post = {
@@ -86,7 +87,7 @@ async function fetchLinkedIn(lovableKey: string, liKey: string): Promise<Post[]>
 }
 
 async function fetchEditorSocialFallback(): Promise<Post[]> {
-  const url = Deno.env.get("SUPABASE_URL");
+  const url = Deno.env.get("SUPABASE_URL") || PUBLIC_BACKEND_URL;
   const anon = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || PUBLIC_ANON_KEY;
   if (!url || !anon) return [];
 

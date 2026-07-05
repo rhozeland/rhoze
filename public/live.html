@@ -477,13 +477,7 @@ async function loadSocial(){
 loadSocial();
 setInterval(loadSocial, 300000);
 
-/* ================= Clock ================= */
-function tickClock(){
-  var d = new Date();
-  function p(n){ return String(n).padStart(2,'0'); }
-  document.getElementById('clock').textContent = p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds());
-}
-tickClock(); setInterval(tickClock, 1000);
+/* Clock + wire-side removed per design */
 
 /* ================= Next Sunday ================= */
 (function nextSunday(){
@@ -520,7 +514,6 @@ function paint(s){
   ct.textContent = fmtPct(s.change24h);
   ct.style.color = s.change24h != null && s.change24h < 0 ? '#ef4444' : '#22c55e';
   buildWire();
-  document.getElementById('wire-updated').textContent = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
 }
 async function loadStats(){
   try {

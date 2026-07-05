@@ -8,6 +8,7 @@ import Settings from "./pages/Settings";
 import TeamAdmin from "./pages/TeamAdmin";
 import Rewards from "./pages/Rewards";
 import Leaderboard from "./pages/Leaderboard";
+import LiveEditor from "./pages/LiveEditor";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Catalog from "./pages/Catalog";
@@ -98,6 +99,7 @@ export default function TeamApp() {
         <Route path="referral-codes" element={<Navigate to="/team-admin" replace />} />
         <Route path="rewards" element={<Rewards />} />
         <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="live-editor" element={<LiveEditor />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

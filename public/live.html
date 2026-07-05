@@ -45,18 +45,18 @@
   @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
   /* MAIN */
-  .main { display:grid; grid-template-columns:1fr 360px; min-height:0; }
+  .main { display:grid; grid-template-columns:1fr 390px; min-height:0; }
   .col-left { display:grid; grid-template-rows:1fr 210px; min-height:0; border-right:1px solid var(--line-strong); }
 
   /* Sidebar chart panel (moved from left) */
-  .side-chart { position:relative; background:var(--panel-2); overflow:hidden; height:150px; border-bottom:1px solid var(--line-strong); flex:0 0 auto; }
+  .side-chart { position:relative; background:var(--panel-2); overflow:hidden; height:280px; border-bottom:1px solid var(--line-strong); flex:0 0 auto; }
   .side-chart iframe { width:100%; height:100%; border:0; display:block; }
   .chart-tag { position:absolute; top:10px; left:10px; z-index:10; background:rgba(10,10,10,0.85); backdrop-filter:blur(6px); border:1px solid var(--line-strong); padding:5px 9px; display:flex; gap:10px; align-items:center; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; }
   .chart-tag .g { color:var(--turq); font-weight:900; }
   .chart-tag .m { color:var(--muted); }
 
   /* SUB ROW: Spotlight + Pulse — spotlight = big hero + rail, pulse = clean 4-up */
-  .sub-row { display:grid; grid-template-columns:1.25fr 1fr; min-height:0; }
+  .sub-row { display:grid; grid-template-columns:1.42fr 0.98fr; min-height:0; }
   .spotlight { padding:12px 14px; border-right:1px solid var(--line-strong); display:flex; flex-direction:column; min-height:0; }
   .kicker { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.24em; color:var(--turq); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
   .kicker .sub { color:var(--dim); letter-spacing:0.16em; font-weight:700; }
@@ -70,7 +70,7 @@
   .spot-hero .live-pill-hero::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--live); animation:pulse 1.4s ease-in-out infinite; }
   .spot-hero .plate { position:absolute; left:14px; right:14px; bottom:12px; z-index:2; }
   .spot-hero .plate .a { font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--turq); font-weight:900; }
-  .spot-hero .plate .t { font-family:'Roboto Condensed',sans-serif; font-size:26px; line-height:1.02; font-weight:900; text-transform:uppercase; color:#fff; margin-top:2px; letter-spacing:-0.02em; }
+  .spot-hero .plate .t { font-family:'Roboto Condensed',sans-serif; font-size:34px; line-height:0.96; font-weight:900; text-transform:uppercase; color:#fff; margin-top:2px; letter-spacing:-0.02em; }
   .spot-rail { display:grid; grid-template-rows:repeat(4, 1fr); gap:6px; min-height:0; }
   .spot-mini { position:relative; background:var(--panel-3); border:1px solid var(--line-strong); overflow:hidden; display:grid; grid-template-columns:64px 1fr; align-items:stretch; }
   .spot-mini .thumb { position:relative; overflow:hidden; }
@@ -80,13 +80,12 @@
   .spot-mini .info .a { font-size:9px; color:var(--muted); text-transform:uppercase; letter-spacing:0.14em; font-weight:700; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .spot-mini .info .tag { font-size:8px; color:var(--turq); font-weight:900; letter-spacing:0.16em; text-transform:uppercase; margin-top:3px; }
 
-  /* Social feed — cleaner list of 4 posts */
+  /* Social feed — text-led, no image thumbnails */
   .pulse-panel { padding:12px 14px; display:flex; flex-direction:column; min-height:0; }
-  .pulse-list { display:grid; grid-template-rows:repeat(4, 1fr); gap:6px; flex:1; min-height:0; }
-  .pulse-item { position:relative; display:grid; grid-template-columns:78px 1fr auto; gap:10px; align-items:stretch; background:var(--panel-3); border:1px solid var(--line-strong); overflow:hidden; min-height:0; }
+  .pulse-list { display:grid; grid-template-rows:repeat(5, 1fr); gap:6px; flex:1; min-height:0; }
+  .pulse-item { position:relative; display:grid; grid-template-columns:48px 1fr auto; gap:10px; align-items:center; background:linear-gradient(90deg, #151515, #101010); border:1px solid var(--line-strong); overflow:hidden; min-height:0; color:inherit; text-decoration:none; }
   .pulse-item.hot { border-color:var(--turq); box-shadow:inset 0 0 0 1px var(--turq); }
-  .pulse-item .thumb { position:relative; overflow:hidden; background:linear-gradient(135deg,#111,#1e2b2a); }
-  .pulse-item .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pulse-item .pulse-badge { height:100%; display:flex; align-items:center; justify-content:center; border-right:1px solid var(--line-strong); background:#0a0a0a; font-size:10px; font-weight:900; letter-spacing:0.1em; color:var(--turq); }
   .pulse-item .body { padding:8px 4px 8px 0; display:flex; flex-direction:column; justify-content:center; min-width:0; }
   .pulse-item .head { display:flex; align-items:center; gap:8px; }
   .pulse-item .plat { font-size:8px; font-weight:900; letter-spacing:0.16em; padding:2px 5px; border:1px solid var(--line-strong); text-transform:uppercase; }
@@ -95,7 +94,7 @@
   .pulse-item .plat.ig { color:#f472b6; border-color:rgba(244,114,182,0.4); }
   .pulse-item .plat.yt { color:#f87171; border-color:rgba(248,113,113,0.4); }
   .pulse-item .who { font-size:10px; color:var(--turq); font-weight:900; text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pulse-item .msg { font-size:11px; color:#d5d5d5; line-height:1.35; margin-top:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .pulse-item .msg { font-size:12px; color:#d5d5d5; line-height:1.35; margin-top:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .pulse-item .when { padding:8px 10px 8px 0; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); align-self:center; white-space:nowrap; }
   .pulse-item.hot .when { color:var(--turq); }
 
@@ -241,7 +240,7 @@
           </div>
         </section>
         <section class="pulse-panel">
-          <div class="kicker"><span>Social Feed</span><span class="sub" id="pulse-source">Live · X · LI</span></div>
+          <div class="kicker"><span>Social Feed</span><span class="sub" id="pulse-source">Live · X · LI · IG</span></div>
           <div class="pulse-list" id="pulse-list"></div>
         </section>
       </div>
@@ -250,11 +249,11 @@
       <section class="merch-rail">
         <div class="merch-rail-head">
           <div>
-            <div class="k1">Toy Box · SS 26</div>
-            <div class="k2">Wear the<br/>Ecosystem</div>
-            <div class="k3">Real people. Real fits. Rhozeland's in-house apparel line — funded by the community.</div>
+            <div class="k1" id="merch-eyebrow">Toy Box · SS 26</div>
+            <div class="k2" id="merch-headline">Wear the<br/>Ecosystem</div>
+            <div class="k3" id="merch-description">Real people. Real fits. Rhozeland's in-house apparel line — funded by the community.</div>
           </div>
-          <div class="k4">→ Drop coming soon</div>
+          <div class="k4" id="merch-cta">→ Drop coming soon</div>
         </div>
         <div class="merch-viewport">
           <div class="merch-strip" id="merch-strip"></div>
@@ -293,8 +292,8 @@
       </div>
 
       <div class="sched">
-        <div class="sched-hd"><span class="l">Broadcast Schedule</span><span class="r">All times UTC</span></div>
-        <div class="sched-list">
+        <div class="sched-hd"><span class="l">Broadcast Schedule</span><span class="r" id="sched-zone">All times UTC</span></div>
+        <div class="sched-list" id="sched-list">
           <div class="sched-item"><span class="day">SUN</span><div class="col"><span class="what">New Release · Video</span><span class="when">20:00 UTC</span></div></div>
           <div class="sched-item"><span class="day">MON</span><div class="col"><span class="what">89-32 Podcast · Live</span><span class="when">18:00 UTC</span></div></div>
           <div class="sched-item"><span class="day">TUE</span><div class="col"><span class="what">Artist Sessions</span><span class="when">19:00 UTC</span></div></div>
@@ -307,11 +306,11 @@
       <!-- MERGED: Creator OS = the Rhozeland App -->
       <div class="os" style="margin-top:auto;">
         <div class="os-head">
-          <span class="os-eyebrow">Creator OS · The Rhozeland App</span>
+          <span class="os-eyebrow" id="os-eyebrow">Creator OS · The Rhozeland App</span>
           <span class="os-live">Live</span>
         </div>
-        <div class="os-title">Own Your <span>Sound</span></div>
-        <div class="os-sub">The always-on operating system for independent artists — verify IP on-chain, attach a creator coin, and back the artists you love.</div>
+        <div class="os-title" id="os-title">Own Your <span>Sound</span></div>
+        <div class="os-sub" id="os-sub">The always-on operating system for independent artists — verify IP on-chain, attach a creator coin, and back the artists you love.</div>
         <div class="os-mock">
           <div class="os-phone" aria-hidden="true">
             <div class="notch"></div>
@@ -330,13 +329,13 @@
           </div>
         </div>
         <div class="os-qr-block">
-          <div class="os-qr-lg"><img alt="Scan to open the Rhozeland app" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
+          <div class="os-qr-lg"><img id="os-qr-img" alt="Scan to open the Rhozeland app" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart" /></div>
           <div class="os-qr-cap">
-            <div class="k">Scan to open</div>
+            <div class="k" id="os-qr-cap">Scan to open</div>
             <div class="v">Point your camera to get on-chain, attach a creator coin, and start dripping $RHOZE.</div>
           </div>
         </div>
-        <div class="os-socials">
+        <div class="os-socials" id="os-socials">
           <a href="https://x.com/rhozeland" target="_blank" rel="noopener" aria-label="X">X</a>
           <a href="https://instagram.com/rhozeland" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
           <a href="https://linkedin.com/company/rhozeland" target="_blank" rel="noopener" aria-label="LinkedIn">LI</a>
@@ -365,6 +364,10 @@ var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
 var POOL  = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
 var SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
 var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
+var LIVE_CONTENT = {};
+function setText(id, value){ var el = document.getElementById(id); if (el && value != null) el.textContent = value; }
+function setHTML(id, value){ var el = document.getElementById(id); if (el && value != null) el.innerHTML = value; }
+function safeFactText(value){ return esc(value || '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); }
 
 /* Real people + stock merch mix (real from Google Drive AI shots) */
 var HERO_VIDEO = '/__l5e/assets-v1/90b14679-dba6-4ff7-97a4-fccc9bdb91cd/fashion-ad.mp4';
@@ -418,33 +421,29 @@ setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotli
 
 /* ================= Social Pulse — fetch real X + LinkedIn ================= */
 var PULSE_FALLBACK = [
-  { who:'@rhozeland', plat:'X',  h:'live', msg:'New release week — Sefra by Cozal is live on YouTube. Tap in.',                   img:'/images/cozal-sefra-thumb.jpg', hot:true },
-  { who:'Rhozeland',  plat:'LI', h:'today',msg:'Rhozeland is building the operating system for independent artists.',            img:'/images/rhozeland_official_logo_2025.webp' },
-  { who:'Rhozeland',  plat:'YT', h:'34m',  msg:'New drop this Sunday — subscribe on youtube.com/@rhozeland.',                    img:'/images/ooak-the-mask-thumb.webp' },
-  { who:'Ooak',       plat:'IG', h:'1h',   msg:'Rollout for the next visual dropping Sunday.',                                    img:'/images/ooak-saint-flair-west-thumb.webp' },
-  { who:'Ess B',      plat:'IG', h:'2h',   msg:'Behind the scenes on the Just Call Me video shoot.',                              img:'/images/ess-b-just-call-me-thumb.webp' },
-  { who:'@rhozeland', plat:'X',  h:'3h',   msg:'$RHOZE supply is locked. Creator economy, transparent by default.',              img:'/images/rhozeland_official_logo_2025.webp' },
-  { who:'Semiah',     plat:'IG', h:'5h',   msg:'Withdrawals video hit 10k views this morning. Thank you.',                        img:'/images/semiah-withdrawals-thumb.webp' },
-  { who:'Monee Fingaz', plat:'IG',h:'6h',  msg:'Mansa Musa video keeps climbing. Real ones only.',                               img:'/images/fingaz-mansa-musa-thumb.webp' },
+  { who:'@rhozeland', plat:'X',  h:'live', msg:'New release week — Sefra by Cozal is live on YouTube. Tap in.', hot:true },
+  { who:'Rhozeland',  plat:'LI', h:'today',msg:'Building the operating system for independent artists — recording, video, launch, rights, rewards.' },
+  { who:'@rhozeland', plat:'IG', h:'1h',   msg:'Behind the scenes from the latest creator sessions and Toy Box fittings.' },
+  { who:'@rhozeland', plat:'X',  h:'3h',   msg:'$RHOZE supply is locked. Creator economy, transparent by default.' },
+  { who:'Rhozeland',  plat:'YT', h:'34m',  msg:'New drop this Sunday — subscribe on youtube.com/@rhozeland.' },
 ];
 var PULSE = PULSE_FALLBACK.slice();
 var pulseIdx = 0;
 function renderPulse(){
   var el = document.getElementById('pulse-list');
-  var items = [0,1,2,3].map(function(o){
+  var items = [0,1,2,3,4].map(function(o){
     var p = PULSE[(pulseIdx + o) % PULSE.length];
     var platCls = (p.plat || 'X').toLowerCase();
-    var thumb = p.img
-      ? '<img loading="lazy" src="' + esc(p.img) + '" alt="" />'
-      : '';
-    return '<div class="pulse-item' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="thumb">' + thumb + '</div>'
+    var tag = p.url ? 'a' : 'div';
+    var href = p.url ? ' href="' + esc(p.url) + '" target="_blank" rel="noopener"' : '';
+    return '<' + tag + href + ' class="pulse-item' + (p.hot ? ' hot' : '') + '">'
+      + '<div class="pulse-badge">' + esc(p.plat || 'X') + '</div>'
       + '<div class="body">'
       +   '<div class="head"><span class="plat ' + platCls + '">' + esc(p.plat || '') + '</span><span class="who">' + esc(p.who) + '</span></div>'
       +   '<div class="msg">' + esc(p.msg) + '</div>'
       + '</div>'
       + '<div class="when">' + (p.hot ? 'LIVE' : esc(p.h)) + '</div>'
-      + '</div>';
+      + '</' + tag + '>';
   }).join('');
   el.innerHTML = items;
 }
@@ -461,8 +460,8 @@ async function loadSocial(){
     var d = await r.json();
     if (d && d.posts && d.posts.length) {
       // Merge live posts on top of fallback so the feed always feels full.
-      var live = d.posts.slice(0, 6).map(function(p, i){
-        return { who:p.who, plat:p.plat, h:p.h || 'live', msg:p.msg, img:p.img || null, hot: i === 0 };
+      var live = d.posts.slice(0, 8).map(function(p, i){
+        return { who:p.who, plat:p.plat, h:p.h || 'live', msg:p.msg, url:p.url || null, hot: i === 0 };
       });
       var fill = PULSE_FALLBACK.filter(function(f){
         return !live.some(function(l){ return l.who === f.who && l.plat === f.plat; });
@@ -476,6 +475,65 @@ async function loadSocial(){
 }
 loadSocial();
 setInterval(loadSocial, 300000);
+
+async function loadLiveContent(){
+  try {
+    var url = SUPABASE_URL + '/rest/v1/live_dashboard_content?select=section_key,payload&is_published=eq.true';
+    var r = await fetch(url, { headers:{ apikey:SUPABASE_ANON, Authorization:'Bearer ' + SUPABASE_ANON, Accept:'application/json' }, cache:'no-store' });
+    if (!r.ok) return;
+    var rows = await r.json();
+    rows.forEach(function(row){ LIVE_CONTENT[row.section_key] = row.payload || {}; });
+    applyLiveContent();
+  } catch(e) {}
+}
+
+function applyLiveContent(){
+  var spot = LIVE_CONTENT.project_spotlight;
+  if (spot && Array.isArray(spot.items) && spot.items.length) {
+    PORTFOLIO = spot.items.map(function(p){ return { t:p.title || p.t || 'Untitled', a:p.artist || p.a || 'Rhozeland', tag:p.tag || 'Release', img:p.image || p.img || '/images/logo-black.webp', video:p.video || '' }; });
+    spotIdx = 0; renderSpotlight();
+  }
+  var social = LIVE_CONTENT.social_feed;
+  if (social && Array.isArray(social.fallbackPosts) && social.fallbackPosts.length) {
+    PULSE_FALLBACK = social.fallbackPosts.map(function(p){ return { who:p.who || '@rhozeland', plat:p.platform || p.plat || 'IG', h:p.time || p.h || 'today', msg:p.message || p.msg || '', url:p.url || null, hot:!!p.hot }; }).filter(function(p){ return p.msg; });
+    if (PULSE_FALLBACK.length) { PULSE = PULSE_FALLBACK.slice(); pulseIdx = 0; renderPulse(); }
+  }
+  var facts = LIVE_CONTENT.did_you_know;
+  if (facts && Array.isArray(facts.items) && facts.items.length) {
+    FACTS = facts.items.map(function(f){ return { c:f.category || 'Update', t:safeFactText(f.text || '') }; }).filter(function(f){ return f.t; });
+    factIdx = 0;
+    if (FACTS.length) { setText('dyk-cat', FACTS[0].c); setHTML('dyk-text', FACTS[0].t); setText('dyk-index', '01'); }
+  }
+  var sched = LIVE_CONTENT.broadcast_schedule;
+  if (sched && Array.isArray(sched.items)) {
+    setText('sched-zone', 'All times ' + (sched.timezone || 'UTC'));
+    var sl = document.getElementById('sched-list');
+    if (sl) sl.innerHTML = sched.items.map(function(s){ return '<div class="sched-item"><span class="day">' + esc(s.day || '') + '</span><div class="col"><span class="what">' + esc(s.title || '') + '</span><span class="when">' + esc(s.time || '') + '</span></div></div>'; }).join('');
+  }
+  var app = LIVE_CONTENT.app_panel;
+  if (app) {
+    setText('os-eyebrow', app.eyebrow);
+    setHTML('os-title', esc(app.title || 'Own Your Sound').replace(/(Sound|RHOZE|App)$/i, '<span>$1</span>'));
+    setText('os-sub', app.description);
+    var qr = document.getElementById('os-qr-img'); if (qr && app.qrUrl) qr.src = app.qrUrl;
+    setText('os-qr-cap', app.qrCaption);
+    var soc = document.getElementById('os-socials');
+    if (soc && Array.isArray(app.socials)) soc.innerHTML = app.socials.map(function(a){ return '<a href="' + esc(a.url || '#') + '" target="_blank" rel="noopener">' + esc(a.label || 'LINK') + '</a>'; }).join('');
+  }
+  var wire = LIVE_CONTENT.latest_wire;
+  if (wire && Array.isArray(wire.items)) { HEADLINES = wire.items.filter(Boolean); buildWire(); }
+  var clothing = LIVE_CONTENT.clothing_rail;
+  if (clothing) {
+    setText('merch-eyebrow', clothing.eyebrow);
+    setHTML('merch-headline', esc(clothing.headline || 'Wear the Ecosystem').replace(/ /g, '<br/>'));
+    setText('merch-description', clothing.description);
+    setText('merch-cta', clothing.cta ? '→ ' + clothing.cta.replace(/^→\s*/, '') : '');
+    if (Array.isArray(clothing.items) && clothing.items.length) {
+      MERCH = clothing.items.map(function(m){ return { n:m.name || 'Rhozeland', p:m.price || 'Preview', tag:m.tag || 'Drop', img:(m.type === 'video' ? '' : m.src), video:(m.type === 'video' ? m.src : ''), editorial:true }; }).filter(function(m){ return m.img || m.video; });
+      renderMerch();
+    }
+  }
+}
 
 /* Clock + wire-side removed per design */
 
@@ -619,7 +677,7 @@ var MERCH = [
   { n:'Essential Wear',          p:'The essentials',             tag:'Drop 01',    img:'/__l5e/assets-v1/1c7bcbe0-19e0-4845-b98a-262ba21be682/toybox-essential-wear.jpg' },
   { n:'Earth Tone Tee',          p:'Heavyweight · Cotton',       tag:'Tee',        img:'/__l5e/assets-v1/2ed75e92-254e-46e7-9d63-11b93e97a337/toybox-tee-earth.jpg' },
 ];
-(function renderMerch(){
+function renderMerch(){
   var strip = document.getElementById('merch-strip');
   var html = MERCH.map(function(m){
     var media = m.video
@@ -632,7 +690,10 @@ var MERCH = [
       + '</div>';
   }).join('');
   strip.innerHTML = html + html;
-})();
+}
+renderMerch();
+loadLiveContent();
+setInterval(loadLiveContent, 120000);
 </script>
 </body>
 </html>

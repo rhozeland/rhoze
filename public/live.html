@@ -697,13 +697,13 @@ loadStats(); setInterval(loadStats, 30000);
 /* ================= Leaderboard ================= */
 async function loadLeaderboard(){
   try {
-    var url = SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&published_at=not.is.null&order=points.desc&limit=8';
+    var url = SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&published_at=not.is.null&order=points.desc&limit=6';
     var r = await fetch(url, { headers: { apikey: SUPABASE_ANON, Authorization: 'Bearer ' + SUPABASE_ANON, Accept: 'application/json' }, cache: 'no-store' });
     if (!r.ok) return;
     var rows = await r.json();
     var el = document.getElementById('lb-list');
     if (!rows.length){ el.innerHTML = '<div class="lb-empty">Leaderboard snapshot pending.</div>'; return; }
-    document.getElementById('lb-sub').textContent = 'Top ' + Math.min(8, rows.length);
+    document.getElementById('lb-sub').textContent = 'Top ' + Math.min(6, rows.length);
     el.innerHTML = rows.map(function(row, i){
       var top = i === 0 ? ' top' : '';
       var pts = (row.points || 0).toLocaleString();

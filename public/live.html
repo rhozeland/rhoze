@@ -90,7 +90,9 @@
   .x-embed-wrap { position:relative; background:#0a0a0a; border:1px solid var(--turq); box-shadow:inset 0 0 0 1px rgba(62,195,184,0.35); overflow:hidden; min-height:0; }
   .x-embed-wrap::before { content:"LIVE · X"; position:absolute; top:6px; left:8px; z-index:5; font-size:8px; font-weight:900; letter-spacing:0.18em; color:var(--turq); background:rgba(0,0,0,0.85); padding:3px 6px; }
   .x-embed-wrap iframe { width:100% !important; height:100% !important; border:0; display:block; }
-  .x-embed-scroll { position:absolute; inset:0; overflow:hidden; }
+  .x-embed-scroll { position:absolute; inset:0; overflow-y:auto; padding:22px 6px 6px; }
+  .x-embed-scroll::-webkit-scrollbar { width:6px; }
+  .x-embed-scroll::-webkit-scrollbar-thumb { background:#333; }
   .x-embed-scroll .twitter-timeline { width:100% !important; }
   .soc-tiles { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .soc-tile { display:grid; grid-template-columns:36px 1fr auto; gap:8px; align-items:center; padding:8px 10px; background:#0f0f0f; border:1px solid var(--line-strong); color:#eee; text-decoration:none; transition:border-color 0.2s, background 0.2s; }

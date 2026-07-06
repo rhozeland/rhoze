@@ -464,9 +464,10 @@ function renderSpotlight(){
     + '<span class="live-pill-hero">On Air</span>'
     + media
     + '<div class="plate"><div class="a">' + esc(hero.a) + '</div><div class="t">' + esc(hero.t) + '</div></div>';
-  var rail = [1,2,3,4].map(function(o){
+  var rail = [1,2,3,4,5,6,7].map(function(o){
     var p = PORTFOLIO[(spotIdx + o) % len];
-    return '<div class="spot-mini">'
+    var cls = 'spot-mini enter' + (o === 1 ? ' next' : '');
+    return '<div class="' + cls + '" style="animation-delay:' + (o * 40) + 'ms">'
       + '<div class="thumb"><img loading="lazy" src="' + esc(p.img) + '" alt="" onerror="this.style.display=\'none\';this.parentNode.style.background=\'#1a1a1a\';" /></div>'
       + '<div class="info"><div class="n">' + esc(p.t) + '</div><div class="a">' + esc(p.a) + '</div><div class="tag">' + esc(p.tag) + '</div></div>'
       + '</div>';
@@ -475,7 +476,7 @@ function renderSpotlight(){
   idxEl.textContent = String((spotIdx % len) + 1).padStart(2,'0') + ' / ' + String(len).padStart(2,'0');
 }
 renderSpotlight();
-setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotlight(); }, 6000);
+setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotlight(); }, 5500);
 
 /* ================= Social Pulse — fetch real X + LinkedIn ================= */
 var PULSE_FALLBACK = [

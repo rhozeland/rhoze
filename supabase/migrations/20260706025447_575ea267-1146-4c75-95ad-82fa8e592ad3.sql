@@ -1,0 +1,1 @@
+REVOKE SELECT (stripe_price_id) ON public.service_packages FROM anon, authenticated;

@@ -505,8 +505,9 @@ function applyLiveContent(){
     spotIdx = 0; renderSpotlight();
   }
   var social = LIVE_CONTENT.social_feed;
-  if (social && Array.isArray(social.fallbackPosts) && social.fallbackPosts.length) {
-    PULSE_FALLBACK = social.fallbackPosts.map(function(p){ return { who:p.who || '@rhozeland', plat:p.platform || p.plat || 'IG', h:p.time || p.h || 'today', msg:p.message || p.msg || '', url:p.url || null, hot:!!p.hot }; }).filter(function(p){ return p.msg; });
+  if (social && social.handles) {
+    // social handles editor field — reserved for future use; X widget covers live now
+  }
     if (PULSE_FALLBACK.length) { PULSE = PULSE_FALLBACK.slice(); pulseIdx = 0; renderPulse(); }
   }
   var facts = LIVE_CONTENT.did_you_know;

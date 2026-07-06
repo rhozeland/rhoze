@@ -478,62 +478,14 @@ function renderSpotlight(){
 renderSpotlight();
 setInterval(function(){ spotIdx = (spotIdx + 1) % PORTFOLIO.length; renderSpotlight(); }, 5500);
 
-/* ================= Social Pulse — fetch real X + LinkedIn ================= */
-var PULSE_FALLBACK = [
-  { who:'@rhozeland', plat:'X',  h:'live', msg:'New release week — Sefra by Cozal is live on YouTube. Tap in.', hot:true },
-  { who:'Rhozeland',  plat:'LI', h:'today',msg:'Building the operating system for independent artists — recording, video, launch, rights, rewards.' },
-  { who:'@rhozeland', plat:'IG', h:'1h',   msg:'Behind the scenes from the latest creator sessions and Toy Box fittings.' },
-  { who:'@rhozeland', plat:'X',  h:'3h',   msg:'$RHOZE supply is locked. Creator economy, transparent by default.' },
-  { who:'Rhozeland',  plat:'YT', h:'34m',  msg:'New drop this Sunday — subscribe on youtube.com/@rhozeland.' },
-];
-var PULSE = PULSE_FALLBACK.slice();
-var pulseIdx = 0;
-function renderPulse(){
-  var el = document.getElementById('pulse-list');
-  var items = [0,1,2,3,4].map(function(o){
-    var p = PULSE[(pulseIdx + o) % PULSE.length];
-    var platCls = (p.plat || 'X').toLowerCase();
-    var tag = p.url ? 'a' : 'div';
-    var href = p.url ? ' href="' + esc(p.url) + '" target="_blank" rel="noopener"' : '';
-    return '<' + tag + href + ' class="pulse-item' + (p.hot ? ' hot' : '') + '">'
-      + '<div class="pulse-badge">' + esc(p.plat || 'X') + '</div>'
-      + '<div class="body">'
-      +   '<div class="head"><span class="plat ' + platCls + '">' + esc(p.plat || '') + '</span><span class="who">' + esc(p.who) + '</span></div>'
-      +   '<div class="msg">' + esc(p.msg) + '</div>'
-      + '</div>'
-      + '<div class="when">' + (p.hot ? 'LIVE' : esc(p.h)) + '</div>'
-      + '</' + tag + '>';
-  }).join('');
-  el.innerHTML = items;
-}
-renderPulse();
-setInterval(function(){ pulseIdx = (pulseIdx + 1) % PULSE.length; renderPulse(); }, 7000);
-
-async function loadSocial(){
-  try {
-    var r = await fetch(SUPABASE_URL + '/functions/v1/live-social-feed', {
-      headers: { Authorization: 'Bearer ' + SUPABASE_ANON, apikey: SUPABASE_ANON },
-      cache: 'no-store'
-    });
-    if (!r.ok) return;
-    var d = await r.json();
-    if (d && d.posts && d.posts.length) {
-      // Merge live posts on top of fallback so the feed always feels full.
-      var live = d.posts.slice(0, 8).map(function(p, i){
-        return { who:p.who, plat:p.plat, h:p.h || 'live', msg:p.msg, url:p.url || null, hot: i === 0 };
-      });
-      var fill = PULSE_FALLBACK.filter(function(f){
-        return !live.some(function(l){ return l.who === f.who && l.plat === f.plat; });
-      });
-      PULSE = live.concat(fill).slice(0, 12);
-      pulseIdx = 0;
-      renderPulse();
-      document.getElementById('pulse-source').textContent = 'Live · ' + live.length + ' posts';
-    }
-  } catch(e){ /* keep fallback */ }
-}
-loadSocial();
-setInterval(loadSocial, 300000);
+/* ================= Social — X timeline widget loads via platform.twitter.com ================= */
+(function loadTwitterWidget(){
+  if (window.twttr) return;
+  var s = document.createElement('script');
+  s.src = 'https://platform.twitter.com/widgets.js';
+  s.async = true; s.charset = 'utf-8';
+  document.head.appendChild(s);
+})();
 
 async function loadLiveContent(){
   try {

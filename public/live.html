@@ -141,15 +141,15 @@ function renderSocial(){var el=document.getElementById('social-list');el.innerHT
 renderSocial();
 
 var MERCH=[
-  {n:'Uniform Front Shot',p:'Stock · actual fit mockup',tag:'Uniform',img:'/__l5e/assets-v1/622abcd8-00e2-4f60-99ee-7e068cf1bcfd/uniform-front-stock.jpg',uniform:true,featured:true},
-  {n:'Rhozeland Campaign',p:'SS26 · motion',tag:'Campaign',video:'/__l5e/assets-v1/441ff766-b5b0-455d-82d2-dcf8f43ece52/rhozeland-ad.mp4',featured:true},
-  {n:'Female Model Jacket',p:'Drive · front fit',tag:'On Body',img:'/__l5e/assets-v1/3a7fa72a-40bc-4dd4-a8d8-03d42fc43455/female-jacket.png',editorial:true},
-  {n:'Man in Jacket',p:'Drive · front fit',tag:'On Body',img:'/__l5e/assets-v1/1b00c117-f07b-43d2-b58e-19f2d24786c9/man-jacket.png',editorial:true},
-  {n:'Woman with Glasses',p:'Drive · portrait',tag:'Editorial',img:'/__l5e/assets-v1/8d9a7124-2c6d-4c43-870c-b0d210dbcdbb/woman-glasses.png',editorial:true},
-  {n:'Woman at Computer',p:'Drive · Creator OS',tag:'Editorial',img:'/__l5e/assets-v1/88cb0e08-c7c0-427d-b897-6db3ba0bd682/woman-computer.png',editorial:true},
-  {n:'Man & Cube',p:'Drive · motion',tag:'Motion',video:'/__l5e/assets-v1/2837a906-abc7-45cd-b6f9-554d9f00b2ff/man-cube.mp4'},
-  {n:'Michael Le',p:'Drive · talent',tag:'Portrait',img:'/__l5e/assets-v1/719c5133-031f-4555-865c-b7a044512490/michael-le.png',editorial:true},
-  {n:'Marvin Ceron',p:'Drive · talent',tag:'Portrait',img:'/__l5e/assets-v1/914d858c-e965-4871-9179-0f3515c3a4a9/marvin-ceron.png',editorial:true}
+  {n:'Uniform Front Shot',p:'Stock · actual fit mockup',tag:'Uniform',img:'/live-media/uniform-front-stock.jpg',uniform:true,featured:true},
+  {n:'Rhozeland Campaign',p:'SS26 · motion poster',tag:'Campaign',img:'/live-media/rhozeland-ad-poster.jpg',featured:true},
+  {n:'Female Model Jacket',p:'Drive · front fit',tag:'On Body',img:'/live-media/female-jacket.webp',editorial:true},
+  {n:'Man in Jacket',p:'Drive · front fit',tag:'On Body',img:'/live-media/man-jacket.webp',editorial:true},
+  {n:'Woman with Glasses',p:'Drive · portrait',tag:'Editorial',img:'/live-media/woman-glasses.webp',editorial:true},
+  {n:'Woman at Computer',p:'Drive · Creator OS',tag:'Editorial',img:'/live-media/woman-computer.webp',editorial:true},
+  {n:'Man & Cube',p:'Drive · motion poster',tag:'Motion',img:'/live-media/man-cube-poster.jpg'},
+  {n:'Michael Le',p:'Drive · talent',tag:'Portrait',img:'/live-media/michael-le.webp',editorial:true},
+  {n:'Marvin Ceron',p:'Drive · talent',tag:'Portrait',img:'/live-media/marvin-ceron.webp',editorial:true}
 ];
 function validAsset(src){return /^\/live-media\//.test(src||'')||/^\/__l5e\/assets-v1\//.test(src||'')||/^\/images\//.test(src||'')||/^\/videos\//.test(src||'')}
 function renderMerch(){var strip=document.getElementById('merch-strip');var html=MERCH.map(function(m){var media=m.video?'<video autoplay muted loop playsinline preload="auto" src="'+esc(m.video)+'"></video>':'<img loading="lazy" src="'+esc(m.img)+'" alt="'+esc(m.n)+'" onerror="this.closest(\'.toy-slide\').style.display=\'none\'">';return '<div class="toy-slide'+(m.editorial?' editorial':'')+(m.uniform?' uniform':'')+(m.featured?' featured':'')+'"><span class="tag">'+esc(m.tag)+'</span>'+media+'<div class="cap"><div class="n">'+esc(m.n)+'</div><div class="p">'+esc(m.p)+'</div></div></div>'}).join('');strip.innerHTML=html+html}

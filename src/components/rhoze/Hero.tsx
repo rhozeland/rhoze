@@ -34,6 +34,15 @@ const pillars = [
   },
 ];
 
+const eventArchive = [
+  { title: "Emote Temple 2.0", date: "Jul 22, 2026", tag: "Upcoming · Powered by $RHOZE", href: "https://luma.com/hiamge0p", featured: true },
+  { title: "World IT Show 2026", date: "Apr 22–25, 2026", tag: "Exhibition · Seoul", href: "https://www.sourcefromontario.com/en/page/delegate/138483/rhozeland#attendees" },
+  { title: "RHOZE Creative Social", date: "Mar 20, 2026", tag: "Social · Toronto", href: "https://luma.com/embed/event/evt-cLEaltiJY1AHWVY/simple" },
+  { title: "Create The Future Summit", date: "Aug 14, 2025", tag: "Summit", href: "https://lu.ma/ea42t9n7" },
+  { title: "UNSCRIPTED!", date: "Jun 27, 2025", tag: "Music", href: "https://torontomusicians.myshopify.com/products/toronto-musicians-unscripted" },
+  { title: "FLVMELAND 3", date: "May 30, 2025", tag: "Culture", href: "https://www.universe.com/events/flvmeland-3-tickets-41CWLH" },
+];
+
 const tickerItems = [
   { tag: "Leaderboard", label: "Weekly snapshot · live", href: "/leaderboard.html" },
   { tag: "Next Event", label: "Land Sessions · LA", href: "/events.html" },
@@ -249,22 +258,65 @@ const Hero = () => {
             <div className="p-5">
               <div className="mb-4 text-[0.68rem] font-black uppercase tracking-[0.18em] text-muted-foreground">Explore Rhozeland</div>
               <div className="grid grid-cols-2 gap-3">
-                {pillars.map(({ href, label, desc, Icon, gradient }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    className="group relative flex aspect-square flex-col justify-between overflow-hidden rounded-2xl border border-foreground/10 p-3 shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-transform hover:-translate-y-0.5"
-                    style={{ backgroundImage: gradient }}
-                  >
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-background/70 text-foreground backdrop-blur-sm">
-                      <Icon size={16} strokeWidth={2.2} />
-                    </span>
-                    <span>
-                      <span className="block text-sm font-black uppercase tracking-[0.08em] text-foreground">{label}</span>
-                      <span className="mt-0.5 block text-[0.62rem] font-semibold leading-snug text-foreground/70">{desc}</span>
-                    </span>
-                  </a>
-                ))}
+                {pillars.map(({ href, label, desc, Icon, gradient }) => {
+                  const isEvents = label === "Events";
+                  return (
+                    <div key={label} className="group relative">
+                      <a
+                        href={href}
+                        className="relative flex aspect-square flex-col justify-between overflow-hidden rounded-2xl border border-foreground/10 p-3 shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-transform hover:-translate-y-0.5"
+                        style={{ backgroundImage: gradient }}
+                      >
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-background/70 text-foreground backdrop-blur-sm">
+                          <Icon size={16} strokeWidth={2.2} />
+                        </span>
+                        <span>
+                          <span className="block text-sm font-black uppercase tracking-[0.08em] text-foreground">{label}</span>
+                          <span className="mt-0.5 block text-[0.62rem] font-semibold leading-snug text-foreground/70">{desc}</span>
+                        </span>
+                        {isEvents ? (
+                          <span className="absolute right-2 top-2 rounded-full bg-foreground px-1.5 py-0.5 text-[0.5rem] font-black uppercase tracking-[0.14em] text-background">
+                            {eventArchive.length}
+                          </span>
+                        ) : null}
+                      </a>
+                      {isEvents ? (
+                        <div
+                          role="tooltip"
+                          className="pointer-events-none absolute right-0 top-full z-30 mt-2 hidden w-72 origin-top-right border border-foreground bg-card p-3 shadow-[6px_6px_0_0_hsl(var(--foreground))] group-hover:block sm:pointer-events-auto"
+                        >
+                          <div className="mb-2 flex items-center justify-between">
+                            <span className="text-[0.55rem] font-black uppercase tracking-[0.18em] text-muted-foreground">Events · Archive & Upcoming</span>
+                            <a href="/events.html" className="text-[0.55rem] font-black uppercase tracking-[0.14em] text-foreground">All →</a>
+                          </div>
+                          <ul className="divide-y divide-border">
+                            {eventArchive.map((ev) => (
+                              <li key={ev.title}>
+                                <a
+                                  href={ev.href}
+                                  {...(ev.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                                  className={`flex items-start gap-2 py-2 hover:bg-muted/60 ${ev.featured ? "-mx-3 border-l-2 border-foreground bg-muted/40 px-3" : ""}`}
+                                >
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-1.5">
+                                      {ev.featured ? (
+                                        <span className="rounded bg-foreground px-1 py-0.5 text-[0.5rem] font-black uppercase tracking-[0.14em] text-background">★ New</span>
+                                      ) : null}
+                                      <span className="text-[0.55rem] font-black uppercase tracking-[0.14em] text-muted-foreground">{ev.tag}</span>
+                                    </div>
+                                    <div className="mt-0.5 truncate text-xs font-black text-foreground">{ev.title}</div>
+                                    <div className="text-[0.62rem] font-semibold text-muted-foreground">{ev.date}</div>
+                                  </div>
+                                  <ArrowUpRight size={12} className="mt-1 shrink-0 text-foreground opacity-60" />
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </aside>

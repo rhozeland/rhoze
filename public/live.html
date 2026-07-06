@@ -510,8 +510,6 @@ function applyLiveContent(){
   if (social && social.handles) {
     // social handles editor field — reserved for future use; X widget covers live now
   }
-    if (PULSE_FALLBACK.length) { PULSE = PULSE_FALLBACK.slice(); pulseIdx = 0; renderPulse(); }
-  }
   var facts = LIVE_CONTENT.did_you_know;
   if (facts && Array.isArray(facts.items) && facts.items.length) {
     FACTS = facts.items.map(function(f){ return { c:f.category || 'Update', t:safeFactText(f.text || '') }; }).filter(function(f){ return f.t; });

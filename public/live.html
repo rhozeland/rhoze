@@ -247,7 +247,7 @@ var SOCIAL_LINKS=[
   {cls:'yt',label:'YT',handle:'@rhozeland',sub:'YouTube · releases',url:'https://youtube.com/@rhozeland'},
   {cls:'tt',label:'TT',handle:'@rhozeland',sub:'TikTok · shorts',url:'https://tiktok.com/@rhozeland'}
 ];
-function renderSocial(){var el=document.getElementById('social-list');var posts=SOCIAL_POSTS.slice(0,4).map(function(p){return '<article class="post'+(p.hot?' hot':'')+'"><div class="post-top"><span class="post-who">'+esc(p.who)+'</span><span class="post-platform">'+esc(p.platform)+' · '+esc(p.time||'')+'</span></div><div class="post-msg">'+esc(p.message)+'</div></article>'}).join('');var cards=SOCIAL_LINKS.map(function(s){return '<a class="social-card '+s.cls+'" href="'+esc(s.url)+'" target="_blank" rel="noopener"><span class="ico">'+esc(s.label)+'</span><span><span class="h">'+esc(s.handle)+'</span><span class="s">'+esc(s.sub)+'</span></span><span class="go">↗</span></a>'}).join('');el.innerHTML=posts+cards}
+function renderSocial(){var el=document.getElementById('social-list');el.innerHTML=SOCIAL_POSTS.slice(0,4).map(function(p){return '<article class="post'+(p.hot?' hot':'')+'"><div class="post-top"><span class="post-who">'+esc(p.who)+'</span><span class="post-platform">'+esc(p.platform)+' · '+esc(p.time||'')+'</span></div><div class="post-msg">'+esc(p.message)+'</div></article>'}).join('')}
 renderSocial();
 
 var MERCH=[

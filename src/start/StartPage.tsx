@@ -622,14 +622,30 @@ export default function StartPage() {
             </div>
           )}
 
-          <div className="flex justify-end pt-4">
-            <Button
-              onClick={() => setStep("review")}
-              disabled={path === "subscribe" ? !tierSlug : selected.length === 0}
-            >
-              Continue <ArrowRight size={14} className="ml-1.5" />
-            </Button>
-          </div>
+          {path === "project" ? (
+            <div className="sticky bottom-3 z-10 flex items-center justify-between gap-4 rounded-2xl border border-border bg-background/95 backdrop-blur px-5 py-3 shadow-lg mt-6">
+              <div className="text-sm">
+                <span className="font-semibold text-foreground">Estimate:</span>{" "}
+                <span className="tabular-nums">{selected.length} {selected.length === 1 ? "item" : "items"} · {totalCredits} cr / {fmt(estimateCents)}</span>
+              </div>
+              <Button
+                size="lg"
+                onClick={() => setStep("review")}
+                disabled={selected.length === 0}
+              >
+                Review & Checkout <ArrowRight size={14} className="ml-1.5" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-end pt-4">
+              <Button
+                onClick={() => setStep("review")}
+                disabled={!tierSlug}
+              >
+                Continue <ArrowRight size={14} className="ml-1.5" />
+              </Button>
+            </div>
+          )}
         </div>
         <ServiceDetailsDialog pkg={detailsFor} onClose={() => setDetailsFor(null)} onAdd={(p) => { addToCart(p); setDetailsFor(null); }} fmt={fmt} />
       </div>

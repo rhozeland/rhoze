@@ -212,122 +212,54 @@
               </div>
             </div>
 
-            <!-- ===== TECHNICAL FORM ===== -->
-            <div class="form-section" id="form-technical">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'technical')" novalidate>
-                <h2>Technical & Studio Support</h2>
-                <p class="subtitle">Questions about platforms, tools, studio access, or billing — we're here to help.</p>
+            <!-- ===== SUPPORT & INQUIRIES (unified) ===== -->
+            <div class="form-section" id="form-support">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'support')" novalidate>
+                <h2>Support & Inquiries</h2>
+                <p class="subtitle">Pick a topic and we'll route your message to the right person.</p>
 
                 <div class="form-group">
-                  <label for="t-fullname">Full Name</label>
-                  <input type="text" id="t-fullname" name="fullname" placeholder="Jane Doe" required />
-                  <span class="error-msg">Name is required</span>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="t-email">Email</label>
-                    <input type="email" id="t-email" name="email" placeholder="you@example.com" required />
-                    <span class="error-msg">Valid email is required</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="t-phone">Phone <span class="optional-tag">optional</span></label>
-                    <input type="tel" id="t-phone" name="phone" placeholder="+1 (555) 000-0000" />
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="t-topic">Topic</label>
-                    <select id="t-topic" name="topic" required>
-                      <option value="" disabled selected>What do you need help with?</option>
-                      <option value="studio-booking">Studio Booking & Access</option>
-                      <option value="platform-issue">Platform / App Issue</option>
-                      <option value="billing">Billing & Payments</option>
-                      <option value="account">Account & Membership</option>
-                      <option value="equipment">Equipment & Gear</option>
-                      <option value="other-tech">Other Technical</option>
-                    </select>
-                    <span class="error-msg">Please select a topic</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="t-urgency">Urgency</label>
-                    <select id="t-urgency" name="urgency">
-                      <option value="" disabled selected>How urgent is this?</option>
-                      <option value="low">Low — no rush</option>
-                      <option value="medium">Medium — within a few days</option>
-                      <option value="high">High — need help ASAP</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="t-details">Describe Your Issue</label>
-                  <textarea id="t-details" name="details" rows="5" placeholder="Include any relevant details, error messages, or context..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
-                  <span class="error-msg">Please describe your issue</span>
-                  <span class="char-count" id="t-details-count">0 / 2,000</span>
-                </div>
-
-
-                <div class="form-actions">
-                  <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
-                    Submit Request
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            <!-- ===== GENERAL FORM ===== -->
-            <div class="form-section" id="form-general">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'general')" novalidate>
-                <h2>General Inquiry</h2>
-                <p class="subtitle">Partnerships, press, sponsorships, or anything else — drop us a line.</p>
-
-                <div class="form-group">
-                  <label for="g-fullname">Full Name</label>
-                  <input type="text" id="g-fullname" name="fullname" placeholder="Jane Doe" required />
-                  <span class="error-msg">Name is required</span>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="g-email">Email</label>
-                    <input type="email" id="g-email" name="email" placeholder="you@example.com" required />
-                    <span class="error-msg">Valid email is required</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="g-phone">Phone <span class="optional-tag">optional</span></label>
-                    <input type="tel" id="g-phone" name="phone" placeholder="+1 (555) 000-0000" />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="g-reason">Reason for Reaching Out</label>
-                  <select id="g-reason" name="reason" required>
-                    <option value="" disabled selected>Select a reason</option>
-                    <option value="partnership">Partnership / Collaboration</option>
-                    <option value="press">Press / Media</option>
-                    <option value="sponsorship">Sponsorship</option>
-                    <option value="feedback">Feedback / Suggestion</option>
-                    <option value="other-general">Other</option>
+                  <label for="s-topic">What's this about?</label>
+                  <select id="s-topic" name="topic" required onchange="document.getElementById('s-form-body').style.display=this.value?'grid':'none'">
+                    <option value="" disabled selected>Select a topic</option>
+                    <option value="platform">Platform Support</option>
+                    <option value="studio">Studio Access</option>
+                    <option value="billing">Billing</option>
+                    <option value="partnerships">Partnerships</option>
+                    <option value="general">General</option>
                   </select>
-                  <span class="error-msg">Please select a reason</span>
+                  <span class="error-msg">Please select a topic</span>
                 </div>
 
-                <div class="form-group">
-                  <label for="g-message">Your Message</label>
-                  <textarea id="g-message" name="message" rows="5" placeholder="Tell us what's on your mind..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
-                  <span class="error-msg">Please enter your message</span>
-                  <span class="char-count" id="g-message-count">0 / 2,000</span>
-                </div>
-
-
-                <div class="form-actions">
-                  <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
-                    Send Message
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-                  </button>
+                <div id="s-form-body" style="display:none;gap:1.25rem;grid-template-columns:1fr;">
+                  <div class="form-group">
+                    <label for="s-fullname">Full Name</label>
+                    <input type="text" id="s-fullname" name="fullname" placeholder="Jane Doe" required />
+                    <span class="error-msg">Name is required</span>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="s-email">Email</label>
+                      <input type="email" id="s-email" name="email" placeholder="you@example.com" required />
+                      <span class="error-msg">Valid email is required</span>
+                    </div>
+                    <div class="form-group">
+                      <label for="s-phone">Phone <span class="optional-tag">optional</span></label>
+                      <input type="tel" id="s-phone" name="phone" placeholder="+1 (555) 000-0000" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="s-message">Your Message</label>
+                    <textarea id="s-message" name="message" rows="5" placeholder="Include any relevant details, context, or links..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
+                    <span class="error-msg">Please enter your message</span>
+                    <span class="char-count" id="s-message-count">0 / 2,000</span>
+                  </div>
+                  <div class="form-actions">
+                    <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
+                      Send Message
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>

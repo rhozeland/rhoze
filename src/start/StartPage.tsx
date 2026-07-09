@@ -321,22 +321,23 @@ export default function StartPage() {
           <img src={logoWhite} alt="Rhozeland" className="h-12 md:h-14 mx-auto opacity-90 dark:opacity-100" />
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight">Start a project</h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
-            Subscribe monthly for ongoing output, or scope a one-off and put down a deposit.
+            Choose how you want to work.
           </p>
 
           <div className="grid md:grid-cols-2 gap-4 pt-4 text-left">
             <button
               onClick={() => { setPath("subscribe"); setStep("build"); }}
-              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/60 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 space-y-3"
             >
               <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Best value</div>
               <div className="text-xl font-semibold">Subscribe</div>
               <p className="text-sm text-muted-foreground">Monthly credits to spend on anything — cheaper per credit.</p>
+              <p className="text-[11px] text-muted-foreground/80 leading-relaxed">1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.</p>
               <div className="flex items-center gap-1 text-sm font-medium pt-2">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
             <button
               onClick={() => { setPath("project"); setStep("build"); }}
-              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/60 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 space-y-3"
             >
               <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">One-off</div>
               <div className="text-xl font-semibold">Scope a project</div>
@@ -345,11 +346,7 @@ export default function StartPage() {
             </button>
           </div>
 
-          <div className="text-xs text-muted-foreground pt-2 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.
-          </div>
-
-          <div id="dashboard" className="pt-10 md:pt-14">
+          <div id="dashboard" className="pt-10 md:pt-14 border-t border-border/50 mt-10">
             <ClientDashboard />
           </div>
         </div>

@@ -865,6 +865,39 @@ export type Database = {
           },
         ]
       }
+      news_ticker_items: {
+        Row: {
+          created_at: string
+          headline: string
+          href: string | null
+          id: string
+          is_active: boolean
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          headline: string
+          href?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          headline?: string
+          href?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pay_periods: {
         Row: {
           created_at: string

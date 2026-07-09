@@ -1,58 +1,49 @@
-## Goal
+## Two things to ship
 
-Evolve `/start.html` (currently a static marketing page) into a **hybrid** Start a Project surface: marketing-style tier picker on top for anonymous visitors, signed-in dashboard panel underneath for clients.
+### 1. Fix the visual bug (news ticker overlap)
 
-## Layout
+**Where:** the "News" label with the green dot on the far left of the ticker in the homepage masthead (in `index.html`, `.r-eco-tick` + `.r-eco-tick.is-news`).
 
-```text
-┌─────────────────────────────────────────────┐
-│ HERO  "Start a project"                     │
-│ Tagline · sign in CTA (right side)          │
-├─────────────────────────────────────────────┤
-│ TIERS / À LA CARTE  (always visible)        │
-│  - Subscription tiers grid                  │
-│  - À la carte sessions + custom deposit     │
-│  - "Checkout" button → Stripe               │
-├─────────────────────────────────────────────┤
-│ ── signed-in only below ──                  │
-│ DASHBOARD                                   │
-│ ┌─ Credits ──────┐ ┌─ Active project ────┐ │
-│ │ 12 credits     │ │ Project: FUS Rollout │ │
-│ │ $240 balance   │ │ Status: active       │ │
-│ │ [Top up]       │ │ Next: Mix v2 (Aug 4) │ │
-│ │ [Change tier]  │ │ [Open portal]        │ │
-│ └────────────────┘ └─────────────────────┘ │
-│ ┌─ Request work ─────────────────────────┐ │
-│ │ Title · description · est. credits     │ │
-│ │ [Submit request]                       │ │
-│ └────────────────────────────────────────┘ │
-│ Recent requests list (status pills)        │
-└─────────────────────────────────────────────┘
-```
+**Why it clips:** the scrolling track is `overflow:hidden` on its own cell, but the parent row lets the animated text bleed under the stationary "News" label because that label has no background/z-index, and there's no left fade to mask the edge.
 
-Anonymous user → only sees hero + tiers + "Sign in to see your dashboard" prompt.
-Signed-in user → sees everything; if they have no project yet, dashboard shows an onboarding state ("Your project will appear here after your first checkout").
+**Fix:**
+- Give the "News" label cell a solid `background: hsl(var(--surface-card))`, `position: relative`, `z-index: 2`, and a proper right border so it sits above the scrolling row.
+- Add a small left fade gradient inside `.r-eco-tick.is-news` (matching the existing behavior on other tickers on the site) so items dissolve into the label cleanly instead of butting up against it.
+- Bump the left padding on the first news item so nothing ever kisses the label edge.
 
-## Implementation
+### 2. Team Portal → Newsroom (admin for the ticker)
 
-1. **Keep `start.html` as the SPA mount** (`src/start-main.tsx` → `StartPage.tsx`). The page is already React — extend it, don't rewrite to static HTML.
-2. **Auth**: reuse the existing community auth client (`rhz-community-auth` storage key) so one sign-in covers leaderboard + start page. Add a top-right "Sign in / Account" button. Use email+password (already wired in `leaderboard.html`).
-3. **Dashboard data sources** (all already in DB):
-   - `projects` (via `project_clients` join) → title, status, `credit_balance`, `dollar_balance_cents`, `active_tier_slug`
-   - `project_milestones` → next deliverable
-   - `credit_requests` → list + submission form via existing `credit_request_*` RPCs
-   - `service_packages` → top-up + tier change options (already pulled in StartPage)
-4. **Top-up flow**: reuse existing `create-checkout` edge function with the user's `project_id`. After Stripe redirect, `apply_project_topup` already credits the balance.
-5. **Submit request**: insert into `credit_requests` with `requested_by = auth.uid()`, `project_id = active project`. Existing trigger handles activity log.
-6. **No schema changes** — current tables and RPCs cover everything. Only RLS check: confirm `credit_requests` allows the requester to read their own rows (it already does per existing policies).
+**New page:** `Newsroom` under the team portal (`/newsroom`), added to the sidebar next to `Live Editor`. Admin-only.
 
-## Out of scope (next iteration)
+**What it does:** lets you edit the homepage news ticker items — the little press/announcement chips that scroll across the masthead. Each row is a simple, typeable entry:
 
-- Billing/invoice history view (deferred per your scope choice)
-- Stripe customer portal embed (link only for now)
-- Multi-project switcher (handle single active project first; add switcher when a client has 2+)
+| Field | Notes |
+|---|---|
+| Label (kicker) | Free text — `New Release`, `Podcast`, `Exhibition`, `Hackathon`, `Community`, whatever you want. Not a fixed dropdown. |
+| Headline | The line that scrolls (`Cozal — "Sefra" music video out now`). |
+| Link (optional) | Full URL or an internal path like `/leaderboard.html`. If empty, item is not clickable. |
+| Sort order | Drag to reorder. |
+| Active | Toggle to show/hide without deleting. |
 
-## Notes / decisions to confirm later
+Standard actions: add, edit, reorder, hide/show, delete. Live preview strip at the top of the page shows exactly how the ticker will look on the homepage.
 
-- Should the dashboard land on `/start.html` or move to `/dashboard.html`? Defaulting to `/start.html` per your direction.
-- Sign-in shares the leaderboard account, so a creator who submits memes and a client who pays both use the same login.
+### How the homepage picks up the changes
+
+The static `index.html` masthead ticker gets a small script that fetches the active items from the backend on load and rerenders `#rEcoNewsTrack`. If the fetch fails or returns empty, it keeps the hardcoded fallback items already in the HTML so the ticker is never blank.
+
+### Data & access
+
+- New table `news_ticker_items` in Lovable Cloud with the fields above.
+- Public read access (so the homepage can render it without auth).
+- Write access restricted to `admin` role via the existing `has_role` pattern.
+
+### Out of scope for this pass
+
+- Rich text / images inside ticker items — kept as plain text on purpose.
+- Scheduling (auto publish/unpublish by date). Easy to add later; for now the Active toggle covers it.
+- Sharing this ticker with other pages (contact, events, etc.). Same data source could power them later, but not part of this change.
+
+### Technical notes
+
+- Files touched: `index.html` (CSS + fetch script), new `src/team/pages/Newsroom.tsx`, `src/team/TeamApp.tsx` (route), `src/team/components/TeamLayout.tsx` (nav link), one Cloud migration.
+- No changes to the React homepage components — the ticker in question lives entirely in `index.html`.

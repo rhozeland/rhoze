@@ -23,7 +23,8 @@
     .cat-tabs{display:flex;gap:0.75rem;justify-content:center;margin:2rem 0 2.5rem;flex-wrap:wrap}
     .cat-tab{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.4rem;border:1px solid hsl(var(--border));border-radius:var(--radius);background:hsl(var(--surface)/0.4);backdrop-filter:blur(12px);font-family:'Inter',system-ui,sans-serif;font-size:0.85rem;font-weight:600;color:hsl(var(--muted));cursor:pointer;transition:all 0.3s ease}
     .cat-tab:hover{border-color:hsl(var(--fg)/0.3);color:hsl(var(--fg));transform:translateY(-1px)}
-    .cat-tab.active{border-color:hsl(var(--fg));color:hsl(var(--fg));background:hsl(var(--surface)/0.8);box-shadow:0 4px 12px hsl(var(--fg)/0.08)}
+    .cat-tab.active{border-color:hsl(var(--fg));color:hsl(var(--bg));background:hsl(var(--fg));box-shadow:0 6px 18px hsl(var(--fg)/0.22)}
+    .cat-tab.active svg{stroke:hsl(var(--bg))}
     .cat-tab svg{width:18px;height:18px;flex-shrink:0}
 
     /* Social section */
@@ -167,34 +168,10 @@
         <div class="section-head" style="flex-direction:column;align-items:center;text-align:center;margin-bottom:1.2rem;">
           <div>
             <span class="section-kicker">Connect</span>
-            <h2>Select how we can help you.</h2>
+            <h2>Let's build something great together.</h2>
           </div>
         </div>
       </section>
-
-      <!-- Social Pills -->
-      <div class="contact-socials-wrap">
-        <div class="contact-socials">
-        <a href="https://www.instagram.com/rhozeland/" target="_blank" rel="noopener noreferrer" class="social-pill" data-label="Instagram" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        </a>
-        <a href="https://x.com/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill" data-label="X" aria-label="X">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-        </a>
-        <a href="https://www.linkedin.com/company/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill" data-label="LinkedIn" aria-label="LinkedIn">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>
-        </a>
-        <a href="https://www.tiktok.com/@rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill" data-label="TikTok" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78 2.92 2.92 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.57 6.33 6.33 0 0 0 9.37 22a6.33 6.33 0 0 0 6.37-6.22V9.4a8.16 8.16 0 0 0 3.85.96V7.04a4.78 4.78 0 0 1-1-.35z"/></svg>
-        </a>
-        <a href="https://luma.com/user/rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill" data-label="Luma" aria-label="Luma">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </a>
-        <a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener noreferrer" class="social-pill" data-label="YouTube" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.3 31.3 0 0 0 0 12a31.3 31.3 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.3 31.3 0 0 0 24 12a31.3 31.3 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6z"/></svg>
-        </a>
-        </div>
-      </div>
 
       <!-- Category Tabs -->
       <div class="cat-tabs">
@@ -202,13 +179,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
           Start a Project
         </button>
-        <button class="cat-tab" onclick="switchCategory('technical')" data-cat="technical">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-          Technical & Studio
-        </button>
-        <button class="cat-tab" onclick="switchCategory('general')" data-cat="general">
+        <button class="cat-tab" onclick="switchCategory('support')" data-cat="support">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          General Inquiry
+          Support & Inquiries
         </button>
       </div>
 
@@ -221,11 +194,11 @@
             <!-- ===== PROJECT FORM ===== -->
             <div class="form-section active" id="form-project">
               <h2>Start a Project</h2>
-              <p class="subtitle">Pick a monthly retainer tier or build an à la carte cart with secure checkout — your project ledger and client portal are created the moment you book.</p>
+              <p class="subtitle">Choose a monthly retainer or <strong>select individual services</strong>. Your client portal and project ledger are generated instantly upon checkout.</p>
               <ul style="list-style:none;padding:0;margin:1.25rem 0 1.75rem;display:grid;gap:0.65rem;font-size:0.88rem;color:hsl(var(--muted));line-height:1.5;">
-                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Choose a subscription tier (monthly credits) or pay as you go</li>
-                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Add à la carte sessions and a custom-amount deposit to your cart</li>
-                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Checkout securely; manage your subscription and balance from your client portal</li>
+                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Choose a subscription tier (monthly credits) or <strong style="color:hsl(var(--fg));font-weight:600;">pay as you go</strong>.</li>
+                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Add <strong style="color:hsl(var(--fg));font-weight:600;">one-off sessions</strong> and a custom deposit to your cart.</li>
+                <li style="display:flex;gap:0.6rem;align-items:flex-start;"><span style="color:hsl(var(--fg));font-weight:700;">→</span> Checkout securely; manage your subscription and balance from your client portal.</li>
               </ul>
               <div class="form-actions">
                 <a href="/start.html" class="btn-dark" style="flex:1;justify-content:center;">
@@ -237,125 +210,56 @@
                   Book a discovery call
                 </a>
               </div>
-              <p style="margin-top:1.25rem;font-size:0.78rem;color:hsl(var(--muted)/0.7);">Have a quick non-project question instead? Switch to <button type="button" onclick="switchCategory('technical')" style="background:none;border:none;padding:0;color:hsl(var(--fg));font-weight:600;cursor:pointer;text-decoration:underline;">Technical & Studio</button> or <button type="button" onclick="switchCategory('general')" style="background:none;border:none;padding:0;color:hsl(var(--fg));font-weight:600;cursor:pointer;text-decoration:underline;">General Inquiry</button>.</p>
             </div>
 
-            <!-- ===== TECHNICAL FORM ===== -->
-            <div class="form-section" id="form-technical">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'technical')" novalidate>
-                <h2>Technical & Studio Support</h2>
-                <p class="subtitle">Questions about platforms, tools, studio access, or billing — we're here to help.</p>
+            <!-- ===== SUPPORT & INQUIRIES (unified) ===== -->
+            <div class="form-section" id="form-support">
+              <form class="inquiry-form" onsubmit="handleSubmit(event,'support')" novalidate>
+                <h2>Support & Inquiries</h2>
+                <p class="subtitle">Pick a topic and we'll route your message to the right person.</p>
 
                 <div class="form-group">
-                  <label for="t-fullname">Full Name</label>
-                  <input type="text" id="t-fullname" name="fullname" placeholder="Jane Doe" required />
-                  <span class="error-msg">Name is required</span>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="t-email">Email</label>
-                    <input type="email" id="t-email" name="email" placeholder="you@example.com" required />
-                    <span class="error-msg">Valid email is required</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="t-phone">Phone <span class="optional-tag">optional</span></label>
-                    <input type="tel" id="t-phone" name="phone" placeholder="+1 (555) 000-0000" />
-                  </div>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="t-topic">Topic</label>
-                    <select id="t-topic" name="topic" required>
-                      <option value="" disabled selected>What do you need help with?</option>
-                      <option value="studio-booking">Studio Booking & Access</option>
-                      <option value="platform-issue">Platform / App Issue</option>
-                      <option value="billing">Billing & Payments</option>
-                      <option value="account">Account & Membership</option>
-                      <option value="equipment">Equipment & Gear</option>
-                      <option value="other-tech">Other Technical</option>
-                    </select>
-                    <span class="error-msg">Please select a topic</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="t-urgency">Urgency</label>
-                    <select id="t-urgency" name="urgency">
-                      <option value="" disabled selected>How urgent is this?</option>
-                      <option value="low">Low — no rush</option>
-                      <option value="medium">Medium — within a few days</option>
-                      <option value="high">High — need help ASAP</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="t-details">Describe Your Issue</label>
-                  <textarea id="t-details" name="details" rows="5" placeholder="Include any relevant details, error messages, or context..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
-                  <span class="error-msg">Please describe your issue</span>
-                  <span class="char-count" id="t-details-count">0 / 2,000</span>
-                </div>
-
-
-                <div class="form-actions">
-                  <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
-                    Submit Request
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            <!-- ===== GENERAL FORM ===== -->
-            <div class="form-section" id="form-general">
-              <form class="inquiry-form" onsubmit="handleSubmit(event,'general')" novalidate>
-                <h2>General Inquiry</h2>
-                <p class="subtitle">Partnerships, press, sponsorships, or anything else — drop us a line.</p>
-
-                <div class="form-group">
-                  <label for="g-fullname">Full Name</label>
-                  <input type="text" id="g-fullname" name="fullname" placeholder="Jane Doe" required />
-                  <span class="error-msg">Name is required</span>
-                </div>
-
-                <div class="form-row">
-                  <div class="form-group">
-                    <label for="g-email">Email</label>
-                    <input type="email" id="g-email" name="email" placeholder="you@example.com" required />
-                    <span class="error-msg">Valid email is required</span>
-                  </div>
-                  <div class="form-group">
-                    <label for="g-phone">Phone <span class="optional-tag">optional</span></label>
-                    <input type="tel" id="g-phone" name="phone" placeholder="+1 (555) 000-0000" />
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="g-reason">Reason for Reaching Out</label>
-                  <select id="g-reason" name="reason" required>
-                    <option value="" disabled selected>Select a reason</option>
-                    <option value="partnership">Partnership / Collaboration</option>
-                    <option value="press">Press / Media</option>
-                    <option value="sponsorship">Sponsorship</option>
-                    <option value="feedback">Feedback / Suggestion</option>
-                    <option value="other-general">Other</option>
+                  <label for="s-topic">What's this about?</label>
+                  <select id="s-topic" name="topic" required onchange="document.getElementById('s-form-body').style.display=this.value?'grid':'none'">
+                    <option value="" disabled selected>Select a topic</option>
+                    <option value="platform">Platform Support</option>
+                    <option value="studio">Studio Access</option>
+                    <option value="billing">Billing</option>
+                    <option value="partnerships">Partnerships</option>
+                    <option value="general">General</option>
                   </select>
-                  <span class="error-msg">Please select a reason</span>
+                  <span class="error-msg">Please select a topic</span>
                 </div>
 
-                <div class="form-group">
-                  <label for="g-message">Your Message</label>
-                  <textarea id="g-message" name="message" rows="5" placeholder="Tell us what's on your mind..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
-                  <span class="error-msg">Please enter your message</span>
-                  <span class="char-count" id="g-message-count">0 / 2,000</span>
-                </div>
-
-
-                <div class="form-actions">
-                  <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
-                    Send Message
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-                  </button>
+                <div id="s-form-body" style="display:none;gap:1.25rem;grid-template-columns:1fr;">
+                  <div class="form-group">
+                    <label for="s-fullname">Full Name</label>
+                    <input type="text" id="s-fullname" name="fullname" placeholder="Jane Doe" required />
+                    <span class="error-msg">Name is required</span>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="s-email">Email</label>
+                      <input type="email" id="s-email" name="email" placeholder="you@example.com" required />
+                      <span class="error-msg">Valid email is required</span>
+                    </div>
+                    <div class="form-group">
+                      <label for="s-phone">Phone <span class="optional-tag">optional</span></label>
+                      <input type="tel" id="s-phone" name="phone" placeholder="+1 (555) 000-0000" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="s-message">Your Message</label>
+                    <textarea id="s-message" name="message" rows="5" placeholder="Include any relevant details, context, or links..." required maxlength="2000" oninput="updateCharCount(this,2000)"></textarea>
+                    <span class="error-msg">Please enter your message</span>
+                    <span class="char-count" id="s-message-count">0 / 2,000</span>
+                  </div>
+                  <div class="form-actions">
+                    <button type="submit" class="btn-dark" style="flex:1;justify-content:center;">
+                      Send Message
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
+                    </button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -432,8 +336,7 @@
   <script>
     var EMAIL_MAP = {
       project: 'collab@rhozeland.com',
-      technical: 'support@rhozeland.com',
-      general: 'collab@rhozeland.com,support@rhozeland.com'
+      support: 'support@rhozeland.com,collab@rhozeland.com'
     };
 
     function switchCategory(cat) {
@@ -522,16 +425,9 @@
         lines.push('');
         lines.push('Project Details:');
         lines.push(f.details ? f.details.value : 'N/A');
-      } else if (category === 'technical') {
-        subjectPrefix = 'Technical Support';
-        lines.push('Topic: ' + (f.topic ? f.topic.value : ''));
-        lines.push('Urgency: ' + (f.urgency ? f.urgency.value : 'N/A'));
-        lines.push('');
-        lines.push('Details:');
-        lines.push(f.details ? f.details.value : 'N/A');
       } else {
-        subjectPrefix = 'General Inquiry';
-        lines.push('Reason: ' + (f.reason ? f.reason.value : ''));
+        subjectPrefix = 'Support & Inquiries';
+        lines.push('Topic: ' + (f.topic ? f.topic.value : ''));
         lines.push('');
         lines.push('Message:');
         lines.push(f.message ? f.message.value : 'N/A');
@@ -546,14 +442,11 @@
           if (f['support-level']) fields['Support Level'] = f['support-level'].value;
           if (f.budget) fields['Budget'] = f.budget.value;
           if (f.timeline) fields['Timeline'] = f.timeline.value;
-        } else if (category === 'technical') {
-          if (f.topic) fields['Topic'] = f.topic.value;
-          if (f.urgency) fields['Urgency'] = f.urgency.value;
         } else {
-          if (f.reason) fields['Reason'] = f.reason.value;
+          if (f.topic) fields['Topic'] = f.topic.value;
         }
         var msgField =
-          category === 'general' ? (f.message ? f.message.value : '') : (f.details ? f.details.value : '');
+          category === 'project' ? (f.details ? f.details.value : '') : (f.message ? f.message.value : '');
         var SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
         var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
         fetch(SUPABASE_URL + '/functions/v1/submit-public-lead', {
@@ -581,7 +474,7 @@
       var mailto = EMAIL_MAP[category];
 
       // Build summary HTML
-      var catLabels = {project:'Project Inquiry',technical:'Technical Support',general:'General Inquiry'};
+      var catLabels = {project:'Project Inquiry',support:'Support & Inquiries'};
       var summaryHtml = '<strong>Category:</strong> ' + catLabels[category] + '<br>';
       summaryHtml += '<strong>Name:</strong> ' + name + '<br>';
       summaryHtml += '<strong>Email:</strong> ' + email + '<br>';

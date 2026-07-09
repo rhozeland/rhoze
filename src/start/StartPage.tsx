@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, type ReactNode } from "react";
+import { useState, useMemo, useRef, useEffect, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink, Play } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink, Play, Check } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -321,22 +321,23 @@ export default function StartPage() {
           <img src={logoWhite} alt="Rhozeland" className="h-12 md:h-14 mx-auto opacity-90 dark:opacity-100" />
           <h1 className="text-4xl md:text-6xl font-semibold tracking-tight">Start a project</h1>
           <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
-            Subscribe monthly for ongoing output, or scope a one-off and put down a deposit.
+            Choose how you want to work.
           </p>
 
           <div className="grid md:grid-cols-2 gap-4 pt-4 text-left">
             <button
               onClick={() => { setPath("subscribe"); setStep("build"); }}
-              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/60 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 space-y-3"
             >
               <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Best value</div>
               <div className="text-xl font-semibold">Subscribe</div>
               <p className="text-sm text-muted-foreground">Monthly credits to spend on anything — cheaper per credit.</p>
+              <p className="text-[11px] text-muted-foreground/80 leading-relaxed">1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.</p>
               <div className="flex items-center gap-1 text-sm font-medium pt-2">Choose a plan <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" /></div>
             </button>
             <button
               onClick={() => { setPath("project"); setStep("build"); }}
-              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/40 transition-colors space-y-3"
+              className="group rounded-2xl p-6 border border-border bg-card hover:border-foreground/60 hover:-translate-y-0.5 hover:shadow-lg transition-all duration-200 space-y-3"
             >
               <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">One-off</div>
               <div className="text-xl font-semibold">Scope a project</div>
@@ -345,11 +346,7 @@ export default function StartPage() {
             </button>
           </div>
 
-          <div className="text-xs text-muted-foreground pt-2 max-w-md mx-auto">
-            1 credit = {fmt(CREDIT_VALUE_CENTS)}. Final scope confirmed on a kickoff call.
-          </div>
-
-          <div id="dashboard" className="pt-10 md:pt-14">
+          <div id="dashboard" className="pt-10 md:pt-14 border-t border-border/50 mt-10">
             <ClientDashboard />
           </div>
         </div>
@@ -407,15 +404,22 @@ export default function StartPage() {
                   const isPicked = tierSlug === t.slug;
                   const accent = TIER_ACCENTS[t.slug] ?? TIER_ACCENTS.default;
                   const isFree = t.price_cents === 0;
+                  const isPopular = t.slug === "glow";
                   return (
                     <button
                       key={t.id}
                       onClick={() => setTierSlug(t.slug)}
-                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "ring-1" : "hover:border-foreground/40"}`}
+                      className={`relative text-left border rounded-2xl p-5 transition-all hover:-translate-y-0.5 ${isPicked ? "ring-1" : "hover:border-foreground/40 hover:shadow-md"} ${isPopular ? "border-2 shadow-lg" : ""}`}
                       style={isPicked
                         ? { borderColor: accent, boxShadow: `inset 0 0 0 1px ${accent}`, background: `${accent}14` }
-                        : undefined}
+                        : isPopular ? { borderColor: accent } : undefined}
                     >
+                      {isPopular && (
+                        <span
+                          className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-semibold uppercase tracking-[0.14em] px-2.5 py-0.5 rounded-full text-background"
+                          style={{ background: accent }}
+                        >Most Popular</span>
+                      )}
                       <div className="text-[11px] uppercase tracking-[0.18em] font-semibold" style={{ color: accent }}>{t.name}</div>
                       <div className="mt-2 flex items-baseline gap-1">
                         <span className="text-2xl font-semibold">{isFree ? "Free" : fmt(t.price_cents)}</span>
@@ -430,9 +434,9 @@ export default function StartPage() {
                       <div className="text-[11px] text-muted-foreground mt-1">
                         {isFree
                           ? "No commitment. Buy credits or scope a project anytime."
-                          : "Unused credits roll over while your subscription stays active."}
+                          : `Best for ${t.credits >= 20 ? "full-stack teams" : t.credits >= 8 ? "active creators" : "steady output"}.`}
                       </div>
-                      {t.description && (
+                      {!isFree && t.description && (
                         <div className="text-xs text-muted-foreground mt-3 leading-relaxed">{t.description}</div>
                       )}
                     </button>
@@ -618,14 +622,30 @@ export default function StartPage() {
             </div>
           )}
 
-          <div className="flex justify-end pt-4">
-            <Button
-              onClick={() => setStep("review")}
-              disabled={path === "subscribe" ? !tierSlug : selected.length === 0}
-            >
-              Continue <ArrowRight size={14} className="ml-1.5" />
-            </Button>
-          </div>
+          {path === "project" ? (
+            <div className="sticky bottom-3 z-10 flex items-center justify-between gap-4 rounded-2xl border border-border bg-background/95 backdrop-blur px-5 py-3 shadow-lg mt-6">
+              <div className="text-sm">
+                <span className="font-semibold text-foreground">Estimate:</span>{" "}
+                <span className="tabular-nums">{selected.length} {selected.length === 1 ? "item" : "items"} · {totalCredits} cr / {fmt(estimateCents)}</span>
+              </div>
+              <Button
+                size="lg"
+                onClick={() => setStep("review")}
+                disabled={selected.length === 0}
+              >
+                Review & Checkout <ArrowRight size={14} className="ml-1.5" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-end pt-4">
+              <Button
+                onClick={() => setStep("review")}
+                disabled={!tierSlug}
+              >
+                Continue <ArrowRight size={14} className="ml-1.5" />
+              </Button>
+            </div>
+          )}
         </div>
         <ServiceDetailsDialog pkg={detailsFor} onClose={() => setDetailsFor(null)} onAdd={(p) => { addToCart(p); setDetailsFor(null); }} fmt={fmt} />
       </div>
@@ -867,6 +887,13 @@ function ServiceDetailsDialog({
   fmt: (c: number) => string;
 }) {
   const open = !!pkg;
+  const [added, setAdded] = useState(false);
+  useEffect(() => { if (!open) setAdded(false); }, [open]);
+  const handleAdd = () => {
+    if (!pkg || added) return;
+    setAdded(true);
+    setTimeout(() => { onAdd(pkg); }, 700);
+  };
   const detail = pkg ? SERVICE_DETAILS[pkg.slug] : undefined;
   const examples = pkg ? SERVICE_EXAMPLES[pkg.slug] : undefined;
   const projectsHref = pkg?.category ? `/projects.html#${pkg.category}` : "/projects.html";
@@ -918,8 +945,10 @@ function ServiceDetailsDialog({
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end pt-4 border-t border-border">
-              <Button variant="outline" onClick={onClose}>Close</Button>
-              <Button onClick={() => onAdd(pkg)}>Add to estimate</Button>
+              <Button variant="outline" onClick={onClose} disabled={added}>Close</Button>
+              <Button onClick={handleAdd} disabled={added} className="transition-colors">
+                {added ? (<><Check size={14} className="mr-1.5" /> Added!</>) : "Add to estimate"}
+              </Button>
             </div>
           </>
         )}

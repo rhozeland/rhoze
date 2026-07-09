@@ -4524,6 +4524,34 @@
           .catch(function(){});
       }
 
+      /* === Admin-managed news ticker (Newsroom in Team Portal) === */
+      var NEWS_SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
+      var NEWS_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
+      function escapeHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]); }); }
+      function renderNewsItems(items){
+        var track = document.getElementById('rEcoNewsTrack');
+        if (!track || !items || !items.length) return;
+        var html = items.map(function(it){
+          var href = it.href && String(it.href).trim();
+          var attrs = href ? ('href="' + escapeHtml(href) + '"' + (/^https?:/i.test(href) ? ' target="_blank" rel="noopener"' : '')) : '';
+          var tag = href ? 'a' : 'span';
+          return '<' + tag + ' class="r-eco-news-item" ' + attrs + '><span class="r-eco-news-k">' + escapeHtml(it.label || 'News') + '</span><span class="r-eco-news-v">' + escapeHtml(it.headline || '') + '</span></' + tag + '>';
+        }).join('');
+        // Duplicate for seamless scroll loop
+        track.innerHTML = html + html;
+        track.dataset.looped = '1';
+      }
+      function loadNewsTicker(){
+        try {
+          fetch(NEWS_SUPABASE_URL + '/rest/v1/news_ticker_items?select=label,headline,href,sort_order&is_active=eq.true&order=sort_order.asc', {
+            headers: { apikey: NEWS_SUPABASE_KEY, Authorization: 'Bearer ' + NEWS_SUPABASE_KEY }
+          })
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .then(function(items){ if (Array.isArray(items) && items.length) renderNewsItems(items); })
+          .catch(function(){});
+        } catch (e) {}
+      }
+
       function start(){
         loadChannel();
         loadNewsTicker();

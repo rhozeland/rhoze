@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, type ReactNode } from "react";
+import { useState, useMemo, useRef, useEffect, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink, Play } from "lucide-react";
+import { Camera, Music2, Activity, Minus, Plus, Info, ArrowRight, CalendarClock, Search, X, ExternalLink, Play, Check } from "lucide-react";
 import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -887,6 +887,13 @@ function ServiceDetailsDialog({
   fmt: (c: number) => string;
 }) {
   const open = !!pkg;
+  const [added, setAdded] = useState(false);
+  useEffect(() => { if (!open) setAdded(false); }, [open]);
+  const handleAdd = () => {
+    if (!pkg || added) return;
+    setAdded(true);
+    setTimeout(() => { onAdd(pkg); }, 700);
+  };
   const detail = pkg ? SERVICE_DETAILS[pkg.slug] : undefined;
   const examples = pkg ? SERVICE_EXAMPLES[pkg.slug] : undefined;
   const projectsHref = pkg?.category ? `/projects.html#${pkg.category}` : "/projects.html";
@@ -938,8 +945,10 @@ function ServiceDetailsDialog({
             </div>
 
             <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end pt-4 border-t border-border">
-              <Button variant="outline" onClick={onClose}>Close</Button>
-              <Button onClick={() => onAdd(pkg)}>Add to estimate</Button>
+              <Button variant="outline" onClick={onClose} disabled={added}>Close</Button>
+              <Button onClick={handleAdd} disabled={added} className="transition-colors">
+                {added ? (<><Check size={14} className="mr-1.5" /> Added!</>) : "Add to estimate"}
+              </Button>
             </div>
           </>
         )}

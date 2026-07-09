@@ -73,12 +73,20 @@
   .os-feat b{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#fff;line-height:1.1}
   .os-feat i{font-size:8.5px;font-style:normal;color:#b8b8b8;line-height:1.32}
   @keyframes os-in{to{opacity:1;transform:none}}
-  .os-cta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--turq);color:#000;text-decoration:none;border:1px solid var(--turq);transition:transform .2s ease,background .2s ease}
-  .os-cta:hover{background:var(--turq-2);transform:translateY(-1px)}
-  .os-cta b{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;line-height:1}
-  .os-cta i{display:block;font-size:8px;font-style:normal;color:rgba(0,0,0,.72);margin-top:2px;letter-spacing:.04em}
-  .os-cta-arrow{font-size:18px;font-weight:900;animation:os-arrow 1.6s ease-in-out infinite}
-  @keyframes os-arrow{50%{transform:translateX(4px)}}
+  .os-scan{display:grid;grid-template-columns:1fr 72px;gap:10px;align-items:center;padding:9px 10px;background:var(--turq);color:#000;border:1px solid var(--turq)}
+  .os-scan b{display:block;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;line-height:1}
+  .os-scan i{display:block;font-size:8.5px;font-style:normal;color:rgba(0,0,0,.75);margin-top:3px;letter-spacing:.05em;line-height:1.35}
+  .os-scan .qr{width:72px;height:72px;background:#fff;padding:4px;display:block}
+  .os-scan .qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
+  .social-follow{margin:6px 8px 8px;display:grid;grid-template-columns:1fr 76px;gap:10px;align-items:center;background:#0c0c0c;border:1px solid var(--line-2);padding:9px 10px}
+  .social-follow .lead{min-width:0}
+  .social-follow .lead b{display:block;font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#fff}
+  .social-follow .lead i{display:block;font-size:9px;font-style:normal;color:var(--muted);margin-top:2px;letter-spacing:.04em}
+  .social-follow .icos{display:flex;gap:6px;margin-top:7px}
+  .social-follow .icos span{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line-2);background:#141414;color:#fff}
+  .social-follow .icos svg{width:12px;height:12px;fill:currentColor}
+  .social-follow .qr{width:76px;height:76px;background:#fff;padding:4px;display:block}
+  .social-follow .qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
 
   .toybox{grid-column:1 / span 2;grid-row:2;display:grid;grid-template-columns:218px 1fr}.toy-head{padding:14px;background:#0b0b0b;border-right:1px solid var(--line-2);display:flex;flex-direction:column;justify-content:space-between}.toy-head .k1{font-size:9px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;color:var(--turq)}.toy-head .k2{font-family:'Roboto Condensed';font-size:34px;line-height:.86;font-weight:900;text-transform:uppercase;margin-top:7px}.toy-head .k3{font-size:11px;line-height:1.35;color:var(--muted);margin-top:8px}.toy-head .k4{font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--turq)}.toy-viewport{position:relative;overflow:hidden}.toy-strip{height:100%;display:flex;width:max-content;animation:toy-scroll 72s linear infinite}.toy-slide{position:relative;flex:0 0 214px;height:100%;background:#111;border-right:1px solid var(--line);overflow:hidden}.toy-slide.featured{flex-basis:260px}.toy-slide img,.toy-slide video{width:100%;height:100%;object-fit:cover;display:block}.toy-slide.gear img{object-fit:contain;background:#080808;padding:8px}.toy-slide::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.08) 55%,transparent);pointer-events:none}.toy-slide .tag{position:absolute;top:8px;left:8px;z-index:2;background:var(--turq);color:#000;padding:3px 6px;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.toy-slide.editorial .tag{background:#fff}.toy-slide .cap{position:absolute;left:10px;right:10px;bottom:9px;z-index:2}.toy-slide .n{font-size:12px;font-weight:900;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toy-slide .p{font-family:'JetBrains Mono';font-size:10px;color:var(--turq);margin-top:2px}@keyframes toy-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 

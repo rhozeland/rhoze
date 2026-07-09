@@ -336,8 +336,7 @@
   <script>
     var EMAIL_MAP = {
       project: 'collab@rhozeland.com',
-      technical: 'support@rhozeland.com',
-      general: 'collab@rhozeland.com,support@rhozeland.com'
+      support: 'support@rhozeland.com,collab@rhozeland.com'
     };
 
     function switchCategory(cat) {
@@ -426,16 +425,9 @@
         lines.push('');
         lines.push('Project Details:');
         lines.push(f.details ? f.details.value : 'N/A');
-      } else if (category === 'technical') {
-        subjectPrefix = 'Technical Support';
-        lines.push('Topic: ' + (f.topic ? f.topic.value : ''));
-        lines.push('Urgency: ' + (f.urgency ? f.urgency.value : 'N/A'));
-        lines.push('');
-        lines.push('Details:');
-        lines.push(f.details ? f.details.value : 'N/A');
       } else {
-        subjectPrefix = 'General Inquiry';
-        lines.push('Reason: ' + (f.reason ? f.reason.value : ''));
+        subjectPrefix = 'Support & Inquiries';
+        lines.push('Topic: ' + (f.topic ? f.topic.value : ''));
         lines.push('');
         lines.push('Message:');
         lines.push(f.message ? f.message.value : 'N/A');
@@ -450,14 +442,11 @@
           if (f['support-level']) fields['Support Level'] = f['support-level'].value;
           if (f.budget) fields['Budget'] = f.budget.value;
           if (f.timeline) fields['Timeline'] = f.timeline.value;
-        } else if (category === 'technical') {
-          if (f.topic) fields['Topic'] = f.topic.value;
-          if (f.urgency) fields['Urgency'] = f.urgency.value;
         } else {
-          if (f.reason) fields['Reason'] = f.reason.value;
+          if (f.topic) fields['Topic'] = f.topic.value;
         }
         var msgField =
-          category === 'general' ? (f.message ? f.message.value : '') : (f.details ? f.details.value : '');
+          category === 'project' ? (f.details ? f.details.value : '') : (f.message ? f.message.value : '');
         var SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';
         var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
         fetch(SUPABASE_URL + '/functions/v1/submit-public-lead', {
@@ -485,7 +474,7 @@
       var mailto = EMAIL_MAP[category];
 
       // Build summary HTML
-      var catLabels = {project:'Project Inquiry',technical:'Technical Support',general:'General Inquiry'};
+      var catLabels = {project:'Project Inquiry',support:'Support & Inquiries'};
       var summaryHtml = '<strong>Category:</strong> ' + catLabels[category] + '<br>';
       summaryHtml += '<strong>Name:</strong> ' + name + '<br>';
       summaryHtml += '<strong>Email:</strong> ' + email + '<br>';

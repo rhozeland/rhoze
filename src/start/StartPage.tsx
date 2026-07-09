@@ -404,15 +404,22 @@ export default function StartPage() {
                   const isPicked = tierSlug === t.slug;
                   const accent = TIER_ACCENTS[t.slug] ?? TIER_ACCENTS.default;
                   const isFree = t.price_cents === 0;
+                  const isPopular = t.slug === "glow";
                   return (
                     <button
                       key={t.id}
                       onClick={() => setTierSlug(t.slug)}
-                      className={`text-left border rounded-2xl p-5 transition-colors ${isPicked ? "ring-1" : "hover:border-foreground/40"}`}
+                      className={`relative text-left border rounded-2xl p-5 transition-all hover:-translate-y-0.5 ${isPicked ? "ring-1" : "hover:border-foreground/40 hover:shadow-md"} ${isPopular ? "border-2 shadow-lg" : ""}`}
                       style={isPicked
                         ? { borderColor: accent, boxShadow: `inset 0 0 0 1px ${accent}`, background: `${accent}14` }
-                        : undefined}
+                        : isPopular ? { borderColor: accent } : undefined}
                     >
+                      {isPopular && (
+                        <span
+                          className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-semibold uppercase tracking-[0.14em] px-2.5 py-0.5 rounded-full text-background"
+                          style={{ background: accent }}
+                        >Most Popular</span>
+                      )}
                       <div className="text-[11px] uppercase tracking-[0.18em] font-semibold" style={{ color: accent }}>{t.name}</div>
                       <div className="mt-2 flex items-baseline gap-1">
                         <span className="text-2xl font-semibold">{isFree ? "Free" : fmt(t.price_cents)}</span>
@@ -427,9 +434,9 @@ export default function StartPage() {
                       <div className="text-[11px] text-muted-foreground mt-1">
                         {isFree
                           ? "No commitment. Buy credits or scope a project anytime."
-                          : "Unused credits roll over while your subscription stays active."}
+                          : `Best for ${t.credits >= 20 ? "full-stack teams" : t.credits >= 8 ? "active creators" : "steady output"}.`}
                       </div>
-                      {t.description && (
+                      {!isFree && t.description && (
                         <div className="text-xs text-muted-foreground mt-3 leading-relaxed">{t.description}</div>
                       )}
                     </button>

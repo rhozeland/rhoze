@@ -73,12 +73,20 @@
   .os-feat b{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#fff;line-height:1.1}
   .os-feat i{font-size:8.5px;font-style:normal;color:#b8b8b8;line-height:1.32}
   @keyframes os-in{to{opacity:1;transform:none}}
-  .os-cta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--turq);color:#000;text-decoration:none;border:1px solid var(--turq);transition:transform .2s ease,background .2s ease}
-  .os-cta:hover{background:var(--turq-2);transform:translateY(-1px)}
-  .os-cta b{display:block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;line-height:1}
-  .os-cta i{display:block;font-size:8px;font-style:normal;color:rgba(0,0,0,.72);margin-top:2px;letter-spacing:.04em}
-  .os-cta-arrow{font-size:18px;font-weight:900;animation:os-arrow 1.6s ease-in-out infinite}
-  @keyframes os-arrow{50%{transform:translateX(4px)}}
+  .os-scan{display:grid;grid-template-columns:1fr 72px;gap:10px;align-items:center;padding:9px 10px;background:var(--turq);color:#000;border:1px solid var(--turq)}
+  .os-scan b{display:block;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;line-height:1}
+  .os-scan i{display:block;font-size:8.5px;font-style:normal;color:rgba(0,0,0,.75);margin-top:3px;letter-spacing:.05em;line-height:1.35}
+  .os-scan .qr{width:72px;height:72px;background:#fff;padding:4px;display:block}
+  .os-scan .qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
+  .social-follow{margin:6px 8px 8px;display:grid;grid-template-columns:1fr 76px;gap:10px;align-items:center;background:#0c0c0c;border:1px solid var(--line-2);padding:9px 10px}
+  .social-follow .lead{min-width:0}
+  .social-follow .lead b{display:block;font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#fff}
+  .social-follow .lead i{display:block;font-size:9px;font-style:normal;color:var(--muted);margin-top:2px;letter-spacing:.04em}
+  .social-follow .icos{display:flex;gap:6px;margin-top:7px}
+  .social-follow .icos span{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line-2);background:#141414;color:#fff}
+  .social-follow .icos svg{width:12px;height:12px;fill:currentColor}
+  .social-follow .qr{width:76px;height:76px;background:#fff;padding:4px;display:block}
+  .social-follow .qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
 
   .toybox{grid-column:1 / span 2;grid-row:2;display:grid;grid-template-columns:218px 1fr}.toy-head{padding:14px;background:#0b0b0b;border-right:1px solid var(--line-2);display:flex;flex-direction:column;justify-content:space-between}.toy-head .k1{font-size:9px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;color:var(--turq)}.toy-head .k2{font-family:'Roboto Condensed';font-size:34px;line-height:.86;font-weight:900;text-transform:uppercase;margin-top:7px}.toy-head .k3{font-size:11px;line-height:1.35;color:var(--muted);margin-top:8px}.toy-head .k4{font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--turq)}.toy-viewport{position:relative;overflow:hidden}.toy-strip{height:100%;display:flex;width:max-content;animation:toy-scroll 72s linear infinite}.toy-slide{position:relative;flex:0 0 214px;height:100%;background:#111;border-right:1px solid var(--line);overflow:hidden}.toy-slide.featured{flex-basis:260px}.toy-slide img,.toy-slide video{width:100%;height:100%;object-fit:cover;display:block}.toy-slide.gear img{object-fit:contain;background:#080808;padding:8px}.toy-slide::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.9),rgba(0,0,0,.08) 55%,transparent);pointer-events:none}.toy-slide .tag{position:absolute;top:8px;left:8px;z-index:2;background:var(--turq);color:#000;padding:3px 6px;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.toy-slide.editorial .tag{background:#fff}.toy-slide .cap{position:absolute;left:10px;right:10px;bottom:9px;z-index:2}.toy-slide .n{font-size:12px;font-weight:900;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.toy-slide .p{font-family:'JetBrains Mono';font-size:10px;color:var(--turq);margin-top:2px}@keyframes toy-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
@@ -117,8 +125,22 @@
         <span class="event-go">↗</span>
       </a>
       <section class="panel social">
-        <div class="hd"><span class="kicker">Social Signal</span><span class="sub">Text only · no thumbnails</span></div>
+        <div class="hd"><span class="kicker">Social Signal</span><span class="sub">@rhozeland everywhere</span></div>
         <div class="social-list" id="social-list"></div>
+        <div class="social-follow">
+          <div class="lead">
+            <b>Follow @rhozeland</b>
+            <i>Scan for every social — IG, X, YouTube, TikTok, LinkedIn</i>
+            <div class="icos" aria-hidden="true">
+              <span title="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.9.3 2.3.5.6.2 1 .5 1.5 1s.8.9 1 1.5c.2.4.4 1.1.5 2.3.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.3 1.9-.5 2.3-.2.6-.5 1-1 1.5s-.9.8-1.5 1c-.4.2-1.1.4-2.3.5-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.9-.3-2.3-.5-.6-.2-1-.5-1.5-1s-.8-.9-1-1.5c-.2-.4-.4-1.1-.5-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.3-1.9.5-2.3.2-.6.5-1 1-1.5s.9-.8 1.5-1c.4-.2 1.1-.4 2.3-.5C8.4 2.2 8.8 2.2 12 2.2Zm0 3.3a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13Zm0 2.2a4.3 4.3 0 1 1 0 8.6 4.3 4.3 0 0 1 0-8.6Zm6.8-2.4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"/></svg></span>
+              <span title="X"><svg viewBox="0 0 24 24"><path d="M18.244 2H21l-6.52 7.45L22 22h-6.828l-5.35-6.99L3.6 22H.844l6.97-7.965L2 2h6.984l4.83 6.39L18.244 2Zm-1.196 18h1.51L7.06 4H5.44l11.608 16Z"/></svg></span>
+              <span title="YouTube"><svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z"/></svg></span>
+              <span title="TikTok"><svg viewBox="0 0 24 24"><path d="M21 8.5a7.5 7.5 0 0 1-4.4-1.4v7.7a6.2 6.2 0 1 1-6.2-6.2c.3 0 .6 0 .9.1V12a3.3 3.3 0 1 0 2.3 3.1V2h3a4.5 4.5 0 0 0 4.4 4.5v2Z"/></svg></span>
+              <span title="LinkedIn"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.1c.5-1 1.9-2 3.9-2 4.2 0 5 2.7 5 6.2V21h-4v-5.3c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21h-4V9Z"/></svg></span>
+            </div>
+          </div>
+          <span class="qr"><img alt="Follow QR" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=https%3A%2F%2Frhozeland.com"></span>
+        </div>
       </section>
     </section>
 
@@ -136,10 +158,10 @@
             <div class="os-feat" style="animation-delay:240ms"><span class="os-ico">✦</span><b>$RHOZE Rewards</b><i>Every action drips credits.</i></div>
             <div class="os-feat" style="animation-delay:360ms"><span class="os-ico">◇</span><b>Back Projects</b><i>Fund releases. Sign on-chain. No middlemen.</i></div>
           </div>
-          <a class="os-cta" href="https://rhozeland.com/start" target="_blank" rel="noopener">
-            <span><b>Join the waitlist</b><i>Early access to Creator OS · $RHOZE-powered</i></span>
-            <span class="os-cta-arrow">→</span>
-          </a>
+          <div class="os-scan">
+            <span><b>Scan to join waitlist</b><i>rhozeland.com/start · early access to Creator OS</i></span>
+            <span class="qr"><img alt="Waitlist QR" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=https%3A%2F%2Frhozeland.com%2Fstart"></span>
+          </div>
         </div>
       </section>
     </aside>
@@ -184,7 +206,6 @@ var PORTFOLIO=[
   {t:'Surfin’',a:'MARV × Straightdizzy',tag:'Single',img:'/images/surfin-thumb.webp'},
   {t:'Night Come',a:'Luckz ft. MARV',tag:'Music Video',img:'/images/luckz-night-come-thumb.webp',video:'/videos/luckz-night-come.mp4'},
   {t:'Lucky Charm',a:'Carina',tag:'Reel',img:'/images/carina-lucky-charm-thumb.webp',video:'/videos/carina-lucky-charm.mp4'},
-  {t:'Angry Mortgage',a:'Rhozeland Network',tag:'Podcast',img:'/images/angry-mortgage-thumb.jpg'},
   {t:'89-32',a:'Rhozeland',tag:'Podcast',img:'/images/rhozeland-89-32-thumb.webp'},
   {t:'FUS Rollout',a:'Rhozeland',tag:'Campaign',img:'/images/rhozeland-fus-thumb.webp'},
   {t:'RC2',a:'Runner’s Club',tag:'Release',img:'/images/rc2-thumb.webp',video:'/videos/rc2.mp4'},
@@ -200,7 +221,6 @@ var PORTFOLIO=[
   {t:'Blast Processing',a:'JulzMadeThisOne',tag:'Release',img:'/images/julz-blast-processing.webp'},
   {t:'Documentary',a:'Rhozeland',tag:'Film',img:'/images/documentary-thumbnail.webp'},
   {t:'Global Masterminds',a:'Rhozeland',tag:'Documentary',img:'/images/global-masterminds-doc-thumb.webp',video:'/videos/global-masterminds-doc.mp4'},
-  {t:'IIMPCT Media',a:'Rhozeland',tag:'Commercial',img:'/images/iimpct-media-thumb.webp'},
   {t:'ETHDenver',a:'Rhozeland',tag:'Hackathon',img:'/images/ethdenver-hacking-tower-thumb.webp',video:'/videos/ethdenver-hacking-tower.mp4'},
   {t:'Milad Session',a:'BK',tag:'Studio',img:'/images/bk-milad-thumb.webp',video:'/videos/bk-milad.mp4'},
   {t:'Salar Session',a:'BK',tag:'Studio',img:'/images/bk-salar-thumb.webp',video:'/videos/bk-salar.mp4'},
@@ -227,7 +247,7 @@ var SOCIAL_LINKS=[
   {cls:'yt',label:'YT',handle:'@rhozeland',sub:'YouTube · releases',url:'https://youtube.com/@rhozeland'},
   {cls:'tt',label:'TT',handle:'@rhozeland',sub:'TikTok · shorts',url:'https://tiktok.com/@rhozeland'}
 ];
-function renderSocial(){var el=document.getElementById('social-list');var posts=SOCIAL_POSTS.slice(0,4).map(function(p){return '<article class="post'+(p.hot?' hot':'')+'"><div class="post-top"><span class="post-who">'+esc(p.who)+'</span><span class="post-platform">'+esc(p.platform)+' · '+esc(p.time||'')+'</span></div><div class="post-msg">'+esc(p.message)+'</div></article>'}).join('');var cards=SOCIAL_LINKS.map(function(s){return '<a class="social-card '+s.cls+'" href="'+esc(s.url)+'" target="_blank" rel="noopener"><span class="ico">'+esc(s.label)+'</span><span><span class="h">'+esc(s.handle)+'</span><span class="s">'+esc(s.sub)+'</span></span><span class="go">↗</span></a>'}).join('');el.innerHTML=posts+cards}
+function renderSocial(){var el=document.getElementById('social-list');el.innerHTML=SOCIAL_POSTS.slice(0,4).map(function(p){return '<article class="post'+(p.hot?' hot':'')+'"><div class="post-top"><span class="post-who">'+esc(p.who)+'</span><span class="post-platform">'+esc(p.platform)+' · '+esc(p.time||'')+'</span></div><div class="post-msg">'+esc(p.message)+'</div></article>'}).join('')}
 renderSocial();
 
 var MERCH=[

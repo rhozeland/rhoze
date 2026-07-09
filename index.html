@@ -4526,9 +4526,11 @@
 
       function start(){
         loadChannel();
+        loadNewsTicker();
         loadTicker(); loadSpark();
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
+        setInterval(loadNewsTicker, 5 * 60 * 1000);
         setInterval(loadChannel, 15 * 60 * 1000); // re-check feed every 15 min
       }
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

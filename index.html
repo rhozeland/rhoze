@@ -2988,7 +2988,7 @@
           /* Network identity ticker masthead */
           .r-eco-ticker { display: flex; flex-direction: column; border-bottom: 1px solid hsl(var(--ink)); font-family: 'Inter', system-ui, sans-serif; }
           .r-eco-ticker-row { display: flex; align-items: stretch; min-width: 0; }
-          .r-eco-tick { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 1rem; min-width: 0; border-right: 1px solid hsl(var(--ink) / 0.18); }
+          .r-eco-tick { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 1rem; min-width: 0; border-right: 1px solid hsl(var(--ink) / 0.18); position: relative; z-index: 2; background: hsl(var(--surface-card)); }
           .r-eco-tick:last-child { border-right: 0; }
           .r-eco-tick-k { color: hsl(var(--muted)); font-size: 0.58rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; white-space: nowrap; }
           .r-eco-tick-v { color: hsl(var(--ink)); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
@@ -2998,8 +2998,11 @@
           .r-eco-net-dot { width: 0.45rem; height: 0.45rem; border-radius: 999px; background: #22c55e; box-shadow: 0 0 0 0 rgba(34,197,94,0.55); animation: rEcoPulse 2.2s infinite; }
           .r-eco-tick-link { color: inherit; text-decoration: none; border: 1px solid hsl(var(--ink)); padding: 0.12rem 0.4rem; font-size: 0.6rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 0.4rem; }
           .r-eco-tick-link:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
-          .r-eco-tick.is-news { flex: 1 1 auto; overflow: hidden; padding: 0; position: relative; }
+          .r-eco-tick.is-news { flex: 1 1 auto; overflow: hidden; padding: 0; position: relative; z-index: 1; background: hsl(var(--surface-card)); }
+          .r-eco-tick.is-news::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 2.25rem; z-index: 3; pointer-events: none; background: linear-gradient(to right, hsl(var(--surface-card)) 0%, hsl(var(--surface-card) / 0) 100%); }
+          .r-eco-tick.is-news::after { content: ""; position: absolute; inset: 0 0 0 auto; width: 2.25rem; z-index: 3; pointer-events: none; background: linear-gradient(to left, hsl(var(--surface-card)) 0%, hsl(var(--surface-card) / 0) 100%); }
           .r-eco-news-track { display: flex; width: max-content; align-items: center; animation: rEcoNewsScroll 42s linear infinite; }
+          .r-eco-news-item:first-child { padding-left: 1.5rem; }
           .r-eco-tick.is-news:hover .r-eco-news-track { animation-play-state: paused; }
           .r-eco-news-item { display: inline-flex; align-items: center; gap: 0.55rem; padding: 0.7rem 1.25rem; border-right: 1px solid hsl(var(--line)); white-space: nowrap; color: inherit; text-decoration: none; }
           .r-eco-news-k { color: hsl(var(--muted)); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; }

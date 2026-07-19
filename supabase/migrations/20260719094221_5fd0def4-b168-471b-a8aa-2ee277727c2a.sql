@@ -1,0 +1,2 @@
+REVOKE SELECT ON public.service_packages FROM anon, authenticated;
+GRANT SELECT (id, slug, name, kind, description, price_cents, credits, billing_interval, is_active, sort_order, created_at, updated_at, category, credits_cost, min_quantity) ON public.service_packages TO anon, authenticated;

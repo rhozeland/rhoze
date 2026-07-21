@@ -206,28 +206,28 @@ export default function ClientDashboard() {
 
   return (
     <div className="space-y-4 text-left">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
+      <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap">
+        <div className="min-w-0">
           <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Your dashboard</div>
-          <div className="text-sm font-medium mt-0.5">{userEmail}</div>
+          <div className="text-sm font-medium mt-0.5 truncate max-w-[70vw] sm:max-w-none">{userEmail}</div>
         </div>
-        <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-xs">
+        <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-xs shrink-0">
           <LogOut size={12} className="mr-1" /> Sign out
         </Button>
       </div>
 
       {!activeProject ? (
-        <div className="rounded-2xl border border-dashed border-border bg-card/40 p-6 text-sm text-muted-foreground">
+        <div className="rounded-2xl border border-dashed border-border bg-card/40 p-4 sm:p-6 text-sm text-muted-foreground">
           You don't have an active project yet. Pick a subscription tier or scope a project above to get started — your project ledger appears here the moment you book.
         </div>
       ) : (
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               <Wallet size={13} /> Balance
             </div>
-            <div className="flex items-baseline gap-3">
-              <div className="text-3xl font-semibold">{credits}</div>
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <div className="text-2xl sm:text-3xl font-semibold">{credits}</div>
               <div className="text-xs text-muted-foreground">credit{credits === 1 ? "" : "s"}</div>
             </div>
             <div className="text-sm text-muted-foreground">{fmtMoney(dollars)} on account</div>
@@ -239,11 +239,11 @@ export default function ClientDashboard() {
             </a>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               <FolderOpen size={13} /> Active project
             </div>
-            <div className="text-lg font-semibold leading-tight">{activeProject.title}</div>
+            <div className="text-base sm:text-lg font-semibold leading-tight break-words">{activeProject.title}</div>
             <div className="text-xs">
               <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 font-medium uppercase tracking-wider">{activeProject.status}</span>
             </div>
@@ -260,7 +260,7 @@ export default function ClientDashboard() {
             </a>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+          <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               <Clock size={13} /> Milestones
             </div>
@@ -286,12 +286,12 @@ export default function ClientDashboard() {
       )}
 
       {projects.length > 0 && (
-        <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">All projects</div>
             <span className="text-[11px] text-muted-foreground">{projects.length} linked</span>
           </div>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {projects.map(p => (
               <li key={p.id}>
                 <a
@@ -301,7 +301,7 @@ export default function ClientDashboard() {
                   className={`block rounded-xl border p-3 hover:border-foreground/50 transition-colors ${p.id === activeProject?.id ? "border-primary/60 bg-primary/5" : "border-border bg-background/40"}`}
                 >
                   <div className="text-sm font-medium truncate">{p.title}</div>
-                  <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-2">
+                  <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1.5 flex-wrap">
                     <span className="uppercase tracking-wider">{p.status}</span>
                     <span>·</span>
                     <span>{p.credit_balance ?? 0} cr</span>
@@ -315,32 +315,32 @@ export default function ClientDashboard() {
         </div>
       )}
 
-      <form onSubmit={submitRequest} className="rounded-2xl border border-border bg-card p-5 space-y-3">
+      <form onSubmit={submitRequest} className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
         <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Request new work</div>
-        <div className="grid md:grid-cols-[1fr_auto] gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
           <Input placeholder="Short title (e.g. Mix v2 of Holy Water)" value={reqTitle} onChange={e => setReqTitle(e.target.value)} required />
-          <Input type="number" min={1} placeholder="Est. credits" value={reqCredits} onChange={e => setReqCredits(e.target.value)} className="md:w-32" />
+          <Input type="number" min={1} placeholder="Est. credits" value={reqCredits} onChange={e => setReqCredits(e.target.value)} className="sm:w-32" />
         </div>
         <Textarea placeholder="What do you need? Links, references, deadlines…" value={reqDesc} onChange={e => setReqDesc(e.target.value)} rows={3} />
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <p className="text-xs text-muted-foreground">Our team reviews requests and replies with an estimate before any credits are spent.</p>
-          <Button type="submit" disabled={submitting || !reqTitle.trim()}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p className="text-xs text-muted-foreground sm:flex-1">Our team reviews requests and replies with an estimate before any credits are spent.</p>
+          <Button type="submit" disabled={submitting || !reqTitle.trim()} className="w-full sm:w-auto">
             {submitting ? "Submitting…" : <>Submit request <ArrowRight size={14} className="ml-1" /></>}
           </Button>
         </div>
       </form>
 
       {requests.length > 0 && (
-        <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
           <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Recent requests</div>
           <ul className="divide-y divide-border">
             {requests.map(r => (
-              <li key={r.id} className="py-2.5 flex items-center justify-between gap-3">
+              <li key={r.id} className="py-2.5 flex items-start sm:items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-sm font-medium truncate">{r.title}</div>
                   <div className="text-[11px] text-muted-foreground">{new Date(r.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                   {(r.final_credits ?? r.estimated_credits) != null && (
                     <span className="text-[11px] text-muted-foreground">{r.final_credits ?? r.estimated_credits} cr</span>
                   )}

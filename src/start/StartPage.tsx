@@ -346,7 +346,10 @@ export default function StartPage() {
             </button>
           </div>
 
-          <div id="dashboard" className="pt-10 md:pt-14 border-t border-border/50 mt-10">
+        </div>
+
+        <div id="dashboard" className="max-w-6xl mx-auto px-6 pb-16 md:pb-24">
+          <div className="pt-10 md:pt-14 border-t border-border/50">
             <ClientDashboard />
           </div>
         </div>

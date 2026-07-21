@@ -221,7 +221,7 @@ export default function ClientDashboard() {
           You don't have an active project yet. Pick a subscription tier or scope a project above to get started — your project ledger appears here the moment you book.
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
               <Wallet size={13} /> Balance
@@ -255,12 +255,63 @@ export default function ClientDashboard() {
             ) : (
               <div className="text-sm text-muted-foreground">No upcoming milestones.</div>
             )}
-            {projects.length > 1 && (
-              <div className="text-xs text-muted-foreground">
-                +{projects.length - 1} other project{projects.length - 1 === 1 ? "" : "s"} linked to your account
-              </div>
+            <a href={`/team.html#/portal/${activeProject.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline underline-offset-4">
+              Open project portal <ExternalLink size={11} />
+            </a>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+              <Clock size={13} /> Milestones
+            </div>
+            {milestones.length === 0 ? (
+              <div className="text-sm text-muted-foreground">No milestones yet.</div>
+            ) : (
+              <ul className="space-y-1.5">
+                {milestones.slice(0, 6).map(m => (
+                  <li key={m.id} className="flex items-start gap-2 text-sm">
+                    {m.status === "approved"
+                      ? <CheckCircle2 size={14} className="text-emerald-500 mt-0.5 shrink-0" />
+                      : <Circle size={14} className="text-muted-foreground mt-0.5 shrink-0" />}
+                    <div className="min-w-0 flex-1">
+                      <div className={`truncate ${m.status === "approved" ? "text-muted-foreground line-through" : "text-foreground"}`}>{m.title}</div>
+                      {m.due_date && <div className="text-[11px] text-muted-foreground">due {new Date(m.due_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
+        </div>
+      )}
+
+      {projects.length > 0 && (
+        <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">All projects</div>
+            <span className="text-[11px] text-muted-foreground">{projects.length} linked</span>
+          </div>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {projects.map(p => (
+              <li key={p.id}>
+                <a
+                  href={`/team.html#/portal/${p.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`block rounded-xl border p-3 hover:border-foreground/50 transition-colors ${p.id === activeProject?.id ? "border-primary/60 bg-primary/5" : "border-border bg-background/40"}`}
+                >
+                  <div className="text-sm font-medium truncate">{p.title}</div>
+                  <div className="text-[11px] text-muted-foreground mt-1 flex items-center gap-2">
+                    <span className="uppercase tracking-wider">{p.status}</span>
+                    <span>·</span>
+                    <span>{p.credit_balance ?? 0} cr</span>
+                    <span>·</span>
+                    <span>{fmtMoney(p.dollar_balance_cents)}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

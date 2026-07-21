@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock } from "lucide-react";
 
 type Project = {
   id: string;
@@ -42,6 +42,7 @@ export default function ClientDashboard() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [nextMilestone, setNextMilestone] = useState<Milestone | null>(null);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [requests, setRequests] = useState<CreditRequest[]>([]);
 
   // request form
@@ -76,10 +77,13 @@ export default function ClientDashboard() {
         .from("project_milestones")
         .select("id,title,due_date,status")
         .eq("project_id", active.id)
-        .neq("status", "approved")
         .order("due_date", { ascending: true, nullsFirst: false })
-        .limit(1);
-      setNextMilestone((ms?.[0] as Milestone) ?? null);
+        .limit(8);
+      const arr = (ms ?? []) as Milestone[];
+      setMilestones(arr);
+      setNextMilestone(arr.find(m => m.status !== "approved") ?? null);
+    } else {
+      setMilestones([]);
     }
 
     const { data: reqs } = await supabase

@@ -503,6 +503,10 @@
       // ===== Leaderboard with weekly/all-time tabs + pagination =====
       var PAGE_SIZE = 10;
       var state = { mode: "weekly", page: 0, rows: [] };
+      var avatarMap = {}; // handle_key -> avatar_url
+      function handleKey(name) {
+        return String(name || "").replace(/^@/, "").trim().toLowerCase();
+      }
       var LEADERBOARD_CACHE_KEY = "rhz-community-leaderboard-cache";
       var LEADERBOARD_FALLBACK = [
         { username:"@Jim", points:548, weekly_points:548, raids:38, memes:0, edu_threads:0, videos:0, last_updated:"2026-06-29" },
@@ -563,7 +567,10 @@
           var cls = rank === 1 ? "lb-medal-1" : rank === 2 ? "lb-medal-2" : rank === 3 ? "lb-medal-3" : "";
           var pts = (r[key] || 0).toLocaleString();
           var hue = hueOf(r.username);
-          var av  = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' + escapeHtml(initialOf(r.username)) + '</span>';
+          var avatarUrl = avatarMap[handleKey(r.username)];
+          var av = avatarUrl
+            ? '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);padding:0;overflow:hidden;"><img src="' + escapeHtml(avatarUrl) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" /></span>'
+            : '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' + escapeHtml(initialOf(r.username)) + '</span>';
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
             '<td><div class="lb-row-user">' + av + '<span class="name">' + escapeHtml(r.username) + '</span></div></td>' +
@@ -631,6 +638,13 @@
           state.rows = state.rows.length ? state.rows : getCachedRows();
           renderLeaderboard();
         });
+        rest("community_avatars?select=handle_key,avatar_url&limit=1000").then(function (avs) {
+          if (!Array.isArray(avs)) return;
+          var m = {};
+          avs.forEach(function (a) { if (a && a.handle_key && a.avatar_url) m[a.handle_key] = a.avatar_url; });
+          avatarMap = m;
+          renderLeaderboard();
+        }).catch(function () {});
       }
       load();
       setInterval(load, 60000);

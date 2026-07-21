@@ -2158,7 +2158,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      community_avatars: {
+        Row: {
+          avatar_url: string | null
+          handle_key: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          handle_key?: never
+        }
+        Update: {
+          avatar_url?: string | null
+          handle_key?: never
+        }
+        Relationships: []
+      }
     }
     Functions: {
       _rhoze_ensure_balance: {

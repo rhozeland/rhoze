@@ -4912,23 +4912,33 @@
                 'body{margin:0!important;padding:0!important;}',
                 '.navbar-wrap,.navbar,header.navbar,nav.navbar,#navbar,.site-header,header[role="banner"]{display:none!important;}',
                 'footer,.footer,.site-footer{display:none!important;}',
-                'main{padding-top:0!important;margin-top:0!important;}'
+                'main{padding-top:0!important;margin-top:0!important;}',
+                /* Kill the inner page-shell chrome so we don\'t see nested rounded corners / borders inside the iframe. */
+                '.page-shell{max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;}'
               ].join('');
               doc.head && doc.head.appendChild(s);
               // Auto-size iframe to inner content so there is no wasted whitespace.
               var resize = function(){
                 try {
-                  var h = Math.max(doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0);
-                  if (h > 200) frame.style.height = h + 'px';
+                  // Use body scrollHeight as the source of truth; documentElement often reports viewport height.
+                  var bodyH = doc.body ? doc.body.scrollHeight : 0;
+                  var docH  = doc.documentElement ? doc.documentElement.scrollHeight : 0;
+                  var h = Math.max(bodyH, docH);
+                  if (h > 100) frame.style.height = h + 'px';
                 } catch(e){}
               };
               resize();
               setTimeout(resize, 250);
               setTimeout(resize, 800);
               setTimeout(resize, 1800);
+              setTimeout(resize, 3200);
               if (window.ResizeObserver && doc.body) {
                 var ro = new ResizeObserver(resize);
                 ro.observe(doc.body);
+              }
+              if (window.MutationObserver && doc.body) {
+                var mo = new MutationObserver(resize);
+                mo.observe(doc.body, { childList: true, subtree: true, attributes: true, characterData: true });
               }
               window.addEventListener('resize', resize);
             }

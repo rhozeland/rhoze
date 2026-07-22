@@ -1219,6 +1219,7 @@ export type Database = {
           program: string | null
           pronouns: string | null
           social_handle: string | null
+          solana_wallet: string | null
           specialty: string | null
           started_at: string | null
           updated_at: string
@@ -1254,6 +1255,7 @@ export type Database = {
           program?: string | null
           pronouns?: string | null
           social_handle?: string | null
+          solana_wallet?: string | null
           specialty?: string | null
           started_at?: string | null
           updated_at?: string
@@ -1289,6 +1291,7 @@ export type Database = {
           program?: string | null
           pronouns?: string | null
           social_handle?: string | null
+          solana_wallet?: string | null
           specialty?: string | null
           started_at?: string | null
           updated_at?: string

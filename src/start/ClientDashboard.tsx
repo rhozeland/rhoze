@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";
 
 type Project = {
   id: string;
@@ -34,6 +35,11 @@ type MilestoneMessage = {
   body: string;
   author_id: string;
   created_at: string;
+  attachment_path: string | null;
+  attachment_name: string | null;
+  attachment_mime: string | null;
+  attachment_size: number | null;
+  embed_url: string | null;
 };
 
 function fmtMoney(cents: number | null) {
@@ -67,15 +73,33 @@ export default function ClientDashboard() {
   const [msgBody, setMsgBody] = useState("");
   const [msgSending, setMsgSending] = useState(false);
   const [msgUserId, setMsgUserId] = useState<string | null>(null);
+  const [msgFile, setMsgFile] = useState<File | null>(null);
+  const [msgEmbed, setMsgEmbed] = useState("");
+  const [showEmbed, setShowEmbed] = useState(false);
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
     const { data, error } = await supabase
       .from("milestone_messages")
-      .select("id,body,author_id,created_at")
+      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url")
       .eq("milestone_id", milestoneId)
       .order("created_at", { ascending: true });
-    if (!error) setMsgList((data ?? []) as MilestoneMessage[]);
+    if (!error) {
+      const rows = (data ?? []) as MilestoneMessage[];
+      setMsgList(rows);
+      const paths = rows.map(r => r.attachment_path).filter(Boolean) as string[];
+      if (paths.length) {
+        const { data: signed } = await supabase.storage
+          .from("milestone-attachments")
+          .createSignedUrls(paths, 60 * 60);
+        const map: Record<string, string> = {};
+        (signed ?? []).forEach(s => { if (s.path && s.signedUrl) map[s.path] = s.signedUrl; });
+        setSignedUrls(map);
+      } else {
+        setSignedUrls({});
+      }
+    }
     setMsgLoading(false);
   }, []);
 
@@ -83,6 +107,9 @@ export default function ClientDashboard() {
     setMsgMilestone(m);
     setMsgList([]);
     setMsgBody("");
+    setMsgFile(null);
+    setMsgEmbed("");
+    setShowEmbed(false);
     const { data: { user } } = await supabase.auth.getUser();
     setMsgUserId(user?.id ?? null);
     await loadMessages(m.id);
@@ -90,19 +117,58 @@ export default function ClientDashboard() {
 
   async function sendMessage(e: React.FormEvent) {
     e.preventDefault();
-    if (!msgMilestone || !msgBody.trim() || !activeProject) return;
+    if (!msgMilestone || !activeProject) return;
+    const hasBody = msgBody.trim().length > 0;
+    const hasFile = !!msgFile;
+    const hasEmbed = showEmbed && msgEmbed.trim().length > 0;
+    if (!hasBody && !hasFile && !hasEmbed) return;
     setMsgSending(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not signed in");
+
+      let attachment_path: string | null = null;
+      let attachment_name: string | null = null;
+      let attachment_mime: string | null = null;
+      let attachment_size: number | null = null;
+
+      if (msgFile) {
+        if (msgFile.size > 25 * 1024 * 1024) {
+          throw new Error("Attachment must be under 25 MB");
+        }
+        const safeName = msgFile.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+        const path = `${activeProject.id}/${msgMilestone.id}/${crypto.randomUUID()}-${safeName}`;
+        const { error: upErr } = await supabase.storage
+          .from("milestone-attachments")
+          .upload(path, msgFile, {
+            contentType: msgFile.type || "application/octet-stream",
+            upsert: false,
+          });
+        if (upErr) throw upErr;
+        attachment_path = path;
+        attachment_name = msgFile.name;
+        attachment_mime = msgFile.type || null;
+        attachment_size = msgFile.size;
+      }
+
+      const embed_url = hasEmbed ? msgEmbed.trim() : null;
+
       const { error } = await supabase.from("milestone_messages").insert({
         milestone_id: msgMilestone.id,
         project_id: activeProject.id,
         author_id: user.id,
-        body: msgBody.trim(),
+        body: hasBody ? msgBody.trim() : null,
+        attachment_path,
+        attachment_name,
+        attachment_mime,
+        attachment_size,
+        embed_url,
       });
       if (error) throw error;
       setMsgBody("");
+      setMsgFile(null);
+      setMsgEmbed("");
+      setShowEmbed(false);
       await loadMessages(msgMilestone.id);
     } catch (err: any) {
       toast({ title: "Couldn't send", description: err.message ?? String(err), variant: "destructive" });

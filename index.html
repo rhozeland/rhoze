@@ -4965,6 +4965,17 @@
         else if (location.hash) history.pushState(null, '', location.pathname + location.search);
       }
       function wireInlineNav(){
+        // Update the active tab in the secondary nav row.
+        function paintActive(routeKey){
+          try {
+            document.querySelectorAll('.nav-tab').forEach(function(t){
+              var k = t.getAttribute('data-inline-nav');
+              if ((!routeKey && k === '__home') || k === routeKey) t.setAttribute('aria-current','page');
+              else t.removeAttribute('aria-current');
+            });
+          } catch(e){}
+        }
+        window.__rPaintActive = paintActive;
         // Intercept clicks on any anchor whose href matches an inline route.
         document.addEventListener('click', function(e){
           var a = e.target && e.target.closest && e.target.closest('a[href]');
@@ -4975,23 +4986,32 @@
           var href = a.getAttribute('href') || '';
           // Explicit opt-in via data attribute wins.
           var explicit = a.getAttribute('data-inline-nav');
+          if (explicit === '__home') {
+            e.preventDefault();
+            closeInlineView();
+            paintActive(null);
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(_){ window.scrollTo(0,0); }
+            return;
+          }
           var key = explicit || HREF_TO_ROUTE[href.replace(/\/$/, '')] || HREF_TO_ROUTE[href.split('?')[0].split('#')[0]];
           if (!key || !INLINE_ROUTES[key]) return;
           e.preventDefault();
           // Close mobile nav drawer if present.
           if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e2){} }
           openInlineView(key);
+          paintActive(key);
         });
         var close = document.getElementById('rInlineClose');
         if (close) close.addEventListener('click', function(){ closeInlineView(); });
         window.addEventListener('popstate', function(){
           var h = (location.hash || '').replace('#', '');
-          if (h && INLINE_ROUTES[h]) openInlineView(h, { replace: true });
-          else closeInlineView({ replace: true });
+          if (h && INLINE_ROUTES[h]) { openInlineView(h, { replace: true }); paintActive(h); }
+          else { closeInlineView({ replace: true }); paintActive(null); }
         });
         // On initial load, honor #hash routing.
         var h0 = (location.hash || '').replace('#', '');
-        if (h0 && INLINE_ROUTES[h0]) openInlineView(h0, { replace: true });
+        if (h0 && INLINE_ROUTES[h0]) { openInlineView(h0, { replace: true }); paintActive(h0); }
+        else paintActive(null);
       }
 
       function start(){

@@ -1,82 +1,91 @@
-# /start Redesign + Portfolio Backend
 
-Two connected systems. Phase 1 ships the new front door. Phase 2 gives the team a real backend to feed it.
+# /start Redesign — Studio Copilot
+
+Replace Phase 1's modular layout with a **conversational AI copilot** as the primary experience. Team roster stays, but demoted to a small inline suggestion after the copilot understands the project.
 
 ---
 
-## Phase 1 — New `/start` page (Studio Concierge)
-
-Full rebuild of `src/start/StartPage.tsx` in the direction you picked (warm cream #faf8f5, tan #c9b99a, taupe #8b7355, near-black ink, Inter light). Layout follows the "Modular" wireframe: left column = identity + auth + live dashboard slot, right column = pathways + roster.
-
-**Signed-out state — one screen, three pathways + inline auth**
+## The experience
 
 ```
-┌──────────────────────┬──────────────────────────────────────────┐
-│ STUDIO CONCIERGE     │  01 SUBSCRIBE   02 BUILD    03 REQUEST   │
-│ Welcome back.        │  Monthly        Scoped      Rapid brief  │
-│                      │  retainer       estimate    (48h)        │
-│ ┌─ Access Studio ──┐ │                                          │
-│ │ email            │ │  ──────────────────────────────────────  │
-│ │ password         │ │  PICK YOUR TEAM        · from portfolio  │
-│ │ [ Sign In ]      │ │  [portrait][portrait][portrait][portrait]│
-│ │  ── or ──        │ │  Name · role · projects worked           │
-│ │ [G] Google       │ │                                          │
-│ └──────────────────┘ │  ──────────────────────────────────────  │
-│                      │  ACTIVE WORKSPACE (shown when signed in) │
-│ (auth swaps to       │  Project · milestone bar · credits left  │
-│  compact dashboard   │                                          │
-│  when signed in)     │                                          │
-└──────────────────────┴──────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│  STUDIO CONCIERGE          (auth: Sign in · optional)      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│   ┌─ Copilot thread ───────────────┐  ┌─ Live brief ────┐  │
+│   │ AI: Hey — tell me about your   │  │ Type: —         │  │
+│   │     project. Timeline, vibe,   │  │ Scope: —        │  │
+│   │     references, anything.      │  │ Budget: —       │  │
+│   │                                │  │ Timeline: —     │  │
+│   │ You: [text / 🎙 voice / 📎]    │  │ Est: $—         │  │
+│   │ AI: Got it. Two questions...   │  │                 │  │
+│   │                                │  │ Path: Build ▸   │  │
+│   │ [composer]                     │  │ Suggested team: │  │
+│   │ [🎙 hold to talk] [📎] [Send]  │  │ • Marvin · Dir  │  │
+│   └────────────────────────────────┘  │ • Michael · Ed  │  │
+│                                       │                 │  │
+│                                       │ [ Continue → ]  │  │
+│                                       └─────────────────┘  │
+└────────────────────────────────────────────────────────────┘
 ```
 
-- **Subscribe** → opens tier picker + embedded Stripe checkout (existing flow, restyled).
-- **Build** → opens the scoped-services drawer (existing catalog + cart + deposit checkout, restyled to warm tokens).
-- **Request** → lightweight brief form → writes to `intake_requests` (existing), routes to team.
-- **Auth panel** — email/password + Google, in-page. On success the whole left column swaps to a compact live dashboard (active project, milestone progress, credits, "Open full dashboard →" link into `/client/home` or `/portal/:id`).
-- **Pick your team rail** — pulls verified team members from `profiles` + `user_roles` (admin/employee) plus their project counts from Phase 2 credits table. Falls back to empty state until Phase 2 is populated.
-- Fully responsive: single column mobile, split on `md+`.
+**Copilot behavior:**
+- Streams in an assistant persona ("Rhoze Concierge") over Lovable AI (`openai/gpt-5.5`).
+- Runs a scoping loop: what → who it's for → deliverables → timeline → budget → references.
+- After every user turn, silently updates a **structured brief** (JSON) via a tool call.
+- The right rail shows that brief live — fields fill in as the conversation progresses.
+- Recommends one of three pathways when it has enough info: **Subscribe** (monthly), **Build** (scoped), or **Request** (48h brief).
+- Live estimate: rough $ + weeks, based on scope tags. Updates as brief updates.
 
-**Not touched in Phase 1:** the /start URL, existing Stripe integration, existing intake table, existing tier/service data. Only the shell and visual system change.
+**Inputs:**
+- Text.
+- **Voice notes:** hold-to-talk mic → records webm → `openai/gpt-4o-transcribe` → inserted as user turn with 🎙 badge.
+- **Attachments:** images, PDFs, audio — uploaded to `copilot-attachments` bucket, rendered inline, referenced in the brief.
+- **Links:** Drive / Figma / YouTube / Loom pasted → parsed with existing `EmbedPreview`.
 
----
+**Auth: optional, guest-friendly.**
+- Whole conversation works signed out. Session persists in `localStorage` by `conversation_id`.
+- "Continue →" prompts sign-in only at the moment of committing: opening Stripe checkout, sending the brief to the team, or saving the thread to their account.
+- Signed-in users: thread + brief sync to DB, dashboard slot appears above the copilot showing their active project.
 
-## Phase 2 — Portfolio backend in Team Portal
-
-New team-portal section at `/portfolio` (admin/employee edit, everyone reads).
-
-### Schema (migration)
-
-- `public.portfolio_works` — title, slug, client_name, year, summary, tags[], hero_media_url, hero_media_kind (image/video/gif), external_url, published (bool), featured_order (int), created_at/updated_at.
-- `public.portfolio_media` — work_id FK, url, kind, caption, sort_order. Multi-media per work (thumbs, gifs, videos, stills).
-- `public.portfolio_credits` — work_id FK, user_id FK (profiles), role (e.g. "Director", "Editor"), sort_order. This is the join that answers "who worked on it" and drives the /start roster.
-- RLS: read = public for `published=true`; write = admin/employee via `is_team_member`. GRANTs on all three tables per project rules.
-
-### Team-portal UI (`src/team/pages/Portfolio.tsx`)
-
-- List view: table of works with published toggle, featured order, quick filters, search.
-- Detail editor: title/client/year/tags, hero media picker (upload to `docs` bucket or paste Drive/YouTube URL — reuses `EmbedPreview`), media grid drag-to-reorder, credits picker (autocomplete team members → assign role).
-- "Publish to public site" toggle syncs `published` flag.
-
-### Public `/projects.html` sync
-
-- Replace the current hand-authored project list with a fetch from `portfolio_works` where `published=true`, ordered by `featured_order`. Keeps the static HTML shell; injects rows at runtime via a small script.
-
-### Feeds into `/start`
-
-- The "Pick your team" rail on the new /start page queries `portfolio_credits` grouped by user → shows top N members by project count with their most recent work thumbnail as hover state.
-- Selecting a team member on /start stores their id in the intake payload so the assigned team knows who the client wants.
+**Team suggestions (demoted):**
+- Small "Suggested for you" chip strip inside the Live Brief card — 2-3 avatars max, appears only after the copilot classifies the project type.
+- No big roster grid on the page.
 
 ---
 
-## Technical notes (for the dev, not the plan reader)
+## Backend
 
-- Palette tokens added to `src/index.css` as `--concierge-*` HSL vars; component classes use them via Tailwind arbitrary values (`bg-[hsl(var(--concierge-cream))]`) to stay theme-safe.
-- Auth uses existing `supabase.auth.signInWithPassword` and `signInWithOAuth({ provider: 'google', redirectTo: window.location.origin + '/start.html' })`.
-- Dashboard slot reuses the existing `ClientDashboard` component in a compact variant.
-- Portfolio media uploads go to the existing `docs` bucket under a `portfolio/` prefix.
+New tables:
+- `copilot_conversations` — id, user_id (nullable for guests), guest_token, brief_json, recommended_pathway, estimate_low/high, timeline_weeks, status, timestamps.
+- `copilot_messages` — conversation_id, role (user/assistant/system), content, attachments_json, transcript_source (text/voice), created_at.
+- `copilot_attachments` — conversation_id, message_id, path, kind, mime, size.
+
+Storage bucket: `copilot-attachments` (private, signed URLs).
+
+Edge functions:
+- `copilot-chat` — streams AI SDK reply, calls `update_brief` tool to mutate `brief_json`, saves message on `onFinish`. Guest-safe (accepts `guest_token`).
+- `copilot-transcribe` — accepts audio blob, forwards to `openai/gpt-4o-transcribe`, returns text.
+- `copilot-submit` — final commit: creates `intake_requests` row from `brief_json`, links attachments, routes by pathway.
+
+RLS: owner (user_id or guest_token match) reads/writes their conversation; team reads submitted ones.
 
 ---
 
-## What I need from you before I start
+## Files
 
-Nothing blocking — the wireframe pick is enough. I'll ship Phase 1 first, show you the working page, and only start Phase 2 after you approve Phase 1. Reply "ship phase 1" (or with any tweaks) and I'll build.
+- **New:** `src/start/CopilotChat.tsx`, `src/start/CopilotBrief.tsx`, `src/start/CopilotVoiceButton.tsx`, `src/start/copilotClient.ts` (guest token + fetch).
+- **Rewritten:** `src/start/StartPage.tsx` — copilot-first layout, auth becomes an inline "Sign in" link in the header.
+- **New edge functions:** `supabase/functions/copilot-chat`, `copilot-transcribe`, `copilot-submit`.
+- **Migration:** three tables + bucket + RLS + GRANTs.
+- **Untouched:** existing Stripe flows, `intake_requests` schema, team portal.
+
+---
+
+## Phase 2 (unchanged, deferred)
+
+Portfolio backend in team portal — feeds the "Suggested team" chips later. Skipped for now per your note that team-pick is nice-to-have.
+
+---
+
+Reply **"ship it"** to build, or tell me what to change (persona tone, which fields the brief tracks, whether voice should be tap-to-record vs hold-to-talk, etc.).

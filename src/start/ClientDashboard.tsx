@@ -558,10 +558,44 @@ export default function ClientDashboard() {
               ) : (
                 msgList.map(msg => {
                   const mine = msg.author_id === msgUserId;
+                  const signed = msg.attachment_path ? signedUrls[msg.attachment_path] : null;
+                  const mime = msg.attachment_mime ?? "";
+                  const isImage = mime.startsWith("image/");
+                  const isAudio = mime.startsWith("audio/");
+                  const isPdf = mime === "application/pdf";
                   return (
                     <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
-                        <div className="whitespace-pre-wrap break-words">{msg.body}</div>
+                      <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm space-y-2 ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+                        {msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>}
+                        {signed && isImage && (
+                          <a href={signed} target="_blank" rel="noreferrer" className="block">
+                            <img src={signed} alt={msg.attachment_name ?? "attachment"} className="rounded-lg max-h-64 w-auto" />
+                          </a>
+                        )}
+                        {signed && isAudio && (
+                          <audio src={signed} controls className="w-full max-w-xs" />
+                        )}
+                        {signed && isPdf && (
+                          <a href={signed} target="_blank" rel="noreferrer"
+                             className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
+                            <FileText size={14} />
+                            <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Document.pdf"}</span>
+                            <ExternalLink size={11} />
+                          </a>
+                        )}
+                        {signed && !isImage && !isAudio && !isPdf && (
+                          <a href={signed} target="_blank" rel="noreferrer"
+                             className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
+                            <Paperclip size={13} />
+                            <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Attachment"}</span>
+                            <ExternalLink size={11} />
+                          </a>
+                        )}
+                        {msg.embed_url && (
+                          toEmbedUrl(msg.embed_url)
+                            ? <div className="rounded-lg overflow-hidden bg-background text-foreground"><EmbedPreview url={msg.embed_url} height={280} /></div>
+                            : <a href={msg.embed_url} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-1 text-xs underline underline-offset-2 ${mine ? "" : "text-primary"}`}><Link2 size={12} /> {msg.embed_url}</a>
+                        )}
                         <div className={`text-[10px] mt-1 opacity-70 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
                           {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                         </div>
@@ -573,23 +607,84 @@ export default function ClientDashboard() {
             </div>
           </ScrollArea>
 
-          <form onSubmit={sendMessage} className="border-t border-border p-3 sm:p-4 flex items-end gap-2">
-            <Textarea
-              value={msgBody}
-              onChange={(e) => setMsgBody(e.target.value)}
-              placeholder="Write a message to your team…"
-              rows={2}
-              className="resize-none min-h-[44px]"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  sendMessage(e as any);
-                }
-              }}
-            />
-            <Button type="submit" disabled={msgSending || !msgBody.trim()} size="icon" className="shrink-0 h-11 w-11">
-              <Send size={16} />
-            </Button>
+          <form onSubmit={sendMessage} className="border-t border-border p-3 sm:p-4 space-y-2">
+            {msgFile && (
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-2 py-1.5 text-xs">
+                {msgFile.type.startsWith("image/") ? <ImageIcon size={13} />
+                  : msgFile.type.startsWith("audio/") ? <Music size={13} />
+                  : msgFile.type === "application/pdf" ? <FileText size={13} />
+                  : <Paperclip size={13} />}
+                <span className="truncate flex-1">{msgFile.name}</span>
+                <span className="text-muted-foreground shrink-0">{(msgFile.size / 1024).toFixed(0)} KB</span>
+                <button type="button" onClick={() => setMsgFile(null)} className="text-muted-foreground hover:text-foreground shrink-0" aria-label="Remove attachment">
+                  <X size={13} />
+                </button>
+              </div>
+            )}
+            {showEmbed && (
+              <div className="flex items-center gap-2">
+                <Link2 size={14} className="text-muted-foreground shrink-0" />
+                <Input
+                  type="url"
+                  value={msgEmbed}
+                  onChange={(e) => setMsgEmbed(e.target.value)}
+                  placeholder="Paste a Google Drive, Docs, YouTube, or Loom link"
+                  className="h-9 text-xs"
+                />
+                <button type="button" onClick={() => { setShowEmbed(false); setMsgEmbed(""); }} className="text-muted-foreground hover:text-foreground shrink-0" aria-label="Cancel link">
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+            <div className="flex items-end gap-2">
+              <Textarea
+                value={msgBody}
+                onChange={(e) => setMsgBody(e.target.value)}
+                placeholder="Write a message to your team…"
+                rows={2}
+                className="resize-none min-h-[44px]"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    sendMessage(e as any);
+                  }
+                }}
+              />
+              <div className="flex flex-col gap-1 shrink-0">
+                <label className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-border cursor-pointer text-muted-foreground hover:text-foreground hover:border-foreground/40" title="Attach image, PDF, or audio">
+                  <Paperclip size={14} />
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf,audio/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0] ?? null;
+                      setMsgFile(f);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowEmbed(v => !v)}
+                  className={`inline-flex items-center justify-center h-8 w-8 rounded-md border ${showEmbed ? "border-primary text-primary" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`}
+                  title="Embed a Google Drive or link"
+                >
+                  <Link2 size={14} />
+                </button>
+              </div>
+              <Button
+                type="submit"
+                disabled={msgSending || (!msgBody.trim() && !msgFile && !(showEmbed && msgEmbed.trim()))}
+                size="icon"
+                className="shrink-0 h-11 w-11"
+              >
+                <Send size={16} />
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              Attach images, PDFs, or audio (25 MB max) — or paste a Google Drive link to embed.
+            </p>
           </form>
         </DialogContent>
       </Dialog>

@@ -226,6 +226,49 @@
       background: hsl(var(--surface) / 0.96);
     }
 
+    /* Secondary tab row that sits directly under the identity/brand row. */
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.25rem;
+      padding: 0.55rem 2rem;
+      border-bottom: 1px solid hsl(var(--line));
+      background: hsl(var(--surface) / 0.94);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.15rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: hsl(var(--ink) / 0.42);
+      white-space: nowrap;
+      transition: color 0.18s ease;
+      background: none; border: 0; cursor: pointer; font-family: inherit;
+    }
+    .nav-tab:hover { color: hsl(var(--ink)); }
+    .nav-tab svg { width: 0.95rem; height: 0.95rem; }
+    .nav-tab[aria-current="page"] { color: hsl(var(--ink)); }
+    .nav-tab[aria-current="page"]::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -0.55rem;
+      height: 2px;
+      background: hsl(var(--ink));
+    }
+    @media (max-width: 720px) {
+      .nav-tabs { gap: 1.25rem; justify-content: flex-start; padding: 0.5rem 1rem; }
+      .nav-tab { font-size: 0.68rem; letter-spacing: 0.12em; }
+    }
+
     .brand {
       display: inline-flex;
       align-items: center;
@@ -3048,16 +3091,8 @@
         <span class="brand-text">Rhozeland</span>
       </a>
 
-      <div class="nav-links">
-        <a href="/about.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span><span class="nav-label">About</span></a>
-        <a href="/projects.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg></span><span class="nav-label">Work</span></a>
-        <a href="/leaderboard.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span><span class="nav-label">Leaderboard</span></a>
-        <a href="/contact.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span class="nav-label">Connect</span></a>
-        <a href="/invest.html"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span><span class="nav-label">Invest</span></a>
-      </div>
-
       <!-- Unified auth cluster (signed-in only; hidden until session detected) -->
-      <div id="rSignedInHUD" class="nav-auth" role="group" aria-label="Your Rhozeland account" hidden>
+      <div id="rSignedInHUD" class="nav-auth" role="group" aria-label="Your Rhozeland account" hidden style="margin-left:auto;">
         <a class="nav-auth-balance" id="rHudRhozeLink" href="https://dexscreener.com/solana/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF" target="_blank" rel="noopener" title="View $RHOZE on DexScreener">
           <span class="nav-auth-dot" aria-hidden="true"></span>
           <span class="nav-auth-k">$RHOZE</span>
@@ -3082,6 +3117,16 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
       </button>
     </nav>
+
+    <!-- Secondary tab row: seamless inline section swap on click. -->
+    <div class="nav-tabs" role="tablist" aria-label="Sections">
+      <a class="nav-tab" href="/" data-inline-nav="__home">Home</a>
+      <a class="nav-tab" href="/about.html" data-inline-nav="about">About</a>
+      <a class="nav-tab" href="/projects.html" data-inline-nav="work">Work</a>
+      <a class="nav-tab" href="/leaderboard.html" data-inline-nav="leaderboard">Leaderboard</a>
+      <a class="nav-tab" href="/contact.html" data-inline-nav="connect">Connect</a>
+      <a class="nav-tab" href="/invest.html" data-inline-nav="invest">Invest</a>
+    </div>
 
     <div id="mobileMenu" class="mobile-menu">
       <a href="/about.html" onclick="closeMenu()"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span><span class="nav-label">About</span></a>
@@ -3110,6 +3155,11 @@
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
           body.r-inline-active main > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
+          /* Sections outside <main> that would otherwise bleed under the inline view. */
+          body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }
+          /* Kill the outer page-shell rounded corners while inline view is active so we don't see cream peeks at the top corners. */
+          body.r-inline-active .page-shell { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; box-shadow: none !important; }
+          .r-inline-frame-wrap { min-height: 0; }
         </style>
         <div class="r-inline-frame-wrap">
           <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>
@@ -4864,23 +4914,33 @@
                 'body{margin:0!important;padding:0!important;}',
                 '.navbar-wrap,.navbar,header.navbar,nav.navbar,#navbar,.site-header,header[role="banner"]{display:none!important;}',
                 'footer,.footer,.site-footer{display:none!important;}',
-                'main{padding-top:0!important;margin-top:0!important;}'
+                'main{padding-top:0!important;margin-top:0!important;}',
+                /* Kill the inner page-shell chrome so we don\'t see nested rounded corners / borders inside the iframe. */
+                '.page-shell{max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;}'
               ].join('');
               doc.head && doc.head.appendChild(s);
               // Auto-size iframe to inner content so there is no wasted whitespace.
               var resize = function(){
                 try {
-                  var h = Math.max(doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0);
-                  if (h > 200) frame.style.height = h + 'px';
+                  // Use body scrollHeight as the source of truth; documentElement often reports viewport height.
+                  var bodyH = doc.body ? doc.body.scrollHeight : 0;
+                  var docH  = doc.documentElement ? doc.documentElement.scrollHeight : 0;
+                  var h = Math.max(bodyH, docH);
+                  if (h > 100) frame.style.height = h + 'px';
                 } catch(e){}
               };
               resize();
               setTimeout(resize, 250);
               setTimeout(resize, 800);
               setTimeout(resize, 1800);
+              setTimeout(resize, 3200);
               if (window.ResizeObserver && doc.body) {
                 var ro = new ResizeObserver(resize);
                 ro.observe(doc.body);
+              }
+              if (window.MutationObserver && doc.body) {
+                var mo = new MutationObserver(resize);
+                mo.observe(doc.body, { childList: true, subtree: true, attributes: true, characterData: true });
               }
               window.addEventListener('resize', resize);
             }
@@ -4907,6 +4967,17 @@
         else if (location.hash) history.pushState(null, '', location.pathname + location.search);
       }
       function wireInlineNav(){
+        // Update the active tab in the secondary nav row.
+        function paintActive(routeKey){
+          try {
+            document.querySelectorAll('.nav-tab').forEach(function(t){
+              var k = t.getAttribute('data-inline-nav');
+              if ((!routeKey && k === '__home') || k === routeKey) t.setAttribute('aria-current','page');
+              else t.removeAttribute('aria-current');
+            });
+          } catch(e){}
+        }
+        window.__rPaintActive = paintActive;
         // Intercept clicks on any anchor whose href matches an inline route.
         document.addEventListener('click', function(e){
           var a = e.target && e.target.closest && e.target.closest('a[href]');
@@ -4917,23 +4988,32 @@
           var href = a.getAttribute('href') || '';
           // Explicit opt-in via data attribute wins.
           var explicit = a.getAttribute('data-inline-nav');
+          if (explicit === '__home') {
+            e.preventDefault();
+            closeInlineView();
+            paintActive(null);
+            try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(_){ window.scrollTo(0,0); }
+            return;
+          }
           var key = explicit || HREF_TO_ROUTE[href.replace(/\/$/, '')] || HREF_TO_ROUTE[href.split('?')[0].split('#')[0]];
           if (!key || !INLINE_ROUTES[key]) return;
           e.preventDefault();
           // Close mobile nav drawer if present.
           if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e2){} }
           openInlineView(key);
+          paintActive(key);
         });
         var close = document.getElementById('rInlineClose');
         if (close) close.addEventListener('click', function(){ closeInlineView(); });
         window.addEventListener('popstate', function(){
           var h = (location.hash || '').replace('#', '');
-          if (h && INLINE_ROUTES[h]) openInlineView(h, { replace: true });
-          else closeInlineView({ replace: true });
+          if (h && INLINE_ROUTES[h]) { openInlineView(h, { replace: true }); paintActive(h); }
+          else { closeInlineView({ replace: true }); paintActive(null); }
         });
         // On initial load, honor #hash routing.
         var h0 = (location.hash || '').replace('#', '');
-        if (h0 && INLINE_ROUTES[h0]) openInlineView(h0, { replace: true });
+        if (h0 && INLINE_ROUTES[h0]) { openInlineView(h0, { replace: true }); paintActive(h0); }
+        else paintActive(null);
       }
 
       function start(){

@@ -374,7 +374,7 @@ function PledgeDialog({
     if (amount < 50) { toast({ title: "Minimum pledge is $50" }); return; }
     setBusy(true);
     try {
-      const { error } = await supabase.rpc("create_investor_pledge", {
+      const { data: pledgeId, error } = await supabase.rpc("create_investor_pledge", {
         _amount_usd_cents: amount * 100,
         _lock_months: lockMonths,
         _path: path,
@@ -383,6 +383,12 @@ function PledgeDialog({
         _notes: notes.trim() || null,
       });
       if (error) throw error;
+      // Fire-and-forget team notification email. Non-blocking; failure won't
+      // break the pledge UX (the pledge is already persisted).
+      if (pledgeId) {
+        supabase.functions.invoke("notify-new-pledge", { body: { pledgeId } })
+          .catch((e) => console.warn("notify-new-pledge failed", e));
+      }
       toast({ title: "Pledge submitted", description: "We'll reach out to settle payment." });
       onCreated();
       onOpenChange(false);

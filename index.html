@@ -3061,6 +3061,24 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
         Build
       </a>
+      <!-- Unified auth cluster (signed-in only; hidden until session detected) -->
+      <div id="rSignedInHUD" class="nav-auth" role="group" aria-label="Your Rhozeland account" hidden>
+        <a class="nav-auth-balance" id="rHudRhozeLink" href="https://dexscreener.com/solana/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF" target="_blank" rel="noopener" title="View $RHOZE on DexScreener">
+          <span class="nav-auth-dot" aria-hidden="true"></span>
+          <span class="nav-auth-k">$RHOZE</span>
+          <span class="nav-auth-v" id="rHudRhoze" aria-live="polite">—</span>
+          <span class="nav-auth-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="nav-auth-identity" href="/start.html" data-inline-nav="build" title="Open your dashboard">
+          <span class="nav-auth-avatar" id="rHudAvatar" aria-hidden="true">R</span>
+          <span class="nav-auth-name" id="rHudGreet">Welcome</span>
+        </a>
+        <a class="nav-auth-chip is-dashboard" href="/start.html" data-inline-nav="build">Dashboard</a>
+        <span class="nav-auth-divider" aria-hidden="true"></span>
+        <button type="button" class="nav-auth-icon" id="rHudSignOut" aria-label="Sign out" title="Sign out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
       </button>

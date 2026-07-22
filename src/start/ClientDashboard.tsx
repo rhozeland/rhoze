@@ -639,33 +639,75 @@ export default function ClientDashboard() {
                   const isImage = mime.startsWith("image/");
                   const isAudio = mime.startsWith("audio/");
                   const isPdf = mime === "application/pdf";
+                  const canEdit = mine || false;
+                  const actionBtn = (extra: string) =>
+                    `inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] uppercase tracking-wider transition-colors ${extra} ${mine ? "border-primary-foreground/30 text-primary-foreground/80 hover:bg-primary-foreground/10" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`;
+                  const AttachmentActions = signed ? (
+                    <div className="flex flex-wrap items-center gap-1 pt-1">
+                      <button type="button" onClick={() => downloadAttachment(msg)} className={actionBtn("")} title="Download file">
+                        <Download size={10} /> Download
+                      </button>
+                      <button type="button" onClick={() => copyAttachmentLink(msg)} className={actionBtn("")} title="Copy shareable link (7 days)">
+                        <Copy size={10} /> Copy link
+                      </button>
+                      {canEdit && (
+                        <label className={actionBtn("cursor-pointer")} title="Replace this file">
+                          <RefreshCw size={10} className={replacingId === msg.id ? "animate-spin" : ""} />
+                          {replacingId === msg.id ? "Replacing…" : "Replace"}
+                          <input
+                            type="file"
+                            accept="image/*,application/pdf,audio/*"
+                            className="hidden"
+                            disabled={replacingId === msg.id}
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) replaceAttachment(msg, f);
+                              e.currentTarget.value = "";
+                            }}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  ) : null;
                   return (
                     <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm space-y-2 ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
                         {msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>}
                         {signed && isImage && (
-                          <a href={signed} target="_blank" rel="noreferrer" className="block">
-                            <img src={signed} alt={msg.attachment_name ?? "attachment"} className="rounded-lg max-h-64 w-auto" />
-                          </a>
+                          <div className="space-y-1">
+                            <a href={signed} target="_blank" rel="noreferrer" className="block">
+                              <img src={signed} alt={msg.attachment_name ?? "attachment"} className="rounded-lg max-h-64 w-auto" />
+                            </a>
+                            {AttachmentActions}
+                          </div>
                         )}
                         {signed && isAudio && (
-                          <audio src={signed} controls className="w-full max-w-xs" />
+                          <div className="space-y-1">
+                            <audio src={signed} controls className="w-full max-w-xs" />
+                            {AttachmentActions}
+                          </div>
                         )}
                         {signed && isPdf && (
-                          <a href={signed} target="_blank" rel="noreferrer"
-                             className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
-                            <FileText size={14} />
-                            <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Document.pdf"}</span>
-                            <ExternalLink size={11} />
-                          </a>
+                          <div className="space-y-1">
+                            <a href={signed} target="_blank" rel="noreferrer"
+                               className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
+                              <FileText size={14} />
+                              <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Document.pdf"}</span>
+                              <ExternalLink size={11} />
+                            </a>
+                            {AttachmentActions}
+                          </div>
                         )}
                         {signed && !isImage && !isAudio && !isPdf && (
-                          <a href={signed} target="_blank" rel="noreferrer"
-                             className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
-                            <Paperclip size={13} />
-                            <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Attachment"}</span>
-                            <ExternalLink size={11} />
-                          </a>
+                          <div className="space-y-1">
+                            <a href={signed} target="_blank" rel="noreferrer"
+                               className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
+                              <Paperclip size={13} />
+                              <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Attachment"}</span>
+                              <ExternalLink size={11} />
+                            </a>
+                            {AttachmentActions}
+                          </div>
                         )}
                         {msg.embed_url && (
                           toEmbedUrl(msg.embed_url)

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag } from "lucide-react";
 
 type Project = {
   id: string;
@@ -139,6 +139,27 @@ export default function ClientDashboard() {
     await supabase.auth.signOut();
   }
 
+  async function requestMilestoneReview(m: Milestone) {
+    if (!activeProject) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("credit_requests").insert({
+        title: `Review request: ${m.title}`,
+        description: `Please review milestone "${m.title}"${m.due_date ? ` (due ${new Date(m.due_date).toLocaleDateString()})` : ""}.`,
+        requested_credits: 0,
+        project_id: activeProject.id,
+        requested_by: user.id,
+        status: "pending_team",
+      });
+      if (error) throw error;
+      toast({ title: "Review requested", description: "Your team has been notified." });
+      await loadData(user.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't send request", description: err.message ?? String(err), variant: "destructive" });
+    }
+  }
+
   async function submitRequest(e: React.FormEvent) {
     e.preventDefault();
     if (!reqTitle.trim()) return;
@@ -269,13 +290,43 @@ export default function ClientDashboard() {
             ) : (
               <ul className="space-y-1.5">
                 {milestones.slice(0, 6).map(m => (
-                  <li key={m.id} className="flex items-start gap-2 text-sm">
+                  <li key={m.id} className="flex items-start gap-2 text-sm group">
                     {m.status === "approved"
                       ? <CheckCircle2 size={14} className="text-emerald-500 mt-0.5 shrink-0" />
                       : <Circle size={14} className="text-muted-foreground mt-0.5 shrink-0" />}
                     <div className="min-w-0 flex-1">
                       <div className={`truncate ${m.status === "approved" ? "text-muted-foreground line-through" : "text-foreground"}`}>{m.title}</div>
                       {m.due_date && <div className="text-[11px] text-muted-foreground">due {new Date(m.due_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>}
+                      <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                        <a
+                          href={`/team.html#/portal/${activeProject.id}?milestone=${m.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                          title="View milestone details"
+                        >
+                          <Eye size={10} /> Details
+                        </a>
+                        <a
+                          href={`/team.html#/portal/${activeProject.id}?compose=1&subject=${encodeURIComponent(`Re: ${m.title}`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                          title="Message your team about this milestone"
+                        >
+                          <MessageSquare size={10} /> Message team
+                        </a>
+                        {m.status !== "approved" && (
+                          <button
+                            type="button"
+                            onClick={() => requestMilestoneReview(m)}
+                            className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                            title="Ask the team to review this milestone"
+                          >
+                            <Flag size={10} /> Request review
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </li>
                 ))}

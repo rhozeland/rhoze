@@ -244,3 +244,24 @@ export async function submitCopilot(opts: {
 export function resetConversation() {
   localStorage.removeItem(CONVO_KEY);
 }
+
+/**
+ * Marks a guest conversation as email-captured so the concierge unlocks.
+ * Also seeds the first user message with the form context.
+ */
+export async function unlockConciergeForGuest(opts: {
+  conversationId: string;
+  seedMessage: string;
+}): Promise<void> {
+  await supabase
+    .from("copilot_conversations")
+    .update({ email_captured_at: new Date().toISOString() })
+    .eq("id", opts.conversationId);
+  if (opts.seedMessage.trim()) {
+    await supabase.from("copilot_messages").insert({
+      conversation_id: opts.conversationId,
+      role: "user",
+      content: opts.seedMessage,
+    });
+  }
+}

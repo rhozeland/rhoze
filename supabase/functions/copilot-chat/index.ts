@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
 
     const { data: convo, error: convoErr } = await admin
       .from("copilot_conversations")
-      .select("id, user_id, guest_token, brief_json")
+      .select("id, user_id, guest_token, brief_json, turn_budget, turns_used, email_captured_at")
       .eq("id", conversation_id)
       .maybeSingle();
 
@@ -90,6 +90,19 @@ Deno.serve(async (req) => {
       (userId && convo.user_id === userId) ||
       (guest_token && convo.guest_token === guest_token);
     if (!owns) return json({ error: "forbidden" }, 403);
+
+    // Enforce turn budget for guest conversations. Signed-in users are
+    // unlimited. Guests must have captured an email (via the intake form)
+    // before the concierge will respond, and get `turn_budget` assistant
+    // turns before being nudged to submit or sign in.
+    if (!userId) {
+      if (!convo.email_captured_at) {
+        return json({ error: "Add your email to unlock the concierge." }, 402);
+      }
+      if ((convo.turns_used ?? 0) >= (convo.turn_budget ?? 5)) {
+        return json({ error: "Concierge budget reached. Send the brief to the team, or sign in for unlimited refinement." }, 402);
+      }
+    }
 
     // Persist the latest user message (the last one in the array) if not yet saved.
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
@@ -171,6 +184,12 @@ Deno.serve(async (req) => {
             if (typeof brief.timeline_weeks_low === "number") update.timeline_weeks_low = brief.timeline_weeks_low;
             if (typeof brief.timeline_weeks_high === "number") update.timeline_weeks_high = brief.timeline_weeks_high;
             await admin.from("copilot_conversations").update(update).eq("id", conversation_id);
+          }
+          // Increment turn counter (guests only).
+          if (!userId) {
+            await admin.from("copilot_conversations")
+              .update({ turns_used: (convo.turns_used ?? 0) + 1 })
+              .eq("id", conversation_id);
           }
         } catch (e) {
           console.error("copilot-chat stream error", e);

@@ -1,91 +1,72 @@
+# /start Rebuild — Concierge v2
 
-# /start Redesign — Studio Copilot
+Locked-in decisions from your reply:
+- **Wallet:** custodial-by-default, editable in Settings.
+- **Concierge:** hybrid — form first (free), then unlock 5 AI turns after email capture.
+- **Signed-in /start:** show the full embedded ClientDashboard above the pathways.
+- **Subscribe:** kill the modal, inline branded section with credit-value framing.
 
-Replace Phase 1's modular layout with a **conversational AI copilot** as the primary experience. Team roster stays, but demoted to a small inline suggestion after the copilot understands the project.
+## 1. Custodial Solana wallet (backend)
 
----
+New table `user_wallets`:
+- `user_id` (unique, FK → auth.users)
+- `pubkey` (base58)
+- `secret_encrypted` (bytea, encrypted with `WALLET_ENCRYPTION_KEY`)
+- `is_custodial` (bool, default true)
+- `created_at`, `updated_at`
 
-## The experience
+RLS: user can SELECT their own row (pubkey only via a view); no client-side UPDATE/INSERT.
+- Public view `user_wallet_pubkeys` exposing only `user_id`, `pubkey`, `is_custodial` — safe for the client.
+- Edge function `wallet-provision` (auto-runs on first /start load when signed in): generates a Solana keypair with `@solana/web3.js`, encrypts secret with AES-GCM using `WALLET_ENCRYPTION_KEY`, upserts row.
+- Edge function `wallet-replace-external`: user pastes their own pubkey → sets `is_custodial=false`, wipes stored secret.
+- Add `WALLET_ENCRYPTION_KEY` via `generate_secret` (64 chars).
 
-```
-┌────────────────────────────────────────────────────────────┐
-│  STUDIO CONCIERGE          (auth: Sign in · optional)      │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│   ┌─ Copilot thread ───────────────┐  ┌─ Live brief ────┐  │
-│   │ AI: Hey — tell me about your   │  │ Type: —         │  │
-│   │     project. Timeline, vibe,   │  │ Scope: —        │  │
-│   │     references, anything.      │  │ Budget: —       │  │
-│   │                                │  │ Timeline: —     │  │
-│   │ You: [text / 🎙 voice / 📎]    │  │ Est: $—         │  │
-│   │ AI: Got it. Two questions...   │  │                 │  │
-│   │                                │  │ Path: Build ▸   │  │
-│   │ [composer]                     │  │ Suggested team: │  │
-│   │ [🎙 hold to talk] [📎] [Send]  │  │ • Marvin · Dir  │  │
-│   └────────────────────────────────┘  │ • Michael · Ed  │  │
-│                                       │                 │  │
-│                                       │ [ Continue → ]  │  │
-│                                       └─────────────────┘  │
-└────────────────────────────────────────────────────────────┘
-```
+Settings page gains a "Wallet" card: shows current pubkey, "Copy", "Replace with my own wallet" (external paste flow), "Reveal recovery phrase" (deferred — placeholder button noting "Coming soon: export").
 
-**Copilot behavior:**
-- Streams in an assistant persona ("Rhoze Concierge") over Lovable AI (`openai/gpt-5.5`).
-- Runs a scoping loop: what → who it's for → deliverables → timeline → budget → references.
-- After every user turn, silently updates a **structured brief** (JSON) via a tool call.
-- The right rail shows that brief live — fields fill in as the conversation progresses.
-- Recommends one of three pathways when it has enough info: **Subscribe** (monthly), **Build** (scoped), or **Request** (48h brief).
-- Live estimate: rough $ + weeks, based on scope tags. Updates as brief updates.
+## 2. Hybrid concierge
 
-**Inputs:**
-- Text.
-- **Voice notes:** hold-to-talk mic → records webm → `openai/gpt-4o-transcribe` → inserted as user turn with 🎙 badge.
-- **Attachments:** images, PDFs, audio — uploaded to `copilot-attachments` bucket, rendered inline, referenced in the brief.
-- **Links:** Drive / Figma / YouTube / Loom pasted → parsed with existing `EmbedPreview`.
+`/start` (signed-out) starts as a **structured form**: project type (chip picker), timeline, budget range, one-line description, email. No AI cost until email captured.
 
-**Auth: optional, guest-friendly.**
-- Whole conversation works signed out. Session persists in `localStorage` by `conversation_id`.
-- "Continue →" prompts sign-in only at the moment of committing: opening Stripe checkout, sending the brief to the team, or saving the thread to their account.
-- Signed-in users: thread + brief sync to DB, dashboard slot appears above the copilot showing their active project.
+On submit:
+- Creates `intake_requests` row + a `copilot_conversations` row seeded with the form as the first system+user turn.
+- Unlocks "Refine with Concierge" panel with a 5-turn budget (tracked in `copilot_conversations.turn_budget` / `turns_used`).
+- Voice + attachments remain available inside the refinement panel.
 
-**Team suggestions (demoted):**
-- Small "Suggested for you" chip strip inside the Live Brief card — 2-3 avatars max, appears only after the copilot classifies the project type.
-- No big roster grid on the page.
+When budget hits 0 → CTA: "Send to team" or "Sign in for unlimited refinement."
 
----
+## 3. Signed-in /start = embedded dashboard
 
-## Backend
+If session exists:
+- Render `<ClientDashboard />` full-width at top (projects, roadmap, credits, $RHOZE, active subscription summary).
+- Below it: compact "Start something new" strip with two buttons — "New project brief" (opens concierge inline) and "Manage subscription" (scrolls to inline subscribe section).
+- Loyalty rail moves into the dashboard header (already has one; deduplicate).
 
-New tables:
-- `copilot_conversations` — id, user_id (nullable for guests), guest_token, brief_json, recommended_pathway, estimate_low/high, timeline_weeks, status, timestamps.
-- `copilot_messages` — conversation_id, role (user/assistant/system), content, attachments_json, transcript_source (text/voice), created_at.
-- `copilot_attachments` — conversation_id, message_id, path, kind, mime, size.
+## 4. Inline branded Subscribe section
 
-Storage bucket: `copilot-attachments` (private, signed URLs).
+Delete `SubscribeDialog`. Add `<SubscribeSection />` rendered inline on /start:
+- Uses brand palette from `index.css` (`--ink`, `--paper`, `--accent`, warm cream/tan).
+- 3 tier cards side-by-side with:
+  - Tier name + monthly price
+  - **Credits/mo big number** + "≈ $X value" framing
+  - $RHOZE yield per dollar
+  - Feature bullets
+  - "Choose {tier}" → mounts `<StripeEmbeddedCheckout />` inline below (not modal)
+- Signed-out users: button prompts inline auth first, then checkout mounts.
 
-Edge functions:
-- `copilot-chat` — streams AI SDK reply, calls `update_brief` tool to mutate `brief_json`, saves message on `onFinish`. Guest-safe (accepts `guest_token`).
-- `copilot-transcribe` — accepts audio blob, forwards to `openai/gpt-4o-transcribe`, returns text.
-- `copilot-submit` — final commit: creates `intake_requests` row from `brief_json`, links attachments, routes by pathway.
+## 5. Files touched
 
-RLS: owner (user_id or guest_token match) reads/writes their conversation; team reads submitted ones.
+- **Migrations:** `user_wallets` table + RLS + `user_wallet_pubkeys` view; `copilot_conversations.turn_budget`, `turns_used` columns.
+- **Edge functions:** `wallet-provision`, `wallet-replace-external`.
+- **New:** `src/start/WalletSlot.tsx`, `src/start/SubscribeSection.tsx`, `src/start/ConciergeForm.tsx`.
+- **Rewrite:** `src/start/StartPage.tsx` (split signed-in vs signed-out branches).
+- **Edit:** `src/team/pages/Settings.tsx` — add Wallet card.
+- **Edit:** `supabase/functions/copilot-chat/index.ts` — enforce turn budget.
 
----
+## Technical notes
 
-## Files
+- Encryption: AES-256-GCM via `crypto.subtle` in the edge function; store `iv || ciphertext || tag` in `secret_encrypted`. Key kept only in env.
+- Keypair generation uses `npm:@solana/web3.js` inside Deno.
+- Turn budget check happens server-side in `copilot-chat` before calling the model — client display is informational only.
+- Custodial-by-default = we hold the key. That's a real custody obligation. This first pass is fine for **display + $RHOZE ledger accrual**; do NOT wire outbound transfers until we add a proper key management review. I'll mark the wallet as "display balance only, transfers coming soon" in the UI so we don't overpromise.
 
-- **New:** `src/start/CopilotChat.tsx`, `src/start/CopilotBrief.tsx`, `src/start/CopilotVoiceButton.tsx`, `src/start/copilotClient.ts` (guest token + fetch).
-- **Rewritten:** `src/start/StartPage.tsx` — copilot-first layout, auth becomes an inline "Sign in" link in the header.
-- **New edge functions:** `supabase/functions/copilot-chat`, `copilot-transcribe`, `copilot-submit`.
-- **Migration:** three tables + bucket + RLS + GRANTs.
-- **Untouched:** existing Stripe flows, `intake_requests` schema, team portal.
-
----
-
-## Phase 2 (unchanged, deferred)
-
-Portfolio backend in team portal — feeds the "Suggested team" chips later. Skipped for now per your note that team-pick is nice-to-have.
-
----
-
-Reply **"ship it"** to build, or tell me what to change (persona tone, which fields the brief tracks, whether voice should be tap-to-record vs hold-to-talk, etc.).
+Approve and I ship it in one pass.

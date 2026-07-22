@@ -4801,13 +4801,20 @@
         var uid = session.user && session.user.id;
         var greetName = (session.user && (session.user.user_metadata && (session.user.user_metadata.display_name || session.user.user_metadata.full_name)) || session.user.email) || 'Welcome back';
         var greet = document.getElementById('rHudGreet');
-        if (greet) greet.textContent = 'Welcome back' + (greetName ? ', ' + String(greetName).split(/\s|@/)[0] : '');
+        var avatar = document.getElementById('rHudAvatar');
+        var firstName = greetName ? String(greetName).split(/\s|@/)[0] : 'You';
+        if (greet) greet.textContent = firstName;
+        if (avatar) avatar.textContent = (firstName.charAt(0) || 'R').toUpperCase();
 
         // Profile display name (best-effort override).
         if (uid) {
           sbFetch('profiles?select=display_name&id=eq.' + encodeURIComponent(uid) + '&limit=1', token).then(function(rows){
             var name = rows && rows[0] && rows[0].display_name;
-            if (name && greet) greet.textContent = 'Welcome back, ' + name;
+            if (name) {
+              var first = String(name).split(/\s|@/)[0];
+              if (greet) greet.textContent = first;
+              if (avatar) avatar.textContent = (first.charAt(0) || 'R').toUpperCase();
+            }
           });
         }
 

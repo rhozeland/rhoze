@@ -4633,13 +4633,114 @@
         } catch (e) {}
       }
 
+      /* === Signed-in HUD: personalized content rails for authenticated users === */
+      var SB_PROJECT_REF = 'hdlpvcsxyxirywjkhsui';
+      function readSbSession(){
+        try {
+          var raw = localStorage.getItem('sb-' + SB_PROJECT_REF + '-auth-token');
+          if (!raw) return null;
+          var parsed = JSON.parse(raw);
+          if (!parsed || !parsed.access_token) return null;
+          if (parsed.expires_at && parsed.expires_at * 1000 < Date.now()) return null;
+          return parsed;
+        } catch (e) { return null; }
+      }
+      function sbHeaders(token){
+        return { apikey: NEWS_SUPABASE_KEY, Authorization: 'Bearer ' + token, Accept: 'application/json' };
+      }
+      function sbFetch(path, token){
+        return fetch(NEWS_SUPABASE_URL + '/rest/v1/' + path, { headers: sbHeaders(token) })
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .catch(function(){ return []; });
+      }
+      function fmtStatus(s){ return String(s || '').replace(/_/g,' '); }
+      function fmtRelative(iso){
+        if (!iso) return '';
+        var d = new Date(iso); if (isNaN(d.getTime())) return '';
+        var s = Math.max(1, Math.floor((Date.now() - d.getTime()) / 1000));
+        if (s < 60) return s + 's ago';
+        var m = Math.floor(s/60); if (m < 60) return m + 'm ago';
+        var h = Math.floor(m/60); if (h < 24) return h + 'h ago';
+        var dd = Math.floor(h/24); if (dd < 30) return dd + 'd ago';
+        return d.toLocaleDateString();
+      }
+      function renderList(el, items, empty){
+        if (!el) return;
+        if (!items || !items.length) { el.innerHTML = '<div class="r-hud-empty">' + escapeHtml(empty) + '</div>'; return; }
+        el.innerHTML = items.map(function(it){
+          var t = '<span class="r-hud-item-t">' + escapeHtml(it.title || '—') + '</span>';
+          var s = it.sub ? '<span class="r-hud-item-s">' + escapeHtml(it.sub) + '</span>' : '';
+          if (it.href) {
+            var attrs = /^https?:/i.test(it.href) ? ' target="_blank" rel="noopener"' : '';
+            return '<a class="r-hud-item" href="' + escapeHtml(it.href) + '"' + attrs + '>' + t + s + '</a>';
+          }
+          return '<div class="r-hud-item">' + t + s + '</div>';
+        }).join('');
+      }
+      function loadSignedInHUD(){
+        var hud = document.getElementById('rSignedInHUD');
+        if (!hud) return;
+        var session = readSbSession();
+        if (!session) { hud.hidden = true; return; }
+        hud.hidden = false;
+        var token = session.access_token;
+        var uid = session.user && session.user.id;
+        var greetName = (session.user && (session.user.user_metadata && (session.user.user_metadata.display_name || session.user.user_metadata.full_name)) || session.user.email) || 'Welcome back';
+        var greet = document.getElementById('rHudGreet');
+        if (greet) greet.textContent = 'Welcome back' + (greetName ? ', ' + String(greetName).split(/\s|@/)[0] : '');
+
+        // Profile display name (best-effort override).
+        if (uid) {
+          sbFetch('profiles?select=display_name&id=eq.' + encodeURIComponent(uid) + '&limit=1', token).then(function(rows){
+            var name = rows && rows[0] && rows[0].display_name;
+            if (name && greet) greet.textContent = 'Welcome back, ' + name;
+          });
+        }
+
+        // Your projects (RLS scopes to caller automatically).
+        sbFetch('projects?select=id,title,status,active_tier_slug,archived_at&archived_at=is.null&order=updated_at.desc&limit=4', token).then(function(rows){
+          var items = (rows || []).map(function(p){
+            return { title: p.title || 'Untitled project', sub: fmtStatus(p.status) || (p.active_tier_slug || 'active'), href: '/start.html' };
+          });
+          renderList(document.getElementById('rHudProjects'), items, 'No projects yet — click Build to start.');
+
+          // Aggregate $RHOZE balance across your projects.
+          var ids = (rows || []).map(function(p){ return p.id; }).filter(Boolean);
+          var rhozeEl = document.getElementById('rHudRhoze');
+          if (!ids.length) { if (rhozeEl) rhozeEl.textContent = '0'; return; }
+          var inList = 'in.(' + ids.map(function(id){ return '"' + id + '"'; }).join(',') + ')';
+          sbFetch('rhoze_balances?select=balance&project_id=' + encodeURIComponent(inList), token).then(function(bals){
+            var sum = (bals || []).reduce(function(a,b){ return a + (Number(b.balance) || 0); }, 0);
+            if (rhozeEl) rhozeEl.textContent = sum.toLocaleString('en-US');
+          });
+        });
+
+        // Studio signals — published live dashboard content.
+        sbFetch('live_dashboard_content?select=section_key,title,updated_at&is_published=eq.true&order=updated_at.desc&limit=4', token).then(function(rows){
+          var items = (rows || []).map(function(r){
+            return { title: r.title || r.section_key || 'Update', sub: fmtRelative(r.updated_at), href: '/live.html' };
+          });
+          renderList(document.getElementById('rHudStudio'), items, 'Quiet on the wire.');
+        });
+
+        // Newsroom items — same source as the marquee, top 4.
+        sbFetch('news_ticker_items?select=label,headline,href,sort_order&is_active=eq.true&order=sort_order.asc&limit=4', token).then(function(rows){
+          var items = (rows || []).map(function(n){
+            return { title: n.headline || 'Update', sub: n.label || '', href: n.href || null };
+          });
+          renderList(document.getElementById('rHudNews'), items, 'No news right now.');
+        });
+      }
+
       function start(){
         loadChannel();
         loadNewsTicker();
         loadTicker(); loadSpark();
+        loadSignedInHUD();
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);
+        setInterval(loadSignedInHUD, 5 * 60 * 1000);
         setInterval(loadChannel, 15 * 60 * 1000); // re-check feed every 15 min
       }
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

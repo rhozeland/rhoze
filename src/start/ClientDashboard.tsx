@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";
@@ -77,6 +77,7 @@ export default function ClientDashboard() {
   const [msgEmbed, setMsgEmbed] = useState("");
   const [showEmbed, setShowEmbed] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [replacingId, setReplacingId] = useState<string | null>(null);
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
@@ -174,6 +175,81 @@ export default function ClientDashboard() {
       toast({ title: "Couldn't send", description: err.message ?? String(err), variant: "destructive" });
     } finally {
       setMsgSending(false);
+    }
+  }
+
+  async function downloadAttachment(msg: MilestoneMessage) {
+    if (!msg.attachment_path) return;
+    try {
+      const { data, error } = await supabase.storage
+        .from("milestone-attachments")
+        .download(msg.attachment_path);
+      if (error) throw error;
+      const url = URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = msg.attachment_name ?? "attachment";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      toast({ title: "Couldn't download", description: err.message ?? String(err), variant: "destructive" });
+    }
+  }
+
+  async function copyAttachmentLink(msg: MilestoneMessage) {
+    if (!msg.attachment_path) return;
+    try {
+      const { data, error } = await supabase.storage
+        .from("milestone-attachments")
+        .createSignedUrl(msg.attachment_path, 60 * 60 * 24 * 7);
+      if (error) throw error;
+      await navigator.clipboard.writeText(data.signedUrl);
+      toast({ title: "Link copied", description: "Signed link valid for 7 days." });
+    } catch (err: any) {
+      toast({ title: "Couldn't copy link", description: err.message ?? String(err), variant: "destructive" });
+    }
+  }
+
+  async function replaceAttachment(msg: MilestoneMessage, file: File) {
+    if (!msgMilestone || !activeProject) return;
+    if (file.size > 25 * 1024 * 1024) {
+      toast({ title: "Too large", description: "Attachments must be under 25 MB.", variant: "destructive" });
+      return;
+    }
+    setReplacingId(msg.id);
+    try {
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+      const newPath = `${activeProject.id}/${msgMilestone.id}/${crypto.randomUUID()}-${safeName}`;
+      const { error: upErr } = await supabase.storage
+        .from("milestone-attachments")
+        .upload(newPath, file, { contentType: file.type || "application/octet-stream", upsert: false });
+      if (upErr) throw upErr;
+
+      const { error: updErr } = await supabase.from("milestone_messages")
+        .update({
+          attachment_path: newPath,
+          attachment_name: file.name,
+          attachment_mime: file.type || null,
+          attachment_size: file.size,
+        })
+        .eq("id", msg.id);
+      if (updErr) {
+        // best-effort cleanup of the orphaned upload
+        await supabase.storage.from("milestone-attachments").remove([newPath]);
+        throw updErr;
+      }
+
+      if (msg.attachment_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.attachment_path]);
+      }
+      toast({ title: "Attachment replaced" });
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't replace", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setReplacingId(null);
     }
   }
 
@@ -563,33 +639,75 @@ export default function ClientDashboard() {
                   const isImage = mime.startsWith("image/");
                   const isAudio = mime.startsWith("audio/");
                   const isPdf = mime === "application/pdf";
+                  const canEdit = mine || false;
+                  const actionBtn = (extra: string) =>
+                    `inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[10px] uppercase tracking-wider transition-colors ${extra} ${mine ? "border-primary-foreground/30 text-primary-foreground/80 hover:bg-primary-foreground/10" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`;
+                  const AttachmentActions = signed ? (
+                    <div className="flex flex-wrap items-center gap-1 pt-1">
+                      <button type="button" onClick={() => downloadAttachment(msg)} className={actionBtn("")} title="Download file">
+                        <Download size={10} /> Download
+                      </button>
+                      <button type="button" onClick={() => copyAttachmentLink(msg)} className={actionBtn("")} title="Copy shareable link (7 days)">
+                        <Copy size={10} /> Copy link
+                      </button>
+                      {canEdit && (
+                        <label className={actionBtn("cursor-pointer")} title="Replace this file">
+                          <RefreshCw size={10} className={replacingId === msg.id ? "animate-spin" : ""} />
+                          {replacingId === msg.id ? "Replacing…" : "Replace"}
+                          <input
+                            type="file"
+                            accept="image/*,application/pdf,audio/*"
+                            className="hidden"
+                            disabled={replacingId === msg.id}
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
+                              if (f) replaceAttachment(msg, f);
+                              e.currentTarget.value = "";
+                            }}
+                          />
+                        </label>
+                      )}
+                    </div>
+                  ) : null;
                   return (
                     <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm space-y-2 ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
                         {msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>}
                         {signed && isImage && (
-                          <a href={signed} target="_blank" rel="noreferrer" className="block">
-                            <img src={signed} alt={msg.attachment_name ?? "attachment"} className="rounded-lg max-h-64 w-auto" />
-                          </a>
+                          <div className="space-y-1">
+                            <a href={signed} target="_blank" rel="noreferrer" className="block">
+                              <img src={signed} alt={msg.attachment_name ?? "attachment"} className="rounded-lg max-h-64 w-auto" />
+                            </a>
+                            {AttachmentActions}
+                          </div>
                         )}
                         {signed && isAudio && (
-                          <audio src={signed} controls className="w-full max-w-xs" />
+                          <div className="space-y-1">
+                            <audio src={signed} controls className="w-full max-w-xs" />
+                            {AttachmentActions}
+                          </div>
                         )}
                         {signed && isPdf && (
-                          <a href={signed} target="_blank" rel="noreferrer"
-                             className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
-                            <FileText size={14} />
-                            <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Document.pdf"}</span>
-                            <ExternalLink size={11} />
-                          </a>
+                          <div className="space-y-1">
+                            <a href={signed} target="_blank" rel="noreferrer"
+                               className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
+                              <FileText size={14} />
+                              <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Document.pdf"}</span>
+                              <ExternalLink size={11} />
+                            </a>
+                            {AttachmentActions}
+                          </div>
                         )}
                         {signed && !isImage && !isAudio && !isPdf && (
-                          <a href={signed} target="_blank" rel="noreferrer"
-                             className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
-                            <Paperclip size={13} />
-                            <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Attachment"}</span>
-                            <ExternalLink size={11} />
-                          </a>
+                          <div className="space-y-1">
+                            <a href={signed} target="_blank" rel="noreferrer"
+                               className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs ${mine ? "border-primary-foreground/30 hover:bg-primary-foreground/10" : "border-border hover:bg-background/60"}`}>
+                              <Paperclip size={13} />
+                              <span className="truncate max-w-[180px]">{msg.attachment_name ?? "Attachment"}</span>
+                              <ExternalLink size={11} />
+                            </a>
+                            {AttachmentActions}
+                          </div>
                         )}
                         {msg.embed_url && (
                           toEmbedUrl(msg.embed_url)

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw, Pencil, Trash2, Check } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw, Pencil, Trash2, Check, Captions } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";

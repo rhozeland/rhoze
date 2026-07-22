@@ -1,49 +1,82 @@
-## Two things to ship
+# /start Redesign + Portfolio Backend
 
-### 1. Fix the visual bug (news ticker overlap)
+Two connected systems. Phase 1 ships the new front door. Phase 2 gives the team a real backend to feed it.
 
-**Where:** the "News" label with the green dot on the far left of the ticker in the homepage masthead (in `index.html`, `.r-eco-tick` + `.r-eco-tick.is-news`).
+---
 
-**Why it clips:** the scrolling track is `overflow:hidden` on its own cell, but the parent row lets the animated text bleed under the stationary "News" label because that label has no background/z-index, and there's no left fade to mask the edge.
+## Phase 1 — New `/start` page (Studio Concierge)
 
-**Fix:**
-- Give the "News" label cell a solid `background: hsl(var(--surface-card))`, `position: relative`, `z-index: 2`, and a proper right border so it sits above the scrolling row.
-- Add a small left fade gradient inside `.r-eco-tick.is-news` (matching the existing behavior on other tickers on the site) so items dissolve into the label cleanly instead of butting up against it.
-- Bump the left padding on the first news item so nothing ever kisses the label edge.
+Full rebuild of `src/start/StartPage.tsx` in the direction you picked (warm cream #faf8f5, tan #c9b99a, taupe #8b7355, near-black ink, Inter light). Layout follows the "Modular" wireframe: left column = identity + auth + live dashboard slot, right column = pathways + roster.
 
-### 2. Team Portal → Newsroom (admin for the ticker)
+**Signed-out state — one screen, three pathways + inline auth**
 
-**New page:** `Newsroom` under the team portal (`/newsroom`), added to the sidebar next to `Live Editor`. Admin-only.
+```
+┌──────────────────────┬──────────────────────────────────────────┐
+│ STUDIO CONCIERGE     │  01 SUBSCRIBE   02 BUILD    03 REQUEST   │
+│ Welcome back.        │  Monthly        Scoped      Rapid brief  │
+│                      │  retainer       estimate    (48h)        │
+│ ┌─ Access Studio ──┐ │                                          │
+│ │ email            │ │  ──────────────────────────────────────  │
+│ │ password         │ │  PICK YOUR TEAM        · from portfolio  │
+│ │ [ Sign In ]      │ │  [portrait][portrait][portrait][portrait]│
+│ │  ── or ──        │ │  Name · role · projects worked           │
+│ │ [G] Google       │ │                                          │
+│ └──────────────────┘ │  ──────────────────────────────────────  │
+│                      │  ACTIVE WORKSPACE (shown when signed in) │
+│ (auth swaps to       │  Project · milestone bar · credits left  │
+│  compact dashboard   │                                          │
+│  when signed in)     │                                          │
+└──────────────────────┴──────────────────────────────────────────┘
+```
 
-**What it does:** lets you edit the homepage news ticker items — the little press/announcement chips that scroll across the masthead. Each row is a simple, typeable entry:
+- **Subscribe** → opens tier picker + embedded Stripe checkout (existing flow, restyled).
+- **Build** → opens the scoped-services drawer (existing catalog + cart + deposit checkout, restyled to warm tokens).
+- **Request** → lightweight brief form → writes to `intake_requests` (existing), routes to team.
+- **Auth panel** — email/password + Google, in-page. On success the whole left column swaps to a compact live dashboard (active project, milestone progress, credits, "Open full dashboard →" link into `/client/home` or `/portal/:id`).
+- **Pick your team rail** — pulls verified team members from `profiles` + `user_roles` (admin/employee) plus their project counts from Phase 2 credits table. Falls back to empty state until Phase 2 is populated.
+- Fully responsive: single column mobile, split on `md+`.
 
-| Field | Notes |
-|---|---|
-| Label (kicker) | Free text — `New Release`, `Podcast`, `Exhibition`, `Hackathon`, `Community`, whatever you want. Not a fixed dropdown. |
-| Headline | The line that scrolls (`Cozal — "Sefra" music video out now`). |
-| Link (optional) | Full URL or an internal path like `/leaderboard.html`. If empty, item is not clickable. |
-| Sort order | Drag to reorder. |
-| Active | Toggle to show/hide without deleting. |
+**Not touched in Phase 1:** the /start URL, existing Stripe integration, existing intake table, existing tier/service data. Only the shell and visual system change.
 
-Standard actions: add, edit, reorder, hide/show, delete. Live preview strip at the top of the page shows exactly how the ticker will look on the homepage.
+---
 
-### How the homepage picks up the changes
+## Phase 2 — Portfolio backend in Team Portal
 
-The static `index.html` masthead ticker gets a small script that fetches the active items from the backend on load and rerenders `#rEcoNewsTrack`. If the fetch fails or returns empty, it keeps the hardcoded fallback items already in the HTML so the ticker is never blank.
+New team-portal section at `/portfolio` (admin/employee edit, everyone reads).
 
-### Data & access
+### Schema (migration)
 
-- New table `news_ticker_items` in Lovable Cloud with the fields above.
-- Public read access (so the homepage can render it without auth).
-- Write access restricted to `admin` role via the existing `has_role` pattern.
+- `public.portfolio_works` — title, slug, client_name, year, summary, tags[], hero_media_url, hero_media_kind (image/video/gif), external_url, published (bool), featured_order (int), created_at/updated_at.
+- `public.portfolio_media` — work_id FK, url, kind, caption, sort_order. Multi-media per work (thumbs, gifs, videos, stills).
+- `public.portfolio_credits` — work_id FK, user_id FK (profiles), role (e.g. "Director", "Editor"), sort_order. This is the join that answers "who worked on it" and drives the /start roster.
+- RLS: read = public for `published=true`; write = admin/employee via `is_team_member`. GRANTs on all three tables per project rules.
 
-### Out of scope for this pass
+### Team-portal UI (`src/team/pages/Portfolio.tsx`)
 
-- Rich text / images inside ticker items — kept as plain text on purpose.
-- Scheduling (auto publish/unpublish by date). Easy to add later; for now the Active toggle covers it.
-- Sharing this ticker with other pages (contact, events, etc.). Same data source could power them later, but not part of this change.
+- List view: table of works with published toggle, featured order, quick filters, search.
+- Detail editor: title/client/year/tags, hero media picker (upload to `docs` bucket or paste Drive/YouTube URL — reuses `EmbedPreview`), media grid drag-to-reorder, credits picker (autocomplete team members → assign role).
+- "Publish to public site" toggle syncs `published` flag.
 
-### Technical notes
+### Public `/projects.html` sync
 
-- Files touched: `index.html` (CSS + fetch script), new `src/team/pages/Newsroom.tsx`, `src/team/TeamApp.tsx` (route), `src/team/components/TeamLayout.tsx` (nav link), one Cloud migration.
-- No changes to the React homepage components — the ticker in question lives entirely in `index.html`.
+- Replace the current hand-authored project list with a fetch from `portfolio_works` where `published=true`, ordered by `featured_order`. Keeps the static HTML shell; injects rows at runtime via a small script.
+
+### Feeds into `/start`
+
+- The "Pick your team" rail on the new /start page queries `portfolio_credits` grouped by user → shows top N members by project count with their most recent work thumbnail as hover state.
+- Selecting a team member on /start stores their id in the intake payload so the assigned team knows who the client wants.
+
+---
+
+## Technical notes (for the dev, not the plan reader)
+
+- Palette tokens added to `src/index.css` as `--concierge-*` HSL vars; component classes use them via Tailwind arbitrary values (`bg-[hsl(var(--concierge-cream))]`) to stay theme-safe.
+- Auth uses existing `supabase.auth.signInWithPassword` and `signInWithOAuth({ provider: 'google', redirectTo: window.location.origin + '/start.html' })`.
+- Dashboard slot reuses the existing `ClientDashboard` component in a compact variant.
+- Portfolio media uploads go to the existing `docs` bucket under a `portfolio/` prefix.
+
+---
+
+## What I need from you before I start
+
+Nothing blocking — the wireframe pick is enough. I'll ship Phase 1 first, show you the working page, and only start Phase 2 after you approve Phase 1. Reply "ship phase 1" (or with any tweaks) and I'll build.

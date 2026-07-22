@@ -3042,33 +3042,60 @@
               </div>
               <div class="r-hud-chips">
                 <a class="r-hud-chip is-link" id="rHudRhozeLink" href="https://dexscreener.com/solana/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF" target="_blank" rel="noopener" title="View $RHOZE on DexScreener"><span class="r-hud-chip-k">$RHOZE</span><span class="r-hud-chip-val" id="rHudRhoze" aria-live="polite">—</span><span class="r-hud-chip-arrow" aria-hidden="true">↗</span></a>
-                <a class="r-hud-chip" href="/start.html">Dashboard</a>
-                <a class="r-hud-chip" href="/invest.html">Invest</a>
-                <a class="r-hud-chip is-solid" href="/start.html">Build</a>
+                <a class="r-hud-chip" href="/start.html" data-inline-nav="build">Dashboard</a>
+                <a class="r-hud-chip" href="/invest.html" data-inline-nav="invest">Invest</a>
+                <a class="r-hud-chip is-solid" href="/start.html" data-inline-nav="build">Build</a>
+                <button type="button" class="r-hud-chip" id="rHudSignOut" title="Sign out of Rhozeland">Sign out</button>
               </div>
             </div>
-            <div class="r-hud-rails">
-              <div class="r-hud-rail">
-                <div class="r-hud-rail-h">
-                  <span class="r-hud-rail-k">Your projects</span>
-                  <a class="r-hud-rail-more" href="/start.html">Open</a>
-                </div>
-                <div class="r-hud-list" id="rHudProjects" data-skel="1"><div class="r-hud-skel"><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:55%"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:62%"></span><span class="r-hud-skel-bar is-s"></span></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inline swap view: nav clicks load the target page inside this iframe overlay instead of navigating away. -->
+      <section id="rInlineView" class="r-inline" aria-label="Section viewer" hidden>
+        <style>
+          .r-inline { padding: 0.75rem 0 1.25rem; }
+          .r-inline-inner { max-width: 1240px; margin: 0 auto; padding: 0 2rem; }
+          .r-inline-shell { border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); box-shadow: 8px 8px 0 0 hsl(var(--ink)); overflow: hidden; }
+          .r-inline-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.65rem 1rem; border-bottom: 1px solid hsl(var(--ink)); font-family: 'Inter', system-ui, sans-serif; }
+          .r-inline-crumbs { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+          .r-inline-crumb-k { font-size: 0.58rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); }
+          .r-inline-crumb-v { font-size: 0.86rem; font-weight: 800; color: hsl(var(--ink)); letter-spacing: -0.01em; }
+          .r-inline-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+          .r-inline-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.32rem 0.6rem; border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; cursor: pointer; font-family: inherit; }
+          .r-inline-btn:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-inline-btn.is-solid { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-inline-btn.is-solid:hover { background: hsl(var(--surface-card)); color: hsl(var(--ink)); }
+          .r-inline-frame-wrap { position: relative; width: 100%; height: 82vh; min-height: 640px; background: hsl(var(--surface-card)); }
+          .r-inline-frame { width: 100%; height: 100%; border: 0; display: block; opacity: 0; transition: opacity 260ms ease; }
+          .r-inline-frame.is-ready { opacity: 1; }
+          .r-inline-load { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted)); pointer-events: none; opacity: 1; transition: opacity 200ms ease; }
+          .r-inline-load.is-hidden { opacity: 0; }
+          .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
+          @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
+          /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer. */
+          body.r-inline-active main > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
+          @media (max-width: 700px) {
+            .r-inline-inner { padding: 0 1rem; }
+            .r-inline-frame-wrap { height: 78vh; min-height: 520px; }
+          }
+        </style>
+        <div class="r-inline-inner">
+          <div class="r-inline-shell">
+            <div class="r-inline-bar">
+              <div class="r-inline-crumbs">
+                <span class="r-inline-crumb-k">Viewing</span>
+                <span class="r-inline-crumb-v" id="rInlineTitle">—</span>
               </div>
-              <div class="r-hud-rail">
-                <div class="r-hud-rail-h">
-                  <span class="r-hud-rail-k">Studio signals</span>
-                  <a class="r-hud-rail-more" href="/live.html">Live</a>
-                </div>
-                <div class="r-hud-list" id="rHudStudio" data-skel="1"><div class="r-hud-skel"><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:58%"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:68%"></span><span class="r-hud-skel-bar is-s"></span></div></div></div>
+              <div class="r-inline-actions">
+                <a class="r-inline-btn" id="rInlineOpen" href="#" target="_blank" rel="noopener">Open full page ↗</a>
+                <button type="button" class="r-inline-btn is-solid" id="rInlineClose" aria-label="Back to home">← Home</button>
               </div>
-              <div class="r-hud-rail">
-                <div class="r-hud-rail-h">
-                  <span class="r-hud-rail-k">Newsroom</span>
-                  <a class="r-hud-rail-more" href="/about.html">More</a>
-                </div>
-                <div class="r-hud-list" id="rHudNews" data-skel="1"><div class="r-hud-skel"><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:60%"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:52%"></span><span class="r-hud-skel-bar is-s"></span></div></div></div>
-              </div>
+            </div>
+            <div class="r-inline-frame-wrap">
+              <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>
+              <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section" loading="lazy"></iframe>
             </div>
           </div>
         </div>
@@ -4739,14 +4766,8 @@
           });
         }
 
-        // Your projects (RLS scopes to caller automatically).
-        sbFetch('projects?select=id,title,status,active_tier_slug,archived_at&archived_at=is.null&order=updated_at.desc&limit=4', token).then(function(rows){
-          var items = (rows || []).map(function(p){
-            return { title: p.title || 'Untitled project', sub: fmtStatus(p.status) || (p.active_tier_slug || 'active'), href: '/start.html' };
-          });
-          renderList(document.getElementById('rHudProjects'), items, 'No projects yet — click Build to start.');
-
-          // Aggregate $RHOZE balance across your projects.
+        // Aggregate $RHOZE balance across the user's projects (rails removed; balance chip stays).
+        sbFetch('projects?select=id&archived_at=is.null&limit=50', token).then(function(rows){
           var ids = (rows || []).map(function(p){ return p.id; }).filter(Boolean);
           if (!ids.length) { animateRhoze(0); return; }
           var inList = 'in.(' + ids.map(function(id){ return '"' + id + '"'; }).join(',') + ')';
@@ -4755,22 +4776,114 @@
             animateRhoze(sum);
           });
         });
+      }
 
-        // Studio signals — published live dashboard content.
-        sbFetch('live_dashboard_content?select=section_key,title,updated_at&is_published=eq.true&order=updated_at.desc&limit=4', token).then(function(rows){
-          var items = (rows || []).map(function(r){
-            return { title: r.title || r.section_key || 'Update', sub: fmtRelative(r.updated_at), href: '/live.html' };
-          });
-          renderList(document.getElementById('rHudStudio'), items, 'Quiet on the wire.');
+      // === Sign out ===
+      function wireSignOut(){
+        var btn = document.getElementById('rHudSignOut');
+        if (!btn) return;
+        btn.addEventListener('click', function(){
+          try {
+            // Clear all Supabase auth keys from localStorage (sb-*-auth-token).
+            for (var i = localStorage.length - 1; i >= 0; i--) {
+              var k = localStorage.key(i);
+              if (k && (k.indexOf('sb-') === 0 || k.indexOf('supabase.auth.') === 0)) localStorage.removeItem(k);
+            }
+          } catch(e){}
+          window.location.href = '/';
         });
+      }
 
-        // Newsroom items — same source as the marquee, top 4.
-        sbFetch('news_ticker_items?select=label,headline,href,sort_order&is_active=eq.true&order=sort_order.asc&limit=4', token).then(function(rows){
-          var items = (rows || []).map(function(n){
-            return { title: n.headline || 'Update', sub: n.label || '', href: n.href || null };
-          });
-          renderList(document.getElementById('rHudNews'), items, 'No news right now.');
+      // === One-page inline swap ===
+      // Maps hash tokens to the underlying page URL + human-friendly crumb label.
+      var INLINE_ROUTES = {
+        about:       { url: '/about.html',       title: 'About' },
+        work:        { url: '/projects.html',    title: 'Work' },
+        leaderboard: { url: '/leaderboard.html', title: 'Leaderboard' },
+        connect:     { url: '/contact.html',     title: 'Connect' },
+        invest:      { url: '/invest.html',      title: 'Invest' },
+        build:       { url: '/start.html',       title: 'Build' },
+        live:        { url: '/live.html',        title: 'Live' },
+        events:      { url: '/events.html',      title: 'Events' }
+      };
+      // Map raw href paths to route keys so we can intercept existing anchor tags without rewriting each one.
+      var HREF_TO_ROUTE = {
+        '/about.html': 'about', '/about': 'about',
+        '/projects.html': 'work', '/projects': 'work',
+        '/leaderboard.html': 'leaderboard', '/leaderboard': 'leaderboard',
+        '/contact.html': 'connect', '/contact': 'connect',
+        '/invest.html': 'invest', '/invest': 'invest',
+        '/start.html': 'build', '/start': 'build',
+        '/live.html': 'live', '/live': 'live',
+        '/events.html': 'events', '/events': 'events'
+      };
+      function openInlineView(routeKey, opts){
+        var route = INLINE_ROUTES[routeKey];
+        if (!route) return false;
+        var view  = document.getElementById('rInlineView');
+        var frame = document.getElementById('rInlineFrame');
+        var load  = document.getElementById('rInlineLoad');
+        var title = document.getElementById('rInlineTitle');
+        var open  = document.getElementById('rInlineOpen');
+        if (!view || !frame) return false;
+        document.body.classList.add('r-inline-active');
+        view.hidden = false;
+        if (title) title.textContent = route.title;
+        if (open)  open.href = route.url;
+        frame.classList.remove('is-ready');
+        if (load) load.classList.remove('is-hidden');
+        frame.onload = function(){
+          frame.classList.add('is-ready');
+          if (load) load.classList.add('is-hidden');
+        };
+        // Only reload the iframe if the src actually changed.
+        var targetSrc = new URL(route.url, window.location.origin).toString();
+        if (frame.src !== targetSrc) frame.src = route.url;
+        else { frame.classList.add('is-ready'); if (load) load.classList.add('is-hidden'); }
+        // Update URL hash without scrolling.
+        var newHash = '#' + routeKey;
+        if (opts && opts.replace) history.replaceState(null, '', newHash);
+        else if (location.hash !== newHash) history.pushState(null, '', newHash);
+        // Scroll the shell into view so users see the swap.
+        try { view.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) { view.scrollIntoView(); }
+        return true;
+      }
+      function closeInlineView(opts){
+        var view = document.getElementById('rInlineView');
+        if (!view) return;
+        document.body.classList.remove('r-inline-active');
+        view.hidden = true;
+        if (opts && opts.replace) history.replaceState(null, '', location.pathname + location.search);
+        else if (location.hash) history.pushState(null, '', location.pathname + location.search);
+      }
+      function wireInlineNav(){
+        // Intercept clicks on any anchor whose href matches an inline route.
+        document.addEventListener('click', function(e){
+          var a = e.target && e.target.closest && e.target.closest('a[href]');
+          if (!a) return;
+          if (a.target === '_blank' || a.hasAttribute('download')) return;
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          // Only intercept in-page links (same origin, no ?query except hashless).
+          var href = a.getAttribute('href') || '';
+          // Explicit opt-in via data attribute wins.
+          var explicit = a.getAttribute('data-inline-nav');
+          var key = explicit || HREF_TO_ROUTE[href.replace(/\/$/, '')] || HREF_TO_ROUTE[href.split('?')[0].split('#')[0]];
+          if (!key || !INLINE_ROUTES[key]) return;
+          e.preventDefault();
+          // Close mobile nav drawer if present.
+          if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e2){} }
+          openInlineView(key);
         });
+        var close = document.getElementById('rInlineClose');
+        if (close) close.addEventListener('click', function(){ closeInlineView(); });
+        window.addEventListener('popstate', function(){
+          var h = (location.hash || '').replace('#', '');
+          if (h && INLINE_ROUTES[h]) openInlineView(h, { replace: true });
+          else closeInlineView({ replace: true });
+        });
+        // On initial load, honor #hash routing.
+        var h0 = (location.hash || '').replace('#', '');
+        if (h0 && INLINE_ROUTES[h0]) openInlineView(h0, { replace: true });
       }
 
       function start(){
@@ -4778,6 +4891,8 @@
         loadNewsTicker();
         loadTicker(); loadSpark();
         loadSignedInHUD();
+        wireSignOut();
+        wireInlineNav();
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);

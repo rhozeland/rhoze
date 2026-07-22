@@ -92,13 +92,16 @@ export default function ClientDashboard() {
     setMsgLoading(true);
     const { data, error } = await supabase
       .from("milestone_messages")
-      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url,edited_at")
+      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url,edited_at,caption_path,caption_name,caption_mime")
       .eq("milestone_id", milestoneId)
       .order("created_at", { ascending: true });
     if (!error) {
       const rows = (data ?? []) as MilestoneMessage[];
       setMsgList(rows);
-      const paths = rows.map(r => r.attachment_path).filter(Boolean) as string[];
+      const paths = [
+        ...rows.map(r => r.attachment_path),
+        ...rows.map(r => r.caption_path),
+      ].filter(Boolean) as string[];
       if (paths.length) {
         const { data: signed } = await supabase.storage
           .from("milestone-attachments")

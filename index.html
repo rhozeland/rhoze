@@ -3074,13 +3074,8 @@
           .r-inline-load.is-hidden { opacity: 0; }
           .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
           @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
-          body.r-inline-active .r-eco,
-          body.r-inline-active .r-brand-pillars,
-          body.r-inline-active .about,
-          body.r-inline-active .selected-work,
-          body.r-inline-active .r-chart,
-          body.r-inline-active .tokenomics,
-          body.r-inline-active #ecosystem-ticker { display: none !important; }
+          /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer. */
+          body.r-inline-active main > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           @media (max-width: 700px) {
             .r-inline-inner { padding: 0 1rem; }
             .r-inline-frame-wrap { height: 78vh; min-height: 520px; }

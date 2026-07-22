@@ -470,6 +470,63 @@ export default function ClientDashboard() {
       <a href="/team.html#/portal" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline underline-offset-4">
         Open full client portal <ExternalLink size={11} />
       </a>
+
+      <Dialog open={!!msgMilestone} onOpenChange={(o) => { if (!o) setMsgMilestone(null); }}>
+        <DialogContent className="sm:max-w-lg p-0 gap-0 max-h-[90vh] flex flex-col">
+          <DialogHeader className="p-4 sm:p-5 border-b border-border space-y-1">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Milestone thread</div>
+            <DialogTitle className="text-base sm:text-lg leading-tight pr-6">{msgMilestone?.title}</DialogTitle>
+            <DialogDescription className="text-xs">
+              Send updates to your team. They'll see your messages in the project portal.
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="flex-1 min-h-[220px] max-h-[50vh]">
+            <div className="p-4 sm:p-5 space-y-3">
+              {msgLoading ? (
+                <div className="text-xs text-muted-foreground">Loading thread…</div>
+              ) : msgList.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-8">
+                  No messages yet. Start the conversation below.
+                </div>
+              ) : (
+                msgList.map(msg => {
+                  const mine = msg.author_id === msgUserId;
+                  return (
+                    <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+                        <div className="whitespace-pre-wrap break-words">{msg.body}</div>
+                        <div className={`text-[10px] mt-1 opacity-70 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                          {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </ScrollArea>
+
+          <form onSubmit={sendMessage} className="border-t border-border p-3 sm:p-4 flex items-end gap-2">
+            <Textarea
+              value={msgBody}
+              onChange={(e) => setMsgBody(e.target.value)}
+              placeholder="Write a message to your team…"
+              rows={2}
+              className="resize-none min-h-[44px]"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault();
+                  sendMessage(e as any);
+                }
+              }}
+            />
+            <Button type="submit" disabled={msgSending || !msgBody.trim()} size="icon" className="shrink-0 h-11 w-11">
+              <Send size={16} />
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

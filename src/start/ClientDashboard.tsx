@@ -87,6 +87,7 @@ export default function ClientDashboard() {
   const [editingBody, setEditingBody] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [captionBusyId, setCaptionBusyId] = useState<string | null>(null);
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
@@ -308,6 +309,71 @@ export default function ClientDashboard() {
       setDeletingId(null);
     }
   }
+
+  async function uploadCaption(msg: MilestoneMessage, file: File) {
+    if (!msgMilestone || !activeProject) return;
+    const name = file.name.toLowerCase();
+    if (!name.endsWith(".vtt") && !name.endsWith(".srt") && file.type !== "text/vtt") {
+      toast({ title: "Unsupported file", description: "Upload a .vtt or .srt caption file.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 512 * 1024) {
+      toast({ title: "Too large", description: "Caption files must be under 512 KB.", variant: "destructive" });
+      return;
+    }
+    setCaptionBusyId(msg.id);
+    try {
+      let text = await file.text();
+      // Auto-convert SRT to a minimal VTT so the player can render it.
+      if (name.endsWith(".srt")) {
+        text = "WEBVTT\n\n" + text.replace(/\r/g, "").replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, "$1.$2");
+      }
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+      const path = `${activeProject.id}/${msgMilestone.id}/captions/${crypto.randomUUID()}-${safeName.replace(/\.srt$/i, ".vtt")}`;
+      const blob = new Blob([text], { type: "text/vtt" });
+      const { error: upErr } = await supabase.storage
+        .from("milestone-attachments")
+        .upload(path, blob, { contentType: "text/vtt", upsert: false });
+      if (upErr) throw upErr;
+
+      const { error: updErr } = await supabase.from("milestone_messages")
+        .update({ caption_path: path, caption_name: file.name, caption_mime: "text/vtt" })
+        .eq("id", msg.id);
+      if (updErr) {
+        await supabase.storage.from("milestone-attachments").remove([path]);
+        throw updErr;
+      }
+      if (msg.caption_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.caption_path]);
+      }
+      toast({ title: "Captions added" });
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't add captions", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setCaptionBusyId(null);
+    }
+  }
+
+  async function removeCaption(msg: MilestoneMessage) {
+    if (!msgMilestone) return;
+    setCaptionBusyId(msg.id);
+    try {
+      if (msg.caption_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.caption_path]);
+      }
+      const { error } = await supabase.from("milestone_messages")
+        .update({ caption_path: null, caption_name: null, caption_mime: null })
+        .eq("id", msg.id);
+      if (error) throw error;
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't remove captions", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setCaptionBusyId(null);
+    }
+  }
+
 
   const loadData = useCallback(async (uid: string) => {
     // projects via membership

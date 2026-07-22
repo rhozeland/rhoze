@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw, Pencil, Trash2, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";
@@ -40,6 +40,7 @@ type MilestoneMessage = {
   attachment_mime: string | null;
   attachment_size: number | null;
   embed_url: string | null;
+  edited_at: string | null;
 };
 
 function fmtMoney(cents: number | null) {
@@ -78,12 +79,16 @@ export default function ClientDashboard() {
   const [showEmbed, setShowEmbed] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [replacingId, setReplacingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingBody, setEditingBody] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
     const { data, error } = await supabase
       .from("milestone_messages")
-      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url")
+      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url,edited_at")
       .eq("milestone_id", milestoneId)
       .order("created_at", { ascending: true });
     if (!error) {
@@ -250,6 +255,50 @@ export default function ClientDashboard() {
       toast({ title: "Couldn't replace", description: err.message ?? String(err), variant: "destructive" });
     } finally {
       setReplacingId(null);
+    }
+  }
+
+  function startEdit(msg: MilestoneMessage) {
+    setEditingId(msg.id);
+    setEditingBody(msg.body ?? "");
+  }
+  function cancelEdit() {
+    setEditingId(null);
+    setEditingBody("");
+  }
+  async function saveEdit(msg: MilestoneMessage) {
+    if (!msgMilestone) return;
+    const next = editingBody.trim();
+    if (next === (msg.body ?? "").trim()) { cancelEdit(); return; }
+    setEditSaving(true);
+    try {
+      const { error } = await supabase.from("milestone_messages")
+        .update({ body: next.length ? next : null, edited_at: new Date().toISOString() })
+        .eq("id", msg.id);
+      if (error) throw error;
+      cancelEdit();
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't save edit", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setEditSaving(false);
+    }
+  }
+  async function deleteMessage(msg: MilestoneMessage) {
+    if (!msgMilestone) return;
+    if (!confirm("Delete this message? This can't be undone.")) return;
+    setDeletingId(msg.id);
+    try {
+      if (msg.attachment_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.attachment_path]);
+      }
+      const { error } = await supabase.from("milestone_messages").delete().eq("id", msg.id);
+      if (error) throw error;
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't delete", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -672,7 +721,27 @@ export default function ClientDashboard() {
                   return (
                     <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm space-y-2 ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
-                        {msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>}
+                        {editingId === msg.id ? (
+                          <div className="space-y-1.5">
+                            <Textarea
+                              value={editingBody}
+                              onChange={(e) => setEditingBody(e.target.value)}
+                              rows={3}
+                              className="text-sm bg-background text-foreground"
+                              autoFocus
+                            />
+                            <div className="flex gap-1.5 justify-end">
+                              <button type="button" onClick={cancelEdit} disabled={editSaving} className={actionBtn("")}>
+                                <X size={10} /> Cancel
+                              </button>
+                              <button type="button" onClick={() => saveEdit(msg)} disabled={editSaving} className={actionBtn("")}>
+                                <Check size={10} /> {editSaving ? "Saving…" : "Save"}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>
+                        )}
                         {signed && isImage && (
                           <div className="space-y-1">
                             <a href={signed} target="_blank" rel="noreferrer" className="block">
@@ -714,8 +783,39 @@ export default function ClientDashboard() {
                             ? <div className="rounded-lg overflow-hidden bg-background text-foreground"><EmbedPreview url={msg.embed_url} height={280} /></div>
                             : <a href={msg.embed_url} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-1 text-xs underline underline-offset-2 ${mine ? "" : "text-primary"}`}><Link2 size={12} /> {msg.embed_url}</a>
                         )}
-                        <div className={`text-[10px] mt-1 opacity-70 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                          {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                        <div className={`flex items-center justify-between gap-2 text-[10px] mt-1 opacity-80 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                          <span>
+                            {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                            {msg.edited_at && (
+                              <span
+                                className="ml-1 italic"
+                                title={`Edited ${new Date(msg.edited_at).toLocaleString()}`}
+                              >
+                                (edited)
+                              </span>
+                            )}
+                          </span>
+                          {mine && editingId !== msg.id && (
+                            <span className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => startEdit(msg)}
+                                className={actionBtn("")}
+                                title="Edit message"
+                              >
+                                <Pencil size={10} /> Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteMessage(msg)}
+                                disabled={deletingId === msg.id}
+                                className={actionBtn("")}
+                                title="Delete message"
+                              >
+                                <Trash2 size={10} /> {deletingId === msg.id ? "Deleting…" : "Delete"}
+                              </button>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -2982,6 +2982,85 @@
     </div>
 
     <main>
+      <!-- Signed-in HUD (personalized content rails). Hidden until JS confirms an authenticated session. -->
+      <section id="rSignedInHUD" class="r-hud" aria-label="Your Rhozeland" hidden>
+        <style>
+          .r-hud { padding: 1rem 0 0.25rem; }
+          .r-hud .r-hud-inner { max-width: 1240px; margin: 0 auto; padding: 0 2rem; }
+          .r-hud-shell { border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); box-shadow: 6px 6px 0 0 hsl(var(--ink)); }
+          .r-hud-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.8rem 1rem; border-bottom: 1px solid hsl(var(--ink)); font-family: 'Inter', system-ui, sans-serif; flex-wrap: wrap; }
+          .r-hud-hi { display: flex; align-items: center; gap: 0.6rem; min-width: 0; }
+          .r-hud-hi-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.18); }
+          .r-hud-hi-k { font-size: 0.58rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); }
+          .r-hud-hi-v { font-size: 0.86rem; font-weight: 800; color: hsl(var(--ink)); letter-spacing: -0.01em; }
+          .r-hud-chips { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+          .r-hud-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.32rem 0.55rem; border: 1px solid hsl(var(--ink)); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; background: hsl(var(--surface-card)); }
+          .r-hud-chip.is-solid { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-hud-chip:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-hud-chip.is-solid:hover { background: hsl(var(--surface-card)); color: hsl(var(--ink)); }
+          .r-hud-chip .r-hud-chip-k { opacity: 0.7; font-weight: 700; }
+          .r-hud-rails { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 0; }
+          .r-hud-rail { padding: 0.9rem 1rem 1rem; border-right: 1px solid hsl(var(--ink) / 0.18); min-width: 0; }
+          .r-hud-rail:last-child { border-right: 0; }
+          .r-hud-rail-h { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0 0 0.55rem; }
+          .r-hud-rail-k { font-size: 0.58rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted)); }
+          .r-hud-rail-more { font-size: 0.6rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); padding-bottom: 1px; }
+          .r-hud-list { display: flex; flex-direction: column; gap: 0.4rem; }
+          .r-hud-item { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; padding: 0.4rem 0; border-bottom: 1px dashed hsl(var(--line)); color: hsl(var(--ink)); text-decoration: none; }
+          .r-hud-item:last-child { border-bottom: 0; }
+          .r-hud-item-t { font-size: 0.78rem; font-weight: 700; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1 1 auto; }
+          .r-hud-item-s { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: hsl(var(--muted)); white-space: nowrap; }
+          .r-hud-empty { font-size: 0.72rem; color: hsl(var(--muted)); font-style: italic; padding: 0.3rem 0; }
+          @media (max-width: 900px) {
+            .r-hud-rails { grid-template-columns: 1fr; }
+            .r-hud-rail { border-right: 0; border-bottom: 1px solid hsl(var(--ink) / 0.18); }
+            .r-hud-rail:last-child { border-bottom: 0; }
+          }
+        </style>
+        <div class="r-hud-inner">
+          <div class="r-hud-shell">
+            <div class="r-hud-top">
+              <div class="r-hud-hi">
+                <span class="r-hud-hi-dot" aria-hidden="true"></span>
+                <div style="min-width:0;">
+                  <div class="r-hud-hi-k">Signed in</div>
+                  <div class="r-hud-hi-v" id="rHudGreet">Welcome back</div>
+                </div>
+              </div>
+              <div class="r-hud-chips">
+                <span class="r-hud-chip"><span class="r-hud-chip-k">$RHOZE</span><span id="rHudRhoze">—</span></span>
+                <a class="r-hud-chip" href="/start.html">Dashboard</a>
+                <a class="r-hud-chip" href="/invest.html">Invest</a>
+                <a class="r-hud-chip is-solid" href="/start.html">Build</a>
+              </div>
+            </div>
+            <div class="r-hud-rails">
+              <div class="r-hud-rail">
+                <div class="r-hud-rail-h">
+                  <span class="r-hud-rail-k">Your projects</span>
+                  <a class="r-hud-rail-more" href="/start.html">Open</a>
+                </div>
+                <div class="r-hud-list" id="rHudProjects"><div class="r-hud-empty">Loading…</div></div>
+              </div>
+              <div class="r-hud-rail">
+                <div class="r-hud-rail-h">
+                  <span class="r-hud-rail-k">Studio signals</span>
+                  <a class="r-hud-rail-more" href="/live.html">Live</a>
+                </div>
+                <div class="r-hud-list" id="rHudStudio"><div class="r-hud-empty">Loading…</div></div>
+              </div>
+              <div class="r-hud-rail">
+                <div class="r-hud-rail-h">
+                  <span class="r-hud-rail-k">Newsroom</span>
+                  <a class="r-hud-rail-more" href="/about.html">More</a>
+                </div>
+                <div class="r-hud-list" id="rHudNews"><div class="r-hud-empty">Loading…</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="hero r-eco" aria-labelledby="homepage-title">
         <style>
           .r-eco { padding-top: 1.25rem; padding-bottom: 0.75rem; }

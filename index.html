@@ -4766,14 +4766,8 @@
           });
         }
 
-        // Your projects (RLS scopes to caller automatically).
-        sbFetch('projects?select=id,title,status,active_tier_slug,archived_at&archived_at=is.null&order=updated_at.desc&limit=4', token).then(function(rows){
-          var items = (rows || []).map(function(p){
-            return { title: p.title || 'Untitled project', sub: fmtStatus(p.status) || (p.active_tier_slug || 'active'), href: '/start.html' };
-          });
-          renderList(document.getElementById('rHudProjects'), items, 'No projects yet — click Build to start.');
-
-          // Aggregate $RHOZE balance across your projects.
+        // Aggregate $RHOZE balance across the user's projects (rails removed; balance chip stays).
+        sbFetch('projects?select=id&archived_at=is.null&limit=50', token).then(function(rows){
           var ids = (rows || []).map(function(p){ return p.id; }).filter(Boolean);
           if (!ids.length) { animateRhoze(0); return; }
           var inList = 'in.(' + ids.map(function(id){ return '"' + id + '"'; }).join(',') + ')';
@@ -4782,22 +4776,114 @@
             animateRhoze(sum);
           });
         });
+      }
 
-        // Studio signals — published live dashboard content.
-        sbFetch('live_dashboard_content?select=section_key,title,updated_at&is_published=eq.true&order=updated_at.desc&limit=4', token).then(function(rows){
-          var items = (rows || []).map(function(r){
-            return { title: r.title || r.section_key || 'Update', sub: fmtRelative(r.updated_at), href: '/live.html' };
-          });
-          renderList(document.getElementById('rHudStudio'), items, 'Quiet on the wire.');
+      // === Sign out ===
+      function wireSignOut(){
+        var btn = document.getElementById('rHudSignOut');
+        if (!btn) return;
+        btn.addEventListener('click', function(){
+          try {
+            // Clear all Supabase auth keys from localStorage (sb-*-auth-token).
+            for (var i = localStorage.length - 1; i >= 0; i--) {
+              var k = localStorage.key(i);
+              if (k && (k.indexOf('sb-') === 0 || k.indexOf('supabase.auth.') === 0)) localStorage.removeItem(k);
+            }
+          } catch(e){}
+          window.location.href = '/';
         });
+      }
 
-        // Newsroom items — same source as the marquee, top 4.
-        sbFetch('news_ticker_items?select=label,headline,href,sort_order&is_active=eq.true&order=sort_order.asc&limit=4', token).then(function(rows){
-          var items = (rows || []).map(function(n){
-            return { title: n.headline || 'Update', sub: n.label || '', href: n.href || null };
-          });
-          renderList(document.getElementById('rHudNews'), items, 'No news right now.');
+      // === One-page inline swap ===
+      // Maps hash tokens to the underlying page URL + human-friendly crumb label.
+      var INLINE_ROUTES = {
+        about:       { url: '/about.html',       title: 'About' },
+        work:        { url: '/projects.html',    title: 'Work' },
+        leaderboard: { url: '/leaderboard.html', title: 'Leaderboard' },
+        connect:     { url: '/contact.html',     title: 'Connect' },
+        invest:      { url: '/invest.html',      title: 'Invest' },
+        build:       { url: '/start.html',       title: 'Build' },
+        live:        { url: '/live.html',        title: 'Live' },
+        events:      { url: '/events.html',      title: 'Events' }
+      };
+      // Map raw href paths to route keys so we can intercept existing anchor tags without rewriting each one.
+      var HREF_TO_ROUTE = {
+        '/about.html': 'about', '/about': 'about',
+        '/projects.html': 'work', '/projects': 'work',
+        '/leaderboard.html': 'leaderboard', '/leaderboard': 'leaderboard',
+        '/contact.html': 'connect', '/contact': 'connect',
+        '/invest.html': 'invest', '/invest': 'invest',
+        '/start.html': 'build', '/start': 'build',
+        '/live.html': 'live', '/live': 'live',
+        '/events.html': 'events', '/events': 'events'
+      };
+      function openInlineView(routeKey, opts){
+        var route = INLINE_ROUTES[routeKey];
+        if (!route) return false;
+        var view  = document.getElementById('rInlineView');
+        var frame = document.getElementById('rInlineFrame');
+        var load  = document.getElementById('rInlineLoad');
+        var title = document.getElementById('rInlineTitle');
+        var open  = document.getElementById('rInlineOpen');
+        if (!view || !frame) return false;
+        document.body.classList.add('r-inline-active');
+        view.hidden = false;
+        if (title) title.textContent = route.title;
+        if (open)  open.href = route.url;
+        frame.classList.remove('is-ready');
+        if (load) load.classList.remove('is-hidden');
+        frame.onload = function(){
+          frame.classList.add('is-ready');
+          if (load) load.classList.add('is-hidden');
+        };
+        // Only reload the iframe if the src actually changed.
+        var targetSrc = new URL(route.url, window.location.origin).toString();
+        if (frame.src !== targetSrc) frame.src = route.url;
+        else { frame.classList.add('is-ready'); if (load) load.classList.add('is-hidden'); }
+        // Update URL hash without scrolling.
+        var newHash = '#' + routeKey;
+        if (opts && opts.replace) history.replaceState(null, '', newHash);
+        else if (location.hash !== newHash) history.pushState(null, '', newHash);
+        // Scroll the shell into view so users see the swap.
+        try { view.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) { view.scrollIntoView(); }
+        return true;
+      }
+      function closeInlineView(opts){
+        var view = document.getElementById('rInlineView');
+        if (!view) return;
+        document.body.classList.remove('r-inline-active');
+        view.hidden = true;
+        if (opts && opts.replace) history.replaceState(null, '', location.pathname + location.search);
+        else if (location.hash) history.pushState(null, '', location.pathname + location.search);
+      }
+      function wireInlineNav(){
+        // Intercept clicks on any anchor whose href matches an inline route.
+        document.addEventListener('click', function(e){
+          var a = e.target && e.target.closest && e.target.closest('a[href]');
+          if (!a) return;
+          if (a.target === '_blank' || a.hasAttribute('download')) return;
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          // Only intercept in-page links (same origin, no ?query except hashless).
+          var href = a.getAttribute('href') || '';
+          // Explicit opt-in via data attribute wins.
+          var explicit = a.getAttribute('data-inline-nav');
+          var key = explicit || HREF_TO_ROUTE[href.replace(/\/$/, '')] || HREF_TO_ROUTE[href.split('?')[0].split('#')[0]];
+          if (!key || !INLINE_ROUTES[key]) return;
+          e.preventDefault();
+          // Close mobile nav drawer if present.
+          if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e2){} }
+          openInlineView(key);
         });
+        var close = document.getElementById('rInlineClose');
+        if (close) close.addEventListener('click', function(){ closeInlineView(); });
+        window.addEventListener('popstate', function(){
+          var h = (location.hash || '').replace('#', '');
+          if (h && INLINE_ROUTES[h]) openInlineView(h, { replace: true });
+          else closeInlineView({ replace: true });
+        });
+        // On initial load, honor #hash routing.
+        var h0 = (location.hash || '').replace('#', '');
+        if (h0 && INLINE_ROUTES[h0]) openInlineView(h0, { replace: true });
       }
 
       function start(){
@@ -4805,6 +4891,8 @@
         loadNewsTicker();
         loadTicker(); loadSpark();
         loadSignedInHUD();
+        wireSignOut();
+        wireInlineNav();
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);

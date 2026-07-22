@@ -3011,6 +3011,19 @@
           .r-hud-item-t { font-size: 0.78rem; font-weight: 700; letter-spacing: -0.005em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1 1 auto; }
           .r-hud-item-s { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: hsl(var(--muted)); white-space: nowrap; }
           .r-hud-empty { font-size: 0.72rem; color: hsl(var(--muted)); font-style: italic; padding: 0.3rem 0; }
+          /* Skeleton shimmer for loading rails + chip */
+          .r-hud-skel { display: flex; flex-direction: column; gap: 0.45rem; padding: 0.15rem 0 0; }
+          .r-hud-skel-row { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; padding: 0.4rem 0; border-bottom: 1px dashed hsl(var(--line)); }
+          .r-hud-skel-row:last-child { border-bottom: 0; }
+          .r-hud-skel-bar { height: 0.62rem; border-radius: 2px; background: linear-gradient(90deg, hsl(var(--ink) / 0.06) 0%, hsl(var(--ink) / 0.14) 50%, hsl(var(--ink) / 0.06) 100%); background-size: 200% 100%; animation: rHudShimmer 1.35s ease-in-out infinite; }
+          .r-hud-skel-bar.is-t { flex: 1 1 auto; max-width: 70%; }
+          .r-hud-skel-bar.is-s { width: 3.2rem; opacity: 0.6; }
+          .r-hud-chip-val { display: inline-block; min-width: 1.6ch; text-align: right; font-variant-numeric: tabular-nums; transition: color 220ms ease; }
+          .r-hud-chip-val.is-bumped { color: #15803d; }
+          .r-hud-chip.is-link { gap: 0.35rem; }
+          .r-hud-chip-arrow { display: inline-block; transform: translateY(-0.02em); opacity: 0.75; }
+          @keyframes rHudShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+          @media (prefers-reduced-motion: reduce) { .r-hud-skel-bar { animation: none; } }
           @media (max-width: 900px) {
             .r-hud-rails { grid-template-columns: 1fr; }
             .r-hud-rail { border-right: 0; border-bottom: 1px solid hsl(var(--ink) / 0.18); }
@@ -3028,7 +3041,7 @@
                 </div>
               </div>
               <div class="r-hud-chips">
-                <span class="r-hud-chip"><span class="r-hud-chip-k">$RHOZE</span><span id="rHudRhoze">—</span></span>
+                <a class="r-hud-chip is-link" id="rHudRhozeLink" href="https://dexscreener.com/solana/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF" target="_blank" rel="noopener" title="View $RHOZE on DexScreener"><span class="r-hud-chip-k">$RHOZE</span><span class="r-hud-chip-val" id="rHudRhoze" aria-live="polite">—</span><span class="r-hud-chip-arrow" aria-hidden="true">↗</span></a>
                 <a class="r-hud-chip" href="/start.html">Dashboard</a>
                 <a class="r-hud-chip" href="/invest.html">Invest</a>
                 <a class="r-hud-chip is-solid" href="/start.html">Build</a>
@@ -3040,21 +3053,21 @@
                   <span class="r-hud-rail-k">Your projects</span>
                   <a class="r-hud-rail-more" href="/start.html">Open</a>
                 </div>
-                <div class="r-hud-list" id="rHudProjects"><div class="r-hud-empty">Loading…</div></div>
+                <div class="r-hud-list" id="rHudProjects" data-skel="1"><div class="r-hud-skel"><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:55%"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:62%"></span><span class="r-hud-skel-bar is-s"></span></div></div></div>
               </div>
               <div class="r-hud-rail">
                 <div class="r-hud-rail-h">
                   <span class="r-hud-rail-k">Studio signals</span>
                   <a class="r-hud-rail-more" href="/live.html">Live</a>
                 </div>
-                <div class="r-hud-list" id="rHudStudio"><div class="r-hud-empty">Loading…</div></div>
+                <div class="r-hud-list" id="rHudStudio" data-skel="1"><div class="r-hud-skel"><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:58%"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:68%"></span><span class="r-hud-skel-bar is-s"></span></div></div></div>
               </div>
               <div class="r-hud-rail">
                 <div class="r-hud-rail-h">
                   <span class="r-hud-rail-k">Newsroom</span>
                   <a class="r-hud-rail-more" href="/about.html">More</a>
                 </div>
-                <div class="r-hud-list" id="rHudNews"><div class="r-hud-empty">Loading…</div></div>
+                <div class="r-hud-list" id="rHudNews" data-skel="1"><div class="r-hud-skel"><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:60%"></span><span class="r-hud-skel-bar is-s"></span></div><div class="r-hud-skel-row"><span class="r-hud-skel-bar is-t" style="max-width:52%"></span><span class="r-hud-skel-bar is-s"></span></div></div></div>
               </div>
             </div>
           </div>
@@ -4676,6 +4689,35 @@
           }
           return '<div class="r-hud-item">' + t + s + '</div>';
         }).join('');
+        el.removeAttribute('data-skel');
+      }
+      // Tween the $RHOZE chip value from its current number to `next` over ~700ms.
+      var _rhozeCur = null, _rhozeAnim = null;
+      function animateRhoze(next){
+        var el = document.getElementById('rHudRhoze');
+        if (!el) return;
+        next = Math.max(0, Math.floor(Number(next) || 0));
+        var from = (_rhozeCur == null) ? next : _rhozeCur; // first paint: no tween
+        _rhozeCur = next;
+        if (_rhozeAnim) cancelAnimationFrame(_rhozeAnim);
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (from === next || reduce) {
+          el.textContent = next.toLocaleString('en-US');
+          return;
+        }
+        var dur = 700, t0 = performance.now();
+        function step(now){
+          var p = Math.min(1, (now - t0) / dur);
+          var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+          var v = Math.round(from + (next - from) * eased);
+          el.textContent = v.toLocaleString('en-US');
+          if (p < 1) { _rhozeAnim = requestAnimationFrame(step); }
+          else if (next !== from) {
+            el.classList.add('is-bumped');
+            setTimeout(function(){ el.classList.remove('is-bumped'); }, 900);
+          }
+        }
+        _rhozeAnim = requestAnimationFrame(step);
       }
       function loadSignedInHUD(){
         var hud = document.getElementById('rSignedInHUD');
@@ -4706,12 +4748,11 @@
 
           // Aggregate $RHOZE balance across your projects.
           var ids = (rows || []).map(function(p){ return p.id; }).filter(Boolean);
-          var rhozeEl = document.getElementById('rHudRhoze');
-          if (!ids.length) { if (rhozeEl) rhozeEl.textContent = '0'; return; }
+          if (!ids.length) { animateRhoze(0); return; }
           var inList = 'in.(' + ids.map(function(id){ return '"' + id + '"'; }).join(',') + ')';
           sbFetch('rhoze_balances?select=balance&project_id=' + encodeURIComponent(inList), token).then(function(bals){
             var sum = (bals || []).reduce(function(a,b){ return a + (Number(b.balance) || 0); }, 0);
-            if (rhozeEl) rhozeEl.textContent = sum.toLocaleString('en-US');
+            animateRhoze(sum);
           });
         });
 

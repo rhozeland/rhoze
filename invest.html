@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function(){
+      var o=localStorage.getItem('theme-override');
+      if(o==='dark'||o==='light'){document.documentElement.classList.toggle('dark',o==='dark');return;}
+      var h=new Date().getHours();if(h<6||h>=19)document.documentElement.classList.add('dark');
+    })();
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invest in $RHOZE — Rhozeland Graduation Cohort</title>
+  <meta name="description" content="Join the Rhozeland graduation cohort. Pledge to help bond $RHOZE, earn credits redeemable for merch, studio time, and app perks." />
+  <link rel="canonical" href="https://www.rhozeland.com/invest" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Invest in $RHOZE — Rhozeland" />
+  <meta property="og:description" content="Real people bonding a real ecosystem. Get $RHOZE + redeemable studio credits." />
+  <meta property="og:url" content="https://www.rhozeland.com/invest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/invest-main.tsx"></script>
+</body>
+</html>

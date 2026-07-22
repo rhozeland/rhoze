@@ -825,7 +825,41 @@ export default function ClientDashboard() {
                         )}
                         {signed && isAudio && (
                           <div className="space-y-1">
-                            <audio src={signed} controls className="w-full max-w-xs" />
+                            <AudioMessagePlayer
+                              src={signed}
+                              captionsUrl={msg.caption_path ? signedUrls[msg.caption_path] ?? null : null}
+                              mine={mine}
+                            />
+                            {mine && (
+                              <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                                <label className={actionBtn("cursor-pointer")} title="Attach captions (.vtt or .srt)">
+                                  <Captions size={10} />
+                                  {captionBusyId === msg.id ? "Working…" : msg.caption_path ? "Replace CC" : "Add captions"}
+                                  <input
+                                    type="file"
+                                    accept=".vtt,.srt,text/vtt"
+                                    className="hidden"
+                                    disabled={captionBusyId === msg.id}
+                                    onChange={(e) => {
+                                      const f = e.target.files?.[0];
+                                      if (f) uploadCaption(msg, f);
+                                      e.currentTarget.value = "";
+                                    }}
+                                  />
+                                </label>
+                                {msg.caption_path && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeCaption(msg)}
+                                    disabled={captionBusyId === msg.id}
+                                    className={actionBtn("")}
+                                    title="Remove captions"
+                                  >
+                                    <X size={10} /> CC off
+                                  </button>
+                                )}
+                              </div>
+                            )}
                             {AttachmentActions}
                           </div>
                         )}

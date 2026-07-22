@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw, Pencil, Trash2, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";
@@ -40,6 +40,7 @@ type MilestoneMessage = {
   attachment_mime: string | null;
   attachment_size: number | null;
   embed_url: string | null;
+  edited_at: string | null;
 };
 
 function fmtMoney(cents: number | null) {
@@ -78,12 +79,16 @@ export default function ClientDashboard() {
   const [showEmbed, setShowEmbed] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const [replacingId, setReplacingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingBody, setEditingBody] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
     const { data, error } = await supabase
       .from("milestone_messages")
-      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url")
+      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url,edited_at")
       .eq("milestone_id", milestoneId)
       .order("created_at", { ascending: true });
     if (!error) {

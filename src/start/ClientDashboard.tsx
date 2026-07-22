@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw, Pencil, Trash2, Check } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X, Paperclip, Link2, FileText, Image as ImageIcon, Music, Download, Copy, RefreshCw, Pencil, Trash2, Check, Captions } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";
+import AudioMessagePlayer from "./AudioMessagePlayer";
 
 type Project = {
   id: string;
@@ -41,6 +42,9 @@ type MilestoneMessage = {
   attachment_size: number | null;
   embed_url: string | null;
   edited_at: string | null;
+  caption_path: string | null;
+  caption_name: string | null;
+  caption_mime: string | null;
 };
 
 function fmtMoney(cents: number | null) {
@@ -83,18 +87,22 @@ export default function ClientDashboard() {
   const [editingBody, setEditingBody] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [captionBusyId, setCaptionBusyId] = useState<string | null>(null);
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
     const { data, error } = await supabase
       .from("milestone_messages")
-      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url,edited_at")
+      .select("id,body,author_id,created_at,attachment_path,attachment_name,attachment_mime,attachment_size,embed_url,edited_at,caption_path,caption_name,caption_mime")
       .eq("milestone_id", milestoneId)
       .order("created_at", { ascending: true });
     if (!error) {
       const rows = (data ?? []) as MilestoneMessage[];
       setMsgList(rows);
-      const paths = rows.map(r => r.attachment_path).filter(Boolean) as string[];
+      const paths = [
+        ...rows.map(r => r.attachment_path),
+        ...rows.map(r => r.caption_path),
+      ].filter(Boolean) as string[];
       if (paths.length) {
         const { data: signed } = await supabase.storage
           .from("milestone-attachments")
@@ -301,6 +309,71 @@ export default function ClientDashboard() {
       setDeletingId(null);
     }
   }
+
+  async function uploadCaption(msg: MilestoneMessage, file: File) {
+    if (!msgMilestone || !activeProject) return;
+    const name = file.name.toLowerCase();
+    if (!name.endsWith(".vtt") && !name.endsWith(".srt") && file.type !== "text/vtt") {
+      toast({ title: "Unsupported file", description: "Upload a .vtt or .srt caption file.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 512 * 1024) {
+      toast({ title: "Too large", description: "Caption files must be under 512 KB.", variant: "destructive" });
+      return;
+    }
+    setCaptionBusyId(msg.id);
+    try {
+      let text = await file.text();
+      // Auto-convert SRT to a minimal VTT so the player can render it.
+      if (name.endsWith(".srt")) {
+        text = "WEBVTT\n\n" + text.replace(/\r/g, "").replace(/(\d\d:\d\d:\d\d),(\d\d\d)/g, "$1.$2");
+      }
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+      const path = `${activeProject.id}/${msgMilestone.id}/captions/${crypto.randomUUID()}-${safeName.replace(/\.srt$/i, ".vtt")}`;
+      const blob = new Blob([text], { type: "text/vtt" });
+      const { error: upErr } = await supabase.storage
+        .from("milestone-attachments")
+        .upload(path, blob, { contentType: "text/vtt", upsert: false });
+      if (upErr) throw upErr;
+
+      const { error: updErr } = await supabase.from("milestone_messages")
+        .update({ caption_path: path, caption_name: file.name, caption_mime: "text/vtt" })
+        .eq("id", msg.id);
+      if (updErr) {
+        await supabase.storage.from("milestone-attachments").remove([path]);
+        throw updErr;
+      }
+      if (msg.caption_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.caption_path]);
+      }
+      toast({ title: "Captions added" });
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't add captions", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setCaptionBusyId(null);
+    }
+  }
+
+  async function removeCaption(msg: MilestoneMessage) {
+    if (!msgMilestone) return;
+    setCaptionBusyId(msg.id);
+    try {
+      if (msg.caption_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.caption_path]);
+      }
+      const { error } = await supabase.from("milestone_messages")
+        .update({ caption_path: null, caption_name: null, caption_mime: null })
+        .eq("id", msg.id);
+      if (error) throw error;
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't remove captions", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setCaptionBusyId(null);
+    }
+  }
+
 
   const loadData = useCallback(async (uid: string) => {
     // projects via membership
@@ -752,7 +825,41 @@ export default function ClientDashboard() {
                         )}
                         {signed && isAudio && (
                           <div className="space-y-1">
-                            <audio src={signed} controls className="w-full max-w-xs" />
+                            <AudioMessagePlayer
+                              src={signed}
+                              captionsUrl={msg.caption_path ? signedUrls[msg.caption_path] ?? null : null}
+                              mine={mine}
+                            />
+                            {mine && (
+                              <div className="flex flex-wrap items-center gap-1 pt-0.5">
+                                <label className={actionBtn("cursor-pointer")} title="Attach captions (.vtt or .srt)">
+                                  <Captions size={10} />
+                                  {captionBusyId === msg.id ? "Working…" : msg.caption_path ? "Replace CC" : "Add captions"}
+                                  <input
+                                    type="file"
+                                    accept=".vtt,.srt,text/vtt"
+                                    className="hidden"
+                                    disabled={captionBusyId === msg.id}
+                                    onChange={(e) => {
+                                      const f = e.target.files?.[0];
+                                      if (f) uploadCaption(msg, f);
+                                      e.currentTarget.value = "";
+                                    }}
+                                  />
+                                </label>
+                                {msg.caption_path && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeCaption(msg)}
+                                    disabled={captionBusyId === msg.id}
+                                    className={actionBtn("")}
+                                    title="Remove captions"
+                                  >
+                                    <X size={10} /> CC off
+                                  </button>
+                                )}
+                              </div>
+                            )}
                             {AttachmentActions}
                           </div>
                         )}

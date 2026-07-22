@@ -873,6 +873,9 @@ export type Database = {
           attachment_size: number | null
           author_id: string
           body: string | null
+          caption_mime: string | null
+          caption_name: string | null
+          caption_path: string | null
           created_at: string
           edited_at: string | null
           embed_url: string | null
@@ -887,6 +890,9 @@ export type Database = {
           attachment_size?: number | null
           author_id: string
           body?: string | null
+          caption_mime?: string | null
+          caption_name?: string | null
+          caption_path?: string | null
           created_at?: string
           edited_at?: string | null
           embed_url?: string | null
@@ -901,6 +907,9 @@ export type Database = {
           attachment_size?: number | null
           author_id?: string
           body?: string | null
+          caption_mime?: string | null
+          caption_name?: string | null
+          caption_path?: string | null
           created_at?: string
           edited_at?: string | null
           embed_url?: string | null

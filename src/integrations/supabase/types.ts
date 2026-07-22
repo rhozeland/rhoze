@@ -867,25 +867,40 @@ export type Database = {
       }
       milestone_messages: {
         Row: {
+          attachment_mime: string | null
+          attachment_name: string | null
+          attachment_path: string | null
+          attachment_size: number | null
           author_id: string
-          body: string
+          body: string | null
           created_at: string
+          embed_url: string | null
           id: string
           milestone_id: string
           project_id: string
         }
         Insert: {
+          attachment_mime?: string | null
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
           author_id: string
-          body: string
+          body?: string | null
           created_at?: string
+          embed_url?: string | null
           id?: string
           milestone_id: string
           project_id: string
         }
         Update: {
+          attachment_mime?: string | null
+          attachment_name?: string | null
+          attachment_path?: string | null
+          attachment_size?: number | null
           author_id?: string
-          body?: string
+          body?: string | null
           created_at?: string
+          embed_url?: string | null
           id?: string
           milestone_id?: string
           project_id?: string

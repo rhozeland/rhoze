@@ -865,6 +865,48 @@ export type Database = {
           },
         ]
       }
+      milestone_messages: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          milestone_id: string
+          project_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          milestone_id: string
+          project_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          milestone_id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "milestone_messages_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "project_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "milestone_messages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       news_ticker_items: {
         Row: {
           created_at: string

@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Project = {
   id: string;
@@ -26,6 +28,13 @@ type CreditRequest = {
 };
 
 type Milestone = { id: string; title: string; due_date: string | null; status: string };
+
+type MilestoneMessage = {
+  id: string;
+  body: string;
+  author_id: string;
+  created_at: string;
+};
 
 function fmtMoney(cents: number | null) {
   return `$${((cents ?? 0) / 100).toFixed(2)}`;
@@ -50,6 +59,57 @@ export default function ClientDashboard() {
   const [reqDesc, setReqDesc] = useState("");
   const [reqCredits, setReqCredits] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // message team dialog
+  const [msgMilestone, setMsgMilestone] = useState<Milestone | null>(null);
+  const [msgList, setMsgList] = useState<MilestoneMessage[]>([]);
+  const [msgLoading, setMsgLoading] = useState(false);
+  const [msgBody, setMsgBody] = useState("");
+  const [msgSending, setMsgSending] = useState(false);
+  const [msgUserId, setMsgUserId] = useState<string | null>(null);
+
+  const loadMessages = useCallback(async (milestoneId: string) => {
+    setMsgLoading(true);
+    const { data, error } = await supabase
+      .from("milestone_messages")
+      .select("id,body,author_id,created_at")
+      .eq("milestone_id", milestoneId)
+      .order("created_at", { ascending: true });
+    if (!error) setMsgList((data ?? []) as MilestoneMessage[]);
+    setMsgLoading(false);
+  }, []);
+
+  async function openMessageTeam(m: Milestone) {
+    setMsgMilestone(m);
+    setMsgList([]);
+    setMsgBody("");
+    const { data: { user } } = await supabase.auth.getUser();
+    setMsgUserId(user?.id ?? null);
+    await loadMessages(m.id);
+  }
+
+  async function sendMessage(e: React.FormEvent) {
+    e.preventDefault();
+    if (!msgMilestone || !msgBody.trim() || !activeProject) return;
+    setMsgSending(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("milestone_messages").insert({
+        milestone_id: msgMilestone.id,
+        project_id: activeProject.id,
+        author_id: user.id,
+        body: msgBody.trim(),
+      });
+      if (error) throw error;
+      setMsgBody("");
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't send", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setMsgSending(false);
+    }
+  }
 
   const loadData = useCallback(async (uid: string) => {
     // projects via membership
@@ -288,49 +348,53 @@ export default function ClientDashboard() {
             {milestones.length === 0 ? (
               <div className="text-sm text-muted-foreground">No milestones yet.</div>
             ) : (
-              <ul className="space-y-1.5">
-                {milestones.slice(0, 6).map(m => (
-                  <li key={m.id} className="flex items-start gap-2 text-sm group">
-                    {m.status === "approved"
-                      ? <CheckCircle2 size={14} className="text-emerald-500 mt-0.5 shrink-0" />
-                      : <Circle size={14} className="text-muted-foreground mt-0.5 shrink-0" />}
-                    <div className="min-w-0 flex-1">
-                      <div className={`truncate ${m.status === "approved" ? "text-muted-foreground line-through" : "text-foreground"}`}>{m.title}</div>
-                      {m.due_date && <div className="text-[11px] text-muted-foreground">due {new Date(m.due_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>}
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                        <a
-                          href={`/team.html#/portal/${activeProject.id}?milestone=${m.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
-                          title="View milestone details"
-                        >
-                          <Eye size={10} /> Details
-                        </a>
-                        <a
-                          href={`/team.html#/portal/${activeProject.id}?compose=1&subject=${encodeURIComponent(`Re: ${m.title}`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
-                          title="Message your team about this milestone"
-                        >
-                          <MessageSquare size={10} /> Message team
-                        </a>
-                        {m.status !== "approved" && (
+              <ol className="relative space-y-2 sm:space-y-1.5 before:absolute before:left-[6px] before:top-1 before:bottom-1 before:w-px before:bg-border sm:before:hidden">
+                {milestones.slice(0, 6).map(m => {
+                  const done = m.status === "approved";
+                  return (
+                    <li key={m.id} className="relative pl-5 sm:pl-0 sm:flex sm:items-start sm:gap-2 text-sm">
+                      <span className="absolute left-0 top-1 sm:static sm:mt-0.5 sm:shrink-0">
+                        {done
+                          ? <CheckCircle2 size={14} className="text-emerald-500" />
+                          : <Circle size={14} className="text-muted-foreground" />}
+                      </span>
+                      <div className="min-w-0 flex-1 rounded-lg sm:rounded-none border sm:border-0 border-border bg-background/40 sm:bg-transparent p-2 sm:p-0">
+                        <div className={`text-sm leading-snug break-words ${done ? "text-muted-foreground line-through" : "text-foreground font-medium sm:font-normal"}`}>{m.title}</div>
+                        {m.due_date && <div className="text-[11px] text-muted-foreground mt-0.5">due {new Date(m.due_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>}
+                        <div className="mt-2 sm:mt-1.5 flex flex-wrap items-center gap-1">
+                          <a
+                            href={`/team.html#/portal/${activeProject.id}?milestone=${m.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                            title="View milestone details"
+                          >
+                            <Eye size={10} /> Details
+                          </a>
                           <button
                             type="button"
-                            onClick={() => requestMilestoneReview(m)}
+                            onClick={() => openMessageTeam(m)}
                             className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
-                            title="Ask the team to review this milestone"
+                            title="Message your team about this milestone"
                           >
-                            <Flag size={10} /> Request review
+                            <MessageSquare size={10} /> Message team
                           </button>
-                        )}
+                          {!done && (
+                            <button
+                              type="button"
+                              onClick={() => requestMilestoneReview(m)}
+                              className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                              title="Ask the team to review this milestone"
+                            >
+                              <Flag size={10} /> Request review
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  );
+                })}
+              </ol>
             )}
           </div>
         </div>
@@ -406,6 +470,63 @@ export default function ClientDashboard() {
       <a href="/team.html#/portal" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline underline-offset-4">
         Open full client portal <ExternalLink size={11} />
       </a>
+
+      <Dialog open={!!msgMilestone} onOpenChange={(o) => { if (!o) setMsgMilestone(null); }}>
+        <DialogContent className="sm:max-w-lg p-0 gap-0 max-h-[90vh] flex flex-col">
+          <DialogHeader className="p-4 sm:p-5 border-b border-border space-y-1">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-semibold">Milestone thread</div>
+            <DialogTitle className="text-base sm:text-lg leading-tight pr-6">{msgMilestone?.title}</DialogTitle>
+            <DialogDescription className="text-xs">
+              Send updates to your team. They'll see your messages in the project portal.
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="flex-1 min-h-[220px] max-h-[50vh]">
+            <div className="p-4 sm:p-5 space-y-3">
+              {msgLoading ? (
+                <div className="text-xs text-muted-foreground">Loading thread…</div>
+              ) : msgList.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-8">
+                  No messages yet. Start the conversation below.
+                </div>
+              ) : (
+                msgList.map(msg => {
+                  const mine = msg.author_id === msgUserId;
+                  return (
+                    <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
+                        <div className="whitespace-pre-wrap break-words">{msg.body}</div>
+                        <div className={`text-[10px] mt-1 opacity-70 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                          {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </ScrollArea>
+
+          <form onSubmit={sendMessage} className="border-t border-border p-3 sm:p-4 flex items-end gap-2">
+            <Textarea
+              value={msgBody}
+              onChange={(e) => setMsgBody(e.target.value)}
+              placeholder="Write a message to your team…"
+              rows={2}
+              className="resize-none min-h-[44px]"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                  e.preventDefault();
+                  sendMessage(e as any);
+                }
+              }}
+            />
+            <Button type="submit" disabled={msgSending || !msgBody.trim()} size="icon" className="shrink-0 h-11 w-11">
+              <Send size={16} />
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

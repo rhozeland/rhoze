@@ -3155,6 +3155,9 @@
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
           body.r-inline-active main > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
+          /* Kill the outer page-shell rounded corners while inline view is active so we don't see cream peeks at the top corners. */
+          body.r-inline-active .page-shell { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; box-shadow: none !important; }
+          .r-inline-frame-wrap { min-height: 0; }
         </style>
         <div class="r-inline-frame-wrap">
           <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>

@@ -721,7 +721,27 @@ export default function ClientDashboard() {
                   return (
                     <div key={msg.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm space-y-2 ${mine ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}>
-                        {msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>}
+                        {editingId === msg.id ? (
+                          <div className="space-y-1.5">
+                            <Textarea
+                              value={editingBody}
+                              onChange={(e) => setEditingBody(e.target.value)}
+                              rows={3}
+                              className="text-sm bg-background text-foreground"
+                              autoFocus
+                            />
+                            <div className="flex gap-1.5 justify-end">
+                              <button type="button" onClick={cancelEdit} disabled={editSaving} className={actionBtn("")}>
+                                <X size={10} /> Cancel
+                              </button>
+                              <button type="button" onClick={() => saveEdit(msg)} disabled={editSaving} className={actionBtn("")}>
+                                <Check size={10} /> {editSaving ? "Saving…" : "Save"}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          msg.body && <div className="whitespace-pre-wrap break-words">{msg.body}</div>
+                        )}
                         {signed && isImage && (
                           <div className="space-y-1">
                             <a href={signed} target="_blank" rel="noreferrer" className="block">
@@ -763,8 +783,39 @@ export default function ClientDashboard() {
                             ? <div className="rounded-lg overflow-hidden bg-background text-foreground"><EmbedPreview url={msg.embed_url} height={280} /></div>
                             : <a href={msg.embed_url} target="_blank" rel="noreferrer" className={`inline-flex items-center gap-1 text-xs underline underline-offset-2 ${mine ? "" : "text-primary"}`}><Link2 size={12} /> {msg.embed_url}</a>
                         )}
-                        <div className={`text-[10px] mt-1 opacity-70 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
-                          {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                        <div className={`flex items-center justify-between gap-2 text-[10px] mt-1 opacity-80 ${mine ? "text-primary-foreground" : "text-muted-foreground"}`}>
+                          <span>
+                            {new Date(msg.created_at).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                            {msg.edited_at && (
+                              <span
+                                className="ml-1 italic"
+                                title={`Edited ${new Date(msg.edited_at).toLocaleString()}`}
+                              >
+                                (edited)
+                              </span>
+                            )}
+                          </span>
+                          {mine && editingId !== msg.id && (
+                            <span className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => startEdit(msg)}
+                                className={actionBtn("")}
+                                title="Edit message"
+                              >
+                                <Pencil size={10} /> Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteMessage(msg)}
+                                disabled={deletingId === msg.id}
+                                className={actionBtn("")}
+                                title="Delete message"
+                              >
+                                <Trash2 size={10} /> {deletingId === msg.id ? "Deleting…" : "Delete"}
+                              </button>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -332,6 +332,92 @@ export type Database = {
         }
         Relationships: []
       }
+      copilot_conversations: {
+        Row: {
+          brief_json: Json
+          created_at: string
+          estimate_high_cents: number | null
+          estimate_low_cents: number | null
+          guest_token: string | null
+          id: string
+          recommended_pathway: string | null
+          status: string
+          submitted_intake_id: string | null
+          timeline_weeks_high: number | null
+          timeline_weeks_low: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          brief_json?: Json
+          created_at?: string
+          estimate_high_cents?: number | null
+          estimate_low_cents?: number | null
+          guest_token?: string | null
+          id?: string
+          recommended_pathway?: string | null
+          status?: string
+          submitted_intake_id?: string | null
+          timeline_weeks_high?: number | null
+          timeline_weeks_low?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          brief_json?: Json
+          created_at?: string
+          estimate_high_cents?: number | null
+          estimate_low_cents?: number | null
+          guest_token?: string | null
+          id?: string
+          recommended_pathway?: string | null
+          status?: string
+          submitted_intake_id?: string | null
+          timeline_weeks_high?: number | null
+          timeline_weeks_low?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      copilot_messages: {
+        Row: {
+          attachments_json: Json
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          transcript_source: string | null
+        }
+        Insert: {
+          attachments_json?: Json
+          content?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          transcript_source?: string | null
+        }
+        Update: {
+          attachments_json?: Json
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          transcript_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "copilot_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "copilot_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       credit_requests: {
         Row: {
           client_decided_at: string | null

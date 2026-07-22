@@ -139,6 +139,27 @@ export default function ClientDashboard() {
     await supabase.auth.signOut();
   }
 
+  async function requestMilestoneReview(m: Milestone) {
+    if (!activeProject) return;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("credit_requests").insert({
+        title: `Review request: ${m.title}`,
+        description: `Please review milestone "${m.title}"${m.due_date ? ` (due ${new Date(m.due_date).toLocaleDateString()})` : ""}.`,
+        requested_credits: 0,
+        project_id: activeProject.id,
+        requested_by: user.id,
+        status: "pending_team",
+      });
+      if (error) throw error;
+      toast({ title: "Review requested", description: "Your team has been notified." });
+      await loadData(user.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't send request", description: err.message ?? String(err), variant: "destructive" });
+    }
+  }
+
   async function submitRequest(e: React.FormEvent) {
     e.preventDefault();
     if (!reqTitle.trim()) return;

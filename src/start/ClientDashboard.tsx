@@ -77,6 +77,7 @@ export default function ClientDashboard() {
   const [msgEmbed, setMsgEmbed] = useState("");
   const [showEmbed, setShowEmbed] = useState(false);
   const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+  const [replacingId, setReplacingId] = useState<string | null>(null);
 
   const loadMessages = useCallback(async (milestoneId: string) => {
     setMsgLoading(true);
@@ -174,6 +175,81 @@ export default function ClientDashboard() {
       toast({ title: "Couldn't send", description: err.message ?? String(err), variant: "destructive" });
     } finally {
       setMsgSending(false);
+    }
+  }
+
+  async function downloadAttachment(msg: MilestoneMessage) {
+    if (!msg.attachment_path) return;
+    try {
+      const { data, error } = await supabase.storage
+        .from("milestone-attachments")
+        .download(msg.attachment_path);
+      if (error) throw error;
+      const url = URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = msg.attachment_name ?? "attachment";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      toast({ title: "Couldn't download", description: err.message ?? String(err), variant: "destructive" });
+    }
+  }
+
+  async function copyAttachmentLink(msg: MilestoneMessage) {
+    if (!msg.attachment_path) return;
+    try {
+      const { data, error } = await supabase.storage
+        .from("milestone-attachments")
+        .createSignedUrl(msg.attachment_path, 60 * 60 * 24 * 7);
+      if (error) throw error;
+      await navigator.clipboard.writeText(data.signedUrl);
+      toast({ title: "Link copied", description: "Signed link valid for 7 days." });
+    } catch (err: any) {
+      toast({ title: "Couldn't copy link", description: err.message ?? String(err), variant: "destructive" });
+    }
+  }
+
+  async function replaceAttachment(msg: MilestoneMessage, file: File) {
+    if (!msgMilestone || !activeProject) return;
+    if (file.size > 25 * 1024 * 1024) {
+      toast({ title: "Too large", description: "Attachments must be under 25 MB.", variant: "destructive" });
+      return;
+    }
+    setReplacingId(msg.id);
+    try {
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+      const newPath = `${activeProject.id}/${msgMilestone.id}/${crypto.randomUUID()}-${safeName}`;
+      const { error: upErr } = await supabase.storage
+        .from("milestone-attachments")
+        .upload(newPath, file, { contentType: file.type || "application/octet-stream", upsert: false });
+      if (upErr) throw upErr;
+
+      const { error: updErr } = await supabase.from("milestone_messages")
+        .update({
+          attachment_path: newPath,
+          attachment_name: file.name,
+          attachment_mime: file.type || null,
+          attachment_size: file.size,
+        })
+        .eq("id", msg.id);
+      if (updErr) {
+        // best-effort cleanup of the orphaned upload
+        await supabase.storage.from("milestone-attachments").remove([newPath]);
+        throw updErr;
+      }
+
+      if (msg.attachment_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.attachment_path]);
+      }
+      toast({ title: "Attachment replaced" });
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't replace", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setReplacingId(null);
     }
   }
 

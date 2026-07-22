@@ -226,6 +226,49 @@
       background: hsl(var(--surface) / 0.96);
     }
 
+    /* Secondary tab row that sits directly under the identity/brand row. */
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.25rem;
+      padding: 0.55rem 2rem;
+      border-bottom: 1px solid hsl(var(--line));
+      background: hsl(var(--surface) / 0.94);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.15rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: hsl(var(--ink) / 0.42);
+      white-space: nowrap;
+      transition: color 0.18s ease;
+      background: none; border: 0; cursor: pointer; font-family: inherit;
+    }
+    .nav-tab:hover { color: hsl(var(--ink)); }
+    .nav-tab svg { width: 0.95rem; height: 0.95rem; }
+    .nav-tab[aria-current="page"] { color: hsl(var(--ink)); }
+    .nav-tab[aria-current="page"]::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -0.55rem;
+      height: 2px;
+      background: hsl(var(--ink));
+    }
+    @media (max-width: 720px) {
+      .nav-tabs { gap: 1.25rem; justify-content: flex-start; padding: 0.5rem 1rem; }
+      .nav-tab { font-size: 0.68rem; letter-spacing: 0.12em; }
+    }
+
     .brand {
       display: inline-flex;
       align-items: center;

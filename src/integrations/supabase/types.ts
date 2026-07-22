@@ -336,6 +336,7 @@ export type Database = {
         Row: {
           brief_json: Json
           created_at: string
+          email_captured_at: string | null
           estimate_high_cents: number | null
           estimate_low_cents: number | null
           guest_token: string | null
@@ -345,12 +346,15 @@ export type Database = {
           submitted_intake_id: string | null
           timeline_weeks_high: number | null
           timeline_weeks_low: number | null
+          turn_budget: number
+          turns_used: number
           updated_at: string
           user_id: string | null
         }
         Insert: {
           brief_json?: Json
           created_at?: string
+          email_captured_at?: string | null
           estimate_high_cents?: number | null
           estimate_low_cents?: number | null
           guest_token?: string | null
@@ -360,12 +364,15 @@ export type Database = {
           submitted_intake_id?: string | null
           timeline_weeks_high?: number | null
           timeline_weeks_low?: number | null
+          turn_budget?: number
+          turns_used?: number
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           brief_json?: Json
           created_at?: string
+          email_captured_at?: string | null
           estimate_high_cents?: number | null
           estimate_low_cents?: number | null
           guest_token?: string | null
@@ -375,6 +382,8 @@ export type Database = {
           submitted_intake_id?: string | null
           timeline_weeks_high?: number | null
           timeline_weeks_low?: number | null
+          turn_budget?: number
+          turns_used?: number
           updated_at?: string
           user_id?: string | null
         }
@@ -2314,6 +2323,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_wallets: {
+        Row: {
+          created_at: string
+          is_custodial: boolean
+          pubkey: string
+          secret_encrypted: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_custodial?: boolean
+          pubkey: string
+          secret_encrypted?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          is_custodial?: boolean
+          pubkey?: string
+          secret_encrypted?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       community_avatars: {
@@ -2328,6 +2364,30 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           handle_key?: never
+        }
+        Relationships: []
+      }
+      user_wallet_pubkeys: {
+        Row: {
+          created_at: string | null
+          is_custodial: boolean | null
+          pubkey: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          is_custodial?: boolean | null
+          pubkey?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          is_custodial?: boolean | null
+          pubkey?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

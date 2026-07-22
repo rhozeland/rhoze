@@ -4846,18 +4846,45 @@
         var view  = document.getElementById('rInlineView');
         var frame = document.getElementById('rInlineFrame');
         var load  = document.getElementById('rInlineLoad');
-        var title = document.getElementById('rInlineTitle');
-        var open  = document.getElementById('rInlineOpen');
         if (!view || !frame) return false;
         document.body.classList.add('r-inline-active');
         view.hidden = false;
-        if (title) title.textContent = route.title;
-        if (open)  open.href = route.url;
         frame.classList.remove('is-ready');
         if (load) load.classList.remove('is-hidden');
         frame.onload = function(){
           frame.classList.add('is-ready');
           if (load) load.classList.add('is-hidden');
+          // Strip inner-page chrome so we don't see two headers/footers stacked.
+          try {
+            var doc = frame.contentDocument;
+            if (doc) {
+              var s = doc.createElement('style');
+              s.textContent = [
+                'html,body{background:transparent!important;}',
+                'body{margin:0!important;padding:0!important;}',
+                '.navbar-wrap,.navbar,header.navbar,nav.navbar,#navbar,.site-header,header[role="banner"]{display:none!important;}',
+                'footer,.footer,.site-footer{display:none!important;}',
+                'main{padding-top:0!important;margin-top:0!important;}'
+              ].join('');
+              doc.head && doc.head.appendChild(s);
+              // Auto-size iframe to inner content so there is no wasted whitespace.
+              var resize = function(){
+                try {
+                  var h = Math.max(doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0);
+                  if (h > 200) frame.style.height = h + 'px';
+                } catch(e){}
+              };
+              resize();
+              setTimeout(resize, 250);
+              setTimeout(resize, 800);
+              setTimeout(resize, 1800);
+              if (window.ResizeObserver && doc.body) {
+                var ro = new ResizeObserver(resize);
+                ro.observe(doc.body);
+              }
+              window.addEventListener('resize', resize);
+            }
+          } catch(e) { /* cross-origin — leave default height */ }
         };
         // Only reload the iframe if the src actually changed.
         var targetSrc = new URL(route.url, window.location.origin).toString();
@@ -4867,8 +4894,8 @@
         var newHash = '#' + routeKey;
         if (opts && opts.replace) history.replaceState(null, '', newHash);
         else if (location.hash !== newHash) history.pushState(null, '', newHash);
-        // Scroll the shell into view so users see the swap.
-        try { view.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e) { view.scrollIntoView(); }
+        // Scroll to top of the page so the header remains visible above the swapped section.
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
         return true;
       }
       function closeInlineView(opts){

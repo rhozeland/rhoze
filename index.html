@@ -3052,6 +3052,60 @@
         </div>
       </section>
 
+      <!-- Inline swap view: nav clicks load the target page inside this iframe overlay instead of navigating away. -->
+      <section id="rInlineView" class="r-inline" aria-label="Section viewer" hidden>
+        <style>
+          .r-inline { padding: 0.75rem 0 1.25rem; }
+          .r-inline-inner { max-width: 1240px; margin: 0 auto; padding: 0 2rem; }
+          .r-inline-shell { border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); box-shadow: 8px 8px 0 0 hsl(var(--ink)); overflow: hidden; }
+          .r-inline-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.65rem 1rem; border-bottom: 1px solid hsl(var(--ink)); font-family: 'Inter', system-ui, sans-serif; }
+          .r-inline-crumbs { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+          .r-inline-crumb-k { font-size: 0.58rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: hsl(var(--muted)); }
+          .r-inline-crumb-v { font-size: 0.86rem; font-weight: 800; color: hsl(var(--ink)); letter-spacing: -0.01em; }
+          .r-inline-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+          .r-inline-btn { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.32rem 0.6rem; border: 1px solid hsl(var(--ink)); background: hsl(var(--surface-card)); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; cursor: pointer; font-family: inherit; }
+          .r-inline-btn:hover { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-inline-btn.is-solid { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+          .r-inline-btn.is-solid:hover { background: hsl(var(--surface-card)); color: hsl(var(--ink)); }
+          .r-inline-frame-wrap { position: relative; width: 100%; height: 82vh; min-height: 640px; background: hsl(var(--surface-card)); }
+          .r-inline-frame { width: 100%; height: 100%; border: 0; display: block; opacity: 0; transition: opacity 260ms ease; }
+          .r-inline-frame.is-ready { opacity: 1; }
+          .r-inline-load { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted)); pointer-events: none; opacity: 1; transition: opacity 200ms ease; }
+          .r-inline-load.is-hidden { opacity: 0; }
+          .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
+          @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
+          body.r-inline-active .r-eco,
+          body.r-inline-active .r-brand-pillars,
+          body.r-inline-active .about,
+          body.r-inline-active .selected-work,
+          body.r-inline-active .r-chart,
+          body.r-inline-active .tokenomics,
+          body.r-inline-active #ecosystem-ticker { display: none !important; }
+          @media (max-width: 700px) {
+            .r-inline-inner { padding: 0 1rem; }
+            .r-inline-frame-wrap { height: 78vh; min-height: 520px; }
+          }
+        </style>
+        <div class="r-inline-inner">
+          <div class="r-inline-shell">
+            <div class="r-inline-bar">
+              <div class="r-inline-crumbs">
+                <span class="r-inline-crumb-k">Viewing</span>
+                <span class="r-inline-crumb-v" id="rInlineTitle">—</span>
+              </div>
+              <div class="r-inline-actions">
+                <a class="r-inline-btn" id="rInlineOpen" href="#" target="_blank" rel="noopener">Open full page ↗</a>
+                <button type="button" class="r-inline-btn is-solid" id="rInlineClose" aria-label="Back to home">← Home</button>
+              </div>
+            </div>
+            <div class="r-inline-frame-wrap">
+              <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>
+              <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section" loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="hero r-eco" aria-labelledby="homepage-title">
         <style>
           .r-eco { padding-top: 1.25rem; padding-bottom: 0.75rem; }

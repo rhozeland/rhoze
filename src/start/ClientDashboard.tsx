@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag } from "lucide-react";
+import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle2, Circle, Clock, Eye, MessageSquare, Flag, Send, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Project = {
   id: string;
@@ -26,6 +28,13 @@ type CreditRequest = {
 };
 
 type Milestone = { id: string; title: string; due_date: string | null; status: string };
+
+type MilestoneMessage = {
+  id: string;
+  body: string;
+  author_id: string;
+  created_at: string;
+};
 
 function fmtMoney(cents: number | null) {
   return `$${((cents ?? 0) / 100).toFixed(2)}`;
@@ -50,6 +59,57 @@ export default function ClientDashboard() {
   const [reqDesc, setReqDesc] = useState("");
   const [reqCredits, setReqCredits] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // message team dialog
+  const [msgMilestone, setMsgMilestone] = useState<Milestone | null>(null);
+  const [msgList, setMsgList] = useState<MilestoneMessage[]>([]);
+  const [msgLoading, setMsgLoading] = useState(false);
+  const [msgBody, setMsgBody] = useState("");
+  const [msgSending, setMsgSending] = useState(false);
+  const [msgUserId, setMsgUserId] = useState<string | null>(null);
+
+  const loadMessages = useCallback(async (milestoneId: string) => {
+    setMsgLoading(true);
+    const { data, error } = await supabase
+      .from("milestone_messages")
+      .select("id,body,author_id,created_at")
+      .eq("milestone_id", milestoneId)
+      .order("created_at", { ascending: true });
+    if (!error) setMsgList((data ?? []) as MilestoneMessage[]);
+    setMsgLoading(false);
+  }, []);
+
+  async function openMessageTeam(m: Milestone) {
+    setMsgMilestone(m);
+    setMsgList([]);
+    setMsgBody("");
+    const { data: { user } } = await supabase.auth.getUser();
+    setMsgUserId(user?.id ?? null);
+    await loadMessages(m.id);
+  }
+
+  async function sendMessage(e: React.FormEvent) {
+    e.preventDefault();
+    if (!msgMilestone || !msgBody.trim() || !activeProject) return;
+    setMsgSending(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+      const { error } = await supabase.from("milestone_messages").insert({
+        milestone_id: msgMilestone.id,
+        project_id: activeProject.id,
+        author_id: user.id,
+        body: msgBody.trim(),
+      });
+      if (error) throw error;
+      setMsgBody("");
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't send", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setMsgSending(false);
+    }
+  }
 
   const loadData = useCallback(async (uid: string) => {
     // projects via membership

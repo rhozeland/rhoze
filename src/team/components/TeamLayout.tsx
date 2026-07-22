@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Shield, LogOut, Calendar,
   FolderKanban, Inbox, Package, Clock,
-  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy, Menu, X, Radio, Newspaper,
+  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy, Menu, X, Radio, Newspaper, Rocket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,7 @@ const adminNav = [
   { to: "/requests", label: "Credit requests", icon: MessageSquare },
   { to: "/catalog", label: "Catalog", icon: Package },
   { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
+  { to: "/invest", label: "Investor pledges", icon: Rocket },
 ];
 
 function navClass({ isActive }: { isActive: boolean }) {

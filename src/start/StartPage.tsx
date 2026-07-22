@@ -1,5 +1,6 @@
-// Studio Concierge - copilot-first /start page.
-// Guest-friendly AI-guided project scoping. Sign-in optional.
+// Studio Concierge - warm minimalist grid.
+// Click-to-launch Subscribe/Build tiles, $RHOZE loyalty chip + Solana wallet
+// slot for future token airdrops, copilot chat below.
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import logoWhite from "@/assets/logo-white.webp";
 import CopilotChat from "@/start/CopilotChat";
 import CopilotBrief from "@/start/CopilotBrief";
+import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import {
   type Conversation,
   type CopilotMessage,
@@ -20,6 +22,7 @@ import {
 } from "@/start/copilotClient";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
+import { Sparkles, Rocket, Coins, ArrowRight, Loader2 } from "lucide-react";
 
 export default function StartPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -28,6 +31,8 @@ export default function StartPage() {
   const [loading, setLoading] = useState(true);
   const [continueOpen, setContinueOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [subscribeOpen, setSubscribeOpen] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
   const guestToken = getGuestToken();
 
   useEffect(() => {
@@ -58,8 +63,8 @@ export default function StartPage() {
   }, [convo]);
 
   return (
-    <div className="min-h-screen bg-[hsl(45_35%_97%)] text-neutral-900" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}>
-      <header className="border-b border-neutral-200/70 bg-white/40 backdrop-blur">
+    <div className="min-h-screen bg-[#FDFCFB] text-[#4A4540]" style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}>
+      <header className="border-b border-[#E8E4DE]/70 bg-white/40 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2">
             <img src={logoWhite} alt="Rhoze" className="h-6 invert" />
@@ -81,22 +86,65 @@ export default function StartPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10">
-        <div className="mb-6 md:mb-8">
-          <div className="text-[11px] tracking-[0.25em] uppercase text-neutral-500 mb-1">Start a project</div>
-          <h1 className="text-2xl md:text-4xl tracking-tight text-neutral-900">
-            Talk it through. We'll scope it together.
-          </h1>
-          <p className="mt-2 text-neutral-500 max-w-xl text-sm md:text-base">
-            Describe what you're making - the concierge asks the right questions, builds a brief, and points you to the right pathway. No login needed to start.
-          </p>
+        <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div>
+            <div className="text-[11px] tracking-[0.25em] uppercase text-neutral-500 mb-1">Start a project</div>
+            <h1 className="text-2xl md:text-4xl tracking-tight text-[#4A4540]">
+              Pick a pathway. Or just talk it through.
+            </h1>
+            <p className="mt-2 text-neutral-500 max-w-xl text-sm md:text-base">
+              Subscribe for a monthly retainer, build a one-off with the concierge, or link a Solana wallet so future $RHOZE rewards land in your pocket.
+            </p>
+          </div>
+          <LoyaltyRail
+            session={session}
+            onConnectWallet={() => (session ? setWalletOpen(true) : setAuthOpen(true))}
+          />
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 md:mb-8">
+          <button
+            onClick={() => document.getElementById("copilot-anchor")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            className="group text-left flex flex-col p-6 bg-[#F5F2ED] border border-[#E8E4DE] rounded-2xl hover:border-[#D8D4CE] transition-all"
+          >
+            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-4 border border-[#E8E4DE]">
+              <Sparkles className="w-5 h-5 opacity-70" strokeWidth={1.5} />
+            </div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-normal">Build a project</h3>
+              <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-60 -translate-x-1 group-hover:translate-x-0 transition-all" />
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed mt-1">
+              Scope a one-off with the concierge. Deposit, timeline, and team suggestions in-line.
+            </p>
+          </button>
+
+          <button
+            onClick={() => setSubscribeOpen(true)}
+            className="group text-left flex flex-col p-6 bg-white border border-[#E8E4DE] rounded-2xl hover:border-[#D8D4CE] transition-all"
+          >
+            <div className="w-10 h-10 rounded-full bg-[#F5F2ED] flex items-center justify-center mb-4 border border-[#E8E4DE]">
+              <Rocket className="w-5 h-5 opacity-70" strokeWidth={1.5} />
+            </div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-normal">Subscribe</h3>
+              <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-60 -translate-x-1 group-hover:translate-x-0 transition-all" />
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed mt-1">
+              Monthly retainer. Credits refresh, priority queue, and $RHOZE yield on every dollar spent.
+            </p>
+          </button>
+        </div>
+
+        <div id="copilot-anchor" className="text-[11px] tracking-[0.25em] uppercase text-neutral-500 mb-3">
+          Concierge · live scoping
+        </div>
         {loading || !convo ? (
-          <div className="rounded-2xl border border-neutral-200 bg-white/60 p-10 text-center text-neutral-500 text-sm">
+          <div className="rounded-2xl border border-[#E8E4DE] bg-white/60 p-10 text-center text-neutral-500 text-sm">
             Warming up...
           </div>
         ) : (
-          <div className="grid md:grid-cols-[1fr_340px] gap-4 md:gap-6 min-h-[600px] md:h-[calc(100vh-220px)]">
+          <div className="grid md:grid-cols-[1fr_340px] gap-4 md:gap-6 min-h-[560px]">
             <CopilotChat
               conversation={convo}
               guestToken={guestToken}
@@ -106,6 +154,10 @@ export default function StartPage() {
             <CopilotBrief conversation={convo} onContinue={() => setContinueOpen(true)} />
           </div>
         )}
+
+        <p className="text-center text-[11px] opacity-40 italic tracking-wide mt-6">
+          Rhoze Copilot uses your conversation context to draft the brief.
+        </p>
       </main>
 
       <ContinueDialog
@@ -116,7 +168,176 @@ export default function StartPage() {
         session={session}
       />
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      <SubscribeDialog
+        open={subscribeOpen}
+        onOpenChange={setSubscribeOpen}
+        session={session}
+        onNeedAuth={() => { setSubscribeOpen(false); setAuthOpen(true); }}
+      />
+      <WalletDialog open={walletOpen} onOpenChange={setWalletOpen} session={session} />
     </div>
+  );
+}
+
+// ---------- Loyalty rail (balance chip + wallet pill) ----------
+function LoyaltyRail({ session, onConnectWallet }: { session: Session | null; onConnectWallet: () => void }) {
+  const [balance, setBalance] = useState<number | null>(null);
+  const [wallet, setWallet] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!session) { setBalance(null); setWallet(null); return; }
+    (async () => {
+      const { data: prof } = await supabase.from("profiles").select("solana_wallet").eq("id", session.user.id).maybeSingle();
+      setWallet(prof?.solana_wallet ?? null);
+      const { data: pcs } = await supabase.from("project_clients").select("project_id").eq("user_id", session.user.id);
+      const ids = (pcs ?? []).map((r) => r.project_id);
+      if (!ids.length) { setBalance(0); return; }
+      const { data: bals } = await supabase.from("rhoze_balances").select("balance").in("project_id", ids);
+      setBalance((bals ?? []).reduce((a, r) => a + Number(r.balance ?? 0), 0));
+    })();
+  }, [session?.user?.id]);
+
+  const short = (w: string) => `${w.slice(0, 4)}…${w.slice(-4)}`;
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex flex-col items-end">
+        <span className="text-[10px] uppercase tracking-widest opacity-60">Loyalty balance</span>
+        <span className="text-lg font-normal tabular-nums">
+          {session ? (balance === null ? "…" : balance.toLocaleString()) : "—"} <span className="text-xs text-neutral-500">$RHOZE</span>
+        </span>
+      </div>
+      <button
+        onClick={onConnectWallet}
+        className="px-4 py-2 border border-[#E8E4DE] rounded-full text-xs hover:bg-[#F5F2ED] transition-colors flex items-center gap-2"
+        title={wallet ?? "Link a Solana wallet for future $RHOZE airdrops"}
+      >
+        <Coins className="w-3.5 h-3.5 opacity-60" strokeWidth={1.5} />
+        {wallet ? short(wallet) : "Connect Solana wallet"}
+      </button>
+    </div>
+  );
+}
+
+// ---------- Subscribe dialog (loads active subscription packages) ----------
+function SubscribeDialog({
+  open, onOpenChange, session, onNeedAuth,
+}: { open: boolean; onOpenChange: (o: boolean) => void; session: Session | null; onNeedAuth: () => void }) {
+  const [tiers, setTiers] = useState<any[] | null>(null);
+  const [slug, setSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    setSlug(null);
+    (async () => {
+      const { data } = await supabase
+        .from("service_packages")
+        .select("id,slug,name,description,price_cents,credits,billing_interval,sort_order")
+        .eq("kind", "subscription")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+      setTiers(data ?? []);
+    })();
+  }, [open]);
+
+  const startCheckout = (chosen: string) => {
+    if (!session) { onNeedAuth(); return; }
+    setSlug(chosen);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Subscribe to Rhoze</DialogTitle>
+          <DialogDescription>Monthly credits, priority queue, and $RHOZE yield on every dollar spent.</DialogDescription>
+        </DialogHeader>
+        {slug ? (
+          <div className="min-h-[520px]">
+            <StripeEmbeddedCheckout
+              subscriptionSlug={slug}
+              customerEmail={session?.user?.email}
+              userId={session?.user?.id}
+              returnUrl={`${window.location.origin}/start.html?checkout=return`}
+            />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {tiers === null && (
+              <div className="col-span-full flex items-center justify-center py-10 text-neutral-500 text-sm">
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> Loading tiers…
+              </div>
+            )}
+            {tiers && tiers.length === 0 && (
+              <div className="col-span-full text-center py-10 text-neutral-500 text-sm">
+                No subscription tiers are published yet. Ping the team.
+              </div>
+            )}
+            {(tiers ?? []).map((t) => (
+              <div key={t.id} className="rounded-2xl border border-[#E8E4DE] p-5 flex flex-col bg-white">
+                <div className="text-[11px] uppercase tracking-widest text-neutral-500">{t.billing_interval ?? "month"}</div>
+                <div className="text-lg mt-1">{t.name}</div>
+                <div className="text-2xl mt-2 tabular-nums">${((t.price_cents ?? 0) / 100).toFixed(0)}<span className="text-sm text-neutral-500">/mo</span></div>
+                <div className="text-xs text-neutral-500 mt-1">{t.credits ?? 0} credits / mo</div>
+                {t.description && <p className="text-xs text-neutral-500 mt-3 leading-relaxed flex-1">{t.description}</p>}
+                <Button onClick={() => startCheckout(t.slug)} className="mt-4 bg-[#4A4540] hover:bg-black text-white">
+                  Choose {t.name}
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ---------- Solana wallet dialog ----------
+function WalletDialog({ open, onOpenChange, session }: { open: boolean; onOpenChange: (o: boolean) => void; session: Session | null }) {
+  const [addr, setAddr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!open || !session) return;
+    supabase.from("profiles").select("solana_wallet").eq("id", session.user.id).maybeSingle()
+      .then(({ data }) => setAddr(data?.solana_wallet ?? ""));
+  }, [open, session?.user?.id]);
+
+  const save = async () => {
+    if (!session) return;
+    const v = addr.trim();
+    if (v && (v.length < 32 || v.length > 44)) {
+      toast({ title: "Doesn't look like a Solana address", description: "Should be 32–44 characters.", variant: "destructive" });
+      return;
+    }
+    setBusy(true);
+    const { error } = await supabase.from("profiles").update({ solana_wallet: v || null }).eq("id", session.user.id);
+    setBusy(false);
+    if (error) toast({ title: "Couldn't save", description: error.message, variant: "destructive" });
+    else { toast({ title: v ? "Wallet linked" : "Wallet removed" }); onOpenChange(false); }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Link your Solana wallet</DialogTitle>
+          <DialogDescription>
+            Save the address where future $RHOZE airdrops should land. You earn $RHOZE for every dollar spent with Rhoze — payouts to wallets roll out soon.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3">
+          <Label className="text-xs">Solana address</Label>
+          <Input value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="e.g. 5F...JkR (base58)" />
+          <Button onClick={save} disabled={busy} className="w-full bg-[#4A4540] hover:bg-black text-white">
+            {busy ? "Saving…" : "Save wallet"}
+          </Button>
+          <p className="text-[11px] text-neutral-500 leading-relaxed">
+            We don't touch your keys or take custody. This is a display + payout address only.
+          </p>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

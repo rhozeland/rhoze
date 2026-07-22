@@ -16,6 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowRight, Check, Coins, Lock, Rocket, Shield, Sparkles, Wallet } from "lucide-react";
 import logoWhite from "@/assets/logo-white.webp";
+import WalletPanel from "./WalletPanel";
 
 // ─── Types ────────────────────────────────────────────────────────────────
 type Tier = "supporter" | "builder" | "core";
@@ -215,6 +216,11 @@ export default function InvestPage() {
           <ValueCard icon={<Rocket className="w-4 h-4" />} title="Real utility, not vapor" body="Credits spend on merch, studio time, and app perks. You always have something to use." />
           <ValueCard icon={<Lock className="w-4 h-4" />} title="Optional locks, real bonuses" body="Longer commitment = higher multiplier. Skin in the game gets rewarded." />
           <ValueCard icon={<Shield className="w-4 h-4" />} title="Transparent settlement" body="Track your pledge from confirmation → on-chain settlement → credits issued. All in your dashboard." />
+        </section>
+
+        {/* Wallet lookup / Solscan panel */}
+        <section>
+          <WalletPanel session={session} />
         </section>
       </main>
 

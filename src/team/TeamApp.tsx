@@ -10,6 +10,7 @@ import Rewards from "./pages/Rewards";
 import Leaderboard from "./pages/Leaderboard";
 import LiveEditor from "./pages/LiveEditor";
 import Newsroom from "./pages/Newsroom";
+import InvestAdmin from "./pages/InvestAdmin";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import Catalog from "./pages/Catalog";
@@ -102,6 +103,7 @@ export default function TeamApp() {
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="live-editor" element={<LiveEditor />} />
         <Route path="newsroom" element={<Newsroom />} />
+        <Route path="invest" element={<InvestAdmin />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

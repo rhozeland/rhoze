@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => ({
         main: path.resolve(__dirname, "index.html"),
         team: path.resolve(__dirname, "team.html"),
         start: path.resolve(__dirname, "start.html"),
+        invest: path.resolve(__dirname, "invest.html"),
       },
     },
   },

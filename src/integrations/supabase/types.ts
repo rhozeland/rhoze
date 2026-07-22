@@ -104,6 +104,45 @@ export type Database = {
         }
         Relationships: []
       }
+      campaign_state: {
+        Row: {
+          campaign_open: boolean
+          headline: string | null
+          id: number
+          remaining_sol: number
+          sol_price_usd: number
+          subhead: string | null
+          total_target_sol: number
+          updated_at: string
+          updated_by: string | null
+          window_ends_at: string | null
+        }
+        Insert: {
+          campaign_open?: boolean
+          headline?: string | null
+          id?: number
+          remaining_sol?: number
+          sol_price_usd?: number
+          subhead?: string | null
+          total_target_sol?: number
+          updated_at?: string
+          updated_by?: string | null
+          window_ends_at?: string | null
+        }
+        Update: {
+          campaign_open?: boolean
+          headline?: string | null
+          id?: number
+          remaining_sol?: number
+          sol_price_usd?: number
+          subhead?: string | null
+          total_target_sol?: number
+          updated_at?: string
+          updated_by?: string | null
+          window_ends_at?: string | null
+        }
+        Relationships: []
+      }
       community_challenges: {
         Row: {
           created_at: string
@@ -868,6 +907,83 @@ export type Database = {
           {
             foreignKeyName: "intake_requests_project_id_fkey"
             columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investor_pledges: {
+        Row: {
+          admin_notes: string | null
+          amount_usd_cents: number
+          awarded_project_id: string | null
+          created_at: string
+          credit_multiplier: number
+          credits_awarded: number
+          fulfilled_at: string | null
+          id: string
+          lock_months: number
+          notes: string | null
+          path: Database["public"]["Enums"]["pledge_path"]
+          payment_method: Database["public"]["Enums"]["pledge_payment"]
+          service_fee_cents: number
+          settled_at: string | null
+          solana_wallet: string | null
+          status: Database["public"]["Enums"]["pledge_status"]
+          tier: Database["public"]["Enums"]["pledge_tier"]
+          tx_signature: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount_usd_cents: number
+          awarded_project_id?: string | null
+          created_at?: string
+          credit_multiplier?: number
+          credits_awarded?: number
+          fulfilled_at?: string | null
+          id?: string
+          lock_months?: number
+          notes?: string | null
+          path?: Database["public"]["Enums"]["pledge_path"]
+          payment_method?: Database["public"]["Enums"]["pledge_payment"]
+          service_fee_cents?: number
+          settled_at?: string | null
+          solana_wallet?: string | null
+          status?: Database["public"]["Enums"]["pledge_status"]
+          tier: Database["public"]["Enums"]["pledge_tier"]
+          tx_signature?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount_usd_cents?: number
+          awarded_project_id?: string | null
+          created_at?: string
+          credit_multiplier?: number
+          credits_awarded?: number
+          fulfilled_at?: string | null
+          id?: string
+          lock_months?: number
+          notes?: string | null
+          path?: Database["public"]["Enums"]["pledge_path"]
+          payment_method?: Database["public"]["Enums"]["pledge_payment"]
+          service_fee_cents?: number
+          settled_at?: string | null
+          solana_wallet?: string | null
+          status?: Database["public"]["Enums"]["pledge_status"]
+          tier?: Database["public"]["Enums"]["pledge_tier"]
+          tx_signature?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investor_pledges_awarded_project_id_fkey"
+            columns: ["awarded_project_id"]
             isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
@@ -2397,6 +2513,14 @@ export type Database = {
         Args: { _project_id: string }
         Returns: undefined
       }
+      admin_fulfill_investor_pledge: {
+        Args: {
+          _pledge_id: string
+          _project_id: string
+          _tx_signature?: string
+        }
+        Returns: number
+      }
       admin_get_service_packages: {
         Args: never
         Returns: {
@@ -2458,6 +2582,17 @@ export type Database = {
       consume_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      create_investor_pledge: {
+        Args: {
+          _amount_usd_cents: number
+          _lock_months: number
+          _notes?: string
+          _path: Database["public"]["Enums"]["pledge_path"]
+          _payment_method: Database["public"]["Enums"]["pledge_payment"]
+          _solana_wallet?: string
+        }
+        Returns: string
       }
       create_project_from_intake: {
         Args: { _intake_id: string }
@@ -2601,6 +2736,15 @@ export type Database = {
       department: "marketing" | "hr" | "development" | "sales" | "operations"
       invite_status: "pending" | "accepted" | "revoked"
       milestone_status: "pending" | "submitted" | "approved" | "cancelled"
+      pledge_path: "self_serve" | "assisted"
+      pledge_payment: "square" | "etransfer" | "sol" | "usdc" | "other"
+      pledge_status:
+        | "pending"
+        | "confirmed"
+        | "settled"
+        | "fulfilled"
+        | "cancelled"
+      pledge_tier: "supporter" | "builder" | "core"
       rhoze_kind:
         | "earn_payment"
         | "earn_first_project"
@@ -2769,6 +2913,16 @@ export const Constants = {
       department: ["marketing", "hr", "development", "sales", "operations"],
       invite_status: ["pending", "accepted", "revoked"],
       milestone_status: ["pending", "submitted", "approved", "cancelled"],
+      pledge_path: ["self_serve", "assisted"],
+      pledge_payment: ["square", "etransfer", "sol", "usdc", "other"],
+      pledge_status: [
+        "pending",
+        "confirmed",
+        "settled",
+        "fulfilled",
+        "cancelled",
+      ],
+      pledge_tier: ["supporter", "builder", "core"],
       rhoze_kind: [
         "earn_payment",
         "earn_first_project",

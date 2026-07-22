@@ -874,6 +874,7 @@ export type Database = {
           author_id: string
           body: string | null
           created_at: string
+          edited_at: string | null
           embed_url: string | null
           id: string
           milestone_id: string
@@ -887,6 +888,7 @@ export type Database = {
           author_id: string
           body?: string | null
           created_at?: string
+          edited_at?: string | null
           embed_url?: string | null
           id?: string
           milestone_id: string
@@ -900,6 +902,7 @@ export type Database = {
           author_id?: string
           body?: string | null
           created_at?: string
+          edited_at?: string | null
           embed_url?: string | null
           id?: string
           milestone_id?: string

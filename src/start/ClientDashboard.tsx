@@ -9,6 +9,7 @@ import { ArrowRight, LogOut, Wallet, FolderOpen, Plus, ExternalLink, CheckCircle
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import EmbedPreview, { toEmbedUrl } from "@/team/components/EmbedPreview";
+import AudioMessagePlayer from "./AudioMessagePlayer";
 
 type Project = {
   id: string;
@@ -41,6 +42,9 @@ type MilestoneMessage = {
   attachment_size: number | null;
   embed_url: string | null;
   edited_at: string | null;
+  caption_path: string | null;
+  caption_name: string | null;
+  caption_mime: string | null;
 };
 
 function fmtMoney(cents: number | null) {

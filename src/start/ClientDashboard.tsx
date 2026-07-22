@@ -258,6 +258,50 @@ export default function ClientDashboard() {
     }
   }
 
+  function startEdit(msg: MilestoneMessage) {
+    setEditingId(msg.id);
+    setEditingBody(msg.body ?? "");
+  }
+  function cancelEdit() {
+    setEditingId(null);
+    setEditingBody("");
+  }
+  async function saveEdit(msg: MilestoneMessage) {
+    if (!msgMilestone) return;
+    const next = editingBody.trim();
+    if (next === (msg.body ?? "").trim()) { cancelEdit(); return; }
+    setEditSaving(true);
+    try {
+      const { error } = await supabase.from("milestone_messages")
+        .update({ body: next.length ? next : null, edited_at: new Date().toISOString() })
+        .eq("id", msg.id);
+      if (error) throw error;
+      cancelEdit();
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't save edit", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setEditSaving(false);
+    }
+  }
+  async function deleteMessage(msg: MilestoneMessage) {
+    if (!msgMilestone) return;
+    if (!confirm("Delete this message? This can't be undone.")) return;
+    setDeletingId(msg.id);
+    try {
+      if (msg.attachment_path) {
+        await supabase.storage.from("milestone-attachments").remove([msg.attachment_path]);
+      }
+      const { error } = await supabase.from("milestone_messages").delete().eq("id", msg.id);
+      if (error) throw error;
+      await loadMessages(msgMilestone.id);
+    } catch (err: any) {
+      toast({ title: "Couldn't delete", description: err.message ?? String(err), variant: "destructive" });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
   const loadData = useCallback(async (uid: string) => {
     // projects via membership
     const { data: memberRows } = await supabase

@@ -348,49 +348,53 @@ export default function ClientDashboard() {
             {milestones.length === 0 ? (
               <div className="text-sm text-muted-foreground">No milestones yet.</div>
             ) : (
-              <ul className="space-y-1.5">
-                {milestones.slice(0, 6).map(m => (
-                  <li key={m.id} className="flex items-start gap-2 text-sm group">
-                    {m.status === "approved"
-                      ? <CheckCircle2 size={14} className="text-emerald-500 mt-0.5 shrink-0" />
-                      : <Circle size={14} className="text-muted-foreground mt-0.5 shrink-0" />}
-                    <div className="min-w-0 flex-1">
-                      <div className={`truncate ${m.status === "approved" ? "text-muted-foreground line-through" : "text-foreground"}`}>{m.title}</div>
-                      {m.due_date && <div className="text-[11px] text-muted-foreground">due {new Date(m.due_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>}
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                        <a
-                          href={`/team.html#/portal/${activeProject.id}?milestone=${m.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
-                          title="View milestone details"
-                        >
-                          <Eye size={10} /> Details
-                        </a>
-                        <a
-                          href={`/team.html#/portal/${activeProject.id}?compose=1&subject=${encodeURIComponent(`Re: ${m.title}`)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
-                          title="Message your team about this milestone"
-                        >
-                          <MessageSquare size={10} /> Message team
-                        </a>
-                        {m.status !== "approved" && (
+              <ol className="relative space-y-2 sm:space-y-1.5 before:absolute before:left-[6px] before:top-1 before:bottom-1 before:w-px before:bg-border sm:before:hidden">
+                {milestones.slice(0, 6).map(m => {
+                  const done = m.status === "approved";
+                  return (
+                    <li key={m.id} className="relative pl-5 sm:pl-0 sm:flex sm:items-start sm:gap-2 text-sm">
+                      <span className="absolute left-0 top-1 sm:static sm:mt-0.5 sm:shrink-0">
+                        {done
+                          ? <CheckCircle2 size={14} className="text-emerald-500" />
+                          : <Circle size={14} className="text-muted-foreground" />}
+                      </span>
+                      <div className="min-w-0 flex-1 rounded-lg sm:rounded-none border sm:border-0 border-border bg-background/40 sm:bg-transparent p-2 sm:p-0">
+                        <div className={`text-sm leading-snug break-words ${done ? "text-muted-foreground line-through" : "text-foreground font-medium sm:font-normal"}`}>{m.title}</div>
+                        {m.due_date && <div className="text-[11px] text-muted-foreground mt-0.5">due {new Date(m.due_date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>}
+                        <div className="mt-2 sm:mt-1.5 flex flex-wrap items-center gap-1">
+                          <a
+                            href={`/team.html#/portal/${activeProject.id}?milestone=${m.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                            title="View milestone details"
+                          >
+                            <Eye size={10} /> Details
+                          </a>
                           <button
                             type="button"
-                            onClick={() => requestMilestoneReview(m)}
+                            onClick={() => openMessageTeam(m)}
                             className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
-                            title="Ask the team to review this milestone"
+                            title="Message your team about this milestone"
                           >
-                            <Flag size={10} /> Request review
+                            <MessageSquare size={10} /> Message team
                           </button>
-                        )}
+                          {!done && (
+                            <button
+                              type="button"
+                              onClick={() => requestMilestoneReview(m)}
+                              className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-colors"
+                              title="Ask the team to review this milestone"
+                            >
+                              <Flag size={10} /> Request review
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    </li>
+                  );
+                })}
+              </ol>
             )}
           </div>
         </div>

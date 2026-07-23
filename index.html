@@ -4886,10 +4886,12 @@
       }
       function loadSignedInHUD(){
         var hud = document.getElementById('rSignedInHUD');
+        var signInCta = document.getElementById('rSignInCta');
         if (!hud) return;
         var session = readSbSession();
-        if (!session) { hud.hidden = true; return; }
+        if (!session) { hud.hidden = true; if (signInCta) signInCta.hidden = false; return; }
         hud.hidden = false;
+        if (signInCta) signInCta.hidden = true;
         var token = session.access_token;
         var uid = session.user && session.user.id;
         var greetName = (session.user && (session.user.user_metadata && (session.user.user_metadata.display_name || session.user.user_metadata.full_name)) || session.user.email) || 'Welcome back';

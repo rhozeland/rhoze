@@ -3589,6 +3589,95 @@
               display: inline-flex; align-items: center;
             }
           }
+
+          /* ============================================================
+             Command Bento — dashboard overlay for the homepage lead
+             Softens brutalist edges, tightens density, warms palette.
+             ============================================================ */
+          .r-eco { padding-top: 0.85rem; padding-bottom: 1rem; background: #faf9f6; }
+          .r-eco .r-eco-inner { max-width: 1320px; padding: 0 1rem; gap: 0.65rem; }
+
+          /* Outer shell → soft rounded card, no hard offset shadow */
+          .r-eco .r-eco-lead {
+            border: 1px solid #e9e4db;
+            border-radius: 20px;
+            box-shadow: 0 1px 2px rgba(45,42,38,0.04), 0 8px 24px -12px rgba(45,42,38,0.08);
+            background: #ffffff;
+          }
+
+          /* Ticker bar → dark bento pill, matches selected direction */
+          .r-eco-ticker { border-bottom: 0; padding: 6px; gap: 6px; }
+          .r-eco-ticker-row {
+            background: #2d2a26;
+            border-radius: 14px;
+            overflow: hidden;
+            min-height: 44px;
+          }
+          .r-eco-tick { background: transparent; border-right: 1px solid rgba(255,255,255,0.08); color: #f5f0e6; padding: 0.55rem 0.9rem; }
+          .r-eco-tick-k { color: rgba(245,240,230,0.55); }
+          .r-eco-tick-v { color: #f5f0e6; }
+          .r-eco-tick.is-news { background: transparent; }
+          .r-eco-tick.is-news::before { background: linear-gradient(to right, #2d2a26 40%, rgba(45,42,38,0)); }
+          .r-eco-tick.is-news::after  { background: linear-gradient(to left,  #2d2a26 40%, rgba(45,42,38,0)); }
+          .r-eco-news-k { color: #b28a5d; }
+          .r-eco-news-v { color: #f5f0e6; }
+          .r-eco-news-item { border-right-color: rgba(255,255,255,0.08); }
+          .r-eco-live-pill { background: #b28a5d; color: #fff; border-radius: 4px; }
+          .r-eco-tick-link { border-color: rgba(245,240,230,0.35); color: #f5f0e6; }
+          .r-eco-tick-link:hover { background: #b28a5d; border-color: #b28a5d; color: #fff; }
+          .r-eco-tick.is-foot { display: none; }
+
+          /* Bento grid — tighter split, gap-separated cards instead of shared borders */
+          .r-eco-issue-grid { gap: 10px; padding: 10px; grid-template-columns: minmax(0, 8fr) minmax(300px, 4fr); }
+          .r-eco-issue-main {
+            border-right: 0;
+            padding: 1.1rem 1.25rem 1.15rem;
+            background: #ffffff;
+            border: 1px solid #eee7db;
+            border-radius: 16px;
+          }
+          .r-eco-issue-side { gap: 10px; }
+
+          /* Tighter hero copy inside the featured card */
+          .r-eco-kicker-row { margin-bottom: 0.6rem; }
+          .r-eco-kicker { border-radius: 4px; padding: 0.28rem 0.5rem; }
+          .r-eco .r-eco-title { font-size: clamp(1.35rem, 2.4vw, 1.75rem); line-height: 1.08; margin-bottom: 0.55rem; max-width: 34ch; }
+          .r-eco-video { border-radius: 14px; margin-bottom: 0.85rem; border-color: #e9e4db; }
+          .r-eco-dek { font-size: 0.9rem; line-height: 1.5; }
+          .r-eco-episodes { margin-top: 0.9rem; padding-top: 0.75rem; }
+
+          /* Sidebar cards: market + drops become individual bento tiles */
+          .r-eco-stats, .r-eco-drops {
+            border: 1px solid #eee7db;
+            border-bottom: 1px solid #eee7db;
+            border-radius: 16px;
+            padding: 1rem 1.05rem;
+            background: #f1ede4;
+          }
+          .r-eco-drops { background: #ffffff; }
+          .r-eco-stats-head, .r-eco-drops-head { margin-bottom: 0.7rem; }
+          .r-eco-stats-label, .r-eco-drops-label { color: #b28a5d; letter-spacing: 0.2em; }
+          .r-eco-status { border-radius: 999px; }
+          .r-eco-mini-price { font-size: 1.45rem; }
+          .r-eco-spark { height: 40px; margin: 0.25rem 0 0.55rem; }
+          .r-eco-mini-row { padding-top: 0.5rem; gap: 0.55rem; }
+          .r-eco-drops-grid { gap: 0.55rem; }
+          .r-eco-drop.is-tile { min-height: 96px; padding: 0.7rem 0.75rem; border-radius: 12px; background: #faf9f6; border-color: #eee7db; }
+          .r-eco-drop.is-tile + .r-eco-drop.is-tile { border-top-color: #eee7db; }
+          .r-eco-drop-t { font-size: 0.82rem; margin: 0.25rem 0 0.15rem; }
+          .r-eco-drop-d { font-size: 0.68rem; }
+
+          /* Story dropdown row → chip-styled seam under the bento */
+          .r-eco-story { border-top-color: #eee7db; border-bottom: 0; }
+          .r-eco-story summary { padding: 0.55rem 1rem; }
+
+          /* Kill outer .hero underline emphasis when eco is in dashboard mode */
+          .r-eco.hero { min-height: 0; }
+
+          @media (max-width: 980px) {
+            .r-eco-issue-grid { grid-template-columns: minmax(0, 1fr); padding: 8px; }
+            .r-eco-issue-main { border-bottom: 0; }
+          }
         </style>
 
         <div class="hero-inner r-eco-inner">

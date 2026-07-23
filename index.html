@@ -4070,36 +4070,8 @@
 
     </main>
 
-    <!-- ===================== START A PROJECT CTA ===================== -->
-    <section class="r-start reveal" id="engage" aria-label="Start a project">
-      <style>
-        .r-start { padding: 56px 0 72px; }
-        .r-start-inner { max-width: 920px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); text-align: center; }
-        .r-start-kicker { display: inline-block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--muted)); margin: 0 0 14px; }
-        .r-start h2 { font-family: var(--font-display, inherit); font-size: clamp(2.2rem, 5.4vw, 3.6rem); font-weight: 900; line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 14px; color: hsl(var(--ink)); }
-        .r-start p { font-size: clamp(0.98rem, 1.5vw, 1.1rem); line-height: 1.5; color: hsl(var(--muted)); margin: 0 auto 26px; max-width: 560px; }
-        .r-start-actions { display: inline-flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .r-start-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.95rem 1.6rem; border-radius: 999px; font-size: 0.92rem; font-weight: 700; letter-spacing: -0.005em; text-decoration: none; cursor: pointer; border: 1px solid hsl(var(--ink)); transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease; font-family: inherit; }
-        .r-start-btn--primary { background: hsl(var(--ink)); color: hsl(var(--surface-card, var(--bg))); }
-        .r-start-btn--primary:hover { transform: translateY(-2px); }
-        .r-start-btn--ghost { background: transparent; color: hsl(var(--ink)); }
-        .r-start-btn--ghost:hover { background: hsl(var(--ink) / 0.06); transform: translateY(-2px); }
-        .r-start-btn svg { width: 1rem; height: 1rem; }
-      </style>
-      <div class="r-start-inner">
-        <span class="r-start-kicker">Work with us</span>
-        <h2>Start a project with Rhozeland</h2>
-        <p>Bring a release, a brand, an event, or an idea. We'll route you to the right team and shape the launch with you.</p>
-        <div class="r-start-actions">
-          <a href="/projects" class="r-start-btn r-start-btn--primary">
-            Start a project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-          <button type="button" class="r-start-btn r-start-btn--ghost" onclick="document.getElementById('newsletterModal').classList.add('open')">Stay in the loop</button>
-        </div>
-      </div>
-
-      <!-- Newsletter Modal -->
+    <!-- Newsletter Modal (kept for other CTAs that reference #newsletterModal) -->
+    <section aria-hidden="true" style="display:contents;">
       <div id="newsletterModal" class="newsletter-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
         <div class="newsletter-modal">
           <button class="newsletter-modal-close" onclick="document.getElementById('newsletterModal').classList.remove('open')" aria-label="Close">&times;</button>

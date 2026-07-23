@@ -4768,6 +4768,32 @@
         } catch (e) {}
       }
 
+      /* === Mini leaderboard (replaces old pillar tiles in the bento sidebar) === */
+      function loadMiniLeaderboard(){
+        var el = document.getElementById('rEcoMiniLb');
+        if (!el) return;
+        try {
+          fetch(NEWS_SUPABASE_URL + '/rest/v1/community_leaderboard?select=display_name,points,rank&published_at=not.is.null&order=rank.asc&limit=5', {
+            headers: { apikey: NEWS_SUPABASE_KEY, Authorization: 'Bearer ' + NEWS_SUPABASE_KEY }
+          })
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .then(function(rows){
+            if (!Array.isArray(rows) || !rows.length) {
+              el.innerHTML = '<div class="r-eco-mini-lb-empty">No snapshot yet.</div>';
+              return;
+            }
+            el.innerHTML = rows.map(function(r, i){
+              var rank = r.rank || (i + 1);
+              var name = escapeHtml(r.display_name || 'Anonymous');
+              var pts = (r.points == null) ? '—' : Number(r.points).toLocaleString();
+              return '<div class="r-eco-mini-lb-row"><span class="r-eco-mini-lb-rank">#' + rank + '</span><span class="r-eco-mini-lb-name">' + name + '</span><span class="r-eco-mini-lb-pts">' + pts + '</span></div>';
+            }).join('');
+          })
+          .catch(function(){ el.innerHTML = '<div class="r-eco-mini-lb-empty">Couldn\u2019t load board.</div>'; });
+        } catch (e) {}
+      }
+      try { loadMiniLeaderboard(); } catch (e) {}
+
       /* === Signed-in HUD: personalized content rails for authenticated users === */
       var SB_PROJECT_REF = 'hdlpvcsxyxirywjkhsui';
       function readSbSession(){

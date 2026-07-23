@@ -4813,11 +4813,17 @@
 
       function paintTicker(stats){
         var p = document.getElementById('rEcoMiniPrice'); if (p) p.textContent = fmtPrice(stats.price);
+        var spatialPrice = document.getElementById('rSpatialTickerPrice'); if (spatialPrice) spatialPrice.textContent = fmtPrice(stats.price);
         var c = document.getElementById('rEcoMiniChg');
         if (c) {
           c.textContent = fmtPct(stats.change24h);
-          c.className = 'r-eco-mini-chg ' + (stats.change24h == null ? 'flat' : (stats.change24h >= 0 ? 'up' : 'dn'));
+          if (c.classList.contains('r-market-v')) {
+            c.dataset.direction = stats.change24h == null ? 'flat' : (stats.change24h >= 0 ? 'up' : 'dn');
+          } else {
+            c.className = 'r-eco-mini-chg ' + (stats.change24h == null ? 'flat' : (stats.change24h >= 0 ? 'up' : 'dn'));
+          }
         }
+        var spatialChange = document.getElementById('rSpatialTickerChange'); if (spatialChange) spatialChange.textContent = fmtPct(stats.change24h);
         var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
         var vol = document.getElementById('rEcoMiniVol'); if (vol) vol.textContent = fmtCompact(stats.volume24h);
         var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';

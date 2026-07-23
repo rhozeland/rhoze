@@ -3160,7 +3160,7 @@
           body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }
           /* Kill the fixed body-level gradient/orange background so it doesn't bleed through inline pages. */
           body.r-inline-active .gradient-canvas { display: none !important; }
-          html.r-inline-active, body.r-inline-active { background: hsl(var(--surface-card)) !important; }
+          body.r-inline-active { background: hsl(var(--surface-card)) !important; }
           /* Kill the outer page-shell rounded corners while inline view is active so we don't see cream peeks at the top corners. */
           body.r-inline-active .page-shell { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; box-shadow: none !important; }
           .r-inline-frame-wrap { min-height: 0; }

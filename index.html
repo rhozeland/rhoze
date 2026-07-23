@@ -3109,9 +3109,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
-      <a class="nav-cta" href="/start.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z"/></svg>
-        Build
+      <a class="nav-cta" id="rSignInCta" href="/team.html#/portal" aria-label="Sign in to Rhozeland">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign in
       </a>
       <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
@@ -3158,6 +3158,9 @@
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
           /* Sections outside <main> that would otherwise bleed under the inline view. */
           body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }
+          /* Kill the fixed body-level gradient/orange background so it doesn't bleed through inline pages. */
+          body.r-inline-active .gradient-canvas { display: none !important; }
+          body.r-inline-active { background: hsl(var(--surface-card)) !important; }
           /* Kill the outer page-shell rounded corners while inline view is active so we don't see cream peeks at the top corners. */
           body.r-inline-active .page-shell { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; box-shadow: none !important; }
           .r-inline-frame-wrap { min-height: 0; }
@@ -4070,36 +4073,8 @@
 
     </main>
 
-    <!-- ===================== START A PROJECT CTA ===================== -->
-    <section class="r-start reveal" id="engage" aria-label="Start a project">
-      <style>
-        .r-start { padding: 56px 0 72px; }
-        .r-start-inner { max-width: 920px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem); text-align: center; }
-        .r-start-kicker { display: inline-block; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.24em; text-transform: uppercase; color: hsl(var(--muted)); margin: 0 0 14px; }
-        .r-start h2 { font-family: var(--font-display, inherit); font-size: clamp(2.2rem, 5.4vw, 3.6rem); font-weight: 900; line-height: 1.02; letter-spacing: -0.02em; margin: 0 0 14px; color: hsl(var(--ink)); }
-        .r-start p { font-size: clamp(0.98rem, 1.5vw, 1.1rem); line-height: 1.5; color: hsl(var(--muted)); margin: 0 auto 26px; max-width: 560px; }
-        .r-start-actions { display: inline-flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .r-start-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.95rem 1.6rem; border-radius: 999px; font-size: 0.92rem; font-weight: 700; letter-spacing: -0.005em; text-decoration: none; cursor: pointer; border: 1px solid hsl(var(--ink)); transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease; font-family: inherit; }
-        .r-start-btn--primary { background: hsl(var(--ink)); color: hsl(var(--surface-card, var(--bg))); }
-        .r-start-btn--primary:hover { transform: translateY(-2px); }
-        .r-start-btn--ghost { background: transparent; color: hsl(var(--ink)); }
-        .r-start-btn--ghost:hover { background: hsl(var(--ink) / 0.06); transform: translateY(-2px); }
-        .r-start-btn svg { width: 1rem; height: 1rem; }
-      </style>
-      <div class="r-start-inner">
-        <span class="r-start-kicker">Work with us</span>
-        <h2>Start a project with Rhozeland</h2>
-        <p>Bring a release, a brand, an event, or an idea. We'll route you to the right team and shape the launch with you.</p>
-        <div class="r-start-actions">
-          <a href="/projects" class="r-start-btn r-start-btn--primary">
-            Start a project
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-          <button type="button" class="r-start-btn r-start-btn--ghost" onclick="document.getElementById('newsletterModal').classList.add('open')">Stay in the loop</button>
-        </div>
-      </div>
-
-      <!-- Newsletter Modal -->
+    <!-- Newsletter Modal (kept for other CTAs that reference #newsletterModal) -->
+    <section aria-hidden="true" style="display:contents;">
       <div id="newsletterModal" class="newsletter-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
         <div class="newsletter-modal">
           <button class="newsletter-modal-close" onclick="document.getElementById('newsletterModal').classList.remove('open')" aria-label="Close">&times;</button>
@@ -4911,10 +4886,12 @@
       }
       function loadSignedInHUD(){
         var hud = document.getElementById('rSignedInHUD');
+        var signInCta = document.getElementById('rSignInCta');
         if (!hud) return;
         var session = readSbSession();
-        if (!session) { hud.hidden = true; return; }
+        if (!session) { hud.hidden = true; if (signInCta) signInCta.hidden = false; return; }
         hud.hidden = false;
+        if (signInCta) signInCta.hidden = true;
         var token = session.access_token;
         var uid = session.user && session.user.id;
         var greetName = (session.user && (session.user.user_metadata && (session.user.user_metadata.display_name || session.user.user_metadata.full_name)) || session.user.email) || 'Welcome back';

@@ -11,29 +11,37 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
   <style>
-    /* Compact command-bar header (redesign v3) */
-    .lb-hero { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:14px 20px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
-    .lb-hero h1 { font-size: clamp(22px, 3.2vw, 30px); line-height:1; letter-spacing:-0.03em; color:hsl(var(--ink)); font-weight:900; text-transform:uppercase; }
-    .lb-hero .sub { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; margin-top:4px; }
-    .lb-hero .live { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(140 55% 92%); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:hsl(158 60% 22%); font-weight:800; }
+    /* Command Grid header (redesign v2) — hairline black rail */
+    .lb-hero { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:18px 22px; border:1px solid hsl(var(--ink)); border-radius:2px; background:hsl(var(--surface-card)); }
+    .lb-hero .eyebrow { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:hsl(var(--ink)); font-weight:700; margin-bottom:4px; }
+    .lb-hero h1 { font-size: clamp(22px, 3vw, 30px); line-height:1; letter-spacing:-0.02em; color:hsl(var(--ink)); font-weight:500; }
+    .lb-hero h1 .slash { color:hsl(var(--muted)); font-weight:400; margin:0 6px; }
+    .lb-hero .sub { font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:hsl(var(--ink)); font-weight:700; margin-bottom:2px; }
+    .lb-hero .stamp { font-family:'Space Mono', ui-monospace, monospace; font-size:13px; color:hsl(var(--ink)); }
+    .lb-hero .live { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(140 55% 92%); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:hsl(158 60% 22%); font-weight:800; margin-top:6px; }
     .lb-hero .live::before { content:""; width:6px; height:6px; border-radius:999px; background:hsl(158 60% 35%); box-shadow:0 0 0 3px hsl(158 60% 35% / 0.18); }
     /* Split grid: leaderboard + account */
     .lb-split { display:grid; grid-template-columns: 1fr; gap:18px; margin-top:16px; align-items:start; }
     @media (min-width: 980px) { .lb-split { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap:22px; } }
-    .lb-card { border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); overflow:hidden; }
+    .lb-card { border:1px solid hsl(var(--ink)); border-radius:2px; background:hsl(var(--surface-card)); overflow:hidden; }
     .lb-card-pad { padding:18px 20px; }
+    /* Section bar (dark stripe subhead inside cards, à la Command Grid) */
+    .lb-secbar { display:flex; justify-content:space-between; align-items:center; padding:10px 20px; background:hsl(var(--surface-alt)); border-bottom:1px solid hsl(var(--ink)); }
+    .lb-secbar .lbl { font-size:10px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--ink)); }
+    .lb-secbar .meta { font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:hsl(var(--muted)); }
     .lb-tabs { display:inline-flex; padding:3px; gap:2px; border:1px solid hsl(var(--line)); border-radius:999px; background:hsl(var(--surface-alt)); }
     .lb-tabs button { padding:6px 14px; font-size:12px; font-weight:600; letter-spacing:.02em; border-radius:999px; border:0; background:transparent; color:hsl(var(--muted)); cursor:pointer; }
     .lb-tabs button.active { background:hsl(var(--ink)); color:hsl(var(--surface)); }
     .lb-table { width:100%; border-collapse:separate; border-spacing:0; }
     .lb-table th, .lb-table td { padding:14px 20px; text-align:left; font-size:13px; border-bottom:1px solid hsl(var(--line)); }
-    .lb-table th { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:500; }
-    .lb-table td.rank { font-variant-numeric: tabular-nums; font-weight:600; color:hsl(var(--ink)); width:56px; padding-left:24px; }
+    .lb-table th { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--ink)); font-weight:700; background:hsl(var(--surface-card)); border-bottom:1px solid hsl(var(--ink)); }
+    .lb-table td.rank { font-family:'Space Mono', ui-monospace, monospace; font-weight:700; color:hsl(var(--ink)); width:56px; padding-left:24px; }
     .lb-table th:first-child { padding-left:24px; }
     .lb-table th:last-child, .lb-table td:last-child { padding-right:24px; }
-    .lb-table td.points { font-variant-numeric: tabular-nums; font-weight:600; color:hsl(var(--ink)); text-align:right; }
+    .lb-table td.points { font-family:'Space Mono', ui-monospace, monospace; font-weight:700; color:hsl(var(--ink)); text-align:right; }
     .lb-table tr:hover td { background:hsl(var(--surface-alt)); }
     .lb-table tr:last-child td { border-bottom:0; }
     .lb-medal-1 td.rank { color: hsl(var(--accent-gold)); }

@@ -72,7 +72,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
   <script src="/shared.js" defer></script>
   <style>
@@ -3120,12 +3120,13 @@
 
     <!-- Secondary tab row: seamless inline section swap on click. -->
     <div class="nav-tabs" role="tablist" aria-label="Sections">
-      <a class="nav-tab" href="/" data-inline-nav="__home">Home</a>
-      <a class="nav-tab" href="/about.html" data-inline-nav="about">About</a>
-      <a class="nav-tab" href="/projects.html" data-inline-nav="work">Work</a>
-      <a class="nav-tab" href="/leaderboard.html" data-inline-nav="leaderboard">Leaderboard</a>
-      <a class="nav-tab" href="/contact.html" data-inline-nav="connect">Connect</a>
-      <a class="nav-tab" href="/invest.html" data-inline-nav="invest">Invest</a>
+      <a class="nav-tab" href="/" data-inline-nav="__home"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span><span>Home</span></a>
+      <a class="nav-tab" href="/about.html" data-inline-nav="about"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span><span>About</span></a>
+      <a class="nav-tab" href="/projects.html" data-inline-nav="work"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18 8.58 3.9a1 1 0 0 1 0 1.83l-8.58 3.91a2 2 0 0 1-1.66 0L2.59 7.91a1 1 0 0 1 0-1.83l8.58-3.9a2 2 0 0 1 1.66 0Z"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/></svg></span><span>Work</span></a>
+      <a class="nav-tab" href="/leaderboard.html" data-inline-nav="leaderboard"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.7V17c0 .6-.5 1-1 1.2C7.9 18.8 7 20.2 7 22"/><path d="M14 14.7V17c0 .6.5 1 1 1.2 1.1.6 2 2 2 3.8"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></span><span>Board</span></a>
+      <a class="nav-tab" href="/contact.html" data-inline-nav="connect"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 21l1.9-5.7A8.5 8.5 0 1 1 21 11.5Z"/></svg></span><span>Connect</span></a>
+      <a class="nav-tab" href="/invest.html" data-inline-nav="invest"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11l4 4 8-8"/><path d="M14 7h7v7"/></svg></span><span>Invest</span></a>
+      <a class="nav-tab" href="/start.html" data-inline-nav="build"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span><span>Build</span></a>
     </div>
 
     <div id="mobileMenu" class="mobile-menu">
@@ -3164,6 +3165,179 @@
         <div class="r-inline-frame-wrap">
           <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>
           <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section" loading="lazy"></iframe>
+        </div>
+      </section>
+
+      <section class="r-spatial-home" aria-labelledby="rSpatialTitle">
+        <style>
+          :root {
+            --spatial-bg: 240 10% 4%;
+            --spatial-panel: 240 9% 8%;
+            --spatial-panel-soft: 240 8% 12%;
+            --spatial-ink: 0 0% 96%;
+            --spatial-muted: 228 12% 63%;
+            --spatial-line: 0 0% 100% / 0.11;
+            --spatial-rose: 348 82% 58%;
+            --spatial-amber: 28 94% 62%;
+            --spatial-blue: 217 89% 63%;
+            --spatial-violet: 267 78% 68%;
+            --spatial-green: 154 72% 48%;
+          }
+          body:not(.r-inline-active) { background: hsl(var(--spatial-bg)); padding: clamp(0.75rem, 1.4vw, 1.5rem); }
+          body:not(.r-inline-active) .gradient-canvas {
+            background-image:
+              radial-gradient(circle at 12% 12%, hsl(var(--spatial-rose) / 0.32), transparent 30%),
+              radial-gradient(circle at 88% 24%, hsl(var(--spatial-blue) / 0.22), transparent 28%),
+              linear-gradient(135deg, hsl(240 10% 4%) 0%, hsl(250 12% 6%) 48%, hsl(240 10% 4%) 100%);
+            opacity: 1;
+          }
+          body:not(.r-inline-active) .page-shell { max-width: 1520px; background: hsl(var(--spatial-bg) / 0.94); border-color: hsl(var(--spatial-line)); border-radius: 28px; box-shadow: 0 32px 120px -72px hsl(0 0% 0% / 0.9); }
+          body:not(.r-inline-active) .navbar { background: hsl(var(--spatial-bg) / 0.82); border-bottom-color: hsl(var(--spatial-line)); backdrop-filter: blur(18px); }
+          body:not(.r-inline-active) .brand-text { color: hsl(var(--spatial-ink)); font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: -0.03em; }
+          body:not(.r-inline-active) .nav-cta { border-color: hsl(var(--spatial-ink) / 0.2); color: hsl(var(--spatial-ink)); }
+          body:not(.r-inline-active) .nav-cta:hover { background: hsl(var(--spatial-ink)); color: hsl(var(--spatial-bg)); }
+          body:not(.r-inline-active) .nav-tabs { justify-content: flex-start; gap: 0.55rem; padding: 0.85rem 1.2rem; border-bottom-color: hsl(var(--spatial-line)); background: hsl(var(--spatial-bg) / 0.72); }
+          body:not(.r-inline-active) .nav-tab { gap: 0.48rem; padding: 0.58rem 0.9rem; border: 1px solid hsl(var(--spatial-line)); border-radius: 999px; background: hsl(var(--spatial-ink) / 0.045); color: hsl(var(--spatial-muted)); font-size: 0.68rem; letter-spacing: 0.08em; }
+          body:not(.r-inline-active) .nav-tab:hover, body:not(.r-inline-active) .nav-tab[aria-current="page"] { color: hsl(var(--spatial-bg)); background: hsl(var(--spatial-ink)); border-color: hsl(var(--spatial-ink)); transform: translateY(-1px); }
+          body:not(.r-inline-active) .nav-tab::after { display: none; }
+          .nav-tab-ico { display: inline-flex; width: 1rem; height: 1rem; align-items: center; justify-content: center; }
+          .nav-tab-ico svg { width: 1rem; height: 1rem; }
+          body:not(.r-inline-active) main > section.hero.r-eco { display: none; }
+          .r-spatial-home { color: hsl(var(--spatial-ink)); background: hsl(var(--spatial-bg)); padding: clamp(1rem, 2vw, 2rem); font-family: 'Inter', system-ui, sans-serif; }
+          .r-spatial-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(0.9rem, 1.4vw, 1.35rem); max-width: 1400px; margin: 0 auto; }
+          .r-spatial-top { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: end; gap: 1.2rem; padding-bottom: 0.9rem; border-bottom: 1px solid hsl(var(--spatial-line)); }
+          .r-spatial-brand h1 { margin: 0; font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: clamp(2rem, 4vw, 4.7rem); line-height: 0.88; letter-spacing: -0.06em; text-transform: uppercase; }
+          .r-spatial-live { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 0.65rem; color: hsl(var(--spatial-rose)); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
+          .r-spatial-live span { display: inline-flex; align-items: center; gap: 0.42rem; color: hsl(var(--spatial-muted)); }
+          .r-live-dot { width: 0.42rem; height: 0.42rem; border-radius: 999px; background: hsl(var(--spatial-rose)); box-shadow: 0 0 0 0 hsl(var(--spatial-rose) / 0.5); animation: rSpatialPulse 2s infinite; }
+          .r-spatial-stats { display: flex; gap: 1.4rem; padding: 0.95rem 1rem; border: 1px solid hsl(var(--spatial-line)); border-radius: 18px; background: hsl(var(--spatial-ink) / 0.045); }
+          .r-spatial-stat { min-width: 6.5rem; text-align: right; }
+          .r-spatial-stat + .r-spatial-stat { border-left: 1px solid hsl(var(--spatial-line)); padding-left: 1.4rem; }
+          .r-spatial-stat-k { display: block; color: hsl(var(--spatial-muted)); font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+          .r-spatial-stat-v { display: block; margin-top: 0.25rem; color: hsl(var(--spatial-ink)); font-size: 1.1rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+          .r-spatial-hero { grid-column: span 8; min-height: 520px; position: relative; overflow: hidden; border: 1px solid hsl(var(--spatial-line)); border-radius: 24px; background: hsl(var(--spatial-panel)); isolation: isolate; }
+          .r-spatial-hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, hsl(var(--spatial-bg) / 0.04), hsl(var(--spatial-bg) / 0.92)), url('/images/documentary-thumbnail.webp') center / cover no-repeat; opacity: 0.78; transform: scale(1.02); transition: transform 0.7s cubic-bezier(.16,1,.3,1); z-index: -2; }
+          .r-spatial-hero::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 18% 24%, hsl(var(--spatial-rose) / 0.38), transparent 34%), radial-gradient(circle at 82% 18%, hsl(var(--spatial-blue) / 0.25), transparent 30%); mix-blend-mode: screen; opacity: 0.8; z-index: -1; }
+          .r-spatial-hero:hover::before { transform: scale(1.06); }
+          .r-spatial-hero-copy { position: absolute; inset: auto 0 0 0; padding: clamp(1.4rem, 4vw, 3.2rem); max-width: 760px; }
+          .r-spatial-badge { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.34rem 0.58rem; margin-bottom: 1rem; background: hsl(var(--spatial-rose)); color: hsl(var(--spatial-ink)); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+          .r-spatial-title { margin: 0; font-family: 'Space Grotesk', 'Inter', sans-serif; font-size: clamp(3rem, 7.2vw, 6.9rem); line-height: 0.82; letter-spacing: -0.07em; text-transform: uppercase; font-style: italic; color: hsl(var(--spatial-ink)); max-width: 8.5ch; }
+          .r-spatial-dek { margin: 1.1rem 0 0; max-width: 42rem; color: hsl(var(--spatial-ink) / 0.76); font-size: clamp(0.95rem, 1.35vw, 1.1rem); line-height: 1.55; font-weight: 600; }
+          .r-spatial-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+          .r-spatial-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 2.85rem; padding: 0.85rem 1.25rem; border: 1px solid hsl(var(--spatial-ink) / 0.2); color: hsl(var(--spatial-ink)); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 900; transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease; }
+          .r-spatial-btn:hover { transform: translateY(-2px); }
+          .r-spatial-btn.is-primary { background: hsl(var(--spatial-ink)); color: hsl(var(--spatial-bg)); border-color: hsl(var(--spatial-ink)); }
+          .r-spatial-btn.is-primary:hover { background: hsl(var(--spatial-rose)); color: hsl(var(--spatial-ink)); border-color: hsl(var(--spatial-rose)); }
+          .r-spatial-side { grid-column: span 4; display: flex; flex-direction: column; gap: clamp(0.9rem, 1.4vw, 1.35rem); min-width: 0; }
+          .r-spatial-card { border: 1px solid hsl(var(--spatial-line)); border-radius: 22px; background: hsl(var(--spatial-ink) / 0.045); overflow: hidden; }
+          .r-card-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.1rem 1.2rem; border-bottom: 1px solid hsl(var(--spatial-line)); }
+          .r-card-head h2 { margin: 0; color: hsl(var(--spatial-ink)); font-size: 0.7rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+          .r-card-meta { color: hsl(var(--spatial-rose)); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+          .r-activity-list { display: grid; gap: 0.85rem; padding: 1.1rem 1.2rem; }
+          .r-activity-item { display: grid; grid-template-columns: 2.35rem minmax(0,1fr) auto; gap: 0.75rem; align-items: center; }
+          .r-activity-avatar { width: 2.35rem; height: 2.35rem; border-radius: 999px; background: linear-gradient(135deg, hsl(var(--spatial-rose)), hsl(var(--spatial-amber))); }
+          .r-activity-avatar.is-blue { background: linear-gradient(135deg, hsl(var(--spatial-blue)), hsl(var(--spatial-violet))); }
+          .r-activity-avatar.is-green { background: linear-gradient(135deg, hsl(var(--spatial-green)), hsl(var(--spatial-blue))); }
+          .r-activity-title { display: block; color: hsl(var(--spatial-ink)); font-size: 0.82rem; font-weight: 800; line-height: 1.25; overflow-wrap: anywhere; }
+          .r-activity-time { display: block; margin-top: 0.18rem; color: hsl(var(--spatial-muted)); font-size: 0.65rem; font-weight: 700; }
+          .r-activity-value { color: hsl(var(--spatial-rose)); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.68rem; font-weight: 900; white-space: nowrap; }
+          .r-opportunity { position: relative; min-height: 240px; padding: 1.35rem; border-radius: 22px; background: hsl(var(--spatial-rose)); color: hsl(var(--spatial-ink)); overflow: hidden; }
+          .r-opportunity::after { content: ""; position: absolute; right: -4rem; top: -4rem; width: 14rem; height: 14rem; border: 1.5rem solid hsl(var(--spatial-ink) / 0.1); transform: rotate(22deg); }
+          .r-opportunity > * { position: relative; z-index: 1; }
+          .r-opportunity-k { display: block; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.75; }
+          .r-opportunity h2 { margin: 0.6rem 0 0; max-width: 13ch; font-size: clamp(1.4rem, 2.4vw, 2.1rem); line-height: 0.96; letter-spacing: -0.03em; color: inherit; }
+          .r-opportunity p { margin: 0.75rem 0 1.2rem; max-width: 24rem; font-size: 0.92rem; font-weight: 700; line-height: 1.35; opacity: 0.86; }
+          .r-opportunity a { display: inline-flex; width: 100%; justify-content: center; padding: 0.88rem 1rem; background: hsl(var(--spatial-bg)); color: hsl(var(--spatial-ink)); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+          .r-spatial-market { grid-column: span 4; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0.75rem; }
+          .r-market-tile { padding: 1rem; border: 1px solid hsl(var(--spatial-line)); border-radius: 18px; background: hsl(var(--spatial-ink) / 0.045); min-height: 8rem; }
+          .r-market-k { color: hsl(var(--spatial-muted)); font-size: 0.6rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+          .r-market-v { display: block; margin-top: 0.6rem; color: hsl(var(--spatial-ink)); font-size: 1.35rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+          .r-market-d { display: block; margin-top: 0.35rem; color: hsl(var(--spatial-muted)); font-size: 0.72rem; font-weight: 700; }
+          .r-spatial-opencalls { grid-column: span 8; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0.75rem; }
+          .r-call-card { min-height: 8rem; padding: 1rem; border: 1px solid hsl(var(--spatial-line)); border-radius: 18px; background: hsl(var(--spatial-ink) / 0.045); transition: transform 0.18s ease, background 0.18s ease; }
+          .r-call-card:hover { transform: translateY(-2px); background: hsl(var(--spatial-ink) / 0.075); }
+          .r-call-k { display: block; color: hsl(var(--spatial-rose)); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+          .r-call-t { display: block; margin-top: 0.55rem; color: hsl(var(--spatial-ink)); font-size: 0.98rem; line-height: 1.05; font-weight: 900; }
+          .r-call-d { display: block; margin-top: 0.55rem; color: hsl(var(--spatial-muted)); font-size: 0.72rem; line-height: 1.3; font-weight: 700; }
+          .r-spatial-ticker { grid-column: 1 / -1; overflow: hidden; border-top: 1px solid hsl(var(--spatial-line)); border-bottom: 1px solid hsl(var(--spatial-line)); background: hsl(var(--spatial-ink) / 0.045); }
+          .r-spatial-ticker-track { display: flex; width: max-content; gap: 2rem; padding: 0.72rem 0; animation: rSpatialScroll 32s linear infinite; }
+          .r-spatial-ticker span { display: inline-flex; gap: 0.8rem; align-items: center; color: hsl(var(--spatial-muted)); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
+          .r-spatial-ticker strong { color: hsl(var(--spatial-ink)); }
+          @keyframes rSpatialScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+          @keyframes rSpatialPulse { 70%, 100% { box-shadow: 0 0 0 0.45rem hsl(var(--spatial-rose) / 0); } }
+          @media (max-width: 1080px) { .r-spatial-hero, .r-spatial-side, .r-spatial-market, .r-spatial-opencalls { grid-column: 1 / -1; } .r-spatial-opencalls { grid-template-columns: repeat(3, minmax(0,1fr)); } }
+          @media (max-width: 760px) { .r-spatial-home { padding: 0.9rem; } .r-spatial-top { align-items: flex-start; flex-direction: column; } .r-spatial-stats { width: 100%; justify-content: space-between; } .r-spatial-stat { min-width: 0; text-align: left; } .r-spatial-hero { min-height: 560px; border-radius: 18px; } .r-spatial-hero-copy { padding: 1.2rem; } .r-spatial-title { font-size: clamp(2.7rem, 15vw, 4.4rem); } .r-spatial-actions .r-spatial-btn { width: 100%; } .r-spatial-market, .r-spatial-opencalls { grid-template-columns: 1fr; } body:not(.r-inline-active) .nav-tabs { overflow-x: auto; padding-inline: 0.9rem; } body:not(.r-inline-active) .nav-tab { flex: 0 0 auto; } }
+          @media (prefers-reduced-motion: reduce) { .r-spatial-ticker-track, .r-live-dot { animation: none; } .r-spatial-hero::before, .r-spatial-btn, .r-call-card { transition: none; } }
+        </style>
+        <div class="r-spatial-grid">
+          <header class="r-spatial-top">
+            <div class="r-spatial-brand">
+              <h1 id="rSpatialTitle">Rhozeland</h1>
+              <div class="r-spatial-live"><span><i class="r-live-dot" aria-hidden="true"></i>Live feed</span><span>$RHOZE <strong id="rSpatialTickerPrice">syncing</strong></span><span>Toronto creative network</span></div>
+            </div>
+            <div class="r-spatial-stats" aria-label="Member snapshot">
+              <div class="r-spatial-stat"><span class="r-spatial-stat-k">Creator credits</span><span class="r-spatial-stat-v">12.4K</span></div>
+              <div class="r-spatial-stat"><span class="r-spatial-stat-k">Active projects</span><span class="r-spatial-stat-v">07</span></div>
+            </div>
+          </header>
+
+          <article class="r-spatial-hero" aria-label="Featured spotlight">
+            <div class="r-spatial-hero-copy">
+              <span class="r-spatial-badge">Featured spotlight</span>
+              <h2 class="r-spatial-title">The new creative sovereignty</h2>
+              <p class="r-spatial-dek">Rhozeland is becoming the live operating system for artists: culture, funding, open calls, studio output, services, and $RHOZE access in one seamless dashboard.</p>
+              <div class="r-spatial-actions">
+                <a class="r-spatial-btn is-primary" href="/start.html" data-inline-nav="build">Start a project</a>
+                <a class="r-spatial-btn" href="/invest.html" data-inline-nav="invest">Invest in $RHOZE</a>
+                <a class="r-spatial-btn" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">Watch channel</a>
+              </div>
+            </div>
+          </article>
+
+          <aside class="r-spatial-side" aria-label="Live dashboard panels">
+            <section class="r-spatial-card" aria-labelledby="rActivityTitle">
+              <div class="r-card-head"><h2 id="rActivityTitle">Live activity</h2><span class="r-card-meta">Real-time</span></div>
+              <div class="r-activity-list">
+                <div class="r-activity-item"><span class="r-activity-avatar"></span><span><span class="r-activity-title">New project intake opened for music videos</span><span class="r-activity-time">2 minutes ago</span></span><span class="r-activity-value">+3 briefs</span></div>
+                <div class="r-activity-item"><span class="r-activity-avatar is-blue"></span><span><span class="r-activity-title">Playlist placement call moved to review</span><span class="r-activity-time">9 minutes ago</span></span><span class="r-activity-value">24 slots</span></div>
+                <div class="r-activity-item"><span class="r-activity-avatar is-green"></span><span><span class="r-activity-title">$RHOZE bonding curve watchlist refreshed</span><span class="r-activity-time">live now</span></span><span class="r-activity-value" id="rSpatialTickerChange">sync</span></div>
+              </div>
+            </section>
+            <section class="r-opportunity" aria-labelledby="rOpportunityTitle">
+              <span class="r-opportunity-k">Open calls</span>
+              <h2 id="rOpportunityTitle">Artist shoutouts, playlists, and launch spots</h2>
+              <p>Creators can apply to be featured on Instagram, YouTube playlists, studio drops, and upcoming Rhozeland campaigns.</p>
+              <a href="/contact.html" data-inline-nav="connect">Apply now</a>
+            </section>
+          </aside>
+
+          <section class="r-spatial-market" aria-label="Network stats">
+            <div class="r-market-tile"><span class="r-market-k">$RHOZE price</span><span class="r-market-v" id="rEcoMiniPrice">—</span><span class="r-market-d">Live market feed</span></div>
+            <div class="r-market-tile"><span class="r-market-k">24h move</span><span class="r-market-v" id="rEcoMiniChg">—</span><span class="r-market-d">Bonding curve watch</span></div>
+            <div class="r-market-tile"><span class="r-market-k">Market cap</span><span class="r-market-v" id="rEcoMiniMc">—</span><span class="r-market-d">Solana pool snapshot</span></div>
+            <div class="r-market-tile"><span class="r-market-k">24h volume</span><span class="r-market-v" id="rEcoMiniVol">—</span><span class="r-market-d">Synced externally</span></div>
+          </section>
+
+          <section class="r-spatial-opencalls" aria-label="Opportunities">
+            <a class="r-call-card" href="/contact.html" data-inline-nav="connect"><span class="r-call-k">Instagram feature</span><span class="r-call-t">Artist shoutout submissions</span><span class="r-call-d">Submit your newest release or visual for social spotlight consideration.</span></a>
+            <a class="r-call-card" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener"><span class="r-call-k">YouTube playlist</span><span class="r-call-t">Be on the channel queue</span><span class="r-call-d">Music videos, podcasts, BTS cuts, and creator docs from the ecosystem.</span></a>
+            <a class="r-call-card" href="/start.html" data-inline-nav="build"><span class="r-call-k">Launch support</span><span class="r-call-t">Build with the studio</span><span class="r-call-d">Route a project into audio, visual, development, events, or rollout help.</span></a>
+          </section>
+
+          <div class="r-spatial-ticker" aria-label="Latest network wire">
+            <div class="r-spatial-ticker-track" id="rEcoNewsTrack">
+              <span><strong>New release</strong> Cozal — “Sefra” music video out now</span>
+              <span><strong>Podcast</strong> Rhoze Podcast from the studio</span>
+              <span><strong>Open call</strong> Artist shoutout forms now routing</span>
+              <span><strong>Invest</strong> $RHOZE bonding curve watch live</span>
+              <span><strong>Build</strong> Project dashboard intakes open</span>
+              <span><strong>New release</strong> Cozal — “Sefra” music video out now</span>
+              <span><strong>Podcast</strong> Rhoze Podcast from the studio</span>
+              <span><strong>Open call</strong> Artist shoutout forms now routing</span>
+              <span><strong>Invest</strong> $RHOZE bonding curve watch live</span>
+              <span><strong>Build</strong> Project dashboard intakes open</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3652,7 +3826,7 @@
                   <span class="r-eco-kicker">The Channel</span>
                   <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto</span>
                 </div>
-                <h1 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h1>
+                <h2 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h2>
                 <div class="r-eco-video">
                   <iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
                   <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Featured · Latest Episode</span></span>

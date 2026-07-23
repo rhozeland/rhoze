@@ -3787,69 +3787,26 @@
                     <div class="r-eco-mini-cell r-eco-stat is-muted"><div class="r-eco-stat-k">24h Vol</div><div class="r-eco-stat-v" id="rEcoMiniVol">—</div></div>
                   </div>
                 </div>
-                <!-- Explore grid — quadrant tiles, hover reveals services -->
-                <div class="r-eco-side-explore" aria-label="Explore Rhozeland">
-                  <div class="r-eco-side-grid">
-                    <a class="r-eco-side-tile is-visual" href="/projects.html">
-                      <span class="r-eco-side-swap">
-                        <span class="r-eco-side-ico" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                      </span>
-                        <span class="r-eco-side-pills">
-                          <span class="r-eco-side-pill">Photo shoots</span>
-                          <span class="r-eco-side-pill">Content editing</span>
-                          <span class="r-eco-side-pill">Commercial</span>
-                          <span class="r-eco-side-pill">Short-form</span>
-                          <span class="r-eco-side-pill">Music video</span>
-                        </span>
-                      </span>
-                      <span class="r-eco-side-cat">Visual</span>
-                    </a>
-                    <a class="r-eco-side-tile is-audio" href="/projects.html">
-                      <span class="r-eco-side-swap">
-                        <span class="r-eco-side-ico" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="4" y2="12"/><line x1="8" y1="8" x2="8" y2="16"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="16" y1="9" x2="16" y2="15"/><line x1="20" y1="11" x2="20" y2="13"/></svg>
-                      </span>
-                        <span class="r-eco-side-pills">
-                          <span class="r-eco-side-pill">Recording</span>
-                          <span class="r-eco-side-pill">Mixing</span>
-                          <span class="r-eco-side-pill">Mastering</span>
-                          <span class="r-eco-side-pill">Production</span>
-                          <span class="r-eco-side-pill">Podcasts</span>
-                        </span>
-                      </span>
-                      <span class="r-eco-side-cat">Audio</span>
-                    </a>
-                    <a class="r-eco-side-tile is-dev" href="/projects.html">
-                      <span class="r-eco-side-swap">
-                        <span class="r-eco-side-ico" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-                      </span>
-                        <span class="r-eco-side-pills">
-                          <span class="r-eco-side-pill">Web &amp; app</span>
-                          <span class="r-eco-side-pill">Brand systems</span>
-                          <span class="r-eco-side-pill">Launch strategy</span>
-                          <span class="r-eco-side-pill">Creator tooling</span>
-                        </span>
-                      </span>
-                      <span class="r-eco-side-cat">Development</span>
-                    </a>
-                    <a class="r-eco-side-tile is-events" href="/events.html">
-                      <span class="r-eco-side-swap">
-                        <span class="r-eco-side-ico" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                      </span>
-                        <span class="r-eco-side-pills">
-                          <span class="r-eco-side-pill">Land Sessions</span>
-                          <span class="r-eco-side-pill">Pop-ups</span>
-                          <span class="r-eco-side-pill">Livestreams</span>
-                          <span class="r-eco-side-pill">Meetups</span>
-                        </span>
-                      </span>
-                      <span class="r-eco-side-cat">Events</span>
-                    </a>
-                  </div>
-                </div>
+                 <!-- Live mini-leaderboard (replaces the old service pillars) -->
+                 <style>
+                   .r-eco-mini-lb { display: flex; flex-direction: column; gap: 0.35rem; padding: 0.9rem 0 0.2rem; }
+                   .r-eco-mini-lb-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.55rem; }
+                   .r-eco-mini-lb-label { color: hsl(var(--muted)); font-size: 0.62rem; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; }
+                   .r-eco-mini-lb-all { color: hsl(var(--ink)); font-size: 0.58rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); padding-bottom: 1px; cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; }
+                   .r-eco-mini-lb-row { display: grid; grid-template-columns: 1.5rem 1fr auto; align-items: center; gap: 0.55rem; padding: 0.45rem 0; border-top: 1px dashed hsl(var(--line)); font-family: 'Inter', system-ui, sans-serif; }
+                   .r-eco-mini-lb-row:first-of-type { border-top: 0; }
+                   .r-eco-mini-lb-rank { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.72rem; font-weight: 800; color: hsl(var(--muted)); }
+                   .r-eco-mini-lb-name { font-size: 0.82rem; font-weight: 700; color: hsl(var(--ink)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                   .r-eco-mini-lb-pts { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.78rem; font-weight: 800; color: hsl(var(--ink)); }
+                   .r-eco-mini-lb-empty { padding: 1rem 0; color: hsl(var(--muted)); font-size: 0.78rem; text-align: center; }
+                 </style>
+                 <div class="r-eco-mini-lb" aria-label="Community leaderboard preview">
+                   <div class="r-eco-mini-lb-head">
+                     <span class="r-eco-mini-lb-label">Community · Top this week</span>
+                     <button type="button" class="r-eco-mini-lb-all" data-inline-nav="leaderboard">Full board →</button>
+                   </div>
+                   <div id="rEcoMiniLb"><div class="r-eco-mini-lb-empty">Loading…</div></div>
+                 </div>
               </aside>
             </div>
           </div>

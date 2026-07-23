@@ -13,10 +13,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
   <style>
-    .lb-hero { display:grid; gap:10px; padding:22px 26px; border:1px solid hsl(var(--line)); border-radius:var(--radius-lg); background:hsl(var(--surface-card)); }
-    .lb-hero .kicker { font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); }
-    .lb-hero h1 { font-size: clamp(26px, 4vw, 36px); line-height:1.05; letter-spacing:-0.02em; color:hsl(var(--ink)); font-weight:700; margin-top:2px; }
-    .lb-hero p.lb-lede { font-size:13.5px; color:hsl(var(--muted)); margin-top:6px; line-height:1.55; }
+    /* Compact command-bar header (redesign v3) */
+    .lb-hero { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; padding:14px 20px; border:1px solid hsl(var(--line)); border-radius:var(--radius-md); background:hsl(var(--surface-card)); }
+    .lb-hero h1 { font-size: clamp(22px, 3.2vw, 30px); line-height:1; letter-spacing:-0.03em; color:hsl(var(--ink)); font-weight:900; text-transform:uppercase; }
+    .lb-hero .sub { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:hsl(var(--muted)); font-weight:600; margin-top:4px; }
+    .lb-hero .live { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; border:1px solid hsl(var(--line)); background:hsl(140 55% 92%); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:hsl(158 60% 22%); font-weight:800; }
+    .lb-hero .live::before { content:""; width:6px; height:6px; border-radius:999px; background:hsl(158 60% 35%); box-shadow:0 0 0 3px hsl(158 60% 35% / 0.18); }
     /* Split grid: leaderboard + account */
     .lb-split { display:grid; grid-template-columns: 1fr; gap:18px; margin-top:16px; align-items:start; }
     @media (min-width: 980px) { .lb-split { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap:22px; } }
@@ -105,6 +107,11 @@
     /* Combined info strip below hero: points rules + weekly rewards */
     .lb-top-info { display:grid; grid-template-columns:1fr; gap:14px; margin-top:14px; }
     @media (min-width: 860px) { .lb-top-info { grid-template-columns:1.15fr 1fr; gap:18px; } }
+    /* Slimmer info-unified card */
+    .lb-info-unified { margin-top:12px !important; padding:14px 18px !important; gap:12px !important; }
+    .lb-info-unified .lb-info-head h3 { font-size:13px; }
+    .lb-info-unified .lb-info-head .sub { font-size:11px; }
+    .lb-info-grid { gap:14px !important; }
     /* Equal-height split */
     .lb-split { align-items:stretch; }
     .lb-split > * { display:flex; flex-direction:column; }
@@ -213,15 +220,13 @@
     </div>
 
     <main>
-      <!-- HERO -->
-      <section class="lb-hero">
+      <!-- COMPACT HERO (redesign v3) -->
+      <section class="lb-hero" aria-label="Leaderboard header">
         <div>
-          <span class="kicker">Rhozeland · Community</span>
           <h1>Leaderboard</h1>
-          <p class="lb-lede">
-            Earn cash, $RHOZE, store credit, and merch every week. Raid posts, drop memes, write threads, ship video. Every approved submission climbs the board.
-          </p>
+          <div class="sub">Weekly Cycle · Resets Sunday 00:00 EST</div>
         </div>
+        <span class="live">Live Feed</span>
       </section>
 
       <!-- UNIFIED INFO: Points rules + Weekly rewards + PFP bonus, in one card -->

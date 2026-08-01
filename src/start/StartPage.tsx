@@ -278,35 +278,59 @@ function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: b
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
   const signIn = async () => {
+    if (!email.trim() || !password) {
+      toast({ title: "Email and password required" });
+      return;
+    }
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } =
+      mode === "signin"
+        ? await supabase.auth.signInWithPassword({ email: email.trim(), password })
+        : await supabase.auth.signUp({
+            email: email.trim(),
+            password,
+            options: { emailRedirectTo: window.location.origin + "/start.html" },
+          });
     setBusy(false);
-    if (error) toast({ title: "Sign in failed", description: error.message, variant: "destructive" });
-    else onOpenChange(false);
+    if (error) {
+      toast({ title: mode === "signin" ? "Sign in failed" : "Sign up failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    if (mode === "signup") toast({ title: "Check your email", description: "Confirm your address to finish signing up." });
+    onOpenChange(false);
   };
 
   const google = async () => {
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin + "/start.html" },
     });
+    if (error) toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>Sign in</DialogTitle>
-          <DialogDescription>Save your conversation and access your dashboard.</DialogDescription>
+          <DialogTitle>{mode === "signin" ? "Sign in" : "Create an account"}</DialogTitle>
+          <DialogDescription>Save your brief and access your client dashboard.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <Input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           <Input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <Button onClick={signIn} disabled={busy} className="w-full bg-neutral-900 hover:bg-neutral-800 text-white">
-            {busy ? "..." : "Sign in"}
+            {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}
           </Button>
+          <button
+            type="button"
+            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+            className="w-full text-[11px] text-muted-foreground underline underline-offset-4"
+          >
+            {mode === "signin" ? "No account? Create one" : "Already have an account? Sign in"}
+          </button>
           <div className="text-center text-[11px] uppercase tracking-wider text-neutral-400">or</div>
           <Button variant="outline" onClick={google} className="w-full">Continue with Google</Button>
         </div>

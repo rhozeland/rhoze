@@ -80,11 +80,10 @@ export default function StartPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
+      <header className="site-header border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
-            <img src={logoWhite} alt="Rhoze" className="h-6 dark:invert-0 invert" />
-            <span className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Studio</span>
+          <a href="/" className="flex items-center gap-2" aria-label="Rhozeland home">
+            <img src={logoWhite} alt="Rhozeland" className="h-6 dark:invert-0 invert" />
           </a>
           <div className="flex items-center gap-3 text-xs">
             {session && (

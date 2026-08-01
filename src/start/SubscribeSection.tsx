@@ -83,7 +83,7 @@ export default function SubscribeSection({
           No subscription tiers are published yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {tiers.map((t, i) => {
             const credits = t.credits ?? 0;
             const value = credits * CREDIT_VALUE_CENTS;

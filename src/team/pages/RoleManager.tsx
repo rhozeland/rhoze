@@ -724,7 +724,7 @@ export default function RoleManager() {
 }
 
 function EditMemberDialogBody({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   titleDrafts, setTitleDrafts, notesDrafts, setNotesDrafts,
   setDept, setTitle, setEmp, grant, revoke, onDeleted,

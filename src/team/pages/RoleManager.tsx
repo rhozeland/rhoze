@@ -133,6 +133,30 @@ export default function RoleManager() {
   const [statusFilter, setStatusFilter] = useState<EmpStatus | "all">("all");
   const [tenureMin, setTenureMin] = useState<string>("");
   const [tenureMax, setTenureMax] = useState<string>("");
+  const [density, setDensity] = useState<"cards" | "compact">(() => {
+    try { return (localStorage.getItem("rolemanager.density") as any) === "compact" ? "compact" : "cards"; } catch { return "cards"; }
+  });
+  useEffect(() => { try { localStorage.setItem("rolemanager.density", density); } catch {} }, [density]);
+  const [pendingDelete, setPendingDelete] = useState<any | null>(null);
+  const [deletingUid, setDeletingUid] = useState<string | null>(null);
+  const { user: currentUser, isAdmin } = useAuth();
+
+  const removeMember = async (p: any) => {
+    setDeletingUid(p.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("delete-team-member", { body: { user_id: p.id } });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast({ title: "Member removed" });
+      qc.invalidateQueries({ queryKey: ["all-profiles"] });
+      qc.invalidateQueries({ queryKey: ["all-roles"] });
+      setPendingDelete(null);
+    } catch (e: any) {
+      toast({ title: "Failed to remove", description: e.message, variant: "destructive" });
+    } finally {
+      setDeletingUid(null);
+    }
+  };
 
   const { data: profiles } = useQuery({
     queryKey: ["all-profiles"],
@@ -308,6 +332,58 @@ export default function RoleManager() {
       </header>
 
       <RolePresetsCombined />
+
+      <div className="rounded-lg border border-border bg-card p-3 space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search name, title, notes…"
+              className="h-9 pl-8"
+            />
+          </div>
+          <div className="inline-flex rounded-md border border-border overflow-hidden">
+            {([
+              ["current", `Current (${counts.current})`],
+              ["former", `Former (${counts.former})`],
+              ["all", `All (${counts.all})`],
+            ] as const).map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`px-3 h-9 text-xs font-medium transition ${view === v ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+            <SelectTrigger className="h-9 w-[150px]"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Any status</SelectItem>
+              {EMP_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <div className="inline-flex rounded-md border border-border overflow-hidden">
+            {([["cards", "Cards"], ["compact", "Compact"]] as const).map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => setDensity(v)}
+                className={`px-3 h-9 text-xs font-medium transition ${density === v ? "bg-primary text-primary-foreground" : "hover:bg-muted text-muted-foreground"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {activeFilterCount > 0 && (
+            <Button variant="ghost" size="sm" onClick={clearFilters} className="h-9">
+              Clear {activeFilterCount}
+            </Button>
+          )}
+        </div>
+      </div>
 
       <div className="flex items-center gap-2 flex-wrap">
         <span className="text-[11px] uppercase tracking-wider text-muted-foreground mr-1">Filter</span>

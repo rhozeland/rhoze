@@ -14,6 +14,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccentPicker } from "@/components/AccentPicker";
+import { canAccessSection, loadSectionAccess } from "../lib/access";
 import rhozelandLogo from "@/assets/rhozeland-logo.webp";
 
 const nav = [
@@ -52,7 +53,9 @@ function collapsedNavClass({ isActive }: { isActive: boolean }) {
 }
 
 export default function TeamLayout() {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, department, signOut } = useAuth();
+  const accessMap = loadSectionAccess();
+  const visibleNav = nav.filter((n) => canAccessSection(n.to, { isAdmin, department }, accessMap));
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState<boolean>(() => {
@@ -193,7 +196,7 @@ export default function TeamLayout() {
             </Avatar>
             {!collapsed && accountLabel}
           </NavLink>
-          {nav.map((n) => (
+          {visibleNav.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.end} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
               <n.icon size={16} />
               {!collapsed && n.label}

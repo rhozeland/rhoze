@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import type { Dept } from "./access";
 
 export type AppRole = "admin" | "employee" | "client";
 
@@ -8,6 +9,7 @@ interface AuthCtx {
   session: Session | null;
   user: User | null;
   roles: AppRole[];
+  department: Dept | null;
   loading: boolean;
   isTeam: boolean;
   isAdmin: boolean;
@@ -20,15 +22,23 @@ const Ctx = createContext<AuthCtx | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
+  const [department, setDepartment] = useState<Dept | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadRoles = async (uid: string | undefined) => {
     if (!uid) {
       setRoles([]);
+      setDepartment(null);
       return;
     }
     const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
     setRoles((data ?? []).map((r) => r.role as AppRole));
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("department")
+      .eq("id", uid)
+      .maybeSingle();
+    setDepartment((prof?.department as Dept | null) ?? null);
   };
 
   useEffect(() => {
@@ -54,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }, 0);
       } else {
         setRoles([]);
+        setDepartment(null);
       }
     });
 
@@ -70,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session,
     user: session?.user ?? null,
     roles,
+    department,
     loading,
     isTeam: roles.includes("admin") || roles.includes("employee"),
     isAdmin: roles.includes("admin"),

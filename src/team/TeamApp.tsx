@@ -24,6 +24,23 @@ import ClientHome from "./pages/ClientHome";
 import ClientProfile from "./pages/ClientProfile";
 import ClientRequests from "./pages/ClientRequests";
 import { useAuth } from "./lib/auth";
+import { canAccessSection, DEPT_LABELS, loadSectionAccess } from "./lib/access";
+
+function RequireSection({ path, children }: { path: string; children: React.ReactNode }) {
+  const { isAdmin, department } = useAuth();
+  if (canAccessSection(path, { isAdmin, department }, loadSectionAccess())) return <>{children}</>;
+  const allowed = loadSectionAccess()[path];
+  return (
+    <div className="p-8 max-w-md mx-auto text-center space-y-3">
+      <h1 className="text-2xl font-semibold">Section not available</h1>
+      <p className="text-sm text-muted-foreground">
+        {allowed?.length
+          ? `This area is limited to ${allowed.map((d) => DEPT_LABELS[d]).join(", ")}. Ask an admin to change your department if you need access.`
+          : "This area is limited to admins."}
+      </p>
+    </div>
+  );
+}
 
 function RequireTeam({ children }: { children: React.ReactNode }) {
   const { loading, session, isTeam } = useAuth();
@@ -82,13 +99,13 @@ export default function TeamApp() {
         <Route index element={<Dashboard />} />
         {/* Priorities merged into Dashboard; legacy URL redirects */}
         <Route path="priorities" element={<Navigate to="/" replace />} />
-        <Route path="crm" element={<CRM />} />
+        <Route path="crm" element={<RequireSection path="/crm"><CRM /></RequireSection>} />
         <Route path="projects" element={<Projects />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="catalog" element={<Catalog />} />
         <Route path="intake" element={<Intake />} />
         <Route path="requests" element={<Requests />} />
-        <Route path="time" element={<TimeAndPay />} />
+        <Route path="time" element={<RequireSection path="/time"><TimeAndPay /></RequireSection>} />
         {/* Legacy URLs */}
         <Route path="timesheets" element={<Navigate to="/time" replace />} />
         <Route path="payroll" element={<Navigate to="/time" replace />} />
@@ -100,9 +117,9 @@ export default function TeamApp() {
         <Route path="invites" element={<Navigate to="/team-admin" replace />} />
         <Route path="referral-codes" element={<Navigate to="/team-admin" replace />} />
         <Route path="rewards" element={<Rewards />} />
-        <Route path="leaderboard" element={<Leaderboard />} />
-        <Route path="live-editor" element={<LiveEditor />} />
-        <Route path="newsroom" element={<Newsroom />} />
+        <Route path="leaderboard" element={<RequireSection path="/leaderboard"><Leaderboard /></RequireSection>} />
+        <Route path="live-editor" element={<RequireSection path="/live-editor"><LiveEditor /></RequireSection>} />
+        <Route path="newsroom" element={<RequireSection path="/newsroom"><Newsroom /></RequireSection>} />
         <Route path="invest" element={<InvestAdmin />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

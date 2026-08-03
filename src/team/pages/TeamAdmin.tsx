@@ -2,7 +2,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RoleManager from "./RoleManager";
 import Invites from "./Invites";
 import ReferralCodes from "./ReferralCodes";
-import RoleSettings from "./RoleSettings";
+import RoleSettings, { SectionAccessMatrix } from "./RoleSettings";
 
 export default function TeamAdmin() {
   return (
@@ -21,7 +21,10 @@ export default function TeamAdmin() {
         <TabsContent value="roles"><RoleManager /></TabsContent>
         <TabsContent value="invites"><Invites /></TabsContent>
         <TabsContent value="referral-codes"><ReferralCodes /></TabsContent>
-        <TabsContent value="role-settings"><RoleSettings /></TabsContent>
+        <TabsContent value="role-settings" className="space-y-4">
+          <SectionAccessMatrix />
+          <RoleSettings />
+        </TabsContent>
       </Tabs>
     </div>
   );

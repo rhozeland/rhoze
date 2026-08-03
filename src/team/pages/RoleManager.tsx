@@ -454,6 +454,52 @@ export default function RoleManager() {
                     </div>
                   )}
                 </div>
+                {density === "compact" ? (
+                  <div className="rounded-lg border border-border bg-card divide-y divide-border">
+                    {g.people.map((p: any) => {
+                      const cur = rolesByUser?.[p.id] ?? [];
+                      const isFormer = p.employment_status === "former";
+                      return (
+                        <div key={p.id} className={`flex items-center gap-3 px-3 py-2 ${isFormer ? "opacity-60" : ""}`}>
+                          {p.avatar_url ? (
+                            <img src={p.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover border border-border shrink-0" />
+                          ) : (
+                            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-medium shrink-0">
+                              {(p.display_name ?? p.email ?? "?").slice(0, 1).toUpperCase()}
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-medium truncate">{p.display_name ?? "Unnamed"}</div>
+                            <div className="text-[11px] text-muted-foreground truncate">{p.job_title || p.email || "—"}</div>
+                          </div>
+                          <div className="hidden sm:flex flex-wrap gap-1 max-w-[220px] justify-end">
+                            {cur.map((r: any) => (
+                              <span key={r.id} className="text-[10px] px-1.5 py-0.5 rounded bg-muted">{r.role}</span>
+                            ))}
+                            {p.department && (
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded border ${DEPT_STYLES[p.department as Dept]}`}>
+                                {DEPTS.find((d) => d.value === p.department)?.label}
+                              </span>
+                            )}
+                          </div>
+                          <MemberActions
+                            p={p}
+                            isAdmin={isAdmin}
+                            currentUserId={currentUser?.id}
+                            onEdit={() => setEditingUid(p.id)}
+                            onToggleFormer={() =>
+                              setEmp.mutate({
+                                userId: p.id,
+                                patch: { employment_status: isFormer ? "active" : "former", ended_at: isFormer ? null : new Date().toISOString().slice(0, 10) },
+                              })
+                            }
+                            onDelete={() => setPendingDelete(p)}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {g.people.map((p: any) => {
           const cur = rolesByUser?.[p.id] ?? [];
@@ -490,7 +536,23 @@ export default function RoleManager() {
                     </a>
                   )}
                 </div>
-                <Button size="sm" onClick={() => setEditingUid(p.id)}>Edit Mastersheet</Button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button size="sm" onClick={() => setEditingUid(p.id)}>Edit</Button>
+                  <MemberActions
+                    p={p}
+                    isAdmin={isAdmin}
+                    currentUserId={currentUser?.id}
+                    onEdit={() => setEditingUid(p.id)}
+                    hideEdit
+                    onToggleFormer={() =>
+                      setEmp.mutate({
+                        userId: p.id,
+                        patch: { employment_status: isFormer ? "active" : "former", ended_at: isFormer ? null : new Date().toISOString().slice(0, 10) },
+                      })
+                    }
+                    onDelete={() => setPendingDelete(p)}
+                  />
+                </div>
               </div>
               <div className="mt-3 pt-3 border-t border-border space-y-2">
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Roles</div>
@@ -594,11 +656,34 @@ export default function RoleManager() {
           );
         })}
                 </div>
+                )}
               </section>
             ))}
           </div>
         );
       })()}
+
+      <AlertDialog open={!!pendingDelete} onOpenChange={(o) => !o && setPendingDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove this member?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently deletes <strong>{pendingDelete?.display_name ?? pendingDelete?.email ?? "this user"}</strong>,
+              their profile, roles and personal team data. Shared work records stay but lose the link. This cannot be undone —
+              if they may return, mark them "Former" instead.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={!!deletingUid}
+              onClick={(e) => { e.preventDefault(); if (pendingDelete) removeMember(pendingDelete); }}
+            >
+              {deletingUid ? "Removing…" : "Remove permanently"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={!!editingUid} onOpenChange={(o) => !o && setEditingUid(null)}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">

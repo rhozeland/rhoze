@@ -723,8 +723,54 @@ export default function RoleManager() {
   );
 }
 
+function MemberActions({
+  p,
+  isAdmin,
+  currentUserId,
+  onEdit,
+  onToggleFormer,
+  onDelete,
+  hideEdit,
+}: {
+  p: any;
+  isAdmin: boolean;
+  currentUserId?: string;
+  onEdit: () => void;
+  onToggleFormer: () => void;
+  onDelete: () => void;
+  hideEdit?: boolean;
+}) {
+  const isFormer = p.employment_status === "former";
+  const isSelf = currentUserId === p.id;
+  return (
+    <div className="flex items-center gap-1 shrink-0">
+      {!hideEdit && (
+        <Button size="sm" variant="outline" className="h-8" onClick={onEdit}>Edit</Button>
+      )}
+      <button
+        type="button"
+        onClick={onToggleFormer}
+        title={isFormer ? "Reactivate member" : "Mark as former"}
+        className="h-8 px-2 rounded border border-border text-[11px] text-muted-foreground hover:text-foreground hover:border-foreground/30 transition"
+      >
+        {isFormer ? "Reactivate" : "Mark former"}
+      </button>
+      {isAdmin && !isSelf && (
+        <button
+          type="button"
+          onClick={onDelete}
+          title="Remove permanently"
+          aria-label={`Remove ${p.display_name ?? "member"}`}
+          className="h-8 w-8 grid place-items-center rounded border border-border text-muted-foreground hover:text-destructive hover:border-destructive/40 transition"
+        >
+          <Trash2 size={13} />
+        </button>
+      )}
+    </div>
+  );
+}
+
 function EditMemberDialogBody({
-  userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   userId, profile: p, availability: av, roles: cur, picks, setPicks, errors, setErrors,
   titleDrafts, setTitleDrafts, notesDrafts, setNotesDrafts,
   setDept, setTitle, setEmp, grant, revoke, onDeleted,

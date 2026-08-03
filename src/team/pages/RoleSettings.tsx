@@ -5,6 +5,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Shield, User, Briefcase, RotateCcw, Save, Lock, Check, Plus, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import {
+  DEFAULT_SECTION_ACCESS,
+  DEPT_LABELS,
+  loadSectionAccess,
+  resetSectionAccess,
+  saveSectionAccess,
+  type Dept as AccessDept,
+} from "../lib/access";
 
 /**
  * Roles Settings — an admin-friendly reference + tweak surface for the
@@ -372,6 +380,92 @@ export default function RoleSettings() {
         can read or write what. These settings document and reorganise the
         intent in one place — they do not bypass RLS.
       </p>
+    </div>
+  );
+}
+
+const SECTION_LABELS: Record<string, string> = {
+  "/crm": "CRM",
+  "/time": "Time & Pay",
+  "/leaderboard": "Leaderboard",
+  "/live-editor": "Live Editor",
+  "/newsroom": "Newsroom",
+};
+
+export function SectionAccessMatrix() {
+  const [map, setMap] = useState<Record<string, AccessDept[]>>(() => loadSectionAccess());
+  const depts = Object.keys(DEPT_LABELS) as AccessDept[];
+
+  const toggle = (path: string, dept: AccessDept) => {
+    const cur = map[path] ?? [];
+    const next = cur.includes(dept) ? cur.filter((d) => d !== dept) : [...cur, dept];
+    const updated = { ...map, [path]: next };
+    setMap(updated);
+    saveSectionAccess(updated);
+  };
+
+  return (
+    <div className="border border-border rounded-lg p-4 bg-card space-y-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="text-sm font-semibold">Section access by department</h2>
+          <p className="text-xs text-muted-foreground">
+            Controls which portal sections show up in the sidebar for each department.
+            Admins always see everything. Dashboard, Directory, Docs, Projects and
+            Settings are open to all team members.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            resetSectionAccess();
+            setMap(DEFAULT_SECTION_ACCESS);
+            toast({ title: "Section access reset" });
+          }}
+        >
+          <RotateCcw size={12} /> Reset
+        </Button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs border-separate border-spacing-1">
+          <thead>
+            <tr className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              <th className="text-left px-2 py-1 font-medium">Section</th>
+              {depts.map((d) => (
+                <th key={d} className="px-2 py-1 font-medium">{DEPT_LABELS[d]}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(SECTION_LABELS).map((path) => (
+              <tr key={path}>
+                <td className="px-2 py-1 text-foreground">{SECTION_LABELS[path]}</td>
+                {depts.map((d) => {
+                  const on = (map[path] ?? []).includes(d);
+                  return (
+                    <td key={d} className="p-0 text-center">
+                      <button
+                        type="button"
+                        aria-pressed={on}
+                        onClick={() => toggle(path, d)}
+                        className={
+                          "w-full h-9 rounded text-[11px] font-medium transition-colors " +
+                          (on
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted/40 text-muted-foreground hover:bg-muted")
+                        }
+                      >
+                        {on ? "Allowed" : "—"}
+                      </button>
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

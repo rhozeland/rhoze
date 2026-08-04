@@ -283,8 +283,8 @@ function BuyDialog({
         _lock_months: lockMonths,
         _path: "assisted",
         _payment_method: payment,
-        _solana_wallet: wallet.trim() || null,
-        _notes: notes.trim() || null,
+        _solana_wallet: wallet.trim() || undefined,
+        _notes: notes.trim() || undefined,
       });
       if (error) throw error;
       if (pledgeId) {

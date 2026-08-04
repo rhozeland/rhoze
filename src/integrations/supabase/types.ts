@@ -107,10 +107,14 @@ export type Database = {
       campaign_state: {
         Row: {
           campaign_open: boolean
+          dex_url: string | null
+          graduated: boolean
+          graduated_at: string | null
           headline: string | null
           id: number
           remaining_sol: number
           sol_price_usd: number
+          square_checkout_url: string | null
           subhead: string | null
           total_target_sol: number
           updated_at: string
@@ -119,10 +123,14 @@ export type Database = {
         }
         Insert: {
           campaign_open?: boolean
+          dex_url?: string | null
+          graduated?: boolean
+          graduated_at?: string | null
           headline?: string | null
           id?: number
           remaining_sol?: number
           sol_price_usd?: number
+          square_checkout_url?: string | null
           subhead?: string | null
           total_target_sol?: number
           updated_at?: string
@@ -131,10 +139,14 @@ export type Database = {
         }
         Update: {
           campaign_open?: boolean
+          dex_url?: string | null
+          graduated?: boolean
+          graduated_at?: string | null
           headline?: string | null
           id?: number
           remaining_sol?: number
           sol_price_usd?: number
+          square_checkout_url?: string | null
           subhead?: string | null
           total_target_sol?: number
           updated_at?: string

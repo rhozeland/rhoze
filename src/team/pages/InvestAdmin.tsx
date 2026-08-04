@@ -61,6 +61,8 @@ export default function InvestAdmin() {
       campaign_open: !!campaign.campaign_open,
       headline: campaign.headline,
       subhead: campaign.subhead,
+      graduated: !!campaign.graduated,
+      square_checkout_url: campaign.square_checkout_url || null,
       updated_at: new Date().toISOString(),
     }).eq("id", 1);
     if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
@@ -113,6 +115,23 @@ export default function InvestAdmin() {
                   <SelectItem value="0">Closed</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Graduated</Label>
+              <Select value={campaign.graduated ? "1" : "0"} onValueChange={(v) => setCampaign({ ...campaign, graduated: v === "1" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Graduated (open market)</SelectItem>
+                  <SelectItem value="0">Still on bonding curve</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs">Square checkout link</Label>
+              <Input placeholder="https://square.link/u/..." value={campaign.square_checkout_url ?? ""}
+                onChange={(e) => setCampaign({ ...campaign, square_checkout_url: e.target.value })} />
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-3">

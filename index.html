@@ -4945,20 +4945,33 @@
       }
 
       function loadSpark(){
-        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + ACTIVE_POOL +
-          '/ohlcv/day?aggregate=1&limit=1000&currency=usd';
-        fetch(url, { cache:'no-store' })
-          .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(d){
-            var arr = d && d.data && d.data.attributes && d.data.attributes.ohlcv_list;
-            if (!arr || !arr.length) return;
-            // ohlcv_list: [[ts, o, h, l, c, v], ...] sorted newest first → reverse
-            var rows = arr.slice().reverse().map(function(r){
-              return { o: parseFloat(r[1]), h: parseFloat(r[2]), l: parseFloat(r[3]), c: parseFloat(r[4]) };
-            }).filter(function(r){ return isFinite(r.o) && isFinite(r.h) && isFinite(r.l) && isFinite(r.c); });
+        // The token traded on the pump.fun bonding curve before migrating, so full
+        // history lives across two pools — merge both into one hourly series.
+        var POOLS = [ACTIVE_POOL, 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF'];
+        var ohlcv = function(pool){
+          return fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + pool +
+            '/ohlcv/hour?aggregate=1&limit=1000&currency=usd', { cache:'no-store' })
+            .then(function(r){ return r.ok ? r.json() : null; })
+            .then(function(d){ return (d && d.data && d.data.attributes && d.data.attributes.ohlcv_list) || []; })
+            .catch(function(){ return []; });
+        };
+        Promise.all(POOLS.map(ohlcv))
+          .then(function(lists){
+            var byTs = {};
+            lists.forEach(function(arr, idx){
+              arr.forEach(function(r){
+                var ts = r[0];
+                // first list (live pool) wins on overlapping buckets
+                if (idx > 0 && byTs[ts]) return;
+                byTs[ts] = { t: ts, o: parseFloat(r[1]), h: parseFloat(r[2]), l: parseFloat(r[3]), c: parseFloat(r[4]) };
+              });
+            });
+            var rows = Object.keys(byTs).map(function(k){ return byTs[k]; })
+              .sort(function(a,b){ return a.t - b.t; })
+              .filter(function(r){ return isFinite(r.o) && isFinite(r.h) && isFinite(r.l) && isFinite(r.c); });
             if (rows.length < 2) return;
             // Keep the tail so candles stay readable on a small tile.
-            var MAX = 60;
+            var MAX = 90;
             if (rows.length > MAX) rows = rows.slice(rows.length - MAX);
             var lows = rows.map(function(r){ return r.l; });
             var highs = rows.map(function(r){ return r.h; });
@@ -5004,7 +5017,7 @@
             var wrap = document.querySelector('.r-rz-chart');
             if (wrap) wrap.style.color = up ? UP : DN;
             var tag = document.getElementById('rRzRangeTag');
-            if (tag) tag.textContent = rows.length + ' daily candles · $RHOZE/USD';
+            if (tag) tag.textContent = rows.length + ' hourly candles · $RHOZE/USD';
           })
           .catch(function(){});
       }

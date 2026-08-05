@@ -1939,6 +1939,42 @@ export type Database = {
           },
         ]
       }
+      rhoze_onchain_trades: {
+        Row: {
+          created_at: string
+          price_usd: number
+          side: string
+          sig: string
+          sol: number
+          tokens: number
+          trader: string
+          ts: string
+          value_usd: number
+        }
+        Insert: {
+          created_at?: string
+          price_usd: number
+          side: string
+          sig: string
+          sol: number
+          tokens: number
+          trader: string
+          ts: string
+          value_usd: number
+        }
+        Update: {
+          created_at?: string
+          price_usd?: number
+          side?: string
+          sig?: string
+          sol?: number
+          tokens?: number
+          trader?: string
+          ts?: string
+          value_usd?: number
+        }
+        Relationships: []
+      }
       rhoze_settings: {
         Row: {
           bonus_first_project: number

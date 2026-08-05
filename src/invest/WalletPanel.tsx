@@ -14,6 +14,11 @@ import { ArrowUpRight, ExternalLink, Loader2, Save, Search, Wallet, X } from "lu
 const RHOZE_MINT = "7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump";
 const RHOZE_BIRDEYE_URL = `https://birdeye.so/token/${RHOZE_MINT}?chain=solana`;
 const RHOZE_BIRDEYE_WIDGET = `https://birdeye.so/tv-widget/${RHOZE_MINT}?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark`;
+const RHOZE_POOL = "AjCpwQxLsW3SbueGUD2sKpGbbtUPNt64JPcSBJ2uuUiJ";
+const GT_POOL = `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RHOZE_POOL}`;
+
+type Market = { price: number; change24h: number | null; fdv: number | null; liq: number | null; vol24h: number | null };
+type Trade = { id: string; kind: string; usd: number; amount: number; at: string; tx: string };
 
 type Lookup = {
   address: string;
@@ -40,6 +45,45 @@ export default function WalletPanel({ session }: { session: Session | null }) {
   const [busy, setBusy] = useState(false);
   const [data, setData] = useState<Lookup | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [market, setMarket] = useState<Market | null>(null);
+  const [trades, setTrades] = useState<Trade[]>([]);
+
+  // Live market + on-chain trades for $RHOZE (public, no key needed)
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const r = await fetch(GT_POOL, { cache: "no-store" });
+        const j = await r.json();
+        const a = j?.data?.attributes;
+        if (alive && a) {
+          setMarket({
+            price: Number(a.base_token_price_usd ?? 0),
+            change24h: a.price_change_percentage?.h24 != null ? Number(a.price_change_percentage.h24) : null,
+            fdv: a.fdv_usd ? Number(a.fdv_usd) : null,
+            liq: a.reserve_in_usd ? Number(a.reserve_in_usd) : null,
+            vol24h: a.volume_usd?.h24 ? Number(a.volume_usd.h24) : null,
+          });
+        }
+      } catch { /* ignore */ }
+      try {
+        const r = await fetch(`${GT_POOL}/trades`, { cache: "no-store" });
+        const j = await r.json();
+        const rows: Trade[] = (j?.data ?? []).slice(0, 12).map((t: any) => ({
+          id: t.id,
+          kind: t.attributes?.kind ?? "trade",
+          usd: Number(t.attributes?.volume_in_usd ?? 0),
+          amount: Number(t.attributes?.from_token_amount ?? 0),
+          at: t.attributes?.block_timestamp,
+          tx: t.attributes?.tx_hash,
+        }));
+        if (alive) setTrades(rows);
+      } catch { /* ignore */ }
+    };
+    load();
+    const id = setInterval(load, 60000);
+    return () => { alive = false; clearInterval(id); };
+  }, []);
 
   // Load saved wallet from profile
   useEffect(() => {
@@ -96,19 +140,48 @@ export default function WalletPanel({ session }: { session: Session | null }) {
 
   return (
     <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <div>
-          <div className="flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
-            <Wallet className="w-3 h-3" /> Wallet lookup
-          </div>
-          <h2 className="text-xl md:text-2xl tracking-tight mt-1">See any wallet on Solscan + $RHOZE</h2>
-          <p className="text-sm text-muted-foreground mt-1">
-            Paste a Solana address to view SOL, $RHOZE holdings, live price, and recent activity. We never take custody — this is read-only.
-          </p>
+      {/* Always-on market view */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">$RHOZE · Live market</div>
+        <div className="flex items-center gap-3 text-xs">
+          <a href={RHOZE_BIRDEYE_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-foreground underline underline-offset-4">Birdeye <ExternalLink className="w-3 h-3" /></a>
+          <a href={`https://solscan.io/token/${RHOZE_MINT}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">Solscan <ExternalLink className="w-3 h-3" /></a>
         </div>
       </div>
+      <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Stat label="Price" value={market ? fmtUsd(market.price) : "—"}
+          sub={market?.change24h != null ? `${market.change24h >= 0 ? "▲" : "▼"} ${Math.abs(market.change24h).toFixed(2)}% 24h` : undefined}
+          tone={market?.change24h != null ? (market.change24h >= 0 ? "up" : "down") : undefined} />
+        <Stat label="Market cap (FDV)" value={market?.fdv ? fmtUsd(market.fdv) : "—"} />
+        <Stat label="Liquidity" value={market?.liq ? fmtUsd(market.liq) : "—"} />
+        <Stat label="Volume 24h" value={market?.vol24h != null ? fmtUsd(market.vol24h) : "—"} />
+      </div>
+      <div className="mt-3 rounded-xl border border-border overflow-hidden bg-background">
+        <iframe title="$RHOZE live chart" src={RHOZE_BIRDEYE_WIDGET} className="w-full h-[340px] block" loading="lazy" />
+      </div>
 
-      <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
+      {trades.length > 0 && (
+        <div className="mt-4">
+          <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-2">Latest transactions</div>
+          <ul className="rounded-xl border border-border overflow-hidden divide-y divide-border">
+            {trades.map((t) => (
+              <li key={t.id} className="flex items-center justify-between gap-3 px-3 py-2 text-xs hover:bg-muted/30">
+                <span className={`font-medium uppercase tracking-wider ${t.kind === "buy" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>{t.kind}</span>
+                <span className="tabular-nums">{fmtUsd(t.usd)}</span>
+                <span className="text-muted-foreground tabular-nums hidden sm:inline">{new Date(t.at).toLocaleString()}</span>
+                <a href={`https://solscan.io/tx/${t.tx}`} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-foreground shrink-0">
+                  View <ArrowUpRight className="w-3 h-3" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="mt-5 pt-4 border-t border-border flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
+        <Wallet className="w-3 h-3" /> Wallet lookup
+      </div>
+      <form onSubmit={onSubmit} className="mt-2 flex flex-col sm:flex-row gap-2">
         <Input
           value={addr}
           onChange={(e) => setAddr(e.target.value)}
@@ -149,7 +222,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
             )}
           </div>
 
-          {/* Stat grid */}
+          {/* Wallet stat grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Stat label="$RHOZE balance" value={fmtNum(data.rhoze.balance, 0)} sub={fmtUsd(totalUsd)} />
             <Stat label="SOL balance" value={`${fmtNum(data.sol.balance, 3)} SOL`} />
@@ -162,17 +235,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
               sub={data.market.volume24h ? `${fmtUsd(data.market.volume24h)} vol 24h` : undefined} />
           </div>
 
-          {/* Chart embed */}
-          <div className="rounded-xl border border-border overflow-hidden bg-background">
-            <iframe
-              title="$RHOZE live chart"
-              src={RHOZE_BIRDEYE_WIDGET}
-              className="w-full h-[360px] block"
-              loading="lazy"
-            />
-          </div>
-
-          {/* Recent activity */}
+          {/* Wallet activity */}
           {data.recent.length > 0 && (
             <div>
               <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-2">Recent activity</div>

@@ -45,10 +45,10 @@ export default function DashboardHome({
       const { data: lb } = await supabase.from("community_leaderboard").select("username,points")
         .not("published_at", "is", null).order("points", { ascending: false }).limit(5);
       setBoard((lb ?? []) as Row[]);
-      const { data: news } = await supabase.from("news_ticker_items").select("headline,source,created_at")
-        .order("created_at", { ascending: false }).limit(3);
+      const { data: news } = await supabase.from("news_ticker_items").select("headline,label,created_at")
+        .eq("is_active", true).order("sort_order", { ascending: true }).limit(3);
       setCommunity((news ?? []).map((n: any) => ({
-        title: n.headline, meta: n.source ?? new Date(n.created_at).toLocaleDateString(),
+        title: n.headline, meta: n.label ?? new Date(n.created_at).toLocaleDateString(),
       })));
     })();
   }, [session.user.id]);

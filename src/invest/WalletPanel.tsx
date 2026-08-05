@@ -1,6 +1,6 @@
 // /invest — WalletPanel
 // Paste any Solana wallet address to see SOL + $RHOZE holdings, USD value,
-// live market data (DexScreener), Solscan deep links, and a lightweight
+// live market data (Birdeye), Solscan deep links, and a lightweight
 // price chart. Signed-in users can save the address to their profile so it
 // auto-loads on return visits.
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +10,10 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowUpRight, ExternalLink, Loader2, Save, Search, Wallet, X } from "lucide-react";
+
+const RHOZE_MINT = "7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump";
+const RHOZE_BIRDEYE_URL = `https://birdeye.so/token/${RHOZE_MINT}?chain=solana`;
+const RHOZE_BIRDEYE_WIDGET = `https://birdeye.so/tv-widget/${RHOZE_MINT}?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark`;
 
 type Lookup = {
   address: string;
@@ -129,7 +133,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
             <a href={data.solscan} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-foreground underline underline-offset-4">
               Solscan <ExternalLink className="w-3 h-3" />
             </a>
-            <a href="https://birdeye.so/token/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF?chain=solana" target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
+            <a href={RHOZE_BIRDEYE_URL} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
               Birdeye <ExternalLink className="w-3 h-3" />
             </a>
             {session && (
@@ -162,7 +166,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
           <div className="rounded-xl border border-border overflow-hidden bg-background">
             <iframe
               title="$RHOZE live chart"
-              src={`https://birdeye.so/tv-widget/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF?chain=solana&viewMode=pair&chartInterval=15&chartType=CANDLE&theme=dark`}
+              src={RHOZE_BIRDEYE_WIDGET}
               className="w-full h-[360px] block"
               loading="lazy"
             />

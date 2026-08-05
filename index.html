@@ -4943,49 +4943,70 @@
           .catch(function(){});
       }
 
-      var RZ_RANGE = 'all';
       function loadSpark(){
-        var isAll = RZ_RANGE === 'all';
         var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + ACTIVE_POOL +
-          (isAll ? '/ohlcv/day?aggregate=1&limit=1000&currency=usd' : '/ohlcv/hour?aggregate=1&limit=24&currency=usd');
+          '/ohlcv/day?aggregate=1&limit=1000&currency=usd';
         fetch(url, { cache:'no-store' })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){
             var arr = d && d.data && d.data.attributes && d.data.attributes.ohlcv_list;
             if (!arr || !arr.length) return;
             // ohlcv_list: [[ts, o, h, l, c, v], ...] sorted newest first → reverse
-            var pts = arr.slice().reverse().map(function(r){ return parseFloat(r[4]); }).filter(function(v){ return isFinite(v); });
-            if (pts.length < 2) return;
-            var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts);
-            var range = (max - min) || 1;
+            var rows = arr.slice().reverse().map(function(r){
+              return { o: parseFloat(r[1]), h: parseFloat(r[2]), l: parseFloat(r[3]), c: parseFloat(r[4]) };
+            }).filter(function(r){ return isFinite(r.o) && isFinite(r.h) && isFinite(r.l) && isFinite(r.c); });
+            if (rows.length < 2) return;
+            // Keep the tail so candles stay readable on a small tile.
+            var MAX = 60;
+            if (rows.length > MAX) rows = rows.slice(rows.length - MAX);
+            var lows = rows.map(function(r){ return r.l; });
+            var highs = rows.map(function(r){ return r.h; });
+            var min = Math.min.apply(null, lows), max = Math.max.apply(null, highs);
+            var range = (max - min) || (max || 1) * 0.1 || 1;
             var W = 200, H = 96, pad = 4;
-            var step = (W - pad*2) / (pts.length - 1);
-            var line = pts.map(function(v, i){
-              var x = pad + i * step;
-              var y = pad + (H - pad*2) * (1 - (v - min) / range);
-              return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1);
+            var slot = (W - pad*2) / rows.length;
+            var bw = Math.max(1.1, Math.min(6, slot * 0.62));
+            var y = function(v){ return pad + (H - pad*2) * (1 - (v - min) / range); };
+            var UP = '#15803d', DN = '#b91c1c';
+            var svgns = 'http://www.w3.org/2000/svg';
+            var g = document.getElementById('rEcoCandles');
+            if (g) {
+              while (g.firstChild) g.removeChild(g.firstChild);
+              rows.forEach(function(r, i){
+                var cx = pad + slot * i + slot / 2;
+                var col = r.c >= r.o ? UP : DN;
+                var wick = document.createElementNS(svgns, 'line');
+                wick.setAttribute('x1', cx.toFixed(2)); wick.setAttribute('x2', cx.toFixed(2));
+                wick.setAttribute('y1', y(r.h).toFixed(2)); wick.setAttribute('y2', y(r.l).toFixed(2));
+                wick.setAttribute('stroke', col); wick.setAttribute('stroke-width', '0.6');
+                wick.setAttribute('vector-effect', 'non-scaling-stroke');
+                g.appendChild(wick);
+                var top = Math.min(y(r.o), y(r.c));
+                var hgt = Math.max(0.9, Math.abs(y(r.o) - y(r.c)));
+                var body = document.createElementNS(svgns, 'rect');
+                body.setAttribute('x', (cx - bw/2).toFixed(2)); body.setAttribute('y', top.toFixed(2));
+                body.setAttribute('width', bw.toFixed(2)); body.setAttribute('height', hgt.toFixed(2));
+                body.setAttribute('fill', col); body.setAttribute('rx', '0.5');
+                g.appendChild(body);
+              });
+            }
+            // Soft area behind the candles for depth.
+            var closes = rows.map(function(r){ return r.c; });
+            var line = closes.map(function(v, i){
+              var x = pad + slot * i + slot / 2;
+              return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y(v).toFixed(1);
             }).join(' ');
             var fill = line + ' L' + (W - pad).toFixed(1) + ' ' + (H - pad) + ' L' + pad + ' ' + (H - pad) + ' Z';
-            var l = document.getElementById('rEcoSparkLine'); if (l) l.setAttribute('d', line);
+            var l = document.getElementById('rEcoSparkLine'); if (l) l.setAttribute('d', '');
             var f = document.getElementById('rEcoSparkFill'); if (f) f.setAttribute('d', fill);
-            var up = pts[pts.length-1] >= pts[0];
+            var up = closes[closes.length-1] >= closes[0];
             var wrap = document.querySelector('.r-rz-chart');
-            if (wrap) wrap.style.color = up ? '#15803d' : '#b91c1c';
+            if (wrap) wrap.style.color = up ? UP : DN;
             var tag = document.getElementById('rRzRangeTag');
-            if (tag) tag.textContent = isAll ? ('All time · ' + pts.length + ' days') : 'Last 24 hours';
+            if (tag) tag.textContent = rows.length + ' daily candles · $RHOZE/USD';
           })
           .catch(function(){});
       }
-      document.addEventListener('click', function(e){
-        var btn = e.target && e.target.closest ? e.target.closest('.r-rz-range-btn') : null;
-        if (!btn) return;
-        e.preventDefault();
-        RZ_RANGE = btn.getAttribute('data-range') === 'day' ? 'day' : 'all';
-        Array.prototype.forEach.call(document.querySelectorAll('.r-rz-range-btn'), function(b){
-          b.classList.toggle('is-on', b === btn);
-        });
-        loadSpark();
-      });
 
       /* === Admin-managed news ticker (Newsroom in Team Portal) === */
       var NEWS_SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';

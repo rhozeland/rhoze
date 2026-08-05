@@ -3743,13 +3743,13 @@
           .r-home-main > #rHomeFeatSlot > .r-eco-feat--standalone { flex: 1; display: flex; flex-direction: column; margin-top: 0; }
           .r-home-main > #rHomeFeatSlot .r-eco-feat-viewport { flex: 1 1 auto; display: flex; align-items: stretch; min-height: 240px; padding-top: 2rem; }
           .r-home-main > #rHomeFeatSlot .r-eco-feat-track { align-content: stretch; }
-          .r-home-main > #rHomeFeatSlot .r-eco-feat-card,
-          .r-home-main > #rHomeFeatSlot .r-eco-feat-cta { width: clamp(130px, 12vw, 180px); }
+          .r-home-main > #rHomeFeatSlot .r-eco-feat-card { height: 100%; width: auto; max-height: 210px; }
+          .r-home-main > #rHomeFeatSlot .r-eco-feat-cta { height: 100%; width: auto; max-height: 428px; }
           .r-home-main > #rHomeFeatSlot .r-eco-feat-partners { margin-top: auto; }
           @media (max-width: 900px) {
             .r-home-dashboard { grid-template-columns: 1fr; }
             .r-home-main > #rHomeFeatSlot .r-eco-feat-card,
-            .r-home-main > #rHomeFeatSlot .r-eco-feat-cta { width: 140px; }
+            .r-home-main > #rHomeFeatSlot .r-eco-feat-cta { height: auto; width: 140px; }
             .r-home-status-grid { grid-template-columns: 1fr 1fr; }
             .r-home-project { grid-column: 1 / -1; }
           }

@@ -19,12 +19,12 @@ const TIERS: { slug: Tier; label: string; min: number; mult: number; perk: strin
   { slug: "core", label: "Core", min: 2000, mult: 1.4, perk: "+40% credits, named slot, governance weight" },
 ];
 
-const FEE_PCT = 0.07;   // Rhozeland handles the on-chain buy for you
-const HST_PCT = 0.13;   // HST applies to the service fee
+const FEE_PCT = 0.05;   // Rhozeland handles the on-chain buy for you
+const HST_PCT = 0.13;   // HST applies to the purchase amount
 const money = (n: number) => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 export function quote(amount: number) {
   const fee = amount * FEE_PCT;
-  const hst = fee * HST_PCT;
+  const hst = amount * HST_PCT;
   return { fee, hst, total: amount + fee + hst };
 }
 
@@ -108,7 +108,7 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
 
           <div className="mt-5 grid md:grid-cols-[minmax(0,1fr)_300px] gap-4 items-stretch">
             <div>
-              <Label htmlFor="rhoze-amount" className="text-xs">Amount to buy (USD)</Label>
+              <Label htmlFor="rhoze-amount" className="text-xs">Amount to buy (CAD)</Label>
               <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 focus-within:ring-2 focus-within:ring-ring">
                 <span className="text-xl text-muted-foreground">$</span>
                 <input type="number" min={50} step={10} value={amount}
@@ -117,21 +117,21 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
                   className="w-full bg-transparent text-3xl tabular-nums outline-none" />
               </div>
               <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                <span>Minimum $50</span>
+                <span>Minimum $50 CAD</span>
                 <span>{Math.floor(amount * multFor(amount)).toLocaleString()} credits · {multFor(amount).toFixed(2)}× rate</span>
               </div>
             </div>
             <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2 text-sm">
               <Row label="$RHOZE purchase" value={`$${money(amount)}`} />
-              <Row label="Service fee (7%)" value={`$${money(quote(amount).fee)}`} />
-              <Row label="HST (13% on fee)" value={`$${money(quote(amount).hst)}`} />
+              <Row label="Service fee (5%)" value={`$${money(quote(amount).fee)}`} />
+              <Row label="HST (13%)" value={`$${money(quote(amount).hst)}`} />
               <div className="border-t border-border pt-2 mt-2">
                 <Row label="Total due" value={`$${money(quote(amount).total)}`} bold />
               </div>
             </div>
           </div>
           <Button size="lg" className="mt-4 w-full" onClick={() => startBuy(amount)} disabled={amount < 50}>
-            <CreditCard className="w-4 h-4 mr-2" /> Pay ${money(quote(amount).total)} with Square
+            <CreditCard className="w-4 h-4 mr-2" /> Pay ${money(quote(amount).total)} CAD with Square
           </Button>
         </section>
 
@@ -247,13 +247,13 @@ function BuyDialog({
             <div className="space-y-4">
               <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-1.5 text-sm">
                 <Row label="$RHOZE purchase" value={`$${money(amount)}`} />
-                <Row label="Service fee (7%)" value={`$${money(q.fee)}`} />
-                <Row label="HST (13% on fee)" value={`$${money(q.hst)}`} />
+                <Row label="Service fee (5%)" value={`$${money(q.fee)}`} />
+                <Row label="HST (13%)" value={`$${money(q.hst)}`} />
                 <Row label="Total due" value={`$${money(q.total)}`} bold />
                 <Row label={`Credits (${multFor(amount).toFixed(2)}×)`} value={`${credits.toLocaleString()}`} />
               </div>
               <Button className="w-full" disabled={busy} onClick={submit}>
-                {busy ? "Preparing checkout…" : `Continue to Square · $${money(q.total)}`}
+                {busy ? "Preparing checkout…" : `Continue to Square · $${money(q.total)} CAD`}
               </Button>
             </div>
           </>

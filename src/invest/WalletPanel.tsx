@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowUpRight, ExternalLink, Loader2, Save, Search, X } from "lucide-react";
+import { fetchRhozeTrades, type ChainTrade } from "@/lib/rhozeChain";
 
 const RHOZE_MINT = "7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump";
 const RHOZE_BIRDEYE_URL = `https://birdeye.so/token/${RHOZE_MINT}?chain=solana`;
@@ -45,6 +46,8 @@ const ago = (iso: string) => {
 };
 
 type Tab = "trades" | "traders" | "wallet";
+type Range = "24h" | "7d" | "all";
+const RANGE_SEC: Record<Range, number> = { "24h": 86400, "7d": 604800, all: Number.MAX_SAFE_INTEGER };
 
 export default function WalletPanel({ session }: { session: Session | null }) {
   const [market, setMarket] = useState<Market | null>(null);
@@ -53,6 +56,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
   const [tab, setTab] = useState<Tab>("trades");
   const [q, setQ] = useState("");
   const [side, setSide] = useState<"all" | "buy" | "sell">("all");
+  const [range, setRange] = useState<Range>("all");
 
   // wallet check
   const [addr, setAddr] = useState("");
@@ -95,7 +99,31 @@ export default function WalletPanel({ session }: { session: Session | null }) {
             trader: a.tx_from_address ?? "",
           };
         });
-        if (alive) setTrades(rows);
+        if (alive && rows.length) { setTrades(rows); setLoadingTrades(false); }
+      } catch { /* ignore */ }
+
+      // Deep history straight from the chain (pool data only covers post-migration).
+      const toTrade = (c: ChainTrade): Trade => ({
+        id: c.sig,
+        kind: c.type,
+        usd: c.valueUsd,
+        tokens: c.tokens,
+        price: c.priceUsd,
+        at: new Date(c.ts * 1000).toISOString(),
+        tx: c.sig,
+        trader: c.trader,
+      });
+      const merge = (chain: ChainTrade[]) => {
+        if (!alive) return;
+        setTrades((prev) => {
+          const seen = new Set(prev.map((p) => p.tx));
+          const extra = chain.filter((c) => !seen.has(c.sig)).map(toTrade);
+          return [...prev, ...extra].sort((a, b) => +new Date(b.at) - +new Date(a.at));
+        });
+      };
+      try {
+        const chain = await fetchRhozeTrades({ maxTrades: 150, maxSignatures: 600, onPartial: merge });
+        merge(chain);
       } catch { /* ignore */ }
       if (alive) setLoadingTrades(false);
     };
@@ -147,12 +175,14 @@ export default function WalletPanel({ session }: { session: Session | null }) {
 
   const filteredTrades = useMemo(() => {
     const needle = q.trim().toLowerCase();
+    const cutoff = Date.now() - RANGE_SEC[range] * 1000;
     return trades.filter((t) => {
       if (side !== "all" && t.kind !== side) return false;
+      if (range !== "all" && +new Date(t.at) < cutoff) return false;
       if (!needle) return true;
       return t.trader.toLowerCase().includes(needle) || t.tx.toLowerCase().includes(needle);
     });
-  }, [trades, q, side]);
+  }, [trades, q, side, range]);
 
   const topTraders = useMemo(() => {
     const map = new Map<string, { addr: string; buys: number; sells: number; usd: number; net: number }>();
@@ -205,6 +235,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
           {tab !== "wallet" && (
             <div className="flex items-center gap-2">
               {tab === "trades" && (
+                <>
                 <div className="inline-flex rounded-lg border border-border p-0.5 text-[11px]">
                   {(["all", "buy", "sell"] as const).map((s) => (
                     <button key={s} onClick={() => setSide(s)}
@@ -213,6 +244,15 @@ export default function WalletPanel({ session }: { session: Session | null }) {
                     </button>
                   ))}
                 </div>
+                <div className="inline-flex rounded-lg border border-border p-0.5 text-[11px]">
+                  {(["24h", "7d", "all"] as const).map((s) => (
+                    <button key={s} onClick={() => setRange(s)}
+                      className={`px-2.5 py-1 rounded-md uppercase tracking-wider ${range === s ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+                </>
               )}
               <div className="relative">
                 <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -230,7 +270,10 @@ export default function WalletPanel({ session }: { session: Session | null }) {
             </div>
             <div className="max-h-[380px] overflow-y-auto divide-y divide-border">
               {loadingTrades && <div className="px-3 py-6 text-xs text-muted-foreground flex items-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading on-chain trades…</div>}
-              {!loadingTrades && filteredTrades.length === 0 && <div className="px-3 py-6 text-xs text-muted-foreground">No trades match that search.</div>}
+              {!loadingTrades && filteredTrades.length === 0 && <div className="px-3 py-6 text-xs text-muted-foreground">No trades match that filter.</div>}
+              {loadingTrades && filteredTrades.length > 0 && (
+                <div className="px-3 py-1.5 text-[10px] text-muted-foreground flex items-center gap-1.5"><Loader2 className="w-3 h-3 animate-spin" /> loading more history…</div>
+              )}
               {filteredTrades.map((t) => (
                 <a key={t.id} href={`https://solscan.io/tx/${t.tx}`} target="_blank" rel="noopener"
                   className="grid grid-cols-[64px_1fr_1fr_1fr_60px] gap-2 px-3 py-2 text-xs hover:bg-muted/30 items-center">

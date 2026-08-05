@@ -314,7 +314,7 @@ function BuyDialog({
       }
       setDone({ ref: String(pledgeId ?? "").slice(0, 8).toUpperCase() });
       onCreated();
-      if (payment === "square" && squareUrl) window.open(squareUrl, "_blank", "noopener");
+      // non-square methods stay pending until settlement
     } catch (e) {
       toast({ title: "Couldn't place order", description: (e as Error).message, variant: "destructive" });
     } finally {

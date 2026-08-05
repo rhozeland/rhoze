@@ -197,17 +197,6 @@ export default function InvestPage() {
   );
 }
 
-function StatusPill({ status }: { status: string }) {
-  const map: Record<string, string> = {
-    pending: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
-    confirmed: "bg-blue-500/15 text-blue-700 dark:text-blue-400",
-    settled: "bg-purple-500/15 text-purple-700 dark:text-purple-400",
-    fulfilled: "bg-green-500/15 text-green-700 dark:text-green-400",
-    cancelled: "bg-muted text-muted-foreground",
-  };
-  return <span className={`px-2 py-0.5 rounded-full text-[11px] capitalize ${map[status] ?? "bg-muted"}`}>{status}</span>;
-}
-
 // ─── Buy dialog ───────────────────────────────────────────────────────────
 function BuyDialog({
   open, onOpenChange, initialAmount, squareUrl, session, onCreated,

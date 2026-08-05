@@ -3813,38 +3813,41 @@
                   </a>
                 </section>
 
-                <section class="r-home-status-grid" aria-label="Creator dashboard overview">
-                  <a class="r-home-card r-home-project" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
-                    <span class="r-home-card-k">Current project · Roadmap</span>
-                    <h2>Your production, one clear timeline</h2>
-                    <p>Milestones, files, approvals and messages stay together from kickoff to delivery.</p>
-                    <div class="r-home-progress"><span></span></div>
-                    <div class="r-home-card-foot"><span>Open project desk</span><span>64%</span></div>
+                <style>
+                  .r-home-pillars { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+                  @media (max-width: 900px) { .r-home-pillars { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+                  .r-home-pillar { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem 0.85rem; background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 14px; color: hsl(var(--ink)); text-decoration: none; transition: transform .18s ease, border-color .18s ease; }
+                  .r-home-pillar:hover { transform: translateY(-2px); border-color: hsl(var(--ink) / 0.45); }
+                  .r-home-pillar strong { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
+                  .r-home-pillar span { font-size: 0.76rem; line-height: 1.45; color: hsl(var(--muted)); }
+                  .r-home-pillar .r-pill-tag { display: inline-flex; align-self: flex-start; margin-top: 0.35rem; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.22rem 0.45rem; border-radius: 999px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+                  .r-home-pillar.is-soon { opacity: 0.85; }
+                  .r-home-pillar.is-soon .r-pill-tag { background: transparent; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); }
+                </style>
+                <nav class="r-home-pillars" aria-label="Rhozeland modules">
+                  <a class="r-home-pillar" href="#workspace/build" data-home-workspace data-ws-tab="build">
+                    <strong>Sales</strong>
+                    <span>Brief, price and launch a project with the studio.</span>
+                    <em class="r-pill-tag">Build a project ↗</em>
                   </a>
-                  <a class="r-home-card r-home-opportunity" href="/contact.html" data-inline-nav="connect">
-                    <span class="r-home-card-k">Opportunities</span>
-                    <h3>Open calls</h3>
-                    <p>Playlist features, artist shoutouts, shoots and creator listings.</p>
-                    <div class="r-home-card-foot"><span>See openings</span><span>04 →</span></div>
+                  <a class="r-home-pillar is-soon" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
+                    <strong>Opportunities</strong>
+                    <span>Open calls, playlist features and creator listings.</span>
+                    <em class="r-pill-tag">Coming soon</em>
                   </a>
-                  <a class="r-home-card r-home-xp" href="/leaderboard.html" data-inline-nav="leaderboard">
-                    <span class="r-home-card-k">Creator progress</span>
-                    <h3>Level 01</h3>
-                    <p>Build, collaborate and earn your place in the community.</p>
-                    <div class="r-home-progress"><span></span></div>
-                    <div class="r-home-card-foot"><span>Community rank</span><span>View →</span></div>
+                  <a class="r-home-pillar is-soon" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
+                    <strong>School</strong>
+                    <span>Learn the craft through projects and creator knowledge.</span>
+                    <em class="r-pill-tag">Coming soon</em>
                   </a>
-                </section>
-
-                <div class="r-home-works-intro">
-                  <h2>Featured Works</h2>
-                  <a href="/projects.html" data-inline-nav="work">Explore all work →</a>
-                </div>
-                <nav class="r-home-system" aria-label="Creator resources">
-                  <a href="/projects.html" data-inline-nav="work"><strong>Sales</strong><span>Package and launch creative work with the studio.</span><b>↗</b></a>
-                  <a href="/about.html" data-inline-nav="about"><strong>School</strong><span>Learn through projects, stories and creator knowledge.</span><b>↗</b></a>
-                  <a href="/contact.html" data-inline-nav="connect"><strong>Database</strong><span>Find collaborators, resources and ways into the network.</span><b>↗</b></a>
+                  <a class="r-home-pillar is-soon" href="/leaderboard.html" data-inline-nav="leaderboard">
+                    <strong>Database</strong>
+                    <span>Find collaborators, resources and ways into the network.</span>
+                    <em class="r-pill-tag">Coming soon</em>
+                  </a>
                 </nav>
+
+                <div id="rHomeFeatSlot"></div>
               </div>
 
               <aside class="r-home-rail" aria-label="Rhozeland live overview">

@@ -12,7 +12,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowRight, Check, CheckCircle2, Coins, CreditCard, Sparkles } from "lucide-react";
+import { Check, CheckCircle2, Coins, CreditCard, Sparkles } from "lucide-react";
 import logoWhite from "@/assets/logo-white.webp";
 import WalletPanel from "./WalletPanel";
 
@@ -34,7 +34,6 @@ const multFor = (usd: number) => TIERS.find((t) => t.slug === pickTier(usd))!.mu
 export default function InvestPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
-  const [pledges, setPledges] = useState<any[]>([]);
   const [holders, setHolders] = useState(0);
   const [authOpen, setAuthOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
@@ -56,15 +55,16 @@ export default function InvestPage() {
       .in("status", ["confirmed", "settled", "fulfilled"]);
     setHolders(new Set((data ?? []).map((r: any) => r.user_id)).size);
   };
-  const loadPledges = async () => {
-    if (!session) { setPledges([]); return; }
-    const { data } = await supabase.from("investor_pledges").select("*")
-      .eq("user_id", session.user.id).order("created_at", { ascending: false });
-    setPledges(data ?? []);
-  };
-
   useEffect(() => { loadCampaign(); loadHolders(); }, []);
-  useEffect(() => { loadPledges(); }, [session?.user?.id]);
+
+  // When embedded in the homepage iframe (auto-sized to content), a fixed-position
+  // dialog centers inside the tall iframe viewport and lands off-screen. Ask the
+  // parent to scroll it into view whenever a dialog opens.
+  useEffect(() => {
+    if (!buyOpen && !authOpen) return;
+    if (window.parent === window) return;
+    try { window.parent.postMessage({ type: "rhoze:dialog-open" }, "*"); } catch { /* ignore */ }
+  }, [buyOpen, authOpen]);
 
   const targetSol = Number(campaign?.total_target_sol ?? 85);
   const graduated = campaign?.graduated !== false;
@@ -189,7 +189,7 @@ export default function InvestPage() {
         initialAmount={amount}
         squareUrl={campaign?.square_checkout_url ?? null}
         session={session}
-        onCreated={() => { loadPledges(); loadHolders(); }}
+        onCreated={() => { loadHolders(); }}
       />
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen}
         onSignedIn={() => { setAuthOpen(false); setBuyOpen(true); }} />

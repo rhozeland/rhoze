@@ -31,7 +31,7 @@ const LOCK_BONUS: Record<number, number> = { 0: 0, 3: 0.1, 6: 0.2, 12: 0.35 };
 const pickTier = (usd: number): Tier => (usd >= 2000 ? "core" : usd >= 500 ? "builder" : "supporter");
 const multFor = (usd: number) => TIERS.find((t) => t.slug === pickTier(usd))!.mult;
 
-export default function InvestPage() {
+export default function InvestPage({ embedded = false }: { embedded?: boolean } = {}) {
   const [session, setSession] = useState<Session | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
   const [holders, setHolders] = useState(0);
@@ -76,8 +76,8 @@ export default function InvestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
+    <div className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}>
+      {!embedded && <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2">
             <img src={logoWhite} alt="Rhozeland" className="h-6 dark:invert-0 invert" />
@@ -89,18 +89,18 @@ export default function InvestPage() {
             )}
           </div>
         </div>
-      </header>
+      </header>}
 
-      <main className="max-w-5xl mx-auto px-4 md:px-6 py-10 md:py-14 space-y-12">
+      <main className={embedded ? "space-y-6" : "max-w-5xl mx-auto px-4 md:px-6 py-10 md:py-14 space-y-12"}>
         {/* Hero */}
         <section>
           <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-primary">
             <CheckCircle2 className="w-3.5 h-3.5" /> Graduated
           </div>
-          <h1 className="mt-4 text-4xl md:text-6xl tracking-tight leading-[1.02] max-w-3xl">
+          <h1 className={`mt-4 tracking-tight leading-[1.02] max-w-3xl ${embedded ? "text-2xl md:text-3xl" : "text-4xl md:text-6xl"}`}>
             {campaign?.headline ?? "We graduated. Now own a piece."}
           </h1>
-          <p className="mt-3 text-muted-foreground text-lg max-w-xl">
+          <p className={`mt-3 text-muted-foreground max-w-xl ${embedded ? "text-sm" : "text-lg"}`}>
             Buy $RHOZE with a card at checkout. Every dollar also lands as Rhozeland credits — merch, studio time, app perks.
           </p>
 
@@ -173,15 +173,15 @@ export default function InvestPage() {
           </div>
         </section>
 
-        <section><WalletPanel session={session} /></section>
+        {!embedded && <section><WalletPanel session={session} /></section>}
       </main>
 
-      <footer className="border-t border-border">
+      {!embedded && <footer className="border-t border-border">
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-6 text-xs text-muted-foreground flex flex-wrap gap-3 justify-between">
           <span>© 2026 Rhozeland · collab@rhozeland.com</span>
           <span>Not financial advice. Credits are non-transferable.</span>
         </div>
-      </footer>
+      </footer>}
 
       <BuyDialog
         open={buyOpen}

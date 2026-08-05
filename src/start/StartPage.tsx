@@ -117,7 +117,6 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 {([
                   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
                   { id: "build", label: "Build project", icon: PlusSquare },
-                  { id: "roadmap", label: "Project roadmap", icon: MapIcon },
                   { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
                   { id: "community", label: "Community board", icon: Trophy },
                 ] as const).map((t) => (
@@ -137,12 +136,16 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                   <DashboardHome
                     session={session}
                     onBuild={() => setTab("build")}
-                    onRoadmap={() => setTab("roadmap")}
+                    onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
                     onTokens={() => setTab("tokens")}
                   />
                 )}
-                {tab === "build" && <BuildWizard session={session} onDone={() => setTab("roadmap")} />}
-                {tab === "roadmap" && <ClientDashboard />}
+                {tab === "dashboard" && (
+                  <div id="project-roadmap" className="mt-6 scroll-mt-24">
+                    <ClientDashboard />
+                  </div>
+                )}
+                {tab === "build" && <BuildWizard session={session} onDone={() => setTab("dashboard")} />}
                 {tab === "tokens" && <TokensPanel session={session} />}
                 {tab === "community" && (
                   <div className="rounded-2xl border border-border bg-card overflow-hidden">

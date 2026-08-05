@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import type { Session } from "@supabase/supabase-js";
 import { Globe, Palette, ShoppingBag, TrendingUp } from "lucide-react";
 import WalletSlot from "./WalletSlot";
+import InvestPage from "@/invest/InvestPage";
 
 type Entry = { id: string; delta: number; kind: string; reason: string | null; created_at: string };
 
@@ -49,7 +50,7 @@ export default function TokensPanel({ session }: { session: Session }) {
             <span className="text-sm text-muted-foreground mb-1">$RHOZE</span>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <Button onClick={() => window.open("/invest.html", "_blank")}>Buy $RHOZE</Button>
+            <Button onClick={() => document.getElementById("rhoze-buy")?.scrollIntoView({ behavior: "smooth" })}>Buy $RHOZE</Button>
             <Button variant="outline" onClick={() => document.getElementById("rhoze-catalog")?.scrollIntoView({ behavior: "smooth" })}>
               Use $RHOZE
             </Button>
@@ -63,6 +64,11 @@ export default function TokensPanel({ session }: { session: Session }) {
       </div>
 
       <WalletSlot session={session} />
+
+      {/* Buying / investing lives here now — no separate Invest page. */}
+      <section id="rhoze-buy" className="rounded-2xl border border-border bg-card p-5 md:p-6">
+        <InvestPage embedded />
+      </section>
 
       <section id="rhoze-catalog">
         <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-2">What can you use $RHOZE for?</div>

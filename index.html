@@ -3702,6 +3702,12 @@
           .r-home-works-intro { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid #111111; padding: 4px 0 8px; }
           .r-home-works-intro h2 { margin: 0; color: #111111; font-family: 'Archivo Black','Arial Black',sans-serif; font-size: 1.25rem; letter-spacing: 0; }
           .r-home-works-intro a { color: #111111; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; }
+          .r-home-system { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #111111; min-height: 108px; }
+          .r-home-system a { display: flex; flex-direction: column; justify-content: space-between; padding: 14px; color: #111111; text-decoration: none; border-right: 1px solid #111111; }
+          .r-home-system a:last-child { border-right: 0; }
+          .r-home-system strong { font-family: 'Archivo Black','Arial Black',sans-serif; font-size: 0.82rem; letter-spacing: 0; }
+          .r-home-system span { color: #333333; font-size: 0.68rem; font-weight: 700; line-height: 1.35; }
+          .r-home-system b { align-self: flex-end; font-size: 1rem; }
           .r-home-news { border: 1px solid #111111; background: #111111; color: #ffffff; padding: 14px; }
           .r-home-news-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
           .r-home-news-head strong { font-family: 'Archivo Black','Arial Black',sans-serif; font-size: 0.88rem; letter-spacing: 0; }
@@ -3729,6 +3735,9 @@
             .r-home-build { border-left: 0; border-top: 1px solid #111111; min-height: 116px; }
             .r-home-status-grid { grid-template-columns: 1fr; }
             .r-home-project { grid-column: auto; }
+            .r-home-system { grid-template-columns: 1fr; }
+            .r-home-system a { min-height: 90px; border-right: 0; border-bottom: 1px solid #111111; }
+            .r-home-system a:last-child { border-bottom: 0; }
           }
         </style>
 
@@ -3831,6 +3840,11 @@
                   <h2>Featured Works</h2>
                   <a href="/projects.html" data-inline-nav="work">Explore all work →</a>
                 </div>
+                <nav class="r-home-system" aria-label="Creator resources">
+                  <a href="/projects.html" data-inline-nav="work"><strong>Sales</strong><span>Package and launch creative work with the studio.</span><b>↗</b></a>
+                  <a href="/about.html" data-inline-nav="about"><strong>School</strong><span>Learn through projects, stories and creator knowledge.</span><b>↗</b></a>
+                  <a href="/contact.html" data-inline-nav="connect"><strong>Database</strong><span>Find collaborators, resources and ways into the network.</span><b>↗</b></a>
+                </nav>
               </div>
 
               <aside class="r-home-rail" aria-label="Rhozeland live overview">

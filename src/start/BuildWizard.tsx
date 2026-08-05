@@ -34,7 +34,15 @@ const LINES = (slug: string) => {
   ];
 };
 
-export default function BuildWizard({ session, onDone }: { session: Session; onDone: () => void }) {
+export default function BuildWizard({
+  session,
+  onDone,
+  onNeedAuth,
+}: {
+  session: Session | null;
+  onDone: () => void;
+  onNeedAuth?: () => void;
+}) {
   const [step, setStep] = useState(0);
   const [type, setType] = useState<string | null>(null);
   const [desc, setDesc] = useState("");
@@ -56,6 +64,10 @@ export default function BuildWizard({ session, onDone }: { session: Session; onD
 
   const confirm = async () => {
     if (!type) return;
+    if (!session) {
+      onNeedAuth?.();
+      return;
+    }
     setBusy(true);
     try {
       const { data, error } = await supabase.from("credit_requests").insert({

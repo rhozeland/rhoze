@@ -14,6 +14,7 @@ import ClientDashboard from "@/start/ClientDashboard";
 import DashboardHome from "@/start/DashboardHome";
 import BuildWizard from "@/start/BuildWizard";
 import TokensPanel from "@/start/TokensPanel";
+import InvestPage from "@/invest/InvestPage";
 import ConciergeForm from "@/start/ConciergeForm";
 import SubscribeSection from "@/start/SubscribeSection";
 import {
@@ -33,6 +34,7 @@ type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community";
 
 export default function StartPage({ embedded = false }: { embedded?: boolean }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const [tab, setTab] = useState<StartTab>("dashboard");
   const [convo, setConvo] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
@@ -55,8 +57,14 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
   }, []);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s);
+      setAuthReady(true);
+    });
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthReady(true);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -121,7 +129,43 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
       </header>}
 
       <main className={embedded ? "max-w-6xl mx-auto px-3 md:px-5 py-4 md:py-6 space-y-8" : "max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-10"}>
-        {session ? (
+        {!authReady ? (
+          <div className="min-h-[55vh] grid place-items-center text-sm text-muted-foreground">Loading your workspace…</div>
+        ) : embedded ? (
+          <section>
+            {tab === "dashboard" && session && (
+              <>
+                <DashboardHome
+                  session={session}
+                  onBuild={() => setTab("build")}
+                  onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
+                  onTokens={() => setTab("tokens")}
+                />
+                <div id="project-roadmap" className="mt-6 scroll-mt-24"><ClientDashboard /></div>
+              </>
+            )}
+            {tab === "dashboard" && !session && (
+              <div className="min-h-[55vh] flex flex-col items-center justify-center text-center px-4">
+                <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Creator workspace</div>
+                <h1 className="mt-2 text-2xl md:text-4xl tracking-tight">Your projects, credits and progress.</h1>
+                <p className="mt-2 max-w-md text-sm text-muted-foreground">Sign in to see your personal dashboard, or use Build and Invest without an account.</p>
+                <Button className="mt-5" onClick={() => setAuthOpen(true)}>Sign in to your dashboard</Button>
+              </div>
+            )}
+            {tab === "build" && (
+              <div className="space-y-4">
+                <BuildWizard session={session} onDone={() => setTab("dashboard")} onNeedAuth={() => setAuthOpen(true)} />
+                <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
+              </div>
+            )}
+            {tab === "tokens" && (session ? <TokensPanel session={session} /> : <InvestPage embedded />)}
+            {tab === "community" && (
+              <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                <iframe src="/leaderboard.html" title="Community leaderboard" className="w-full block" style={{ height: "min(1400px, 160vh)", border: 0 }} loading="lazy" />
+              </div>
+            )}
+          </section>
+        ) : session ? (
           <>
             {/* Signed-in: everything lives in tabs */}
             <section>
@@ -161,7 +205,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 )}
                 {tab === "build" && (
                   <div className="space-y-4">
-                    <BuildWizard session={session} onDone={() => setTab("dashboard")} />
+                    <BuildWizard session={session} onDone={() => setTab("dashboard")} onNeedAuth={() => setAuthOpen(true)} />
                     <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
                   </div>
                 )}
@@ -214,7 +258,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
         )}
 
         {/* Concierge — guests only; signed-in users use the Build tab */}
-        {!session && (
+        {!embedded && !session && (
         <section id="concierge" className="scroll-mt-16">
           <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
             Concierge · {conciergeUnlocked ? "live scoping" : "structured brief"}
@@ -247,7 +291,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
         </section>
         )}
 
-        {!session && <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />}
+        {!embedded && !session && <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />}
       </main>
 
       <ContinueDialog

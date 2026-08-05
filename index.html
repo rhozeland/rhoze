@@ -3118,7 +3118,7 @@
       </a>
     </div>
 
-    <main>
+    <main id="rMain">
       <section id="homepageWorkspace" class="homepage-workspace" hidden aria-label="Rhozeland workspace">
         <style>
           .homepage-workspace { min-height: calc(100vh - 132px); background: hsl(var(--surface-alt)); }
@@ -3126,7 +3126,7 @@
           .homepage-workspace #homepage-workspace-root { min-height: inherit; }
           /* Hide every other page section while the workspace is open (the homepage
              lives inside .page-shell, so a direct-child selector would miss it). */
-          body.workspace-active main > *:not(#homepageWorkspace) { display: none !important; }
+          body.workspace-active #rMain > *:not(#homepageWorkspace) { display: none !important; }
           body.workspace-active .footer, body.workspace-active footer { display: none !important; }
           body.workspace-active .r-start, body.workspace-active #engage,
           body.workspace-active .page-shell > section:not(.navbar) { display: none !important; }
@@ -3151,7 +3151,7 @@
           .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
           @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
-          body.r-inline-active main > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
+          body.r-inline-active #rMain > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
           /* Sections outside <main> that would otherwise bleed under the inline view. */
           body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }

@@ -27,7 +27,7 @@ import {
 } from "@/start/copilotClient";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, Map as MapIcon, PlusSquare, Trophy } from "lucide-react";
+import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, PlusSquare, Trophy } from "lucide-react";
 
 type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community";
 
@@ -125,25 +125,27 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
           <>
             {/* Signed-in: everything lives in tabs */}
             <section>
-              <div className={`${embedded ? "hidden" : "flex"} items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1`}>
-                {([
-                  { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
-                  { id: "build", label: "Build project", icon: PlusSquare },
-                  { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
-                  ...(embedded ? [] : [{ id: "community", label: "Community board", icon: Trophy } as const]),
-                ] as const).map((t) => (
-                  <button key={t.id} onClick={() => setTab(t.id)}
-                    className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm whitespace-nowrap transition border ${
-                      tab === t.id
-                        ? "bg-foreground text-background border-foreground"
-                        : "border-border text-muted-foreground hover:border-foreground/30"
-                    }`}>
-                    <t.icon className="w-4 h-4" />{t.label}
-                  </button>
-                ))}
-              </div>
+              {!embedded && (
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+                  {([
+                    { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+                    { id: "build", label: "Build project", icon: PlusSquare },
+                    { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
+                    { id: "community", label: "Community board", icon: Trophy },
+                  ] as const).map((t) => (
+                    <button key={t.id} onClick={() => setTab(t.id)}
+                      className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm whitespace-nowrap transition border ${
+                        tab === t.id
+                          ? "bg-foreground text-background border-foreground"
+                          : "border-border text-muted-foreground hover:border-foreground/30"
+                      }`}>
+                      <t.icon className="w-4 h-4" />{t.label}
+                    </button>
+                  ))}
+                </div>
+              )}
 
-              <div className="mt-4">
+              <div className={embedded ? "" : "mt-4"}>
                 {tab === "dashboard" && (
                   <DashboardHome
                     session={session}

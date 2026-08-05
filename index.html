@@ -4122,6 +4122,41 @@
 
     </section>
 
+    <style>
+      /* Footer links were inheriting a near-invisible colour; force readable ink. */
+      .footer-links a, .footer-contact a, .footer-contact p, .footer-copy {
+        color: hsl(var(--ink) / 0.78) !important;
+        opacity: 1 !important;
+      }
+      .footer-links a:hover, .footer-contact a:hover { color: hsl(var(--ink)) !important; }
+      .footer-heading { color: hsl(var(--ink)); }
+      /* Seamless cross-fade when an inline section takes over the dashboard. */
+      #rInlineView:not([hidden]) { animation: rInlineIn 320ms ease both; }
+      @keyframes rInlineIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    </style>
+    <script>
+      // Featured work belongs inside the dashboard column (where Sales/School/Database used to sit).
+      (function(){
+        function move(){
+          var slot = document.getElementById('rHomeFeatSlot');
+          var feat = document.querySelector('.r-eco-feat--standalone');
+          if (!slot || !feat) return;
+          slot.appendChild(feat);
+          var host = document.querySelector('section[aria-label="Featured work"]');
+          if (host && !host.contains(slot)) host.style.display = 'none';
+        }
+        function credits(){
+          var cr = document.getElementById('rEcoMiniCredits');
+          var hud = document.getElementById('rHudRhoze');
+          if (!cr) return;
+          var bal = hud && hud.textContent && hud.textContent.trim() !== '—' ? hud.textContent.trim() : null;
+          cr.textContent = bal ? bal + ' $RHOZE' : 'Sign in';
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', move);
+        else move();
+        setInterval(credits, 2000);
+      })();
+    </script>
     <footer class="footer">
       <div class="footer-panel">
         <div class="footer-brand">

@@ -4718,8 +4718,8 @@
         fetchFeed().then(function(videos){ renderChannel(videos.length ? videos : FALLBACK_VIDEOS); }).catch(function(){ renderChannel(FALLBACK_VIDEOS); });
       }
 
-      /* === $RHOZE live ticker + sparkline === */
-      var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
+      /* === $RHOZE live ticker + sparkline (post-graduation Raydium pool) === */
+      var POOL = 'AjCpwQxLsW3SbueGUD2sKpGbbtUPNt64JPcSBJ2uuUiJ';
       var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
       var ACTIVE_POOL = POOL;
 
@@ -4753,11 +4753,35 @@
         var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
         var vol = document.getElementById('rEcoMiniVol');
         if (vol) vol.textContent = (stats.volume24h === 0) ? '$0' : fmtCompact(stats.volume24h);
+        var cr = document.getElementById('rEcoMiniCredits');
+        if (cr) {
+          var hud = document.getElementById('rHudRhoze');
+          var bal = hud && hud.textContent && hud.textContent !== '—' ? hud.textContent.trim() : null;
+          cr.textContent = bal ? bal + ' $RHOZE' : 'Sign in';
+        }
         var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';
         var tt = document.getElementById('rEcoTickerTime'); if (tt) tt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       }
 
       function loadTicker(){
+        // GeckoTerminal is the source of truth for the migrated $RHOZE pool.
+        fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache:'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(gd){
+            var a = gd && gd.data && gd.data.attributes;
+            if (!a) throw new Error('no pool');
+            ACTIVE_POOL = POOL;
+            paintTicker({
+              price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
+              change24h: a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
+              marketCap: (a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null)),
+              volume24h: a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null
+            });
+          })
+          .catch(function(){ loadTickerFallback(); });
+      }
+
+      function loadTickerFallback(){
         fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache:'no-store' })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){

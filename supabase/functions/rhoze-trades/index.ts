@@ -204,11 +204,11 @@ function candles(trades: any[], bucketSec: number, max: number) {
   const map = new Map<number, { o: number; h: number; l: number; c: number; v: number }>();
   const asc = [...trades].sort((a, b) => a.ts - b.ts);
   for (const t of asc) {
-    const price = Number(t.price_usd);
+    const price = Number(t.priceUsd ?? t.price_usd);
     if (!price || !isFinite(price)) continue;
     const b = Math.floor(t.ts / bucketSec) * bucketSec;
     const cur = map.get(b);
-    const v = Number(t.value_usd) || 0;
+    const v = Number(t.valueUsd ?? t.value_usd) || 0;
     if (!cur) map.set(b, { o: price, h: price, l: price, c: price, v });
     else {
       cur.h = Math.max(cur.h, price);

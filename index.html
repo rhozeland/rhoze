@@ -151,39 +151,19 @@
       display: none;
     }
 
-    /* Animated color-shifting gradient background */
+    /* Flat, consistent page background (no animated gradients) */
     .gradient-canvas {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background-size: 220% 220%, 180% 180%, 100% 100%;
-      animation: gradient-shift 28s ease-in-out infinite;
-      background-image:
-        radial-gradient(circle at 18% 22%, hsl(38 92% 78% / 0.9) 0%, transparent 34%),
-        radial-gradient(circle at 78% 28%, hsl(195 88% 76% / 0.75) 0%, transparent 38%),
-        linear-gradient(135deg,
-          hsl(22 96% 68%) 0%,
-          hsl(340 88% 77%) 24%,
-          hsl(286 72% 82%) 48%,
-          hsl(205 88% 81%) 72%,
-          hsl(174 74% 72%) 100%
-        );
+      background: hsl(var(--page-bg));
+      animation: none;
     }
 
     .dark .gradient-canvas {
-      background-size: 400% 400%;
-      background-image: linear-gradient(
-        135deg,
-        hsl(270 60% 15%) 0%,
-        hsl(250 70% 20%) 15%,
-        hsl(200 50% 12%) 30%,
-        hsl(30 60% 18%) 45%,
-        hsl(330 50% 16%) 60%,
-        hsl(180 50% 14%) 75%,
-        hsl(260 60% 18%) 100%
-      );
-      animation: gradient-shift-dark 30s ease infinite;
+      background: hsl(var(--page-bg));
+      animation: none;
     }
 
     @keyframes gradient-shift {
@@ -3817,7 +3797,7 @@
                  </style>
                  <div class="r-eco-mini-lb" aria-label="Community leaderboard preview">
                    <div class="r-eco-mini-lb-head">
-                     <span class="r-eco-mini-lb-label">Community · Top this week</span>
+                     <span class="r-eco-mini-lb-label">Community · All-time top 5</span>
                      <a class="r-eco-mini-lb-all" href="/leaderboard.html" data-inline-nav="leaderboard">Full board →</a>
                    </div>
                    <div id="rEcoMiniLb"><div class="r-eco-mini-lb-empty">Loading…</div></div>
@@ -4660,6 +4640,7 @@
       /* === $RHOZE live ticker + sparkline === */
       var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
       var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
+      var ACTIVE_POOL = POOL;
 
       function fmtPrice(n){
         if (n == null || !isFinite(n)) return '—';
@@ -4689,7 +4670,8 @@
         }
         var spatialChange = document.getElementById('rSpatialTickerChange'); if (spatialChange) spatialChange.textContent = fmtPct(stats.change24h);
         var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
-        var vol = document.getElementById('rEcoMiniVol'); if (vol) vol.textContent = fmtCompact(stats.volume24h);
+        var vol = document.getElementById('rEcoMiniVol');
+        if (vol) vol.textContent = (stats.volume24h === 0) ? '$0' : fmtCompact(stats.volume24h);
         var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';
         var tt = document.getElementById('rEcoTickerTime'); if (tt) tt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       }
@@ -4702,6 +4684,11 @@
             if (pairs.length) {
               pairs.sort(function(a,b){ return (b.liquidity && b.liquidity.usd || 0) - (a.liquidity && a.liquidity.usd || 0); });
               var p = pairs[0];
+              if (p.pairAddress) {
+                var changed = ACTIVE_POOL !== p.pairAddress;
+                ACTIVE_POOL = p.pairAddress;
+                if (changed) { try { loadSpark(); } catch (e) {} }
+              }
               paintTicker({
                 price: parseFloat(p.priceUsd),
                 change24h: p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null,
@@ -4727,7 +4714,7 @@
       }
 
       function loadSpark(){
-        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
+        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + ACTIVE_POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
         fetch(url, { cache:'no-store' })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){
@@ -4788,18 +4775,19 @@
         var el = document.getElementById('rEcoMiniLb');
         if (!el) return;
         try {
-          fetch(NEWS_SUPABASE_URL + '/rest/v1/community_leaderboard?select=display_name,points,rank&published_at=not.is.null&order=rank.asc&limit=5', {
+          fetch(NEWS_SUPABASE_URL + '/rest/v1/community_leaderboard?select=username,points,weekly_points&order=points.desc.nullslast&limit=5', {
             headers: { apikey: NEWS_SUPABASE_KEY, Authorization: 'Bearer ' + NEWS_SUPABASE_KEY }
           })
           .then(function(r){ return r.ok ? r.json() : []; })
           .then(function(rows){
-            if (!Array.isArray(rows) || !rows.length) {
+            rows = (Array.isArray(rows) ? rows : []).filter(function(r){ return (r.points || 0) > 0; });
+            if (!rows.length) {
               el.innerHTML = '<div class="r-eco-mini-lb-empty">No snapshot yet.</div>';
               return;
             }
             el.innerHTML = rows.map(function(r, i){
-              var rank = r.rank || (i + 1);
-              var name = escapeHtml(r.display_name || 'Anonymous');
+              var rank = i + 1;
+              var name = escapeHtml(r.username || 'Anonymous');
               var pts = (r.points == null) ? '—' : Number(r.points).toLocaleString();
               return '<div class="r-eco-mini-lb-row"><span class="r-eco-mini-lb-rank">#' + rank + '</span><span class="r-eco-mini-lb-name">' + name + '</span><span class="r-eco-mini-lb-pts">' + pts + '</span></div>';
             }).join('');

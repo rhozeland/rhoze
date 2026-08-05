@@ -114,6 +114,27 @@ export async function fetchRhozeTrades(opts: {
     if (cached?.length) return cached;
   }
 
+  // Preferred path: the indexed server feed (full history, Helius-backed).
+  try {
+    const base = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/rhoze-trades`;
+    const r = await fetch(`${base}?limit=500&bucket=3600`, {
+      headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
+    });
+    if (r.ok) {
+      const j = await r.json();
+      const rows: ChainTrade[] = (j?.trades ?? []).map((t: any) => ({
+        sig: t.sig, ts: t.ts, type: t.type, tokens: Number(t.tokens), sol: Number(t.sol),
+        priceUsd: Number(t.priceUsd), valueUsd: Number(t.valueUsd), trader: t.trader,
+      })).filter((t: ChainTrade) => t.sig && isFinite(t.priceUsd));
+      if (rows.length) {
+        rows.sort((a, b) => b.ts - a.ts);
+        onPartial?.(rows);
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), trades: rows })); } catch { /* quota */ }
+        return rows;
+      }
+    }
+  } catch { /* fall through to direct RPC */ }
+
   const solPrice = await fetchSolPriceUsd();
   const trades: ChainTrade[] = [];
   let before: string | undefined;

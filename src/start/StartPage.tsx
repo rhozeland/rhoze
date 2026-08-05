@@ -16,7 +16,6 @@ import BuildWizard from "@/start/BuildWizard";
 import TokensPanel from "@/start/TokensPanel";
 import ConciergeForm from "@/start/ConciergeForm";
 import SubscribeSection from "@/start/SubscribeSection";
-import WalletSlot from "@/start/WalletSlot";
 import {
   type Conversation,
   type CopilotMessage,
@@ -180,7 +179,8 @@ export default function StartPage() {
           </section>
         )}
 
-        {/* Concierge — form-first for guests, chat for unlocked or signed-in */}
+        {/* Concierge — guests only; signed-in users use the Build tab */}
+        {!session && (
         <section id="concierge" className="scroll-mt-16">
           <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
             Concierge · {conciergeUnlocked ? "live scoping" : "structured brief"}
@@ -211,6 +211,7 @@ export default function StartPage() {
             </div>
           )}
         </section>
+        )}
 
         <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
       </main>

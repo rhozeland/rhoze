@@ -4670,7 +4670,8 @@
         }
         var spatialChange = document.getElementById('rSpatialTickerChange'); if (spatialChange) spatialChange.textContent = fmtPct(stats.change24h);
         var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
-        var vol = document.getElementById('rEcoMiniVol'); if (vol) vol.textContent = fmtCompact(stats.volume24h);
+        var vol = document.getElementById('rEcoMiniVol');
+        if (vol) vol.textContent = (stats.volume24h === 0) ? '$0' : fmtCompact(stats.volume24h);
         var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';
         var tt = document.getElementById('rEcoTickerTime'); if (tt) tt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       }

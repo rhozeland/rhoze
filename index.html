@@ -3740,10 +3740,10 @@
             <div class="r-eco-issue-grid">
               <article class="r-eco-issue-main">
                 <div class="r-eco-kicker-row">
-                  <span class="r-eco-kicker">The Channel</span>
+                  <span class="r-eco-kicker">Rhozeland News</span>
                   <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto</span>
                 </div>
-                <h2 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h2>
+                <h2 class="r-eco-title" id="homepage-title">The newsroom of <em>Rhozeland.</em></h2>
                 <div class="r-eco-video">
                   <iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
                   <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Featured · Latest Episode</span></span>
@@ -3803,6 +3803,40 @@
                      <a class="r-eco-mini-lb-all" href="/leaderboard.html" data-inline-nav="leaderboard">Full board →</a>
                    </div>
                    <div id="rEcoMiniLb"><div class="r-eco-mini-lb-empty">Loading…</div></div>
+                 </div>
+                 <!-- Build CTA + quick-open rail: fills the side column and makes every
+                      destination (workspace tabs, about, work, board) reachable from home. -->
+                 <style>
+                   .r-eco-build { margin-top: 1rem; border-top: 1px solid hsl(var(--ink)); padding-top: 0.9rem; }
+                   .r-eco-build-t { font-size: 1.05rem; font-weight: 900; letter-spacing: -0.01em; color: hsl(var(--ink)); margin: 0 0 0.4rem; }
+                   .r-eco-build-list { list-style: none; margin: 0 0 0.75rem; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+                   .r-eco-build-list li { position: relative; padding-left: 0.85rem; font-size: 0.74rem; font-weight: 600; line-height: 1.4; color: hsl(var(--muted)); }
+                   .r-eco-build-list li::before { content: "—"; position: absolute; left: 0; color: hsl(var(--ink)); }
+                   .r-eco-build-cta { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; width: 100%; background: hsl(var(--ink)); color: hsl(var(--surface-card)); text-decoration: none; padding: 0.7rem 0.9rem; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+                   .r-eco-build-cta:hover { opacity: 0.88; }
+                   .r-eco-open { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.75rem; }
+                   .r-eco-open a { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; border: 1px solid hsl(var(--line)); padding: 0.5rem 0.6rem; color: hsl(var(--ink)); text-decoration: none; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+                   .r-eco-open a:hover { border-color: hsl(var(--ink)); background: hsl(var(--surface-alt)); }
+                 </style>
+                 <div class="r-eco-build">
+                   <p class="r-eco-build-t">Build a project with us</p>
+                   <ul class="r-eco-build-list">
+                     <li>We know your best angles</li>
+                     <li>We find beauty in the mundane</li>
+                     <li>We shoot and turn edits around fast</li>
+                     <li>iPhone-native, gear-agnostic</li>
+                     <li>On planes, trains, on foot, on set, at festivals</li>
+                     <li>Fluent in internet culture and trends</li>
+                   </ul>
+                   <a class="r-eco-build-cta" href="#workspace/build" data-home-workspace data-ws-tab="build">Start a project <span aria-hidden="true">→</span></a>
+                   <div class="r-eco-open">
+                     <a href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">Dashboard</a>
+                     <a href="#workspace/tokens" data-home-workspace data-ws-tab="tokens">$RHOZE</a>
+                     <a href="/leaderboard.html" data-inline-nav="leaderboard">Board</a>
+                     <a href="/about.html" data-inline-nav="about">About</a>
+                     <a href="/projects.html" data-inline-nav="work">Work</a>
+                     <a href="/contact.html" data-inline-nav="connect">Connect</a>
+                   </div>
                  </div>
               </aside>
             </div>

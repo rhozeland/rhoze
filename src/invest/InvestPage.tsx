@@ -268,6 +268,7 @@ function BuyDialog({
 
   useEffect(() => { if (open) { setAmount(initialAmount); setDone(null); setCredited(null); } }, [open, initialAmount]);
 
+  const isSquare: boolean = payment === "square";
   const base = multFor(amount);
   const totalMult = Number((base + (LOCK_BONUS[lockMonths] ?? 0)).toFixed(2));
   const fee = Math.round(amount * 0.07);
@@ -342,14 +343,14 @@ function BuyDialog({
                 <div className="mt-1 text-2xl tabular-nums">{credited.balance.toLocaleString()} $RHOZE</div>
               </div>
             )}
-            {payment === "square" && (
+            {isSquare && (
               <p className="mt-3 text-xs text-muted-foreground">
                 {squareUrl
                   ? "Square checkout opened in a new tab — finish the card payment to complete your order."
                   : "We'll send your Square payment link by email within 24h."}
               </p>
             )}
-            {squareUrl && payment === "square" && (
+            {squareUrl && isSquare && (
               <Button className="mt-4 w-full" onClick={() => window.open(squareUrl, "_blank", "noopener")}>
                 Reopen Square checkout
               </Button>
@@ -410,7 +411,7 @@ function BuyDialog({
                 <Row label={`Credits (${totalMult.toFixed(2)}×)`} value={`${credits.toLocaleString()}`} />
               </div>
               <Button className="w-full" disabled={busy} onClick={submit}>
-                {busy ? "Placing order…" : payment === "square" ? "Continue to Square" : "Place order"}
+                {busy ? "Placing order…" : isSquare ? "Continue to Square" : "Place order"}
               </Button>
             </div>
           </>

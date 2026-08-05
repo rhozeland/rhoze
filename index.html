@@ -3110,6 +3110,16 @@
       </a>
     </div>
 
+    <div class="nav-tabs" role="navigation" aria-label="Rhozeland sections">
+      <a class="nav-tab" href="#" data-inline-nav="__home">Home</a>
+      <a class="nav-tab" href="#workspace/build" data-home-workspace data-ws-tab="build">Build a project</a>
+      <a class="nav-tab" href="#workspace/tokens" data-home-workspace data-ws-tab="tokens">$RHOZE</a>
+      <a class="nav-tab" href="/leaderboard.html" data-inline-nav="leaderboard">Community</a>
+      <a class="nav-tab" href="/about.html" data-inline-nav="about">About</a>
+      <a class="nav-tab" href="/projects.html" data-inline-nav="work">Work</a>
+      <a class="nav-tab" href="/contact.html" data-inline-nav="connect">Connect</a>
+    </div>
+
     <main id="rMain">
       <section id="homepageWorkspace" class="homepage-workspace" hidden aria-label="Rhozeland workspace">
         <style>
@@ -3813,38 +3823,41 @@
                   </a>
                 </section>
 
-                <section class="r-home-status-grid" aria-label="Creator dashboard overview">
-                  <a class="r-home-card r-home-project" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
-                    <span class="r-home-card-k">Current project · Roadmap</span>
-                    <h2>Your production, one clear timeline</h2>
-                    <p>Milestones, files, approvals and messages stay together from kickoff to delivery.</p>
-                    <div class="r-home-progress"><span></span></div>
-                    <div class="r-home-card-foot"><span>Open project desk</span><span>64%</span></div>
+                <style>
+                  .r-home-pillars { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
+                  @media (max-width: 900px) { .r-home-pillars { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+                  .r-home-pillar { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem 0.85rem; background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 14px; color: hsl(var(--ink)); text-decoration: none; transition: transform .18s ease, border-color .18s ease; }
+                  .r-home-pillar:hover { transform: translateY(-2px); border-color: hsl(var(--ink) / 0.45); }
+                  .r-home-pillar strong { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
+                  .r-home-pillar span { font-size: 0.76rem; line-height: 1.45; color: hsl(var(--muted)); }
+                  .r-home-pillar .r-pill-tag { display: inline-flex; align-self: flex-start; margin-top: 0.35rem; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.22rem 0.45rem; border-radius: 999px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+                  .r-home-pillar.is-soon { opacity: 0.85; }
+                  .r-home-pillar.is-soon .r-pill-tag { background: transparent; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); }
+                </style>
+                <nav class="r-home-pillars" aria-label="Rhozeland modules">
+                  <a class="r-home-pillar" href="#workspace/build" data-home-workspace data-ws-tab="build">
+                    <strong>Sales</strong>
+                    <span>Brief, price and launch a project with the studio.</span>
+                    <em class="r-pill-tag">Build a project ↗</em>
                   </a>
-                  <a class="r-home-card r-home-opportunity" href="/contact.html" data-inline-nav="connect">
-                    <span class="r-home-card-k">Opportunities</span>
-                    <h3>Open calls</h3>
-                    <p>Playlist features, artist shoutouts, shoots and creator listings.</p>
-                    <div class="r-home-card-foot"><span>See openings</span><span>04 →</span></div>
+                  <a class="r-home-pillar is-soon" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
+                    <strong>Opportunities</strong>
+                    <span>Open calls, playlist features and creator listings.</span>
+                    <em class="r-pill-tag">Coming soon</em>
                   </a>
-                  <a class="r-home-card r-home-xp" href="/leaderboard.html" data-inline-nav="leaderboard">
-                    <span class="r-home-card-k">Creator progress</span>
-                    <h3>Level 01</h3>
-                    <p>Build, collaborate and earn your place in the community.</p>
-                    <div class="r-home-progress"><span></span></div>
-                    <div class="r-home-card-foot"><span>Community rank</span><span>View →</span></div>
+                  <a class="r-home-pillar is-soon" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
+                    <strong>School</strong>
+                    <span>Learn the craft through projects and creator knowledge.</span>
+                    <em class="r-pill-tag">Coming soon</em>
                   </a>
-                </section>
-
-                <div class="r-home-works-intro">
-                  <h2>Featured Works</h2>
-                  <a href="/projects.html" data-inline-nav="work">Explore all work →</a>
-                </div>
-                <nav class="r-home-system" aria-label="Creator resources">
-                  <a href="/projects.html" data-inline-nav="work"><strong>Sales</strong><span>Package and launch creative work with the studio.</span><b>↗</b></a>
-                  <a href="/about.html" data-inline-nav="about"><strong>School</strong><span>Learn through projects, stories and creator knowledge.</span><b>↗</b></a>
-                  <a href="/contact.html" data-inline-nav="connect"><strong>Database</strong><span>Find collaborators, resources and ways into the network.</span><b>↗</b></a>
+                  <a class="r-home-pillar is-soon" href="/leaderboard.html" data-inline-nav="leaderboard">
+                    <strong>Database</strong>
+                    <span>Find collaborators, resources and ways into the network.</span>
+                    <em class="r-pill-tag">Coming soon</em>
+                  </a>
                 </nav>
+
+                <div id="rHomeFeatSlot"></div>
               </div>
 
               <aside class="r-home-rail" aria-label="Rhozeland live overview">
@@ -3862,16 +3875,33 @@
                   <div class="r-eco-stats-head"><span class="r-eco-stats-label">$RHOZE · Live on Solana</span></div>
                   <div class="r-eco-mini"><div class="r-eco-mini-price" id="rEcoMiniPrice">—</div><div class="r-eco-mini-chg flat" id="rEcoMiniChg">—</div></div>
                   <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true"><path id="rEcoSparkFill" d="" fill="hsl(var(--ink) / 0.08)" stroke="none"/><path id="rEcoSparkLine" d="" fill="none" stroke="hsl(var(--ink))" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>
-                  <div class="r-eco-mini-row"><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div><div class="r-eco-mini-cell r-eco-stat is-muted"><div class="r-eco-stat-k">24h Vol</div><div class="r-eco-stat-v" id="rEcoMiniVol">—</div></div></div>
+                  <div class="r-eco-mini-row"><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Your credits</div><div class="r-eco-stat-v" id="rEcoMiniCredits">—</div></div></div>
+                  <div style="display:flex;gap:8px;margin-top:10px;">
+                    <a href="#workspace/tokens" data-home-workspace data-ws-tab="tokens" style="flex:1;text-align:center;padding:0.5rem;border-radius:10px;background:hsl(var(--ink));color:hsl(var(--surface-card));font-size:0.68rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">Buy $RHOZE</a>
+                    <a href="https://birdeye.so/token/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana" target="_blank" rel="noopener" style="flex:1;text-align:center;padding:0.5rem;border-radius:10px;border:1px solid hsl(var(--line));color:hsl(var(--ink));font-size:0.68rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">Chart ↗</a>
+                  </div>
                 </div>
 
-                <nav class="r-home-utility" aria-label="Explore Rhozeland">
-                  <a class="is-rank" href="/leaderboard.html" data-inline-nav="leaderboard"><strong>Community</strong><span>All-time board ↗</span></a>
-                  <a class="is-token" href="#workspace/tokens" data-home-workspace data-ws-tab="tokens"><strong>$RHOZE</strong><span>Balance &amp; buy ↗</span></a>
-                  <a class="is-about" href="/about.html" data-inline-nav="about"><strong>About</strong><span>Our story ↗</span></a>
-                  <a class="is-connect" href="/contact.html" data-inline-nav="connect"><strong>Connect</strong><span>Work with us ↗</span></a>
-                </nav>
-                <div id="rEcoMiniLb" hidden></div>
+                <section class="r-home-board" aria-label="Community board">
+                  <div class="r-home-board-head"><strong>Community board</strong><a href="/leaderboard.html" data-inline-nav="leaderboard">All-time ↗</a></div>
+                  <div id="rEcoMiniLb"></div>
+                </section>
+                <style>
+                  .r-home-board { margin-top: 10px; background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 16px; padding: 0.9rem 1rem; }
+                  .r-home-board-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
+                  .r-home-board-head strong { font-size: 0.9rem; font-weight: 800; }
+                  .r-home-board-head a { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); }
+                  .r-eco-mini-lb-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; border-top: 1px solid hsl(var(--line)); font-size: 0.8rem; color: hsl(var(--ink)); }
+                  .r-eco-mini-lb-row:first-child { border-top: 0; }
+                  .r-eco-mini-lb-rank { font-weight: 800; color: hsl(var(--ink) / 0.55); font-size: 0.7rem; }
+                  .r-eco-mini-lb-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+                  .r-eco-mini-lb-pts { font-weight: 800; font-variant-numeric: tabular-nums; }
+                  .r-eco-mini-lb-empty { font-size: 0.78rem; color: hsl(var(--ink) / 0.55); }
+                  /* Readability: muted greys were washing out on the dashboard */
+                  .r-home-pillar span, .r-eco-stat-k { color: hsl(var(--ink) / 0.68) !important; }
+                  .r-home-pillar.is-soon .r-pill-tag { color: hsl(var(--ink) / 0.62); }
+                  .r-home-pillar.is-soon { opacity: 1; }
+                </style>
               </aside>
             </div>
           </div>
@@ -4111,6 +4141,41 @@
 
     </section>
 
+    <style>
+      /* Footer links were inheriting a near-invisible colour; force readable ink. */
+      .footer-links a, .footer-contact a, .footer-contact p, .footer-copy {
+        color: hsl(var(--ink) / 0.78) !important;
+        opacity: 1 !important;
+      }
+      .footer-links a:hover, .footer-contact a:hover { color: hsl(var(--ink)) !important; }
+      .footer-heading { color: hsl(var(--ink)); }
+      /* Seamless cross-fade when an inline section takes over the dashboard. */
+      #rInlineView:not([hidden]) { animation: rInlineIn 320ms ease both; }
+      @keyframes rInlineIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    </style>
+    <script>
+      // Featured work belongs inside the dashboard column (where Sales/School/Database used to sit).
+      (function(){
+        function move(){
+          var slot = document.getElementById('rHomeFeatSlot');
+          var feat = document.querySelector('.r-eco-feat--standalone');
+          if (!slot || !feat) return;
+          slot.appendChild(feat);
+          var host = document.querySelector('section[aria-label="Featured work"]');
+          if (host && !host.contains(slot)) host.style.display = 'none';
+        }
+        function credits(){
+          var cr = document.getElementById('rEcoMiniCredits');
+          var hud = document.getElementById('rHudRhoze');
+          if (!cr) return;
+          var bal = hud && hud.textContent && hud.textContent.trim() !== '—' ? hud.textContent.trim() : null;
+          cr.textContent = bal ? bal + ' $RHOZE' : 'Sign in';
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', move);
+        else move();
+        setInterval(credits, 2000);
+      })();
+    </script>
     <footer class="footer">
       <div class="footer-panel">
         <div class="footer-brand">
@@ -4707,8 +4772,8 @@
         fetchFeed().then(function(videos){ renderChannel(videos.length ? videos : FALLBACK_VIDEOS); }).catch(function(){ renderChannel(FALLBACK_VIDEOS); });
       }
 
-      /* === $RHOZE live ticker + sparkline === */
-      var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
+      /* === $RHOZE live ticker + sparkline (post-graduation Raydium pool) === */
+      var POOL = 'AjCpwQxLsW3SbueGUD2sKpGbbtUPNt64JPcSBJ2uuUiJ';
       var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
       var ACTIVE_POOL = POOL;
 
@@ -4742,11 +4807,35 @@
         var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
         var vol = document.getElementById('rEcoMiniVol');
         if (vol) vol.textContent = (stats.volume24h === 0) ? '$0' : fmtCompact(stats.volume24h);
+        var cr = document.getElementById('rEcoMiniCredits');
+        if (cr) {
+          var hud = document.getElementById('rHudRhoze');
+          var bal = hud && hud.textContent && hud.textContent !== '—' ? hud.textContent.trim() : null;
+          cr.textContent = bal ? bal + ' $RHOZE' : 'Sign in';
+        }
         var st = document.getElementById('rEcoTickerStatus'); if (st) st.textContent = 'Ecosystem synced · $RHOZE on Solana';
         var tt = document.getElementById('rEcoTickerTime'); if (tt) tt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
       }
 
       function loadTicker(){
+        // GeckoTerminal is the source of truth for the migrated $RHOZE pool.
+        fetch('https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL, { cache:'no-store' })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(gd){
+            var a = gd && gd.data && gd.data.attributes;
+            if (!a) throw new Error('no pool');
+            ACTIVE_POOL = POOL;
+            paintTicker({
+              price: a.base_token_price_usd != null ? parseFloat(a.base_token_price_usd) : null,
+              change24h: a.price_change_percentage && a.price_change_percentage.h24 != null ? parseFloat(a.price_change_percentage.h24) : null,
+              marketCap: (a.market_cap_usd != null ? parseFloat(a.market_cap_usd) : (a.fdv_usd != null ? parseFloat(a.fdv_usd) : null)),
+              volume24h: a.volume_usd && a.volume_usd.h24 != null ? parseFloat(a.volume_usd.h24) : null
+            });
+          })
+          .catch(function(){ loadTickerFallback(); });
+      }
+
+      function loadTickerFallback(){
         fetch('https://api.dexscreener.com/latest/dex/tokens/' + TOKEN, { cache:'no-store' })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){

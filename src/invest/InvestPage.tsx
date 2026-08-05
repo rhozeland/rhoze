@@ -99,88 +99,47 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
       </header>}
 
       <main className={embedded ? "space-y-6" : "max-w-5xl mx-auto px-4 md:px-6 py-10 md:py-14 space-y-12"}>
-        {/* Hero */}
-        <section>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-primary">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Graduated
+        {/* Buy — one input, clear total */}
+        <section className="rounded-2xl border border-border bg-card p-4 md:p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Buy $RHOZE</div>
+              <p className="mt-1 text-sm text-muted-foreground max-w-md">
+                Enter what you want to invest. We handle the on-chain buy and credit your account.
+              </p>
+            </div>
+            <span className="text-[11px] text-muted-foreground tabular-nums">{holders} holders through Rhozeland</span>
           </div>
-          <h1 className={`mt-4 tracking-tight leading-[1.02] max-w-3xl ${embedded ? "text-2xl md:text-3xl" : "text-4xl md:text-6xl"}`}>
-            {campaign?.headline ?? "We graduated. Now own a piece."}
-          </h1>
-          <p className={`mt-3 text-muted-foreground max-w-xl ${embedded ? "text-sm" : "text-lg"}`}>
-            Buy $RHOZE with a card at checkout. Every dollar also lands as Rhozeland credits — merch, studio time, app perks.
-          </p>
 
-          {/* Buy bar */}
-          <div className="mt-7 rounded-2xl border border-border bg-card p-4 md:p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              {AMOUNTS.map((a) => (
-                <button key={a} onClick={() => setAmount(a)}
-                  className={`rounded-full border px-4 py-2 text-sm tabular-nums transition ${
-                    amount === a ? "border-primary bg-primary text-primary-foreground" : "border-border hover:border-primary/50"
-                  }`}>${a.toLocaleString()}</button>
-              ))}
-              <div className="flex items-center gap-1 rounded-full border border-border px-3 py-1.5">
-                <span className="text-muted-foreground text-sm">$</span>
-                <input type="number" min={50} value={amount}
+          <div className="mt-4 grid md:grid-cols-[minmax(0,1fr)_260px] gap-4 items-end">
+            <div>
+              <Label className="text-xs">Amount (USD)</Label>
+              <div className="mt-1 flex items-center gap-2 rounded-xl border border-border px-3 py-2">
+                <span className="text-muted-foreground">$</span>
+                <input type="number" min={50} step={10} value={amount}
                   onChange={(e) => setAmount(Math.max(0, Number(e.target.value) || 0))}
-                  className="w-20 bg-transparent text-sm tabular-nums outline-none" />
+                  className="w-full bg-transparent text-2xl tabular-nums outline-none" />
+              </div>
+              <div className="mt-1 text-[11px] text-muted-foreground">
+                Minimum $50 · {Math.floor(amount * multFor(amount)).toLocaleString()} Rhozeland credits at {multFor(amount).toFixed(2)}×
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-              <div className="text-sm text-muted-foreground">
-                {pickTier(amount) !== "supporter" && (
-                  <span className="capitalize text-foreground">{pickTier(amount)} tier · </span>
-                )}
-                <span className="tabular-nums text-foreground">{Math.floor(amount * multFor(amount)).toLocaleString()}</span> credits at {multFor(amount).toFixed(2)}×
+            <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-1.5 text-sm">
+              <Row label="Investment" value={`$${money(amount)}`} />
+              <Row label="Service fee (7%)" value={`$${money(quote(amount).fee)}`} />
+              <Row label="HST (13% on fee)" value={`$${money(quote(amount).hst)}`} />
+              <div className="border-t border-border pt-1.5">
+                <Row label="Total due" value={`$${money(quote(amount).total)}`} bold />
               </div>
-              <Button size="lg" onClick={() => startBuy(amount)}>
-                <CreditCard className="w-4 h-4 mr-2" /> Checkout with Square
-              </Button>
             </div>
           </div>
+          <Button size="lg" className="mt-4 w-full md:w-auto" onClick={() => startBuy(amount)} disabled={amount < 50}>
+            <CreditCard className="w-4 h-4 mr-2" /> Checkout with Square
+          </Button>
         </section>
 
-        {/* Graduation explainer */}
-        <section className="grid md:grid-cols-3 gap-4">
-          <div className="md:col-span-1 rounded-2xl border border-border bg-card p-5">
-            <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Bonding curve</div>
-            <div className="mt-2 text-3xl tabular-nums">{targetSol} / {targetSol} SOL</div>
-            <div className="mt-3 h-2 rounded-full bg-muted overflow-hidden">
-              <div className="h-full w-full bg-primary" />
-            </div>
-            <div className="mt-2 text-xs text-primary">Complete · 100%</div>
-          </div>
-          <div className="md:col-span-2 rounded-2xl border border-border p-5 text-sm text-muted-foreground">
-            <div className="text-foreground text-sm font-medium mb-2">What graduating means</div>
-            <ul className="space-y-1.5">
-              <li className="flex gap-2"><Check className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />The launch curve filled, so liquidity moved to a real market pool.</li>
-              <li className="flex gap-2"><Check className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />$RHOZE now trades openly — price is set by the market, not a curve.</li>
-              <li className="flex gap-2"><Check className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />Buying here is simply buying in — no goal to hit, no deadline.</li>
-              <li className="flex gap-2"><Coins className="w-3.5 h-3.5 mt-0.5 text-primary shrink-0" />{holders} holders through Rhozeland so far.</li>
-            </ul>
-          </div>
-        </section>
-
-        {/* Tiers, compact */}
-        <section>
-          <div className="grid md:grid-cols-3 gap-3">
-            {TIERS.map((t) => (
-              <button key={t.slug} onClick={() => startBuy(Math.max(t.min, t.slug === pickTier(amount) ? amount : t.min))}
-                className={`text-left rounded-2xl border p-4 transition hover:border-primary/60 ${
-                  pickTier(amount) === t.slug ? "border-primary bg-primary/5" : "border-border bg-card"
-                }`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{t.label}</span>
-                  <span className="text-xs tabular-nums text-muted-foreground">${t.min.toLocaleString()}+</span>
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">{t.perk}</div>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {!embedded && <section><WalletPanel session={session} /></section>}
+        {/* Chart + market stats + on-chain activity */}
+        <section><WalletPanel session={session} /></section>
       </main>
 
       {!embedded && <footer className="border-t border-border">

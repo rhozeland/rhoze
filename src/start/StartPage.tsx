@@ -42,6 +42,18 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
   const [rhozeBalance, setRhozeBalance] = useState<number | null>(null);
   const guestToken = getGuestToken();
 
+  // Homepage shell deep-links into a workspace tab (#workspace/<tab>).
+  useEffect(() => {
+    const initial = (window as any).__rWorkspaceTab as StartTab | undefined;
+    if (initial) setTab(initial);
+    const onTab = (e: Event) => {
+      const next = (e as CustomEvent).detail as StartTab;
+      if (next) setTab(next);
+    };
+    window.addEventListener("rhoze:workspace-tab", onTab);
+    return () => window.removeEventListener("rhoze:workspace-tab", onTab);
+  }, []);
+
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
@@ -118,7 +130,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
                   { id: "build", label: "Build project", icon: PlusSquare },
                   { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
-                  { id: "community", label: "Community board", icon: Trophy },
+                  ...(embedded ? [] : [{ id: "community", label: "Community board", icon: Trophy } as const]),
                 ] as const).map((t) => (
                   <button key={t.id} onClick={() => setTab(t.id)}
                     className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm whitespace-nowrap transition border ${

@@ -3101,11 +3101,9 @@
     <!-- Secondary tab row: seamless inline section swap on click. -->
     <div class="nav-tabs" role="tablist" aria-label="Sections">
       <a class="nav-tab" href="/" data-inline-nav="__home"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></span><span>Home</span></a>
-      <a class="nav-tab" href="/about.html" data-inline-nav="about"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span><span>About</span></a>
-      <a class="nav-tab" href="/projects.html" data-inline-nav="work"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18 8.58 3.9a1 1 0 0 1 0 1.83l-8.58 3.91a2 2 0 0 1-1.66 0L2.59 7.91a1 1 0 0 1 0-1.83l8.58-3.9a2 2 0 0 1 1.66 0Z"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/></svg></span><span>Work</span></a>
-      
-      
-      <a class="nav-tab" href="#workspace" data-home-workspace id="navTabWorkspace"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span><span>Workspace</span></a>
+      <a class="nav-tab" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span><span>Dashboard</span></a>
+      <a class="nav-tab" href="#workspace/build" data-home-workspace data-ws-tab="build" id="navTabWorkspace"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg></span><span>Build a project</span></a>
+      <a class="nav-tab" href="#workspace/tokens" data-home-workspace data-ws-tab="tokens"><span class="nav-tab-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5A3.5 3.5 0 0 0 9 12a3.5 3.5 0 0 0 6 2.5"/></svg></span><span>$RHOZE</span></a>
     </div>
 
     <div id="mobileMenu" class="mobile-menu">
@@ -3120,14 +3118,18 @@
       </a>
     </div>
 
-    <main>
+    <main id="rMain">
       <section id="homepageWorkspace" class="homepage-workspace" hidden aria-label="Rhozeland workspace">
         <style>
           .homepage-workspace { min-height: calc(100vh - 132px); background: hsl(var(--surface-alt)); }
           .homepage-workspace[hidden] { display: none !important; }
           .homepage-workspace #homepage-workspace-root { min-height: inherit; }
-          body.workspace-active > main > *:not(#homepageWorkspace) { display: none !important; }
-          body.workspace-active > .footer { display: none !important; }
+          /* Hide every other page section while the workspace is open (the homepage
+             lives inside .page-shell, so a direct-child selector would miss it). */
+          body.workspace-active #rMain > *:not(#homepageWorkspace) { display: none !important; }
+          body.workspace-active .footer, body.workspace-active footer { display: none !important; }
+          body.workspace-active .r-start, body.workspace-active #engage,
+          body.workspace-active .page-shell > section:not(.navbar) { display: none !important; }
           body.workspace-active .gradient-canvas { display: none !important; }
           body.workspace-active { background: hsl(var(--surface-alt)); }
           body.workspace-active .page-shell { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }
@@ -3149,7 +3151,7 @@
           .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
           @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
-          body.r-inline-active main > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
+          body.r-inline-active #rMain > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
           /* Sections outside <main> that would otherwise bleed under the inline view. */
           body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }
@@ -3738,10 +3740,10 @@
             <div class="r-eco-issue-grid">
               <article class="r-eco-issue-main">
                 <div class="r-eco-kicker-row">
-                  <span class="r-eco-kicker">The Channel</span>
+                  <span class="r-eco-kicker">Rhozeland News</span>
                   <span class="r-eco-date" id="rEcoEpDate">New every Sunday · Toronto</span>
                 </div>
-                <h2 class="r-eco-title" id="homepage-title">This week on <em>Rhozeland.</em></h2>
+                <h2 class="r-eco-title" id="homepage-title">The newsroom of <em>Rhozeland.</em></h2>
                 <div class="r-eco-video">
                   <iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
                   <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Featured · Latest Episode</span></span>
@@ -3801,6 +3803,40 @@
                      <a class="r-eco-mini-lb-all" href="/leaderboard.html" data-inline-nav="leaderboard">Full board →</a>
                    </div>
                    <div id="rEcoMiniLb"><div class="r-eco-mini-lb-empty">Loading…</div></div>
+                 </div>
+                 <!-- Build CTA + quick-open rail: fills the side column and makes every
+                      destination (workspace tabs, about, work, board) reachable from home. -->
+                 <style>
+                   .r-eco-build { margin-top: 1rem; border-top: 1px solid hsl(var(--ink)); padding-top: 0.9rem; }
+                   .r-eco-build-t { font-size: 1.05rem; font-weight: 900; letter-spacing: -0.01em; color: hsl(var(--ink)); margin: 0 0 0.4rem; }
+                   .r-eco-build-list { list-style: none; margin: 0 0 0.75rem; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+                   .r-eco-build-list li { position: relative; padding-left: 0.85rem; font-size: 0.74rem; font-weight: 600; line-height: 1.4; color: hsl(var(--muted)); }
+                   .r-eco-build-list li::before { content: "—"; position: absolute; left: 0; color: hsl(var(--ink)); }
+                   .r-eco-build-cta { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; width: 100%; background: hsl(var(--ink)); color: hsl(var(--surface-card)); text-decoration: none; padding: 0.7rem 0.9rem; font-size: 0.72rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; }
+                   .r-eco-build-cta:hover { opacity: 0.88; }
+                   .r-eco-open { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: 0.75rem; }
+                   .r-eco-open a { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; border: 1px solid hsl(var(--line)); padding: 0.5rem 0.6rem; color: hsl(var(--ink)); text-decoration: none; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; }
+                   .r-eco-open a:hover { border-color: hsl(var(--ink)); background: hsl(var(--surface-alt)); }
+                 </style>
+                 <div class="r-eco-build">
+                   <p class="r-eco-build-t">Build a project with us</p>
+                   <ul class="r-eco-build-list">
+                     <li>We know your best angles</li>
+                     <li>We find beauty in the mundane</li>
+                     <li>We shoot and turn edits around fast</li>
+                     <li>iPhone-native, gear-agnostic</li>
+                     <li>On planes, trains, on foot, on set, at festivals</li>
+                     <li>Fluent in internet culture and trends</li>
+                   </ul>
+                   <a class="r-eco-build-cta" href="#workspace/build" data-home-workspace data-ws-tab="build">Start a project <span aria-hidden="true">→</span></a>
+                   <div class="r-eco-open">
+                     <a href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">Dashboard</a>
+                     <a href="#workspace/tokens" data-home-workspace data-ws-tab="tokens">$RHOZE</a>
+                     <a href="/leaderboard.html" data-inline-nav="leaderboard">Board</a>
+                     <a href="/about.html" data-inline-nav="about">About</a>
+                     <a href="/projects.html" data-inline-nav="work">Work</a>
+                     <a href="/contact.html" data-inline-nav="connect">Connect</a>
+                   </div>
                  </div>
               </aside>
             </div>
@@ -5039,23 +5075,32 @@
       }
       function wireInlineNav(){
         // Update the active tab in the secondary nav row.
-        function paintActive(routeKey){
+        function paintActive(routeKey, wsTab){
           try {
             document.querySelectorAll('.nav-tab').forEach(function(t){
-              var k = t.hasAttribute('data-home-workspace') ? 'workspace' : t.getAttribute('data-inline-nav');
-              if ((!routeKey && k === '__home') || k === routeKey) t.setAttribute('aria-current','page');
+              var isWs = t.hasAttribute('data-home-workspace');
+              var k = isWs ? 'workspace' : t.getAttribute('data-inline-nav');
+              var on = isWs
+                ? (routeKey === 'workspace' && t.getAttribute('data-ws-tab') === wsTab)
+                : ((!routeKey && k === '__home') || k === routeKey);
+              if (on) t.setAttribute('aria-current','page');
               else t.removeAttribute('aria-current');
             });
           } catch(e){}
         }
         window.__rPaintActive = paintActive;
-        function showWorkspace(pushHash){
+        var WS_TABS = ['dashboard','build','tokens','community'];
+        function showWorkspace(pushHash, wsTab){
+          var tab = WS_TABS.indexOf(wsTab) >= 0 ? wsTab : 'dashboard';
           closeInlineView({ replace: true });
           document.body.classList.add('workspace-active');
           var workspace = document.getElementById('homepageWorkspace');
           if (workspace) workspace.hidden = false;
-          paintActive('workspace');
-          if (pushHash && location.hash !== '#workspace') history.pushState(null, '', '#workspace');
+          paintActive('workspace', tab);
+          window.__rWorkspaceTab = tab;
+          try { window.dispatchEvent(new CustomEvent('rhoze:workspace-tab', { detail: tab })); } catch(e){}
+          var target = '#workspace/' + tab;
+          if (pushHash && location.hash !== target) history.pushState(null, '', target);
           window.scrollTo(0, 0);
         }
         function hideWorkspace(){
@@ -5072,9 +5117,10 @@
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
           // Only intercept in-page links (same origin, no ?query except hashless).
           var href = a.getAttribute('href') || '';
-          if (a.hasAttribute('data-home-workspace') || href === '#workspace') {
+          if (a.hasAttribute('data-home-workspace') || href.indexOf('#workspace') === 0) {
             e.preventDefault();
-            showWorkspace(true);
+            if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e3){} }
+            showWorkspace(true, a.getAttribute('data-ws-tab') || href.split('/')[1]);
             return;
           }
           // Explicit opt-in via data attribute wins.
@@ -5100,7 +5146,7 @@
         if (close) close.addEventListener('click', function(){ closeInlineView(); });
         window.addEventListener('popstate', function(){
           var h = (location.hash || '').replace('#', '');
-          if (h === 'workspace') showWorkspace(false);
+          if (h.indexOf('workspace') === 0) showWorkspace(false, h.split('/')[1]);
           else if (h && INLINE_ROUTES[h]) { hideWorkspace(); openInlineView(h, { replace: true }); paintActive(h); }
           else { hideWorkspace(); closeInlineView({ replace: true }); paintActive(null); }
         });
@@ -5117,7 +5163,9 @@
         loadSignedInHUD();
         wireSignOut();
       wireInlineNav();
-      if (location.hash === '#workspace' && window.__rShowWorkspace) window.__rShowWorkspace(false);
+      if ((location.hash || '').indexOf('#workspace') === 0 && window.__rShowWorkspace) {
+        window.__rShowWorkspace(false, (location.hash || '').split('/')[1]);
+      }
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);

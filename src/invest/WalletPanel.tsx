@@ -269,7 +269,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
               <span>Type</span><span className="text-right">Value</span><span className="text-right hidden sm:block">$RHOZE</span><span className="text-right">Trader</span><span className="text-right">Age</span>
             </div>
             <div className="max-h-[380px] overflow-y-auto divide-y divide-border">
-              {loadingTrades && <div className="px-3 py-6 text-xs text-muted-foreground flex items-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading on-chain trades…</div>}
+              {loadingTrades && filteredTrades.length === 0 && <div className="px-3 py-6 text-xs text-muted-foreground flex items-center gap-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading on-chain trades…</div>}
               {!loadingTrades && filteredTrades.length === 0 && <div className="px-3 py-6 text-xs text-muted-foreground">No trades match that filter.</div>}
               {loadingTrades && filteredTrades.length > 0 && (
                 <div className="px-3 py-1.5 text-[10px] text-muted-foreground flex items-center gap-1.5"><Loader2 className="w-3 h-3 animate-spin" /> loading more history…</div>

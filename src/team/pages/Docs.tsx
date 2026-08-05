@@ -1157,7 +1157,7 @@ export default function Docs() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={14} />
               <Input className="pl-9" placeholder="Search docs…" value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
-            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
+            <div className="inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-muted/40 p-1 shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {(
                 [
                   { id: "mine" as const, label: "My Documents", Icon: UserIcon },
@@ -1325,7 +1325,7 @@ export default function Docs() {
           ) : (
           <>
           {scope === "manage" && focusedUserId && (
-            <div className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1 shrink-0">
+            <div className="inline-flex max-w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-muted/40 p-1 shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {([
                 { id: "accessible" as const, label: "Accessible" },
                 { id: "uploaded" as const, label: "Uploaded by them" },

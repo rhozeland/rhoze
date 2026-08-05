@@ -27,6 +27,7 @@ export default function SubscribeSection({
 }: { session: Session | null; onNeedAuth: () => void }) {
   const [tiers, setTiers] = useState<Tier[] | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -45,19 +46,39 @@ export default function SubscribeSection({
     setSlug(s);
   };
 
+  const cheapest = (tiers ?? []).filter((t) => t.price_cents > 0)
+    .sort((a, b) => a.price_cents - b.price_cents)[0];
+
   return (
     <section id="subscribe" className="scroll-mt-16">
-      <div className="flex items-end justify-between mb-4">
-        <div>
-          <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Retainer</div>
-          <h2 className="text-2xl md:text-3xl tracking-tight mt-1 text-foreground">Subscribe & save on credits</h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-            Monthly credits refresh, priority queue, and $RHOZE loyalty yield on every dollar. Cancel anytime.
-          </p>
-        </div>
-      </div>
+      {!open && !slug && (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="w-full flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left hover:border-foreground/30 transition"
+        >
+          <Coins className="w-4 h-4 text-muted-foreground shrink-0" />
+          <span className="text-sm flex-1 min-w-0">
+            Shooting regularly? A retainer refreshes credits monthly and skips the queue
+            {cheapest && <span className="text-muted-foreground"> — from ${(cheapest.price_cents / 100).toFixed(0)}/mo CAD</span>}
+          </span>
+          <span className="text-xs underline underline-offset-4 shrink-0">See plans</span>
+        </button>
+      )}
 
-      {slug ? (
+      {(open || slug) && (
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Retainer</div>
+            <h2 className="text-xl md:text-2xl tracking-tight mt-1 text-foreground">Monthly credits, priority queue</h2>
+          </div>
+          <Button variant="ghost" size="sm" onClick={() => { setOpen(false); setSlug(null); }}>
+            <X className="w-3.5 h-3.5 mr-1" /> Hide
+          </Button>
+        </div>
+      )}
+
+      {!open && !slug ? null : slug ? (
         <div className="rounded-2xl border border-border bg-card p-4 md:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="text-xs text-muted-foreground">Complete checkout</div>
@@ -109,7 +130,7 @@ export default function SubscribeSection({
                 <div className="text-lg mt-1 text-foreground">{t.name}</div>
                 <div className="text-3xl mt-2 tabular-nums text-foreground">
                   ${(t.price_cents / 100).toFixed(0)}
-                  <span className="text-sm text-muted-foreground">/mo</span>
+                  <span className="text-sm text-muted-foreground">/mo CAD</span>
                 </div>
 
                 <div className="mt-4 rounded-xl bg-background/60 border border-border p-3">

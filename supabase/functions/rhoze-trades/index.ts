@@ -78,8 +78,79 @@ function parseTx(sig: string, blockTime: number, t: any, sol: number) {
   };
 }
 
+// ---- Helius Enhanced Transactions (fast, parsed) ----
+function heliusKey() { return Deno.env.get('HELIUS_API_KEY') ?? ''; }
+
+function parseEnhanced(tx: any, sol: number) {
+  const payer = tx?.feePayer;
+  if (!payer || !tx?.signature) return null;
+  let delta = 0;
+  for (const t of tx.tokenTransfers ?? []) {
+    if (t.mint !== MINT) continue;
+    const amt = Number(t.tokenAmount ?? 0) || 0;
+    if (t.toUserAccount === payer) delta += amt;
+    if (t.fromUserAccount === payer) delta -= amt;
+  }
+  if (!delta) return null;
+  let lam = 0;
+  for (const a of tx.accountData ?? []) {
+    if (a.account === payer) lam = Number(a.nativeBalanceChange ?? 0) || 0;
+  }
+  const solAmt = Math.abs((lam + (tx.fee ?? 0)) / 1e9);
+  if (solAmt < 0.000001) return null;
+  const tokens = Math.abs(delta);
+  const valueUsd = solAmt * sol;
+  return {
+    sig: tx.signature,
+    ts: new Date((tx.timestamp || 0) * 1000).toISOString(),
+    side: delta > 0 ? 'buy' : 'sell',
+    tokens,
+    sol: solAmt,
+    price_usd: tokens ? valueUsd / tokens : 0,
+    value_usd: valueUsd,
+    trader: payer,
+  };
+}
+
+async function heliusSync(mode: 'top' | 'backfill' | 'deep') {
+  const key = heliusKey();
+  if (!key) return null;
+  const sol = await solPriceUsd();
+  let before = '';
+  if (mode !== 'top') {
+    const { data } = await db.from('rhoze_onchain_trades').select('sig').order('ts', { ascending: true }).limit(1);
+    before = data?.[0]?.sig ?? '';
+  }
+  const pages = mode === 'deep' ? 25 : mode === 'backfill' ? 6 : 1;
+  let inserted = 0;
+  for (let p = 0; p < pages; p++) {
+    const u = new URL(`https://api.helius.xyz/v0/addresses/${MINT}/transactions`);
+    u.searchParams.set('api-key', key);
+    u.searchParams.set('limit', '100');
+    if (before) u.searchParams.set('before', before);
+    const r = await fetch(u.toString());
+    if (!r.ok) { console.error('helius', r.status, await r.text()); break; }
+    const txs = await r.json();
+    if (!Array.isArray(txs) || !txs.length) break;
+    before = txs[txs.length - 1]?.signature ?? '';
+    const rows = txs.map((t: any) => parseEnhanced(t, sol)).filter(Boolean);
+    if (rows.length) {
+      const { error } = await db.from('rhoze_onchain_trades').upsert(rows, { onConflict: 'sig' });
+      if (error) console.error('upsert', error.message);
+      else inserted += rows.length;
+    }
+    if (!before) break;
+    await sleep(60);
+  }
+  const { count } = await db.from('rhoze_onchain_trades').select('sig', { count: 'exact', head: true });
+  return { inserted, total: count ?? 0, source: 'helius' };
+}
+
 // Pull signatures newer than what we have (or page backwards when backfilling).
-async function sync(mode: 'top' | 'backfill') {
+async function sync(mode: 'top' | 'backfill' | 'deep') {
+  const viaHelius = await heliusSync(mode);
+  if (viaHelius) return viaHelius;
+  if (mode === 'deep') mode = 'backfill';
   const sol = await solPriceUsd();
   let before: string | undefined;
   if (mode === 'backfill') {

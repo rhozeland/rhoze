@@ -116,20 +116,29 @@ async function heliusSync(mode: 'top' | 'backfill' | 'deep') {
   const key = heliusKey();
   if (!key) return null;
   const sol = await solPriceUsd();
-  let before = '';
-  if (mode !== 'top') {
-    const { data } = await db.from('rhoze_onchain_trades').select('sig').order('ts', { ascending: true }).limit(1);
-    before = data?.[0]?.sig ?? '';
-  }
-  const pages = mode === 'deep' ? 25 : mode === 'backfill' ? 6 : 1;
+  const pages = mode === 'deep' ? 20 : mode === 'backfill' ? 6 : 1;
   let inserted = 0;
+
+  // Crawl the mint plus every live pool/pair address (pump.fun curve + AMM),
+  // since pump swaps don't always list the mint account.
+  const addresses = [MINT];
+  if (mode !== 'top') {
+    try {
+      const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${MINT}`);
+      const d = await r.json();
+      for (const p of d?.pairs ?? []) if (p?.pairAddress) addresses.push(p.pairAddress);
+    } catch { /* ignore */ }
+  }
+
+  for (const address of [...new Set(addresses)]) {
+  let before = '';
   for (let p = 0; p < pages; p++) {
-    const u = new URL(`https://api.helius.xyz/v0/addresses/${MINT}/transactions`);
+    const u = new URL(`https://api.helius.xyz/v0/addresses/${address}/transactions`);
     u.searchParams.set('api-key', key);
     u.searchParams.set('limit', '100');
     if (before) u.searchParams.set('before', before);
     const r = await fetch(u.toString());
-    if (!r.ok) { console.error('helius', r.status, await r.text()); break; }
+    if (!r.ok) { console.error('helius', address, r.status, await r.text()); break; }
     const txs = await r.json();
     if (!Array.isArray(txs) || !txs.length) break;
     before = txs[txs.length - 1]?.signature ?? '';
@@ -141,6 +150,7 @@ async function heliusSync(mode: 'top' | 'backfill' | 'deep') {
     }
     if (!before) break;
     await sleep(60);
+  }
   }
   const { count } = await db.from('rhoze_onchain_trades').select('sig', { count: 'exact', head: true });
   return { inserted, total: count ?? 0, source: 'helius' };

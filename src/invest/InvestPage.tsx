@@ -25,8 +25,15 @@ const TIERS: { slug: Tier; label: string; min: number; mult: number; perk: strin
   { slug: "core", label: "Core", min: 2000, mult: 1.4, perk: "+40% credits, named slot, governance weight" },
 ];
 
-const AMOUNTS = [50, 100, 250, 500, 1000, 2500];
 const LOCK_BONUS: Record<number, number> = { 0: 0, 3: 0.1, 6: 0.2, 12: 0.35 };
+const FEE_PCT = 0.07;   // Rhozeland handles the on-chain buy for you
+const HST_PCT = 0.13;   // HST applies to the service fee
+const money = (n: number) => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export function quote(amount: number) {
+  const fee = amount * FEE_PCT;
+  const hst = fee * HST_PCT;
+  return { fee, hst, total: amount + fee + hst };
+}
 
 const pickTier = (usd: number): Tier => (usd >= 2000 ? "core" : usd >= 500 ? "builder" : "supporter");
 const multFor = (usd: number) => TIERS.find((t) => t.slug === pickTier(usd))!.mult;

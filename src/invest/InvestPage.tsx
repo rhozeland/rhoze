@@ -141,11 +141,20 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
             </div>
             <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2 text-sm">
               <Row label="$RHOZE purchase" value={`$${money(amount)}`} />
+              <Row
+                label="You receive (est.)"
+                value={rhozeCad ? `≈ ${Math.floor(amount / rhozeCad).toLocaleString()} $RHOZE` : "—"}
+              />
               <Row label="Service fee (5%)" value={`$${money(quote(amount).fee)}`} />
               <Row label="HST (13%)" value={`$${money(quote(amount).hst)}`} />
               <div className="border-t border-border pt-2 mt-2">
                 <Row label="Total due" value={`$${money(quote(amount).total)}`} bold />
               </div>
+              {rhozeCad && (
+                <div className="text-[11px] text-muted-foreground pt-1">
+                  Live price ≈ ${rhozeCad.toFixed(8)} CAD / $RHOZE · final amount set at fill
+                </div>
+              )}
             </div>
           </div>
           <Button size="lg" className="mt-4 w-full" onClick={() => startBuy(amount)} disabled={amount < 20}>

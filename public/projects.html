@@ -592,16 +592,26 @@
 
   <script>
   (function() {
-    /* Services tab toggle */
-    var tabBtns = document.querySelectorAll('.services-tab-btn');
-    tabBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        tabBtns.forEach(function(b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        document.querySelectorAll('.services-tab-panel').forEach(function(p) { p.classList.remove('active'); });
-        document.querySelector('.services-tab-panel[data-panel="' + btn.getAttribute('data-tab') + '"]').classList.add('active');
+    /* Minimal services strip — chips double as category filters */
+    var SVC_LIST = {
+      portfolio: 'Photo · Video · Audio · Design · Web — every stage of the creative process',
+      visual: 'Photo shoots · Content editing · Commercial editing · Short-form editing · Music video editing',
+      audio: 'Audio recording · Mixing · Mastering · Podcast recording',
+      development: 'Graphic design · Design hour · Web development · UI/UX design · Strategy consult'
+    };
+    var svcChips = document.querySelectorAll('.svc-chip');
+    var svcCopy = document.getElementById('svcStripServices');
+    svcChips.forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var key = chip.getAttribute('data-svc');
+        svcChips.forEach(function(c) { c.classList.remove('is-active'); });
+        chip.classList.add('is-active');
+        if (svcCopy) svcCopy.textContent = SVC_LIST[key] || '';
+        var item = document.querySelector('.filter-dropdown-item[data-filter="' + key + '"]');
+        if (item) item.click();
       });
     });
+    if (svcCopy) svcCopy.textContent = SVC_LIST.portfolio;
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');

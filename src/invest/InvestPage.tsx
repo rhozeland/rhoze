@@ -139,19 +139,26 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
                 <span>{Math.floor(amount * multFor(amount)).toLocaleString()} credits · {multFor(amount).toFixed(2)}× rate</span>
               </div>
             </div>
-            <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2 text-sm">
-              <Row label="$RHOZE purchase" value={`$${money(amount)}`} />
-              <Row
-                label="You receive (est.)"
-                value={rhozeCad ? `≈ ${Math.floor(amount / rhozeCad).toLocaleString()} $RHOZE` : "—"}
-              />
-              <Row label="Service fee (5%)" value={`$${money(quote(amount).fee)}`} />
-              <Row label="HST (13%)" value={`$${money(quote(amount).hst)}`} />
+            <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col text-sm">
+              <div className="rounded-lg bg-background border border-border px-3 py-2.5">
+                <div className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">You receive (est.)</div>
+                <div className="mt-0.5 flex items-baseline gap-1.5">
+                  <span className="text-xl leading-none tabular-nums font-medium">
+                    {rhozeCad ? `≈ ${Math.floor(amount / rhozeCad).toLocaleString()}` : "—"}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">$RHOZE</span>
+                </div>
+              </div>
+              <div className="mt-3 space-y-1.5">
+                <Row label="$RHOZE purchase" value={`$${money(amount)}`} />
+                <Row label="Service fee (5%)" value={`$${money(quote(amount).fee)}`} />
+                <Row label="HST (13%)" value={`$${money(quote(amount).hst)}`} />
+              </div>
               <div className="border-t border-border pt-2 mt-2">
                 <Row label="Total due" value={`$${money(quote(amount).total)}`} bold />
               </div>
               {rhozeCad && (
-                <div className="text-[11px] text-muted-foreground pt-1">
+                <div className="text-[11px] leading-snug text-muted-foreground pt-2 mt-auto">
                   Live price ≈ ${rhozeCad.toFixed(8)} CAD / $RHOZE · final amount set at fill
                 </div>
               )}
@@ -292,9 +299,9 @@ function BuyDialog({
 
 function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
   return (
-    <div className="flex justify-between">
-      <span className="text-muted-foreground">{label}</span>
-      <span className={`tabular-nums ${bold ? "font-medium text-foreground" : ""}`}>{value}</span>
+    <div className="flex items-baseline justify-between gap-3">
+      <span className="text-muted-foreground whitespace-nowrap">{label}</span>
+      <span className={`tabular-nums text-right whitespace-nowrap ${bold ? "font-medium text-foreground" : ""}`}>{value}</span>
     </div>
   );
 }

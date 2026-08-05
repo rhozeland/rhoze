@@ -784,6 +784,7 @@ function MyTimesheetView(props: any) {
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
 
       {/* Actions */}

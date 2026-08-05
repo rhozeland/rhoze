@@ -108,7 +108,6 @@ export default function BuildWizard({
         kind: "custom",
         title: `${label} — new project`,
         proposed_project_title: `${label} — ${session.user.email?.split("@")[0] ?? "client"}`,
-        description: `${desc}\n\nGoals: ${goals}\nTimeline: ${timeline}\nBudget: ${budget}`,
         description: `${desc}\n\nGoals: ${goals}\nTimeline: ${timeline}\nBudget: ${budget}\nEstimate: ${totalCredits} credits ($${money(totalCad)} CAD)${applyRhoze && tokensForTotal ? ` · paying with ~${Math.round(tokensForTotal).toLocaleString()} $RHOZE` : ""}`,
         requested_credits: totalCredits,
         estimated_credits: totalCredits,

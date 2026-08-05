@@ -5041,7 +5041,7 @@
         function paintActive(routeKey){
           try {
             document.querySelectorAll('.nav-tab').forEach(function(t){
-              var k = t.getAttribute('data-inline-nav');
+              var k = t.hasAttribute('data-home-workspace') ? 'workspace' : t.getAttribute('data-inline-nav');
               if ((!routeKey && k === '__home') || k === routeKey) t.setAttribute('aria-current','page');
               else t.removeAttribute('aria-current');
             });
@@ -5089,6 +5089,7 @@
           var key = explicit || HREF_TO_ROUTE[href.replace(/\/$/, '')] || HREF_TO_ROUTE[href.split('?')[0].split('#')[0]];
           if (!key || !INLINE_ROUTES[key]) return;
           e.preventDefault();
+          hideWorkspace();
           // Close mobile nav drawer if present.
           if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e2){} }
           openInlineView(key);
@@ -5098,8 +5099,9 @@
         if (close) close.addEventListener('click', function(){ closeInlineView(); });
         window.addEventListener('popstate', function(){
           var h = (location.hash || '').replace('#', '');
-          if (h && INLINE_ROUTES[h]) { openInlineView(h, { replace: true }); paintActive(h); }
-          else { closeInlineView({ replace: true }); paintActive(null); }
+          if (h === 'workspace') showWorkspace(false);
+          else if (h && INLINE_ROUTES[h]) { hideWorkspace(); openInlineView(h, { replace: true }); paintActive(h); }
+          else { hideWorkspace(); closeInlineView({ replace: true }); paintActive(null); }
         });
         // On initial load, honor #hash routing.
         var h0 = (location.hash || '').replace('#', '');
@@ -5125,5 +5127,6 @@
       else start();
     })();
   </script>
+  <script type="module" src="/src/homepage-workspace-main.tsx"></script>
 </body>
 </html>

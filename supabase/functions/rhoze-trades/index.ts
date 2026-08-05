@@ -150,10 +150,14 @@ Deno.serve(async (req) => {
     const limit = Math.min(500, Math.max(10, parseInt(url.searchParams.get('limit') ?? '200') || 200));
     const mode = url.searchParams.get('mode') === 'backfill' ? 'backfill' : 'top';
 
+    // Never block the response on RPC work — sync in the background.
     let synced: any = null;
     if (mode === 'backfill' || Date.now() - lastSync > 60_000) {
       lastSync = Date.now();
-      synced = await sync(mode).catch((e) => ({ error: String(e?.message ?? e) }));
+      synced = { queued: mode };
+      const job = sync(mode).catch((e) => console.error('sync failed', e));
+      // @ts-ignore EdgeRuntime is available in Supabase edge functions
+      if (typeof EdgeRuntime !== 'undefined') EdgeRuntime.waitUntil(job);
     }
 
     const { data } = await db.from('rhoze_onchain_trades')

@@ -11,9 +11,11 @@ import logoWhite from "@/assets/logo-white.webp";
 import CopilotChat from "@/start/CopilotChat";
 import CopilotBrief from "@/start/CopilotBrief";
 import ClientDashboard from "@/start/ClientDashboard";
+import DashboardHome from "@/start/DashboardHome";
+import BuildWizard from "@/start/BuildWizard";
+import TokensPanel from "@/start/TokensPanel";
 import ConciergeForm from "@/start/ConciergeForm";
 import SubscribeSection from "@/start/SubscribeSection";
-import WalletSlot from "@/start/WalletSlot";
 import {
   type Conversation,
   type CopilotMessage,
@@ -25,10 +27,13 @@ import {
 } from "@/start/copilotClient";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowRight, Coins } from "lucide-react";
+import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, Map as MapIcon, PlusSquare } from "lucide-react";
+
+type StartTab = "dashboard" | "build" | "roadmap" | "tokens";
 
 export default function StartPage() {
   const [session, setSession] = useState<Session | null>(null);
+  const [tab, setTab] = useState<StartTab>("dashboard");
   const [convo, setConvo] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,37 +111,59 @@ export default function StartPage() {
       <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-10">
         {session ? (
           <>
-            {/* Signed-in: dashboard on top, quick strip, then subscribe */}
+            {/* Signed-in: everything lives in tabs */}
             <section>
-              <div className="grid md:grid-cols-[1fr_340px] gap-4 mb-4 items-start">
-                <div>
-                  <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-1">Your studio</div>
-                  <h1 className="text-2xl md:text-3xl tracking-tight">Welcome back.</h1>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Everything on your projects, plus a fresh brief or subscription anytime.
-                  </p>
-                </div>
-                <WalletSlot session={session} />
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+                {([
+                  { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
+                  { id: "build", label: "Build project", icon: PlusSquare },
+                  { id: "roadmap", label: "Project roadmap", icon: MapIcon },
+                  { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
+                ] as const).map((t) => (
+                  <button key={t.id} onClick={() => setTab(t.id)}
+                    className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm whitespace-nowrap transition border ${
+                      tab === t.id
+                        ? "bg-foreground text-background border-foreground"
+                        : "border-border text-muted-foreground hover:border-foreground/30"
+                    }`}>
+                    <t.icon className="w-4 h-4" />{t.label}
+                  </button>
+                ))}
               </div>
-              <ClientDashboard />
+
+              <div className="mt-4">
+                {tab === "dashboard" && (
+                  <DashboardHome
+                    session={session}
+                    onBuild={() => setTab("build")}
+                    onRoadmap={() => setTab("roadmap")}
+                    onTokens={() => setTab("tokens")}
+                  />
+                )}
+                {tab === "build" && <BuildWizard session={session} onDone={() => setTab("roadmap")} />}
+                {tab === "roadmap" && <ClientDashboard />}
+                {tab === "tokens" && <TokensPanel session={session} />}
+              </div>
             </section>
 
-            <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                <div>
-                  <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Start something new</div>
-                  <h2 className="text-lg mt-1">Brief a project or top up your plan</h2>
+            {tab === "dashboard" && (
+              <section className="rounded-2xl border border-border bg-card p-5 md:p-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div>
+                    <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Start something new</div>
+                    <h2 className="text-lg mt-1">Brief a project or top up your plan</h2>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setTab("build")}>
+                      New project <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    </Button>
+                    <Button onClick={() => scrollTo("subscribe")}>
+                      Manage subscription <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => scrollTo("concierge")}>
-                    New project brief <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </Button>
-                  <Button onClick={() => scrollTo("subscribe")}>
-                    Manage subscription <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </Button>
-                </div>
-              </div>
-            </section>
+              </section>
+            )}
           </>
         ) : (
           <section>
@@ -152,7 +179,8 @@ export default function StartPage() {
           </section>
         )}
 
-        {/* Concierge — form-first for guests, chat for unlocked or signed-in */}
+        {/* Concierge — guests only; signed-in users use the Build tab */}
+        {!session && (
         <section id="concierge" className="scroll-mt-16">
           <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
             Concierge · {conciergeUnlocked ? "live scoping" : "structured brief"}
@@ -183,6 +211,7 @@ export default function StartPage() {
             </div>
           )}
         </section>
+        )}
 
         <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
       </main>

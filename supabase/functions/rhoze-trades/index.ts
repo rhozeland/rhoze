@@ -124,9 +124,12 @@ async function heliusSync(mode: 'top' | 'backfill' | 'deep') {
   const addresses = [MINT];
   if (mode !== 'top') {
     try {
-      const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${MINT}`);
+      const r = await fetch(`https://api.geckoterminal.com/api/v2/networks/solana/tokens/${MINT}/pools`);
       const d = await r.json();
-      for (const p of d?.pairs ?? []) if (p?.pairAddress) addresses.push(p.pairAddress);
+      for (const p of d?.data ?? []) {
+        const a = p?.attributes?.address;
+        if (a) addresses.push(a);
+      }
     } catch { /* ignore */ }
   }
 

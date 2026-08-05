@@ -5028,6 +5028,19 @@
         try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
         return true;
       }
+
+      // Embedded pages are auto-sized, so a fixed-position dialog inside the iframe
+      // centers within the tall frame. Scroll the parent so it comes into view.
+      window.addEventListener('message', function(ev){
+        var d = ev && ev.data;
+        if (!d || d.type !== 'rhoze:dialog-open') return;
+        var frame = document.getElementById('rInlineFrame');
+        if (!frame) return;
+        var rect = frame.getBoundingClientRect();
+        var center = window.scrollY + rect.top + (rect.height / 2) - (window.innerHeight / 2);
+        try { window.scrollTo({ top: Math.max(0, center), behavior: 'smooth' }); }
+        catch(e) { window.scrollTo(0, Math.max(0, center)); }
+      });
       function closeInlineView(opts){
         var view = document.getElementById('rInlineView');
         if (!view) return;

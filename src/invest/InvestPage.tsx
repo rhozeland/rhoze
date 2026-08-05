@@ -12,7 +12,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowRight, Check, CheckCircle2, Coins, CreditCard, Sparkles } from "lucide-react";
+import { Check, CheckCircle2, Coins, CreditCard, Sparkles } from "lucide-react";
 import logoWhite from "@/assets/logo-white.webp";
 import WalletPanel from "./WalletPanel";
 
@@ -34,7 +34,6 @@ const multFor = (usd: number) => TIERS.find((t) => t.slug === pickTier(usd))!.mu
 export default function InvestPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
-  const [pledges, setPledges] = useState<any[]>([]);
   const [holders, setHolders] = useState(0);
   const [authOpen, setAuthOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
@@ -56,15 +55,16 @@ export default function InvestPage() {
       .in("status", ["confirmed", "settled", "fulfilled"]);
     setHolders(new Set((data ?? []).map((r: any) => r.user_id)).size);
   };
-  const loadPledges = async () => {
-    if (!session) { setPledges([]); return; }
-    const { data } = await supabase.from("investor_pledges").select("*")
-      .eq("user_id", session.user.id).order("created_at", { ascending: false });
-    setPledges(data ?? []);
-  };
-
   useEffect(() => { loadCampaign(); loadHolders(); }, []);
-  useEffect(() => { loadPledges(); }, [session?.user?.id]);
+
+  // When embedded in the homepage iframe (auto-sized to content), a fixed-position
+  // dialog centers inside the tall iframe viewport and lands off-screen. Ask the
+  // parent to scroll it into view whenever a dialog opens.
+  useEffect(() => {
+    if (!buyOpen && !authOpen) return;
+    if (window.parent === window) return;
+    try { window.parent.postMessage({ type: "rhoze:dialog-open" }, "*"); } catch { /* ignore */ }
+  }, [buyOpen, authOpen]);
 
   const targetSol = Number(campaign?.total_target_sol ?? 85);
   const graduated = campaign?.graduated !== false;
@@ -173,48 +173,6 @@ export default function InvestPage() {
           </div>
         </section>
 
-        {/* Your orders */}
-        {session && (
-          <section>
-            <div className="flex items-baseline justify-between mb-3">
-              <h2 className="text-xl tracking-tight">Your orders</h2>
-              <Button size="sm" variant="outline" onClick={() => setBuyOpen(true)}>
-                Buy more <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
-            </div>
-            {pledges.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                Nothing yet — your first buy shows up here with status and credits.
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-border overflow-x-auto">
-                <table className="w-full text-sm min-w-[520px]">
-                  <thead className="bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
-                    <tr>
-                      <th className="text-left px-4 py-2">Date</th>
-                      <th className="text-left px-4 py-2">Amount</th>
-                      <th className="text-left px-4 py-2">Tier</th>
-                      <th className="text-left px-4 py-2">Credits</th>
-                      <th className="text-left px-4 py-2">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pledges.map((p) => (
-                      <tr key={p.id} className="border-t border-border">
-                        <td className="px-4 py-2 text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-2 tabular-nums">${(p.amount_usd_cents / 100).toLocaleString()}</td>
-                        <td className="px-4 py-2 capitalize">{p.tier}</td>
-                        <td className="px-4 py-2 tabular-nums">{Number(p.credits_awarded).toLocaleString()}</td>
-                        <td className="px-4 py-2"><StatusPill status={p.status} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-        )}
-
         <section><WalletPanel session={session} /></section>
       </main>
 
@@ -231,23 +189,12 @@ export default function InvestPage() {
         initialAmount={amount}
         squareUrl={campaign?.square_checkout_url ?? null}
         session={session}
-        onCreated={() => { loadPledges(); loadHolders(); }}
+        onCreated={() => { loadHolders(); }}
       />
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen}
         onSignedIn={() => { setAuthOpen(false); setBuyOpen(true); }} />
     </div>
   );
-}
-
-function StatusPill({ status }: { status: string }) {
-  const map: Record<string, string> = {
-    pending: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
-    confirmed: "bg-blue-500/15 text-blue-700 dark:text-blue-400",
-    settled: "bg-purple-500/15 text-purple-700 dark:text-purple-400",
-    fulfilled: "bg-green-500/15 text-green-700 dark:text-green-400",
-    cancelled: "bg-muted text-muted-foreground",
-  };
-  return <span className={`px-2 py-0.5 rounded-full text-[11px] capitalize ${map[status] ?? "bg-muted"}`}>{status}</span>;
 }
 
 // ─── Buy dialog ───────────────────────────────────────────────────────────

@@ -4640,6 +4640,7 @@
       /* === $RHOZE live ticker + sparkline === */
       var POOL = 'C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF';
       var TOKEN = '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
+      var ACTIVE_POOL = POOL;
 
       function fmtPrice(n){
         if (n == null || !isFinite(n)) return '—';
@@ -4682,6 +4683,11 @@
             if (pairs.length) {
               pairs.sort(function(a,b){ return (b.liquidity && b.liquidity.usd || 0) - (a.liquidity && a.liquidity.usd || 0); });
               var p = pairs[0];
+              if (p.pairAddress) {
+                var changed = ACTIVE_POOL !== p.pairAddress;
+                ACTIVE_POOL = p.pairAddress;
+                if (changed) { try { loadSpark(); } catch (e) {} }
+              }
               paintTicker({
                 price: parseFloat(p.priceUsd),
                 change24h: p.priceChange && p.priceChange.h24 != null ? parseFloat(p.priceChange.h24) : null,
@@ -4707,7 +4713,7 @@
       }
 
       function loadSpark(){
-        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
+        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + ACTIVE_POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
         fetch(url, { cache:'no-store' })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){

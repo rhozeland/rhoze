@@ -2643,6 +2643,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      ensure_personal_project: { Args: { _user_id: string }; Returns: string }
       get_checkout_outcome: {
         Args: { _session_id: string }
         Returns: {
@@ -2685,6 +2686,21 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      purchase_rhoze_square: {
+        Args: {
+          _amount_usd_cents: number
+          _lock_months?: number
+          _notes?: string
+          _solana_wallet?: string
+          _square_order_ref?: string
+        }
+        Returns: {
+          credits_awarded: number
+          new_balance: number
+          pledge_id: string
+          project_id: string
+        }[]
       }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }

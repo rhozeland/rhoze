@@ -31,6 +31,11 @@ export function quote(amount: number) {
 const pickTier = (usd: number): Tier => (usd >= 2000 ? "core" : usd >= 500 ? "builder" : "supporter");
 const multFor = (usd: number) => TIERS.find((t) => t.slug === pickTier(usd))!.mult;
 
+// Live $RHOZE price (USD) from the graduated pool, converted to CAD.
+const RHOZE_POOL = "AjCpwQxLsW3SbueGUD2sKpGbbtUPNt64JPcSBJ2uuUiJ";
+const GT_POOL = `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RHOZE_POOL}`;
+const CAD_PER_USD = 1.37;
+
 export default function InvestPage({ embedded = false }: { embedded?: boolean } = {}) {
   const [session, setSession] = useState<Session | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
@@ -38,6 +43,17 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
   const [authOpen, setAuthOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
   const [amount, setAmount] = useState(250);
+  const [rhozeCad, setRhozeCad] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(GT_POOL)
+      .then((r) => r.json())
+      .then((j) => {
+        const p = Number(j?.data?.attributes?.base_token_price_usd);
+        if (p > 0) setRhozeCad(p * CAD_PER_USD);
+      })
+      .catch(() => { /* price optional */ });
+  }, []);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));

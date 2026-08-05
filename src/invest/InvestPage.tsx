@@ -184,9 +184,8 @@ function BuyDialog({
   const isSquare: boolean = payment === "square";
   const base = multFor(amount);
   const totalMult = Number((base + (LOCK_BONUS[lockMonths] ?? 0)).toFixed(2));
-  const fee = Math.round(amount * 0.07);
   const credits = Math.floor(amount * totalMult);
-  const total = amount + fee;
+  const q = quote(amount);
 
   const submit = async () => {
     if (!session) return;
@@ -318,9 +317,10 @@ function BuyDialog({
                 <Textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional" />
               </div>
               <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-1.5 text-sm">
-                <Row label="Buy amount" value={`$${amount.toLocaleString()}`} />
-                <Row label="Service fee (7%)" value={`$${fee.toLocaleString()}`} />
-                <Row label="Total" value={`$${total.toLocaleString()}`} bold />
+                <Row label="Investment" value={`$${money(amount)}`} />
+                <Row label="Service fee (7%)" value={`$${money(q.fee)}`} />
+                <Row label="HST (13% on fee)" value={`$${money(q.hst)}`} />
+                <Row label="Total due" value={`$${money(q.total)}`} bold />
                 <Row label={`Credits (${totalMult.toFixed(2)}×)`} value={`${credits.toLocaleString()}`} />
               </div>
               <Button className="w-full" disabled={busy} onClick={submit}>

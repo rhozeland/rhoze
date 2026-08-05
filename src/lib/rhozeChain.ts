@@ -118,7 +118,10 @@ export async function fetchRhozeTrades(opts: {
   try {
     const base = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/rhoze-trades`;
     const r = await fetch(`${base}?limit=500&bucket=3600`, {
-      headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
+      headers: {
+        apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
     });
     if (r.ok) {
       const j = await r.json();

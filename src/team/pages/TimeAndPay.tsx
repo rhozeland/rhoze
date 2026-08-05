@@ -741,7 +741,8 @@ function MyTimesheetView(props: any) {
         <div className="px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground bg-muted/40 border-b border-border">
           Pay breakdown
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[420px]">
           <thead className="text-[11px] uppercase tracking-wider text-muted-foreground bg-muted/20">
             <tr>
               <th className="text-left px-4 py-2 font-medium">Category</th>
@@ -783,6 +784,7 @@ function MyTimesheetView(props: any) {
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
 
       {/* Actions */}

@@ -145,7 +145,7 @@ export default function Projects() {
           <Link
             key={p.id}
             to={`/projects/${p.id}`}
-            className="border border-border rounded-lg p-4 bg-card hover:border-primary/40 transition-colors flex items-center justify-between gap-3"
+            className="border border-border rounded-lg p-4 bg-card hover:border-primary/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
           >
             <div className="flex items-center gap-3 min-w-0">
               <FolderOpen size={18} className="text-muted-foreground shrink-0" />
@@ -154,10 +154,10 @@ export default function Projects() {
                 <div className="text-xs text-muted-foreground truncate">{p.client_name} · {p.status}</div>
               </div>
             </div>
-            <div className="flex items-center gap-4 shrink-0">
-              <div className="text-right">
+            <div className="flex items-center gap-3 sm:gap-4 shrink-0 flex-wrap">
+              <div className="text-left sm:text-right">
                 <div className="text-xs text-muted-foreground">Balance</div>
-                <div className="text-sm font-medium">{formatCents(p.dollar_balance_cents)} · {p.credit_balance} cr</div>
+                <div className="text-sm font-medium whitespace-nowrap">{formatCents(p.dollar_balance_cents)} · {p.credit_balance} cr</div>
               </div>
               {p.project_code && (
                 <button

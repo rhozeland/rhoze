@@ -224,14 +224,14 @@ export default function CRM() {
             Square clients & Instagram leads — one workspace, edited in place.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-auto">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search name, handle, topic…"
-              className="pl-9 w-72"
+              className="pl-9 w-full sm:w-72"
             />
           </div>
           <Button size="sm" variant="ghost" onClick={() => setShowStats((s) => !s)} title="Toggle stats">

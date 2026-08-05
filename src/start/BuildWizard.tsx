@@ -198,14 +198,54 @@ export default function BuildWizard({
               {lines.map((l) => (
                 <div key={l.name} className="flex justify-between py-2.5 text-sm">
                   <span className="flex gap-2"><Check className="w-4 h-4 text-muted-foreground shrink-0" />{l.name}</span>
-                  <span className="tabular-nums text-muted-foreground">{l.credits} $RHOZE</span>
+                  <span className="tabular-nums text-muted-foreground">
+                    {l.credits} {l.credits === 1 ? "credit" : "credits"}
+                    <span className="ml-2 text-xs opacity-70">${money(l.credits * CAD_PER_CREDIT)}</span>
+                  </span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 rounded-xl bg-muted/40 p-4 flex items-end justify-between">
-              <div><div className="text-xs text-muted-foreground">Total estimated</div>
-                <div className="text-2xl tabular-nums">{total.toLocaleString()} $RHOZE</div></div>
+            <div className="mt-4 rounded-xl bg-muted/40 p-4 flex items-end justify-between gap-4">
+              <div>
+                <div className="text-xs text-muted-foreground">Total estimated</div>
+                <div className="text-2xl tabular-nums">{totalCredits.toLocaleString()} credits</div>
+                <div className="text-sm text-muted-foreground tabular-nums">${money(totalCad)} CAD · 1 credit = ${CAD_PER_CREDIT}</div>
+              </div>
               <div className="text-xs text-muted-foreground text-right">Confirmed by the team<br />before any spend</div>
+            </div>
+
+            <div className="mt-3 rounded-xl border border-border p-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1 accent-foreground"
+                  checked={applyRhoze}
+                  onChange={(e) => setApplyRhoze(e.target.checked)}
+                  disabled={!tokensPerCredit}
+                />
+                <span className="text-sm">
+                  Pay with $RHOZE
+                  <span className="block text-xs text-muted-foreground mt-0.5">
+                    {tokensPerCredit
+                      ? <>Live price ${rhozeUsd!.toFixed(6)} USD · 1 credit ≈ {Math.round(tokensPerCredit).toLocaleString()} $RHOZE</>
+                      : "Fetching live $RHOZE price…"}
+                  </span>
+                </span>
+              </label>
+              {applyRhoze && tokensForTotal && (
+                <div className="mt-3 flex items-end justify-between border-t border-border pt-3">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Token cost for this project</div>
+                    <div className="text-lg tabular-nums">{Math.round(tokensForTotal).toLocaleString()} $RHOZE</div>
+                  </div>
+                  <div className="text-xs text-muted-foreground text-right">
+                    Covers {totalCredits} credits<br />(${money(totalCad)} CAD)
+                  </div>
+                </div>
+              )}
+              <p className="mt-3 text-xs text-muted-foreground">
+                Hold less than the full amount? Any $RHOZE you send is applied at market value against the CAD total — partial credits round down, the rest is invoiced in CAD.
+              </p>
             </div>
             <div className="mt-5 flex gap-2">
               <Button variant="outline" onClick={() => setStep(1)}>← Back</Button>

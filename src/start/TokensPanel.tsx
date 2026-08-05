@@ -66,7 +66,7 @@ export default function TokensPanel({ session }: { session: Session }) {
       <WalletSlot session={session} />
 
       {/* Buying / investing lives here now — no separate Invest page. */}
-      <section id="rhoze-buy" className="rounded-2xl border border-border bg-card p-5 md:p-6">
+      <section id="rhoze-buy">
         <InvestPage embedded />
       </section>
 

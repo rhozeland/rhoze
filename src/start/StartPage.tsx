@@ -27,9 +27,9 @@ import {
 } from "@/start/copilotClient";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, Map as MapIcon, PlusSquare } from "lucide-react";
+import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, Map as MapIcon, PlusSquare, Trophy } from "lucide-react";
 
-type StartTab = "dashboard" | "build" | "roadmap" | "tokens";
+type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community";
 
 export default function StartPage() {
   const [session, setSession] = useState<Session | null>(null);
@@ -119,6 +119,7 @@ export default function StartPage() {
                   { id: "build", label: "Build project", icon: PlusSquare },
                   { id: "roadmap", label: "Project roadmap", icon: MapIcon },
                   { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
+                  { id: "community", label: "Community board", icon: Trophy },
                 ] as const).map((t) => (
                   <button key={t.id} onClick={() => setTab(t.id)}
                     className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm whitespace-nowrap transition border ${
@@ -143,6 +144,17 @@ export default function StartPage() {
                 {tab === "build" && <BuildWizard session={session} onDone={() => setTab("roadmap")} />}
                 {tab === "roadmap" && <ClientDashboard />}
                 {tab === "tokens" && <TokensPanel session={session} />}
+                {tab === "community" && (
+                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                    <iframe
+                      src="/leaderboard.html"
+                      title="Community leaderboard"
+                      className="w-full block"
+                      style={{ height: "min(1400px, 160vh)", border: 0 }}
+                      loading="lazy"
+                    />
+                  </div>
+                )}
               </div>
             </section>
 

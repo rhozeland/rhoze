@@ -64,6 +64,20 @@ export default function BuildWizard({
   const [budget, setBudget] = useState("Flexible");
   const [busy, setBusy] = useState(false);
   const [ref, setRef] = useState<string | null>(null);
+  const [rhozeUsd, setRhozeUsd] = useState<number | null>(null);
+  const [applyRhoze, setApplyRhoze] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    fetch(GT_POOL)
+      .then((r) => r.json())
+      .then((j) => {
+        const p = Number(j?.data?.attributes?.base_token_price_usd);
+        if (alive && Number.isFinite(p) && p > 0) setRhozeUsd(p);
+      })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   const pick = (slug: string) => {
     setType(slug);
@@ -72,8 +86,14 @@ export default function BuildWizard({
   };
 
   const lines = type ? LINES(type) : [];
-  const total = lines.reduce((a, l) => a + l.credits, 0);
+  const totalCredits = lines.reduce((a, l) => a + l.credits, 0);
+  const totalCad = totalCredits * CAD_PER_CREDIT;
   const label = TYPES.find((t) => t.slug === type)?.label ?? "";
+
+  // $RHOZE conversion: live market price → how many tokens equal 1 credit ($75 CAD)
+  const rhozeCad = rhozeUsd != null ? rhozeUsd * CAD_PER_USD : null;
+  const tokensPerCredit = rhozeCad ? CAD_PER_CREDIT / rhozeCad : null;
+  const tokensForTotal = tokensPerCredit ? tokensPerCredit * totalCredits : null;
 
   const confirm = async () => {
     if (!type) return;
@@ -89,8 +109,9 @@ export default function BuildWizard({
         title: `${label} — new project`,
         proposed_project_title: `${label} — ${session.user.email?.split("@")[0] ?? "client"}`,
         description: `${desc}\n\nGoals: ${goals}\nTimeline: ${timeline}\nBudget: ${budget}`,
-        requested_credits: total,
-        estimated_credits: total,
+        description: `${desc}\n\nGoals: ${goals}\nTimeline: ${timeline}\nBudget: ${budget}\nEstimate: ${totalCredits} credits ($${money(totalCad)} CAD)${applyRhoze && tokensForTotal ? ` · paying with ~${Math.round(tokensForTotal).toLocaleString()} $RHOZE` : ""}`,
+        requested_credits: totalCredits,
+        estimated_credits: totalCredits,
       }).select("id").maybeSingle();
       if (error) throw error;
       setRef(String(data?.id ?? "").slice(0, 8).toUpperCase());

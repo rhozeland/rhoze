@@ -674,7 +674,12 @@
           state.rows = state.rows.length ? state.rows : getCachedRows();
           renderLeaderboard();
         });
-        rest("community_avatars?select=handle_key,avatar_url&limit=1000").then(function (avs) {
+        fetch(SUPABASE_URL + "/rest/v1/rpc/community_avatar_list", {
+          method: "POST",
+          headers: Object.assign({ Accept: "application/json", "Content-Type": "application/json" }, headers),
+          body: "{}",
+          cache: "no-store",
+        }).then(function (r) { return r.ok ? r.json() : []; }).then(function (avs) {
           if (!Array.isArray(avs)) return;
           var m = {};
           avs.forEach(function (a) { if (a && a.handle_key && a.avatar_url) m[a.handle_key] = a.avatar_url; });

@@ -2617,6 +2617,13 @@ export type Database = {
       }
       archive_expired_projects: { Args: never; Returns: number }
       can_edit_community: { Args: { _uid: string }; Returns: boolean }
+      community_avatar_list: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          handle_key: string
+        }[]
+      }
       community_reset_weekly: { Args: never; Returns: number }
       community_reset_weekly_points: { Args: never; Returns: undefined }
       community_submission_approve: {

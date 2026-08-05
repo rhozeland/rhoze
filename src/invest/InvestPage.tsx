@@ -116,7 +116,8 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
                 <Calculator className="h-3.5 w-3.5" /> Purchase calculator
               </div>
               <p className="mt-1 text-sm text-muted-foreground max-w-md">
-                Enter any amount. Your handling fee and HST are calculated instantly.
+                Concierge buying — you pay in CAD, we place the on-chain buy for you and airdrop
+                the $RHOZE to your wallet. No exchange, no seed phrase.
               </p>
             </div>
             <span className="text-[11px] text-muted-foreground tabular-nums">{holders} holders through Rhozeland</span>
@@ -164,6 +165,17 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
               )}
             </div>
           </div>
+          <ol className="mt-4 grid sm:grid-cols-3 gap-2 text-[11px] text-muted-foreground">
+            <li className="rounded-lg border border-border bg-muted/20 px-3 py-2">
+              <span className="text-foreground">1 · You pay</span> — checkout in CAD with Square.
+            </li>
+            <li className="rounded-lg border border-border bg-muted/20 px-3 py-2">
+              <span className="text-foreground">2 · We buy on-chain</span> — our desk executes the swap for you, usually within 24h.
+            </li>
+            <li className="rounded-lg border border-border bg-muted/20 px-3 py-2">
+              <span className="text-foreground">3 · We airdrop</span> — tokens land in your wallet; the chart only moves once we fill.
+            </li>
+          </ol>
           <Button size="lg" className="mt-4 w-full" onClick={() => startBuy(amount)} disabled={amount < 20}>
             <CreditCard className="w-4 h-4 mr-2" /> Pay ${money(quote(amount).total)} CAD with Square
           </Button>
@@ -276,7 +288,9 @@ function BuyDialog({
           <>
             <DialogHeader>
               <DialogTitle>Buy $RHOZE</DialogTitle>
-              <DialogDescription>Review the calculated total, then continue to Square.</DialogDescription>
+              <DialogDescription>
+                We buy on-chain on your behalf and airdrop the tokens to you. Review the total, then continue to Square.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-1.5 text-sm">
@@ -289,6 +303,9 @@ function BuyDialog({
               <Button className="w-full" disabled={busy} onClick={submit}>
                 {busy ? "Preparing checkout…" : `Continue to Square · $${money(q.total)} CAD`}
               </Button>
+              <p className="text-[11px] text-muted-foreground text-center">
+                Your order is filled manually by our desk (typically within 24h), so it won't show on the live chart until we execute it.
+              </p>
             </div>
           </>
         )}

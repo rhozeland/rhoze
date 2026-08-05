@@ -129,8 +129,8 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
                   {([
                     { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
-                    { id: "build", label: "Build project", icon: PlusSquare },
-                    { id: "tokens", label: "$RHOZE", icon: CoinsIcon },
+                    { id: "build", label: "Build", icon: PlusSquare },
+                    { id: "tokens", label: "Invest", icon: CoinsIcon },
                     { id: "community", label: "Community board", icon: Trophy },
                   ] as const).map((t) => (
                     <button key={t.id} onClick={() => setTab(t.id)}
@@ -159,7 +159,12 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     <ClientDashboard />
                   </div>
                 )}
-                {tab === "build" && <BuildWizard session={session} onDone={() => setTab("dashboard")} />}
+                {tab === "build" && (
+                  <div className="space-y-4">
+                    <BuildWizard session={session} onDone={() => setTab("dashboard")} />
+                    <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
+                  </div>
+                )}
                 {tab === "tokens" && <TokensPanel session={session} />}
                 {tab === "community" && (
                   <div className="rounded-2xl border border-border bg-card overflow-hidden">
@@ -242,7 +247,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
         </section>
         )}
 
-        <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
+        {!session && <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />}
       </main>
 
       <ContinueDialog

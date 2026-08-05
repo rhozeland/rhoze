@@ -264,8 +264,9 @@ function BuyDialog({
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<{ ref: string } | null>(null);
+  const [credited, setCredited] = useState<{ credits: number; balance: number } | null>(null);
 
-  useEffect(() => { if (open) { setAmount(initialAmount); setDone(null); } }, [open, initialAmount]);
+  useEffect(() => { if (open) { setAmount(initialAmount); setDone(null); setCredited(null); } }, [open, initialAmount]);
 
   const base = multFor(amount);
   const totalMult = Number((base + (LOCK_BONUS[lockMonths] ?? 0)).toFixed(2));
@@ -278,6 +279,25 @@ function BuyDialog({
     if (amount < 50) { toast({ title: "Minimum is $50" }); return; }
     setBusy(true);
     try {
+      if (payment === "square") {
+        const { data, error } = await (supabase.rpc as any)("purchase_rhoze_square", {
+          _amount_usd_cents: amount * 100,
+          _lock_months: lockMonths,
+          _solana_wallet: wallet.trim() || undefined,
+          _notes: notes.trim() || undefined,
+        });
+        if (error) throw error;
+        const row = Array.isArray(data) ? data[0] : data;
+        if (row?.pledge_id) {
+          supabase.functions.invoke("notify-new-pledge", { body: { pledgeId: row.pledge_id } })
+            .catch((e) => console.warn("notify-new-pledge failed", e));
+        }
+        setCredited({ credits: Number(row?.credits_awarded ?? 0), balance: Number(row?.new_balance ?? 0) });
+        setDone({ ref: String(row?.pledge_id ?? "").slice(0, 8).toUpperCase() });
+        onCreated();
+        if (squareUrl) window.open(squareUrl, "_blank", "noopener");
+        return;
+      }
       const { data: pledgeId, error } = await supabase.rpc("create_investor_pledge", {
         _amount_usd_cents: amount * 100,
         _lock_months: lockMonths,
@@ -311,12 +331,21 @@ function BuyDialog({
             </div>
             <DialogTitle className="mt-4">You're in the cohort</DialogTitle>
             <DialogDescription className="mt-1">
-              Order <span className="font-mono">#{done.ref}</span> — {credits.toLocaleString()} credits pending.
+              Order <span className="font-mono">#{done.ref}</span> —{" "}
+              {credited
+                ? `${credited.credits.toLocaleString()} credits added to your account.`
+                : `${credits.toLocaleString()} credits pending.`}
             </DialogDescription>
+            {credited && (
+              <div className="mt-3 rounded-xl border border-border bg-muted/30 p-3">
+                <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">New balance</div>
+                <div className="mt-1 text-2xl tabular-nums">{credited.balance.toLocaleString()} $RHOZE</div>
+              </div>
+            )}
             {payment === "square" && (
               <p className="mt-3 text-xs text-muted-foreground">
                 {squareUrl
-                  ? "Square checkout opened in a new tab. Finish payment and your credits unlock automatically."
+                  ? "Square checkout opened in a new tab — finish the card payment to complete your order."
                   : "We'll send your Square payment link by email within 24h."}
               </p>
             )}

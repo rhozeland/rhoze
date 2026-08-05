@@ -1,5 +1,5 @@
 // Build Project tab — 4-step wizard. Pre-filled, no AI credits consumed.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,19 @@ import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
 import { Camera, Check, Megaphone, Music, Palette, Sparkles, Video } from "lucide-react";
 
+// Pricing model: everything is quoted in CREDITS. 1 credit = $75 CAD.
+const CAD_PER_CREDIT = 75;
+const CAD_PER_USD = 1.37; // fallback FX for converting the live USD token price
+const RHOZE_POOL = "AjCpwQxLsW3SbueGUD2sKpGbbtUPNt64JPcSBJ2uuUiJ";
+const GT_POOL = `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RHOZE_POOL}`;
+
 const TYPES = [
-  { slug: "video", label: "Video Production", hint: "Promo, short film, reels", icon: Video, base: 600 },
-  { slug: "photo", label: "Photography", hint: "Brand, product, portrait", icon: Camera, base: 400 },
-  { slug: "design", label: "Design", hint: "Identity, UI, print", icon: Palette, base: 500 },
-  { slug: "music", label: "Music Production", hint: "Beats, mixing, mastering", icon: Music, base: 450 },
-  { slug: "marketing", label: "Marketing", hint: "Strategy, content, ads", icon: Megaphone, base: 350 },
+  // base = credits (1 credit = $75 CAD)
+  { slug: "video", label: "Video Production", hint: "Promo, short film, reels", icon: Video, base: 40 },
+  { slug: "photo", label: "Photography", hint: "Brand, product, portrait", icon: Camera, base: 16 },
+  { slug: "design", label: "Design", hint: "Identity, UI, print", icon: Palette, base: 20 },
+  { slug: "music", label: "Music Production", hint: "Beats, mixing, mastering", icon: Music, base: 18 },
+  { slug: "marketing", label: "Marketing", hint: "Strategy, content, ads", icon: Megaphone, base: 12 },
 ];
 
 const PREFILL: Record<string, { desc: string; goals: string }> = {
@@ -27,12 +34,18 @@ const PREFILL: Record<string, { desc: string; goals: string }> = {
 
 const LINES = (slug: string) => {
   const t = TYPES.find((x) => x.slug === slug)!;
+  const core = Math.max(1, Math.round(t.base * 0.55));
+  const kit = Math.max(1, Math.round(t.base * 0.3));
+  const direction = Math.max(1, t.base - core - kit);
   return [
-    { name: `${t.label} — core deliverable`, credits: Math.round(t.base * 0.55) },
-    { name: "Social cutdowns / asset kit", credits: Math.round(t.base * 0.3) },
-    { name: "Direction + consultation session", credits: Math.round(t.base * 0.15) },
+    { name: `${t.label} — core deliverable`, credits: core },
+    { name: "Social cutdowns / asset kit", credits: kit },
+    { name: "Direction + consultation session", credits: direction },
   ];
 };
+
+const money = (n: number) =>
+  n.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function BuildWizard({
   session,

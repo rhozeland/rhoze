@@ -129,7 +129,7 @@ export default function WalletPanel({ session }: { session: Session | null }) {
             <a href={data.solscan} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-foreground underline underline-offset-4">
               Solscan <ExternalLink className="w-3 h-3" />
             </a>
-            <a href={data.market.pairUrl} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
+            <a href="https://birdeye.so/token/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF?chain=solana" target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground">
               Birdeye <ExternalLink className="w-3 h-3" />
             </a>
             {session && (

@@ -5041,23 +5041,32 @@
       }
       function wireInlineNav(){
         // Update the active tab in the secondary nav row.
-        function paintActive(routeKey){
+        function paintActive(routeKey, wsTab){
           try {
             document.querySelectorAll('.nav-tab').forEach(function(t){
-              var k = t.hasAttribute('data-home-workspace') ? 'workspace' : t.getAttribute('data-inline-nav');
-              if ((!routeKey && k === '__home') || k === routeKey) t.setAttribute('aria-current','page');
+              var isWs = t.hasAttribute('data-home-workspace');
+              var k = isWs ? 'workspace' : t.getAttribute('data-inline-nav');
+              var on = isWs
+                ? (routeKey === 'workspace' && t.getAttribute('data-ws-tab') === wsTab)
+                : ((!routeKey && k === '__home') || k === routeKey);
+              if (on) t.setAttribute('aria-current','page');
               else t.removeAttribute('aria-current');
             });
           } catch(e){}
         }
         window.__rPaintActive = paintActive;
-        function showWorkspace(pushHash){
+        var WS_TABS = ['dashboard','build','tokens','community'];
+        function showWorkspace(pushHash, wsTab){
+          var tab = WS_TABS.indexOf(wsTab) >= 0 ? wsTab : 'dashboard';
           closeInlineView({ replace: true });
           document.body.classList.add('workspace-active');
           var workspace = document.getElementById('homepageWorkspace');
           if (workspace) workspace.hidden = false;
-          paintActive('workspace');
-          if (pushHash && location.hash !== '#workspace') history.pushState(null, '', '#workspace');
+          paintActive('workspace', tab);
+          window.__rWorkspaceTab = tab;
+          try { window.dispatchEvent(new CustomEvent('rhoze:workspace-tab', { detail: tab })); } catch(e){}
+          var target = '#workspace/' + tab;
+          if (pushHash && location.hash !== target) history.pushState(null, '', target);
           window.scrollTo(0, 0);
         }
         function hideWorkspace(){
@@ -5074,9 +5083,10 @@
           if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
           // Only intercept in-page links (same origin, no ?query except hashless).
           var href = a.getAttribute('href') || '';
-          if (a.hasAttribute('data-home-workspace') || href === '#workspace') {
+          if (a.hasAttribute('data-home-workspace') || href.indexOf('#workspace') === 0) {
             e.preventDefault();
-            showWorkspace(true);
+            if (typeof closeMenu === 'function') { try { closeMenu(); } catch(e3){} }
+            showWorkspace(true, a.getAttribute('data-ws-tab') || href.split('/')[1]);
             return;
           }
           // Explicit opt-in via data attribute wins.
@@ -5102,7 +5112,7 @@
         if (close) close.addEventListener('click', function(){ closeInlineView(); });
         window.addEventListener('popstate', function(){
           var h = (location.hash || '').replace('#', '');
-          if (h === 'workspace') showWorkspace(false);
+          if (h.indexOf('workspace') === 0) showWorkspace(false, h.split('/')[1]);
           else if (h && INLINE_ROUTES[h]) { hideWorkspace(); openInlineView(h, { replace: true }); paintActive(h); }
           else { hideWorkspace(); closeInlineView({ replace: true }); paintActive(null); }
         });
@@ -5119,7 +5129,9 @@
         loadSignedInHUD();
         wireSignOut();
       wireInlineNav();
-      if (location.hash === '#workspace' && window.__rShowWorkspace) window.__rShowWorkspace(false);
+      if ((location.hash || '').indexOf('#workspace') === 0 && window.__rShowWorkspace) {
+        window.__rShowWorkspace(false, (location.hash || '').split('/')[1]);
+      }
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);

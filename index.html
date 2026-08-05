@@ -3730,8 +3730,17 @@
           .r-home-utility .is-token { background: #e8f6ed; }
           .r-home-utility .is-about { background: #fff5d1; }
           .r-home-utility .is-connect { background: #fbe6e3; }
+          /* Level the two columns — no dead space under featured work */
+          .r-home-dashboard { align-items: stretch; }
+          .r-home-main > #rHomeFeatSlot { flex: 1 1 auto; display: flex; min-height: 0; }
+          .r-home-main > #rHomeFeatSlot > .r-eco-feat--standalone { flex: 1; display: flex; flex-direction: column; margin-top: 0; }
+          .r-home-main > #rHomeFeatSlot .r-eco-feat-viewport { flex: 1 1 auto; display: flex; align-items: stretch; min-height: 240px; padding-top: 2rem; }
+          .r-home-main > #rHomeFeatSlot .r-eco-feat-track { align-items: stretch; }
+          .r-home-main > #rHomeFeatSlot .r-eco-feat-card { height: 100%; width: auto; aspect-ratio: 4 / 5; max-width: 300px; }
+          .r-home-main > #rHomeFeatSlot .r-eco-feat-partners { margin-top: auto; }
           @media (max-width: 900px) {
             .r-home-dashboard { grid-template-columns: 1fr; }
+            .r-home-main > #rHomeFeatSlot .r-eco-feat-card { height: auto; width: 168px; aspect-ratio: 4 / 5; }
             .r-home-status-grid { grid-template-columns: 1fr 1fr; }
             .r-home-project { grid-column: 1 / -1; }
           }

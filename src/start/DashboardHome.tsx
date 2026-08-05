@@ -59,149 +59,141 @@ export default function DashboardHome({
   const nextXp = level * 1000;
   const rank = board.findIndex((b) => b.username.toLowerCase() === String(name).toLowerCase());
 
+  const pct = Math.min(100, Math.round((xp / nextXp) * 100));
+
   return (
-    <div className="space-y-4">
-      {/* Welcome + stats */}
-      <div className="grid lg:grid-cols-[1fr_300px] gap-4">
-        <div className="rounded-2xl border border-border bg-card p-5 md:p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Welcome back</div>
-              <h2 className="text-2xl md:text-3xl tracking-tight mt-1 truncate">{name}</h2>
-              <div className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Star className="w-3.5 h-3.5" /> Creator Level · Level {level}
-              </div>
-            </div>
-            <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center text-lg uppercase shrink-0">
+    <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      {/* MAIN COLUMN */}
+      <div className="flex flex-col gap-3 min-w-0">
+        {/* Header strip: identity + level + inline stats + actions */}
+        <section className="rounded-2xl border border-border bg-card p-4 md:p-5">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="w-11 h-11 rounded-full bg-muted grid place-items-center text-base uppercase shrink-0">
               {name.slice(0, 1)}
             </div>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-xl md:text-2xl tracking-tight truncate">{name}</h2>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Star className="w-3.5 h-3.5" /> Level {level} · {xp.toLocaleString()}/{nextXp.toLocaleString()} XP
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={onBuild}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-foreground text-background px-3 py-2 text-xs font-medium">
+                <Plus className="w-3.5 h-3.5" /> New project
+              </button>
+              <button onClick={onTokens}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs hover:border-foreground/30">
+                <Coins className="w-3.5 h-3.5" /> $RHOZE
+              </button>
+            </div>
           </div>
-          <div className="mt-5">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>XP progress</span>
-              <span className="tabular-nums">{xp.toLocaleString()} / {nextXp.toLocaleString()} XP</span>
-            </div>
-            <div className="mt-1.5 h-2 rounded-full bg-muted overflow-hidden">
-              <div className="h-full bg-foreground" style={{ width: `${Math.min(100, (xp / nextXp) * 100)}%` }} />
-            </div>
-            <div className="mt-1.5 text-xs text-muted-foreground tabular-nums">
-              {Math.max(0, nextXp - xp).toLocaleString()} XP to next level
-            </div>
+          <div className="mt-4 h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="h-full bg-foreground transition-all" style={{ width: `${pct}%` }} />
           </div>
-        </div>
-        <div className="grid grid-cols-3 lg:grid-cols-1 gap-3">
-          <Stat label="Projects completed" value={String(completed)} />
-          <Stat label="$RHOZE balance" value={balance.toLocaleString()} />
-          <Stat label="Community rank" value={rank >= 0 ? `#${rank + 1}` : "—"} />
-        </div>
+          <div className="mt-3 grid grid-cols-3 divide-x divide-border rounded-xl border border-border">
+            <Stat label="Projects done" value={String(completed)} />
+            <Stat label="Credits" value={balance.toLocaleString()} />
+            <Stat label="Rank" value={rank >= 0 ? `#${rank + 1}` : "—"} />
+          </div>
+        </section>
+
+        {/* Projects */}
+        <section className="rounded-2xl border border-border bg-card p-4 md:p-5">
+          <div className="flex items-baseline justify-between mb-3">
+            <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Your projects</div>
+            <button onClick={onRoadmap} className="text-xs underline underline-offset-4">Roadmap</button>
+          </div>
+          {projects.length === 0 ? (
+            <button onClick={onBuild}
+              className="w-full rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground hover:border-foreground/30 transition">
+              No projects yet — start your first brief
+            </button>
+          ) : (
+            <div className="divide-y divide-border">
+              {projects.slice(0, 5).map((p) => (
+                <button key={p.id} onClick={onRoadmap}
+                  className="w-full text-left py-3 first:pt-0 last:pb-0 group">
+                  <div className="flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium truncate group-hover:underline underline-offset-4">{p.title}</div>
+                      <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{p.status}</div>
+                    </div>
+                    <div className="w-24 shrink-0">
+                      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                        <div className="h-full bg-foreground" style={{ width: `${progress[p.id] ?? 0}%` }} />
+                      </div>
+                    </div>
+                    <span className="w-10 text-right text-xs tabular-nums text-muted-foreground">{progress[p.id] ?? 0}%</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Signals */}
+        <section className="rounded-2xl border border-border bg-card p-4 md:p-5">
+          <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">From the network</div>
+          {community.length === 0 ? (
+            <div className="text-sm text-muted-foreground">Nothing new yet.</div>
+          ) : (
+            <div className="divide-y divide-border">
+              {community.map((c, i) => (
+                <div key={i} className="py-2.5 first:pt-0 last:pb-0 flex items-baseline gap-3">
+                  <span className="text-sm flex-1 min-w-0 truncate">{c.title}</span>
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground shrink-0">{c.meta}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
 
-      {/* Current projects */}
-      <section>
-        <div className="flex items-baseline justify-between mb-2">
-          <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Current projects</div>
-          <button onClick={onRoadmap} className="text-xs underline underline-offset-4">View all</button>
-        </div>
-        {projects.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            No projects yet — start one from the Build tab.
-          </div>
-        ) : (
-          <div className="grid md:grid-cols-3 gap-3">
-            {projects.slice(0, 6).map((p) => (
-              <button key={p.id} onClick={onRoadmap}
-                className="text-left rounded-2xl border border-border bg-card p-4 hover:border-foreground/30 transition">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="text-sm font-medium truncate">{p.title}</div>
-                  <span className="text-[10px] uppercase tracking-wider rounded-full bg-muted px-2 py-0.5 shrink-0">{p.status}</span>
-                </div>
-                <div className="mt-4 flex justify-between text-xs text-muted-foreground">
-                  <span>Progress</span><span className="tabular-nums">{progress[p.id] ?? 0}%</span>
-                </div>
-                <div className="mt-1 h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full bg-foreground" style={{ width: `${progress[p.id] ?? 0}%` }} />
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Bottom row */}
-      <div className="grid lg:grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">$RHOZE balance</div>
-          <div className="mt-2 text-3xl tabular-nums">{balance.toLocaleString()}</div>
-          <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
-            <li>Creative services</li><li>Clothing purchases</li>
-            <li>Community access</li><li>Investments</li>
-          </ul>
-          <button onClick={onTokens} className="mt-4 w-full rounded-xl border border-border py-2 text-sm hover:border-foreground/30">
+      {/* RAIL */}
+      <aside className="flex flex-col gap-3 min-w-0">
+        <div className="rounded-2xl border border-border bg-foreground text-background p-5">
+          <div className="text-[11px] tracking-[0.25em] uppercase opacity-70">Studio credits</div>
+          <div className="mt-1 text-3xl tabular-nums">{balance.toLocaleString()}</div>
+          <p className="mt-2 text-xs opacity-70 leading-relaxed">
+            Spend on shoots, merch drops and community access.
+          </p>
+          <button onClick={onTokens}
+            className="mt-4 w-full rounded-xl bg-background text-foreground py-2 text-sm font-medium">
             Manage $RHOZE
           </button>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center gap-1.5 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">
-            <Trophy className="w-3.5 h-3.5" /> Community leaderboard
+            <Trophy className="w-3.5 h-3.5" /> Leaderboard
           </div>
           <div className="mt-3 space-y-2">
-            {board.length === 0 && <div className="text-sm text-muted-foreground">Leaderboard updating…</div>}
+            {board.length === 0 && <div className="text-sm text-muted-foreground">Updating…</div>}
             {board.map((b, i) => (
-              <div key={b.username} className="flex items-center gap-3 text-sm">
-                <span className="w-4 text-muted-foreground tabular-nums">{i + 1}</span>
-                <span className="w-6 h-6 rounded-full bg-muted shrink-0" />
+              <div key={b.username} className="flex items-center gap-2.5 text-sm">
+                <span className="w-4 text-muted-foreground tabular-nums text-xs">{i + 1}</span>
                 <span className="truncate flex-1">{b.username}</span>
-                <span className="tabular-nums text-muted-foreground">{b.points.toLocaleString()} XP</span>
+                <span className="tabular-nums text-xs text-muted-foreground">{b.points.toLocaleString()}</span>
               </div>
             ))}
           </div>
+          <button onClick={() => window.open("/leaderboard.html", "_blank")}
+            className="mt-4 w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-xs hover:border-foreground/30">
+            <Users className="w-3.5 h-3.5" /> Full board
+          </button>
         </div>
-
-        <div className="space-y-3">
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Quick actions</div>
-            <div className="mt-3 space-y-2">
-              <Action icon={<Plus className="w-4 h-4" />} label="Start a project" onClick={onBuild} />
-              <Action icon={<Coins className="w-4 h-4" />} label="Buy $RHOZE" onClick={() => window.open("/invest.html", "_blank")} />
-              <Action icon={<Users className="w-4 h-4" />} label="Join community" onClick={() => window.open("/leaderboard.html", "_blank")} />
-            </div>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-5">
-            <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Recent community</div>
-            <div className="mt-3 space-y-2.5">
-              {community.length === 0 && <div className="text-sm text-muted-foreground">Nothing new yet.</div>}
-              {community.map((c, i) => (
-                <div key={i} className="flex gap-2.5">
-                  <span className="w-8 h-8 rounded-lg bg-muted shrink-0" />
-                  <div className="min-w-0">
-                    <div className="text-sm truncate">{c.title}</div>
-                    <div className="text-xs text-muted-foreground truncate">{c.meta}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      </aside>
     </div>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 text-2xl tabular-nums">{value}</div>
+    <div className="px-3 py-2.5">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground truncate">{label}</div>
+      <div className="mt-0.5 text-lg tabular-nums">{value}</div>
     </div>
-  );
-}
-
-function Action({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
-  return (
-    <button onClick={onClick}
-      className="w-full flex items-center gap-2 rounded-xl border border-border px-3 py-2.5 text-sm hover:border-foreground/30 transition">
-      {icon}<span className="flex-1 text-left">{label}</span><ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
-    </button>
   );
 }

@@ -3278,7 +3278,7 @@
           .r-eco-story summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 0.75rem 1rem; font-family: 'Inter', system-ui, sans-serif; text-align: center; }
           .r-eco-story summary::-webkit-details-marker { display: none; }
           .r-eco-story-line { display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1; }
-          .r-eco-story-kicker { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: hsl(var(--muted)); padding: 0.18rem 0.5rem; border: 1px solid hsl(var(--line)); border-radius: 999px; white-space: nowrap; }
+          .r-eco-story-kicker { font-size: 0.58rem; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase; color: #111111; background: #f2c230; padding: 0.2rem 0.55rem; border: 1px solid #111111; border-radius: 999px; white-space: nowrap; }
           .r-eco-story-tagline { font-size: 0.92rem; color: hsl(var(--ink)); font-weight: 500; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
           .r-eco-story-chev { width: 1.1rem; height: 1.1rem; flex-shrink: 0; color: hsl(var(--ink)); transition: transform 0.3s ease; }
           .r-eco-story[open] .r-eco-story-chev { transform: rotate(180deg); }
@@ -3822,34 +3822,43 @@
                 <style>
                   .r-home-pillars { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
                   @media (max-width: 900px) { .r-home-pillars { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-                  .r-home-pillar { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem 0.85rem; background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 14px; color: hsl(var(--ink)); text-decoration: none; transition: transform .18s ease, border-color .18s ease; }
-                  .r-home-pillar:hover { transform: translateY(-2px); border-color: hsl(var(--ink) / 0.45); }
-                  .r-home-pillar strong { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
-                  .r-home-pillar span { font-size: 0.76rem; line-height: 1.45; color: hsl(var(--muted)); }
-                  .r-home-pillar .r-pill-tag { display: inline-flex; align-self: flex-start; margin-top: 0.35rem; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.22rem 0.45rem; border-radius: 999px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
-                  .r-home-pillar.is-soon { opacity: 0.85; }
-                  .r-home-pillar.is-soon .r-pill-tag { background: transparent; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); }
+                  .r-home-pillar { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 0.7rem; min-height: 132px; padding: 0.9rem 1rem; background: #ffffff; border: 1px solid #111111; color: #111111; text-decoration: none; overflow: hidden; transition: transform .18s ease, background .18s ease; }
+                  .r-home-pillar:hover { transform: translateY(-2px); }
+                  .r-home-pillar-ico { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #111111; border-radius: 50%; }
+                  .r-home-pillar-ico svg { width: 17px; height: 17px; }
+                  .r-home-pillar strong { display: block; color: inherit; font-family: 'Archivo Black','Arial Black',sans-serif; font-size: 1.02rem; line-height: 1.05; letter-spacing: 0; }
+                  .r-home-pillar .r-home-pillar-ico svg { stroke: currentColor; fill: none; }
+                  .r-home-pillar em { display: block; margin-top: 0.25rem; font-style: normal; font-size: 0.7rem; line-height: 1.35; color: #4a4a4a; font-weight: 600; }
+                  .r-home-pillar .r-pill-tag { position: absolute; top: 0.85rem; right: 0.9rem; font-size: 0.5rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.18rem 0.4rem; border-radius: 999px; background: #111111; color: #ffffff; }
+                  .r-home-pillar.is-live { background: #111111; color: #ffffff; }
+                  .r-home-pillar.is-live strong { color: #ffffff !important; }
+                  .r-home-pillar.is-live em { color: #d8d8d8 !important; }
+                  .r-home-pillar.is-live .r-home-pillar-ico { border-color: #ffffff; color: #ffffff; }
+                  .r-home-pillar.is-live .r-home-pillar-ico svg { stroke: #ffffff !important; }
+                  .r-home-pillar.is-live .r-pill-tag { background: #f2c230; color: #111111; }
+                  .r-home-pillar.is-soon .r-pill-tag { background: transparent; color: #6b6b6b; border: 1px solid #cfcfcf; }
+                  .r-home-pillar.is-soon .r-home-pillar-ico { border-color: #cfcfcf; color: #6b6b6b; }
                 </style>
                 <nav class="r-home-pillars" aria-label="Rhozeland modules">
-                  <a class="r-home-pillar" href="#workspace/build" data-home-workspace data-ws-tab="build">
-                    <strong>Sales</strong>
-                    <span>Brief, price and launch a project with the studio.</span>
-                    <em class="r-pill-tag">Build a project ↗</em>
+                  <a class="r-home-pillar is-live" href="#workspace/build" data-home-workspace data-ws-tab="build">
+                    <span class="r-home-pillar-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
+                    <span><strong>Sales</strong><em>Brief, price and launch a shoot.</em></span>
+                    <em class="r-pill-tag">Live</em>
                   </a>
                   <a class="r-home-pillar is-soon" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
-                    <strong>Opportunities</strong>
-                    <span>Open calls, playlist features and creator listings.</span>
-                    <em class="r-pill-tag">Coming soon</em>
+                    <span class="r-home-pillar-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg></span>
+                    <span><strong>Opportunities</strong><em>Open calls and creator listings.</em></span>
+                    <em class="r-pill-tag">Soon</em>
                   </a>
                   <a class="r-home-pillar is-soon" href="#workspace/dashboard" data-home-workspace data-ws-tab="dashboard">
-                    <strong>School</strong>
-                    <span>Learn the craft through projects and creator knowledge.</span>
-                    <em class="r-pill-tag">Coming soon</em>
+                    <span class="r-home-pillar-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 8l10 5 10-5-10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg></span>
+                    <span><strong>School</strong><em>Learn the craft, project by project.</em></span>
+                    <em class="r-pill-tag">Soon</em>
                   </a>
                   <a class="r-home-pillar is-soon" href="/leaderboard.html" data-inline-nav="leaderboard">
-                    <strong>Database</strong>
-                    <span>Find collaborators, resources and ways into the network.</span>
-                    <em class="r-pill-tag">Coming soon</em>
+                    <span class="r-home-pillar-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 19c0-3.2 2.9-5 6.5-5s6.5 1.8 6.5 5"/><path d="M17 5.5a3 3 0 010 5.6"/><path d="M19 19c0-2.4-1-4-3-4.6"/></svg></span>
+                    <span><strong>Database</strong><em>Find collaborators in the network.</em></span>
+                    <em class="r-pill-tag">Soon</em>
                   </a>
                 </nav>
 
@@ -3876,15 +3885,46 @@
                 </section>
 
                 <div class="r-eco-stats" id="rEcoMiniTicker" aria-live="polite">
-                  <div class="r-eco-stats-head"><span class="r-eco-stats-label">$RHOZE · Live on Solana</span></div>
-                  <div class="r-eco-mini"><div class="r-eco-mini-price" id="rEcoMiniPrice">—</div><div class="r-eco-mini-chg flat" id="rEcoMiniChg">—</div></div>
-                  <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true"><path id="rEcoSparkFill" d="" fill="hsl(var(--ink) / 0.08)" stroke="none"/><path id="rEcoSparkLine" d="" fill="none" stroke="hsl(var(--ink))" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>
-                  <div class="r-eco-mini-row"><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Your credits</div><div class="r-eco-stat-v" id="rEcoMiniCredits">—</div></div></div>
-                  <div style="display:flex;gap:8px;margin-top:10px;">
-                    <a href="#workspace/tokens" data-home-workspace data-ws-tab="tokens" style="flex:1;text-align:center;padding:0.5rem;border-radius:10px;background:hsl(var(--ink));color:hsl(var(--surface-card));font-size:0.68rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">Buy $RHOZE</a>
-                    <a href="https://birdeye.so/token/7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump?chain=solana" target="_blank" rel="noopener" style="flex:1;text-align:center;padding:0.5rem;border-radius:10px;border:1px solid hsl(var(--line));color:hsl(var(--ink));font-size:0.68rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">Chart ↗</a>
+                  <div class="r-eco-stats-head">
+                    <span class="r-eco-stats-label">$RHOZE · Live on Solana</span>
+                    <div class="r-rz-range" role="group" aria-label="Chart range">
+                      <button type="button" class="r-rz-range-btn" data-range="day">24H</button>
+                      <button type="button" class="r-rz-range-btn is-on" data-range="all">All</button>
+                    </div>
                   </div>
+                  <div class="r-eco-mini"><div class="r-eco-mini-price" id="rEcoMiniPrice">—</div><div class="r-eco-mini-chg flat" id="rEcoMiniChg">—</div></div>
+                  <div class="r-rz-chart">
+                    <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 96" preserveAspectRatio="none" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="rRzGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="currentColor" stop-opacity="0.28"/>
+                          <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
+                        </linearGradient>
+                      </defs>
+                      <path id="rEcoSparkFill" d="" fill="url(#rRzGrad)" stroke="none"/>
+                      <path id="rEcoSparkLine" d="" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                    </svg>
+                    <span class="r-rz-chart-tag" id="rRzRangeTag">All time</span>
+                  </div>
+                  <div class="r-eco-mini-row"><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Your credits</div><div class="r-eco-stat-v" id="rEcoMiniCredits">—</div></div></div>
+                  <a class="r-rz-buy" href="#workspace/tokens" data-home-workspace data-ws-tab="tokens">
+                    <span>Get $RHOZE</span>
+                    <span aria-hidden="true">→</span>
+                  </a>
+                  <p class="r-rz-note">Credits work across studio projects, merch and drops.</p>
                 </div>
+                <style>
+                  .r-rz-range { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid hsl(var(--line)); border-radius: 999px; }
+                  .r-rz-range-btn { border: 0; background: transparent; cursor: pointer; font-family: inherit; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #6b6b6b; padding: 0.2rem 0.5rem; border-radius: 999px; }
+                  .r-rz-range-btn.is-on { background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
+                  .r-rz-chart { position: relative; margin: 0.35rem 0 0.75rem; color: hsl(var(--ink)); }
+                  .r-rz-chart .r-eco-spark { height: 96px; margin: 0; }
+                  .r-rz-chart-tag { position: absolute; left: 0; bottom: -12px; font-size: 0.52rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: #6b6b6b; }
+                  .r-rz-chart { margin-bottom: 1.15rem; }
+                  .r-rz-buy { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-top: 0.75rem; padding: 0.7rem 0.9rem; border-radius: 12px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.02em; text-decoration: none; transition: transform .16s ease; }
+                  .r-rz-buy:hover { transform: translateY(-1px); }
+                  .r-rz-note { margin: 0.5rem 0 0; font-size: 0.68rem; line-height: 1.4; color: #6b6b6b; }
+                </style>
 
                 <section class="r-home-board" aria-label="Community board">
                   <div class="r-home-board-head"><strong>Community board</strong><a href="/leaderboard.html" data-inline-nav="leaderboard">All-time ↗</a></div>
@@ -4876,8 +4916,11 @@
           .catch(function(){});
       }
 
+      var RZ_RANGE = 'all';
       function loadSpark(){
-        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + ACTIVE_POOL + '/ohlcv/hour?aggregate=1&limit=24&currency=usd';
+        var isAll = RZ_RANGE === 'all';
+        var url = 'https://api.geckoterminal.com/api/v2/networks/solana/pools/' + ACTIVE_POOL +
+          (isAll ? '/ohlcv/day?aggregate=1&limit=1000&currency=usd' : '/ohlcv/hour?aggregate=1&limit=24&currency=usd');
         fetch(url, { cache:'no-store' })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){
@@ -4888,7 +4931,7 @@
             if (pts.length < 2) return;
             var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts);
             var range = (max - min) || 1;
-            var W = 200, H = 44, pad = 2;
+            var W = 200, H = 96, pad = 4;
             var step = (W - pad*2) / (pts.length - 1);
             var line = pts.map(function(v, i){
               var x = pad + i * step;
@@ -4899,11 +4942,23 @@
             var l = document.getElementById('rEcoSparkLine'); if (l) l.setAttribute('d', line);
             var f = document.getElementById('rEcoSparkFill'); if (f) f.setAttribute('d', fill);
             var up = pts[pts.length-1] >= pts[0];
-            if (l) l.setAttribute('stroke', up ? '#15803d' : '#b91c1c');
-            if (f) f.setAttribute('fill', up ? 'rgba(21,128,61,0.10)' : 'rgba(185,28,28,0.10)');
+            var wrap = document.querySelector('.r-rz-chart');
+            if (wrap) wrap.style.color = up ? '#15803d' : '#b91c1c';
+            var tag = document.getElementById('rRzRangeTag');
+            if (tag) tag.textContent = isAll ? ('All time · ' + pts.length + ' days') : 'Last 24 hours';
           })
           .catch(function(){});
       }
+      document.addEventListener('click', function(e){
+        var btn = e.target && e.target.closest ? e.target.closest('.r-rz-range-btn') : null;
+        if (!btn) return;
+        e.preventDefault();
+        RZ_RANGE = btn.getAttribute('data-range') === 'day' ? 'day' : 'all';
+        Array.prototype.forEach.call(document.querySelectorAll('.r-rz-range-btn'), function(b){
+          b.classList.toggle('is-on', b === btn);
+        });
+        loadSpark();
+      });
 
       /* === Admin-managed news ticker (Newsroom in Team Portal) === */
       var NEWS_SUPABASE_URL = 'https://hdlpvcsxyxirywjkhsui.supabase.co';

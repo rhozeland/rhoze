@@ -173,48 +173,6 @@ export default function InvestPage() {
           </div>
         </section>
 
-        {/* Your orders */}
-        {session && (
-          <section>
-            <div className="flex items-baseline justify-between mb-3">
-              <h2 className="text-xl tracking-tight">Your orders</h2>
-              <Button size="sm" variant="outline" onClick={() => setBuyOpen(true)}>
-                Buy more <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
-            </div>
-            {pledges.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                Nothing yet — your first buy shows up here with status and credits.
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-border overflow-x-auto">
-                <table className="w-full text-sm min-w-[520px]">
-                  <thead className="bg-muted/30 text-[11px] uppercase tracking-wider text-muted-foreground">
-                    <tr>
-                      <th className="text-left px-4 py-2">Date</th>
-                      <th className="text-left px-4 py-2">Amount</th>
-                      <th className="text-left px-4 py-2">Tier</th>
-                      <th className="text-left px-4 py-2">Credits</th>
-                      <th className="text-left px-4 py-2">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pledges.map((p) => (
-                      <tr key={p.id} className="border-t border-border">
-                        <td className="px-4 py-2 text-muted-foreground">{new Date(p.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-2 tabular-nums">${(p.amount_usd_cents / 100).toLocaleString()}</td>
-                        <td className="px-4 py-2 capitalize">{p.tier}</td>
-                        <td className="px-4 py-2 tabular-nums">{Number(p.credits_awarded).toLocaleString()}</td>
-                        <td className="px-4 py-2"><StatusPill status={p.status} /></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
-        )}
-
         <section><WalletPanel session={session} /></section>
       </main>
 

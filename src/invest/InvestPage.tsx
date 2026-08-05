@@ -31,6 +31,11 @@ export function quote(amount: number) {
 const pickTier = (usd: number): Tier => (usd >= 2000 ? "core" : usd >= 500 ? "builder" : "supporter");
 const multFor = (usd: number) => TIERS.find((t) => t.slug === pickTier(usd))!.mult;
 
+// Live $RHOZE price (USD) from the graduated pool, converted to CAD.
+const RHOZE_POOL = "AjCpwQxLsW3SbueGUD2sKpGbbtUPNt64JPcSBJ2uuUiJ";
+const GT_POOL = `https://api.geckoterminal.com/api/v2/networks/solana/pools/${RHOZE_POOL}`;
+const CAD_PER_USD = 1.37;
+
 export default function InvestPage({ embedded = false }: { embedded?: boolean } = {}) {
   const [session, setSession] = useState<Session | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
@@ -38,6 +43,17 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
   const [authOpen, setAuthOpen] = useState(false);
   const [buyOpen, setBuyOpen] = useState(false);
   const [amount, setAmount] = useState(250);
+  const [rhozeCad, setRhozeCad] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(GT_POOL)
+      .then((r) => r.json())
+      .then((j) => {
+        const p = Number(j?.data?.attributes?.base_token_price_usd);
+        if (p > 0) setRhozeCad(p * CAD_PER_USD);
+      })
+      .catch(() => { /* price optional */ });
+  }, []);
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
@@ -125,11 +141,20 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
             </div>
             <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-2 text-sm">
               <Row label="$RHOZE purchase" value={`$${money(amount)}`} />
+              <Row
+                label="You receive (est.)"
+                value={rhozeCad ? `≈ ${Math.floor(amount / rhozeCad).toLocaleString()} $RHOZE` : "—"}
+              />
               <Row label="Service fee (5%)" value={`$${money(quote(amount).fee)}`} />
               <Row label="HST (13%)" value={`$${money(quote(amount).hst)}`} />
               <div className="border-t border-border pt-2 mt-2">
                 <Row label="Total due" value={`$${money(quote(amount).total)}`} bold />
               </div>
+              {rhozeCad && (
+                <div className="text-[11px] text-muted-foreground pt-1">
+                  Live price ≈ ${rhozeCad.toFixed(8)} CAD / $RHOZE · final amount set at fill
+                </div>
+              )}
             </div>
           </div>
           <Button size="lg" className="mt-4 w-full" onClick={() => startBuy(amount)} disabled={amount < 20}>

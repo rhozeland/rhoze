@@ -111,13 +111,15 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
               <Label htmlFor="rhoze-amount" className="text-xs">Amount to buy (CAD)</Label>
               <div className="mt-1 flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 focus-within:ring-2 focus-within:ring-ring">
                 <span className="text-xl text-muted-foreground">$</span>
-                <input type="number" min={50} step={10} value={amount}
+                <input type="number" min={20} step={10} value={amount}
                   id="rhoze-amount"
                   onChange={(e) => setAmount(Math.max(0, Number(e.target.value) || 0))}
                   className="w-full bg-transparent text-3xl tabular-nums outline-none" />
               </div>
               <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                <span>Minimum $50 CAD</span>
+                <span className={amount > 0 && amount < 20 ? "text-destructive" : "opacity-0 select-none"} aria-live="polite">
+                  Minimum $20 CAD
+                </span>
                 <span>{Math.floor(amount * multFor(amount)).toLocaleString()} credits · {multFor(amount).toFixed(2)}× rate</span>
               </div>
             </div>
@@ -130,7 +132,7 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
               </div>
             </div>
           </div>
-          <Button size="lg" className="mt-4 w-full" onClick={() => startBuy(amount)} disabled={amount < 50}>
+          <Button size="lg" className="mt-4 w-full" onClick={() => startBuy(amount)} disabled={amount < 20}>
             <CreditCard className="w-4 h-4 mr-2" /> Pay ${money(quote(amount).total)} CAD with Square
           </Button>
         </section>
@@ -179,7 +181,7 @@ function BuyDialog({
 
   const submit = async () => {
     if (!session) return;
-    if (amount < 50) { toast({ title: "Minimum is $50" }); return; }
+    if (amount < 20) { toast({ title: "Minimum is $20 CAD" }); return; }
     setBusy(true);
     try {
       const { data, error } = await (supabase.rpc as any)("purchase_rhoze_square", {

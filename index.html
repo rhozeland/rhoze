@@ -3146,8 +3146,8 @@
           .homepage-workspace { min-height: calc(100vh - 132px); background: hsl(var(--surface-alt)); }
           .homepage-workspace[hidden] { display: none !important; }
           .homepage-workspace #homepage-workspace-root { min-height: inherit; }
-          body.workspace-active main > *:not(#homepageWorkspace) { display: none !important; }
-          body.workspace-active .footer { display: none !important; }
+          body.workspace-active > main > *:not(#homepageWorkspace) { display: none !important; }
+          body.workspace-active > .footer { display: none !important; }
           body.workspace-active .gradient-canvas { display: none !important; }
           body.workspace-active { background: hsl(var(--surface-alt)); }
           body.workspace-active .page-shell { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }

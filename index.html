@@ -3822,13 +3822,16 @@
                 <style>
                   .r-home-pillars { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; }
                   @media (max-width: 900px) { .r-home-pillars { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-                  .r-home-pillar { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem 0.85rem; background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 14px; color: hsl(var(--ink)); text-decoration: none; transition: transform .18s ease, border-color .18s ease; }
-                  .r-home-pillar:hover { transform: translateY(-2px); border-color: hsl(var(--ink) / 0.45); }
-                  .r-home-pillar strong { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; }
-                  .r-home-pillar span { font-size: 0.76rem; line-height: 1.45; color: hsl(var(--muted)); }
-                  .r-home-pillar .r-pill-tag { display: inline-flex; align-self: flex-start; margin-top: 0.35rem; font-size: 0.56rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.22rem 0.45rem; border-radius: 999px; background: hsl(var(--ink)); color: hsl(var(--surface-card)); }
-                  .r-home-pillar.is-soon { opacity: 0.85; }
-                  .r-home-pillar.is-soon .r-pill-tag { background: transparent; color: hsl(var(--muted)); border: 1px solid hsl(var(--line)); }
+                  .r-home-pillar { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 0.7rem; min-height: 132px; padding: 0.9rem 1rem; background: #ffffff; border: 1px solid #111111; color: #111111; text-decoration: none; overflow: hidden; transition: transform .18s ease, background .18s ease; }
+                  .r-home-pillar:hover { transform: translateY(-2px); }
+                  .r-home-pillar-ico { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #111111; border-radius: 50%; }
+                  .r-home-pillar-ico svg { width: 17px; height: 17px; }
+                  .r-home-pillar strong { display: block; font-family: 'Archivo Black','Arial Black',sans-serif; font-size: 1.02rem; line-height: 1.05; letter-spacing: 0; }
+                  .r-home-pillar em { display: block; margin-top: 0.25rem; font-style: normal; font-size: 0.7rem; line-height: 1.35; color: #4a4a4a; font-weight: 600; }
+                  .r-home-pillar .r-pill-tag { position: absolute; top: 0.85rem; right: 0.9rem; font-size: 0.5rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.18rem 0.4rem; border-radius: 999px; background: #111111; color: #ffffff; }
+                  .r-home-pillar.is-live { background: #f2c230; }
+                  .r-home-pillar.is-soon .r-pill-tag { background: transparent; color: #6b6b6b; border: 1px solid #cfcfcf; }
+                  .r-home-pillar.is-soon .r-home-pillar-ico { border-color: #cfcfcf; color: #6b6b6b; }
                 </style>
                 <nav class="r-home-pillars" aria-label="Rhozeland modules">
                   <a class="r-home-pillar" href="#workspace/build" data-home-workspace data-ws-tab="build">

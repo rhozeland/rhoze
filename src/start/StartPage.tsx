@@ -125,7 +125,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
           <>
             {/* Signed-in: everything lives in tabs */}
             <section>
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+              <div className={`${embedded ? "hidden" : "flex"} items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1`}>
                 {([
                   { id: "dashboard", label: "Dashboard", icon: LayoutGrid },
                   { id: "build", label: "Build project", icon: PlusSquare },

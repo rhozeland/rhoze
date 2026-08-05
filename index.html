@@ -3114,10 +3114,6 @@
       <a class="nav-tab" href="#" data-inline-nav="__home">Home</a>
       <a class="nav-tab" href="#workspace/build" data-home-workspace data-ws-tab="build">Build a project</a>
       <a class="nav-tab" href="#workspace/tokens" data-home-workspace data-ws-tab="tokens">$RHOZE</a>
-      <a class="nav-tab" href="/leaderboard.html" data-inline-nav="leaderboard">Community</a>
-      <a class="nav-tab" href="/about.html" data-inline-nav="about">About</a>
-      <a class="nav-tab" href="/projects.html" data-inline-nav="work">Work</a>
-      <a class="nav-tab" href="/contact.html" data-inline-nav="connect">Connect</a>
     </div>
 
     <main id="rMain">
@@ -3868,7 +3864,15 @@
                     <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Latest</span></span>
                   </div>
                   <p class="r-home-news-title" id="rEcoFeaturedDek">Podcast, documentaries and studio stories from the Rhozeland channel.</p>
-                  <div id="rEcoEpsGrid" hidden></div><button id="rEcoEpsPrev" hidden></button><button id="rEcoEpsNext" hidden></button>
+                  <div class="r-eco-eps-head" style="margin-top:0.9rem;">
+                    <span class="r-eco-eps-label">More from the channel</span>
+                    <a class="r-eco-eps-all" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">All videos ↗</a>
+                  </div>
+                  <div class="r-eco-eps-rail">
+                    <button class="r-eco-eps-nav is-prev" id="rEcoEpsPrev" type="button" aria-label="Previous videos">‹</button>
+                    <div class="r-eco-eps-grid" id="rEcoEpsGrid"></div>
+                    <button class="r-eco-eps-nav is-next" id="rEcoEpsNext" type="button" aria-label="More videos">›</button>
+                  </div>
                 </section>
 
                 <div class="r-eco-stats" id="rEcoMiniTicker" aria-live="polite">

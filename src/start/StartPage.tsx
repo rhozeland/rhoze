@@ -31,7 +31,7 @@ import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, Map as MapIcon, Plus
 
 type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community";
 
-export default function StartPage() {
+export default function StartPage({ embedded = false }: { embedded?: boolean }) {
   const [session, setSession] = useState<Session | null>(null);
   const [tab, setTab] = useState<StartTab>("dashboard");
   const [convo, setConvo] = useState<Conversation | null>(null);
@@ -84,8 +84,8 @@ export default function StartPage() {
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="site-header border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
+    <div className={embedded ? "bg-background text-foreground" : "min-h-screen bg-background text-foreground"}>
+      {!embedded && <header className="site-header border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2" aria-label="Rhozeland home">
             <img src={logoWhite} alt="Rhozeland" className="h-6 dark:invert-0 invert" />
@@ -106,9 +106,9 @@ export default function StartPage() {
             )}
           </div>
         </div>
-      </header>
+      </header>}
 
-      <main className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-10">
+      <main className={embedded ? "max-w-6xl mx-auto px-3 md:px-5 py-4 md:py-6 space-y-8" : "max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-10"}>
         {session ? (
           <>
             {/* Signed-in: everything lives in tabs */}
@@ -333,7 +333,7 @@ function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: b
         : await supabase.auth.signUp({
             email: email.trim(),
             password,
-            options: { emailRedirectTo: window.location.origin + "/start.html" },
+            options: { emailRedirectTo: window.location.origin + "/#workspace" },
           });
     setBusy(false);
     if (error) {
@@ -347,7 +347,7 @@ function AuthDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: b
   const google = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.origin + "/start.html" },
+      options: { redirectTo: window.location.origin + "/#workspace" },
     });
     if (error) toast({ title: "Google sign-in failed", description: error.message, variant: "destructive" });
   };

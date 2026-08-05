@@ -50,3 +50,5 @@ verify_jwt = true
 
 [functions.wallet-replace-external]
 verify_jwt = true
+[functions.rhoze-trades]
+verify_jwt = false

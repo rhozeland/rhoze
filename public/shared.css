@@ -658,6 +658,23 @@ button { background: none; border: 0; cursor: pointer; }
   .svc-strip-services { display: none; }
 }
 
+/* Mobile: keep the services strip readable and edge-safe */
+@media (max-width: 720px) {
+  .svc-strip {
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0 1.2rem 0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .svc-strip::-webkit-scrollbar { display: none; }
+  .svc-strip-label { display: none; }
+  .svc-strip-chips { flex-wrap: nowrap; }
+  .svc-chip { white-space: nowrap; }
+  .svc-strip-cta { flex: 0 0 auto; }
+}
+
 /* ===================== SERVICES TABS ===================== */
 .services-tabs { max-width: 700px; margin: 0 auto; text-align: center; }
 .services-tab-buttons {

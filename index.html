@@ -4069,7 +4069,12 @@
               + '<span class="meta"><span class="t">'+p.t+'</span><span class="a">'+p.a+'</span></span>'
               + '</a>';
           }
-          var html = projects.map(card).join('');
+          var ctaTile = '<a class="r-eco-feat-cta" href="#workspace/build" data-home-workspace data-ws-tab="build" aria-label="Start a project with Rhozeland">'
+            + '<span class="k">Your turn</span>'
+            + '<span class="h">Create a project with Rhozeland</span>'
+            + '<span class="b">Start a build <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>'
+            + '</a>';
+          var html = ctaTile + projects.map(card).join('');
           // Duplicate for seamless marquee loop
           track.innerHTML = html + html;
           // Auto-scroll featured work like the Featured On ticker; pause on hover/touch/focus

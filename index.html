@@ -3882,7 +3882,26 @@
                   </div>
                 </div>
 
-                <div id="rEcoMiniLb" hidden></div>
+                <section class="r-home-board" aria-label="Community board">
+                  <div class="r-home-board-head"><strong>Community board</strong><a href="/leaderboard.html" data-inline-nav="leaderboard">All-time ↗</a></div>
+                  <div id="rEcoMiniLb"></div>
+                </section>
+                <style>
+                  .r-home-board { margin-top: 10px; background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 16px; padding: 0.9rem 1rem; }
+                  .r-home-board-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
+                  .r-home-board-head strong { font-size: 0.9rem; font-weight: 800; }
+                  .r-home-board-head a { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: hsl(var(--ink)); text-decoration: none; border-bottom: 1px solid hsl(var(--ink)); }
+                  .r-eco-mini-lb-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; border-top: 1px solid hsl(var(--line)); font-size: 0.8rem; color: hsl(var(--ink)); }
+                  .r-eco-mini-lb-row:first-child { border-top: 0; }
+                  .r-eco-mini-lb-rank { font-weight: 800; color: hsl(var(--ink) / 0.55); font-size: 0.7rem; }
+                  .r-eco-mini-lb-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+                  .r-eco-mini-lb-pts { font-weight: 800; font-variant-numeric: tabular-nums; }
+                  .r-eco-mini-lb-empty { font-size: 0.78rem; color: hsl(var(--ink) / 0.55); }
+                  /* Readability: muted greys were washing out on the dashboard */
+                  .r-home-pillar span, .r-eco-stat-k, .r-home-news-title { color: hsl(var(--ink) / 0.68) !important; }
+                  .r-home-pillar.is-soon .r-pill-tag { color: hsl(var(--ink) / 0.62); }
+                  .r-home-pillar.is-soon { opacity: 1; }
+                </style>
               </aside>
             </div>
           </div>

@@ -46,14 +46,27 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
 
   // Homepage shell deep-links into a workspace tab (#workspace/<tab>).
   useEffect(() => {
-    const initial = (window as any).__rWorkspaceTab as StartTab | undefined;
+    const ALIAS: Record<string, StartTab> = {
+      dashboard: "dashboard", create: "dashboard", home: "dashboard",
+      build: "build", project: "build",
+      tokens: "tokens", invest: "tokens", rhoze: "tokens",
+      community: "community", leaderboard: "community", roadmap: "roadmap",
+    };
+    const norm = (v?: string): StartTab | undefined => (v ? ALIAS[String(v).toLowerCase()] : undefined);
+    const fromHash = () => norm(window.location.hash.replace(/^#/, "").split("/")[1]);
+    const initial = norm((window as any).__rWorkspaceTab) ?? fromHash();
     if (initial) setTab(initial);
     const onTab = (e: Event) => {
-      const next = (e as CustomEvent).detail as StartTab;
+      const next = norm((e as CustomEvent).detail as string);
       if (next) setTab(next);
     };
+    const onHash = () => { const t = fromHash(); if (t) setTab(t); };
+    window.addEventListener("hashchange", onHash);
     window.addEventListener("rhoze:workspace-tab", onTab);
-    return () => window.removeEventListener("rhoze:workspace-tab", onTab);
+    return () => {
+      window.removeEventListener("rhoze:workspace-tab", onTab);
+      window.removeEventListener("hashchange", onHash);
+    };
   }, []);
 
   useEffect(() => {

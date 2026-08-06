@@ -125,15 +125,15 @@ export default function BuildWizard({
 
   return (
     <div className="space-y-5">
-      <ol className="flex items-center gap-2">
+      <ol className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
         {steps.map((s, i) => (
-          <li key={s} className="flex items-center gap-2 flex-1 min-w-0">
+          <li key={s} className={`flex items-center gap-2 min-w-0 ${i === step ? "flex-1" : "sm:flex-1"}`}>
             <span className={`w-6 h-6 shrink-0 rounded-full grid place-items-center text-[11px] tabular-nums border ${
               i < step ? "bg-foreground text-background border-foreground"
                 : i === step ? "border-foreground" : "border-border text-muted-foreground"}`}>
               {i < step ? <Check className="w-3 h-3" /> : i + 1}
             </span>
-            <span className={`text-xs truncate ${i === step ? "text-foreground" : "text-muted-foreground"}`}>{s}</span>
+            <span className={`text-xs truncate ${i === step ? "text-foreground" : "text-muted-foreground hidden sm:inline"}`}>{s}</span>
             {i < steps.length - 1 && <span className="h-px flex-1 bg-border hidden sm:block" />}
           </li>
         ))}

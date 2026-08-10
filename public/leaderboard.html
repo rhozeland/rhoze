@@ -736,6 +736,7 @@
           $("lb-acct-title").textContent = "Your account";
           $("lb-acct-sub").textContent = "Submit posts for points and keep your reward info up to date.";
           whoEl.textContent = session.user.email;
+          setAcctAvatar(session.user.email, null); // instant initial, PFP swaps in after profile load
           loadProfile();
           loadMine();
         } else {
@@ -799,16 +800,7 @@
               $("lb-pf-email").value = user.email || "";
               $("lb-pf-pay").value = p.payment_email || "";
               applySocialUI(parseSocials(p.social_handle));
-              var av = $("lb-acct-avatar");
-              if (av) {
-                var name = p.community_username || p.alias || user.email || "?";
-                var letter = String(name).replace(/^@/, "").charAt(0).toUpperCase() || "?";
-                if (p.avatar_url) {
-                  av.innerHTML = '<img src="' + escapeHtml(p.avatar_url) + '" alt="" />';
-                } else {
-                  av.textContent = letter;
-                }
-              }
+              setAcctAvatar(p.community_username || p.alias || user.email, p.avatar_url);
             });
         });
       }

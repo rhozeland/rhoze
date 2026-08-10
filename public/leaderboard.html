@@ -772,11 +772,12 @@
         return parseSocialsImpl(raw);
       }
       // Paints the initial immediately, then fades the PFP in over it when it loads.
-      function setAcctAvatar(name, url) {
-        var av = $("lb-acct-avatar");
+      var myAvatarName = "";
+      function paintAvatar(av, name, url) {
         if (!av) return;
         var letter = String(name || "?").replace(/^@/, "").charAt(0).toUpperCase() || "?";
-        av.textContent = letter;
+        av.innerHTML = "";
+        av.appendChild(document.createTextNode(letter));
         if (!url) return;
         var img = new Image();
         img.alt = "";
@@ -786,6 +787,87 @@
         img.src = url;
         av.appendChild(img);
       }
+      function setAcctAvatar(name, url) {
+        myAvatarName = name || myAvatarName;
+        paintAvatar($("lb-acct-avatar"), myAvatarName, url);
+        paintAvatar($("lb-pfp-preview"), myAvatarName, url);
+      }
+
+      // --- Display picture: upload / remove -------------------------------
+      function squareBlobFromFile(file, size) {
+        return new Promise(function (resolve, reject) {
+          var url = URL.createObjectURL(file);
+          var img = new Image();
+          img.onload = function () {
+            try {
+              var side = Math.min(img.width, img.height);
+              var sx = (img.width - side) / 2, sy = (img.height - side) / 2;
+              var out = Math.min(size, side) || size;
+              var canvas = document.createElement("canvas");
+              canvas.width = out; canvas.height = out;
+              var ctx = canvas.getContext("2d");
+              ctx.drawImage(img, sx, sy, side, side, 0, 0, out, out);
+              canvas.toBlob(function (b) {
+                URL.revokeObjectURL(url);
+                b ? resolve(b) : reject(new Error("Could not process that image"));
+              }, "image/png");
+            } catch (e) { URL.revokeObjectURL(url); reject(e); }
+          };
+          img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("Could not read that image")); };
+          img.src = url;
+        });
+      }
+      function savePfpUrl(userId, url) {
+        return sb.from("profiles").update({ avatar_url: url }).eq("id", userId).then(function (r) {
+          if (r && r.error) throw r.error;
+          setAcctAvatar(null, url);
+        });
+      }
+      function handlePfpFile(file) {
+        if (!file || !sb) return;
+        if (!/^image\//.test(file.type)) { setMsg("Pick an image file.", "err"); return; }
+        if (file.size > 8 * 1024 * 1024) { setMsg("That image is over 8 MB.", "err"); return; }
+        sb.auth.getUser().then(function (u) {
+          var user = u.data.user;
+          if (!user) { setMsg("Sign in to set your display picture.", "err"); return; }
+          setMsg("Uploading your PFP…");
+          var isGif = file.type === "image/gif";
+          var prep = isGif ? Promise.resolve(file) : squareBlobFromFile(file, 512);
+          prep.then(function (blob) {
+            var path = user.id + "/pfp-" + Date.now() + (isGif ? ".gif" : ".png");
+            return sb.storage.from("avatars")
+              .upload(path, blob, { contentType: isGif ? "image/gif" : "image/png", upsert: true })
+              .then(function (r) {
+                if (r.error) throw r.error;
+                var pub = sb.storage.from("avatars").getPublicUrl(path);
+                return savePfpUrl(user.id, pub.data && pub.data.publicUrl);
+              });
+          }).then(function () {
+            setMsg("Display picture updated!", "ok");
+          }).catch(function (e) { setMsg("Upload failed: " + (e.message || e), "err"); });
+        });
+      }
+      (function wirePfpControls() {
+        var fileInput = $("lb-pfp-file");
+        var btnUp = $("lb-pfp-upload");
+        var btnRm = $("lb-pfp-remove");
+        if (btnUp && fileInput) btnUp.addEventListener("click", function () { fileInput.click(); });
+        if (fileInput) fileInput.addEventListener("change", function () {
+          var f = fileInput.files && fileInput.files[0];
+          fileInput.value = "";
+          handlePfpFile(f);
+        });
+        if (btnRm) btnRm.addEventListener("click", function () {
+          if (!sb) return;
+          sb.auth.getUser().then(function (u) {
+            var user = u.data.user;
+            if (!user) { setMsg("Sign in first.", "err"); return; }
+            savePfpUrl(user.id, null)
+              .then(function () { setMsg("Display picture removed.", "ok"); })
+              .catch(function (e) { setMsg("Remove failed: " + (e.message || e), "err"); });
+          });
+        });
+      })();
       function parseSocialsImpl(raw) {
         if (!raw) return {};
         try { var o = JSON.parse(raw); if (o && typeof o === "object") return o; } catch (e) {}

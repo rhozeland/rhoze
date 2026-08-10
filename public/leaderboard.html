@@ -753,6 +753,24 @@
       }
 
       function parseSocials(raw) {
+        return parseSocialsImpl(raw);
+      }
+      // Paints the initial immediately, then fades the PFP in over it when it loads.
+      function setAcctAvatar(name, url) {
+        var av = $("lb-acct-avatar");
+        if (!av) return;
+        var letter = String(name || "?").replace(/^@/, "").charAt(0).toUpperCase() || "?";
+        av.textContent = letter;
+        if (!url) return;
+        var img = new Image();
+        img.alt = "";
+        img.decoding = "async";
+        img.onload = function () { img.classList.add("ready"); };
+        img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); };
+        img.src = url;
+        av.appendChild(img);
+      }
+      function parseSocialsImpl(raw) {
         if (!raw) return {};
         try { var o = JSON.parse(raw); if (o && typeof o === "object") return o; } catch (e) {}
         return { x: raw }; // legacy single-string fallback

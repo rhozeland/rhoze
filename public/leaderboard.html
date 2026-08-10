@@ -1330,7 +1330,10 @@
                 if (r.error) throw r.error;
                 var pub = sb.storage.from("avatars").getPublicUrl(path);
                 var url = pub.data && pub.data.publicUrl;
-                return sb.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+                return sb.from("profiles").update({ avatar_url: url }).eq("id", user.id).then(function (r) {
+                  if (!r || !r.error) { try { setAcctAvatar(null, url); } catch (e) {} }
+                  return r;
+                });
               });
             }).then(function (r) {
               if (r && r.error) { setMsg(r.error.message, "err"); return; }

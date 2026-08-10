@@ -397,6 +397,22 @@
             </div>
             <button class="lb-btn ghost sm" type="button" id="lb-save-profile" style="justify-self:start;">Save profile</button>
 
+            <!-- DISPLAY PICTURE: upload / manage your Toybox PFP -->
+            <div class="lb-field">
+              <label>Display picture</label>
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <div class="lb-acct-avatar" id="lb-pfp-preview" aria-hidden="true">?</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <input type="file" id="lb-pfp-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;" />
+                  <button class="lb-btn ghost sm" type="button" id="lb-pfp-upload">Upload image</button>
+                  <button class="lb-btn ghost sm" type="button" id="lb-pfp-remove">Remove</button>
+                </div>
+              </div>
+              <div style="font-size:11.5px; color:hsl(var(--muted)); margin-top:6px; line-height:1.5;">
+                PNG, JPG or WebP up to 8&nbsp;MB — cropped to a square. This is the PFP that shows on the leaderboard. No image? Design one with the Toybox below.
+              </div>
+            </div>
+
             <!-- STATS: gamified snapshot -->
             <div>
               <div class="lb-tb-label" style="margin-bottom:6px;">Your rank</div>

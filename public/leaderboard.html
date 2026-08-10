@@ -148,12 +148,15 @@
     .lb-tb-stage svg { width:150px; height:150px; }
     /* Row avatars in Top Movers */
     .lb-row-user { display:flex; align-items:center; gap:10px; min-width:0; }
-    .lb-row-avatar { width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:hsl(var(--ink)); border:1.5px solid hsl(var(--ink) / 0.85); background:hsl(var(--surface-alt)); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+    .lb-row-avatar { position:relative; overflow:hidden; width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:hsl(var(--ink)); border:1.5px solid hsl(var(--ink) / 0.85); background:hsl(var(--surface-alt)); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+    .lb-row-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .18s ease; }
+    .lb-row-avatar img.ready { opacity:1; }
     .lb-row-user .name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:hsl(var(--ink)); }
     /* Account header avatar */
     .lb-acct-head { align-items:center; }
-    .lb-acct-avatar { width:44px; height:44px; border-radius:12px; border:2px solid hsl(var(--ink)); background:hsl(var(--surface-alt)); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:hsl(var(--ink)); }
-    .lb-acct-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+    .lb-acct-avatar { position:relative; width:44px; height:44px; border-radius:12px; border:2px solid hsl(var(--ink)); background:hsl(var(--surface-alt)); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:hsl(var(--ink)); }
+    .lb-acct-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .18s ease; }
+    .lb-acct-avatar img.ready { opacity:1; }
     .lb-acct-head-left { display:flex; align-items:center; gap:12px; min-width:0; }
     /* Unified info card (merged rules + rewards) */
     .lb-info-unified { margin-top:14px; padding:20px 22px; display:grid; gap:18px; }
@@ -529,7 +532,15 @@
       // ===== Leaderboard with weekly/all-time tabs + pagination =====
       var PAGE_SIZE = 10;
       var state = { mode: "alltime", page: 0, rows: [] };
-      var avatarMap = {}; // handle_key -> avatar_url
+      // handle_key -> avatar_url. Seeded from cache so PFPs paint on first frame.
+      var AVATAR_CACHE_KEY = "rhz-community-avatars-cache";
+      var avatarMap = (function () {
+        try {
+          var raw = localStorage.getItem(AVATAR_CACHE_KEY);
+          var o = raw ? JSON.parse(raw) : null;
+          return (o && typeof o === "object") ? o : {};
+        } catch (e) { return {}; }
+      })();
       function handleKey(name) {
         return String(name || "").replace(/^@/, "").trim().toLowerCase();
       }
@@ -603,9 +614,15 @@
           var pts = (r[key] || 0).toLocaleString();
           var hue = hueOf(r.username);
           var avatarUrl = avatarMap[handleKey(r.username)];
-          var av = avatarUrl
-            ? '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);padding:0;overflow:hidden;"><img src="' + escapeHtml(avatarUrl) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" /></span>'
-            : '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' + escapeHtml(initialOf(r.username)) + '</span>';
+          // Initials always paint first; the PFP fades in over them once decoded,
+          // and simply never appears if the image 404s.
+          var av = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' +
+            escapeHtml(initialOf(r.username)) +
+            (avatarUrl
+              ? '<img src="' + escapeHtml(avatarUrl) + '" alt="" decoding="async" loading="lazy" ' +
+                'onload="this.classList.add(\'ready\')" onerror="this.remove()" />'
+              : "") +
+          '</span>';
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
             '<td><div class="lb-row-user">' + av + '<span class="name">' + escapeHtml(r.username) + '</span></div></td>' +
@@ -684,6 +701,7 @@
           var m = {};
           avs.forEach(function (a) { if (a && a.handle_key && a.avatar_url) m[a.handle_key] = a.avatar_url; });
           avatarMap = m;
+          try { localStorage.setItem(AVATAR_CACHE_KEY, JSON.stringify(m)); } catch (e) {}
           renderLeaderboard();
         }).catch(function () {});
       }
@@ -718,6 +736,7 @@
           $("lb-acct-title").textContent = "Your account";
           $("lb-acct-sub").textContent = "Submit posts for points and keep your reward info up to date.";
           whoEl.textContent = session.user.email;
+          setAcctAvatar(session.user.email, null); // instant initial, PFP swaps in after profile load
           loadProfile();
           loadMine();
         } else {
@@ -734,6 +753,24 @@
       }
 
       function parseSocials(raw) {
+        return parseSocialsImpl(raw);
+      }
+      // Paints the initial immediately, then fades the PFP in over it when it loads.
+      function setAcctAvatar(name, url) {
+        var av = $("lb-acct-avatar");
+        if (!av) return;
+        var letter = String(name || "?").replace(/^@/, "").charAt(0).toUpperCase() || "?";
+        av.textContent = letter;
+        if (!url) return;
+        var img = new Image();
+        img.alt = "";
+        img.decoding = "async";
+        img.onload = function () { img.classList.add("ready"); };
+        img.onerror = function () { if (img.parentNode) img.parentNode.removeChild(img); };
+        img.src = url;
+        av.appendChild(img);
+      }
+      function parseSocialsImpl(raw) {
         if (!raw) return {};
         try { var o = JSON.parse(raw); if (o && typeof o === "object") return o; } catch (e) {}
         return { x: raw }; // legacy single-string fallback
@@ -781,16 +818,7 @@
               $("lb-pf-email").value = user.email || "";
               $("lb-pf-pay").value = p.payment_email || "";
               applySocialUI(parseSocials(p.social_handle));
-              var av = $("lb-acct-avatar");
-              if (av) {
-                var name = p.community_username || p.alias || user.email || "?";
-                var letter = String(name).replace(/^@/, "").charAt(0).toUpperCase() || "?";
-                if (p.avatar_url) {
-                  av.innerHTML = '<img src="' + escapeHtml(p.avatar_url) + '" alt="" />';
-                } else {
-                  av.textContent = letter;
-                }
-              }
+              setAcctAvatar(p.community_username || p.alias || user.email, p.avatar_url);
             });
         });
       }

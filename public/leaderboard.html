@@ -532,7 +532,15 @@
       // ===== Leaderboard with weekly/all-time tabs + pagination =====
       var PAGE_SIZE = 10;
       var state = { mode: "alltime", page: 0, rows: [] };
-      var avatarMap = {}; // handle_key -> avatar_url
+      // handle_key -> avatar_url. Seeded from cache so PFPs paint on first frame.
+      var AVATAR_CACHE_KEY = "rhz-community-avatars-cache";
+      var avatarMap = (function () {
+        try {
+          var raw = localStorage.getItem(AVATAR_CACHE_KEY);
+          var o = raw ? JSON.parse(raw) : null;
+          return (o && typeof o === "object") ? o : {};
+        } catch (e) { return {}; }
+      })();
       function handleKey(name) {
         return String(name || "").replace(/^@/, "").trim().toLowerCase();
       }

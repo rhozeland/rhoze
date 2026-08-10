@@ -614,9 +614,15 @@
           var pts = (r[key] || 0).toLocaleString();
           var hue = hueOf(r.username);
           var avatarUrl = avatarMap[handleKey(r.username)];
-          var av = avatarUrl
-            ? '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);padding:0;overflow:hidden;"><img src="' + escapeHtml(avatarUrl) + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" /></span>'
-            : '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' + escapeHtml(initialOf(r.username)) + '</span>';
+          // Initials always paint first; the PFP fades in over them once decoded,
+          // and simply never appears if the image 404s.
+          var av = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' +
+            escapeHtml(initialOf(r.username)) +
+            (avatarUrl
+              ? '<img src="' + escapeHtml(avatarUrl) + '" alt="" decoding="async" loading="lazy" ' +
+                'onload="this.classList.add(\'ready\')" onerror="this.remove()" />'
+              : "") +
+          '</span>';
           return '<tr class="' + cls + '">' +
             '<td class="rank">' + rank + '</td>' +
             '<td><div class="lb-row-user">' + av + '<span class="name">' + escapeHtml(r.username) + '</span></div></td>' +

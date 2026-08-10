@@ -701,6 +701,7 @@
           var m = {};
           avs.forEach(function (a) { if (a && a.handle_key && a.avatar_url) m[a.handle_key] = a.avatar_url; });
           avatarMap = m;
+          try { localStorage.setItem(AVATAR_CACHE_KEY, JSON.stringify(m)); } catch (e) {}
           renderLeaderboard();
         }).catch(function () {});
       }

@@ -149,13 +149,13 @@
     /* Row avatars in Top Movers */
     .lb-row-user { display:flex; align-items:center; gap:10px; min-width:0; }
     .lb-row-avatar { position:relative; overflow:hidden; width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:hsl(var(--ink)); border:1.5px solid hsl(var(--ink) / 0.85); background:hsl(var(--surface-alt)); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
-    .lb-row-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .18s ease; }
+    .lb-row-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0; transition:opacity .18s ease; image-rendering:auto; backface-visibility:hidden; transform:translateZ(0); }
     .lb-row-avatar img.ready { opacity:1; }
     .lb-row-user .name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:hsl(var(--ink)); }
     /* Account header avatar */
     .lb-acct-head { align-items:center; }
     .lb-acct-avatar { position:relative; width:44px; height:44px; border-radius:12px; border:2px solid hsl(var(--ink)); background:hsl(var(--surface-alt)); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:hsl(var(--ink)); }
-    .lb-acct-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .18s ease; }
+    .lb-acct-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0; transition:opacity .18s ease; image-rendering:auto; backface-visibility:hidden; transform:translateZ(0); }
     .lb-acct-avatar img.ready { opacity:1; }
     .lb-acct-head-left { display:flex; align-items:center; gap:12px; min-width:0; }
     /* Unified info card (merged rules + rewards) */
@@ -635,7 +635,7 @@
           var av = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' +
             escapeHtml(initialOf(r.username)) +
             (avatarUrl
-              ? '<img src="' + escapeHtml(avatarUrl) + '" alt="" decoding="async" loading="lazy" ' +
+              ? '<img src="' + escapeHtml(avatarUrl) + '" alt="" width="56" height="56" decoding="async" loading="lazy" fetchpriority="low" ' +
                 'onload="this.classList.add(\'ready\')" onerror="this.remove()" />'
               : "") +
           '</span>';

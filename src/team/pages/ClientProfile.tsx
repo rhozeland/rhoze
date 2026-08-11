@@ -57,11 +57,17 @@ export default function ClientProfile() {
     }
     setUploading(true);
     try {
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-      const path = `${user.id}/avatar-${Date.now()}.${ext}`;
+      const isGif = file.type === "image/gif";
+      const blob = isGif ? file : await squareBlobFromFile(file, 512);
+      const path = `${user.id}/avatar-${Date.now()}.${isGif ? "gif" : "png"}`;
       const { error: upErr } = await supabase.storage
         .from("avatars")
-        .upload(path, file, { upsert: true, contentType: file.type });
+        .upload(path, blob, {
+          upsert: true,
+          contentType: isGif ? "image/gif" : "image/png",
+          // Timestamped path = immutable object, so cache it hard.
+          cacheControl: "31536000",
+        });
       if (upErr) throw upErr;
       const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
       const url = pub.publicUrl;
@@ -129,7 +135,14 @@ export default function ClientProfile() {
       <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-4">
         <div className="size-16 rounded-full bg-muted overflow-hidden border border-border shrink-0 flex items-center justify-center text-muted-foreground">
           {profile?.avatar_url ? (
-            <img src={profile.avatar_url} alt="Avatar" className="size-full object-cover" />
+            <img
+              src={profile.avatar_url}
+              alt="Avatar"
+              width={128}
+              height={128}
+              decoding="async"
+              className="size-full object-cover object-center"
+            />
           ) : (
             <span className="text-lg font-medium">
               {(displayName || user?.email || "?").slice(0, 1).toUpperCase()}

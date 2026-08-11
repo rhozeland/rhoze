@@ -794,6 +794,9 @@
       }
 
       // --- Display picture: upload / remove -------------------------------
+      // Center-crops to a square and downscales in halving steps so big uploads
+      // stay sharp (a single huge drawImage pass aliases badly). Always emits a
+      // fixed 512px master so every avatar renders at identical density.
       function squareBlobFromFile(file, size) {
         return new Promise(function (resolve, reject) {
           var url = URL.createObjectURL(file);
@@ -802,11 +805,35 @@
             try {
               var side = Math.min(img.width, img.height);
               var sx = (img.width - side) / 2, sy = (img.height - side) / 2;
-              var out = Math.min(size, side) || size;
+              var out = size;
+
+              // Step 1: crop the square region at native resolution.
+              var src = document.createElement("canvas");
+              src.width = side; src.height = side;
+              var sctx = src.getContext("2d");
+              sctx.imageSmoothingEnabled = true;
+              sctx.imageSmoothingQuality = "high";
+              sctx.drawImage(img, sx, sy, side, side, 0, 0, side, side);
+
+              // Step 2: halve repeatedly until within 2x of the target.
+              var cur = src, curSide = side;
+              while (curSide > out * 2) {
+                var next = document.createElement("canvas");
+                var nextSide = Math.max(out, Math.round(curSide / 2));
+                next.width = nextSide; next.height = nextSide;
+                var nctx = next.getContext("2d");
+                nctx.imageSmoothingEnabled = true;
+                nctx.imageSmoothingQuality = "high";
+                nctx.drawImage(cur, 0, 0, curSide, curSide, 0, 0, nextSide, nextSide);
+                cur = next; curSide = nextSide;
+              }
+
               var canvas = document.createElement("canvas");
               canvas.width = out; canvas.height = out;
               var ctx = canvas.getContext("2d");
-              ctx.drawImage(img, sx, sy, side, side, 0, 0, out, out);
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.drawImage(cur, 0, 0, curSide, curSide, 0, 0, out, out);
               canvas.toBlob(function (b) {
                 URL.revokeObjectURL(url);
                 b ? resolve(b) : reject(new Error("Could not process that image"));
@@ -836,7 +863,12 @@
           prep.then(function (blob) {
             var path = user.id + "/pfp-" + Date.now() + (isGif ? ".gif" : ".png");
             return sb.storage.from("avatars")
-              .upload(path, blob, { contentType: isGif ? "image/gif" : "image/png", upsert: true })
+              .upload(path, blob, {
+                contentType: isGif ? "image/gif" : "image/png",
+                upsert: true,
+                // Paths are timestamped, so the object is immutable — cache hard.
+                cacheControl: "31536000",
+              })
               .then(function (r) {
                 if (r.error) throw r.error;
                 var pub = sb.storage.from("avatars").getPublicUrl(path);

@@ -1358,7 +1358,7 @@
             setMsg("Saving your Toybox…");
             tbToPngBlob(512).then(function (blob) {
               var path = user.id + "/toybox-" + Date.now() + ".png";
-              return sb.storage.from("avatars").upload(path, blob, { contentType:"image/png", upsert:true }).then(function (r) {
+              return sb.storage.from("avatars").upload(path, blob, { contentType:"image/png", upsert:true, cacheControl:"31536000" }).then(function (r) {
                 if (r.error) throw r.error;
                 var pub = sb.storage.from("avatars").getPublicUrl(path);
                 var url = pub.data && pub.data.publicUrl;

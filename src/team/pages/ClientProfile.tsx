@@ -9,6 +9,67 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Upload, Trash2, Sparkles, ExternalLink } from "lucide-react";
 
 /**
+ * Center-crop to a square and downscale in halving steps so large uploads stay
+ * sharp, emitting a fixed 512px PNG master for consistent avatar density.
+ */
+function squareBlobFromFile(file: File, size: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const side = Math.min(img.width, img.height);
+        const sx = (img.width - side) / 2;
+        const sy = (img.height - side) / 2;
+
+        const src = document.createElement("canvas");
+        src.width = side;
+        src.height = side;
+        const sctx = src.getContext("2d")!;
+        sctx.imageSmoothingEnabled = true;
+        sctx.imageSmoothingQuality = "high";
+        sctx.drawImage(img, sx, sy, side, side, 0, 0, side, side);
+
+        let cur: HTMLCanvasElement = src;
+        let curSide = side;
+        while (curSide > size * 2) {
+          const next = document.createElement("canvas");
+          const nextSide = Math.max(size, Math.round(curSide / 2));
+          next.width = nextSide;
+          next.height = nextSide;
+          const nctx = next.getContext("2d")!;
+          nctx.imageSmoothingEnabled = true;
+          nctx.imageSmoothingQuality = "high";
+          nctx.drawImage(cur, 0, 0, curSide, curSide, 0, 0, nextSide, nextSide);
+          cur = next;
+          curSide = nextSide;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(cur, 0, 0, curSide, curSide, 0, 0, size, size);
+        canvas.toBlob((b) => {
+          URL.revokeObjectURL(url);
+          b ? resolve(b) : reject(new Error("Could not process that image"));
+        }, "image/png");
+      } catch (e) {
+        URL.revokeObjectURL(url);
+        reject(e);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not read that image"));
+    };
+    img.src = url;
+  });
+}
+
+/**
  * Minimal client profile page — name + password change. Keeps the client
  * portal self-contained so users never have to wander into team settings.
  */

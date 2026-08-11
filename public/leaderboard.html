@@ -149,13 +149,13 @@
     /* Row avatars in Top Movers */
     .lb-row-user { display:flex; align-items:center; gap:10px; min-width:0; }
     .lb-row-avatar { position:relative; overflow:hidden; width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:hsl(var(--ink)); border:1.5px solid hsl(var(--ink) / 0.85); background:hsl(var(--surface-alt)); font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
-    .lb-row-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .18s ease; }
+    .lb-row-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0; transition:opacity .18s ease; image-rendering:auto; backface-visibility:hidden; transform:translateZ(0); }
     .lb-row-avatar img.ready { opacity:1; }
     .lb-row-user .name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600; color:hsl(var(--ink)); }
     /* Account header avatar */
     .lb-acct-head { align-items:center; }
     .lb-acct-avatar { position:relative; width:44px; height:44px; border-radius:12px; border:2px solid hsl(var(--ink)); background:hsl(var(--surface-alt)); flex-shrink:0; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; color:hsl(var(--ink)); }
-    .lb-acct-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity .18s ease; }
+    .lb-acct-avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0; transition:opacity .18s ease; image-rendering:auto; backface-visibility:hidden; transform:translateZ(0); }
     .lb-acct-avatar img.ready { opacity:1; }
     .lb-acct-head-left { display:flex; align-items:center; gap:12px; min-width:0; }
     /* Unified info card (merged rules + rewards) */
@@ -635,7 +635,7 @@
           var av = '<span class="lb-row-avatar" style="background:hsl(' + hue + ' 70% 88%);">' +
             escapeHtml(initialOf(r.username)) +
             (avatarUrl
-              ? '<img src="' + escapeHtml(avatarUrl) + '" alt="" decoding="async" loading="lazy" ' +
+              ? '<img src="' + escapeHtml(avatarUrl) + '" alt="" width="56" height="56" decoding="async" loading="lazy" fetchpriority="low" ' +
                 'onload="this.classList.add(\'ready\')" onerror="this.remove()" />'
               : "") +
           '</span>';
@@ -794,6 +794,9 @@
       }
 
       // --- Display picture: upload / remove -------------------------------
+      // Center-crops to a square and downscales in halving steps so big uploads
+      // stay sharp (a single huge drawImage pass aliases badly). Always emits a
+      // fixed 512px master so every avatar renders at identical density.
       function squareBlobFromFile(file, size) {
         return new Promise(function (resolve, reject) {
           var url = URL.createObjectURL(file);
@@ -802,11 +805,35 @@
             try {
               var side = Math.min(img.width, img.height);
               var sx = (img.width - side) / 2, sy = (img.height - side) / 2;
-              var out = Math.min(size, side) || size;
+              var out = size;
+
+              // Step 1: crop the square region at native resolution.
+              var src = document.createElement("canvas");
+              src.width = side; src.height = side;
+              var sctx = src.getContext("2d");
+              sctx.imageSmoothingEnabled = true;
+              sctx.imageSmoothingQuality = "high";
+              sctx.drawImage(img, sx, sy, side, side, 0, 0, side, side);
+
+              // Step 2: halve repeatedly until within 2x of the target.
+              var cur = src, curSide = side;
+              while (curSide > out * 2) {
+                var next = document.createElement("canvas");
+                var nextSide = Math.max(out, Math.round(curSide / 2));
+                next.width = nextSide; next.height = nextSide;
+                var nctx = next.getContext("2d");
+                nctx.imageSmoothingEnabled = true;
+                nctx.imageSmoothingQuality = "high";
+                nctx.drawImage(cur, 0, 0, curSide, curSide, 0, 0, nextSide, nextSide);
+                cur = next; curSide = nextSide;
+              }
+
               var canvas = document.createElement("canvas");
               canvas.width = out; canvas.height = out;
               var ctx = canvas.getContext("2d");
-              ctx.drawImage(img, sx, sy, side, side, 0, 0, out, out);
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.drawImage(cur, 0, 0, curSide, curSide, 0, 0, out, out);
               canvas.toBlob(function (b) {
                 URL.revokeObjectURL(url);
                 b ? resolve(b) : reject(new Error("Could not process that image"));
@@ -836,7 +863,12 @@
           prep.then(function (blob) {
             var path = user.id + "/pfp-" + Date.now() + (isGif ? ".gif" : ".png");
             return sb.storage.from("avatars")
-              .upload(path, blob, { contentType: isGif ? "image/gif" : "image/png", upsert: true })
+              .upload(path, blob, {
+                contentType: isGif ? "image/gif" : "image/png",
+                upsert: true,
+                // Paths are timestamped, so the object is immutable — cache hard.
+                cacheControl: "31536000",
+              })
               .then(function (r) {
                 if (r.error) throw r.error;
                 var pub = sb.storage.from("avatars").getPublicUrl(path);
@@ -1326,7 +1358,7 @@
             setMsg("Saving your Toybox…");
             tbToPngBlob(512).then(function (blob) {
               var path = user.id + "/toybox-" + Date.now() + ".png";
-              return sb.storage.from("avatars").upload(path, blob, { contentType:"image/png", upsert:true }).then(function (r) {
+              return sb.storage.from("avatars").upload(path, blob, { contentType:"image/png", upsert:true, cacheControl:"31536000" }).then(function (r) {
                 if (r.error) throw r.error;
                 var pub = sb.storage.from("avatars").getPublicUrl(path);
                 var url = pub.data && pub.data.publicUrl;

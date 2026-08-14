@@ -49,10 +49,12 @@ export default function BuildWizard({
   session,
   onDone,
   onNeedAuth,
+  onCreated,
 }: {
   session: Session | null;
   onDone: () => void;
   onNeedAuth?: () => void;
+  onCreated?: (requestId: string) => void;
 }) {
   const [step, setStep] = useState(0);
   const [type, setType] = useState<string | null>(null);
@@ -113,9 +115,11 @@ export default function BuildWizard({
         estimated_credits: totalCredits,
       }).select("id").maybeSingle();
       if (error) throw error;
-      setRef(String(data?.id ?? "").slice(0, 8).toUpperCase());
+      const id = String(data?.id ?? "");
+      setRef(id.slice(0, 8).toUpperCase());
       setStep(3);
-      onDone();
+      if (id && onCreated) onCreated(id);
+      else onDone();
     } catch (e) {
       toast({ title: "Couldn't create project", description: (e as Error).message, variant: "destructive" });
     } finally { setBusy(false); }

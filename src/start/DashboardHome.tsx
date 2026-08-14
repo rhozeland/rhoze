@@ -6,14 +6,17 @@ import { ArrowRight, Coins, Plus, Star, Trophy, Users } from "lucide-react";
 
 type Proj = { id: string; title: string; status: string; credit_balance: number | null };
 type Row = { username: string; points: number };
+type Req = { id: string; title: string; proposed_project_title: string | null; status: string; estimated_credits: number | null; requested_credits: number };
 
 export default function DashboardHome({
-  session, onBuild, onRoadmap, onTokens,
+  session, onBuild, onRoadmap, onTokens, onOpenProject,
 }: {
   session: Session;
   onBuild: () => void; onRoadmap: () => void; onTokens: () => void;
+  onOpenProject?: (requestId: string) => void;
 }) {
   const [projects, setProjects] = useState<Proj[]>([]);
+  const [requests, setRequests] = useState<Req[]>([]);
   const [progress, setProgress] = useState<Record<string, number>>({});
   const [balance, setBalance] = useState(0);
   const [earned, setEarned] = useState(0);
@@ -23,6 +26,13 @@ export default function DashboardHome({
 
   useEffect(() => {
     (async () => {
+      const { data: reqs } = await supabase
+        .from("credit_requests")
+        .select("id,title,proposed_project_title,status,estimated_credits,requested_credits")
+        .eq("requested_by", session.user.id)
+        .order("created_at", { ascending: false })
+        .limit(8);
+      setRequests((reqs ?? []) as Req[]);
       const { data: pcs } = await supabase.from("project_clients").select("project_id").eq("user_id", session.user.id);
       const ids = (pcs ?? []).map((r) => r.project_id);
       if (ids.length) {
@@ -104,13 +114,29 @@ export default function DashboardHome({
             <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Your projects</div>
             <button onClick={onRoadmap} className="text-xs underline underline-offset-4">Roadmap</button>
           </div>
-          {projects.length === 0 ? (
+          {projects.length === 0 && requests.length === 0 ? (
             <button onClick={onBuild}
               className="w-full rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground hover:border-foreground/30 transition">
               No projects yet — start your first brief
             </button>
           ) : (
             <div className="divide-y divide-border">
+              {requests.map((r) => (
+                <button key={r.id} onClick={() => onOpenProject?.(r.id)}
+                  className="w-full text-left py-3 first:pt-0 last:pb-0 group">
+                  <div className="flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium truncate group-hover:underline underline-offset-4">
+                        {r.proposed_project_title || r.title}
+                      </div>
+                      <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                        {String(r.status).replace(/_/g, " ")} · {(r.estimated_credits ?? r.requested_credits ?? 0).toLocaleString()} credits
+                      </div>
+                    </div>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </div>
+                </button>
+              ))}
               {projects.slice(0, 5).map((p) => (
                 <button key={p.id} onClick={onRoadmap}
                   className="w-full text-left py-3 first:pt-0 last:pb-0 group">

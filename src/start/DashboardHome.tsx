@@ -2,11 +2,57 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowRight, Coins, Plus, Star, Trophy, Users } from "lucide-react";
+import { ArrowRight, Coins, FolderOpen, Plus, Star, Trophy, Users } from "lucide-react";
 
 type Proj = { id: string; title: string; status: string; credit_balance: number | null };
 type Row = { username: string; points: number };
-type Req = { id: string; title: string; proposed_project_title: string | null; status: string; estimated_credits: number | null; requested_credits: number };
+type Req = { id: string; title: string; proposed_project_title: string | null; status: string; estimated_credits: number | null; requested_credits: number; created_at?: string };
+
+// Human-readable status labels + tone.
+const STATUS: Record<string, string> = {
+  draft: "Draft",
+  pending: "Pending review",
+  pending_review: "Pending review",
+  submitted: "Pending review",
+  in_review: "Pending review",
+  estimated: "Estimated",
+  approved: "Confirmed",
+  confirmed: "Confirmed",
+  active: "In progress",
+  in_progress: "In progress",
+  complete: "Completed",
+  completed: "Completed",
+  rejected: "Declined",
+};
+const niceStatus = (s: string) => STATUS[String(s).toLowerCase()] ?? String(s).replace(/_/g, " ");
+
+function StatusPill({ status }: { status: string }) {
+  const k = String(status).toLowerCase();
+  const done = k.startsWith("complete") || k === "approved" || k === "confirmed";
+  const live = k === "active" || k === "in_progress";
+  return (
+    <span
+      className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+        done
+          ? "border-primary/40 bg-primary/10 text-foreground"
+          : live
+          ? "border-foreground/30 bg-foreground text-background"
+          : "border-border text-muted-foreground"
+      }`}
+    >
+      {niceStatus(status)}
+    </span>
+  );
+}
+
+const relTime = (iso?: string) => {
+  if (!iso) return "—";
+  const d = (Date.now() - new Date(iso).getTime()) / 86400000;
+  if (d < 1) return "today";
+  if (d < 2) return "yesterday";
+  if (d < 30) return `${Math.floor(d)}d ago`;
+  return new Date(iso).toLocaleDateString();
+};
 
 export default function DashboardHome({
   session, onBuild, onRoadmap, onTokens, onOpenProject,
@@ -28,7 +74,7 @@ export default function DashboardHome({
     (async () => {
       const { data: reqs } = await supabase
         .from("credit_requests")
-        .select("id,title,proposed_project_title,status,estimated_credits,requested_credits")
+        .select("id,title,proposed_project_title,status,estimated_credits,requested_credits,created_at")
         .eq("requested_by", session.user.id)
         .order("created_at", { ascending: false })
         .limit(8);

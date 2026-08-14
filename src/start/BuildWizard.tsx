@@ -252,7 +252,7 @@ export default function BuildWizard({
               Request <span className="font-mono">#{ref}</span> is with the team — they'll be in touch within 24 hours.
             </p>
             <div className="mt-5 flex gap-2 justify-center">
-              <Button variant="outline" onClick={() => { setStep(0); setType(null); setRef(null); }}>Start another</Button>
+              <Button variant="outline" onClick={() => { setStep(0); setType(null); setRef(null); setAnswers({ desc: "", goals: "", timeline: "", budget: "", notes: "" }); }}>Start another</Button>
               <Button onClick={onDone}>View roadmap</Button>
             </div>
           </div>

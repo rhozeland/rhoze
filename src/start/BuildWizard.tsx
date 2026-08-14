@@ -1,11 +1,9 @@
 // Build Project tab — 4-step wizard. Pre-filled, no AI credits consumed.
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import CopilotQuestionnaire, { type CopilotAnswers } from "./CopilotQuestionnaire";
 import type { Session } from "@supabase/supabase-js";
 import { Camera, Check, Megaphone, Music, Palette, Sparkles, Video } from "lucide-react";
 
@@ -58,10 +56,9 @@ export default function BuildWizard({
 }) {
   const [step, setStep] = useState(0);
   const [type, setType] = useState<string | null>(null);
-  const [desc, setDesc] = useState("");
-  const [goals, setGoals] = useState("");
-  const [timeline, setTimeline] = useState("2–4 weeks");
-  const [budget, setBudget] = useState("Flexible");
+  const [answers, setAnswers] = useState<CopilotAnswers>({
+    desc: "", goals: "", timeline: "", budget: "", notes: "",
+  });
   const [busy, setBusy] = useState(false);
   const [ref, setRef] = useState<string | null>(null);
   const [rhozeUsd, setRhozeUsd] = useState<number | null>(null);
@@ -81,14 +78,17 @@ export default function BuildWizard({
 
   const pick = (slug: string) => {
     setType(slug);
-    setDesc(PREFILL[slug].desc);
-    setGoals(PREFILL[slug].goals);
+    setAnswers({ desc: "", goals: "", timeline: "", budget: "", notes: "" });
   };
 
   const lines = type ? LINES(type) : [];
   const totalCredits = lines.reduce((a, l) => a + l.credits, 0);
   const totalCad = totalCredits * CAD_PER_CREDIT;
   const label = TYPES.find((t) => t.slug === type)?.label ?? "";
+  const desc = answers.desc.trim() || (type ? PREFILL[type].desc : "");
+  const goals = answers.goals.trim() || (type ? PREFILL[type].goals : "");
+  const timeline = answers.timeline.trim() || "2–4 weeks";
+  const budget = answers.budget.trim() || "Flexible";
 
   // $RHOZE conversion: live market price → how many tokens equal 1 credit ($75 CAD)
   const rhozeCad = rhozeUsd != null ? rhozeUsd * CAD_PER_USD : null;
@@ -108,7 +108,7 @@ export default function BuildWizard({
         kind: "custom",
         title: `${label} — new project`,
         proposed_project_title: `${label} — ${session.user.email?.split("@")[0] ?? "client"}`,
-        description: `${desc}\n\nGoals: ${goals}\nTimeline: ${timeline}\nBudget: ${budget}\nEstimate: ${totalCredits} credits ($${money(totalCad)} CAD)${applyRhoze && tokensForTotal ? ` · paying with ~${Math.round(tokensForTotal).toLocaleString()} $RHOZE` : ""}`,
+        description: `${desc}\n\nGoals: ${goals}\nTimeline: ${timeline}\nBudget: ${budget}${answers.notes.trim() ? `\nNotes: ${answers.notes.trim()}` : ""}\nEstimate: ${totalCredits} credits ($${money(totalCad)} CAD)${applyRhoze && tokensForTotal ? ` · paying with ~${Math.round(tokensForTotal).toLocaleString()} $RHOZE` : ""}`,
         requested_credits: totalCredits,
         estimated_credits: totalCredits,
       }).select("id").maybeSingle();

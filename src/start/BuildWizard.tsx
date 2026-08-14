@@ -139,7 +139,7 @@ export default function BuildWizard({
         ))}
       </ol>
 
-      <div className="rounded-2xl border border-border bg-card p-5 md:p-6">
+      <div className={step === 1 ? "" : "rounded-2xl border border-border bg-card p-5 md:p-6"}>
         {step === 0 && (
           <>
             <h3 className="text-xl tracking-tight">What do you want to create?</h3>
@@ -161,27 +161,15 @@ export default function BuildWizard({
           </>
         )}
 
-        {step === 1 && (
-          <>
-            <h3 className="text-xl tracking-tight">Tell us about your project</h3>
-            <p className="text-sm text-muted-foreground mt-0.5">{label} · pre-filled, edit anything.</p>
-            <div className="mt-4 space-y-3">
-              <div><Label className="text-xs">Project description</Label>
-                <Textarea rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
-              <div><Label className="text-xs">Key goals</Label>
-                <Input value={goals} onChange={(e) => setGoals(e.target.value)} /></div>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <div><Label className="text-xs">Timeline</Label>
-                  <Input value={timeline} onChange={(e) => setTimeline(e.target.value)} /></div>
-                <div><Label className="text-xs">Budget preference</Label>
-                  <Input value={budget} onChange={(e) => setBudget(e.target.value)} /></div>
-              </div>
-            </div>
-            <div className="mt-5 flex gap-2">
-              <Button variant="outline" onClick={() => setStep(0)}>← Back</Button>
-              <Button className="flex-1" onClick={() => setStep(2)}>Generate estimate →</Button>
-            </div>
-          </>
+        {step === 1 && type && (
+          <CopilotQuestionnaire
+            label={label}
+            prefill={PREFILL[type]}
+            value={answers}
+            onChange={setAnswers}
+            onBack={() => setStep(0)}
+            onContinue={() => setStep(2)}
+          />
         )}
 
         {step === 2 && (

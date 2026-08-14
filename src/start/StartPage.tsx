@@ -212,9 +212,9 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     { id: "tokens", label: "Invest", icon: CoinsIcon },
                     { id: "community", label: "Community board", icon: Trophy },
                   ] as const).map((t) => (
-                    <button key={t.id} onClick={() => setTab(t.id)}
+                    <button key={t.id} onClick={() => { setActiveProject(null); setTab(t.id); }}
                       className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm whitespace-nowrap transition border ${
-                        tab === t.id
+                        tab === t.id || (t.id === "dashboard" && tab === "project")
                           ? "bg-foreground text-background border-foreground"
                           : "border-border text-muted-foreground hover:border-foreground/30"
                       }`}>
@@ -231,8 +231,10 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     onBuild={() => setTab("build")}
                     onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
                     onTokens={() => setTab("tokens")}
+                    onOpenProject={(id) => openProject(id)}
                   />
                 )}
+                {tab === "project" && projectPane}
                 {tab === "dashboard" && (
                   <div id="project-roadmap" className="mt-6 scroll-mt-24">
                     <ClientDashboard />
@@ -240,7 +242,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 )}
                 {tab === "build" && (
                   <div className="space-y-4">
-                    <BuildWizard session={session} onDone={() => setTab("dashboard")} onNeedAuth={() => setAuthOpen(true)} />
+                    <BuildWizard session={session} onDone={backToDashboard} onNeedAuth={() => setAuthOpen(true)} onCreated={(id) => openProject(id, true)} />
                     <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
                   </div>
                 )}

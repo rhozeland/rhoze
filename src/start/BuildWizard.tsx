@@ -1,11 +1,11 @@
 // Build Project tab — 4-step wizard. Pre-filled, no AI credits consumed.
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ElementType } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import CopilotQuestionnaire, { type CopilotAnswers } from "./CopilotQuestionnaire";
 import type { Session } from "@supabase/supabase-js";
-import { Camera, Check, Megaphone, Music, Palette, Sparkles, Video } from "lucide-react";
+import { Calendar, Camera, Check, Coins, Megaphone, MessageSquare, Music, Palette, Scissors, Sparkles, Video, Wallet } from "lucide-react";
 
 // Pricing model: everything is quoted in CREDITS. 1 credit = $75 CAD.
 const CAD_PER_CREDIT = 75;
@@ -173,73 +173,140 @@ export default function BuildWizard({
         )}
 
         {step === 2 && (
-          <>
-            <div className="flex items-center gap-2"><Sparkles className="w-4 h-4" />
-              <h3 className="text-xl tracking-tight">Your estimate</h3></div>
-            <div className="mt-4 rounded-xl bg-muted/40 p-4">
-              <div className="text-xs text-muted-foreground">Based on your answers</div>
-              <div className="text-sm mt-0.5">{label}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">Timeline: {timeline} · Budget: {budget}</div>
-            </div>
-            <div className="mt-4 text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Recommended</div>
-            <div className="mt-2 divide-y divide-border">
-              {lines.map((l) => (
-                <div key={l.name} className="flex justify-between py-2.5 text-sm">
-                  <span className="flex gap-2"><Check className="w-4 h-4 text-muted-foreground shrink-0" />{l.name}</span>
-                  <span className="tabular-nums text-muted-foreground">
-                    {l.credits} {l.credits === 1 ? "credit" : "credits"}
-                    <span className="ml-2 text-xs opacity-70">${money(l.credits * CAD_PER_CREDIT)}</span>
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 rounded-xl bg-muted/40 p-4 flex items-end justify-between gap-4">
-              <div>
-                <div className="text-xs text-muted-foreground">Total estimated</div>
-                <div className="text-2xl tabular-nums">{totalCredits.toLocaleString()} credits</div>
-                <div className="text-sm text-muted-foreground tabular-nums">${money(totalCad)} CAD · 1 credit = ${CAD_PER_CREDIT}</div>
-              </div>
-              <div className="text-xs text-muted-foreground text-right">Confirmed by the team<br />before any spend</div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <h3 className="text-xl tracking-tight">Your estimate</h3>
             </div>
 
-            <div className="mt-3 rounded-xl border border-border p-4">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="mt-1 accent-foreground"
-                  checked={applyRhoze}
-                  onChange={(e) => setApplyRhoze(e.target.checked)}
-                  disabled={!tokensPerCredit}
+            {/* Project summary */}
+            <section className="rounded-2xl border border-border bg-card p-5">
+              <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-4">Project summary</div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <SummaryBlock
+                  icon={TYPES.find((t) => t.slug === type)?.icon ?? Video}
+                  label="Project type"
+                  value={label}
                 />
-                <span className="text-sm">
-                  Pay with $RHOZE
-                  <span className="block text-xs text-muted-foreground mt-0.5">
+                <SummaryBlock icon={Calendar} label="Timeline" value={timeline} />
+                <SummaryBlock icon={Wallet} label="Budget" value={budget} />
+              </div>
+            </section>
+
+            {/* Breakdown */}
+            <section>
+              <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground mb-3">Recommended breakdown</div>
+              <div className="space-y-3">
+                {lines.map((l, i) => {
+                  const TypeIcon = TYPES.find((t) => t.slug === type)?.icon ?? Video;
+                  const LineIcon = [TypeIcon, Scissors, MessageSquare][i] ?? Check;
+                  const descs = [
+                    "Primary deliverable for your project",
+                    "Reusable cuts for social channels",
+                    "Creative direction and review session",
+                  ];
+                  return (
+                    <div key={l.name} className="rounded-2xl border border-border bg-card p-4 flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-muted grid place-items-center shrink-0">
+                        <LineIcon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium">{l.name}</div>
+                        <div className="text-xs text-muted-foreground">{descs[i]}</div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="text-2xl tabular-nums font-medium">{l.credits}</div>
+                        <div className="text-xs text-muted-foreground tabular-nums">${money(l.credits * CAD_PER_CREDIT)} CAD</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* Total */}
+            <section className="rounded-2xl border border-border bg-card p-5">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Total estimated</div>
+                  <div className="text-4xl tabular-nums font-medium mt-1">
+                    {totalCredits.toLocaleString()} <span className="text-lg text-muted-foreground font-normal">credits</span>
+                  </div>
+                  <div className="text-lg text-muted-foreground tabular-nums mt-0.5">${money(totalCad)} CAD</div>
+                  <div className="text-xs text-muted-foreground mt-1">1 credit = ${CAD_PER_CREDIT} CAD</div>
+                </div>
+                <div className="text-xs text-muted-foreground text-right">Confirmed by the team<br />before any spend</div>
+              </div>
+
+              <div className="mt-5 h-2.5 w-full rounded-full bg-muted overflow-hidden flex gap-1">
+                {lines.map((l) => (
+                  <div
+                    key={l.name}
+                    style={{ width: `${(l.credits / totalCredits) * 100}%` }}
+                    className="h-full rounded-full bg-primary"
+                  />
+                ))}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                {lines.map((l) => (
+                  <div key={l.name} className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    <span>{l.name} · {l.credits}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* $RHOZE payment */}
+            <section className="rounded-2xl border border-border bg-card p-5">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-muted grid place-items-center shrink-0">
+                  <Coins className="w-5 h-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium">Pay with $RHOZE</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">
                     {tokensPerCredit
                       ? <>Live price ${rhozeUsd!.toFixed(6)} USD · 1 credit ≈ {Math.round(tokensPerCredit).toLocaleString()} $RHOZE</>
                       : "Fetching live $RHOZE price…"}
-                  </span>
-                </span>
-              </label>
+                  </div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={applyRhoze}
+                    onChange={(e) => setApplyRhoze(e.target.checked)}
+                    disabled={!tokensPerCredit}
+                  />
+                  <div className="w-11 h-6 bg-muted rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary peer-disabled:opacity-50" />
+                </label>
+              </div>
+
               {applyRhoze && tokensForTotal && (
-                <div className="mt-3 flex items-end justify-between border-t border-border pt-3">
+                <div className="mt-4 pt-4 border-t border-border flex items-end justify-between gap-4">
                   <div>
                     <div className="text-xs text-muted-foreground">Token cost for this project</div>
-                    <div className="text-lg tabular-nums">{Math.round(tokensForTotal).toLocaleString()} $RHOZE</div>
+                    <div className="text-2xl tabular-nums font-medium">
+                      {Math.round(tokensForTotal).toLocaleString()} <span className="text-sm text-muted-foreground font-normal">$RHOZE</span>
+                    </div>
                   </div>
                   <div className="text-xs text-muted-foreground text-right">
                     Covers {totalCredits} credits<br />(${money(totalCad)} CAD)
                   </div>
                 </div>
               )}
-              <p className="mt-3 text-xs text-muted-foreground">
+              <p className="mt-4 text-xs text-muted-foreground">
                 Hold less than the full amount? Any $RHOZE you send is applied at market value against the CAD total — partial credits round down, the rest is invoiced in CAD.
               </p>
-            </div>
-            <div className="mt-5 flex gap-2">
+            </section>
+
+            {/* CTAs */}
+            <div className="flex gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep(1)}>← Back</Button>
               <Button className="flex-1" disabled={busy} onClick={confirm}>{busy ? "Creating…" : "Confirm project →"}</Button>
             </div>
-          </>
+          </div>
         )}
 
         {step === 3 && (
@@ -258,6 +325,18 @@ export default function BuildWizard({
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function SummaryBlock({ icon: Icon, label, value }: { icon: ElementType; label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-background p-3">
+      <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground">
+        <Icon className="w-3.5 h-3.5" />
+        {label}
+      </div>
+      <div className="mt-1.5 text-sm font-medium truncate">{value}</div>
     </div>
   );
 }

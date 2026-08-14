@@ -13,6 +13,7 @@ import CopilotBrief from "@/start/CopilotBrief";
 import ClientDashboard from "@/start/ClientDashboard";
 import DashboardHome from "@/start/DashboardHome";
 import BuildWizard from "@/start/BuildWizard";
+import ProjectView from "@/start/ProjectView";
 import TokensPanel from "@/start/TokensPanel";
 import InvestPage from "@/invest/InvestPage";
 import ConciergeForm from "@/start/ConciergeForm";
@@ -30,12 +31,13 @@ import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
 import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, PlusSquare, Trophy } from "lucide-react";
 
-type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community";
+type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community" | "project";
 
 export default function StartPage({ embedded = false }: { embedded?: boolean }) {
   const [session, setSession] = useState<Session | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [tab, setTab] = useState<StartTab>("dashboard");
+  const [activeProject, setActiveProject] = useState<{ id: string; justCreated: boolean } | null>(null);
   const [convo, setConvo] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,6 +118,24 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
   const conciergeUnlocked = !!(convo as any)?.email_captured_at || !!session;
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
+  const openProject = (id: string, justCreated = false) => {
+    setActiveProject({ id, justCreated });
+    setTab("project");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const backToDashboard = () => { setActiveProject(null); setTab("dashboard"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const goBuild = () => { setActiveProject(null); setTab("build"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+
+  const projectPane = activeProject && (
+    <ProjectView
+      session={session}
+      requestId={activeProject.id}
+      justCreated={activeProject.justCreated}
+      onBack={backToDashboard}
+      onBuild={goBuild}
+    />
+  );
+
   return (
     <div className={embedded ? "bg-background text-foreground" : "min-h-screen bg-background text-foreground"}>
       {!embedded && <header className="site-header border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
@@ -153,6 +173,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                   onBuild={() => setTab("build")}
                   onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
                   onTokens={() => setTab("tokens")}
+                  onOpenProject={(id) => openProject(id)}
                 />
                 <div id="project-roadmap" className="mt-6 scroll-mt-24"><ClientDashboard /></div>
               </>
@@ -167,10 +188,11 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
             )}
             {tab === "build" && (
               <div className="space-y-4">
-                <BuildWizard session={session} onDone={() => setTab("dashboard")} onNeedAuth={() => setAuthOpen(true)} />
+                <BuildWizard session={session} onDone={backToDashboard} onNeedAuth={() => setAuthOpen(true)} onCreated={(id) => openProject(id, true)} />
                 <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
               </div>
             )}
+            {tab === "project" && projectPane}
             {tab === "tokens" && (session ? <TokensPanel session={session} /> : <InvestPage embedded />)}
             {tab === "community" && (
               <div className="rounded-2xl border border-border bg-card overflow-hidden">

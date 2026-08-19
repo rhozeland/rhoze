@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import InvestPage from "@/invest/InvestPage";
+import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
 const qc = new QueryClient();
@@ -13,6 +14,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={qc}>
       <HashRouter>
+        <PageTracker />
         <TooltipProvider>
           <Routes>
             <Route path="/" element={<InvestPage />} />

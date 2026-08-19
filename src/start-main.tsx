@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import CheckoutReturn from "@/start/CheckoutReturn";
+import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
 const qc = new QueryClient();
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={qc}>
       <HashRouter>
+        <PageTracker />
         <TooltipProvider>
           <Routes>
             <Route path="/" element={<StartPage />} />

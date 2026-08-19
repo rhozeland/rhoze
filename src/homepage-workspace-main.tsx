@@ -13,6 +13,7 @@ if (rootElement) {
   createRoot(rootElement).render(
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <PageTracker />
         <StartPage embedded />
         <Toaster />
       </TooltipProvider>

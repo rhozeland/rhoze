@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
+import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
 const rootElement = document.getElementById("homepage-workspace-root");

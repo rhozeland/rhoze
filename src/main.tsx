@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import TeamApp from "@/team/TeamApp";
 import { AuthProvider } from "@/team/lib/auth";
+import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
 const queryClient = new QueryClient();
@@ -15,6 +16,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <HashRouter>
+        <PageTracker />
         <AuthProvider>
           <TooltipProvider>
             <TeamApp />

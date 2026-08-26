@@ -2638,6 +2638,107 @@ export type Database = {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      copilot_attachment_allowed: { Args: { p_name: string }; Returns: boolean }
+      copilot_capture_email: {
+        Args: {
+          p_conversation_id: string
+          p_guest_token: string
+          p_seed: string
+        }
+        Returns: undefined
+      }
+      copilot_create_conversation: {
+        Args: { p_guest_token: string }
+        Returns: {
+          brief_json: Json
+          created_at: string
+          email_captured_at: string | null
+          estimate_high_cents: number | null
+          estimate_low_cents: number | null
+          guest_token: string | null
+          id: string
+          recommended_pathway: string | null
+          status: string
+          submitted_intake_id: string | null
+          timeline_weeks_high: number | null
+          timeline_weeks_low: number | null
+          turn_budget: number
+          turns_used: number
+          updated_at: string
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "copilot_conversations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      copilot_find_draft: {
+        Args: { p_guest_token: string }
+        Returns: {
+          brief_json: Json
+          created_at: string
+          email_captured_at: string | null
+          estimate_high_cents: number | null
+          estimate_low_cents: number | null
+          guest_token: string | null
+          id: string
+          recommended_pathway: string | null
+          status: string
+          submitted_intake_id: string | null
+          timeline_weeks_high: number | null
+          timeline_weeks_low: number | null
+          turn_budget: number
+          turns_used: number
+          updated_at: string
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "copilot_conversations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      copilot_get_conversation: {
+        Args: { p_guest_token: string; p_id: string }
+        Returns: {
+          brief_json: Json
+          created_at: string
+          email_captured_at: string | null
+          estimate_high_cents: number | null
+          estimate_low_cents: number | null
+          guest_token: string | null
+          id: string
+          recommended_pathway: string | null
+          status: string
+          submitted_intake_id: string | null
+          timeline_weeks_high: number | null
+          timeline_weeks_low: number | null
+          turn_budget: number
+          turns_used: number
+          updated_at: string
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "copilot_conversations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      copilot_guest_token_ok: { Args: { p_token: string }; Returns: boolean }
+      copilot_list_messages: {
+        Args: { p_conversation_id: string; p_guest_token: string }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          transcript_source: string
+        }[]
+      }
       create_investor_pledge: {
         Args: {
           _amount_usd_cents: number

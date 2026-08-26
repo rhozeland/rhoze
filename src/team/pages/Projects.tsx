@@ -47,7 +47,7 @@ export default function Projects() {
   const { data: packages } = useQuery({
     queryKey: ["service_packages_active"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("service_packages").select("*").eq("is_active", true).order("sort_order");
+      const { data, error } = await supabase.from("service_packages").select("id, slug, name, kind, category, description, price_cents, credits, credits_cost, billing_interval, min_quantity, is_active, sort_order, created_at, updated_at").eq("is_active", true).order("sort_order");
       if (error) throw error;
       return data;
     },

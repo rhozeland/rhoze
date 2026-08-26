@@ -600,9 +600,6 @@ export default function ClientDashboard() {
             ) : (
               <div className="text-sm text-muted-foreground">No upcoming milestones.</div>
             )}
-            <a href={`/team.html#/portal/${activeProject.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline underline-offset-4">
-              Open project portal <ExternalLink size={11} />
-            </a>
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3 sm:col-span-2 lg:col-span-1">
@@ -731,9 +728,6 @@ export default function ClientDashboard() {
         </div>
       )}
 
-      <a href="/team.html#/portal" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline underline-offset-4">
-        Open full client portal <ExternalLink size={11} />
-      </a>
 
       <Dialog open={!!msgMilestone} onOpenChange={(o) => { if (!o) setMsgMilestone(null); }}>
         <DialogContent className="sm:max-w-lg p-0 gap-0 max-h-[90vh] flex flex-col">

@@ -731,9 +731,6 @@ export default function ClientDashboard() {
         </div>
       )}
 
-      <a href="/team.html#/portal" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground underline underline-offset-4">
-        Open full client portal <ExternalLink size={11} />
-      </a>
 
       <Dialog open={!!msgMilestone} onOpenChange={(o) => { if (!o) setMsgMilestone(null); }}>
         <DialogContent className="sm:max-w-lg p-0 gap-0 max-h-[90vh] flex flex-col">

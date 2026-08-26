@@ -5254,6 +5254,24 @@
           });
         }
 
+        // Staff-only "Team" tab — revealed in the existing nav row when the signed-in
+        // account carries an admin/employee role. Everyone else never sees it.
+        if (uid) {
+          sbFetch('user_roles?select=role&user_id=eq.' + encodeURIComponent(uid), token).then(function(rows){
+            var roles = (rows || []).map(function(r){ return r.role; });
+            var isStaff = roles.indexOf('admin') > -1 || roles.indexOf('employee') > -1;
+            if (!isStaff) return;
+            var tab = document.getElementById('rTeamTab');
+            var item = document.getElementById('rTeamMenuItem');
+            if (tab) tab.hidden = false;
+            if (item) item.hidden = false;
+            // If the page loaded straight onto #team, open it now that access is confirmed.
+            if (location.hash === '#team') { try { openInlineView('team', { replace: true }); } catch (e) {} }
+          });
+        }
+
+
+
         // Aggregate $RHOZE balance across the user's projects (rails removed; balance chip stays).
         sbFetch('projects?select=id&archived_at=is.null&limit=50', token).then(function(rows){
           var ids = (rows || []).map(function(p){ return p.id; }).filter(Boolean);

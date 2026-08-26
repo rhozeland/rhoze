@@ -240,15 +240,13 @@ export async function unlockConciergeForGuest(opts: {
   conversationId: string;
   seedMessage: string;
 }): Promise<void> {
-  await supabase
-    .from("copilot_conversations")
-    .update({ email_captured_at: new Date().toISOString() })
-    .eq("id", opts.conversationId);
-  if (opts.seedMessage.trim()) {
-    await supabase.from("copilot_messages").insert({
-      conversation_id: opts.conversationId,
-      role: "user",
-      content: opts.seedMessage,
-    });
-  }
+  const { error } = await (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ error: unknown }>)(
+    "copilot_capture_email",
+    {
+      p_conversation_id: opts.conversationId,
+      p_guest_token: ensureGuestToken(),
+      p_seed: opts.seedMessage,
+    }
+  );
+  if (error) throw error as Error;
 }

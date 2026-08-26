@@ -52,68 +52,55 @@ export function getGuestToken(): string {
 }
 
 export async function getOrCreateConversation(): Promise<Conversation> {
-  const { data: session } = await supabase.auth.getSession();
-  const userId = session.session?.user?.id ?? null;
   const guestToken = ensureGuestToken();
+  const rpc = supabase.rpc.bind(supabase) as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
 
-  // Try existing convo id from localStorage
+  // Try existing convo id from localStorage (token/ownership verified server-side)
   const existing = localStorage.getItem(CONVO_KEY);
   if (existing) {
-    const { data } = await supabase
-      .from("copilot_conversations")
-      .select("*")
-      .eq("id", existing)
-      .maybeSingle();
-    if (data) return data as unknown as Conversation;
+    const { data } = await rpc("copilot_get_conversation", {
+      p_id: existing,
+      p_guest_token: guestToken,
+    });
+    const row = Array.isArray(data) ? data[0] : null;
+    if (row) return row as Conversation;
   }
 
-  // Search by owner
-  const query = supabase
-    .from("copilot_conversations")
-    .select("*")
-    .eq("status", "draft")
-    .order("created_at", { ascending: false })
-    .limit(1);
-  const { data: found } = userId
-    ? await query.eq("user_id", userId)
-    : await query.eq("guest_token", guestToken);
-  if (found && found[0]) {
-    localStorage.setItem(CONVO_KEY, found[0].id);
-    return found[0] as unknown as Conversation;
+  // Search by owner (auth user or matching guest token)
+  const { data: found } = await rpc("copilot_find_draft", { p_guest_token: guestToken });
+  const draft = Array.isArray(found) ? found[0] : null;
+  if (draft) {
+    localStorage.setItem(CONVO_KEY, (draft as Conversation).id);
+    return draft as Conversation;
   }
 
   // Create fresh
-  const insertPayload = userId
-    ? { user_id: userId, guest_token: guestToken }
-    : { user_id: null, guest_token: guestToken };
-  const { data: created, error } = await supabase
-    .from("copilot_conversations")
-    .insert(insertPayload)
-    .select("*")
-    .single();
-  if (error || !created) throw error ?? new Error("Failed to create conversation");
-  localStorage.setItem(CONVO_KEY, created.id);
-  return created as unknown as Conversation;
+  const { data: created, error } = await rpc("copilot_create_conversation", {
+    p_guest_token: guestToken,
+  });
+  const row = Array.isArray(created) ? created[0] : null;
+  if (error || !row) throw (error as Error) ?? new Error("Failed to create conversation");
+  localStorage.setItem(CONVO_KEY, (row as Conversation).id);
+  return row as Conversation;
 }
 
 export async function loadMessages(conversationId: string): Promise<CopilotMessage[]> {
-  const { data } = await supabase
-    .from("copilot_messages")
-    .select("id, role, content, transcript_source, created_at")
-    .eq("conversation_id", conversationId)
-    .in("role", ["user", "assistant"])
-    .order("created_at");
-  return (data ?? []) as CopilotMessage[];
+  const { data } = await (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>)(
+    "copilot_list_messages",
+    { p_conversation_id: conversationId, p_guest_token: ensureGuestToken() }
+  );
+  return (Array.isArray(data) ? data : []) as CopilotMessage[];
 }
 
 export async function reloadConversation(conversationId: string): Promise<Conversation | null> {
-  const { data } = await supabase
-    .from("copilot_conversations")
-    .select("*")
-    .eq("id", conversationId)
-    .maybeSingle();
-  return (data as unknown as Conversation) ?? null;
+  const { data } = await (supabase.rpc as unknown as (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>)(
+    "copilot_get_conversation",
+    { p_id: conversationId, p_guest_token: ensureGuestToken() }
+  );
+  const row = Array.isArray(data) ? data[0] : null;
+  return (row as Conversation) ?? null;
 }
+
 
 /**
  * Stream chat SSE from the edge function. onDelta is called for each text delta;

@@ -182,7 +182,7 @@ export function stripBriefBlock(text: string): string {
 /** Upload a file attachment to storage; returns { path, signedUrl }. */
 export async function uploadAttachment(conversationId: string, file: File): Promise<{ path: string; signedUrl: string; kind: string }> {
   const ext = file.name.split(".").pop() ?? "bin";
-  const path = `${conversationId}/${crypto.randomUUID()}.${ext}`;
+  const path = `${conversationId}/${ensureGuestToken()}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from("copilot-attachments").upload(path, file, {
     contentType: file.type || "application/octet-stream",
     upsert: false,

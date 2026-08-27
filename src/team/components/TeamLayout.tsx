@@ -117,7 +117,7 @@ export default function TeamLayout() {
     return (
       <div className="bg-background text-foreground">
         <div className="mx-auto max-w-6xl px-3 sm:px-4 py-3 space-y-3">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar -mx-1 px-1 pb-0.5">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-0.5">
             <NavLink
               to="/settings"
               className={({ isActive }) =>

@@ -9,3 +9,4 @@ One auth page handles client + team. After auth, the smart router reads `user_ro
 - otherwise → `/client/home`
 
 Project code and team referral code fields are collapsible toggles, not always-on. Old PortalLanding/TeamLogin/ClientAccess files have been deleted; do not re-create them.
+Staff entry point: the public homepage keeps its existing HUD and CREATE / BUILD / INVEST nav untouched. A fourth `Team` tab (`#rTeamTab`, plus `#rTeamMenuItem` in the mobile menu) is revealed only when `user_roles` contains admin or employee, and it opens `/team.html` inside the existing inline section viewer — never a new tab. Do not add "open full portal" style external links to the client dashboard.

@@ -99,6 +99,73 @@ export default function TeamLayout() {
     navigate("/login");
   };
 
+  // Embedded mode: the portal is rendered inside the main site's inline section
+  // viewer. Drop the sidebar shell entirely and present every section as a
+  // compact tab strip + bounded panel so it reads as one unified dashboard.
+  const embedded = (() => {
+    if (typeof window === "undefined") return false;
+    try {
+      if (new URLSearchParams(window.location.search).get("embed") === "1") return true;
+      return window.self !== window.top;
+    } catch {
+      return true; // cross-origin frame access throws — we're embedded
+    }
+  })();
+
+  if (embedded) {
+    const tabs = [...visibleNav, ...(isAdmin ? adminNav : [])];
+    return (
+      <div className="bg-background text-foreground">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4 py-3 space-y-3">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-0.5">
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                cn(
+                  "shrink-0 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-xs font-medium transition-colors",
+                  isActive
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:text-foreground hover:bg-accent",
+                )
+              }
+              title={accountLabel}
+            >
+              <Avatar className="h-4 w-4">
+                {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
+                <AvatarFallback className="text-[8px]">{initials}</AvatarFallback>
+              </Avatar>
+              <span className="hidden sm:inline">Account</span>
+            </NavLink>
+            <span className="shrink-0 h-4 w-px bg-border" />
+            {tabs.map((n) => (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                end={(n as { end?: boolean }).end}
+                className={({ isActive }) =>
+                  cn(
+                    "shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    isActive
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-muted-foreground hover:text-foreground hover:bg-accent",
+                  )
+                }
+              >
+                <n.icon size={13} />
+                {n.label}
+              </NavLink>
+            ))}
+          </div>
+          <div className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="max-h-[72vh] overflow-y-auto p-3 sm:p-5">
+              <Outlet />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground md:flex">
       {/* Mobile top bar */}

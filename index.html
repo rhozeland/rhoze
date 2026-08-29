@@ -3176,13 +3176,19 @@
       <section id="rInlineView" class="r-inline" aria-label="Section viewer" hidden>
         <style>
           .r-inline { padding: 0; margin: 0; }
-          .r-inline-frame-wrap { position: relative; width: 100%; min-height: 100vh; background: hsl(var(--surface-card)); }
+          .r-inline-frame-wrap { position: relative; width: 100%; min-height: 60vh; background: hsl(var(--surface-card)); }
           .r-inline-frame { width: 100%; height: 100vh; border: 0; display: block; opacity: 0; transition: opacity 260ms ease; background: hsl(var(--surface-card)); }
           .r-inline-frame.is-ready { opacity: 1; }
-          .r-inline-load { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 0.5rem; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted)); pointer-events: none; opacity: 1; transition: opacity 200ms ease; z-index: 20; }
+          /* Skeleton shown while the embedded app boots — replaces the bare "Loading" text. */
+          .r-inline-load { position: absolute; inset: 0; padding: 1.6rem clamp(1rem, 3vw, 2.4rem); display: grid; gap: 0.9rem; align-content: start; background: hsl(var(--surface-card)); opacity: 1; transition: opacity 220ms ease; z-index: 20; pointer-events: none; }
           .r-inline-load.is-hidden { opacity: 0; }
-          .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
-          @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
+          .r-inline-sk { border-radius: 0.85rem; background: linear-gradient(90deg, hsl(var(--line) / 0.35) 25%, hsl(var(--line) / 0.65) 37%, hsl(var(--line) / 0.35) 63%); background-size: 400% 100%; animation: rInlineShimmer 1.3s ease-in-out infinite; }
+          .r-inline-sk.row { height: 2.4rem; }
+          .r-inline-sk.tall { height: 16rem; }
+          .r-inline-sk.half { height: 9rem; }
+          .r-inline-load-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+          @media (max-width: 720px) { .r-inline-load-grid { grid-template-columns: 1fr; } }
+          @keyframes rInlineShimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
           body.r-inline-active #rMain > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
@@ -3190,15 +3196,22 @@
           body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }
           /* Kill the fixed body-level gradient/orange background so it doesn't bleed through inline pages. */
           body.r-inline-active .gradient-canvas { display: none !important; }
-          body.r-inline-active { background: hsl(var(--surface-card)) !important; }
-          /* Kill the outer page-shell rounded corners while inline view is active so we don't see cream peeks at the top corners. */
-          body.r-inline-active .page-shell { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; box-shadow: none !important; }
+          /* Keep the same page background + rounded shell as the homepage so sections feel identical. */
+          body.r-inline-active { background: hsl(var(--page-bg)) !important; }
           .r-inline-frame-wrap { min-height: 0; }
         </style>
         <div class="r-inline-frame-wrap">
-          <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>
-          <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section" loading="lazy"></iframe>
+          <div class="r-inline-load" id="rInlineLoad" aria-hidden="true">
+            <div class="r-inline-sk row" style="max-width: 22rem;"></div>
+            <div class="r-inline-sk tall"></div>
+            <div class="r-inline-load-grid">
+              <div class="r-inline-sk half"></div>
+              <div class="r-inline-sk half"></div>
+            </div>
+          </div>
+          <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section"></iframe>
         </div>
+
       </section>
 
 

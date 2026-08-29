@@ -5508,22 +5508,61 @@
         else paintActive(null);
       }
 
+      // Keep the header in sync with auth state the moment it changes (sign-in
+      // often happens inside the embedded portal iframe, same origin).
+      var _lastAuthSig = '';
+      function syncAuthState(){
+        var s = readSbSession();
+        var sig = s ? (s.user && s.user.id) || 'in' : 'out';
+        if (sig === _lastAuthSig) return;
+        _lastAuthSig = sig;
+        try { loadSignedInHUD(); } catch (e) {}
+      }
+      window.addEventListener('storage', function(ev){
+        if (!ev.key || ev.key.indexOf('-auth-token') === -1) return;
+        syncAuthState();
+      });
+      window.addEventListener('message', function(ev){
+        var d = ev && ev.data;
+        if (d && (d.type === 'rhoze:auth-changed' || d === 'rhoze:auth-changed')) syncAuthState();
+      });
+      window.addEventListener('focus', syncAuthState);
+      document.addEventListener('visibilitychange', function(){ if (!document.hidden) syncAuthState(); });
+      setInterval(syncAuthState, 1500);
+
+      // Warm the team/portal bundle in the background so the first inline open
+      // is instant instead of showing a long "Loading" state.
+      function prewarmPortal(){
+        if (document.getElementById('rPrewarmFrame')) return;
+        var f = document.createElement('iframe');
+        f.id = 'rPrewarmFrame';
+        f.src = '/team.html?embed=1&prewarm=1#/';
+        f.setAttribute('aria-hidden', 'true');
+        f.setAttribute('tabindex', '-1');
+        f.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9999px;top:0;';
+        document.body.appendChild(f);
+      }
+
       function start(){
         loadChannel();
         loadNewsTicker();
         loadTicker(); loadSpark();
         loadSignedInHUD();
+        syncAuthState();
         wireSignOut();
       wireInlineNav();
       if ((location.hash || '').indexOf('#workspace') === 0 && window.__rShowWorkspace) {
         window.__rShowWorkspace(false, (location.hash || '').split('/')[1]);
       }
+        if (window.requestIdleCallback) requestIdleCallback(prewarmPortal, { timeout: 4000 });
+        else setTimeout(prewarmPortal, 2500);
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);
         setInterval(loadSignedInHUD, 5 * 60 * 1000);
         setInterval(loadChannel, 15 * 60 * 1000); // re-check feed every 15 min
       }
+
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
       else start();
     })();

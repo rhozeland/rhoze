@@ -5373,8 +5373,13 @@
                 'footer,.footer,.site-footer{display:none!important;}',
                 'main{padding-top:0!important;margin-top:0!important;}',
                 /* Kill the inner page-shell chrome so we don\'t see nested rounded corners / borders inside the iframe. */
-                '.page-shell{max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;}'
+                '.page-shell{max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;}',
+                /* Embedded React surfaces use min-h-screen; inside an auto-sized frame that becomes dead whitespace. */
+                (routeKey === 'portal' || routeKey === 'team')
+                  ? '.min-h-screen{min-height:0!important;} .min-h-screen.flex.items-center{padding:2.5rem 0!important;}'
+                  : ''
               ].join('');
+
               doc.head && doc.head.appendChild(s);
               // Auto-size iframe to inner content so there is no wasted whitespace.
               var resize = function(){

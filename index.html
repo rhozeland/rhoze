@@ -3122,7 +3122,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
-      <a class="nav-cta" id="rSignInCta" href="/team.html#/portal" aria-label="Sign in to Rhozeland">
+      <a class="nav-cta" id="rSignInCta" href="/team.html#/portal" data-inline-nav="portal" aria-label="Sign in to Rhozeland">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
         Sign in
       </a>
@@ -3164,8 +3164,8 @@
           body.workspace-active .r-start, body.workspace-active #engage,
           body.workspace-active .page-shell > section:not(.navbar) { display: none !important; }
           body.workspace-active .gradient-canvas { display: none !important; }
-          body.workspace-active { background: hsl(var(--surface-alt)); }
-          body.workspace-active .page-shell { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }
+          body.workspace-active { background: hsl(var(--page-bg)); }
+
           @media (max-width: 720px) {
             .homepage-workspace { min-height: calc(100vh - 116px); }
           }
@@ -3176,13 +3176,19 @@
       <section id="rInlineView" class="r-inline" aria-label="Section viewer" hidden>
         <style>
           .r-inline { padding: 0; margin: 0; }
-          .r-inline-frame-wrap { position: relative; width: 100%; min-height: 100vh; background: hsl(var(--surface-card)); }
+          .r-inline-frame-wrap { position: relative; width: 100%; min-height: 60vh; background: hsl(var(--surface-card)); }
           .r-inline-frame { width: 100%; height: 100vh; border: 0; display: block; opacity: 0; transition: opacity 260ms ease; background: hsl(var(--surface-card)); }
           .r-inline-frame.is-ready { opacity: 1; }
-          .r-inline-load { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 0.5rem; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: hsl(var(--muted)); pointer-events: none; opacity: 1; transition: opacity 200ms ease; z-index: 20; }
+          /* Skeleton shown while the embedded app boots — replaces the bare "Loading" text. */
+          .r-inline-load { position: absolute; inset: 0; padding: 1.6rem clamp(1rem, 3vw, 2.4rem); display: grid; gap: 0.9rem; align-content: start; background: hsl(var(--surface-card)); opacity: 1; transition: opacity 220ms ease; z-index: 20; pointer-events: none; }
           .r-inline-load.is-hidden { opacity: 0; }
-          .r-inline-load-dot { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: hsl(var(--ink)); animation: rInlinePulse 900ms ease-in-out infinite; }
-          @keyframes rInlinePulse { 0%,100% { transform: scale(0.6); opacity: 0.4; } 50% { transform: scale(1); opacity: 1; } }
+          .r-inline-sk { border-radius: 0.85rem; background: linear-gradient(90deg, hsl(var(--line) / 0.35) 25%, hsl(var(--line) / 0.65) 37%, hsl(var(--line) / 0.35) 63%); background-size: 400% 100%; animation: rInlineShimmer 1.3s ease-in-out infinite; }
+          .r-inline-sk.row { height: 2.4rem; }
+          .r-inline-sk.tall { height: 16rem; }
+          .r-inline-sk.half { height: 9rem; }
+          .r-inline-load-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
+          @media (max-width: 720px) { .r-inline-load-grid { grid-template-columns: 1fr; } }
+          @keyframes rInlineShimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
           body.r-inline-active #rMain > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
@@ -3190,15 +3196,22 @@
           body.r-inline-active .r-start, body.r-inline-active #engage, body.r-inline-active .page-shell > section:not(#rInlineView):not(.navbar) { display: none !important; }
           /* Kill the fixed body-level gradient/orange background so it doesn't bleed through inline pages. */
           body.r-inline-active .gradient-canvas { display: none !important; }
-          body.r-inline-active { background: hsl(var(--surface-card)) !important; }
-          /* Kill the outer page-shell rounded corners while inline view is active so we don't see cream peeks at the top corners. */
-          body.r-inline-active .page-shell { border-radius: 0 !important; border-left: 0 !important; border-right: 0 !important; box-shadow: none !important; }
+          /* Keep the same page background + rounded shell as the homepage so sections feel identical. */
+          body.r-inline-active { background: hsl(var(--page-bg)) !important; }
           .r-inline-frame-wrap { min-height: 0; }
         </style>
         <div class="r-inline-frame-wrap">
-          <div class="r-inline-load" id="rInlineLoad"><span class="r-inline-load-dot"></span><span>Loading</span></div>
-          <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section" loading="lazy"></iframe>
+          <div class="r-inline-load" id="rInlineLoad" aria-hidden="true">
+            <div class="r-inline-sk row" style="max-width: 22rem;"></div>
+            <div class="r-inline-sk tall"></div>
+            <div class="r-inline-load-grid">
+              <div class="r-inline-sk half"></div>
+              <div class="r-inline-sk half"></div>
+            </div>
+          </div>
+          <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section"></iframe>
         </div>
+
       </section>
 
 
@@ -5230,7 +5243,16 @@
         var signInCta = document.getElementById('rSignInCta');
         if (!hud) return;
         var session = readSbSession();
-        if (!session) { hud.hidden = true; if (signInCta) signInCta.hidden = false; return; }
+        if (!session) {
+          hud.hidden = true;
+          if (signInCta) signInCta.hidden = false;
+          var offTab = document.getElementById('rTeamTab');
+          var offItem = document.getElementById('rTeamMenuItem');
+          if (offTab) offTab.hidden = true;
+          if (offItem) offItem.hidden = true;
+          return;
+        }
+
         hud.hidden = false;
         if (signInCta) signInCta.hidden = true;
         var token = session.access_token;
@@ -5310,7 +5332,9 @@
         invest:      { url: '/invest.html',      title: 'Invest' },
         live:        { url: '/live.html',        title: 'Live' },
         events:      { url: '/events.html',      title: 'Events' },
-        team:        { url: '/team.html?embed=1#/', title: 'Team' }
+        team:        { url: '/team.html?embed=1#/', title: 'Team' },
+        portal:      { url: '/team.html?embed=1#/portal', title: 'Sign in' }
+
       };
       // Map raw href paths to route keys so we can intercept existing anchor tags without rewriting each one.
       var HREF_TO_ROUTE = {
@@ -5349,8 +5373,13 @@
                 'footer,.footer,.site-footer{display:none!important;}',
                 'main{padding-top:0!important;margin-top:0!important;}',
                 /* Kill the inner page-shell chrome so we don\'t see nested rounded corners / borders inside the iframe. */
-                '.page-shell{max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;}'
+                '.page-shell{max-width:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;overflow:visible!important;}',
+                /* Embedded React surfaces use min-h-screen; inside an auto-sized frame that becomes dead whitespace. */
+                (routeKey === 'portal' || routeKey === 'team')
+                  ? '.min-h-screen{min-height:0!important;} .min-h-screen.flex.items-center{padding:2.5rem 0!important;}'
+                  : ''
               ].join('');
+
               doc.head && doc.head.appendChild(s);
               // Auto-size iframe to inner content so there is no wasted whitespace.
               var resize = function(){
@@ -5495,22 +5524,67 @@
         else paintActive(null);
       }
 
+      // Keep the header in sync with auth state the moment it changes (sign-in
+      // often happens inside the embedded portal iframe, same origin).
+      var _lastAuthSig = '';
+      function syncAuthState(){
+        var s = readSbSession();
+        var sig = s ? (s.user && s.user.id) || 'in' : 'out';
+        if (sig === _lastAuthSig) return;
+        var wasOut = _lastAuthSig === 'out';
+        _lastAuthSig = sig;
+        try { loadSignedInHUD(); } catch (e) {}
+        // Signed in from the embedded portal → leave the sign-in view and land in the workspace.
+        if (s && wasOut && location.hash === '#portal' && window.__rShowWorkspace) {
+          try { window.__rShowWorkspace(true, 'dashboard'); } catch (e) {}
+        }
+      }
+
+      window.addEventListener('storage', function(ev){
+        if (!ev.key || ev.key.indexOf('-auth-token') === -1) return;
+        syncAuthState();
+      });
+      window.addEventListener('message', function(ev){
+        var d = ev && ev.data;
+        if (d && (d.type === 'rhoze:auth-changed' || d === 'rhoze:auth-changed')) syncAuthState();
+      });
+      window.addEventListener('focus', syncAuthState);
+      document.addEventListener('visibilitychange', function(){ if (!document.hidden) syncAuthState(); });
+      setInterval(syncAuthState, 1500);
+
+      // Warm the team/portal bundle in the background so the first inline open
+      // is instant instead of showing a long "Loading" state.
+      function prewarmPortal(){
+        if (document.getElementById('rPrewarmFrame')) return;
+        var f = document.createElement('iframe');
+        f.id = 'rPrewarmFrame';
+        f.src = '/team.html?embed=1&prewarm=1#/';
+        f.setAttribute('aria-hidden', 'true');
+        f.setAttribute('tabindex', '-1');
+        f.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-9999px;top:0;';
+        document.body.appendChild(f);
+      }
+
       function start(){
         loadChannel();
         loadNewsTicker();
         loadTicker(); loadSpark();
         loadSignedInHUD();
+        syncAuthState();
         wireSignOut();
       wireInlineNav();
       if ((location.hash || '').indexOf('#workspace') === 0 && window.__rShowWorkspace) {
         window.__rShowWorkspace(false, (location.hash || '').split('/')[1]);
       }
+        if (window.requestIdleCallback) requestIdleCallback(prewarmPortal, { timeout: 4000 });
+        else setTimeout(prewarmPortal, 2500);
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);
         setInterval(loadNewsTicker, 5 * 60 * 1000);
         setInterval(loadSignedInHUD, 5 * 60 * 1000);
         setInterval(loadChannel, 15 * 60 * 1000); // re-check feed every 15 min
       }
+
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
       else start();
     })();

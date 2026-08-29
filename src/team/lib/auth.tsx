@@ -45,7 +45,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Set listener BEFORE getSession (required pattern)
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
+      // Tell the parent shell (homepage embeds this app in an iframe) so its
+      // header swaps out of the "Sign in" state immediately.
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: "rhoze:auth-changed" }, window.location.origin);
+        }
+      } catch {
+        /* ignore */
+      }
       // Defer Supabase calls to avoid deadlock inside the callback
+
       if (s?.user) {
         setTimeout(async () => {
           // If a referral code was stored at signup (email-confirmation flow), consume it now.

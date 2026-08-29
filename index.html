@@ -5243,7 +5243,16 @@
         var signInCta = document.getElementById('rSignInCta');
         if (!hud) return;
         var session = readSbSession();
-        if (!session) { hud.hidden = true; if (signInCta) signInCta.hidden = false; return; }
+        if (!session) {
+          hud.hidden = true;
+          if (signInCta) signInCta.hidden = false;
+          var offTab = document.getElementById('rTeamTab');
+          var offItem = document.getElementById('rTeamMenuItem');
+          if (offTab) offTab.hidden = true;
+          if (offItem) offItem.hidden = true;
+          return;
+        }
+
         hud.hidden = false;
         if (signInCta) signInCta.hidden = true;
         var token = session.access_token;

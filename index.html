@@ -5517,9 +5517,15 @@
         var s = readSbSession();
         var sig = s ? (s.user && s.user.id) || 'in' : 'out';
         if (sig === _lastAuthSig) return;
+        var wasOut = _lastAuthSig === 'out';
         _lastAuthSig = sig;
         try { loadSignedInHUD(); } catch (e) {}
+        // Signed in from the embedded portal → leave the sign-in view and land in the workspace.
+        if (s && wasOut && location.hash === '#portal' && window.__rShowWorkspace) {
+          try { window.__rShowWorkspace(true, 'dashboard'); } catch (e) {}
+        }
       }
+
       window.addEventListener('storage', function(ev){
         if (!ev.key || ev.key.indexOf('-auth-token') === -1) return;
         syncAuthState();

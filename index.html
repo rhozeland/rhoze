@@ -5504,8 +5504,8 @@
         };
         // Only reload the iframe if the src actually changed.
         var targetSrc = new URL(route.url, window.location.origin).toString();
-        if (frame.src !== targetSrc) frame.src = route.url;
-        else { frame.classList.add('is-ready'); if (load) load.classList.add('is-hidden'); }
+        if (frame.src !== targetSrc) { rArmInlineWatchdog(); frame.src = route.url; }
+        else { rInlineReady(frame, load); }
         // Update URL hash without scrolling.
         var newHash = '#' + routeKey;
         if (opts && opts.replace) history.replaceState(null, '', newHash);

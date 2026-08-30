@@ -3189,6 +3189,18 @@
           .r-inline-load-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
           @media (max-width: 720px) { .r-inline-load-grid { grid-template-columns: 1fr; } }
           @keyframes rInlineShimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+          /* Error / stalled state for inline sections — clear message + retry. */
+          .r-inline-error { position: absolute; inset: 0; display: none; place-items: center; padding: 2rem; background: hsl(var(--surface-card)); z-index: 30; }
+          .r-inline-error.is-visible { display: grid; }
+          .r-inline-error-card { max-width: 26rem; width: 100%; text-align: center; border: 1px solid hsl(var(--line)); border-radius: 1rem; padding: 1.75rem 1.5rem; display: grid; gap: 0.65rem; justify-items: center; background: hsl(var(--surface-card)); }
+          .r-inline-error-title { font-size: 0.95rem; font-weight: 700; color: hsl(var(--ink)); }
+          .r-inline-error-msg { font-size: 0.82rem; color: hsl(var(--muted)); line-height: 1.55; }
+          .r-inline-error-actions { display: flex; gap: 0.6rem; margin-top: 0.4rem; flex-wrap: wrap; justify-content: center; }
+          .r-inline-error-btn { font-family: inherit; font-size: 0.8rem; font-weight: 700; padding: 0.55rem 1.1rem; border-radius: 999px; cursor: pointer; border: 1px solid hsl(var(--ink)); background: hsl(var(--ink)); color: hsl(var(--surface-card)); transition: opacity 0.2s ease; }
+          .r-inline-error-btn:hover { opacity: 0.85; }
+          .r-inline-error-btn.ghost { background: transparent; color: hsl(var(--ink)); }
+          .r-inline-slow { position: absolute; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 25; display: none; font-size: 0.72rem; color: hsl(var(--muted)); background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 999px; padding: 0.4rem 0.9rem; }
+          .r-inline-slow.is-visible { display: block; }
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
           body.r-inline-active #rMain > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }

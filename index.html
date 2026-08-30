@@ -5372,6 +5372,74 @@
         '/events.html': 'events', '/events': 'events',
         '/team.html': 'team', '/team': 'team'
       };
+      // === Inline load watchdog ===
+      // If the embedded page stalls (slow bundle, dead network), show a "slow"
+      // hint after a few seconds, auto-retry once, then surface a clear error
+      // with Retry / Open-full-page actions instead of a skeleton forever.
+      var INLINE_SLOW_MS = 6000;    // show "still loading" hint
+      var INLINE_TIMEOUT_MS = 15000; // give up & show error
+      var rInlineTimers = { slow: 0, dead: 0 };
+      var rInlineAttempts = 0;
+      var rInlineCurrent = null; // { routeKey, route }
+
+      function rClearInlineTimers(){
+        if (rInlineTimers.slow) { clearTimeout(rInlineTimers.slow); rInlineTimers.slow = 0; }
+        if (rInlineTimers.dead) { clearTimeout(rInlineTimers.dead); rInlineTimers.dead = 0; }
+      }
+      function rHideInlineStates(){
+        var slow = document.getElementById('rInlineSlow');
+        var err  = document.getElementById('rInlineError');
+        if (slow) slow.classList.remove('is-visible');
+        if (err)  err.classList.remove('is-visible');
+      }
+      function rShowInlineError(title, msg){
+        var err = document.getElementById('rInlineError');
+        var t = document.getElementById('rInlineErrorTitle');
+        var m = document.getElementById('rInlineErrorMsg');
+        var full = document.getElementById('rInlineOpenFull');
+        if (t && title) t.textContent = title;
+        if (m && msg) m.textContent = msg;
+        if (full && rInlineCurrent) full.setAttribute('href', rInlineCurrent.route.url.replace('?embed=1', ''));
+        if (err) err.classList.add('is-visible');
+      }
+      function rArmInlineWatchdog(){
+        rClearInlineTimers();
+        rHideInlineStates();
+        rInlineTimers.slow = setTimeout(function(){
+          var slow = document.getElementById('rInlineSlow');
+          if (slow) slow.classList.add('is-visible');
+        }, INLINE_SLOW_MS);
+        rInlineTimers.dead = setTimeout(function(){
+          // First stall: silently retry once with a cache-bust before erroring.
+          if (rInlineAttempts < 1 && rInlineCurrent) {
+            rInlineAttempts++;
+            var frame = document.getElementById('rInlineFrame');
+            if (frame) {
+              var url = rInlineCurrent.route.url;
+              var bust = (url.indexOf('?') > -1 ? '&' : '?') + 'rretry=' + Date.now();
+              frame.src = url.split('#')[0] + bust + (url.indexOf('#') > -1 ? url.slice(url.indexOf('#')) : '');
+              rArmInlineWatchdog();
+              return;
+            }
+          }
+          var load = document.getElementById('rInlineLoad');
+          if (load) load.classList.add('is-hidden');
+          rHideInlineStates();
+          rShowInlineError(
+            'This section didn't load',
+            'The ' + (rInlineCurrent ? rInlineCurrent.route.title : 'page') +
+            ' page took too long to respond. Check your connection and try again.'
+          );
+        }, INLINE_TIMEOUT_MS);
+      }
+      function rInlineReady(frame, load){
+        rClearInlineTimers();
+        rHideInlineStates();
+        rInlineAttempts = 0;
+        frame.classList.add('is-ready');
+        if (load) load.classList.add('is-hidden');
+      }
+
       function openInlineView(routeKey, opts){
         var route = INLINE_ROUTES[routeKey];
         if (!route) return false;
@@ -5379,13 +5447,14 @@
         var frame = document.getElementById('rInlineFrame');
         var load  = document.getElementById('rInlineLoad');
         if (!view || !frame) return false;
+        rInlineCurrent = { routeKey: routeKey, route: route };
+        rInlineAttempts = 0;
         document.body.classList.add('r-inline-active');
         view.hidden = false;
         frame.classList.remove('is-ready');
         if (load) load.classList.remove('is-hidden');
         frame.onload = function(){
-          frame.classList.add('is-ready');
-          if (load) load.classList.add('is-hidden');
+          rInlineReady(frame, load);
           // Strip inner-page chrome so we don't see two headers/footers stacked.
           try {
             var doc = frame.contentDocument;

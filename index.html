@@ -3189,6 +3189,19 @@
           .r-inline-load-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; }
           @media (max-width: 720px) { .r-inline-load-grid { grid-template-columns: 1fr; } }
           @keyframes rInlineShimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+          /* Error / stalled state for inline sections — clear message + retry. */
+          .r-inline-error { position: absolute; inset: 0; display: none; place-items: center; padding: 2rem; background: hsl(var(--surface-card)); z-index: 30; }
+          .r-inline-error.is-visible { display: grid; }
+          .r-inline-error-card { max-width: 26rem; width: 100%; text-align: center; border: 1px solid hsl(var(--line)); border-radius: 1rem; padding: 1.75rem 1.5rem; display: grid; gap: 0.65rem; justify-items: center; background: hsl(var(--surface-card)); }
+          .r-inline-error-title { font-size: 0.95rem; font-weight: 700; color: hsl(var(--ink)); }
+          .r-inline-error-msg { font-size: 0.82rem; color: hsl(var(--ink) / 0.72); line-height: 1.55; }
+          .dark .r-inline-error-msg { color: hsl(var(--ink) / 0.8); }
+          .r-inline-error-actions { display: flex; gap: 0.6rem; margin-top: 0.4rem; flex-wrap: wrap; justify-content: center; }
+          .r-inline-error-btn { font-family: inherit; font-size: 0.8rem; font-weight: 700; padding: 0.55rem 1.1rem; border-radius: 999px; cursor: pointer; border: 1px solid hsl(var(--ink)); background: hsl(var(--ink)); color: hsl(var(--surface-card)); transition: opacity 0.2s ease; }
+          .r-inline-error-btn:hover { opacity: 0.85; }
+          .r-inline-error-btn.ghost { background: transparent; color: hsl(var(--ink)); }
+          .r-inline-slow { position: absolute; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 25; display: none; font-size: 0.72rem; color: hsl(var(--muted)); background: hsl(var(--surface-card)); border: 1px solid hsl(var(--line)); border-radius: 999px; padding: 0.4rem 0.9rem; }
+          .r-inline-slow.is-visible { display: block; }
           /* When an inline section is active, hide every sibling in <main> except the HUD and this viewer, and remove page chrome. */
           body.r-inline-active #rMain > *:not(#rSignedInHUD):not(#rInlineView) { display: none !important; }
           body.r-inline-active .navbar-wrap ~ * .footer, body.r-inline-active footer { display: none !important; }
@@ -3207,6 +3220,19 @@
             <div class="r-inline-load-grid">
               <div class="r-inline-sk half"></div>
               <div class="r-inline-sk half"></div>
+            </div>
+          </div>
+          <div class="r-inline-slow" id="rInlineSlow" role="status">Still loading — this is taking longer than usual…</div>
+          <div class="r-inline-error" id="rInlineError" role="alert">
+            <div class="r-inline-error-card">
+              <div class="r-inline-error-title" id="rInlineErrorTitle">This section didn't load</div>
+              <div class="r-inline-error-msg" id="rInlineErrorMsg">
+                The page took too long to respond. Check your connection and try again.
+              </div>
+              <div class="r-inline-error-actions">
+                <button type="button" class="r-inline-error-btn" id="rInlineRetry">Retry</button>
+                <a class="r-inline-error-btn ghost" id="rInlineOpenFull" href="/" style="text-decoration:none; display:inline-flex; align-items:center;">Open full page</a>
+              </div>
             </div>
           </div>
           <iframe class="r-inline-frame" id="rInlineFrame" title="Rhozeland section"></iframe>
@@ -5347,6 +5373,74 @@
         '/events.html': 'events', '/events': 'events',
         '/team.html': 'team', '/team': 'team'
       };
+      // === Inline load watchdog ===
+      // If the embedded page stalls (slow bundle, dead network), show a "slow"
+      // hint after a few seconds, auto-retry once, then surface a clear error
+      // with Retry / Open-full-page actions instead of a skeleton forever.
+      var INLINE_SLOW_MS = 6000;    // show "still loading" hint
+      var INLINE_TIMEOUT_MS = 15000; // give up & show error
+      var rInlineTimers = { slow: 0, dead: 0 };
+      var rInlineAttempts = 0;
+      var rInlineCurrent = null; // { routeKey, route }
+
+      function rClearInlineTimers(){
+        if (rInlineTimers.slow) { clearTimeout(rInlineTimers.slow); rInlineTimers.slow = 0; }
+        if (rInlineTimers.dead) { clearTimeout(rInlineTimers.dead); rInlineTimers.dead = 0; }
+      }
+      function rHideInlineStates(){
+        var slow = document.getElementById('rInlineSlow');
+        var err  = document.getElementById('rInlineError');
+        if (slow) slow.classList.remove('is-visible');
+        if (err)  err.classList.remove('is-visible');
+      }
+      function rShowInlineError(title, msg){
+        var err = document.getElementById('rInlineError');
+        var t = document.getElementById('rInlineErrorTitle');
+        var m = document.getElementById('rInlineErrorMsg');
+        var full = document.getElementById('rInlineOpenFull');
+        if (t && title) t.textContent = title;
+        if (m && msg) m.textContent = msg;
+        if (full && rInlineCurrent) full.setAttribute('href', rInlineCurrent.route.url.replace('?embed=1', ''));
+        if (err) err.classList.add('is-visible');
+      }
+      function rArmInlineWatchdog(){
+        rClearInlineTimers();
+        rHideInlineStates();
+        rInlineTimers.slow = setTimeout(function(){
+          var slow = document.getElementById('rInlineSlow');
+          if (slow) slow.classList.add('is-visible');
+        }, INLINE_SLOW_MS);
+        rInlineTimers.dead = setTimeout(function(){
+          // First stall: silently retry once with a cache-bust before erroring.
+          if (rInlineAttempts < 1 && rInlineCurrent) {
+            rInlineAttempts++;
+            var frame = document.getElementById('rInlineFrame');
+            if (frame) {
+              var url = rInlineCurrent.route.url;
+              var bust = (url.indexOf('?') > -1 ? '&' : '?') + 'rretry=' + Date.now();
+              frame.src = url.split('#')[0] + bust + (url.indexOf('#') > -1 ? url.slice(url.indexOf('#')) : '');
+              rArmInlineWatchdog();
+              return;
+            }
+          }
+          var load = document.getElementById('rInlineLoad');
+          if (load) load.classList.add('is-hidden');
+          rHideInlineStates();
+          rShowInlineError(
+            'This section didn\'t load',
+            'The ' + (rInlineCurrent ? rInlineCurrent.route.title : 'page') +
+            ' page took too long to respond. Check your connection and try again.'
+          );
+        }, INLINE_TIMEOUT_MS);
+      }
+      function rInlineReady(frame, load){
+        rClearInlineTimers();
+        rHideInlineStates();
+        rInlineAttempts = 0;
+        frame.classList.add('is-ready');
+        if (load) load.classList.add('is-hidden');
+      }
+
       function openInlineView(routeKey, opts){
         var route = INLINE_ROUTES[routeKey];
         if (!route) return false;
@@ -5354,13 +5448,19 @@
         var frame = document.getElementById('rInlineFrame');
         var load  = document.getElementById('rInlineLoad');
         if (!view || !frame) return false;
+        rInlineCurrent = { routeKey: routeKey, route: route };
+        rInlineAttempts = 0;
         document.body.classList.add('r-inline-active');
         view.hidden = false;
         frame.classList.remove('is-ready');
         if (load) load.classList.remove('is-hidden');
-        frame.onload = function(){
-          frame.classList.add('is-ready');
+        frame.onerror = function(){
+          rClearInlineTimers();
           if (load) load.classList.add('is-hidden');
+          rShowInlineError('This section could not be loaded', 'The page failed to load. Check your connection and try again.');
+        };
+        frame.onload = function(){
+          rInlineReady(frame, load);
           // Strip inner-page chrome so we don't see two headers/footers stacked.
           try {
             var doc = frame.contentDocument;
@@ -5410,8 +5510,8 @@
         };
         // Only reload the iframe if the src actually changed.
         var targetSrc = new URL(route.url, window.location.origin).toString();
-        if (frame.src !== targetSrc) frame.src = route.url;
-        else { frame.classList.add('is-ready'); if (load) load.classList.add('is-hidden'); }
+        if (frame.src !== targetSrc) { rArmInlineWatchdog(); frame.src = route.url; }
+        else { rInlineReady(frame, load); }
         // Update URL hash without scrolling.
         var newHash = '#' + routeKey;
         if (opts && opts.replace) history.replaceState(null, '', newHash);
@@ -5436,11 +5536,32 @@
       function closeInlineView(opts){
         var view = document.getElementById('rInlineView');
         if (!view) return;
+        rClearInlineTimers();
+        rHideInlineStates();
+        rInlineCurrent = null;
         document.body.classList.remove('r-inline-active');
         view.hidden = true;
         if (opts && opts.replace) history.replaceState(null, '', location.pathname + location.search);
         else if (location.hash) history.pushState(null, '', location.pathname + location.search);
       }
+      // Retry button: force a fresh reload of the stalled inline section.
+      (function(){
+        var retry = document.getElementById('rInlineRetry');
+        if (!retry) return;
+        retry.addEventListener('click', function(){
+          if (!rInlineCurrent) return;
+          var frame = document.getElementById('rInlineFrame');
+          var load  = document.getElementById('rInlineLoad');
+          if (!frame) return;
+          rInlineAttempts = 0;
+          frame.classList.remove('is-ready');
+          if (load) load.classList.remove('is-hidden');
+          rArmInlineWatchdog();
+          var url = rInlineCurrent.route.url;
+          var bust = (url.indexOf('?') > -1 ? '&' : '?') + 'rretry=' + Date.now();
+          frame.src = url.split('#')[0] + bust + (url.indexOf('#') > -1 ? url.slice(url.indexOf('#')) : '');
+        });
+      })();
       function wireInlineNav(){
         // Update the active tab in the secondary nav row.
         function paintActive(routeKey, wsTab){

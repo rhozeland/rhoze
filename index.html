@@ -5453,6 +5453,11 @@
         view.hidden = false;
         frame.classList.remove('is-ready');
         if (load) load.classList.remove('is-hidden');
+        frame.onerror = function(){
+          rClearInlineTimers();
+          if (load) load.classList.add('is-hidden');
+          rShowInlineError('This section could not be loaded', 'The page failed to load. Check your connection and try again.');
+        };
         frame.onload = function(){
           rInlineReady(frame, load);
           // Strip inner-page chrome so we don't see two headers/footers stacked.

@@ -626,10 +626,9 @@
     if (filterBar) {
       var stuckTrigger = 0;
       var computeTrigger = function() {
-        var wasStuck = filterBar.classList.contains('is-stuck');
-        filterBar.classList.remove('is-stuck');
+        filterBar.style.position = 'static';
         stuckTrigger = filterBar.getBoundingClientRect().top + window.scrollY;
-        if (wasStuck) filterBar.classList.add('is-stuck');
+        filterBar.style.position = '';
       };
       var onScrollStick = function() {
         filterBar.classList.toggle('is-stuck', window.scrollY > stuckTrigger + 1);

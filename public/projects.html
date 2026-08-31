@@ -669,7 +669,7 @@
         dropdownItems.forEach(function(i) { i.classList.remove('active'); });
         item.classList.add('active');
         dropdown.classList.remove('open');
-        renderGrid();
+        renderGrid(null, { navigate: true });
       });
     });
 
@@ -750,7 +750,26 @@
       return ordered;
     }
 
-    function renderGrid(mode) {
+    var filterResults = document.getElementById('filterResults');
+
+    function scrollToGrid() {
+      if (!grid) return;
+      var rect = grid.getBoundingClientRect();
+      if (rect.top > 140) {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function flashVisibleCards(visible) {
+      visible.forEach(function(card, i) {
+        card.classList.remove('search-hit');
+        card.style.animationDelay = Math.min(i * 35, 420) + 'ms';
+        void card.offsetWidth;
+        card.classList.add('search-hit');
+      });
+    }
+
+    function renderGrid(mode, opts) {
       var visible = getOrderedCards(cards.filter(function(c) { return matchesSearch(c) && matchesCategory(c); }));
       if (mode === 'shuffle' || currentFilter === 'portfolio') visible = shuffleList(visible);
       var hidden = cards.filter(function(card) { return visible.indexOf(card) === -1; });
@@ -765,8 +784,21 @@
         grid.appendChild(card);
       });
 
+      if (filterResults) {
+        var isFiltered = currentSearch || (currentFilter !== 'portfolio' && currentFilter !== 'newest');
+        filterResults.textContent = isFiltered
+          ? visible.length + (visible.length === 1 ? ' project' : ' projects')
+          : '';
+        filterResults.classList.toggle('visible', !!isFiltered);
+      }
+
       syncProjectGridRows();
       if (typeof setupHoverVideos === 'function') setupHoverVideos();
+
+      if (opts && opts.navigate) {
+        scrollToGrid();
+        flashVisibleCards(visible);
+      }
     }
 
     if (searchInput) {

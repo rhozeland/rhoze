@@ -96,6 +96,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M16 3h5v5"></path><path d="M4 20 21 3"></path><path d="M21 16v5h-5"></path><path d="m15 15 6 6"></path><path d="M4 4h5"></path><path d="m9 4 3 3"></path></svg>
             <span>Shuffle</span>
           </button>
+          <span class="filter-results" id="filterResults" aria-live="polite"></span>
         </div>
       </div>
 
@@ -669,7 +670,7 @@
         dropdownItems.forEach(function(i) { i.classList.remove('active'); });
         item.classList.add('active');
         dropdown.classList.remove('open');
-        renderGrid();
+        renderGrid(null, { navigate: true });
       });
     });
 
@@ -750,7 +751,26 @@
       return ordered;
     }
 
-    function renderGrid(mode) {
+    var filterResults = document.getElementById('filterResults');
+
+    function scrollToGrid() {
+      if (!grid) return;
+      var rect = grid.getBoundingClientRect();
+      if (rect.top > 140) {
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function flashVisibleCards(visible) {
+      visible.forEach(function(card, i) {
+        card.classList.remove('search-hit');
+        card.style.animationDelay = Math.min(i * 35, 420) + 'ms';
+        void card.offsetWidth;
+        card.classList.add('search-hit');
+      });
+    }
+
+    function renderGrid(mode, opts) {
       var visible = getOrderedCards(cards.filter(function(c) { return matchesSearch(c) && matchesCategory(c); }));
       if (mode === 'shuffle' || currentFilter === 'portfolio') visible = shuffleList(visible);
       var hidden = cards.filter(function(card) { return visible.indexOf(card) === -1; });
@@ -765,14 +785,35 @@
         grid.appendChild(card);
       });
 
+      if (filterResults) {
+        var isFiltered = currentSearch || (currentFilter !== 'portfolio' && currentFilter !== 'newest');
+        filterResults.textContent = isFiltered
+          ? visible.length + (visible.length === 1 ? ' project' : ' projects')
+          : '';
+        filterResults.classList.toggle('visible', !!isFiltered);
+      }
+
       syncProjectGridRows();
       if (typeof setupHoverVideos === 'function') setupHoverVideos();
+
+      if (opts && opts.navigate) {
+        scrollToGrid();
+        flashVisibleCards(visible);
+      }
     }
 
     if (searchInput) {
+      var searchScrollTimer = null;
       searchInput.addEventListener('input', function() {
         currentSearch = searchInput.value.trim().toLowerCase();
         renderGrid();
+        clearTimeout(searchScrollTimer);
+        if (currentSearch) {
+          searchScrollTimer = setTimeout(function() {
+            scrollToGrid();
+            flashVisibleCards(cards.filter(function(c) { return !c.classList.contains('filtered-out'); }));
+          }, 380);
+        }
       });
     }
 
@@ -780,7 +821,7 @@
       shuffleBtn.classList.remove('is-shuffling');
       void shuffleBtn.offsetWidth;
       shuffleBtn.classList.add('is-shuffling');
-      renderGrid('shuffle');
+      renderGrid('shuffle', { navigate: true });
     });
 
     shuffleBtn.addEventListener('animationend', function() {

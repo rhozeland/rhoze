@@ -621,6 +621,24 @@
       });
     });
     if (svcCopy) svcCopy.textContent = SVC_LIST.portfolio;
+    /* Sticky filter bar: add shadow/blur state once it pins to the top */
+    var filterBar = document.getElementById('filterBar');
+    if (filterBar) {
+      var stuckTrigger = 0;
+      var computeTrigger = function() {
+        filterBar.style.position = 'static';
+        stuckTrigger = filterBar.getBoundingClientRect().top + window.scrollY;
+        filterBar.style.position = '';
+      };
+      var onScrollStick = function() {
+        filterBar.classList.toggle('is-stuck', window.scrollY > stuckTrigger + 1);
+      };
+      computeTrigger();
+      window.addEventListener('resize', computeTrigger);
+      window.addEventListener('scroll', onScrollStick, { passive: true });
+      onScrollStick();
+    }
+
     var grid = document.getElementById('projectsGrid');
     var cards = Array.from(grid.querySelectorAll('.work-card'));
     var searchInput = document.getElementById('projectSearch');

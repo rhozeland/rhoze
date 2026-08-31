@@ -1418,14 +1418,26 @@ button { background: none; border: 0; cursor: pointer; }
 
 /* ===================== FILTER BAR ===================== */
 .filter-bar {
-  position: relative;
-  z-index: 20;
+  position: sticky;
+  top: 0;
+  z-index: 25;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
   padding: 0.6rem clamp(1.5rem, 4vw, 3rem);
   margin-bottom: 0;
+  background: hsl(var(--surface) / 0.82);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filter-bar.is-stuck {
+  background: hsl(var(--surface) / 0.94);
+  border-bottom-color: hsl(var(--line));
+  box-shadow: 0 12px 28px -22px hsl(var(--shadow, 0 0% 0%) / 0.35);
 }
 
 .filter-search {

@@ -802,9 +802,17 @@
     }
 
     if (searchInput) {
+      var searchScrollTimer = null;
       searchInput.addEventListener('input', function() {
         currentSearch = searchInput.value.trim().toLowerCase();
         renderGrid();
+        clearTimeout(searchScrollTimer);
+        if (currentSearch) {
+          searchScrollTimer = setTimeout(function() {
+            scrollToGrid();
+            flashVisibleCards(cards.filter(function(c) { return !c.classList.contains('filtered-out'); }));
+          }, 380);
+        }
       });
     }
 
@@ -812,7 +820,7 @@
       shuffleBtn.classList.remove('is-shuffling');
       void shuffleBtn.offsetWidth;
       shuffleBtn.classList.add('is-shuffling');
-      renderGrid('shuffle');
+      renderGrid('shuffle', { navigate: true });
     });
 
     shuffleBtn.addEventListener('animationend', function() {

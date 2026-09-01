@@ -1469,8 +1469,26 @@ button { background: none; border: 0; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+/* Ghost controls inside the slim pill */
+.filter-pill .filter-dropdown-btn,
+.filter-pill .shuffle-toggle {
+  border-color: transparent;
+  padding: 0.42rem 0.7rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+.filter-pill .shuffle-toggle { border-style: solid; }
+.filter-pill .filter-dropdown-btn:hover,
+.filter-pill .filter-dropdown.open .filter-dropdown-btn,
+.filter-pill .shuffle-toggle:hover {
+  border-color: transparent;
+  background: hsl(var(--line) / 0.45);
+  color: hsl(var(--ink));
 }
 
 .filter-dropdown {

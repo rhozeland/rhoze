@@ -1672,13 +1672,25 @@ button { background: none; border: 0; cursor: pointer; }
   100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0); }
 }
 
-@media (max-width: 720px) {
-  .filter-bar {
-    grid-template-columns: 1fr;
+@media (max-width: 900px) {
+  .filter-pill {
+    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 0.45rem 0.6rem;
+    row-gap: 0.35rem;
+  }
+
+  .filter-search {
+    flex: 1 1 100%;
+    padding: 0.15rem 0.35rem;
   }
 
   .filter-right {
-    justify-content: flex-start;
+    margin-left: 0;
+  }
+
+  .svc-strip-cta {
+    margin-left: auto;
   }
 }
 

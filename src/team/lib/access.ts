@@ -18,12 +18,16 @@ export const DEPT_LABELS: Record<Dept, string> = {
   operations: "Operations",
 };
 
-/** Sections every team member can reach regardless of department. */
-export const OPEN_SECTIONS = ["/", "/settings", "/directory", "/docs", "/projects"];
+/**
+ * Sections every team member can reach regardless of department.
+ * `/time` is open because every employee needs to log their own hours —
+ * payroll/admin views inside the page are still gated by `isAdmin`.
+ */
+export const OPEN_SECTIONS = ["/", "/settings", "/directory", "/docs", "/projects", "/time"];
 
 /** Section path → departments allowed. Missing key ⇒ admin only. */
 export const DEFAULT_SECTION_ACCESS: Record<string, Dept[]> = {
-  "/time": ["hr", "operations"],
+  "/time": ["hr", "operations", "marketing", "development", "sales"],
   "/crm": ["marketing", "sales"],
   "/leaderboard": ["marketing"],
   "/live-editor": ["marketing"],

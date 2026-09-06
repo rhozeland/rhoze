@@ -19,27 +19,47 @@ interface AuthCtx {
 
 const Ctx = createContext<AuthCtx | undefined>(undefined);
 
+const ROLE_CACHE_KEY = "rhoze.auth.cache.v1";
+
+type RoleCache = { uid: string; roles: AppRole[]; department: Dept | null };
+
+function readRoleCache(): RoleCache | null {
+  try {
+    const raw = localStorage.getItem(ROLE_CACHE_KEY);
+    return raw ? (JSON.parse(raw) as RoleCache) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const cached = readRoleCache();
   const [session, setSession] = useState<Session | null>(null);
-  const [roles, setRoles] = useState<AppRole[]>([]);
-  const [department, setDepartment] = useState<Dept | null>(null);
+  const [roles, setRoles] = useState<AppRole[]>(cached?.roles ?? []);
+  const [department, setDepartment] = useState<Dept | null>(cached?.department ?? null);
   const [loading, setLoading] = useState(true);
 
   const loadRoles = async (uid: string | undefined) => {
     if (!uid) {
       setRoles([]);
       setDepartment(null);
+      try { localStorage.removeItem(ROLE_CACHE_KEY); } catch { /* ignore */ }
       return;
     }
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-    setRoles((data ?? []).map((r) => r.role as AppRole));
-    const { data: prof } = await supabase
-      .from("profiles")
-      .select("department")
-      .eq("id", uid)
-      .maybeSingle();
-    setDepartment((prof?.department as Dept | null) ?? null);
+    // Both lookups run in parallel — they used to be sequential round-trips.
+    const [{ data }, { data: prof }] = await Promise.all([
+      supabase.from("user_roles").select("role").eq("user_id", uid),
+      supabase.from("profiles").select("department").eq("id", uid).maybeSingle(),
+    ]);
+    const nextRoles = (data ?? []).map((r) => r.role as AppRole);
+    const nextDept = (prof?.department as Dept | null) ?? null;
+    setRoles(nextRoles);
+    setDepartment(nextDept);
+    try {
+      localStorage.setItem(ROLE_CACHE_KEY, JSON.stringify({ uid, roles: nextRoles, department: nextDept }));
+    } catch { /* ignore */ }
   };
+
 
   useEffect(() => {
     // Set listener BEFORE getSession (required pattern)

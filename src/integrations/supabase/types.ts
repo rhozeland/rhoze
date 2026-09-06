@@ -1220,60 +1220,105 @@ export type Database = {
       pay_stubs: {
         Row: {
           breakdown: Json
+          cpp_cents: number
+          cpp2_cents: number
           created_at: string
+          deductions_cents: number
+          ei_cents: number
+          employer_cpp_cents: number
+          employer_ei_cents: number
           expense_cents: number
+          fed_tax_cents: number
           file_url: string | null
           flat_cents: number
           gross_amount: number
+          gross_cents: number
           hourly_cents: number
           id: string
           net_amount: number
+          net_cents: number
           notes: string | null
           paid_at: string | null
           paid_method: string | null
           paid_reference: string | null
+          pay_frequency: number
           pay_period_id: string | null
+          prov_tax_cents: number
+          province: string
           revshare_cents: number
           timesheet_period_id: string | null
           user_id: string
+          vacation_cents: number
+          worker_type: string
+          ytd: Json
         }
         Insert: {
           breakdown?: Json
+          cpp_cents?: number
+          cpp2_cents?: number
           created_at?: string
+          deductions_cents?: number
+          ei_cents?: number
+          employer_cpp_cents?: number
+          employer_ei_cents?: number
           expense_cents?: number
+          fed_tax_cents?: number
           file_url?: string | null
           flat_cents?: number
           gross_amount?: number
+          gross_cents?: number
           hourly_cents?: number
           id?: string
           net_amount?: number
+          net_cents?: number
           notes?: string | null
           paid_at?: string | null
           paid_method?: string | null
           paid_reference?: string | null
+          pay_frequency?: number
           pay_period_id?: string | null
+          prov_tax_cents?: number
+          province?: string
           revshare_cents?: number
           timesheet_period_id?: string | null
           user_id: string
+          vacation_cents?: number
+          worker_type?: string
+          ytd?: Json
         }
         Update: {
           breakdown?: Json
+          cpp_cents?: number
+          cpp2_cents?: number
           created_at?: string
+          deductions_cents?: number
+          ei_cents?: number
+          employer_cpp_cents?: number
+          employer_ei_cents?: number
           expense_cents?: number
+          fed_tax_cents?: number
           file_url?: string | null
           flat_cents?: number
           gross_amount?: number
+          gross_cents?: number
           hourly_cents?: number
           id?: string
           net_amount?: number
+          net_cents?: number
           notes?: string | null
           paid_at?: string | null
           paid_method?: string | null
           paid_reference?: string | null
+          pay_frequency?: number
           pay_period_id?: string | null
+          prov_tax_cents?: number
+          province?: string
           revshare_cents?: number
           timesheet_period_id?: string | null
           user_id?: string
+          vacation_cents?: number
+          worker_type?: string
+          ytd?: Json
         }
         Relationships: [
           {
@@ -1284,6 +1329,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payroll_profiles: {
+        Row: {
+          cpp_exempt: boolean
+          created_at: string
+          ei_exempt: boolean
+          extra_tax_cents: number
+          notes: string | null
+          pay_frequency: number
+          province: string
+          sin_last4: string | null
+          td1_federal_cents: number
+          td1_provincial_cents: number
+          updated_at: string
+          user_id: string
+          vacation_pay_pct: number
+          worker_type: string
+        }
+        Insert: {
+          cpp_exempt?: boolean
+          created_at?: string
+          ei_exempt?: boolean
+          extra_tax_cents?: number
+          notes?: string | null
+          pay_frequency?: number
+          province?: string
+          sin_last4?: string | null
+          td1_federal_cents?: number
+          td1_provincial_cents?: number
+          updated_at?: string
+          user_id: string
+          vacation_pay_pct?: number
+          worker_type?: string
+        }
+        Update: {
+          cpp_exempt?: boolean
+          created_at?: string
+          ei_exempt?: boolean
+          extra_tax_cents?: number
+          notes?: string | null
+          pay_frequency?: number
+          province?: string
+          sin_last4?: string | null
+          td1_federal_cents?: number
+          td1_provincial_cents?: number
+          updated_at?: string
+          user_id?: string
+          vacation_pay_pct?: number
+          worker_type?: string
+        }
+        Relationships: []
+      }
+      payroll_tax_years: {
+        Row: {
+          config: Json
+          created_at: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          config: Json
+          created_at?: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
       }
       profile_employment_history: {
         Row: {

@@ -5710,7 +5710,9 @@
       if ((location.hash || '').indexOf('#workspace') === 0 && window.__rShowWorkspace) {
         window.__rShowWorkspace(false, (location.hash || '').split('/')[1]);
       }
-        if (window.requestIdleCallback) requestIdleCallback(prewarmPortal, { timeout: 4000 });
+        // Signed-in visitors get the portal warmed right away; guests later.
+        if (readSbSession()) setTimeout(prewarmPortal, 150);
+        else if (window.requestIdleCallback) requestIdleCallback(prewarmPortal, { timeout: 4000 });
         else setTimeout(prewarmPortal, 2500);
         setInterval(loadTicker, 30000);
         setInterval(loadSpark, 120000);

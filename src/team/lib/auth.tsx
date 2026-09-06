@@ -100,9 +100,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
-      if (s?.user) loadRoles(s.user.id).finally(() => setLoading(false));
-      else setLoading(false);
+      if (s?.user) {
+        // If we already know this account's roles, render straight away and
+        // refresh them in the background instead of blocking on the network.
+        const c = readRoleCache();
+        if (c && c.uid === s.user.id) setLoading(false);
+        loadRoles(s.user.id).finally(() => setLoading(false));
+      } else {
+        setLoading(false);
+      }
     });
+
 
     return () => sub.subscription.unsubscribe();
   }, []);

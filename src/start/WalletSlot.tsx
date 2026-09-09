@@ -34,8 +34,15 @@ export default function WalletSlot({ session }: { session: Session | null }) {
         setLoading(false);
         return;
       }
-      // Provision one
-      const { data, error } = await supabase.functions.invoke("wallet-provision", { body: {} });
+      // Provision one — always send a fresh access token, since the session
+      // prop can be stale/expired by the time this runs (that caused 401s).
+      const { data: fresh } = await supabase.auth.getSession();
+      const token = fresh.session?.access_token;
+      if (!token) { if (!cancelled) setLoading(false); return; }
+      const { data, error } = await supabase.functions.invoke("wallet-provision", {
+        body: {},
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (cancelled) return;
       if (error || !data?.pubkey) {
         toast({ title: "Couldn't set up your wallet", description: error?.message ?? "Try again shortly.", variant: "destructive" });
@@ -43,6 +50,7 @@ export default function WalletSlot({ session }: { session: Session | null }) {
         setWallet({ pubkey: data.pubkey, is_custodial: !!data.is_custodial });
       }
       setLoading(false);
+
     })();
     return () => { cancelled = true; };
   }, [session?.user?.id]);
@@ -61,7 +69,14 @@ export default function WalletSlot({ session }: { session: Session | null }) {
       return;
     }
     setBusy(true);
-    const { data, error } = await supabase.functions.invoke("wallet-replace-external", { body: { pubkey: v } });
+    const { data: fresh } = await supabase.auth.getSession();
+    const token = fresh.session?.access_token;
+    if (!token) { setBusy(false); toast({ title: "Please sign in again", variant: "destructive" }); return; }
+    const { data, error } = await supabase.functions.invoke("wallet-replace-external", {
+      body: { pubkey: v },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     setBusy(false);
     if (error || !data?.pubkey) {
       toast({ title: "Couldn't replace wallet", description: error?.message ?? data?.error, variant: "destructive" });

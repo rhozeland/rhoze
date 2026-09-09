@@ -34,11 +34,18 @@ export default function WalletSlot({ session }: { session: Session | null }) {
         setLoading(false);
         return;
       }
-      // Provision one — always send a fresh access token, since the session
-      // prop can be stale/expired by the time this runs (that caused 401s).
+      // Provision one — the stored session can be revoked server-side (signed
+      // out elsewhere), which made the function return 401. Confirm the token
+      // is still valid first; if not, clear it and stay quiet.
       const { data: fresh } = await supabase.auth.getSession();
       const token = fresh.session?.access_token;
       if (!token) { if (!cancelled) setLoading(false); return; }
+      const { data: check, error: checkErr } = await supabase.auth.getUser();
+      if (checkErr || !check?.user) {
+        await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+        if (!cancelled) { setWallet(null); setLoading(false); }
+        return;
+      }
       const { data, error } = await supabase.functions.invoke("wallet-provision", {
         body: {},
         headers: { Authorization: `Bearer ${token}` },
@@ -50,6 +57,7 @@ export default function WalletSlot({ session }: { session: Session | null }) {
         setWallet({ pubkey: data.pubkey, is_custodial: !!data.is_custodial });
       }
       setLoading(false);
+
 
     })();
     return () => { cancelled = true; };

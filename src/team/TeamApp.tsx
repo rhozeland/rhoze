@@ -19,6 +19,7 @@ import Requests from "./pages/Requests";
 import TimeAndPay from "./pages/TimeAndPay";
 import ClientPortal from "./pages/ClientPortal";
 import Portal from "./pages/Portal";
+import ResetPassword from "./pages/ResetPassword";
 import ClientLayout from "./components/ClientLayout";
 import ClientHome from "./pages/ClientHome";
 import ClientProfile from "./pages/ClientProfile";
@@ -74,6 +75,7 @@ export default function TeamApp() {
       <Route path="/login" element={<Portal />} />
       <Route path="/portal" element={<Portal />} />
       <Route path="/client" element={<Portal />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       {/* Client-facing portal — wrapped in ClientLayout so signed-in clients
           stay inside the client surface and never land in team pages. */}
       <Route

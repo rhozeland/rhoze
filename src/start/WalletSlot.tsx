@@ -69,7 +69,14 @@ export default function WalletSlot({ session }: { session: Session | null }) {
       return;
     }
     setBusy(true);
-    const { data, error } = await supabase.functions.invoke("wallet-replace-external", { body: { pubkey: v } });
+    const { data: fresh } = await supabase.auth.getSession();
+    const token = fresh.session?.access_token;
+    if (!token) { setBusy(false); toast({ title: "Please sign in again", variant: "destructive" }); return; }
+    const { data, error } = await supabase.functions.invoke("wallet-replace-external", {
+      body: { pubkey: v },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     setBusy(false);
     if (error || !data?.pubkey) {
       toast({ title: "Couldn't replace wallet", description: error?.message ?? data?.error, variant: "destructive" });

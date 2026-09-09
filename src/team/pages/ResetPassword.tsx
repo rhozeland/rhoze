@@ -20,31 +20,58 @@ export default function ResetPassword() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    // Recovery links arrive as #access_token=...&type=recovery
+    let cancelled = false;
+    // Recovery links arrive with tokens in the URL hash. Because this app
+    // uses hash routing, the final URL can look like
+    // /team.html#/reset-password#access_token=...&type=recovery — so we
+    // parse tokens manually anywhere in the hash instead of relying on
+    // Supabase's auto-detection.
     const hash = window.location.hash;
     const isRecovery = hash.includes("type=recovery");
+    const at = hash.match(/access_token=([^&]+)/)?.[1];
+    const rt = hash.match(/refresh_token=([^&]+)/)?.[1];
 
     const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setReady(true);
+      if (event === "PASSWORD_RECOVERY" && !cancelled) setReady(true);
     });
 
-    // If the hash tokens were already exchanged before this page mounted,
-    // a session will exist — treat that as a valid recovery context.
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    (async () => {
+      if (at && isRecovery) {
+        // Exchange the emailed tokens for a recovery session ourselves.
+        const { error } = await supabase.auth.setSession({
+          access_token: decodeURIComponent(at),
+          refresh_token: rt ? decodeURIComponent(rt) : "",
+        });
+        if (cancelled) return;
+        if (!error) {
+          // Clean the tokens out of the address bar.
+          window.history.replaceState(null, "", "#/reset-password");
+          setReady(true);
+          return;
+        }
+        setInvalid(true);
+        return;
+      }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (cancelled) return;
       if (session && isRecovery) setReady(true);
-      else if (session) setReady(true); // signed-in users can also land here
+      else if (session && !at) setReady(true); // signed-in users can also land here
       else if (!isRecovery) setInvalid(true);
       // else: wait for onAuthStateChange PASSWORD_RECOVERY
       // Safety timeout: if nothing arrives, show the invalid state.
       setTimeout(() => {
+        if (cancelled) return;
         setReady((r) => {
           if (!r) setInvalid(true);
           return r;
         });
       }, 6000);
-    });
+    })();
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   async function onSubmit(e: FormEvent) {

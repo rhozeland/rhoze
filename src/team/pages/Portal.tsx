@@ -109,6 +109,37 @@ export default function Portal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isTeam, roles.join(",")]);
 
+  async function onForgotPassword() {
+    const okEmail = emailSchema.safeParse(email);
+    if (!okEmail.success) {
+      toast({
+        title: "Enter your email first",
+        description: "Type the email you signed up with, then tap “Forgot password?” again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(okEmail.data, {
+        redirectTo: `${window.location.origin}/team.html#/reset-password`,
+      });
+      if (error) throw error;
+      toast({
+        title: "Reset email sent",
+        description: "Check your inbox for a link to set a new password.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Couldn't send reset email",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     const okEmail = emailSchema.safeParse(email);
@@ -316,7 +347,19 @@ export default function Portal() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="password">Password</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              {mode === "signin" && (
+                <button
+                  type="button"
+                  className="text-[11px] text-muted-foreground hover:text-foreground underline"
+                  onClick={onForgotPassword}
+                  disabled={busy}
+                >
+                  Forgot password?
+                </button>
+              )}
+            </div>
             <Input
               id="password"
               type="password"

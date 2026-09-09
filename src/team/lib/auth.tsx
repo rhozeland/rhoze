@@ -98,9 +98,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
+    supabase.auth.getSession().then(async ({ data: { session: s } }) => {
       setSession(s);
       if (s?.user) {
+        // A revoked/expired token can still sit in storage and make every
+        // request 403 forever. Validate it once; if the server says the
+        // session is gone, clear it locally so the sign-in screen shows.
+        const { error: userErr } = await supabase.auth.getUser();
+        if (userErr) {
+          try { localStorage.removeItem(ROLE_CACHE_KEY); } catch { /* ignore */ }
+          await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
+          setSession(null);
+          setRoles([]);
+          setDepartment(null);
+          setLoading(false);
+          return;
+        }
         // If we already know this account's roles, render straight away and
         // refresh them in the background instead of blocking on the network.
         const c = readRoleCache();
@@ -110,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     });
+
 
 
     return () => sub.subscription.unsubscribe();

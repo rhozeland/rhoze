@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,6 +109,36 @@ export default function Portal() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isTeam, roles.join(",")]);
+
+  async function onGoogle() {
+    setBusy(true);
+    try {
+      localStorage.setItem("portal_intent", audience);
+      setIntent(audience);
+      if (code.trim()) localStorage.setItem("pending_project_code", code.trim());
+      if (referral.trim()) localStorage.setItem("pending_referral_code", referral.trim());
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/team.html`,
+      });
+      if (result.error) {
+        toast({
+          title: "Google sign-in failed",
+          description: result.error.message ?? "Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (result.redirected) return;
+    } catch (err: any) {
+      toast({
+        title: "Google sign-in failed",
+        description: err?.message,
+        variant: "destructive",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function onForgotPassword() {
     const okEmail = emailSchema.safeParse(email);
@@ -319,6 +350,28 @@ export default function Portal() {
           >
             Team
           </button>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full gap-2"
+          onClick={onGoogle}
+          disabled={busy}
+        >
+          <svg viewBox="0 0 48 48" className="h-4 w-4" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.2 17.7 9.5 24 9.5z" />
+            <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.2-.4-4.7H24v9h12.4c-.5 2.9-2.1 5.4-4.5 7l7.1 5.5c4.2-3.9 6.6-9.6 6.6-16.8z" />
+            <path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.8-6.1z" />
+            <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.1-5.5c-2 1.4-4.6 2.2-8.8 2.2-6.3 0-11.7-3.7-13.6-9.2l-7.8 6.1C6.5 42.6 14.6 48 24 48z" />
+          </svg>
+          Continue with Google
+        </Button>
+
+        <div className="flex items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          or
+          <span className="h-px flex-1 bg-border" />
         </div>
 
         <form onSubmit={onSubmit} className="space-y-3">

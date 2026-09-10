@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "../lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,6 +109,36 @@ export default function Portal() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, session, isTeam, roles.join(",")]);
+
+  async function onGoogle() {
+    setBusy(true);
+    try {
+      localStorage.setItem("portal_intent", audience);
+      setIntent(audience);
+      if (code.trim()) localStorage.setItem("pending_project_code", code.trim());
+      if (referral.trim()) localStorage.setItem("pending_referral_code", referral.trim());
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: `${window.location.origin}/team.html`,
+      });
+      if (result.error) {
+        toast({
+          title: "Google sign-in failed",
+          description: result.error.message ?? "Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (result.redirected) return;
+    } catch (err: any) {
+      toast({
+        title: "Google sign-in failed",
+        description: err?.message,
+        variant: "destructive",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function onForgotPassword() {
     const okEmail = emailSchema.safeParse(email);

@@ -252,6 +252,9 @@ export default function PayrollRun({ period }: { period: any }) {
   const generateStubs = useMutation({
     mutationFn: async () => {
       if (computed.length === 0) return;
+      if (unconfigured.length > 0) {
+        throw new Error("Complete Payroll setup for every person in this run before generating pay stubs.");
+      }
       const ids = computed.map((r) => r.user_id);
       await supabase.from("pay_stubs").delete().eq("timesheet_period_id", periodId).is("paid_at", null).in("user_id", ids);
       const inserts = computed
@@ -322,7 +325,7 @@ export default function PayrollRun({ period }: { period: any }) {
           <div className="text-xs text-muted-foreground">
             Includes <strong>approved</strong> timesheets + revenue share from payments collected {formatDate(period.start_date)} → {formatDate(period.end_date)}.
           </div>
-          <Button size="sm" onClick={() => generateStubs.mutate()} disabled={generateStubs.isPending || computed.length === 0}>
+          <Button size="sm" onClick={() => generateStubs.mutate()} disabled={generateStubs.isPending || computed.length === 0 || unconfigured.length > 0}>
             {generateStubs.isPending ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
             Generate / refresh pay stubs
           </Button>
@@ -334,8 +337,8 @@ export default function PayrollRun({ period }: { period: any }) {
       )}
       {unconfigured.length > 0 && (
         <Notice tone="warn">
-          {unconfigured.length} {unconfigured.length === 1 ? "person is" : "people are"} using default payroll settings (Employee · ON · biweekly).
-          Set their status and province in the <strong>Payroll setup</strong> tab so deductions are right.
+           {unconfigured.length} {unconfigured.length === 1 ? "person needs" : "people need"} payroll setup before stubs can be generated.
+           Set status, province and TD1 details in the <strong>Payroll setup</strong> tab.
         </Notice>
       )}
 
@@ -505,8 +508,9 @@ function PayrollRow({ row, profile, stub, period, onChanged }: any) {
           <div className="flex items-center justify-end gap-2 pt-2 border-t border-border flex-wrap">
             <Button
               size="sm" variant="outline"
+              disabled={!stub}
               onClick={() => downloadPayStub({
-                stub: (stub ?? { ...row, worker_type: row.profile.worker_type, province: row.profile.province, pay_frequency: row.profile.pay_frequency }) as any,
+                stub,
                 person: { name, email: profile?.email },
                 period,
               })}

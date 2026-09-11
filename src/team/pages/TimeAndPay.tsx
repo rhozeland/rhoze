@@ -12,6 +12,8 @@ import { useAuth } from "../lib/auth";
 import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
 import PayrollRun from "../components/PayrollRun";
+import PayrollSetup from "../components/PayrollSetup";
+import { downloadPayStub } from "../lib/payStubPdf";
 import {
   Dialog,
   DialogContent,
@@ -143,7 +145,7 @@ function useEntrySaver(queryKey: any[]) {
 export default function TimeAndPay() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();
-  const [view, setView] = useState<"mine" | "admin" | "payroll">("mine");
+  const [view, setView] = useState<"mine" | "stubs" | "admin" | "setup" | "payroll">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editingUserName, setEditingUserName] = useState<string>("");
@@ -231,13 +233,13 @@ export default function TimeAndPay() {
           <h1 className="text-2xl font-semibold tracking-tight">Time &amp; Pay</h1>
           <p className="text-sm text-muted-foreground">Biweekly timesheet — totals auto-calculate. Submit when complete; admin approves for payroll.</p>
         </div>
-        {isAdmin && (
-          <div className="flex items-center gap-1 border border-border rounded-lg p-1 bg-muted/30">
-            <button onClick={() => setView("mine")} className={cn("text-xs px-3 py-1.5 rounded-md font-medium transition", view === "mine" ? "bg-background shadow-sm" : "text-muted-foreground")}>My timesheet</button>
-            <button onClick={() => setView("admin")} className={cn("text-xs px-3 py-1.5 rounded-md font-medium transition", view === "admin" ? "bg-background shadow-sm" : "text-muted-foreground")}>Approval queue</button>
-            <button onClick={() => setView("payroll")} className={cn("text-xs px-3 py-1.5 rounded-md font-medium transition", view === "payroll" ? "bg-background shadow-sm" : "text-muted-foreground")}>Run payroll</button>
-          </div>
-        )}
+        <div className="flex items-center gap-1 border border-border rounded-lg p-1 bg-muted/30 overflow-x-auto max-w-full">
+          <Button size="sm" variant={view === "mine" ? "secondary" : "ghost"} onClick={() => setView("mine")} className="h-8 shrink-0 text-xs">My timesheet</Button>
+          <Button size="sm" variant={view === "stubs" ? "secondary" : "ghost"} onClick={() => setView("stubs")} className="h-8 shrink-0 text-xs">My pay stubs</Button>
+          {isAdmin && <Button size="sm" variant={view === "admin" ? "secondary" : "ghost"} onClick={() => setView("admin")} className="h-8 shrink-0 text-xs">Approval queue</Button>}
+          {isAdmin && <Button size="sm" variant={view === "setup" ? "secondary" : "ghost"} onClick={() => setView("setup")} className="h-8 shrink-0 text-xs">Payroll setup</Button>}
+          {isAdmin && <Button size="sm" variant={view === "payroll" ? "secondary" : "ghost"} onClick={() => setView("payroll")} className="h-8 shrink-0 text-xs">Run payroll</Button>}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
@@ -393,6 +395,8 @@ export default function TimeAndPay() {
             No pay periods yet. Ask an admin to create the first period.
           </div>
         )
+      ) : view === "stubs" ? (
+        <MyPayStubs userId={user?.id ?? ""} periods={periods ?? []} />
       ) : view === "admin" && isAdmin ? (
         <ApprovalQueue
           periodId={periodId}
@@ -402,6 +406,8 @@ export default function TimeAndPay() {
             setView("mine");
           }}
         />
+      ) : view === "setup" && isAdmin ? (
+        <PayrollSetup />
       ) : view === "payroll" && isAdmin && activePeriod ? (
         <PayrollRun period={activePeriod} />
       ) : (
@@ -416,6 +422,112 @@ export default function TimeAndPay() {
           } : undefined}
         />
       )}
+    </div>
+  );
+}
+
+function MyPayStubs({ userId, periods }: { userId: string; periods: any[] }) {
+  const { user } = useAuth();
+  const { data: profile, isLoading: loadingProfile } = useQuery({
+    queryKey: ["my_pay_stub_profile", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("display_name, alias, email")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const { data: stubs, isLoading } = useQuery({
+    queryKey: ["my_pay_stubs", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("pay_stubs")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const periodMap = useMemo(() => new Map(periods.map((period: any) => [period.id, period])), [periods]);
+  const personName = profile?.display_name || profile?.alias || profile?.email || user?.email || "Team member";
+
+  if (isLoading || loadingProfile) {
+    return <div className="flex items-center gap-2 py-8 text-sm text-muted-foreground"><Loader2 size={15} className="animate-spin" /> Loading pay stubs…</div>;
+  }
+
+  if (!stubs?.length) {
+    return (
+      <div className="rounded-lg border border-dashed border-border p-8 text-center">
+        <Receipt size={24} className="mx-auto mb-2 text-muted-foreground" />
+        <p className="text-sm font-medium">No pay stubs yet</p>
+        <p className="mt-1 text-xs text-muted-foreground">Your generated statements will appear here after payroll is processed.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <h2 className="text-lg font-semibold">My pay stubs</h2>
+        <p className="text-xs text-muted-foreground">Download your statement of earnings for any processed pay period.</p>
+      </div>
+      <div className="overflow-hidden rounded-lg border border-border bg-card">
+        {stubs.map((stub: any) => {
+          const period = periodMap.get(stub.timesheet_period_id);
+          const fallbackPeriod = {
+            label: "Payroll statement",
+            start_date: stub.created_at,
+            end_date: stub.created_at,
+            pay_date: stub.paid_at || stub.created_at,
+          };
+          const stubPeriod = period ?? fallbackPeriod;
+          return (
+            <div key={stub.id} className="flex flex-wrap items-center gap-4 border-b border-border px-4 py-3 last:border-b-0">
+              <div className="flex min-w-[180px] flex-1 items-center gap-3">
+                <div className="grid size-9 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground"><FileText size={16} /></div>
+                <div>
+                  <div className="text-sm font-medium">{stubPeriod.label}</div>
+                  <div className="text-xs text-muted-foreground">Pay date {formatDate(stubPeriod.pay_date)}</div>
+                </div>
+              </div>
+              <div className="grid min-w-[260px] flex-1 grid-cols-3 gap-3 text-right">
+                <StubAmount label="Gross" value={stub.gross_cents} />
+                <StubAmount label="Deductions" value={stub.deductions_cents} />
+                <StubAmount label="Net pay" value={stub.net_cents} strong />
+              </div>
+              <span className={cn("text-[10px] font-semibold uppercase tracking-wider", stub.paid_at ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground")}>
+                {stub.paid_at ? `Paid ${formatDate(stub.paid_at)}` : "Prepared"}
+              </span>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => downloadPayStub({
+                  stub,
+                  person: { name: personName, email: profile?.email || user?.email },
+                  period: stubPeriod,
+                })}
+              >
+                <FileText size={14} /> PDF
+              </Button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function StubAmount({ label, value, strong }: { label: string; value: number; strong?: boolean }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={cn("text-sm tabular-nums", strong && "font-semibold")}>{formatCents(value ?? 0)}</div>
     </div>
   );
 }

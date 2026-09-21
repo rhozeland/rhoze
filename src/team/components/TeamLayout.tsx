@@ -30,7 +30,7 @@ const nav = [
 ];
 
 const adminNav = [
-  { to: "/team-admin", label: "Team Members", icon: Shield },
+  { to: "/team-admin", label: "People", icon: Shield },
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/requests", label: "Credit requests", icon: MessageSquare },
   { to: "/catalog", label: "Catalog", icon: Package },

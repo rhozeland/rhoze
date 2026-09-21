@@ -153,7 +153,9 @@ export default function Portal() {
     setBusy(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(okEmail.data, {
-        redirectTo: `${window.location.origin}/team.html#/reset-password`,
+        // Always the live site — preview URLs require a Lovable account and
+        // would show an access-denied page instead of the reset form.
+        redirectTo: `https://www.rhozeland.com/team.html#/reset-password`,
       });
       if (error) throw error;
       toast({

@@ -62,6 +62,45 @@ export type Database = {
           },
         ]
       }
+      benefit_plans: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          employee_cost_cents: number
+          employer_cost_cents: number
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          employee_cost_cents?: number
+          employer_cost_cents?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          employee_cost_cents?: number
+          employer_cost_cents?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           created_at: string
@@ -772,6 +811,50 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: []
+      }
+      employee_benefits: {
+        Row: {
+          created_at: string
+          ended_on: string | null
+          enrolled_on: string
+          id: string
+          notes: string | null
+          plan_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          ended_on?: string | null
+          enrolled_on?: string
+          id?: string
+          notes?: string | null
+          plan_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          ended_on?: string | null
+          enrolled_on?: string
+          id?: string
+          notes?: string | null
+          plan_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_benefits_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "benefit_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ig_threads: {
         Row: {

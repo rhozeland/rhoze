@@ -5,220 +5,107 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rhozeland — Book a Discovery Call</title>
-  <meta name="description" content="Book a free 20-minute discovery call with Rhozeland. Pick a time that works — we'll confirm by email." />
+  <title>Book a Project — Rhozeland</title>
+  <meta name="description" content="Tell Rhozeland about your project and schedule a discovery call with our creative team." />
+  <meta property="og:title" content="Book a Project — Rhozeland" />
+  <meta property="og:description" content="Tell Rhozeland about your project and schedule a discovery call with our creative team." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
   <link rel="canonical" href="https://www.rhozeland.com/book" />
-  <meta name="robots" content="index,follow" />
   <link rel="icon" href="/favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/shared.css" />
   <style>
-    .book-hero{text-align:center;padding:3.5rem 0 1.5rem}
-    .book-hero .hero-label{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:hsl(var(--muted));margin-bottom:1.25rem}
-    .book-hero h1{font-family:'Inter',system-ui,sans-serif;font-size:clamp(2.4rem,5.5vw,4rem);font-weight:800;letter-spacing:-0.04em;margin-bottom:0.75rem;color:hsl(var(--ink));line-height:1.05}
-    .book-hero p{font-size:1.02rem;color:hsl(var(--muted));max-width:520px;margin:0 auto;line-height:1.6}
-    .book-meta{display:flex;justify-content:center;gap:1.25rem;margin-top:1rem;flex-wrap:wrap}
-    .book-meta span{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:hsl(var(--muted));display:inline-flex;align-items:center;gap:0.4rem}
-    .book-meta svg{width:14px;height:14px}
-
-    .book-layout{max-width:920px;margin:1.5rem auto 4rem;display:grid;grid-template-columns:1fr 1.15fr;gap:1.25rem}
-    @media (max-width:780px){.book-layout{grid-template-columns:1fr}}
-    .book-panel{border:1px solid hsl(var(--line));border-radius:var(--radius-lg);padding:1.5rem;background:hsl(var(--surface-card));box-shadow:0 8px 32px hsl(var(--ink)/0.05)}
-    .panel-title{font-family:'Inter',system-ui,sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:-0.01em;margin-bottom:0.25rem;color:hsl(var(--ink))}
-    .panel-sub{font-size:0.78rem;color:hsl(var(--muted));margin-bottom:1rem;line-height:1.5}
-
-    /* Day picker */
-    .day-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:0.5rem;max-height:340px;overflow-y:auto;padding:0.15rem}
-    .day-btn{display:flex;flex-direction:column;align-items:center;gap:0.15rem;padding:0.6rem 0.3rem;border:1.5px solid hsl(var(--line));border-radius:var(--radius-md);background:hsl(var(--surface));color:hsl(var(--ink));cursor:pointer;transition:all 0.18s;font-family:'Inter',system-ui,sans-serif}
-    .day-btn:hover:not(.disabled){border-color:hsl(var(--ink)/0.55);transform:translateY(-1px)}
-    .day-btn.active{border-color:hsl(var(--ink));background:hsl(var(--ink));color:hsl(var(--surface-card))}
-    .day-btn.disabled{opacity:0.32;cursor:not-allowed}
-    .day-btn .dow{font-size:0.62rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;opacity:0.7}
-    .day-btn .dnum{font-size:1.05rem;font-weight:700;line-height:1}
-    .day-btn .dmon{font-size:0.6rem;font-weight:500;opacity:0.6;text-transform:uppercase;letter-spacing:0.05em}
-
-    /* Slot picker */
-    .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:0.45rem;max-height:340px;overflow-y:auto;padding:0.15rem}
-    .slot-btn{padding:0.55rem 0.3rem;border:1.5px solid hsl(var(--line));border-radius:var(--radius-md);background:hsl(var(--surface));cursor:pointer;font-family:'Inter',system-ui,sans-serif;font-size:0.8rem;font-weight:600;color:hsl(var(--ink));transition:all 0.18s}
-    .slot-btn:hover:not(.taken):not(.active){border-color:hsl(var(--ink)/0.55);transform:translateY(-1px)}
-    .slot-btn.active{border-color:hsl(var(--ink));background:hsl(var(--ink));color:hsl(var(--surface-card))}
-    .slot-btn.taken{opacity:0.34;cursor:not-allowed;text-decoration:line-through}
-    .slot-empty{grid-column:1/-1;text-align:center;padding:2rem 1rem;font-size:0.85rem;color:hsl(var(--muted))}
-
-    /* Form */
-    .book-form{display:none;flex-direction:column;gap:1rem;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid hsl(var(--line))}
-    .book-form.show{display:flex}
-    .book-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
-    @media (max-width:520px){.book-form .form-row{grid-template-columns:1fr}}
-    .book-form .form-group{display:flex;flex-direction:column;gap:0.3rem}
-    .book-form label{font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:hsl(var(--muted))}
-    .book-form input,.book-form textarea{width:100%;padding:0.65rem 0.85rem;border:1.5px solid hsl(var(--line));border-radius:var(--radius-md);background:hsl(var(--surface));color:hsl(var(--ink));font-family:'Inter',system-ui,sans-serif;font-size:0.88rem;outline:none;transition:all 0.2s}
-    .book-form input:focus,.book-form textarea:focus{border-color:hsl(var(--ink)/0.55);background:hsl(var(--surface-card));box-shadow:0 0 0 3px hsl(var(--ink)/0.08)}
-    .book-form textarea{resize:vertical;min-height:80px}
-    .book-form .err{font-size:0.7rem;color:hsl(0 75% 55%);display:none}
-    .book-form .err.show{display:block}
-    .selected-slot{padding:0.7rem 0.9rem;border-radius:var(--radius-md);background:hsl(var(--surface));border:1px dashed hsl(var(--ink)/0.3);font-size:0.82rem;color:hsl(var(--ink));font-weight:500}
-    .selected-slot strong{display:block;font-weight:700;font-size:0.92rem;margin-bottom:0.1rem}
-
-    .submit-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.85rem 1.5rem;border:none;border-radius:var(--radius-md);background:hsl(var(--ink));color:hsl(var(--surface-card));font-family:'Inter',system-ui,sans-serif;font-size:0.92rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:0.25rem}
-    .submit-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 18px hsl(var(--ink)/0.2)}
-    .submit-btn:disabled{opacity:0.5;cursor:not-allowed}
-    .submit-btn svg{width:15px;height:15px}
-
-    /* Success */
-    .success-state{display:none;text-align:center;padding:3rem 1.5rem;animation:fadeIn 0.4s ease}
-    .success-state.show{display:block}
-    .success-icon{width:60px;height:60px;border-radius:50%;background:hsl(150 50% 95%);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem}
-    .dark .success-icon{background:hsl(150 40% 15%)}
-    .success-icon svg{width:30px;height:30px;color:hsl(150 60% 40%)}
-    .dark .success-icon svg{color:hsl(150 60% 65%)}
-    .success-state h2{font-family:'Inter',system-ui,sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:0.5rem;color:hsl(var(--ink))}
-    .success-state p{font-size:0.9rem;color:hsl(var(--muted));line-height:1.6;max-width:380px;margin:0 auto 1.25rem}
-    .success-detail{display:inline-block;padding:0.7rem 1.1rem;border:1px solid hsl(var(--line));border-radius:var(--radius-md);background:hsl(var(--surface));font-size:0.85rem;font-weight:600;color:hsl(var(--ink));margin-bottom:1.25rem}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-    .loading{opacity:0.5;pointer-events:none}
+    .page-book{--book-green:159 58% 49%;--book-wash-a:181 62% 76%;--book-wash-b:22 88% 76%;--book-wash-c:43 92% 78%;padding:0;background:hsl(var(--surface));}
+    .page-book .page-shell{max-width:none;border:0;border-radius:0;box-shadow:none;background:hsl(var(--surface));overflow:visible;}
+    .page-book .gradient-canvas{position:absolute;inset:4.4rem 0 auto;height:calc(100% - 4.4rem);background:radial-gradient(circle at 8% 46%,hsl(var(--book-wash-a)/.78),transparent 28%),radial-gradient(circle at 92% 56%,hsl(var(--book-wash-b)/.68),transparent 28%),radial-gradient(circle at 38% 92%,hsl(var(--book-wash-c)/.7),transparent 24%),hsl(var(--surface));}
+    .page-book .navbar{min-height:4.4rem;padding:.8rem 2rem;background:hsl(var(--surface-card));border-bottom:1px solid hsl(var(--line));}
+    .page-book .brand{gap:.55rem}.page-book .brand img{width:1.65rem;height:1.65rem}.page-book .brand-text{font-size:1rem}
+    .page-book .nav-links{position:absolute;left:50%;transform:translateX(-50%);gap:2.2rem;margin:0}.page-book .nav-links a{padding:.25rem;font-size:.78rem;font-weight:500;color:hsl(var(--ink));white-space:nowrap}.page-book .nav-links a:first-child{font-weight:700}
+    .page-book .nav-cta{min-height:2rem;padding:.42rem 1rem;font-size:.78rem;border-width:1px;background:hsl(var(--surface-card));}
+    .booking-stage{position:relative;z-index:2;padding:4rem 1.25rem 5rem;min-height:760px;}
+    .booking-card{width:min(860px,100%);margin:0 auto;background:hsl(var(--surface-card));border:1px solid hsl(var(--line));border-radius:28px;box-shadow:0 18px 48px hsl(var(--shadow)/.14);padding:2.5rem 4.4rem 2.8rem;}
+    .progress-track{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:3.2rem;}
+    .progress-item{position:relative;text-align:center;color:hsl(var(--muted));font-size:.72rem;font-weight:600;padding-top:1.8rem;}
+    .progress-item:not(:last-child)::after{content:"";position:absolute;left:50%;right:-50%;top:.52rem;height:1px;background:hsl(var(--line-strong));}
+    .progress-dot{position:absolute;z-index:1;top:0;left:50%;transform:translateX(-50%);width:1.05rem;height:1.05rem;border-radius:50%;border:1px solid hsl(var(--ink));background:hsl(var(--surface-card));display:grid;place-items:center;font-size:.65rem;color:transparent;}
+    .progress-item.complete .progress-dot,.progress-item.active .progress-dot{background:hsl(var(--book-green));border-color:hsl(var(--ink));color:hsl(var(--ink));}.progress-item.complete .progress-dot::before{content:"✓"}.progress-item.active .progress-dot::before{content:""}
+    .progress-item.active{color:hsl(var(--ink));}
+    .flow-step{display:none;animation:step-in .24s ease}.flow-step.active{display:block}@keyframes step-in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .step-heading{text-align:center;margin-bottom:2.4rem}.step-heading h1{font-size:1.55rem;line-height:1.2;color:hsl(var(--ink));font-weight:700}.step-heading p{max-width:390px;margin:.55rem auto 0;color:hsl(var(--muted));font-size:.88rem;line-height:1.45}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem 1.4rem}.field.full{grid-column:1/-1}.field label,.choice-label,.panel-title{display:block;color:hsl(var(--ink));font-size:.78rem;font-weight:600;margin-bottom:.32rem}.required{color:hsl(346 72% 52%)}
+    .field input,.field textarea,.field select{width:100%;border:1px solid hsl(var(--line-strong));border-radius:11px;background:hsl(var(--surface-card));color:hsl(var(--ink));padding:.7rem .85rem;font-size:.82rem;outline:none;transition:border-color .18s,box-shadow .18s}.field textarea{min-height:94px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:hsl(var(--ink));box-shadow:0 0 0 3px hsl(var(--ink)/.07)}.field.invalid input,.field.invalid textarea,.field.invalid select{border-color:hsl(346 72% 52%)}.field-error,.choice-error{display:block;min-height:.9rem;margin-top:.2rem;color:hsl(346 72% 46%);font-size:.68rem}
+    .choice-section{margin-top:1.05rem}.choice-list{display:flex;flex-wrap:wrap;gap:.42rem}.choice-chip{border:1px solid hsl(var(--line-strong));border-radius:999px;padding:.34rem .62rem;background:hsl(var(--surface-card));color:hsl(var(--muted));font-size:.72rem;line-height:1.1;transition:.16s}.choice-chip:hover,.choice-chip.selected{border-color:hsl(var(--ink));color:hsl(var(--ink));background:hsl(var(--surface-alt))}
+    .flow-actions{display:flex;justify-content:center;align-items:center;gap:.55rem;margin-top:2.4rem}.flow-button{display:inline-flex;align-items:center;justify-content:center;min-height:2.25rem;padding:.45rem 1rem;border:1px solid hsl(var(--ink));border-radius:999px;background:hsl(var(--surface-card));color:hsl(var(--ink));font-size:.75rem;font-weight:600}.flow-button.primary{background:hsl(var(--ink));color:hsl(var(--surface-card))}.flow-button:disabled{opacity:.35;cursor:not-allowed}.flow-note{text-align:center;color:hsl(var(--muted));font-size:.62rem;line-height:1.45;margin:.85rem auto 0;max-width:280px}.flow-note a{text-decoration:underline}
+    .schedule-grid{display:grid;grid-template-columns:1.45fr .92fr;gap:1rem}.schedule-panel,.summary-panel{border:1px solid hsl(var(--ink));border-radius:18px;padding:1.1rem}.schedule-panel .panel-title{text-transform:uppercase;letter-spacing:.08em}.timezone-label{font-size:.7rem;color:hsl(var(--muted));margin-bottom:.2rem}.timezone-pill{display:inline-flex;border:1px solid hsl(var(--line-strong));border-radius:999px;padding:.28rem .65rem;font-size:.68rem;margin-bottom:1rem}.calendar-head{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:.65rem}.calendar-head strong{font-size:.72rem;text-transform:uppercase}.calendar-nav{width:1.6rem;height:1.6rem;border-radius:50%;color:hsl(var(--ink));font-size:1rem}.calendar-nav:disabled{opacity:.2}.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.1rem}.calendar-dow{text-align:center;color:hsl(var(--muted));font-size:.65rem;padding:.3rem}.calendar-blank{min-height:1.8rem}.day-btn{min-height:1.8rem;border-radius:50%;font-size:.7rem;color:hsl(var(--ink))}.day-btn:hover:not(:disabled){background:hsl(var(--surface-alt))}.day-btn.active{background:hsl(var(--ink));color:hsl(var(--surface-card))}.day-btn.disabled{color:hsl(var(--muted));opacity:.24;cursor:not-allowed}
+    .slot-date{font-size:.74rem;color:hsl(var(--muted));margin:.15rem 0 1rem}.slot-grid{display:grid;gap:.45rem;max-height:282px;overflow:auto}.slot-btn{width:100%;border:1px solid hsl(var(--line-strong));border-radius:999px;padding:.45rem;color:hsl(var(--ink));font-size:.72rem;font-weight:600}.slot-btn:hover:not(:disabled),.slot-btn.active{background:hsl(var(--ink));color:hsl(var(--surface-card))}.slot-btn.taken{text-decoration:line-through;opacity:.3}.slot-empty{text-align:center;color:hsl(var(--muted));font-size:.72rem;padding:2rem .5rem}
+    .summary-panel{grid-column:1/-1}.summary-head{display:flex;justify-content:space-between;align-items:center}.summary-edit{font-size:.7rem;text-decoration:underline}.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1rem}.summary-item strong{display:block;font-size:.72rem;color:hsl(var(--ink));margin-bottom:.12rem}.summary-item span{display:block;color:hsl(var(--muted));font-size:.68rem;line-height:1.35;word-break:break-word}.summary-item.wide{grid-column:span 2}
+    .err{font-size:.7rem;color:hsl(346 72% 46%);display:none}.err.show{display:block}.success-state{display:none;text-align:center}.success-state.show{display:block}.success-state .booking-card{padding:5rem 2rem}.success-icon{width:3rem;height:3rem;border-radius:50%;display:grid;place-items:center;margin:0 auto 1rem;background:hsl(var(--book-green));color:hsl(var(--ink))}.success-icon svg{width:1.4rem}.success-state h2{font-size:1.55rem}.success-state p{font-size:.82rem;color:hsl(var(--muted));max-width:390px;margin:.6rem auto 1.2rem}.success-detail{font-size:.78rem;font-weight:600;margin-bottom:1.2rem}.loading{pointer-events:none;opacity:.55}
+    .page-book .footer{position:relative;z-index:2;background:hsl(var(--ink));color:hsl(var(--surface-card));padding:2.1rem 2rem}.page-book .footer-panel{border:0;padding:0;display:grid;grid-template-columns:1fr auto;max-width:1180px;margin:0 auto}.page-book .footer-brand-header img{width:1.4rem;height:1.4rem}.page-book .footer-brand-header{font-size:.95rem}.page-book .footer-copy{max-width:430px;font-size:.72rem;color:hsl(var(--surface-card)/.72)}.page-book .footer-links{display:none}.page-book .footer-heading,.page-book .footer-contact a{color:hsl(var(--surface-card));font-size:.72rem}.page-book .footer-bottom{display:none}
+    @media(max-width:760px){.page-book .nav-links{display:none}.page-book .menu-toggle{display:flex}.page-book .nav-cta{display:none}.booking-stage{padding:1.5rem .75rem 3rem}.booking-card{padding:1.5rem 1rem;border-radius:20px}.progress-track{margin-bottom:2.2rem}.progress-item{font-size:.62rem}.form-grid,.schedule-grid,.summary-grid{grid-template-columns:1fr}.field.full,.summary-item.wide{grid-column:auto}.schedule-panel,.summary-panel{padding:.9rem}.page-book .footer-panel{grid-template-columns:1fr;gap:1.3rem}}
   </style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JTWKCV7WWC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JTWKCV7WWC');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JTWKCV7WWC"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-JTWKCV7WWC');</script>
 </head>
 <body class="page-book">
   <div class="gradient-canvas" aria-hidden="true"></div>
   <div class="page-shell">
-
-    <!-- NAVBAR -->
     <nav class="navbar" aria-label="Primary">
-      <a class="brand" href="/" aria-label="Rhozeland home">
-        <div class="brand-logo-wrap"><img src="/images/logo-black.webp" alt="Rhozeland logo" class="logo-dark" /><img src="/images/logo-white.webp" alt="Rhozeland logo" class="logo-light" /><img src="/images/logo-color.webp" alt="Rhozeland Toybox logo" class="logo-color" /></div>
-        <span class="brand-text">Rhozeland</span>
-      </a>
-      <div class="nav-links">
-        <a href="/about.html">About</a>
-        <a href="/projects.html">Projects</a>
-        <a href="/events.html">Events</a>
-        <a href="/contact.html">Contact</a>
-      </div>
-      <a class="nav-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer">
-        Join Community
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-      </a>
-      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>
-      </button>
+      <a class="brand" href="/" aria-label="Rhozeland home"><div class="brand-logo-wrap"><img src="/images/logo-black.webp" alt="" class="logo-dark"/><img src="/images/logo-white.webp" alt="" class="logo-light"/></div><span class="brand-text">Rhozeland</span></a>
+      <div class="nav-links"><a href="/book">Book a Project</a><a href="/projects">Featured Work</a><a href="/leaderboard">Community</a><a href="/#grow">Grow</a></div>
+      <a class="nav-cta" href="/start">Sign in</a>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </nav>
-    <div id="mobileMenu" class="mobile-menu">
-      <a href="/about.html" onclick="closeMenu()">About</a>
-      <a href="/projects.html" onclick="closeMenu()">Projects</a>
-      <a href="/events.html" onclick="closeMenu()">Events</a>
-      
-      <a href="/contact.html" onclick="closeMenu()">Contact</a>
-      <a class="mobile-cta" href="https://rhozeland.app/" target="_blank" rel="noopener noreferrer" onclick="closeMenu()">
-        Join Community
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"></path><path d="M7 7h10v10"></path></svg>
-      </a>
-    </div>
+    <div id="mobileMenu" class="mobile-menu"><a href="/book" onclick="closeMenu()">Book a Project</a><a href="/projects" onclick="closeMenu()">Featured Work</a><a href="/leaderboard" onclick="closeMenu()">Community</a><a href="/#grow" onclick="closeMenu()">Grow</a><a class="mobile-cta" href="/start">Sign in</a></div>
 
-    <main>
-      <section class="book-hero">
-        <div class="hero-label">Discovery Call</div>
-        <h1>Let's talk.</h1>
-        <p>Book a free 20-minute call with the Rhozeland team. Pick a time below — we'll confirm by email.</p>
-        <div class="book-meta">
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>20 minutes</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Eastern Time (ET)</span>
-          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>Free, no commitment</span>
+    <main class="booking-stage">
+      <section class="booking-card" id="bookingCard" aria-label="Book a project">
+        <div class="progress-track" aria-label="Booking progress">
+          <div class="progress-item active" data-step="1"><span class="progress-dot"></span>Personal Information</div>
+          <div class="progress-item" data-step="2"><span class="progress-dot"></span>Project Details</div>
+          <div class="progress-item" data-step="3"><span class="progress-dot"></span>Schedule a Call</div>
         </div>
+
+        <section class="flow-step active" data-step="1">
+          <div class="step-heading"><h1>Let's get to know you</h1><p>Share a few details so we know who we're creating with.</p></div>
+          <div class="form-grid">
+            <div class="field"><label for="bk_name">Your Name <span class="required">*</span></label><input id="bk_name" autocomplete="name" maxlength="100" placeholder="Ella Cole"/><span class="field-error"></span></div>
+            <div class="field"><label for="bk_email">Email <span class="required">*</span></label><input id="bk_email" type="email" autocomplete="email" maxlength="200" placeholder="you@email.com"/><span class="field-error"></span></div>
+            <div class="field"><label for="bk_project">Project Name <span class="required">*</span></label><input id="bk_project" maxlength="120" placeholder="Super Cool Project"/><span class="field-error"></span></div>
+            <div class="field"><label for="bk_phone">Phone <span class="optional">(optional)</span></label><input id="bk_phone" type="tel" autocomplete="tel" maxlength="40" placeholder="647-555-0123"/><span class="field-error"></span></div>
+            <div class="field full"><label for="bk_location">Location <span class="required">*</span></label><input id="bk_location" maxlength="120" placeholder="Toronto"/><span class="field-error"></span></div>
+          </div>
+          <div class="flow-actions"><button class="flow-button primary" type="button" onclick="nextFromPersonal()">Next ›</button></div>
+        </section>
+
+        <section class="flow-step" data-step="2">
+          <div class="step-heading"><h1>How Can We Help?</h1><p>Tell us a bit about your project, we will discuss the details when we chat!</p></div>
+          <div class="form-grid">
+            <div class="field full"><label for="bk_notes">What do you want to create?</label><textarea id="bk_notes" maxlength="300" placeholder="Tell us about your idea, goals and what the final result should look like."></textarea><span class="field-error"></span></div>
+            <div class="field"><label for="bk_timeline">Timeline <span class="required">*</span></label><select id="bk_timeline"><option value="">Select</option><option>ASAP</option><option>2–4 weeks</option><option>1–3 months</option><option>Flexible</option></select><span class="field-error"></span></div>
+            <div class="field"><label for="bk_budget">Budget <span class="required">*</span></label><select id="bk_budget"><option value="">Select</option><option>Under $3,000</option><option>$3,000–$10,000</option><option>$10,000–$25,000</option><option>$25,000+</option><option>Flexible</option></select><span class="field-error"></span></div>
+          </div>
+          <div class="choice-section"><span class="choice-label">What services are you interested in? <span class="required">*</span></span><div class="choice-list"><button class="choice-chip" type="button" data-value="Branding" onclick="toggleChoice(this,'services')">Branding</button><button class="choice-chip" type="button" data-value="Editing & Post-Production" onclick="toggleChoice(this,'services')">Editing & Post-Production</button><button class="choice-chip" type="button" data-value="Marketing" onclick="toggleChoice(this,'services')">Marketing</button><button class="choice-chip" type="button" data-value="Music Production" onclick="toggleChoice(this,'services')">Music Production</button><button class="choice-chip" type="button" data-value="Photography" onclick="toggleChoice(this,'services')">Photography</button><button class="choice-chip" type="button" data-value="Video Production" onclick="toggleChoice(this,'services')">Video Production</button><button class="choice-chip" type="button" data-value="Web Development" onclick="toggleChoice(this,'services')">Web Development</button><button class="choice-chip" type="button" data-value="Other" onclick="toggleChoice(this,'services')">Other</button></div><span class="choice-error" id="serviceError"></span></div>
+          <div class="choice-section"><span class="choice-label">Do you need any of the following? <span class="optional">(optional)</span></span><div class="choice-list"><button class="choice-chip" type="button" data-value="Studio Rental (Toronto)" onclick="toggleChoice(this,'addons')">Studio Rental (Toronto)</button><button class="choice-chip" type="button" data-value="Full Production Manager" onclick="toggleChoice(this,'addons')">Full Production Manager</button><button class="choice-chip" type="button" data-value="Casting Support" onclick="toggleChoice(this,'addons')">Casting Support</button><button class="choice-chip" type="button" data-value="Model" onclick="toggleChoice(this,'addons')">Model</button><button class="choice-chip" type="button" data-value="Influencer" onclick="toggleChoice(this,'addons')">Influencer</button><button class="choice-chip" type="button" data-value="Makeup Artist" onclick="toggleChoice(this,'addons')">Makeup Artist</button><button class="choice-chip" type="button" data-value="Hair Stylist" onclick="toggleChoice(this,'addons')">Hair Stylist</button><button class="choice-chip" type="button" data-value="Wardrobe Stylist" onclick="toggleChoice(this,'addons')">Wardrobe Stylist</button></div></div>
+          <div class="flow-actions"><button class="flow-button" type="button" onclick="setStep(1)">‹ Back</button><button class="flow-button primary" type="button" onclick="nextFromDetails()">Next ›</button></div>
+        </section>
+
+        <section class="flow-step" data-step="3">
+          <div class="step-heading"><h1>Schedule a Call</h1><p>We're excited to learn about your ideas and see how we can work together!</p></div>
+          <div class="schedule-grid" id="bookingFlow">
+            <div class="schedule-panel"><span class="panel-title">Select a date</span><div class="timezone-label">Time zone</div><span class="timezone-pill">Eastern Time (ET)⌄</span><div class="calendar-head"><button id="prevMonth" class="calendar-nav" type="button" onclick="shiftMonth(-1)" aria-label="Previous month">‹</button><strong id="monthLabel"></strong><button id="nextMonth" class="calendar-nav" type="button" onclick="shiftMonth(1)" aria-label="Next month">›</button></div><div id="dayGrid" class="day-grid"></div></div>
+            <div class="schedule-panel"><span class="panel-title">Select a time</span><div class="slot-date" id="slotSub">Select a date to see available times.</div><div id="slotGrid" class="slot-grid"><div class="slot-empty">Select a date first</div></div></div>
+            <div class="summary-panel"><div class="summary-head"><span class="panel-title">Project details</span><button class="summary-edit" type="button" onclick="setStep(1)">Edit details ↗</button></div><div class="summary-grid"><div class="summary-item"><strong>Your Name</strong><span id="summaryName"></span></div><div class="summary-item wide"><strong>Project Description</strong><span id="summaryDescription"></span></div><div class="summary-item"><strong>Project Name</strong><span id="summaryProject"></span></div><div class="summary-item"><strong>Timeline</strong><span id="summaryTimeline"></span></div><div class="summary-item"><strong>Budget</strong><span id="summaryBudget"></span></div><div class="summary-item"><strong>Email</strong><span id="summaryEmail"></span></div><div class="summary-item wide"><strong>Requested Service(s)</strong><span id="summaryServices"></span></div><div class="summary-item"><strong>Add-ons</strong><span id="summaryAddons"></span></div><div class="summary-item"><strong>Location</strong><span id="summaryLocation"></span></div></div></div>
+          </div>
+          <form onsubmit="return submitBooking(event)" novalidate><div id="selectedSlot" hidden></div><div class="flow-actions"><button class="flow-button" type="button" onclick="setStep(2)">‹ Back</button><button id="submitBtn" class="flow-button primary" type="submit" disabled>Confirm Booking ›</button></div><span class="err" data-for="form" style="text-align:center"></span><p class="flow-note">Once confirmed, a meeting invitation will be sent to your email. We look forward to speaking with you.<br><br>By confirming your appointment, you agree to our <a href="/contact">Booking & Cancellation Policy</a>.</p></form>
+        </section>
       </section>
-
-      <div class="book-layout" id="bookingFlow">
-        <div class="book-panel">
-          <div class="panel-title">1. Pick a day</div>
-          <p class="panel-sub">Available within the next 30 days. 24-hour notice required.</p>
-          <div id="dayGrid" class="day-grid"></div>
-        </div>
-        <div class="book-panel">
-          <div class="panel-title">2. Pick a time</div>
-          <p class="panel-sub" id="slotSub">Select a day to see available slots.</p>
-          <div id="slotGrid" class="slot-grid"><div class="slot-empty">← Pick a day first</div></div>
-
-          <form id="bookForm" class="book-form" onsubmit="return submitBooking(event)" novalidate>
-            <div class="selected-slot" id="selectedSlot"></div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="bk_name">Name</label>
-                <input id="bk_name" name="name" type="text" required maxlength="100" autocomplete="name" />
-                <span class="err" data-for="name">Please enter your name.</span>
-              </div>
-              <div class="form-group">
-                <label for="bk_email">Email</label>
-                <input id="bk_email" name="email" type="email" required maxlength="200" autocomplete="email" />
-                <span class="err" data-for="email">Please enter a valid email.</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="bk_phone">Phone <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.5">(optional)</span></label>
-              <input id="bk_phone" name="phone" type="tel" maxlength="40" autocomplete="tel" />
-            </div>
-            <div class="form-group">
-              <label for="bk_notes">What would you like to discuss? <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:0.5">(optional)</span></label>
-              <textarea id="bk_notes" name="notes" maxlength="800" placeholder="A quick note about your project, goals, or questions."></textarea>
-            </div>
-            <button id="submitBtn" class="submit-btn" type="submit">
-              Confirm booking
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            </button>
-            <span class="err" data-for="form" style="text-align:center"></span>
-          </form>
-        </div>
-      </div>
-
-      <div class="book-layout" style="grid-template-columns:1fr">
-        <div class="success-state book-panel" id="successState">
-          <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-          <h2>You're booked.</h2>
-          <div class="success-detail" id="successSlot"></div>
-          <p>We just sent a confirmation to your email. The Rhozeland team will reach out shortly with the call details.</p>
-          <a href="/" class="submit-btn" style="text-decoration:none;display:inline-flex">Back to home</a>
-        </div>
-      </div>
+      <section class="success-state" id="successState"><div class="booking-card"><div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></div><h2>You're booked.</h2><div class="success-detail" id="successSlot"></div><p>We sent a confirmation to your email. The Rhozeland team will follow up with the call details.</p><a href="/" class="flow-button primary">Back to home</a></div></section>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer-panel">
-        <div class="footer-brand">
-          <div class="footer-brand-header">
-            <div class="brand-logo-wrap"><img src="/images/logo-black.webp" alt="Rhozeland logo" class="logo-dark" /><img src="/images/logo-white.webp" alt="Rhozeland logo" class="logo-light" /><img src="/images/logo-color.webp" alt="Rhozeland Toybox logo" class="logo-color" /></div>
-            <span>Rhozeland</span>
-          </div>
-          <p class="footer-copy">Rhozeland is the creator ecosystem for people building culture through audio, visuals, web, events, and community.</p>
-        </div>
-        <div class="footer-links">
-          <h3 class="footer-heading">Explore</h3>
-          <a href="/about.html">About us</a>
-          <a href="/projects.html">Projects</a>
-          <a href="/events.html">Events</a>
-          
-          <a href="/contact.html">Contact us</a>
-        </div>
-        <div class="footer-contact">
-          <h3 class="footer-heading">Contact</h3>
-          <a href="tel:6478746743">647-874-6743</a>
-          <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>
-        </div>
-      </div>
-      <div class="footer-bottom"><a class="footer-link-inline team-access-link" href="/team.html#/portal" style="font-size:0.75rem;opacity:0.55;margin-right:1rem;">Portal</a><span class="footer-copyright">Copyright &copy; 2026 Rhozeland</span><button id="themeToggle" class="theme-toggle" onclick="toggleTheme()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg><span>Light</span></button></div>
-    </footer>
-
+    <footer class="footer"><div class="footer-panel"><div class="footer-brand"><div class="footer-brand-header"><div class="brand-logo-wrap"><img src="/images/logo-white.webp" alt=""/></div><span>Rhozeland</span></div><p class="footer-copy">Rhozeland is the creator ecosystem for people building culture through audio, visuals, web, events, and community.</p></div><div class="footer-contact"><h3 class="footer-heading">Contact</h3><a href="tel:6478746743">647-874-6743</a><a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a></div></div></footer>
   </div>
   <script src="/shared.js"></script>
   <script>
@@ -338,26 +225,118 @@
       return slots;
     }
 
+    // ========= Wizard =========
+    var CURRENT_STEP = 1;
+    var SERVICES = [];
+    var ADDONS = [];
+
+    function setStep(step) {
+      CURRENT_STEP = step;
+      document.querySelectorAll('.flow-step').forEach(function(panel){
+        panel.classList.toggle('active', Number(panel.dataset.step) === step);
+      });
+      document.querySelectorAll('.progress-item').forEach(function(item){
+        var n = Number(item.dataset.step);
+        item.classList.toggle('active', n === step);
+        item.classList.toggle('complete', n < step);
+      });
+      if (step === 3) updateSummary();
+      document.getElementById('bookingCard').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function valueOf(id) { return document.getElementById(id).value.trim(); }
+    function setFieldError(id, message) {
+      var field = document.getElementById(id);
+      var group = field && field.closest('.field');
+      if (!group) return;
+      group.classList.toggle('invalid', Boolean(message));
+      var err = group.querySelector('.field-error');
+      if (err) err.textContent = message || '';
+    }
+    function nextFromPersonal() {
+      var ok = true;
+      [['bk_name','Please enter your name.'],['bk_email','Please enter a valid email.'],['bk_project','Please name your project.'],['bk_location','Please add your location.']].forEach(function(entry){
+        var v=valueOf(entry[0]); var valid=v.length>0;
+        if(entry[0]==='bk_email') valid=isEmail(v);
+        setFieldError(entry[0], valid?'':entry[1]); if(!valid) ok=false;
+      });
+      if(ok) setStep(2);
+    }
+    function nextFromDetails() {
+      var desc=valueOf('bk_notes');
+      var timeline=valueOf('bk_timeline');
+      var budget=valueOf('bk_budget');
+      setFieldError('bk_notes',desc?'':'Tell us a little about your project.');
+      setFieldError('bk_timeline',timeline?'':'Select a timeline.');
+      setFieldError('bk_budget',budget?'':'Select a budget.');
+      var serviceErr=document.getElementById('serviceError');
+      serviceErr.textContent=SERVICES.length?'':'Choose at least one service.';
+      if(desc && timeline && budget && SERVICES.length) setStep(3);
+    }
+    function toggleChoice(button, collection) {
+      var value=button.dataset.value;
+      var list=collection==='services'?SERVICES:ADDONS;
+      var index=list.indexOf(value);
+      if(index>=0) list.splice(index,1); else list.push(value);
+      button.classList.toggle('selected',index<0);
+      button.setAttribute('aria-pressed',index<0?'true':'false');
+      if(collection==='services') document.getElementById('serviceError').textContent='';
+    }
+    function updateSummary() {
+      var pairs={
+        summaryName:valueOf('bk_name'),summaryEmail:valueOf('bk_email'),summaryLocation:valueOf('bk_location'),
+        summaryProject:valueOf('bk_project'),summaryDescription:valueOf('bk_notes'),summaryTimeline:valueOf('bk_timeline'),
+        summaryBudget:valueOf('bk_budget'),summaryServices:SERVICES.join(', '),summaryAddons:ADDONS.length?ADDONS.join(', '):'None'
+      };
+      Object.keys(pairs).forEach(function(id){document.getElementById(id).textContent=pairs[id]||'—';});
+    }
+
     // ========= Render =========
     var DAYS = [];
     var SELECTED_DAY = null;
     var SELECTED_SLOT = null;
     var TAKEN = {}; // ISO string -> true
+    var CURRENT_MONTH = '';
 
+    function monthKey(date) {
+      return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit'}).format(date);
+    }
+    function shiftMonth(delta) {
+      var parts=CURRENT_MONTH.split('-');
+      var d=new Date(Date.UTC(Number(parts[0]),Number(parts[1])-1+delta,1,12));
+      var key=d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0');
+      var allowed=DAYS.some(function(day){return monthKey(day.utc)===key;});
+      if(allowed){CURRENT_MONTH=key;renderDays();}
+    }
     function renderDays() {
       var grid = document.getElementById('dayGrid');
       grid.innerHTML = '';
-      DAYS.forEach(function(day, idx){
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'day-btn';
-        var dow = new Intl.DateTimeFormat('en-US',{timeZone:TZ,weekday:'short'}).format(day.utc);
-        var dnum = new Intl.DateTimeFormat('en-US',{timeZone:TZ,day:'numeric'}).format(day.utc);
-        var dmon = new Intl.DateTimeFormat('en-US',{timeZone:TZ,month:'short'}).format(day.utc);
-        btn.innerHTML = '<span class="dow">'+dow+'</span><span class="dnum">'+dnum+'</span><span class="dmon">'+dmon+'</span>';
-        btn.onclick = function(){ selectDay(idx); };
-        grid.appendChild(btn);
+      ['S','M','T','W','T','F','S'].forEach(function(label){
+        var head=document.createElement('span');head.className='calendar-dow';head.textContent=label;grid.appendChild(head);
       });
+      var visible=DAYS.filter(function(day){return monthKey(day.utc)===CURRENT_MONTH;});
+      if(!visible.length) return;
+      var first=visible[0].utc;
+      var firstDate=Number(new Intl.DateTimeFormat('en-US',{timeZone:TZ,day:'numeric'}).format(first));
+      var firstDow=dayOfWeekET(etToUtc(Number(CURRENT_MONTH.slice(0,4)),Number(CURRENT_MONTH.slice(5)),1,12,0));
+      for(var blank=0;blank<firstDow;blank++){var b=document.createElement('span');b.className='calendar-blank';grid.appendChild(b);}
+      var daysInMonth=new Date(Number(CURRENT_MONTH.slice(0,4)),Number(CURRENT_MONTH.slice(5)),0).getDate();
+      for(var num=1;num<=daysInMonth;num++){
+        var found=DAYS.find(function(day){return monthKey(day.utc)===CURRENT_MONTH && Number(new Intl.DateTimeFormat('en-US',{timeZone:TZ,day:'numeric'}).format(day.utc))===num;});
+        var btn=document.createElement('button');btn.type='button';btn.className='day-btn';btn.textContent=num;
+        if(!found){btn.disabled=true;btn.classList.add('disabled');}
+        else {
+          var idx=DAYS.indexOf(found);
+          if(SELECTED_DAY && SELECTED_DAY.key===found.key) btn.classList.add('active');
+          btn.onclick=(function(i){return function(){selectDay(i);};})(idx);
+        }
+        grid.appendChild(btn);
+      }
+      var labelDate=new Date(Date.UTC(Number(CURRENT_MONTH.slice(0,4)),Number(CURRENT_MONTH.slice(5))-1,1,12));
+      document.getElementById('monthLabel').textContent=new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(labelDate);
+      var firstKey=monthKey(DAYS[0].utc),lastKey=monthKey(DAYS[DAYS.length-1].utc);
+      document.getElementById('prevMonth').disabled=CURRENT_MONTH===firstKey;
+      document.getElementById('nextMonth').disabled=CURRENT_MONTH===lastKey;
     }
 
     function selectDay(idx) {
@@ -366,7 +345,6 @@
       Array.prototype.forEach.call(document.querySelectorAll('.day-btn'), function(b,i){
         b.classList.toggle('active', i===idx);
       });
-      document.getElementById('bookForm').classList.remove('show');
       renderSlots();
     }
 
@@ -408,12 +386,7 @@
       btn.classList.add('active');
       var sel = document.getElementById('selectedSlot');
       sel.innerHTML = '<strong>'+fmtSlotLabel(slotUTC)+'</strong>20-minute discovery call';
-      var form = document.getElementById('bookForm');
-      form.classList.add('show');
-      setTimeout(function(){
-        form.scrollIntoView({behavior:'smooth', block:'nearest'});
-        document.getElementById('bk_name').focus();
-      }, 80);
+      document.getElementById('submitBtn').disabled=false;
     }
 
     // ========= Fetch existing bookings =========
@@ -456,7 +429,12 @@
       var name = document.getElementById('bk_name').value.trim();
       var email = document.getElementById('bk_email').value.trim();
       var phone = document.getElementById('bk_phone').value.trim();
-      var notes = document.getElementById('bk_notes').value.trim();
+      var project = valueOf('bk_project');
+      var locationValue = valueOf('bk_location');
+      var projectDescription = valueOf('bk_notes');
+      var timeline = valueOf('bk_timeline');
+      var budget = valueOf('bk_budget');
+      var notes = ['Project: '+project,'Location: '+locationValue,'Description: '+projectDescription,'Timeline: '+timeline,'Budget: '+budget,'Services: '+SERVICES.join(', '),'Add-ons: '+(ADDONS.join(', ')||'None')].join('\n');
 
       if (!name || name.length > 100) { showErr('name','Please enter your name (max 100 chars).'); return false; }
       if (!isEmail(email) || email.length > 200) { showErr('email','Please enter a valid email.'); return false; }
@@ -527,7 +505,7 @@
         return Promise.all(NOTIFY_TO.map(sendOne)).catch(function(){ /* non-fatal */ });
       }).then(function(){
         // Success
-        document.getElementById('bookingFlow').style.display = 'none';
+        document.getElementById('bookingCard').style.display = 'none';
         document.getElementById('successSlot').textContent = slotLabel;
         var s = document.getElementById('successState');
         s.classList.add('show');
@@ -549,8 +527,10 @@
 
     // ========= Init =========
     DAYS = buildDays();
+    CURRENT_MONTH = monthKey(DAYS[0].utc);
     renderDays();
     loadTakenSlots();
+
   </script>
 </body>
 </html>

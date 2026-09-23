@@ -2013,6 +2013,90 @@ export type Database = {
         }
         Relationships: []
       }
+      releases: {
+        Row: {
+          answers: Json
+          artist_pct: number
+          booking_id: string | null
+          budget_cents: number
+          cause_name: string | null
+          cause_pct: number
+          coin_image: string | null
+          coin_mint: string | null
+          coin_name: string | null
+          coin_ticker: string | null
+          created_at: string
+          creator_email: string | null
+          creator_name: string
+          current_step: number
+          fee_pct: number
+          id: string
+          milestones: Json
+          owner_token: string
+          payout_wallet: string | null
+          published_at: string | null
+          slug: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          artist_pct?: number
+          booking_id?: string | null
+          budget_cents?: number
+          cause_name?: string | null
+          cause_pct?: number
+          coin_image?: string | null
+          coin_mint?: string | null
+          coin_name?: string | null
+          coin_ticker?: string | null
+          created_at?: string
+          creator_email?: string | null
+          creator_name?: string
+          current_step?: number
+          fee_pct?: number
+          id?: string
+          milestones?: Json
+          owner_token: string
+          payout_wallet?: string | null
+          published_at?: string | null
+          slug?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          artist_pct?: number
+          booking_id?: string | null
+          budget_cents?: number
+          cause_name?: string | null
+          cause_pct?: number
+          coin_image?: string | null
+          coin_mint?: string | null
+          coin_name?: string | null
+          coin_ticker?: string | null
+          created_at?: string
+          creator_email?: string | null
+          creator_name?: string
+          current_step?: number
+          fee_pct?: number
+          id?: string
+          milestones?: Json
+          owner_token?: string
+          payout_wallet?: string | null
+          published_at?: string | null
+          slug?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       rhoze_airdrops: {
         Row: {
           amount: number
@@ -3055,6 +3139,50 @@ export type Database = {
         }[]
       }
       redeem_project_code: { Args: { _code: string }; Returns: string }
+      release_get_draft: {
+        Args: { p_id: string; p_token: string }
+        Returns: {
+          answers: Json
+          artist_pct: number
+          booking_id: string | null
+          budget_cents: number
+          cause_name: string | null
+          cause_pct: number
+          coin_image: string | null
+          coin_mint: string | null
+          coin_name: string | null
+          coin_ticker: string | null
+          created_at: string
+          creator_email: string | null
+          creator_name: string
+          current_step: number
+          fee_pct: number
+          id: string
+          milestones: Json
+          owner_token: string
+          payout_wallet: string | null
+          published_at: string | null
+          slug: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "releases"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      release_publish: {
+        Args: { p_id: string; p_token: string }
+        Returns: string
+      }
+      release_save: {
+        Args: { p_data: Json; p_id: string; p_token: string }
+        Returns: string
+      }
       rhoze_award: {
         Args: {
           _amount: number

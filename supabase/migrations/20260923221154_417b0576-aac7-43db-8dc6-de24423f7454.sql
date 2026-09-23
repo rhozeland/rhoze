@@ -1,0 +1,2 @@
+REVOKE SELECT ON public.releases FROM anon, authenticated;
+GRANT SELECT (id, slug, user_id, booking_id, status, current_step, title, creator_name, answers, budget_cents, artist_pct, fee_pct, cause_pct, cause_name, milestones, coin_mint, coin_ticker, coin_name, coin_image, payout_wallet, published_at, created_at, updated_at) ON public.releases TO anon, authenticated;

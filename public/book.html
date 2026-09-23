@@ -104,7 +104,7 @@
           <form onsubmit="return submitBooking(event)" novalidate><div id="selectedSlot" hidden></div><div class="flow-actions"><button class="flow-button" type="button" onclick="setStep(2)">‹ Back</button><button id="submitBtn" class="flow-button primary" type="submit" disabled>Confirm Booking ›</button></div><span class="err" data-for="form" style="text-align:center"></span><p class="flow-note">Once confirmed, a meeting invitation will be sent to your email. We look forward to speaking with you.<br><br>By confirming your appointment, you agree to our <a href="/contact">Booking & Cancellation Policy</a>.</p></form>
         </section>
       </section>
-      <section class="success-state" id="successState"><div class="booking-card"><div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></div><h2>You're booked.</h2><div class="success-detail" id="successSlot"></div><p>We sent a confirmation to your email. The Rhozeland team will follow up with the call details.</p><a href="/" class="flow-button primary">Back to home</a></div></section>
+      <section class="success-state" id="successState"><div class="booking-card"><div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 4 4L19 6"/></svg></div><h2>You're booked.</h2><div class="success-detail" id="successSlot"></div><p>We sent a confirmation to your email. The Rhozeland team will follow up with the call details.</p><div class="flow-actions" style="margin-top:1.2rem"><a href="/" class="flow-button">Back to home</a><a href="/create.html?new=1" class="flow-button primary">Create project ›</a></div></div></section>
     </main>
 
     <footer class="footer"><div class="footer-panel"><div class="footer-brand"><div class="footer-brand-header"><div class="brand-logo-wrap"><img src="/images/logo-white.webp" alt=""/></div><span>Rhozeland</span></div><p class="footer-copy">Rhozeland is the creator ecosystem for people building culture through audio, visuals, web, events, and community.</p></div><div class="footer-contact"><h3 class="footer-heading">Contact</h3><a href="tel:6478746743">647-874-6743</a><a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a></div></div></footer>
@@ -450,6 +450,7 @@
       var slotEnd = new Date(SELECTED_SLOT.getTime() + SLOT_MINUTES*60000).toISOString();
       var slotLabel = fmtSlotLabel(SELECTED_SLOT);
       var bookingId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2));
+      try { var bk = JSON.stringify({id:bookingId,name:name,email:email,project:project,description:projectDescription}); sessionStorage.setItem('rz_booking', bk); localStorage.setItem('rz_booking', bk); } catch(_){}
 
       var payload = {
         id: bookingId,

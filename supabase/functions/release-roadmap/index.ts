@@ -41,11 +41,22 @@ Deno.serve(async (req) => {
     if (!parsed.success) return json({ error: "Invalid input", details: parsed.error.flatten().fieldErrors }, 400);
     const { title, answers, budget_cents } = parsed.data;
 
-    const prompt = `Create a production roadmap for a creative project at Rhozeland (Toronto creative studio).
+    const prompt = `Create a production-ready roadmap for a creative project at Rhozeland (Toronto creative studio).
 Project: ${title}
 Intake answers: ${JSON.stringify(answers)}
 Total budget: ${(budget_cents / 100).toFixed(2)} CAD.
-Return between 3 and 5 milestones in chronological order. Each: a short title (max 6 words), one concrete deliverable (max 18 words), and amount_cents. The amounts must be whole cents and sum EXACTLY to ${budget_cents}.`;
+Return 3 to 5 milestones in chronological order.
+
+For every milestone:
+- Use a short, action-based title of no more than 6 words.
+- Write one specific, client-verifiable deliverable of 18 to 32 words.
+- State exactly what will be handed over, including relevant quantity, format, scope, dimensions, duration, revision count, or approval checkpoint.
+- Tailor the output to the project and intake answers. Do not invent unsupported project elements.
+- Avoid vague phrases such as “completed work,” “approved assets,” “final files,” “creative direction,” or “production support” unless followed by concrete details.
+- Make adjacent milestones meaningfully different; do not repeat the same deliverable in different words.
+- Set amount_cents as a whole number. All milestone amounts must sum EXACTLY to ${budget_cents}.
+
+Example specificity: instead of “Approved music video,” write “One 3–4 minute colour-graded 4K master, one vertical 30-second cutdown, captions, and two review rounds before final export.”`;
 
     const upstream = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
       method: "POST",
@@ -92,7 +103,7 @@ Return between 3 and 5 milestones in chronological order. Each: a short title (m
     try { milestones = JSON.parse(text).milestones ?? []; } catch { /* fallthrough */ }
     milestones = milestones.slice(0, 5).map((m) => ({
       title: String(m.title).slice(0, 80),
-      deliverable: String(m.deliverable).slice(0, 200),
+      deliverable: String(m.deliverable).slice(0, 240),
       amount_cents: Math.max(0, Math.round(Number(m.amount_cents) || 0)),
     }));
     if (milestones.length < 3) return json({ error: "The AI returned an incomplete roadmap. Try again." }, 502);

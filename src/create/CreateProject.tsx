@@ -176,7 +176,7 @@ export default function CreateProject() {
     <Shell right={
       <button className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</button>
     }>
-      <div className="rz-card">
+      <div className={`rz-card ${step === 2 ? "rz-card-wide" : ""}`}>
         <div className="rz-progress">
           {steps.map((s, i) => (
             <div key={s} className={`rz-pi ${step >= i + 1 ? "on" : ""}`}>
@@ -232,8 +232,8 @@ export default function CreateProject() {
                 <div className="rz-row" key={r.id}>
                   <span className="rz-num">{String(i + 1).padStart(2, "0")}</span>
                   <div className="rz-row-body">
-                    <input className="rz-in" value={r.title} maxLength={80} placeholder="Milestone title" onChange={(e) => updateRow(r.id, { title: e.target.value })} />
-                    <input className="rz-in" value={r.deliverable} maxLength={200} placeholder="Deliverable" onChange={(e) => updateRow(r.id, { deliverable: e.target.value })} />
+                    <textarea className="rz-in rz-roadmap-text rz-roadmap-title" rows={2} value={r.title} maxLength={80} aria-label={`Milestone ${i + 1} title`} placeholder="Milestone title" onChange={(e) => updateRow(r.id, { title: e.target.value })} />
+                    <textarea className="rz-in rz-roadmap-text rz-roadmap-deliverable" rows={3} value={r.deliverable} maxLength={240} aria-label={`Milestone ${i + 1} deliverable`} placeholder="Specific deliverable, quantity, format and approval criteria" onChange={(e) => updateRow(r.id, { deliverable: e.target.value })} />
                     <div className="rz-money"><span>$</span><input className="rz-in" style={{ textAlign: "right", fontSize: ".78rem" }} inputMode="decimal" value={r.amount_cents ? String(r.amount_cents / 100) : ""} placeholder="0" onChange={(e) => updateRow(r.id, { amount_cents: Math.round((parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0) * 100) })} /></div>
                   </div>
                   <div className="rz-row-ctrl">

@@ -32,7 +32,8 @@ export default function CreateProject() {
   const [rows, setRows] = useState<Milestone[]>([]);
   const [genBusy, setGenBusy] = useState(false);
   const [mint, setMint] = useState("");
-  const [coin, setCoin] = useState<Coin>(null);
+  const [ticker, setTicker] = useState("");
+  const [meta, setMeta] = useState<{ mint: string; name: string; image: string | null } | null>(null);
   const [coinBusy, setCoinBusy] = useState(false);
   const [coinErr, setCoinErr] = useState("");
   const [wallet, setWallet] = useState("");
@@ -43,6 +44,9 @@ export default function CreateProject() {
 
   const budgetCents = Math.max(0, Math.round((parseFloat(budget.replace(/[^0-9.]/g, "")) || 0) * 100));
   const artistPct = Math.max(0, 100 - feePct - causePct);
+  const mintOk = MINT_RE.test(mint.trim());
+  const tick = ticker.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 12);
+  const coin: Coin = mintOk && tick ? { mint: mint.trim(), ticker: tick, name: meta?.mint === mint.trim() ? meta.name : tick, image: meta?.mint === mint.trim() ? meta.image : null } : null;
   const rowsTotal = rows.reduce((s, r) => s + (r.amount_cents || 0), 0);
 
   // Load draft or booking prefill
@@ -69,7 +73,7 @@ export default function CreateProject() {
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
       setFeePct(Number(r.fee_pct)); setCausePct(Number(r.cause_pct)); setCauseName(r.cause_name || "");
       setRows((r.milestones || []).map((m: any) => ({ id: uid(), ...m })));
-      if (r.coin_mint) { setMint(r.coin_mint); setCoin({ mint: r.coin_mint, ticker: r.coin_ticker, name: r.coin_name, image: r.coin_image }); }
+      if (r.coin_mint) { setMint(r.coin_mint); setTicker(r.coin_ticker || ""); setMeta({ mint: r.coin_mint, name: r.coin_name, image: r.coin_image }); }
       setWallet(r.payout_wallet || "");
     })();
   }, [token]);
@@ -87,7 +91,7 @@ export default function CreateProject() {
     setSaving(true); setErr("");
     const { data, error } = await (supabase.rpc as any)("release_save", { p_token: token, p_id: draftId, p_data: payload(s) });
     setSaving(false);
-    if (error) { setErr(error.message); return null; }
+    if (error) { setErr("We couldn't save your draft. Check your connection and try again."); return null; }
     setDraftId(data); localStorage.setItem(DRAFT_KEY, data);
     const u = new URL(location.href); u.searchParams.set("draft", data); u.searchParams.delete("new"); history.replaceState(null, "", u);
     setSavedAt(new Date());
@@ -132,37 +136,43 @@ export default function CreateProject() {
   };
 
   const goStep3 = () => { const v = validate2(); if (v) { setErr(v); return; } setErr(""); setStep(3); save(3); };
+  const goStep4 = () => {
+    if (mint.trim() && !mintOk) { setErr("That mint address doesn't look right. Solana addresses are 32 to 44 letters and numbers."); return; }
+    if (mint.trim() && !tick) { setErr("Add your coin's ticker, like $SUMMER."); return; }
+    setErr(""); setStep(4); save(4);
+  };
 
-  // Coin lookup (debounced)
+  // Coin lookup (debounced) — fills image/ticker when available
   const lookupRef = useRef(0);
   useEffect(() => {
     const m = mint.trim();
     setCoinErr("");
-    if (!m) { setCoin(null); return; }
-    if (coin?.mint === m) return;
-    if (!MINT_RE.test(m)) { setCoin(null); if (m.length > 30) setCoinErr("That doesn't look like a Solana mint address."); return; }
+    if (!m) return;
+    if (!MINT_RE.test(m)) { if (m.length >= 20) setCoinErr("That doesn't look like a Solana mint address. It should be 32 to 44 letters and numbers."); return; }
+    if (meta?.mint === m) return;
     const n = ++lookupRef.current;
     setCoinBusy(true);
     const t = setTimeout(async () => {
-      const { data, error } = await supabase.functions.invoke("pumpfun-coin", { body: { mint: m } });
-      if (n !== lookupRef.current) return;
-      setCoinBusy(false);
-      if (error || !data?.ticker) { setCoin(null); setCoinErr("Coin not found on Pump.fun."); return; }
-      setCoin({ mint: m, ticker: data.ticker, name: data.name, image: data.image });
+      try {
+        const { data } = await supabase.functions.invoke("pumpfun-coin", { body: { mint: m } });
+        if (n !== lookupRef.current) return;
+        if (data?.ticker) { setMeta({ mint: m, name: data.name, image: data.image }); setTicker((x) => x || data.ticker); }
+      } catch { /* manual ticker still works */ }
+      if (n === lookupRef.current) setCoinBusy(false);
     }, 400);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); setCoinBusy(false); };
   }, [mint]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const skipCoin = () => { setMint(""); setCoin(null); setCoinErr(""); };
+  const skipCoin = () => { setMint(""); setTicker(""); setMeta(null); setCoinErr(""); setErr(""); setStep(4); save(4); };
 
   const publish = async () => {
-    if (mint.trim() && !coin) { setErr("Fix the coin address or skip it."); return; }
+    if (mint.trim() && !coin) { setErr("Fix the coin details or skip the coin step."); setStep(3); return; }
     setPublishing(true);
-    const id = await save(3);
+    const id = await save(4);
     if (!id) { setPublishing(false); return; }
     const { data, error } = await (supabase.rpc as any)("release_publish", { p_token: token, p_id: id });
     setPublishing(false);
-    if (error) { setErr(error.message); return; }
+    if (error) { setErr("We couldn't publish right now. Your draft is saved — please try again."); return; }
     localStorage.removeItem(DRAFT_KEY);
     location.href = `/release/${data}`;
   };
@@ -170,7 +180,21 @@ export default function CreateProject() {
   const updateRow = (id: string, patch: Partial<Milestone>) => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   const move = (i: number, d: -1 | 1) => setRows((rs) => { const a = [...rs]; const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; });
 
-  const steps = ["Project Basics", "Roadmap", "Launch"];
+  const steps = ["Details", "Roadmap", "Coin", "Publish"];
+  const SplitMini = () => (
+    <div className="rz-split" style={{ marginBottom: ".9rem" }}>
+      <div className="rz-bar"><i className="rz-c-a" style={{ width: `${artistPct}%` }} /><i className="rz-c-f" style={{ width: `${feePct}%` }} /><i className="rz-c-c" style={{ width: `${causePct}%` }} /></div>
+      {([["rz-c-a", "Artist", artistPct], ["rz-c-f", "Rhozeland fee", feePct], ["rz-c-c", causeName.trim() ? `Cause · ${causeName.trim()}` : "Cause", causePct]] as const).map(([c, l, p]) => (
+        <div className="rz-split-row" key={c}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{p}%</span><span className="rz-amt">{money(budgetCents * p / 100)}</span></div>
+      ))}
+    </div>
+  );
+  const CoinChip = () => coin ? (
+    <div className="rz-coin">
+      {coin.image ? <img src={coin.image} alt={coin.ticker} /> : null}
+      <div style={{ minWidth: 0 }}><b>${coin.ticker}</b>{coin.name && coin.name !== coin.ticker && <> <span className="rz-opt" style={{ fontSize: ".72rem" }}>{coin.name}</span></>}<small>{coin.mint}</small></div>
+    </div>
+  ) : <div className="rz-note" style={{ textAlign: "left" }}>No coin attached yet</div>;
 
   return (
     <Shell right={
@@ -225,6 +249,7 @@ export default function CreateProject() {
               <h1>Your roadmap</h1>
               <p>We drafted milestones from your answers. Edit, reorder or remove anything.</p>
             </div>
+            <SplitMini />
             <div className="rz-inv">
               <div className="rz-inv-h"><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span><span /></div>
               {genBusy && [0, 1, 2].map((i) => <div key={i} className="rz-skel" />)}
@@ -254,7 +279,7 @@ export default function CreateProject() {
             </div>
             <div className="rz-actions">
               <button className="rz-btn" onClick={() => { setErr(""); setStep(1); }}>‹ Back</button>
-              <button className="rz-btn pri" disabled={genBusy} onClick={goStep3}>Next: Launch ›</button>
+              <button className="rz-btn pri" disabled={genBusy} onClick={goStep3}>Next: Coin ›</button>
             </div>
           </>
         )}
@@ -262,32 +287,61 @@ export default function CreateProject() {
         {step === 3 && (
           <>
             <div className="rz-head">
-              <h1>Launch</h1>
-              <p>Optionally attach a Pump.fun coin so supporters can back your release.</p>
+              <h1>Attach your Pump.fun coin.</h1>
+              <p>Already launched on Pump.fun? Paste the mint address so fans can hold it to unlock your work.</p>
             </div>
             <div className="rz-grid">
               <div className="rz-field rz-full">
-                <label>Attach Pump.fun coin <span className="rz-opt">(optional)</span></label>
-                <input className="rz-in" value={mint} placeholder="Paste mint address" spellCheck={false} onChange={(e) => setMint(e.target.value.trim())} />
-                {coinBusy && <div className="rz-note">Looking up coin…</div>}
+                <label>Mint address</label>
+                <input className="rz-in" value={mint} maxLength={60} placeholder="Paste mint address" spellCheck={false} onChange={(e) => setMint(e.target.value.trim())} />
                 {coinErr && <div className="rz-err" style={{ textAlign: "left" }}>{coinErr}</div>}
-                {coin && (
-                  <div className="rz-coin">
-                    {coin.image ? <img src={coin.image} alt={coin.ticker} /> : <div className="rz-ico" style={{ width: 52, height: 52 }}>$</div>}
-                    <div style={{ minWidth: 0 }}><b>${coin.ticker}</b> <span className="rz-opt" style={{ fontSize: ".72rem" }}>{coin.name}</span><small>{coin.mint}</small></div>
-                  </div>
-                )}
-                <div style={{ marginTop: ".45rem" }}><button className="rz-textlink" onClick={skipCoin}>Skip for now</button></div>
+              </div>
+              <div className="rz-field" style={{ maxWidth: 200 }}>
+                <label>Ticker</label>
+                <div className="rz-money"><span>$</span><input className="rz-in" value={ticker.replace(/^\$/, "")} maxLength={12} placeholder="SUMMER" onChange={(e) => setTicker(e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase())} /></div>
               </div>
               <div className="rz-field rz-full">
-                <label>Payout wallet (Solana) <span className="rz-opt">(optional)</span></label>
-                <input className="rz-in" value={wallet} maxLength={64} placeholder="Where artist funds or airdrops go" spellCheck={false} onChange={(e) => setWallet(e.target.value.trim())} />
+                {coinBusy && <div className="rz-note" style={{ textAlign: "left" }}>Looking up coin…</div>}
+                {(mint.trim() || tick) && (coin ? <CoinChip /> : tick ? <div className="rz-coin"><div><b>${tick}</b><small>Add a valid mint address to attach</small></div></div> : null)}
+                <div style={{ marginTop: ".55rem" }}><button className="rz-textlink" onClick={skipCoin}>Skip for now</button></div>
               </div>
             </div>
             <div className="rz-actions">
               <button className="rz-btn" onClick={() => { setErr(""); setStep(2); }}>‹ Back</button>
-              <button className="rz-btn pri" disabled={publishing || coinBusy} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</button>
+              <button className="rz-btn pri" disabled={coinBusy} onClick={goStep4}>Next: Review ›</button>
             </div>
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <div className="rz-head">
+              <h1>Review and publish</h1>
+              <p>Check everything below. You can go back to edit any step.</p>
+            </div>
+            <div className="rz-split" style={{ marginBottom: ".9rem" }}>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Project</span><b style={{ wordBreak: "break-word" }}>{title}</b></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Artist</span><span>{name}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{money(budgetCents)}</b></div>
+            </div>
+            <SplitMini />
+            <div className="rz-inv" style={{ marginBottom: ".9rem" }}>
+              {rows.map((m, i) => (
+                <div key={m.id} className="rz-row" style={{ gridTemplateColumns: "1.6rem 1fr auto", fontSize: ".78rem" }}>
+                  <span className="rz-num" style={{ paddingTop: 0 }}>{String(i + 1).padStart(2, "0")}</span>
+                  <div style={{ minWidth: 0 }}><b>{m.title}</b><div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{m.deliverable}</div></div>
+                  <span className="rz-amt">{money(m.amount_cents)}</span>
+                </div>
+              ))}
+              <div className="rz-inv-f"><span>Total</span><strong>{money(rowsTotal)}</strong></div>
+            </div>
+            <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Coin</div>
+            <CoinChip />
+            <div className="rz-actions">
+              <button className="rz-btn" onClick={() => { setErr(""); setStep(3); }}>‹ Back</button>
+              <button className="rz-btn pri" disabled={publishing} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</button>
+            </div>
+            <div style={{ textAlign: "center", marginTop: ".6rem" }}><button className="rz-textlink" disabled={saving} onClick={() => save(4)}>{saving ? "Saving…" : "Save as draft"}</button></div>
             <p className="rz-note">Publishing creates a public page anyone with the link can view.</p>
           </>
         )}

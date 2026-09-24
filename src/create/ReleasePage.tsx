@@ -53,12 +53,13 @@ export default function ReleasePage({ slug }: { slug: string }) {
               ))}
             </div>
 
-            {r.coin_mint && (
-              <a className="rz-coin" style={{ textDecoration: "none", color: "inherit" }} href={`https://pump.fun/coin/${r.coin_mint}`} target="_blank" rel="noreferrer">
-                {r.coin_image && <img src={r.coin_image} alt={r.coin_ticker} />}
-                <div style={{ minWidth: 0, flex: 1 }}><b>${r.coin_ticker}</b> <span className="rz-opt" style={{ fontSize: ".72rem" }}>{r.coin_name}</span><small>{r.coin_mint}</small></div>
-                <span className="rz-btn pri">Buy on Pump.fun</span>
-              </a>
+            {r.coin_mint && r.coin_ticker && (
+              <div style={{ textAlign: "center" }}>
+                <div className="rz-coin" style={{ display: "inline-flex", padding: ".45rem .9rem .45rem .45rem", borderRadius: 999, gap: ".55rem", textAlign: "left" }}>
+                  {r.coin_image && <img src={r.coin_image} alt={r.coin_ticker} style={{ width: 28, height: 28, borderRadius: "50%" }} />}
+                  <div><b style={{ fontSize: ".8rem" }}>Hold ${r.coin_ticker} to unlock</b><small>Attached on Pump.fun</small></div>
+                </div>
+              </div>
             )}
             <div className="rz-actions">
               <button className="rz-btn" onClick={() => navigator.clipboard?.writeText(location.href)}>Copy link</button>

@@ -8,7 +8,7 @@
 .rz-card{width:min(760px,100%);margin:0 auto;background:hsl(var(--card));border:1px solid hsl(var(--line));border-radius:21px;box-shadow:0 12px 28px hsl(0 0% 0%/.13);padding:1.4rem 1.1rem 1.6rem}
 .rz-card-wide{width:min(980px,100%)}
 @media(min-width:720px){.rz-stage{padding:3rem 2rem}.rz-card{padding:1.95rem 3.25rem 2.25rem}}
-.rz-progress{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:1.6rem}
+.rz-progress{display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:1.6rem}
 .rz-pi{position:relative;text-align:center;color:hsl(var(--mut));font-size:.64rem;font-weight:600;padding-top:1.6rem}
 .rz-pi:not(:last-child)::after{content:"";position:absolute;left:50%;right:-50%;top:.48rem;height:1px;background:hsl(var(--strong))}
 .rz-dot{position:absolute;z-index:1;top:0;left:50%;transform:translateX(-50%);width:1rem;height:1rem;border-radius:50%;border:1px solid hsl(var(--strong));background:hsl(var(--card));display:grid;place-items:center;font-size:.6rem}

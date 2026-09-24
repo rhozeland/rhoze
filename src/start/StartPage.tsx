@@ -28,7 +28,7 @@ import {
 } from "@/start/copilotClient";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowLeft, ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, PlusSquare, Trophy } from "lucide-react";
+import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, PlusSquare, Trophy } from "lucide-react";
 
 type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community" | "project";
 
@@ -227,7 +227,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 {tab === "dashboard" && (
                   <DashboardHome
                     session={session}
-                    onBuild={() => setTab("build")}
+                    onBuild={goBuild}
                     onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
                     onTokens={() => setTab("tokens")}
                     onOpenProject={(id) => openProject(id)}
@@ -263,7 +263,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     <h2 className="text-lg mt-1">Brief a project or top up your plan</h2>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setTab("build")}>
+                    <Button variant="outline" onClick={goBuild}>
                       New project <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </Button>
                     <Button onClick={() => scrollTo("subscribe")}>
@@ -333,6 +333,18 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
         session={session}
       />
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+    </div>
+  );
+}
+
+function BuildRedirect({ onOpen }: { onOpen: () => void }) {
+  return (
+    <div className="min-h-[40vh] grid place-items-center text-center px-4">
+      <div>
+        <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Create project</div>
+        <p className="mt-2 text-sm text-muted-foreground">Opening the new project builder…</p>
+        <Button className="mt-4" onClick={onOpen}>Open the project builder</Button>
+      </div>
     </div>
   );
 }

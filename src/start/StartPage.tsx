@@ -12,7 +12,6 @@ import CopilotChat from "@/start/CopilotChat";
 import CopilotBrief from "@/start/CopilotBrief";
 import ClientDashboard from "@/start/ClientDashboard";
 import DashboardHome from "@/start/DashboardHome";
-import BuildWizard from "@/start/BuildWizard";
 import ProjectView from "@/start/ProjectView";
 import TokensPanel from "@/start/TokensPanel";
 import InvestPage from "@/invest/InvestPage";
@@ -29,7 +28,7 @@ import {
 } from "@/start/copilotClient";
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
-import { ArrowLeft, ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, PlusSquare, Trophy } from "lucide-react";
+import { ArrowRight, Coins, Coins as CoinsIcon, LayoutGrid, PlusSquare, Trophy } from "lucide-react";
 
 type StartTab = "dashboard" | "build" | "roadmap" | "tokens" | "community" | "project";
 
@@ -124,7 +123,12 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const backToDashboard = () => { setActiveProject(null); setTab("dashboard"); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const goBuild = () => { setActiveProject(null); setTab("build"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const goBuild = () => { window.location.assign("/create.html"); };
+
+  // The old in-workspace Build wizard was replaced by the dedicated Create project flow.
+  useEffect(() => {
+    if (tab === "build") window.location.assign("/create.html");
+  }, [tab]);
 
   const projectPane = activeProject && (
     <ProjectView
@@ -170,12 +174,12 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
               <>
                 <DashboardHome
                   session={session}
-                  onBuild={() => setTab("build")}
-                  onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
-                  onTokens={() => setTab("tokens")}
-                  onOpenProject={(id) => openProject(id)}
-                />
-                <div id="project-roadmap" className="mt-6 scroll-mt-24"><ClientDashboard /></div>
+                    onBuild={goBuild}
+                    onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
+                    onTokens={() => setTab("tokens")}
+                    onOpenProject={(id) => openProject(id)}
+                  />
+                  <div id="project-roadmap" className="mt-6 scroll-mt-24"><ClientDashboard /></div>
               </>
             )}
             {tab === "dashboard" && !session && (
@@ -186,17 +190,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 <Button className="mt-5" onClick={() => setAuthOpen(true)}>Sign in to your dashboard</Button>
               </div>
             )}
-            {tab === "build" && (
-              <div className="space-y-4">
-                {session && (
-                  <button onClick={backToDashboard} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition">
-                    <ArrowLeft className="w-3.5 h-3.5" /> Back to dashboard
-                  </button>
-                )}
-                <BuildWizard session={session} onDone={backToDashboard} onNeedAuth={() => setAuthOpen(true)} onCreated={(id) => openProject(id, true)} />
-                <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
-              </div>
-            )}
+            {tab === "build" && <BuildRedirect onOpen={goBuild} />}
             {tab === "project" && projectPane}
             {tab === "tokens" && (session ? <TokensPanel session={session} /> : <InvestPage embedded />)}
             {tab === "community" && (
@@ -233,7 +227,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 {tab === "dashboard" && (
                   <DashboardHome
                     session={session}
-                    onBuild={() => setTab("build")}
+                    onBuild={goBuild}
                     onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
                     onTokens={() => setTab("tokens")}
                     onOpenProject={(id) => openProject(id)}
@@ -245,15 +239,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     <ClientDashboard />
                   </div>
                 )}
-                {tab === "build" && (
-                  <div className="space-y-4">
-                    <button onClick={backToDashboard} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition">
-                      <ArrowLeft className="w-3.5 h-3.5" /> Back to dashboard
-                    </button>
-                    <BuildWizard session={session} onDone={backToDashboard} onNeedAuth={() => setAuthOpen(true)} onCreated={(id) => openProject(id, true)} />
-                    <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
-                  </div>
-                )}
+                {tab === "build" && <BuildRedirect onOpen={goBuild} />}
                 {tab === "tokens" && <TokensPanel session={session} />}
                 {tab === "community" && (
                   <div className="rounded-2xl border border-border bg-card overflow-hidden">
@@ -277,7 +263,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     <h2 className="text-lg mt-1">Brief a project or top up your plan</h2>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => setTab("build")}>
+                    <Button variant="outline" onClick={goBuild}>
                       New project <ArrowRight className="w-3.5 h-3.5 ml-1" />
                     </Button>
                     <Button onClick={() => scrollTo("subscribe")}>
@@ -347,6 +333,18 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
         session={session}
       />
       <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+    </div>
+  );
+}
+
+function BuildRedirect({ onOpen }: { onOpen: () => void }) {
+  return (
+    <div className="min-h-[40vh] grid place-items-center text-center px-4">
+      <div>
+        <div className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">Create project</div>
+        <p className="mt-2 text-sm text-muted-foreground">Opening the new project builder…</p>
+        <Button className="mt-4" onClick={onOpen}>Open the project builder</Button>
+      </div>
     </div>
   );
 }

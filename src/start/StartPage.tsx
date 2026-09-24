@@ -123,7 +123,12 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const backToDashboard = () => { setActiveProject(null); setTab("dashboard"); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const goBuild = () => { setActiveProject(null); setTab("build"); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  const goBuild = () => { window.location.assign("/create.html"); };
+
+  // The old in-workspace Build wizard was replaced by the dedicated Create project flow.
+  useEffect(() => {
+    if (tab === "build") window.location.assign("/create.html");
+  }, [tab]);
 
   const projectPane = activeProject && (
     <ProjectView

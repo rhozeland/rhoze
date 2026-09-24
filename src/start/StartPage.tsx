@@ -239,15 +239,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                     <ClientDashboard />
                   </div>
                 )}
-                {tab === "build" && (
-                  <div className="space-y-4">
-                    <button onClick={backToDashboard} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition">
-                      <ArrowLeft className="w-3.5 h-3.5" /> Back to dashboard
-                    </button>
-                    <BuildWizard session={session} onDone={backToDashboard} onNeedAuth={() => setAuthOpen(true)} onCreated={(id) => openProject(id, true)} />
-                    <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
-                  </div>
-                )}
+                {tab === "build" && <BuildRedirect onOpen={goBuild} />}
                 {tab === "tokens" && <TokensPanel session={session} />}
                 {tab === "community" && (
                   <div className="rounded-2xl border border-border bg-card overflow-hidden">

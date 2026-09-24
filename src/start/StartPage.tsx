@@ -190,17 +190,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
                 <Button className="mt-5" onClick={() => setAuthOpen(true)}>Sign in to your dashboard</Button>
               </div>
             )}
-            {tab === "build" && (
-              <div className="space-y-4">
-                {session && (
-                  <button onClick={backToDashboard} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition">
-                    <ArrowLeft className="w-3.5 h-3.5" /> Back to dashboard
-                  </button>
-                )}
-                <BuildWizard session={session} onDone={backToDashboard} onNeedAuth={() => setAuthOpen(true)} onCreated={(id) => openProject(id, true)} />
-                <SubscribeSection session={session} onNeedAuth={() => setAuthOpen(true)} />
-              </div>
-            )}
+            {tab === "build" && <BuildRedirect onOpen={goBuild} />}
             {tab === "project" && projectPane}
             {tab === "tokens" && (session ? <TokensPanel session={session} /> : <InvestPage embedded />)}
             {tab === "community" && (

@@ -344,9 +344,7 @@
     function selectDay(idx) {
       SELECTED_DAY = DAYS[idx];
       SELECTED_SLOT = null;
-      Array.prototype.forEach.call(document.querySelectorAll('.day-btn'), function(b,i){
-        b.classList.toggle('active', i===idx);
-      });
+      renderDays();
       renderSlots();
     }
 

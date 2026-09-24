@@ -12,7 +12,6 @@ import CopilotChat from "@/start/CopilotChat";
 import CopilotBrief from "@/start/CopilotBrief";
 import ClientDashboard from "@/start/ClientDashboard";
 import DashboardHome from "@/start/DashboardHome";
-import BuildWizard from "@/start/BuildWizard";
 import ProjectView from "@/start/ProjectView";
 import TokensPanel from "@/start/TokensPanel";
 import InvestPage from "@/invest/InvestPage";

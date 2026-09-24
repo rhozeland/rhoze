@@ -174,12 +174,12 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
               <>
                 <DashboardHome
                   session={session}
-                  onBuild={() => setTab("build")}
-                  onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
-                  onTokens={() => setTab("tokens")}
-                  onOpenProject={(id) => openProject(id)}
-                />
-                <div id="project-roadmap" className="mt-6 scroll-mt-24"><ClientDashboard /></div>
+                    onBuild={goBuild}
+                    onRoadmap={() => document.getElementById("project-roadmap")?.scrollIntoView({ behavior: "smooth" })}
+                    onTokens={() => setTab("tokens")}
+                    onOpenProject={(id) => openProject(id)}
+                  />
+                  <div id="project-roadmap" className="mt-6 scroll-mt-24"><ClientDashboard /></div>
               </>
             )}
             {tab === "dashboard" && !session && (

@@ -78,3 +78,21 @@
 .rz-owner{width:min(760px,100%);margin:0 auto .8rem;display:flex;flex-wrap:wrap;gap:.5rem;justify-content:space-between;align-items:center;background:hsl(var(--card));border:1px solid hsl(var(--line));border-radius:14px;padding:.55rem .75rem;font-size:.7rem;font-weight:600}
 .rz-owner>div{display:flex;flex-wrap:wrap;gap:.35rem}.rz-owner .rz-btn{min-height:1.9rem;padding:.3rem .75rem;font-size:.66rem}
 .rz-modal{position:fixed;inset:0;background:hsl(0 0% 0%/.4);display:grid;place-items:center;padding:1rem;z-index:50}
+.rz-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.1rem}
+.rz-chipbtn{border:1px solid hsl(var(--strong));background:transparent;color:hsl(var(--ink));border-radius:999px;padding:.32rem .85rem;font-size:.7rem;font-weight:600;cursor:pointer;transition:.15s}
+.rz-chipbtn.on{background:hsl(var(--ink));color:hsl(var(--card))}
+.rz-feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.9rem}
+.rz-feed-card{display:flex;flex-direction:column;gap:.6rem;border:1px solid hsl(var(--line));border-radius:16px;padding:.7rem;background:hsl(var(--card));text-decoration:none;color:hsl(var(--ink));transition:.15s}
+.rz-feed-card:hover{border-color:hsl(var(--strong));transform:translateY(-2px)}
+.rz-feed-cover{aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid hsl(var(--line));background:linear-gradient(135deg,hsl(var(--coral)/.55),hsl(var(--yellow)/.6),hsl(var(--aqua)/.7));display:grid;place-items:center}
+.rz-feed-cover img{width:100%;height:100%;object-fit:cover}
+.rz-feed-cover i{font-style:normal;font-weight:700;font-size:.85rem;opacity:.55;padding:.6rem;text-align:center}
+.rz-feed-meta{display:flex;flex-direction:column;gap:.3rem;align-items:flex-start}
+.rz-feed-meta small{color:hsl(var(--mut));font-size:.66rem}
+.rz-feed-meta b{font-size:.85rem;line-height:1.25}
+.rz-feed-meta .rz-chip{padding:.2rem .6rem .2rem .3rem;font-size:.66rem}
+.rz-feed-meta .rz-chip img{width:16px;height:16px}
+.rz-feed-cta{align-self:stretch;text-align:center;justify-content:center;display:inline-flex}
+.rz-empty{text-align:center;padding:2.5rem 1rem;display:grid;gap:.9rem;justify-items:center}
+.rz-empty p{color:hsl(var(--mut));font-size:.85rem}
+@media(max-width:480px){.rz-feed{grid-template-columns:repeat(2,1fr);gap:.6rem}}

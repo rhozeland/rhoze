@@ -109,7 +109,7 @@ export default function ReleasePage({ slug }: { slug: string }) {
             <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
               {pumpUrl
                 ? <a className="rz-btn pri" href={pumpUrl} target="_blank" rel="noopener noreferrer">Support this project</a>
-                : <button className="rz-btn pri" disabled>Support this project</button>}
+                : <button className="rz-btn pri" onClick={() => setNote("This project hasn't attached a coin yet. Follow along and check back soon.")}>Support this project</button>}
               <button className="rz-btn" onClick={() => setNote("Wallet connection is coming soon.")}>Connect wallet</button>
               <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
             </div>

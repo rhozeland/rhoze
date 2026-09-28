@@ -4,12 +4,21 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
+import DiscoverPage from "@/create/DiscoverPage";
 import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
 const releaseMatch = location.pathname.match(/^\/release\/([^/]+)\/?$/);
 
-if (releaseMatch) {
+const discoverMatch = location.pathname.match(/^\/discover\/?$/);
+
+if (discoverMatch) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "discover-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<DiscoverPage />);
+} else if (releaseMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");
   el.id = "release-root";

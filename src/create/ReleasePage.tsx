@@ -2,21 +2,80 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, money } from "./shared";
 
+type Status = "Upcoming" | "Funded" | "Delivered";
+const FAKE_WALLET = "7xKq…9fRm";
+const CAUSE_WALLET = "Cz4P…w2Lb";
+
+const firstSentence = (t?: string) => {
+  if (!t) return "";
+  const m = t.trim().match(/^[^.!?]*[.!?]/);
+  return (m ? m[0] : t).trim();
+};
+
 export default function ReleasePage({ slug }: { slug: string }) {
   const [r, setR] = useState<any>(undefined);
+  const [isOwner, setIsOwner] = useState(false);
+  const [statuses, setStatuses] = useState<Status[]>([]);
+  const [holds, setHolds] = useState(false);
+  const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     (supabase.from as any)("releases")
-      .select("title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,published_at")
+      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,published_at")
       .eq("slug", slug).eq("status", "published").maybeSingle()
-      .then(({ data }: any) => {
+      .then(async ({ data }: any) => {
         setR(data ?? null);
-        if (data) document.title = `${data.title} — Rhozeland`;
-      });
+        if (!data) return;
+        document.title = `${data.title} | Rhozeland`;
+        setStatuses((data.milestones || []).map((_: any, i: number) => (i === 0 ? "Funded" : "Upcoming")));
+        const token = localStorage.getItem("rz_release_token");
+        if (token) {
+          const { data: own } = await (supabase.rpc as any)("release_get_draft", { p_token: token, p_id: data.id });
+          const row = Array.isArray(own) ? own[0] : own;
+          if (row?.id) setIsOwner(true);
+        }
+      }, () => setR(null));
   }, [slug]);
 
+  const pumpUrl = r?.coin_mint ? `https://pump.fun/coin/${r.coin_mint}` : "";
+  const ticker = r?.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
+  const budget = Number(r?.budget_cents || 0);
+  const funded = Math.round(budget * 0.35);
+
+  const copyLink = async () => {
+    try { await navigator.clipboard.writeText(location.href); setCopied(true); setTimeout(() => setCopied(false), 1800); }
+    catch { setNote("Could not copy the link. Please copy it from the address bar."); }
+  };
+
+  const startDeliver = () => {
+    const idx = statuses.indexOf("Funded");
+    if (idx < 0) { setNote("There is no funded milestone to deliver right now."); return; }
+    setNote("");
+    setReceipt({ idx, confirmed: false });
+    setTimeout(() => {
+      setReceipt({ idx, confirmed: true });
+      setStatuses((s) => s.map((v, i) => (i === idx ? "Delivered" : i === idx + 1 ? "Funded" : v)));
+    }, 2000);
+  };
+
+  const pill = (s: Status) => (
+    <span className={`rz-status rz-status-${s.toLowerCase()}`}>{s}</span>
+  );
+
   return (
-    <Shell right={<a className="rz-link" href="/create.html?new=1">Create a project</a>}>
+    <Shell right={holds ? <span className="rz-wallet-chip"><i />{FAKE_WALLET} <small>Solana</small></span> : <a className="rz-link" href="/create.html?new=1">Create a project</a>}>
+      {r && isOwner && (
+        <div className="rz-owner">
+          <span>You own this page</span>
+          <div>
+            <a className="rz-btn" href={`/create.html?draft=${r.id}`}>Edit project</a>
+            <a className="rz-btn" href="/create.html">My projects</a>
+            <button className="rz-btn pri" onClick={startDeliver}>Mark milestone delivered</button>
+          </div>
+        </div>
+      )}
       <div className="rz-card">
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /><div className="rz-skel" /></>}
         {r === null && (
@@ -25,21 +84,49 @@ export default function ReleasePage({ slug }: { slug: string }) {
         )}
         {r && (
           <>
-            <div className="rz-head" style={{ marginBottom: "1.2rem" }}>
-              <span className="rz-pill">Release</span>
-              <h1 style={{ marginTop: ".6rem", fontSize: "1.6rem" }}>{r.title}</h1>
-              <p>by <b>{r.creator_name || "Rhozeland artist"}</b></p>
+            <div className="rz-cover">
+              {r.coin_image ? <img src={r.coin_image} alt={`${r.title} artwork`} /> : <span>{r.title}</span>}
             </div>
-            {r.answers?.making && <p style={{ fontSize: ".85rem", lineHeight: 1.5, textAlign: "center", maxWidth: 520, margin: "0 auto 1.2rem" }}>{r.answers.making}</p>}
+            <div className="rz-head" style={{ marginBottom: "1rem" }}>
+              <h1 style={{ fontSize: "1.6rem" }}>{r.title}</h1>
+              <p>by <b>{r.creator_name || "Rhozeland artist"}</b></p>
+              {r.answers?.making && <p style={{ maxWidth: 480 }}>{firstSentence(r.answers.making)}</p>}
+            </div>
+
+            <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+              {ticker && pumpUrl ? (
+                <a className="rz-chip" href={pumpUrl} target="_blank" rel="noopener noreferrer">
+                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b><small>Attached on Pump.fun</small>
+                </a>
+              ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
+            </div>
+
+            <div className="rz-fund">
+              <div><span>Funded <b>{money(funded)}</b> of {money(budget)}</span><span>{budget ? Math.round((funded / budget) * 100) : 0}%</span></div>
+              <div className="rz-fund-bar"><i style={{ width: `${budget ? (funded / budget) * 100 : 0}%` }} /></div>
+            </div>
+
+            <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
+              {pumpUrl
+                ? <a className="rz-btn pri" href={pumpUrl} target="_blank" rel="noopener noreferrer">Support this project</a>
+                : <button className="rz-btn pri" disabled>Support this project</button>}
+              <button className="rz-btn" onClick={() => setNote("Wallet connection is coming soon.")}>Connect wallet</button>
+              <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
+            </div>
+            {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 
             <div className="rz-split" style={{ marginBottom: "1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{money(r.budget_cents)}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{money(budget)}</span></div>
               <div className="rz-bar">
                 <i className="rz-c-a" style={{ width: `${r.artist_pct}%` }} /><i className="rz-c-f" style={{ width: `${r.fee_pct}%` }} /><i className="rz-c-c" style={{ width: `${r.cause_pct}%` }} />
               </div>
-              {[["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland fee", r.fee_pct], ["rz-c-c", r.cause_name ? `Cause · ${r.cause_name}` : "Cause", r.cause_pct]].map(([c, l, p]) => (
-                <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{money(r.budget_cents * Number(p) / 100)}</span></div>
+              {[["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland fee", r.fee_pct], ["rz-c-c", r.cause_name ? `Cause: ${r.cause_name}` : "Cause", r.cause_pct]].map(([c, l, p]) => (
+                <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{money(budget * Number(p) / 100)}</span></div>
               ))}
+              <div className="rz-cause">
+                <span>Rewards go to {r.cause_name || "a cause the artist will name soon"}</span>
+                <code>{CAUSE_WALLET}</code>
+              </div>
             </div>
 
             <div className="rz-inv">
@@ -47,27 +134,56 @@ export default function ReleasePage({ slug }: { slug: string }) {
               {(r.milestones || []).map((m: any, i: number) => (
                 <div key={i} className="rz-row" style={{ gridTemplateColumns: "1.6rem 1fr auto", fontSize: ".78rem" }}>
                   <span className="rz-num" style={{ paddingTop: 0 }}>{String(i + 1).padStart(2, "0")}</span>
-                  <div><b>{m.title}</b><div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{m.deliverable}</div></div>
+                  <div><b>{m.title}</b> {statuses[i] && pill(statuses[i])}<div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{m.deliverable}</div></div>
                   <span className="rz-amt">{money(m.amount_cents)}</span>
                 </div>
               ))}
             </div>
 
-            {r.coin_mint && r.coin_ticker && (
-              <div style={{ textAlign: "center" }}>
-                <div className="rz-coin" style={{ display: "inline-flex", padding: ".45rem .9rem .45rem .45rem", borderRadius: 999, gap: ".55rem", textAlign: "left" }}>
-                  {r.coin_image && <img src={r.coin_image} alt={r.coin_ticker} style={{ width: 28, height: 28, borderRadius: "50%" }} />}
-                  <div><b style={{ fontSize: ".8rem" }}>Hold ${r.coin_ticker} to unlock</b><small>Attached on Pump.fun</small></div>
-                </div>
+            <h2 className="rz-h2">Unlocks</h2>
+            <div className="rz-inv">
+              <div className="rz-unlock">
+                <span className="rz-ico-btn" aria-label="Play">▶</span>
+                <div><b>Behind the scenes update</b><small>Unlocked for everyone</small></div>
               </div>
-            )}
-            <div className="rz-actions">
-              <button className="rz-btn" onClick={() => navigator.clipboard?.writeText(location.href)}>Copy link</button>
-              <a className="rz-btn pri" href="/book/">Book a project</a>
+              <div className={`rz-unlock ${holds ? "ok" : ""}`}>
+                <span className="rz-ico-btn" aria-label={holds ? "Download" : "Locked"}>{holds ? "↓" : "🔒"}</span>
+                <div><b>Stems and project files</b><small>{holds ? "Unlocked with your wallet" : `Hold ${ticker ? "$" + ticker : "the coin"} to unlock`}</small></div>
+              </div>
             </div>
+            <label className="rz-toggle">
+              <input type="checkbox" checked={holds} onChange={(e) => setHolds(e.target.checked)} />
+              <span />Demo: wallet holds coin
+            </label>
+
+            <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
           </>
         )}
       </div>
+
+      {receipt && r && (
+        <div className="rz-modal" onClick={() => receipt.confirmed && setReceipt(null)}>
+          <div className="rz-card" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
+            <div className="rz-head" style={{ marginBottom: "1rem" }}>
+              <h1 style={{ fontSize: "1.1rem" }}>Split receipt</h1>
+              <p>Milestone {String(receipt.idx + 1).padStart(2, "0")}: {r.milestones[receipt.idx]?.title}</p>
+            </div>
+            {(() => {
+              const amt = Number(r.milestones[receipt.idx]?.amount_cents || 0);
+              return [["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland", r.fee_pct], ["rz-c-c", "Cause", r.cause_pct]].map(([c, l, p]) => (
+                <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{money(amt * Number(p) / 100)}</span></div>
+              ));
+            })()}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: ".9rem", fontSize: ".75rem" }}>
+              <span className={`rz-status ${receipt.confirmed ? "rz-status-delivered" : "rz-status-upcoming"}`}>{receipt.confirmed ? "Confirmed" : "Pending"}</span>
+              <a className="rz-textlink" href="https://solscan.io" target="_blank" rel="noopener noreferrer">View on Solscan</a>
+            </div>
+            <div className="rz-actions" style={{ marginTop: "1.2rem" }}>
+              <button className="rz-btn pri" disabled={!receipt.confirmed} onClick={() => setReceipt(null)}>Done</button>
+            </div>
+          </div>
+        </div>
+      )}
     </Shell>
   );
 }

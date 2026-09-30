@@ -517,6 +517,60 @@ export type Database = {
           },
         ]
       }
+      creator_directory: {
+        Row: {
+          approved: boolean
+          bio: string | null
+          completed_projects: number
+          created_at: string
+          disciplines: string[]
+          display_name: string
+          hourly_rate_cents: number | null
+          id: string
+          membership_tier: string
+          photo_url: string | null
+          portfolio_url: string | null
+          rating: number | null
+          trending: boolean
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          approved?: boolean
+          bio?: string | null
+          completed_projects?: number
+          created_at?: string
+          disciplines?: string[]
+          display_name: string
+          hourly_rate_cents?: number | null
+          id?: string
+          membership_tier?: string
+          photo_url?: string | null
+          portfolio_url?: string | null
+          rating?: number | null
+          trending?: boolean
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          approved?: boolean
+          bio?: string | null
+          completed_projects?: number
+          created_at?: string
+          disciplines?: string[]
+          display_name?: string
+          hourly_rate_cents?: number | null
+          id?: string
+          membership_tier?: string
+          photo_url?: string | null
+          portfolio_url?: string | null
+          rating?: number | null
+          trending?: boolean
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       credit_requests: {
         Row: {
           client_decided_at: string | null

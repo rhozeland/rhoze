@@ -8,7 +8,7 @@
   const search = $('creatorSearch'), grid = $('creatorGrid'), filters = $('creatorFilters'), meta = $('directoryMeta'), pages = $('directoryPages'), dialog = $('creatorProfile');
   function el(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; }
   function image(creator, className) {
-    if (creator.photo_url && /^https:\/\/|^\/__l5e\/|^\/images\//.test(creator.photo_url)) {
+    if (creator.photo_url && /^https:\/\/|^\/__l5e\/|^\/images\/|^\/assets\//.test(creator.photo_url)) {
       const img = el('img', className); img.src = creator.photo_url; img.alt = creator.display_name; img.loading = 'lazy'; return img;
     }
     return el('div', className + ' creator-initial', (creator.display_name || '?').charAt(0).toUpperCase());

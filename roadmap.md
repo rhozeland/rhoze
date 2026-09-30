@@ -1,0 +1,4 @@
+- [x] Add an approved public creator listing source with one labeled sample profile.
+- [x] Build the reference-inspired Community directory, search, filters, profiles, and contact/booking links.
+- [x] Link the homepage Community card and navigation; mirror booking navigation.
+- [x] Verify desktop and 390px mobile discovery, filters, creator profile, and booking link.

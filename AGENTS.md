@@ -1,0 +1,2 @@
+- Keep the public talent marketplace in `creator_directory`, separate from private account `profiles`, because visitors must never gain access to payroll or account details through discovery.
+- Mirror static page updates between `public/community.html` and `public/community/index.html`, because direct `.html` and clean `/community/` URLs must match.

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Creators — Rhozeland</title>
+  <meta name="description" content="Meet Rhozeland creators. Search by name or discipline, view portfolios, and connect about your next project." />
+  <meta property="og:title" content="Community Creators — Rhozeland" />
+  <meta property="og:description" content="Meet Rhozeland creators and find collaborators for your next project." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/shared.css" />
+  <style>
+    .page-community{--book-green:159 58% 49%;--book-aqua:181 70% 72%;--book-coral:13 92% 74%;--book-yellow:43 96% 76%;--surface:0 0% 97%;--surface-card:0 0% 100%;--surface-alt:0 0% 95%;--ink:0 0% 10%;--muted:0 0% 43%;--line:0 0% 86%;--line-strong:0 0% 32%;--shadow:0 0% 0%;padding:0;background:hsl(var(--surface));color:hsl(var(--ink));}
+    .page-community .page-shell{max-width:none;border:0;border-radius:0;box-shadow:none;background:hsl(var(--surface));overflow:visible}
+    .page-community .navbar{position:relative;z-index:3;min-height:4.25rem;padding:.75rem 1.25rem;background:hsl(var(--surface-card));border-bottom:1px solid hsl(var(--line))}
+    .page-community .brand{gap:.5rem}.page-community .brand img{width:1.6rem;height:1.6rem}.page-community .brand-text{font-size:.92rem}.page-community .logo-dark{display:block!important}.page-community .logo-light{display:none!important}
+    .page-community .nav-links{position:absolute;left:50%;transform:translateX(-50%);gap:2.2rem;margin:0}.page-community .nav-links a{padding:.25rem;font-size:.7rem;font-weight:500;color:hsl(var(--ink));white-space:nowrap}.page-community .nav-links .current{font-weight:700}
+    .page-community .nav-cta{min-height:1.95rem;padding:.38rem .9rem;font-size:.7rem;border:1px solid hsl(var(--ink));background:hsl(var(--surface-card));color:hsl(var(--ink))}
+    .community-stage{min-height:calc(100vh - 4.25rem);padding:3.1rem max(1.25rem,calc((100vw - 1160px)/2)) 4rem;background:radial-gradient(circle at 0% 64%,hsl(var(--book-coral)/.7),transparent 29%),radial-gradient(circle at 100% 69%,hsl(var(--book-aqua)/.86),transparent 31%),radial-gradient(circle at 18% 100%,hsl(var(--book-yellow)/.82),transparent 29%),radial-gradient(circle at 62% 100%,hsl(var(--book-aqua)/.72),transparent 34%),hsl(var(--surface))}
+    .community-head{text-align:center;margin:0 auto 2rem}.community-head h1{font-size:1.75rem;line-height:1.15;font-weight:700}.community-head p{max-width:330px;margin:.35rem auto 0;font-size:.85rem;line-height:1.35;font-weight:600}
+    .community-search{display:flex;align-items:center;height:2.35rem;border:1px solid hsl(var(--line-strong));border-radius:999px;background:hsl(var(--surface-card));padding:0 .85rem;gap:.5rem}.community-search:focus-within{outline:2px solid hsl(var(--book-green));outline-offset:2px}.community-search input{width:100%;border:0;outline:0;color:hsl(var(--ink));background:transparent;font-size:.78rem}.community-search svg{width:1rem;height:1rem;flex:none}
+    .community-filter-head{display:flex;justify-content:space-between;align-items:center;margin:.8rem 0 .55rem;font-size:.67rem;font-weight:700;letter-spacing:.045em}.community-filter-head button{font-size:.65rem;letter-spacing:.045em;font-weight:700;color:hsl(var(--muted))}.community-filter-head button:hover{text-decoration:underline}
+    .community-filters{display:flex;flex-wrap:wrap;gap:.38rem}.filter-pill{border:1px solid hsl(var(--line-strong));border-radius:999px;background:hsl(var(--surface-card));color:hsl(var(--muted));padding:.3rem .62rem;font-size:.68rem;line-height:1.15;white-space:nowrap}.filter-pill[aria-pressed=true]{border-color:hsl(var(--ink));color:hsl(var(--ink));font-weight:600}.filter-pill .tick{color:hsl(var(--book-green));font-weight:700}.filter-pill:hover{border-color:hsl(var(--ink))}
+    .directory-meta{min-height:1.5rem;margin:1.4rem 0 .35rem;font-size:.7rem;color:hsl(var(--muted))}
+    .creator-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem}.creator-card{min-width:0;display:flex;flex-direction:column;background:hsl(var(--surface-card));border-radius:8px;padding:1.05rem;box-shadow:0 3px 15px hsl(var(--shadow)/.11)}
+    .creator-photo{width:6.6rem;height:6.6rem;margin:0 auto .75rem;border-radius:8px;object-fit:cover;background:hsl(var(--surface-alt))}.creator-initial{display:grid;place-items:center;color:hsl(var(--muted));font-size:2rem;font-weight:700}
+    .creator-top{display:flex;gap:.35rem;align-items:center;justify-content:space-between;min-height:1.2rem}.creator-top h2{min-width:0;font-size:.84rem;font-weight:600;overflow-wrap:anywhere}.creator-badges{display:flex;gap:.25rem;flex:none}.creator-badge{border-radius:999px;background:hsl(var(--book-green)/.19);padding:.13rem .34rem;font-size:.55rem;font-weight:700;white-space:nowrap}.creator-badge.rating{background:hsl(var(--ink));color:hsl(var(--surface-card))}
+    .creator-tier{color:hsl(35 79% 36%);font-weight:700;font-size:.58rem;letter-spacing:.025em;text-transform:uppercase}.creator-detail{font-size:.69rem;line-height:1.45}.creator-muted{font-size:.65rem;color:hsl(var(--muted));margin-bottom:.95rem}.creator-view{display:flex;align-items:center;justify-content:center;min-height:2rem;margin-top:auto;border:1px solid hsl(var(--ink));border-radius:999px;background:hsl(var(--surface-card));font-size:.7rem;font-weight:600;color:hsl(var(--ink))}.creator-view:hover,.creator-view:focus-visible{background:hsl(var(--ink));color:hsl(var(--surface-card))}
+    .directory-empty{text-align:center;padding:3rem 1rem;font-size:.8rem}.directory-empty button{margin-top:.75rem;text-decoration:underline;font-weight:600}.directory-pages{display:flex;justify-content:center;gap:.2rem;margin:2rem auto 0}.directory-pages button{min-width:1.65rem;min-height:1.65rem;border-radius:999px;background:hsl(var(--surface-card));font-size:.7rem}.directory-pages button[aria-current=page]{font-weight:700;background:hsl(var(--ink));color:hsl(var(--surface-card))}
+    .profile-dialog{width:min(500px,calc(100vw - 1.5rem));max-height:calc(100dvh - 2rem);margin:auto;border:1px solid hsl(var(--line));border-radius:8px;padding:1.5rem;background:hsl(var(--surface-card));color:hsl(var(--ink));box-shadow:0 24px 70px hsl(var(--shadow)/.22);overflow-y:auto}.profile-dialog::backdrop{background:hsl(var(--ink)/.55)}.profile-close{position:absolute;right:1rem;top:.7rem;font-size:1.35rem}.profile-portrait{width:7.5rem;height:7.5rem;border-radius:8px;object-fit:cover;margin:0 auto 1rem;background:hsl(var(--surface-alt))}.profile-dialog h2{text-align:center;font-size:1.35rem}.profile-dialog .creator-tier{text-align:center;display:block;margin:.3rem 0 1rem}.profile-bio{font-size:.82rem;line-height:1.55;margin:1rem 0}.profile-facts{display:flex;flex-wrap:wrap;gap:.4rem}.profile-facts span{border:1px solid hsl(var(--line));border-radius:999px;padding:.24rem .5rem;font-size:.68rem}.profile-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.4rem}.profile-actions a{flex:1;min-width:130px;text-align:center;padding:.55rem .65rem;border-radius:999px;border:1px solid hsl(var(--ink));font-size:.72rem;font-weight:600}.profile-actions a:first-child{background:hsl(var(--ink));color:hsl(var(--surface-card))}
+    .page-community .footer{background:hsl(var(--ink));color:hsl(var(--surface-card));padding:1.9rem 1.25rem}.page-community .footer-panel{border:0;padding:0;display:grid;grid-template-columns:1fr auto;max-width:1160px;margin:0 auto}.page-community .footer-brand-header img{width:1.35rem;height:1.35rem}.page-community .footer-brand-header{font-size:.88rem}.page-community .footer-copy{max-width:400px;font-size:.66rem;color:hsl(var(--surface-card)/.75)}.page-community .footer-links{display:none}.page-community .footer-heading,.page-community .footer-contact a{color:hsl(var(--surface-card));font-size:.66rem}.page-community .footer-bottom{display:none}
+    @media(max-width:760px){.page-community .nav-links,.page-community .nav-cta{display:none}.page-community .menu-toggle{display:flex}.community-stage{padding:2.3rem 1rem 3rem}.creator-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.page-community .footer-panel{grid-template-columns:1fr;gap:1rem}}
+    @media(max-width:520px){.community-stage{padding:2rem .75rem 2.5rem}.community-head h1{font-size:1.55rem}.creator-grid{grid-template-columns:1fr}.creator-card{padding:1rem}.creator-photo{width:7.5rem;height:7.5rem}.creator-top h2{font-size:.95rem}.filter-pill{font-size:.65rem}}
+  </style>
+</head>
+<body class="page-community">
+  <div class="page-shell">
+    <nav class="navbar" aria-label="Primary">
+      <a class="brand" href="/" aria-label="Rhozeland home"><div class="brand-logo-wrap"><img src="/images/logo-black.webp" alt="" class="logo-dark" /><img src="/images/logo-white.webp" alt="" class="logo-light" /></div><span class="brand-text">Rhozeland</span></a>
+      <div class="nav-links"><a href="/book/">Book a Project</a><a href="/projects">Featured Work</a><a href="/community/" class="current" aria-current="page">Community</a><a href="/#grow">Grow</a></div>
+      <a class="nav-cta" href="/start">Sign in</a>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" onclick="toggleMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </nav>
+    <div id="mobileMenu" class="mobile-menu"><a href="/book/" onclick="closeMenu()">Book a Project</a><a href="/projects" onclick="closeMenu()">Featured Work</a><a href="/community/" onclick="closeMenu()">Community</a><a href="/#grow" onclick="closeMenu()">Grow</a><a class="mobile-cta" href="/start">Sign in</a></div>
+    <main class="community-stage">
+      <header class="community-head"><h1>Community</h1><p>Discover new artists, connect with creatives, and collaborate.</p></header>
+      <div class="community-search"><input type="search" id="creatorSearch" aria-label="Search by artist name or skill" placeholder="Search by artist name or skill..." autocomplete="off" /><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg></div>
+      <div class="community-filter-head"><span>FILTER BY CATEGORY</span><button type="button" id="clearFilters">CLEAR ALL</button></div>
+      <div id="creatorFilters" class="community-filters" aria-label="Creator categories"></div>
+      <div id="directoryMeta" class="directory-meta" role="status">Loading creators…</div>
+      <div id="creatorGrid" class="creator-grid"></div>
+      <div id="directoryPages" class="directory-pages" aria-label="Directory pages"></div>
+    </main>
+    <footer class="footer"><div class="footer-panel"><div class="footer-brand"><div class="footer-brand-header"><div class="brand-logo-wrap"><img src="/images/logo-white.webp" alt="" /></div><span>Rhozeland</span></div><p class="footer-copy">Rhozeland is the creator ecosystem for people building culture through audio, visuals, web, events, and community.</p></div><div class="footer-contact"><h3 class="footer-heading">Contact</h3><a href="tel:6478746743">647-874-6743</a><a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a></div></div></footer>
+  </div>
+  <dialog class="profile-dialog" id="creatorProfile" aria-label="Creator profile"><button type="button" class="profile-close" id="closeProfile" aria-label="Close profile">×</button><div id="profileContent"></div></dialog>
+  <script src="/shared.js"></script>
+  <script src="/community.js" defer></script>
+</body>
+</html>

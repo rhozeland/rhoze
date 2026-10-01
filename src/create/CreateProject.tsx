@@ -231,7 +231,7 @@ export default function CreateProject() {
     <Shell right={
       <button className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</button>
     }>
-      <div className={`rz-card ${step === 2 ? "rz-card-wide" : ""}`}>
+      <div className={`rz-card ${stepKey === "roadmap" ? "rz-card-wide" : ""}`}>
         <div className="rz-progress">
           {steps.map((s, i) => (
             <div key={s} className={`rz-pi ${step >= i + 1 ? "on" : ""}`}>

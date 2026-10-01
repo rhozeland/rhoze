@@ -13,12 +13,27 @@ function getToken() {
   return t;
 }
 
+type Role = { id: string; name: string; count: string; rate: string };
+type PType = "artist" | "brand";
+type StepKey = "type" | "details" | "roadmap" | "roles" | "coin" | "publish";
+const flowFor = (t: PType | null): StepKey[] => ["type", "details", "roadmap", ...(t === "brand" ? ["roles" as StepKey] : []), "coin", "publish"];
+const STEP_LABEL: Record<StepKey, string> = { type: "Type", details: "Details", roadmap: "Roadmap", roles: "Roles", coin: "Coin", publish: "Publish" };
+
 type Coin = { mint: string; ticker: string; name: string; image: string | null } | null;
 
 export default function CreateProject() {
   const token = useMemo(getToken, []);
   const [draftId, setDraftId] = useState<string | null>(null);
-  const [step, setStep] = useState(1);
+  const [ptype, setPtype] = useState<PType | null>(null);
+  const [stepKey, setStepKey] = useState<StepKey>("type");
+  const [talentPct, setTalentPct] = useState(15);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const flow = flowFor(ptype);
+  const step = Math.max(1, flow.indexOf(stepKey) + 1);
+  const isBrand = ptype === "brand";
+  const leadLabel = isBrand ? "Brand" : "Artist";
+  const causeLabel = isBrand ? "Project" : "Cause";
+  const tPct = isBrand ? talentPct : 0;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [bookingId, setBookingId] = useState<string | null>(null);
@@ -43,7 +58,7 @@ export default function CreateProject() {
   const [publishing, setPublishing] = useState(false);
 
   const budgetCents = Math.max(0, Math.round((parseFloat(budget.replace(/[^0-9.]/g, "")) || 0) * 100));
-  const artistPct = Math.max(0, 100 - feePct - causePct);
+  const artistPct = Math.max(0, 100 - feePct - causePct - tPct);
   const mintOk = MINT_RE.test(mint.trim());
   const tick = ticker.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 12);
   const coin: Coin = mintOk && tick ? { mint: mint.trim(), ticker: tick, name: meta?.mint === mint.trim() ? meta.name : tick, image: meta?.mint === mint.trim() ? meta.image : null } : null;
@@ -67,7 +82,11 @@ export default function CreateProject() {
       const { data } = await (supabase.rpc as any)("release_get_draft", { p_token: token, p_id: id });
       const r = Array.isArray(data) ? data[0] : null;
       if (!r || r.status === "published") { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
-      setDraftId(r.id); setStep(r.current_step || 1);
+      setDraftId(r.id);
+      const lt: PType | null = r.answers?.project_type === "brand" ? "brand" : r.answers?.project_type === "artist" ? "artist" : null;
+      setPtype(lt);
+      if (lt === "brand") { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
+      setStepKey(lt ? (flowFor(lt)[(r.current_step || 2) - 1] || "details") : "type");
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
       setTitle(r.title || ""); setMaking(r.answers?.making || ""); setAudience(r.answers?.audience || "");
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
@@ -80,8 +99,8 @@ export default function CreateProject() {
 
   const payload = (s = step) => ({
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
-    answers: { making: making.trim(), audience: audience.trim() },
-    budget_cents: budgetCents, artist_pct: artistPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
+    answers: { making: making.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
+    budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
     coin_mint: coin?.mint ?? "", coin_ticker: coin?.ticker ?? "", coin_name: coin?.name ?? "", coin_image: coin?.image ?? "",
     payout_wallet: wallet.trim(), current_step: s,
@@ -103,7 +122,7 @@ export default function CreateProject() {
     if (!title.trim()) return "Give your project a name.";
     if (!making.trim()) return "Tell us what you're making.";
     if (budgetCents < 100) return "Enter a budget.";
-    if (feePct + causePct > 100) return "Fee and cause can't exceed 100%.";
+    if (feePct + causePct + tPct > 100) return "The split can't exceed 100%.";
     return "";
   };
 
@@ -125,7 +144,7 @@ export default function CreateProject() {
 
   const goStep2 = async () => {
     const v = validate1(); if (v) { setErr(v); return; }
-    setStep(2); save(2);
+    setStepKey("roadmap"); save(flow.indexOf("roadmap") + 1);
     if (!rows.length) generate();
   };
 
@@ -135,11 +154,23 @@ export default function CreateProject() {
     return "";
   };
 
-  const goStep3 = () => { const v = validate2(); if (v) { setErr(v); return; } setErr(""); setStep(3); save(3); };
+  const goStep3 = () => { const v = validate2(); if (v) { setErr(v); return; } setErr(""); const k: StepKey = isBrand ? "roles" : "coin"; setStepKey(k); save(flow.indexOf(k) + 1); };
+  const goCoin = () => {
+    if (!roles.some((x) => x.name.trim())) { setErr("Add at least one role."); return; }
+    setErr(""); setStepKey("coin"); save(flow.indexOf("coin") + 1);
+  };
+  const chooseType = (t: PType) => {
+    if (t !== ptype) {
+      if (t === "brand") { setFeePct(10); setCausePct(5); setTalentPct(15); if (!roles.length) setRoles([{ id: uid(), name: "", count: "1", rate: "" }]); }
+      else { setFeePct(10); setCausePct(10); }
+    }
+    setPtype(t); setErr(""); setStepKey("details");
+  };
+  const updateRole = (id: string, patch: Partial<Role>) => setRoles((rs) => rs.map((x) => (x.id === id ? { ...x, ...patch } : x)));
   const goStep4 = () => {
     if (mint.trim() && !mintOk) { setErr("That mint address doesn't look right. Solana addresses are 32 to 44 letters and numbers."); return; }
     if (mint.trim() && !tick) { setErr("Add your coin's ticker, like $SUMMER."); return; }
-    setErr(""); setStep(4); save(4);
+    setErr(""); setStepKey("publish"); save(flow.length);
   };
 
   // Coin lookup (debounced) — fills image/ticker when available
@@ -163,12 +194,12 @@ export default function CreateProject() {
     return () => { clearTimeout(t); setCoinBusy(false); };
   }, [mint]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const skipCoin = () => { setMint(""); setTicker(""); setMeta(null); setCoinErr(""); setErr(""); setStep(4); save(4); };
+  const skipCoin = () => { setMint(""); setTicker(""); setMeta(null); setCoinErr(""); setErr(""); setStepKey("publish"); save(flow.length); };
 
   const publish = async () => {
-    if (mint.trim() && !coin) { setErr("Fix the coin details or skip the coin step."); setStep(3); return; }
+    if (mint.trim() && !coin) { setErr("Fix the coin details or skip the coin step."); setStepKey("coin"); return; }
     setPublishing(true);
-    const id = await save(4);
+    const id = await save(flow.length);
     if (!id) { setPublishing(false); return; }
     const { data, error } = await (supabase.rpc as any)("release_publish", { p_token: token, p_id: id });
     setPublishing(false);
@@ -180,11 +211,11 @@ export default function CreateProject() {
   const updateRow = (id: string, patch: Partial<Milestone>) => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   const move = (i: number, d: -1 | 1) => setRows((rs) => { const a = [...rs]; const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; });
 
-  const steps = ["Details", "Roadmap", "Coin", "Publish"];
+  const steps = flow.map((k) => STEP_LABEL[k]);
   const SplitMini = () => (
     <div className="rz-split" style={{ marginBottom: ".9rem" }}>
-      <div className="rz-bar"><i className="rz-c-a" style={{ width: `${artistPct}%` }} /><i className="rz-c-f" style={{ width: `${feePct}%` }} /><i className="rz-c-c" style={{ width: `${causePct}%` }} /></div>
-      {([["rz-c-a", "Artist", artistPct], ["rz-c-f", "Rhozeland fee", feePct], ["rz-c-c", causeName.trim() ? `Cause · ${causeName.trim()}` : "Cause", causePct]] as const).map(([c, l, p]) => (
+      <div className="rz-bar"><i className="rz-c-a" style={{ width: `${artistPct}%` }} />{isBrand && <i className="rz-c-t" style={{ width: `${talentPct}%` }} />}<i className="rz-c-f" style={{ width: `${feePct}%` }} /><i className="rz-c-c" style={{ width: `${causePct}%` }} /></div>
+      {([["rz-c-a", leadLabel, artistPct], ...(isBrand ? [["rz-c-t", "Talent", talentPct]] : []), ["rz-c-f", "Rhozeland fee", feePct], ["rz-c-c", causeName.trim() ? `${causeLabel} · ${causeName.trim()}` : causeLabel, causePct]] as [string, string, number][]).map(([c, l, p]) => (
         <div className="rz-split-row" key={c}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{p}%</span><span className="rz-amt">{money(budgetCents * p / 100)}</span></div>
       ))}
     </div>
@@ -209,7 +240,21 @@ export default function CreateProject() {
           ))}
         </div>
 
-        {step === 1 && (
+        {stepKey === "type" && (
+          <>
+            <div className="rz-head">
+              <h1>What kind of project is this?</h1>
+              <p>Pick one to start. You can change it later.</p>
+            </div>
+            <div className="rz-type-grid">
+              {([["artist", "Artist project", "Music, film, art or a release you're making."], ["brand", "Brand project", "A campaign or shoot where you hire creative talent."]] as const).map(([k, l, d]) => (
+                <button key={k} className={`rz-type ${ptype === k ? "on" : ""}`} onClick={() => chooseType(k)}><b>{l}</b><span>{d}</span></button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {stepKey === "details" && (
           <>
             <div className="rz-head">
               <h1>Create your project</h1>
@@ -228,22 +273,25 @@ export default function CreateProject() {
                 <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Where the money goes</div>
                 <div className="rz-bar">
                   <i className="rz-c-a" style={{ width: `${artistPct}%` }} />
+                  {isBrand && <i className="rz-c-t" style={{ width: `${talentPct}%` }} />}
                   <i className="rz-c-f" style={{ width: `${feePct}%` }} />
                   <i className="rz-c-c" style={{ width: `${causePct}%` }} />
                 </div>
-                <div className="rz-split-row"><span className="rz-sw rz-c-a" /><span>Artist</span><span className="rz-amt" style={{ fontWeight: 500 }}>{artistPct}%</span><span className="rz-amt">{money(budgetCents * artistPct / 100)}</span></div>
+                <div className="rz-split-row"><span className="rz-sw rz-c-a" /><span>{leadLabel}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{artistPct}%</span><span className="rz-amt">{money(budgetCents * artistPct / 100)}</span></div>
+                {isBrand && <div className="rz-split-row"><span className="rz-sw rz-c-t" /><span>Talent</span><input className="rz-pct" type="number" min={0} max={100} value={talentPct} onChange={(e) => setTalentPct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /><span className="rz-amt">{money(budgetCents * talentPct / 100)}</span></div>}
                 <div className="rz-split-row"><span className="rz-sw rz-c-f" /><span>Rhozeland fee</span><input className="rz-pct" type="number" min={0} max={100} value={feePct} onChange={(e) => setFeePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /><span className="rz-amt">{money(budgetCents * feePct / 100)}</span></div>
-                <div className="rz-split-row"><span className="rz-sw rz-c-c" /><span>Cause</span><input className="rz-pct" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /><span className="rz-amt">{money(budgetCents * causePct / 100)}</span></div>
-                {causePct > 0 && <input className="rz-in" style={{ marginTop: ".5rem" }} value={causeName} maxLength={120} placeholder="Which cause? (optional)" onChange={(e) => setCauseName(e.target.value)} />}
+                <div className="rz-split-row"><span className="rz-sw rz-c-c" /><span>{causeLabel}</span><input className="rz-pct" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /><span className="rz-amt">{money(budgetCents * causePct / 100)}</span></div>
+                {causePct > 0 && <input className="rz-in" style={{ marginTop: ".5rem" }} value={causeName} maxLength={120} placeholder={isBrand ? "What is the project share for? (optional)" : "Which cause? (optional)"} onChange={(e) => setCauseName(e.target.value)} />}
               </div>
             </div>
             <div className="rz-actions">
+              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("type"); }}>‹ Back</button>
               <button className="rz-btn pri" onClick={goStep2}>Next: Roadmap ›</button>
             </div>
           </>
         )}
 
-        {step === 2 && (
+        {stepKey === "roadmap" && (
           <>
             <div className="rz-head">
               <h1>Your roadmap</h1>
@@ -278,13 +326,41 @@ export default function CreateProject() {
               <button className="rz-btn" disabled={genBusy} onClick={generate}>{rows.length ? <RefreshCw size={13} /> : <Sparkles size={13} />} {genBusy ? "Generating…" : rows.length ? "Regenerate" : "Generate"}</button>
             </div>
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStep(1); }}>‹ Back</button>
-              <button className="rz-btn pri" disabled={genBusy} onClick={goStep3}>Next: Coin ›</button>
+              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("details"); }}>‹ Back</button>
+              <button className="rz-btn pri" disabled={genBusy} onClick={goStep3}>{isBrand ? "Next: Open roles ›" : "Next: Coin ›"}</button>
             </div>
           </>
         )}
 
-        {step === 3 && (
+        {stepKey === "roles" && (
+          <>
+            <div className="rz-head">
+              <h1>Open roles</h1>
+              <p>List the talent you need. Add as many roles as you like.</p>
+            </div>
+            <div className="rz-inv">
+              <div className="rz-roles-h"><span>Role</span><span>People</span><span>Rate</span><span /></div>
+              {roles.map((x, i) => (
+                <div className="rz-role" key={x.id}>
+                  <input className="rz-in" value={x.name} maxLength={80} aria-label={`Role ${i + 1} name`} placeholder="e.g. Model" onChange={(e) => updateRole(x.id, { name: e.target.value })} />
+                  <input className="rz-in" inputMode="numeric" value={x.count} maxLength={3} aria-label={`Role ${i + 1} people needed`} placeholder="1" onChange={(e) => updateRole(x.id, { count: e.target.value.replace(/[^0-9]/g, "") })} />
+                  <input className="rz-in" value={x.rate} maxLength={60} aria-label={`Role ${i + 1} rate`} placeholder="e.g. $300/day" onChange={(e) => updateRole(x.id, { rate: e.target.value })} />
+                  <button className="rz-ico" aria-label="Remove role" onClick={() => setRoles((rs) => rs.filter((y) => y.id !== x.id))}><Trash2 size={13} /></button>
+                </div>
+              ))}
+              {!roles.length && <div className="rz-note" style={{ padding: ".8rem" }}>No roles yet. Add one below.</div>}
+            </div>
+            <div className="rz-actions" style={{ marginTop: ".9rem" }}>
+              <button className="rz-btn" disabled={roles.length >= 20} onClick={() => setRoles((rs) => [...rs, { id: uid(), name: "", count: "1", rate: "" }])}><Plus size={13} /> Add role</button>
+            </div>
+            <div className="rz-actions">
+              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("roadmap"); }}>‹ Back</button>
+              <button className="rz-btn pri" onClick={goCoin}>Next: Coin ›</button>
+            </div>
+          </>
+        )}
+
+        {stepKey === "coin" && (
           <>
             <div className="rz-head">
               <h1>Attach your Pump.fun coin.</h1>
@@ -307,13 +383,13 @@ export default function CreateProject() {
               </div>
             </div>
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStep(2); }}>‹ Back</button>
+              <button className="rz-btn" onClick={() => { setErr(""); setStepKey(isBrand ? "roles" : "roadmap"); }}>‹ Back</button>
               <button className="rz-btn pri" disabled={coinBusy} onClick={goStep4}>Next: Review ›</button>
             </div>
           </>
         )}
 
-        {step === 4 && (
+        {stepKey === "publish" && (
           <>
             <div className="rz-head">
               <h1>Review and publish</h1>
@@ -321,7 +397,8 @@ export default function CreateProject() {
             </div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Project</span><b style={{ wordBreak: "break-word" }}>{title}</b></div>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Artist</span><span>{name}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Type</span><span>{isBrand ? "Brand project" : "Artist project"}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">{leadLabel}</span><span>{name}</span></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{money(budgetCents)}</b></div>
             </div>
             <SplitMini />
@@ -335,13 +412,27 @@ export default function CreateProject() {
               ))}
               <div className="rz-inv-f"><span>Total</span><strong>{money(rowsTotal)}</strong></div>
             </div>
+            {isBrand && (
+              <>
+                <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Open roles</div>
+                <div className="rz-inv" style={{ marginBottom: ".9rem" }}>
+                  {roles.filter((x) => x.name.trim()).map((x) => (
+                    <div key={x.id} className="rz-row" style={{ gridTemplateColumns: "1fr auto auto", fontSize: ".78rem", gap: ".8rem" }}>
+                      <b style={{ minWidth: 0, wordBreak: "break-word" }}>{x.name}</b>
+                      <span className="rz-opt">{Math.max(1, parseInt(x.count) || 1)} needed</span>
+                      <span className="rz-amt">{x.rate || "Rate open"}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
             <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Coin</div>
             <CoinChip />
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStep(3); }}>‹ Back</button>
+              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("coin"); }}>‹ Back</button>
               <button className="rz-btn pri" disabled={publishing} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</button>
             </div>
-            <div style={{ textAlign: "center", marginTop: ".6rem" }}><button className="rz-textlink" disabled={saving} onClick={() => save(4)}>{saving ? "Saving…" : "Save as draft"}</button></div>
+            <div style={{ textAlign: "center", marginTop: ".6rem" }}><button className="rz-textlink" disabled={saving} onClick={() => save(flow.length)}>{saving ? "Saving…" : "Save as draft"}</button></div>
             <p className="rz-note">Publishing creates a public page anyone with the link can view.</p>
           </>
         )}

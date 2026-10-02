@@ -140,6 +140,21 @@ export default function ReleasePage({ slug }: { slug: string }) {
               ))}
             </div>
 
+            {r.answers?.project_type === "brand" && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
+              <>
+                <h2 className="rz-h2">We're hiring</h2>
+                <div className="rz-inv">
+                  <div className="rz-inv-h" style={{ gridTemplateColumns: "1fr 5rem 6rem" }}><span>Role</span><span>Spots</span><span style={{ textAlign: "right" }}>Rate</span></div>
+                  {r.answers.roles.map((role: any, i: number) => (
+                    <div key={i} className="rz-row" style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
+                      <div><b>{role.name}</b><div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{role.count} {Number(role.count) === 1 ? "spot" : "spots"}{role.rate ? ` · ${role.rate}` : ""}</div></div>
+                      <a className="rz-btn" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} href={`mailto:collab@rhozeland.com?subject=${encodeURIComponent(`Applying for ${role.name} on ${r.title}`)}`}>Apply</a>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
             <h2 className="rz-h2">Unlocks</h2>
             <div className="rz-inv">
               <div className="rz-unlock">

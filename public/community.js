@@ -59,7 +59,14 @@
       const top = el('div', 'creator-top'); top.append(el('h2', '', c.title)); top.append(el('span', 'creator-badge', 'OPEN CALL'));
       card.append(top, el('div', 'creator-tier', (c.creator_name || 'Brand') + ' · Brand project'));
       const list = el('div', 'call-roles');
-      roles.forEach(r => list.append(el('span', 'call-role', r.name + (Number(r.count) > 1 ? ' ×' + r.count : '') + (r.rate ? ' · ' + r.rate : ''))));
+      roles.forEach((r, ri) => {
+        if (!r || !String(r.name || '').trim()) return;
+        const chip = el('span', 'call-role', r.name + (Number(r.count) > 1 ? ' ×' + r.count : '') + (r.rate ? ' · ' + r.rate : '') + ' · Apply');
+        chip.setAttribute('role', 'button'); chip.tabIndex = 0; chip.style.cursor = 'pointer';
+        const go = e => { e.preventDefault(); e.stopPropagation(); location.href = '/release/' + encodeURIComponent(c.slug) + '?apply=' + ri; };
+        chip.addEventListener('click', go); chip.addEventListener('keydown', e => { if (e.key === 'Enter') go(e); });
+        list.append(chip);
+      });
       card.append(list, el('div', 'creator-muted', roles.length + (roles.length === 1 ? ' role needed' : ' roles needed') + ' — tap to view and apply'));
       grid.append(card);
     });

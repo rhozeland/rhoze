@@ -2067,6 +2067,53 @@ export type Database = {
         }
         Relationships: []
       }
+      release_applications: {
+        Row: {
+          availability: string
+          created_at: string
+          id: string
+          link: string
+          name: string
+          release_id: string
+          role_index: number
+          role_name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          availability: string
+          created_at?: string
+          id?: string
+          link: string
+          name: string
+          release_id: string
+          role_index: number
+          role_name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          availability?: string
+          created_at?: string
+          id?: string
+          link?: string
+          name?: string
+          release_id?: string
+          role_index?: number
+          role_name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_applications_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       releases: {
         Row: {
           answers: Json
@@ -3193,6 +3240,16 @@ export type Database = {
         }[]
       }
       redeem_project_code: { Args: { _code: string }; Returns: string }
+      release_apply: {
+        Args: {
+          p_availability: string
+          p_link: string
+          p_name: string
+          p_role_index: number
+          p_slug: string
+        }
+        Returns: string
+      }
       release_get_draft: {
         Args: { p_id: string; p_token: string }
         Returns: {
@@ -3229,6 +3286,27 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      release_list_applications: {
+        Args: { p_id: string; p_token: string }
+        Returns: {
+          availability: string
+          created_at: string
+          id: string
+          link: string
+          name: string
+          release_id: string
+          role_index: number
+          role_name: string
+          status: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "release_applications"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       release_publish: {
         Args: { p_id: string; p_token: string }
         Returns: string
@@ -3236,6 +3314,10 @@ export type Database = {
       release_save: {
         Args: { p_data: Json; p_id: string; p_token: string }
         Returns: string
+      }
+      release_set_application_status: {
+        Args: { p_app_id: string; p_status: string; p_token: string }
+        Returns: undefined
       }
       rhoze_award: {
         Args: {

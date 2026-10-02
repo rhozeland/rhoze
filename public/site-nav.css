@@ -1,0 +1,28 @@
+/* Public-site navigation. The dark surface stays constant across page themes. */
+:root{--site-nav-surface:0 0% 12%;--site-nav-ink:0 0% 100%;--site-nav-line:0 0% 100% / .34;--site-nav-hover:0 0% 100% / .12}
+.site-nav{position:relative;z-index:40;display:flex;align-items:center;gap:clamp(.75rem,1.7vw,1.75rem);min-height:76px;padding:.85rem clamp(1rem,2.5vw,2.5rem)!important;background:hsl(var(--site-nav-surface))!important;border:0!important;border-radius:26px 26px 0 0;color:hsl(var(--site-nav-ink));font-family:Arial,Helvetica,sans-serif;box-sizing:border-box}
+.site-nav *{box-sizing:border-box}
+.site-nav a{color:hsl(var(--site-nav-ink));text-decoration:none}
+.site-nav .brand,.site-nav .sn-brand{display:inline-flex;align-items:center;gap:.72rem;flex-shrink:0;color:hsl(var(--site-nav-ink))!important}
+.site-nav .brand img,.site-nav .sn-brand img{width:38px;height:38px;object-fit:contain;filter:none}
+.site-nav .brand-logo-wrap img{display:none!important}.site-nav .brand-logo-wrap .logo-light{display:block!important}
+.site-nav .brand-text,.site-nav .sn-brand span{font-size:1.35rem;font-weight:750;color:hsl(var(--site-nav-ink))!important;letter-spacing:0}
+.site-nav .sn-links,.site-nav .figma-nav-links{position:static!important;transform:none!important;display:flex;align-items:center;justify-content:flex-end;gap:clamp(.7rem,1.55vw,1.9rem);margin:0 0 0 auto!important;white-space:nowrap}
+.site-nav .sn-links a,.site-nav .figma-nav-links a{display:inline-flex;align-items:center;padding:.3rem 0!important;color:hsl(var(--site-nav-ink))!important;font-size:.78rem!important;font-weight:600!important;opacity:.83;transition:opacity .2s ease}
+.site-nav .sn-links a:hover,.site-nav .sn-links a:focus-visible,.site-nav .figma-nav-links a:hover,.site-nav .figma-nav-links a:focus-visible,.site-nav .sn-links a[aria-current="page"]{opacity:1;text-decoration:underline;text-underline-offset:5px}
+.site-nav .nav-cta,.site-nav .sn-signin{min-height:36px;padding:.5rem 1rem;border:1px solid hsl(var(--site-nav-line))!important;border-radius:999px;background:transparent!important;color:hsl(var(--site-nav-ink))!important;white-space:nowrap;font-size:.78rem;font-weight:600;line-height:1.2}
+.site-nav .nav-cta svg{width:14px;height:14px}.site-nav .nav-cta:hover,.site-nav .sn-signin:hover{background:hsl(var(--site-nav-hover))!important;transform:none}
+.site-nav .menu-toggle,.site-nav .sn-toggle{display:none;align-items:center;justify-content:center;width:40px;height:40px;flex-shrink:0;border:1px solid hsl(var(--site-nav-line))!important;border-radius:50%;background:transparent;color:hsl(var(--site-nav-ink))!important;cursor:pointer}
+.site-nav .menu-toggle svg{width:20px;height:20px}
+.site-nav .nav-auth{color:hsl(var(--site-nav-ink))}
+.site-nav .nav-auth a,.site-nav .nav-auth button{color:hsl(var(--site-nav-ink))!important}
+.sn-mobile,.site-nav + .mobile-menu{position:relative;z-index:39;background:hsl(var(--site-nav-surface))!important;color:hsl(var(--site-nav-ink));border:0!important;padding:0 1.5rem 1.2rem}
+.sn-mobile a,.site-nav + .mobile-menu a:not(.mobile-cta){display:block;color:hsl(var(--site-nav-ink))!important;padding:.8rem .2rem;border-bottom:1px solid hsl(var(--site-nav-line));font-size:.95rem;text-decoration:none}
+.site-nav + .mobile-menu .nav-icon{display:none!important}.site-nav + .mobile-menu .mobile-cta{color:hsl(var(--site-nav-ink))!important;border-color:hsl(var(--site-nav-line))!important}
+.site-nav + .mobile-menu [hidden]{display:none!important}
+.sn-mobile{display:none}.sn-mobile.open{display:flex;flex-direction:column}
+.site-nav .sn-extra{display:flex;align-items:center;flex-shrink:0}
+.site-nav .sn-extra .rz-btn,.site-nav .sn-extra .rz-link,.site-nav .sn-extra .rz-wallet-chip{color:hsl(var(--site-nav-ink));border-color:hsl(var(--site-nav-line));background:transparent}
+@media(max-width:900px){.site-nav{min-height:65px;border-radius:18px 18px 0 0;padding:.65rem 1rem!important}.site-nav .sn-links,.site-nav .figma-nav-links,.site-nav .nav-cta,.site-nav .sn-signin{display:none!important}.site-nav .menu-toggle,.site-nav .sn-toggle{display:inline-flex!important;margin-left:auto}.site-nav .sn-extra{margin-left:auto}.site-nav .sn-extra + .sn-toggle{margin-left:0}.site-nav .brand img,.site-nav .sn-brand img{width:32px;height:32px}.site-nav .brand-text,.site-nav .sn-brand span{font-size:1.05rem}}
+@media(max-width:430px){.site-nav .sn-extra .rz-wallet-chip{display:none}.site-nav .sn-extra .rz-btn,.site-nav .sn-extra .rz-link{font-size:.64rem;padding:.35rem .55rem}.site-nav .nav-auth{margin-left:auto!important}}
+@media(prefers-reduced-motion:reduce){.site-nav a{transition:none!important}}

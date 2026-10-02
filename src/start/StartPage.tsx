@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import logoWhite from "@/assets/logo-white.webp";
+import SiteNav from "@/components/SiteNav";
 import CopilotChat from "@/start/CopilotChat";
 import CopilotBrief from "@/start/CopilotBrief";
 import ClientDashboard from "@/start/ClientDashboard";
@@ -142,28 +142,7 @@ export default function StartPage({ embedded = false }: { embedded?: boolean }) 
 
   return (
     <div className={embedded ? "bg-background text-foreground" : "min-h-screen bg-background text-foreground"}>
-      {!embedded && <header className="site-header border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2" aria-label="Rhozeland home">
-            <img src={logoWhite} alt="Rhozeland" className="h-6 dark:invert-0 invert" />
-          </a>
-          <div className="flex items-center gap-3 text-xs">
-            {session && (
-              <span className="hidden sm:flex items-center gap-1 text-muted-foreground">
-                <Coins className="w-3 h-3" />
-                <span className="tabular-nums text-foreground">{rhozeBalance?.toLocaleString() ?? "…"}</span> $RHOZE
-              </span>
-            )}
-            {session ? (
-              <a href="/portal" className="text-foreground underline underline-offset-4">Portal</a>
-            ) : (
-              <button onClick={() => setAuthOpen(true)} className="text-foreground underline underline-offset-4">
-                Sign in
-              </button>
-            )}
-          </div>
-        </div>
-      </header>}
+      {!embedded && <SiteNav signIn={() => setAuthOpen(true)} signedIn={!!session} extra={session ? <><span className="hidden sm:flex items-center gap-1 text-xs"><Coins className="w-3 h-3" />{rhozeBalance?.toLocaleString() ?? "…"} $RHOZE</span><a className="sn-signin" href="/portal">Portal</a></> : undefined} />}
 
       <main className={embedded ? "max-w-6xl mx-auto px-3 md:px-5 py-4 md:py-6 space-y-8" : "max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-10"}>
         {!authReady ? (

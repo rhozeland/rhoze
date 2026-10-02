@@ -156,7 +156,6 @@ export default function CreateProject() {
 
   const goStep3 = () => { const v = validate2(); if (v) { setErr(v); return; } setErr(""); const k: StepKey = isBrand ? "roles" : "coin"; setStepKey(k); save(flow.indexOf(k) + 1); };
   const goCoin = () => {
-    if (!roles.some((x) => x.name.trim())) { setErr("Add at least one role."); return; }
     setErr(""); setStepKey("coin"); save(flow.indexOf("coin") + 1);
   };
   const chooseType = (t: PType) => {
@@ -336,7 +335,7 @@ export default function CreateProject() {
           <>
             <div className="rz-head">
               <h1>Open roles</h1>
-              <p>List the talent you need. Add as many roles as you like.</p>
+              <p>Optional. List the talent you need, or skip this step.</p>
             </div>
             <div className="rz-inv">
               <div className="rz-roles-h"><span>Role</span><span>People</span><span>Rate</span><span /></div>

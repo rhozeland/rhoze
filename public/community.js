@@ -1,9 +1,10 @@
 (function () {
   const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&order=created_at.desc&limit=500';
+  const callsUrl = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/releases?select=slug,title,creator_name,answers&status=eq.published&order=published_at.desc&limit=200';
   const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
   const $ = id => document.getElementById(id);
   const categories = ['Actor','Brand Strategist','Composer','Dancer','Designer','Editor','Influencer','Marketing Specialist','Model','Musician','Photographer','Rapper','Singer','Songwriter','Video Editor','Videographer'];
-  let creators = [], selected = 'All', page = 1, failed = false;
+  let creators = [], calls = [], selected = 'All', page = 1, failed = false;
   const perPage = 15;
   const search = $('creatorSearch'), grid = $('creatorGrid'), filters = $('creatorFilters'), meta = $('directoryMeta'), pages = $('directoryPages'), dialog = $('creatorProfile');
   function el(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; }
@@ -17,8 +18,8 @@
   function validLink(value) { try { const u = new URL(value); return ['https:', 'http:'].includes(u.protocol) ? u.href : null; } catch { return null; } }
   function renderFilters() {
     filters.replaceChildren();
-    ['All', ...categories].forEach(category => {
-      const count = category === 'All' ? creators.length : creators.filter(c => (c.disciplines || []).some(d => d.toLowerCase() === category.toLowerCase())).length;
+    ['All', ...categories, 'Open Calls'].forEach(category => {
+      const count = category === 'All' ? creators.length : category === 'Open Calls' ? calls.length : creators.filter(c => (c.disciplines || []).some(d => d.toLowerCase() === category.toLowerCase())).length;
       const button = el('button', 'filter-pill'); button.type = 'button'; button.setAttribute('aria-pressed', String(selected === category));
       if (selected === category) button.append(el('span', 'tick', '✓ '));
       button.append(document.createTextNode(category + (count ? ' (' + count + ')' : '')));
@@ -46,8 +47,26 @@
   $('closeProfile').addEventListener('click', closeProfile);
   dialog.addEventListener('click', e => { if (e.target === dialog) closeProfile(); });
   dialog.addEventListener('close', () => { if (location.hash.startsWith('#creator-')) history.replaceState(null, '', location.pathname + location.search); });
+  function renderCalls() {
+    const q = search.value.trim().toLocaleLowerCase();
+    const visible = calls.filter(c => !q || [c.creator_name, c.title, ...((c.answers && c.answers.roles) || []).map(r => r.name)].join(' ').toLocaleLowerCase().includes(q));
+    grid.replaceChildren(); pages.replaceChildren();
+    meta.textContent = visible.length + (visible.length === 1 ? ' open call' : ' open calls');
+    if (!visible.length) { grid.append(el('div', 'directory-empty', 'No open calls right now. Check back soon.')); return; }
+    visible.forEach(c => {
+      const roles = (c.answers && c.answers.roles) || [];
+      const card = el('a', 'creator-card call-card'); card.href = '/release/' + encodeURIComponent(c.slug); card.setAttribute('aria-label', 'View open call: ' + c.title);
+      const top = el('div', 'creator-top'); top.append(el('h2', '', c.title)); top.append(el('span', 'creator-badge', 'OPEN CALL'));
+      card.append(top, el('div', 'creator-tier', (c.creator_name || 'Brand') + ' · Brand project'));
+      const list = el('div', 'call-roles');
+      roles.forEach(r => list.append(el('span', 'call-role', r.name + (Number(r.count) > 1 ? ' ×' + r.count : '') + (r.rate ? ' · ' + r.rate : ''))));
+      card.append(list, el('div', 'creator-muted', roles.length + (roles.length === 1 ? ' role needed' : ' roles needed') + ' — tap to view and apply'));
+      grid.append(card);
+    });
+  }
   function render() {
     renderFilters();
+    if (selected === 'Open Calls') { renderCalls(); return; }
     const q = search.value.trim().toLocaleLowerCase();
     const visible = creators.filter(c => (selected === 'All' || (c.disciplines || []).some(d => d.toLowerCase() === selected.toLowerCase())) && (!q || [c.display_name, c.bio, ...(c.disciplines || [])].join(' ').toLocaleLowerCase().includes(q)));
     grid.replaceChildren(); pages.replaceChildren();
@@ -66,7 +85,13 @@
   }
   async function load() {
     meta.textContent = 'Loading creators…'; failed = false;
-    try { const response = await fetch(url, { headers: { apikey: key, Authorization: 'Bearer ' + key } }); if (!response.ok) throw Error('Unable to load'); creators = await response.json(); } catch { failed = true; creators = []; }
+    const headers = { apikey: key, Authorization: 'Bearer ' + key };
+    try {
+      const [cr, rl] = await Promise.all([fetch(url, { headers }), fetch(callsUrl, { headers })]);
+      if (!cr.ok) throw Error('Unable to load');
+      creators = await cr.json();
+      if (rl.ok) { const releases = await rl.json(); calls = (releases || []).filter(r => r.answers && r.answers.project_type === 'brand' && Array.isArray(r.answers.roles) && r.answers.roles.length); }
+    } catch { failed = true; creators = []; }
     render();
     const match = decodeURIComponent(location.hash.replace(/^#creator-/, '')); const initial = creators.find(c => c.id === match); if (initial && !dialog.open) openProfile(initial);
   }

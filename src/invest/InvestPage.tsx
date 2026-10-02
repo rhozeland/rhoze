@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { toast } from "@/hooks/use-toast";
 import type { Session } from "@supabase/supabase-js";
 import { Calculator, CreditCard, Sparkles } from "lucide-react";
-import logoWhite from "@/assets/logo-white.webp";
+import SiteNav from "@/components/SiteNav";
 import WalletPanel from "./WalletPanel";
 
 type Tier = "supporter" | "builder" | "core";
@@ -93,19 +93,7 @@ export default function InvestPage({ embedded = false }: { embedded?: boolean } 
 
   return (
     <div className={embedded ? "text-foreground" : "min-h-screen bg-background text-foreground"}>
-      {!embedded && <header className="border-b border-border bg-background/80 backdrop-blur sticky top-0 z-30">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
-            <img src={logoWhite} alt="Rhozeland" className="h-6 dark:invert-0 invert" />
-            <span className="text-[11px] tracking-[0.25em] uppercase text-muted-foreground">$RHOZE</span>
-          </a>
-          <div className="flex items-center gap-3 text-xs">
-            {session ? <span className="text-muted-foreground">{session.user.email}</span> : (
-              <button onClick={() => setAuthOpen(true)} className="text-foreground underline underline-offset-4">Sign in</button>
-            )}
-          </div>
-        </div>
-      </header>}
+      {!embedded && <SiteNav signIn={() => setAuthOpen(true)} signedIn={!!session} extra={session ? <span className="text-xs">{session.user.email}</span> : undefined} />}
 
       <main className={embedded ? "space-y-6" : "max-w-5xl mx-auto px-4 md:px-6 py-10 md:py-14 space-y-12"}>
         {/* Buy — one input, clear total */}

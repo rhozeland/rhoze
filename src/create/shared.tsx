@@ -1,4 +1,5 @@
 import "./create.css";
+import SiteNav from "@/components/SiteNav";
 
 export type Milestone = { id: string; title: string; deliverable: string; amount_cents: number };
 
@@ -10,10 +11,7 @@ export const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : Math.random
 export function Shell({ children, right }: { children: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="rz-flow">
-      <nav className="rz-nav">
-        <a href="/"><img src="/images/logo-black.webp" alt="Rhozeland" /></a>
-        {right ?? <a className="rz-link" href="/">Home</a>}
-      </nav>
+      <SiteNav extra={right} />
       <main className="rz-stage">{children}</main>
       <footer className="rz-footer">
         © 2026 Rhozeland · <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>

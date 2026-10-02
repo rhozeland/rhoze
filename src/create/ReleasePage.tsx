@@ -20,6 +20,13 @@ export default function ReleasePage({ slug }: { slug: string }) {
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
   const [copied, setCopied] = useState(false);
   const [note, setNote] = useState("");
+  const [applyIdx, setApplyIdx] = useState<number | null>(null);
+  const [applyForm, setApplyForm] = useState({ name: "", link: "", availability: "" });
+  const [applyErr, setApplyErr] = useState("");
+  const [applyBusy, setApplyBusy] = useState(false);
+  const [applyDone, setApplyDone] = useState(false);
+  const [showApplicants, setShowApplicants] = useState(false);
+  const [applicants, setApplicants] = useState<any[] | null>(null);
 
   useEffect(() => {
     (supabase.from as any)("releases")
@@ -38,6 +45,40 @@ export default function ReleasePage({ slug }: { slug: string }) {
         }
       }, () => setR(null));
   }, [slug]);
+
+  useEffect(() => {
+    if (!r?.answers?.roles) return;
+    const a = new URLSearchParams(location.search).get("apply");
+    if (a !== null && r.answers.roles[Number(a)]) openApply(Number(a));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [r]);
+
+  const openApply = (idx: number) => { setApplyErr(""); setApplyDone(false); setApplyForm({ name: "", link: "", availability: "" }); setApplyIdx(idx); };
+
+  const submitApply = async () => {
+    const name = applyForm.name.trim(), link = applyForm.link.trim(), availability = applyForm.availability.trim();
+    if (!name || name.length > 100) return setApplyErr("Please add your name.");
+    if (!/^https?:\/\/\S+$/i.test(link) || link.length > 500) return setApplyErr("Please add a full link that starts with https://.");
+    if (!availability || availability.length > 500) return setApplyErr("Please tell us when you are available.");
+    setApplyBusy(true); setApplyErr("");
+    const { error } = await (supabase.rpc as any)("release_apply", { p_slug: slug, p_role_index: applyIdx, p_name: name, p_link: link, p_availability: availability });
+    setApplyBusy(false);
+    if (error) return setApplyErr("Your application could not be sent. Please try again.");
+    setApplyDone(true);
+  };
+
+  const loadApplicants = async () => {
+    const token = localStorage.getItem("rz_release_token");
+    setApplicants([]); setShowApplicants(true);
+    const { data } = await (supabase.rpc as any)("release_list_applications", { p_token: token, p_id: r.id });
+    setApplicants(data || []);
+  };
+
+  const markHired = async (id: string, status: "hired" | "applied") => {
+    const token = localStorage.getItem("rz_release_token");
+    const { error } = await (supabase.rpc as any)("release_set_application_status", { p_token: token, p_app_id: id, p_status: status });
+    if (!error) setApplicants((list) => list?.map((a) => (a.id === id ? { ...a, status } : a)) ?? null);
+  };
 
   const pumpUrl = r?.coin_mint ? `https://pump.fun/coin/${r.coin_mint}` : "";
   const ticker = r?.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
@@ -72,6 +113,7 @@ export default function ReleasePage({ slug }: { slug: string }) {
           <div>
             <a className="rz-btn" href={`/create.html?draft=${r.id}`}>Edit project</a>
             <a className="rz-btn" href="/create.html">My projects</a>
+            {r.answers?.project_type === "brand" && <button className="rz-btn" onClick={loadApplicants}>Applicants</button>}
             <button className="rz-btn pri" onClick={startDeliver}>Mark milestone delivered</button>
           </div>
         </div>
@@ -148,7 +190,7 @@ export default function ReleasePage({ slug }: { slug: string }) {
                   {r.answers.roles.map((role: any, i: number) => (
                     <div key={i} className="rz-row" style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
                       <div><b>{role.name}</b><div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{role.count} {Number(role.count) === 1 ? "spot" : "spots"}{role.rate ? ` · ${role.rate}` : ""}</div></div>
-                      <a className="rz-btn" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} href={`mailto:collab@rhozeland.com?subject=${encodeURIComponent(`Applying for ${role.name} on ${r.title}`)}`}>Apply</a>
+                      <button className="rz-btn" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} onClick={() => openApply(i)}>Apply</button>
                     </div>
                   ))}
                 </div>

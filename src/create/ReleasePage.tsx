@@ -218,6 +218,73 @@ export default function ReleasePage({ slug }: { slug: string }) {
         )}
       </div>
 
+      {applyIdx !== null && r && (
+        <div className="rz-modal" onClick={() => !applyBusy && setApplyIdx(null)}>
+          <div className="rz-card" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
+            <div className="rz-head" style={{ marginBottom: "1rem" }}>
+              <h1 style={{ fontSize: "1.1rem" }}>Apply: {r.answers.roles[applyIdx]?.name}</h1>
+              <p>{r.title}{r.answers.roles[applyIdx]?.rate ? ` · ${r.answers.roles[applyIdx].rate}` : ""}</p>
+            </div>
+            {applyDone ? (
+              <>
+                <p style={{ fontSize: ".85rem" }}>Thanks, your application was sent. The project owner will review it.</p>
+                <div className="rz-actions" style={{ marginTop: "1.2rem" }}><button className="rz-btn pri" onClick={() => setApplyIdx(null)}>Done</button></div>
+              </>
+            ) : (
+              <>
+                <div className="rz-field"><label>Your name</label><input className="rz-in" maxLength={100} value={applyForm.name} onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })} /></div>
+                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Portfolio or Community profile link</label><input className="rz-in" maxLength={500} placeholder="https://" value={applyForm.link} onChange={(e) => setApplyForm({ ...applyForm, link: e.target.value })} /></div>
+                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Availability</label><textarea className="rz-in" maxLength={500} placeholder="Weekends in October, or any weekday after 5pm" value={applyForm.availability} onChange={(e) => setApplyForm({ ...applyForm, availability: e.target.value })} /></div>
+                {applyErr && <p className="rz-note" style={{ color: "hsl(var(--destructive, 0 70% 50%))", marginTop: ".6rem" }}>{applyErr}</p>}
+                <div className="rz-actions" style={{ marginTop: "1.2rem" }}>
+                  <button className="rz-btn" onClick={() => setApplyIdx(null)}>Cancel</button>
+                  <button className="rz-btn pri" disabled={applyBusy} onClick={submitApply}>{applyBusy ? "Sending…" : "Submit"}</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showApplicants && r && (
+        <div className="rz-modal" onClick={() => setShowApplicants(false)}>
+          <div className="rz-card" style={{ maxWidth: 520, maxHeight: "85vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
+            <div className="rz-head" style={{ marginBottom: "1rem" }}>
+              <h1 style={{ fontSize: "1.1rem" }}>Applicants</h1>
+              <p>{r.title}</p>
+            </div>
+            {applicants === null || applicants.length === 0 ? (
+              <p style={{ fontSize: ".82rem", color: "hsl(var(--mut))" }}>{applicants === null ? "Loading…" : "No one has applied yet."}</p>
+            ) : (
+              (r.answers.roles as any[]).map((role, ri) => {
+                const list = applicants.filter((a) => a.role_index === ri);
+                if (!list.length) return null;
+                return (
+                  <div key={ri} style={{ marginBottom: "1rem" }}>
+                    <h2 className="rz-h2" style={{ marginTop: 0 }}>{role.name} <span style={{ color: "hsl(var(--mut))", fontWeight: 400 }}>({list.length})</span></h2>
+                    <div className="rz-inv">
+                      {list.map((a) => (
+                        <div key={a.id} className="rz-row" style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
+                          <div style={{ minWidth: 0 }}>
+                            <b>{a.name}</b> {a.status === "hired" && <span className="rz-status rz-status-delivered">Hired</span>}
+                            <div><a className="rz-textlink" href={a.link} target="_blank" rel="noopener noreferrer nofollow" style={{ wordBreak: "break-all" }}>{a.link}</a></div>
+                            <div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{a.availability}</div>
+                          </div>
+                          {a.status === "hired"
+                            ? <button className="rz-btn" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} onClick={() => markHired(a.id, "applied")}>Undo</button>
+                            : <button className="rz-btn pri" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} onClick={() => markHired(a.id, "hired")}>Mark hired</button>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            <div className="rz-actions" style={{ marginTop: "1rem" }}><button className="rz-btn pri" onClick={() => setShowApplicants(false)}>Close</button></div>
+          </div>
+        </div>
+      )}
+
       {receipt && r && (
         <div className="rz-modal" onClick={() => receipt.confirmed && setReceipt(null)}>
           <div className="rz-card" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>

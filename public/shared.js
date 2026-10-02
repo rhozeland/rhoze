@@ -1,5 +1,20 @@
 // Shared JS for all Rhozeland pages
 
+// Keep booking accessible while visitors browse any public page with the shared menu.
+(function(){
+  function mountBookingAction(){
+    if (!document.querySelector('.site-nav') || document.querySelector('.site-book-float')) return;
+    var link = document.createElement('a');
+    link.className = 'site-book-float';
+    link.href = '/book.html';
+    link.setAttribute('aria-label', 'Book a project');
+    link.innerHTML = '<span class="site-book-float__mark" aria-hidden="true">✳</span><span>Book a project</span><span class="site-book-float__arrow" aria-hidden="true">↗</span>';
+    document.body.appendChild(link);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountBookingAction);
+  else mountBookingAction();
+})();
+
 // Create modal — injected once on every page
 (function(){
   // Pool of recent projects — 3 random are picked each time the modal opens

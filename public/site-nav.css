@@ -35,3 +35,14 @@
 .site-nav .nav-auth-balance,.site-nav .nav-auth-identity{border-color:hsl(var(--site-nav-line));background:hsl(var(--site-nav-hover))}
 .site-nav .nav-auth-k,.site-nav .nav-auth-v,.site-nav .nav-auth-arrow,.site-nav .nav-auth-name{color:hsl(var(--site-nav-ink))}
 @media(max-width:900px){.site-nav #rSignInCta{display:inline-flex!important;margin-left:auto}.site-nav #rSignInCta + .menu-toggle{margin-left:0}.site-nav .nav-auth{margin-left:auto!important}}
+
+/* Booking lives outside the menu as the persistent public action. */
+:root{--site-book-surface:49 100% 64%;--site-book-ink:0 0% 9%;--site-book-edge:0 0% 9%;--site-book-shadow:0 0% 0% / .28}
+.site-nav .sn-links a[href="/book.html"],.site-nav .figma-nav-links a[href="/book.html"],.site-nav + .mobile-menu a[href="/book.html"]{display:none!important}
+.site-book-float{position:fixed;right:max(1.25rem,env(safe-area-inset-right));bottom:max(1.25rem,env(safe-area-inset-bottom));z-index:45;display:inline-flex;align-items:center;justify-content:center;gap:.75rem;min-height:56px;padding:.45rem .5rem .45rem .8rem;border:2px solid hsl(var(--site-book-edge));border-radius:999px;background:hsl(var(--site-book-surface));box-shadow:4px 5px 0 hsl(var(--site-book-shadow));color:hsl(var(--site-book-ink));font:800 .85rem/1.2 Arial,Helvetica,sans-serif;text-decoration:none;white-space:nowrap;transition:transform .2s ease,box-shadow .2s ease}
+.site-book-float:hover{transform:translateY(-3px);box-shadow:4px 8px 0 hsl(var(--site-book-shadow));color:hsl(var(--site-book-ink))}
+.site-book-float:focus-visible{outline:3px solid hsl(var(--site-book-edge));outline-offset:4px}
+.site-book-float__mark{display:grid;place-items:center;width:35px;height:35px;border:1.5px solid currentColor;border-radius:50%;font-size:1.5rem;line-height:1;flex:none}
+.site-book-float__arrow{display:grid;place-items:center;width:37px;height:37px;border-radius:50%;background:hsl(var(--site-book-edge));color:hsl(var(--site-book-surface));font-size:1.25rem;line-height:1;flex:none}
+@media(max-width:600px){.site-book-float{right:max(.75rem,env(safe-area-inset-right));bottom:max(.75rem,env(safe-area-inset-bottom));min-height:48px;gap:.55rem;padding:.35rem .4rem .35rem .65rem;font-size:.75rem}.site-book-float__mark,.site-book-float__arrow{width:30px;height:30px}.site-book-float__mark{font-size:1.25rem}}
+@media(prefers-reduced-motion:reduce){.site-book-float{transition:none}}

@@ -5,3 +5,7 @@
 
 - [x] Match the dark homepage navigation across public pages while retaining sign-in, page actions, and mobile menus.
 - [x] Verify desktop and 390px navigation and mirrored Community/Book pages.
+
+- [x] Send the homepage's main action directly to a fresh Create project flow.
+- [x] Make booking a distinctive fixed action across public menu pages rather than a regular menu link.
+- [ ] Verify the homepage link and floating booking action across desktop and mobile menu destinations.

@@ -5,7 +5,6 @@ import { Menu, X } from "lucide-react";
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
   { href: "/discover", label: "Discover" },
-  { href: "/book.html", label: "Book a project" },
   { href: "/projects.html", label: "Featured work" },
   { href: "/community.html", label: "Community" },
   { href: "/#ecosystem", label: "Grow" },
@@ -26,5 +25,10 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
     <div className={`sn-mobile${open ? " open" : ""}`} aria-hidden={!open}>
       {open && <>{items}{account}</>}
     </div>
+    <a className="site-book-float" href="/book.html" aria-label="Book a project">
+      <span className="site-book-float__mark" aria-hidden="true">✳</span>
+      <span>Book a project</span>
+      <span className="site-book-float__arrow" aria-hidden="true">↗</span>
+    </a>
   </>;
 }

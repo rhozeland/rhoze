@@ -282,6 +282,30 @@ export default function CreateProject() {
     setErr(""); setCoverSource(file); setCoverFile(file);
   };
 
+  const dropCover = async (dt: DataTransfer) => {
+    const files = Array.from(dt.files || []);
+    const f = files.find((x) => /^image\//.test(x.type) || /\.(jpe?g|png|webp)$/i.test(x.name)) || files[0];
+    if (f) {
+      const type = f.type || (/\.png$/i.test(f.name) ? "image/png" : /\.webp$/i.test(f.name) ? "image/webp" : "image/jpeg");
+      selectCover(f.type ? f : new File([f], f.name, { type }));
+      return;
+    }
+    const url = dt.getData("text/uri-list") || dt.getData("text/plain");
+    if (!/^https?:\/\//.test(url)) { setErr("Drop a JPG, PNG or WebP photo."); return; }
+    setCoverBusy(true);
+    try {
+      const b = await (await fetch(url)).blob();
+      selectCover(new File([b], "cover", { type: b.type }));
+    } catch { setErr("Couldn't use that image. Save it to your computer and drop it again."); }
+    finally { setCoverBusy(false); }
+  };
+
+  useEffect(() => {
+    const stop = (e: DragEvent) => { if (e.dataTransfer?.types?.includes("Files")) e.preventDefault(); };
+    window.addEventListener("dragover", stop); window.addEventListener("drop", stop);
+    return () => { window.removeEventListener("dragover", stop); window.removeEventListener("drop", stop); };
+  }, []);
+
   const adjustCover = async () => {
     if (coverSource) { setCoverFile(coverSource); return; }
     if (!cover) return;
@@ -353,12 +377,17 @@ export default function CreateProject() {
               <div className="rz-field rz-full">
                 <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP · drag a photo here)</span></label>
                 <div
+                  role="button" tabIndex={0} aria-label="Upload or drop cover art"
                   className={`rz-cover rz-cover-up${coverDrag ? " rz-cover-drag" : ""}`}
-                  onDragOver={(e) => { e.preventDefault(); if (!coverBusy) setCoverDrag(true); }}
-                  onDragLeave={() => setCoverDrag(false)}
-                  onDrop={(e) => { e.preventDefault(); setCoverDrag(false); if (!coverBusy) selectCover(e.dataTransfer.files?.[0]); }}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => { if (!coverBusy) coverInput.current?.click(); }}
+                  onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !coverBusy) { e.preventDefault(); coverInput.current?.click(); } }}
+                  onDragEnter={(e) => { e.preventDefault(); if (!coverBusy) setCoverDrag(true); }}
+                  onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; if (!coverBusy) setCoverDrag(true); }}
+                  onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setCoverDrag(false); }}
+                  onDrop={(e) => { e.preventDefault(); e.stopPropagation(); setCoverDrag(false); if (!coverBusy) void dropCover(e.dataTransfer); }}
                 >
-                  {coverPreview ? <img src={coverPreview} alt="Cover art preview" /> : <span>{coverDrag ? "Drop your photo here" : title || "Your cover art"}</span>}
+                  {coverPreview ? <img src={coverPreview} alt="Cover art preview" style={{ pointerEvents: "none" }} /> : <span style={{ pointerEvents: "none" }}>{coverDrag ? "Drop your photo here" : "Drag a photo here or click to upload"}</span>}
                 </div>
                 <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>
                   <Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={() => coverInput.current?.click()}>{coverBusy ? "Loading…" : cover ? "Replace image" : "Upload image"}</Button>

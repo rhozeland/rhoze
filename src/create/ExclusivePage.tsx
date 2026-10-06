@@ -7,6 +7,9 @@ import { Shell } from "./shared";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
+import { Button } from "@/components/ui/button";
+import { FileAudio, LockKeyhole, Pin, Plus } from "lucide-react";
+import "./exclusive.css";
 
 type Post = { id: string; body: string; media_kind: "image" | "video" | null; media_url: string | null; created_at: string; local?: boolean };
 
@@ -138,13 +141,8 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
 
   return (
     <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href={`/release/${encodeURIComponent(slug)}`}>Back to project</a>}>
-      {r && isOwner && (
-        <div className="rz-owner">
-          <span>You own this project</span>
-          <div><button className="rz-btn pri" onClick={() => { setErr(""); setFormOpen(true); }}>Post update</button></div>
-        </div>
-      )}
-      <div className="rz-card">
+      <div className="rz-board-page">
+        {r && isOwner && <div className="rz-owner rz-board-owner"><span>You own this project</span></div>}
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {r === null && (
           <div className="rz-head"><h1>Project not found</h1><p>This page may be unpublished or the link is wrong.</p>
@@ -153,28 +151,44 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
         {r && (
           <>
             <a className="rz-textlink" href={`/release/${encodeURIComponent(slug)}`}>← {r.title}</a>
-            <div className="rz-head" style={{ margin: ".6rem 0 1rem" }}>
+            <div className="rz-board-head">
               <h1>Exclusive feed</h1>
               <p>Updates, stems and files from {r.creator_name || "the creator"}, for people who hold {tk}.</p>
             </div>
 
-            <div className="rz-inv">
-              <article className="rz-post">
-                <div className="rz-post-meta"><span>Pinned</span><small>Open to everyone</small></div>
-                <b>Behind the scenes update</b>
-                <p>A first look at how {r.title} is coming together. Follow along here as the project moves through its milestones.</p>
+            <div className="rz-board-grid" aria-label="Project mood board">
+              {isOwner && <Button variant="outline" className="rz-board-tile rz-board-add" onClick={() => { setErr(""); setFormOpen(true); }}><Plus aria-hidden="true" /><span>Add content</span></Button>}
+              <article className="rz-board-tile">
+                <div className="rz-board-media rz-board-cover">
+                  {r.cover_url ? <BlobMedia url={r.cover_url} kind="image" /> : <div className="rz-board-art"><Pin aria-hidden="true" /></div>}
+                  <span className="rz-board-pinned"><Pin size={12} aria-hidden="true" />Pinned</span>
+                </div>
+                <div className="rz-board-caption">
+                  <b>Behind the scenes update</b>
+                  <p>A first look at how {r.title} is coming together. Follow along here as the project moves through its milestones.</p>
+                  <small>Open to everyone</small>
+                </div>
               </article>
               {unlocked && (posts || []).map((p) => (
-                <article className="rz-post" key={p.id}>
-                  <div className="rz-post-meta"><span>{fmtDate(p.created_at)}</span><small>Holders only</small></div>
-                  <p style={{ whiteSpace: "pre-wrap" }}>{p.body}</p>
-                  {p.media_url && p.media_kind && <BlobMedia url={p.media_url} kind={p.media_kind} />}
+                <article className="rz-board-tile" key={p.id}>
+                  {p.media_url && p.media_kind && <div className="rz-board-media"><BlobMedia url={p.media_url} kind={p.media_kind} /></div>}
+                  <div className="rz-board-caption"><p>{p.body}</p><small>{fmtDate(p.created_at)} · Holders only</small></div>
                 </article>
               ))}
-              <div className={`rz-unlock ${unlocked ? "ok" : ""}`}>
-                <span className="rz-ico-btn" aria-hidden>{unlocked ? "↓" : "🔒"}</span>
-                <div><b>Stems and project files</b><small>{unlocked ? "Unlocked. The creator will share files here" : `Hold ${tk} to unlock`}</small></div>
-              </div>
+              {!unlocked && <article className="rz-board-tile rz-board-locked" aria-label="Locked holder updates">
+                <div className="rz-board-media rz-board-cover">
+                  <div className="rz-board-blur" aria-hidden="true">{r.cover_url ? <BlobMedia url={r.cover_url} kind="image" /> : <div className="rz-board-art"><Pin /></div>}</div>
+                  <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>
+                </div>
+                <div className="rz-board-caption"><b>Holder updates</b><p>Hold {tk} to open exclusive content.</p></div>
+              </article>}
+              <article className={`rz-board-tile ${unlocked ? "" : "rz-board-locked"}`}>
+                <div className="rz-board-media">
+                  <div className={`rz-board-art rz-board-files ${unlocked ? "" : "rz-board-blur"}`} aria-hidden="true"><FileAudio /></div>
+                  {!unlocked && <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>}
+                </div>
+                <div className="rz-board-caption"><b>Stems and project files</b><p>{unlocked ? "Unlocked. The creator will share files here." : `Hold ${tk} to unlock.`}</p></div>
+              </article>
             </div>
 
             {!unlocked && (
@@ -201,7 +215,6 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                 )}
               </div>
             )}
-            {unlocked && isOwner && posts?.length === 0 && <p className="rz-note" style={{ marginTop: ".8rem" }}>No updates yet. Use Post update to share your first one.</p>}
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
           </>
         )}

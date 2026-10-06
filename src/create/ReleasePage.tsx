@@ -389,6 +389,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             <div className="rz-actions" style={{ marginTop: "1.2rem" }}>
               <button className="rz-btn pri" disabled={!receipt.confirmed} onClick={() => setReceipt(null)}>Done</button>
+              <button className="rz-btn" onClick={() => setShareOpen(true)}>Share</button>
             </div>
           </div>
         </div>

@@ -7,3 +7,4 @@
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
 - Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.
 - Route profile messaging through the `dm_open` database function, which resolves the profile owner server-side and sends unclaimed profiles to the team inbox, so visitors never pick a recipient account directly.
+- Crop project covers with react-easy-crop and upload a flattened 16:9 image, so existing project cards and pages preserve the chosen framing without schema changes.

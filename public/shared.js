@@ -1,4 +1,10 @@
 // Shared JS for all Rhozeland pages
+// Embedded sections inherit the outer homepage frame instead of adding a second gutter.
+(function(){
+  var embedded = new URLSearchParams(location.search).get('embed') === '1';
+  try { embedded = embedded || window.self !== window.top; } catch(e) { embedded = true; }
+  document.documentElement.classList.toggle('site-embedded', embedded);
+})();
 
 // Keep booking accessible while visitors browse any public page with the shared menu.
 (function(){

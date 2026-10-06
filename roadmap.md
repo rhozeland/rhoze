@@ -11,3 +11,6 @@
 - [x] Verify the homepage link and floating booking action across desktop and mobile menu destinations.
 
 - [x] Remove the blank hidden page above homepage sign-in and verify the form appears below the navigation.
+
+- [x] Match homepage outer spacing and rounded frame across public pages without nesting frames in embedded views.
+- [x] Verify matching geometry and no horizontal overflow across public destinations.

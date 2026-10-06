@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
+import ExclusivePage from "@/create/ExclusivePage";
 import DiscoverPage from "@/create/DiscoverPage";
 import MyProjects from "@/create/MyProjects";
 import { CreatorProfile, BrandProfile } from "@/create/ProfilePages";
@@ -12,6 +13,8 @@ import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
 const releaseMatch = location.pathname.match(/^\/release\/([^/]+)\/?$/);
+
+const exclusiveMatch = location.pathname.match(/^\/release\/([^/]+)\/exclusive\/?$/);
 
 const discoverMatch = location.pathname.match(/^\/discover\/?$/);
 
@@ -43,6 +46,12 @@ if (acctMatch) {
   el.id = "discover-root";
   document.body.appendChild(el);
   createRoot(el).render(<DiscoverPage />);
+} else if (exclusiveMatch) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "release-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<ExclusivePage slug={decodeURIComponent(exclusiveMatch[1])} />);
 } else if (releaseMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");

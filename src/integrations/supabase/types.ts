@@ -2224,6 +2224,44 @@ export type Database = {
           },
         ]
       }
+      release_posts: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          media_kind: string | null
+          media_path: string | null
+          release_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          media_kind?: string | null
+          media_path?: string | null
+          release_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          media_kind?: string | null
+          media_path?: string | null
+          release_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_posts_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       releases: {
         Row: {
           answers: Json

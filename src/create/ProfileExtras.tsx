@@ -180,7 +180,7 @@ export function MoreCreators({ slug, tags, Avatar }: { slug: string; tags: strin
 
 export const AccountLinks = () => (
   <span style={{ display: "flex", gap: ".8rem" }}>
-    <a className="rz-link" href="/community.html">Community</a>
+    <a className="rz-link rz-acct-hide" href="/community.html">Community</a>
     <a className="rz-link" href="/saved">Saved</a>
     <a className="rz-link" href="/messages">Messages</a>
   </span>

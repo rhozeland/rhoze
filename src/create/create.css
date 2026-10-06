@@ -179,3 +179,4 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-dm-msgs p.me{align-self:flex-end;background:hsl(var(--ink));color:hsl(var(--card))}.rz-dm-msgs p.me a{color:inherit}
 .rz-dm-input{display:flex;gap:.4rem;align-items:flex-end}.rz-dm-input textarea{flex:1}
 @media (max-width:560px){.rz-pf-more{grid-template-columns:1fr 1fr}.rz-dm{grid-template-columns:1fr}.rz-dm-list{border-right:0;padding-right:0}.rz-dm.has-active .rz-dm-list{display:none}.rz-dm:not(.has-active) .rz-dm-thread{display:none}.rz-dm-back{display:inline}}
+@media (max-width:560px){.rz-acct-hide{display:none!important}}

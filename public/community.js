@@ -4,7 +4,7 @@
   const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
   const $ = id => document.getElementById(id);
   const categories = ['Actor','Brand Strategist','Composer','Dancer','Designer','Editor','Influencer','Marketing Specialist','Model','Musician','Photographer','Rapper','Singer','Songwriter','Video Editor','Videographer'];
-  let creators = [], calls = [], selected = 'All', page = 1, failed = false;
+  let creators = [], calls = [], selected = /^#?open-calls$|view=open-calls/.test(location.hash + location.search) ? 'Open Calls' : 'All', page = 1, failed = false;
   const perPage = 15;
   const search = $('creatorSearch'), grid = $('creatorGrid'), filters = $('creatorFilters'), meta = $('directoryMeta'), pages = $('directoryPages'), dialog = $('creatorProfile');
   function slugify(t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }

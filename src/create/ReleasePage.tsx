@@ -31,6 +31,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [note, setNote] = useState("");
   const [applyIdx, setApplyIdx] = useState<number | null>(null);
   const [applyForm, setApplyForm] = useState({ name: "", link: "", availability: "" });
@@ -210,6 +212,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 : <button className="rz-btn pri" onClick={() => setNote("This project hasn't attached a coin yet. Follow along and check back soon.")}>Support this project</button>}
               {!walletAddr && <button className="rz-btn" onClick={openConnect} disabled={connecting}>{connecting ? "Connecting…" : "Connect wallet"}</button>}
               <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
+              <button className="rz-textlink" onClick={() => setShareOpen(true)}>Share</button>
             </div>
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 
@@ -386,10 +389,43 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             <div className="rz-actions" style={{ marginTop: "1.2rem" }}>
               <button className="rz-btn pri" disabled={!receipt.confirmed} onClick={() => setReceipt(null)}>Done</button>
+              <button className="rz-btn" onClick={() => setShareOpen(true)}>Share</button>
             </div>
           </div>
         </div>
       )}
+      {shareOpen && r && (() => {
+        const shareUrl = window.location.href;
+        const shareText = `Support ${r.title} on Rhoze`;
+        const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+        const doCopy = async () => {
+          try { await navigator.clipboard.writeText(shareUrl); setShareCopied(true); setTimeout(() => setShareCopied(false), 2000); } catch { /* ignore */ }
+        };
+        return (
+          <div className="rz-modal" onClick={() => setShareOpen(false)}>
+            <div className="rz-card" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
+              <div className="rz-head" style={{ marginBottom: "1rem" }}>
+                <h1 style={{ fontSize: "1.1rem" }}>Share this project</h1>
+                <p>Post it anywhere, or copy the link.</p>
+              </div>
+              <div className="rz-card" style={{ padding: 0, overflow: "hidden", marginBottom: "1rem" }}>
+                {r.cover_url
+                  ? <img src={r.cover_url} alt={r.title} style={{ width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block" }} />
+                  : <div className="rz-cover" style={{ aspectRatio: "16/9" }} />}
+                <div style={{ padding: ".9rem 1rem" }}>
+                  <b style={{ display: "block", fontSize: ".95rem" }}>{r.title}</b>
+                  <span style={{ fontSize: ".8rem", opacity: .7 }}>{shareText}</span>
+                </div>
+              </div>
+              <div className="rz-actions">
+                <button className="rz-btn pri" onClick={doCopy}>{shareCopied ? "Link copied" : "Copy link"}</button>
+                <a className="rz-btn" href={xUrl} target="_blank" rel="noopener noreferrer">Share to X</a>
+                <button className="rz-textlink" onClick={() => setShareOpen(false)}>Close</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </Shell>
   );
 }

@@ -256,7 +256,7 @@ export default function CreateProject() {
       if (id) finishPublish(id);
     };
     resume();
-    const { data: sub } = supabase.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" && localStorage.getItem(PENDING_KEY)) { setAuthFor(null); resume(); } });
+    const { data: sub } = supabase.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" && localStorage.getItem(PENDING_KEY)) { setAuthFor(null); setTimeout(resume, 0); } });
     return () => sub.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);

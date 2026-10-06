@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, money } from "./shared";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -253,7 +253,17 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               </>
             )}
 
-            <h2 className="rz-h2">Unlocks</h2>
+            {holdMsg === "holds" && (
+              <p className="rz-note" style={{ marginTop: "1.2rem", padding: ".8rem 1rem", border: "1px solid hsl(var(--line))", borderRadius: 12 }}>
+                You hold {ticker ? "$" + ticker : "the coin"} — your unlocks are below
+              </p>
+            )}
+            {holdMsg === "none" && (
+              <p className="rz-note" style={{ marginTop: "1.2rem" }}>
+                Connected, but you don't hold {ticker ? "$" + ticker : "the coin"} yet
+              </p>
+            )}
+            <h2 className="rz-h2" ref={unlockRef}>Unlocks</h2>
             <div className="rz-inv">
               <div className="rz-unlock">
                 <span className="rz-ico-btn" aria-label="Play">▶</span>

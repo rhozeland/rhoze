@@ -66,6 +66,7 @@ export default function CreateProject() {
   const [coverSource, setCoverSource] = useState<Blob | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const coverInput = useRef<HTMLInputElement>(null);
+  const [coverDrag, setCoverDrag] = useState(false);
 
   useEffect(() => {
     if (!cover) { setCoverPreview(null); return; }
@@ -350,9 +351,14 @@ export default function CreateProject() {
               <div className="rz-field"><label>Your name</label><input className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
               <div className="rz-field"><label>Project name</label><input className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
               <div className="rz-field rz-full">
-                <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP)</span></label>
-                <div className="rz-cover rz-cover-up">
-                  {coverPreview ? <img src={coverPreview} alt="Cover art preview" /> : <span>{title || "Your cover art"}</span>}
+                <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP · drag a photo here)</span></label>
+                <div
+                  className={`rz-cover rz-cover-up${coverDrag ? " rz-cover-drag" : ""}`}
+                  onDragOver={(e) => { e.preventDefault(); if (!coverBusy) setCoverDrag(true); }}
+                  onDragLeave={() => setCoverDrag(false)}
+                  onDrop={(e) => { e.preventDefault(); setCoverDrag(false); if (!coverBusy) selectCover(e.dataTransfer.files?.[0]); }}
+                >
+                  {coverPreview ? <img src={coverPreview} alt="Cover art preview" /> : <span>{coverDrag ? "Drop your photo here" : title || "Your cover art"}</span>}
                 </div>
                 <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>
                   <Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={() => coverInput.current?.click()}>{coverBusy ? "Loading…" : cover ? "Replace image" : "Upload image"}</Button>

@@ -143,6 +143,39 @@ export type Database = {
         }
         Relationships: []
       }
+      brand_profiles: {
+        Row: {
+          bio: string | null
+          category: string | null
+          created_at: string
+          logo_url: string | null
+          name: string
+          slug: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          bio?: string | null
+          category?: string | null
+          created_at?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          bio?: string | null
+          category?: string | null
+          created_at?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       campaign_state: {
         Row: {
           campaign_open: boolean
@@ -527,13 +560,17 @@ export type Database = {
           display_name: string
           hourly_rate_cents: number | null
           id: string
+          instagram_url: string | null
           membership_tier: string
           photo_url: string | null
           portfolio_url: string | null
           rating: number | null
+          slug: string | null
           trending: boolean
           updated_at: string
+          user_id: string | null
           website_url: string | null
+          work_samples: Json
         }
         Insert: {
           approved?: boolean
@@ -544,13 +581,17 @@ export type Database = {
           display_name: string
           hourly_rate_cents?: number | null
           id?: string
+          instagram_url?: string | null
           membership_tier?: string
           photo_url?: string | null
           portfolio_url?: string | null
           rating?: number | null
+          slug?: string | null
           trending?: boolean
           updated_at?: string
+          user_id?: string | null
           website_url?: string | null
+          work_samples?: Json
         }
         Update: {
           approved?: boolean
@@ -561,13 +602,17 @@ export type Database = {
           display_name?: string
           hourly_rate_cents?: number | null
           id?: string
+          instagram_url?: string | null
           membership_tier?: string
           photo_url?: string | null
           portfolio_url?: string | null
           rating?: number | null
+          slug?: string | null
           trending?: boolean
           updated_at?: string
+          user_id?: string | null
           website_url?: string | null
+          work_samples?: Json
         }
         Relationships: []
       }
@@ -3001,6 +3046,17 @@ export type Database = {
         Returns: undefined
       }
       archive_expired_projects: { Args: never; Returns: number }
+      brand_can_edit: { Args: { p_slug: string }; Returns: boolean }
+      brand_save_profile: {
+        Args: {
+          p_bio: string
+          p_category: string
+          p_logo: string
+          p_name: string
+          p_slug: string
+        }
+        Returns: undefined
+      }
       can_edit_community: { Args: { _uid: string }; Returns: boolean }
       community_avatar_list: {
         Args: never
@@ -3138,6 +3194,26 @@ export type Database = {
       create_project_from_intake: {
         Args: { _intake_id: string }
         Returns: string
+      }
+      creator_credits: {
+        Args: { p_slug: string }
+        Returns: {
+          brand: string
+          hired_at: string
+          release_slug: string
+          role_name: string
+          title: string
+        }[]
+      }
+      creator_save_profile: {
+        Args: {
+          p_bio: string
+          p_id: string
+          p_instagram: string
+          p_samples: Json
+          p_website: string
+        }
+        Returns: undefined
       }
       credit_request_cancel: {
         Args: { _request_id: string }
@@ -3337,6 +3413,7 @@ export type Database = {
         Args: { _credits: number; _project_id: string }
         Returns: number
       }
+      rz_slugify: { Args: { _t: string }; Returns: string }
       validate_referral_code: {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]

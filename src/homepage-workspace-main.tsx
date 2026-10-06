@@ -7,6 +7,7 @@ import ReleasePage from "@/create/ReleasePage";
 import DiscoverPage from "@/create/DiscoverPage";
 import MyProjects from "@/create/MyProjects";
 import { CreatorProfile, BrandProfile } from "@/create/ProfilePages";
+import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
 import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
 
@@ -16,7 +17,14 @@ const discoverMatch = location.pathname.match(/^\/discover\/?$/);
 
 const profileMatch = location.pathname.match(/^\/(creator|brand)\/([^/]+)\/?$/);
 
-if (/^\/my-projects\/?$/.test(location.pathname)) {
+const acctMatch = location.pathname.match(/^\/(saved|messages)\/?$/);
+if (acctMatch) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "profile-root";
+  document.body.appendChild(el);
+  createRoot(el).render(acctMatch[1] === "saved" ? <SavedPage /> : <MessagesPage />);
+} else if (/^\/my-projects\/?$/.test(location.pathname)) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");
   el.id = "profile-root";

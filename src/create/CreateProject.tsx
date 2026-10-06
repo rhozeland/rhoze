@@ -3,6 +3,8 @@ import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles } from "lucid
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, Milestone, money, uid } from "./shared";
 import AuthModal from "./AuthModal";
+import CoverEditor from "./CoverEditor";
+import { Button } from "@/components/ui/button";
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -60,6 +62,21 @@ export default function CreateProject() {
   const [publishing, setPublishing] = useState(false);
   const [cover, setCover] = useState<string | null>(null);
   const [coverBusy, setCoverBusy] = useState(false);
+  const [coverFile, setCoverFile] = useState<Blob | null>(null);
+  const [coverSource, setCoverSource] = useState<Blob | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const coverInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!cover) { setCoverPreview(null); return; }
+    let active = true;
+    let url: string | null = null;
+    fetch(cover).then((response) => { if (!response.ok) throw new Error("Image unavailable"); return response.blob(); }).then((blob) => {
+      if (!active) return;
+      url = URL.createObjectURL(blob); setCoverPreview(url);
+    }).catch(() => { if (active) setCoverPreview(null); });
+    return () => { active = false; if (url) URL.revokeObjectURL(url); };
+  }, [cover]);
   const [authFor, setAuthFor] = useState<string | null>(null);
 
   const budgetCents = Math.max(0, Math.round((parseFloat(budget.replace(/[^0-9.]/g, "")) || 0) * 100));
@@ -252,8 +269,29 @@ export default function CreateProject() {
     const path = `covers/drafts/${uid()}.${ext}`;
     const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type });
     setCoverBusy(false);
-    if (error) { setErr("Cover upload failed. Please try again."); return; }
+    if (error) { throw new Error("Cover upload failed"); }
     setCover(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl);
+    setCoverFile(null);
+  };
+
+  const selectCover = (file?: File) => {
+    if (!file) return;
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { setErr("Cover art must be a JPG, PNG or WebP image."); return; }
+    if (file.size > 8 * 1024 * 1024) { setErr("Cover art must be 8 MB or smaller."); return; }
+    setErr(""); setCoverSource(file); setCoverFile(file);
+  };
+
+  const adjustCover = async () => {
+    if (coverSource) { setCoverFile(coverSource); return; }
+    if (!cover) return;
+    setCoverBusy(true); setErr("");
+    try {
+      const response = await fetch(cover);
+      if (!response.ok) throw new Error("Image unavailable");
+      const blob = await response.blob();
+      setCoverSource(blob); setCoverFile(blob);
+    } catch { setErr("We couldn't open your cover. Please try again."); }
+    finally { setCoverBusy(false); }
   };
 
   const updateRow = (id: string, patch: Partial<Milestone>) => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
@@ -314,13 +352,14 @@ export default function CreateProject() {
               <div className="rz-field rz-full">
                 <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP)</span></label>
                 <div className="rz-cover rz-cover-up">
-                  {cover ? <img src={cover} alt="Cover art preview" /> : <span>{title || "Your cover art"}</span>}
+                  {coverPreview ? <img src={coverPreview} alt="Cover art preview" /> : <span>{title || "Your cover art"}</span>}
                 </div>
                 <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>
-                  <label className="rz-btn" style={{ cursor: "pointer" }}>{coverBusy ? "Uploading…" : cover ? "Replace image" : "Upload image"}
-                    <input type="file" accept="image/jpeg,image/png,image/webp" hidden disabled={coverBusy} onChange={(e) => { uploadCover(e.target.files?.[0]); e.target.value = ""; }} /></label>
-                  {cover && <button type="button" className="rz-btn" onClick={() => setCover(null)}>Remove</button>}
+                  <Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={() => coverInput.current?.click()}>{coverBusy ? "Loading…" : cover ? "Replace image" : "Upload image"}</Button>
+                  <input ref={coverInput} type="file" accept="image/jpeg,image/png,image/webp" hidden disabled={coverBusy} onChange={(e) => { selectCover(e.target.files?.[0]); e.target.value = ""; }} />
+                  {cover && <><Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={adjustCover}>Adjust image</Button><Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={() => { setCover(null); setCoverSource(null); }}>Remove</Button></>}
                 </div>
+                {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
               </div>
               <div className="rz-field rz-full"><label>What are you making?</label><textarea className="rz-in" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art" onChange={(e) => setMaking(e.target.value)} /></div>
               <div className="rz-field rz-full"><label>Who is it for? <span className="rz-opt">(optional)</span></label><input className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto, 18–30" onChange={(e) => setAudience(e.target.value)} /></div>
@@ -458,7 +497,7 @@ export default function CreateProject() {
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Project</span><b style={{ wordBreak: "break-word" }}>{title}</b></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Type</span><span>{isBrand ? "Brand project" : "Artist project"}</span></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">{leadLabel}</span><span>{name}</span></div>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Cover</span>{cover ? <img src={cover} alt="Cover art" style={{ width: 72, height: 40, objectFit: "cover", borderRadius: 6 }} /> : <span className="rz-opt">Gradient placeholder</span>}</div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Cover</span>{coverPreview ? <img src={coverPreview} alt="Cover art" style={{ width: 72, height: 40, objectFit: "cover", borderRadius: 6 }} /> : <span className="rz-opt">Gradient placeholder</span>}</div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{money(budgetCents)}</b></div>
             </div>
             <SplitMini />

@@ -31,6 +31,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [note, setNote] = useState("");
   const [applyIdx, setApplyIdx] = useState<number | null>(null);
   const [applyForm, setApplyForm] = useState({ name: "", link: "", availability: "" });

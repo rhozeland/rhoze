@@ -8,6 +8,13 @@
       "when": 1791296645122,
       "tag": "0000_community_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791297082267,
+      "tag": "0001_release_account_ownership",
+      "breakpoints": true
     }
   ]
 }

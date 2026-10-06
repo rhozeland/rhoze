@@ -228,7 +228,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
   const load = async () => {
     const [{ data: r }, { data: b }, { data: ce }] = await Promise.all([
-      db.from("releases").select("id,slug,title,creator_name,answers,coin_image,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500),
+      db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500),
       db.from("brand_profiles").select("slug,name,logo_url,category,bio").eq("slug", slug).maybeSingle(),
       db.rpc("brand_can_edit", { p_slug: slug }),
     ]);
@@ -272,7 +272,7 @@ export function BrandProfile({ slug }: { slug: string }) {
                 <div className="rz-feed">
                   {rels.map((r) => (
                     <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
-                      <span className="rz-feed-cover">{r.coin_image ? <img src={r.coin_image} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}</span>
+                      <span className="rz-feed-cover">{(r as any).cover_url || r.coin_image ? <img src={(r as any).cover_url || r.coin_image!} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}</span>
                       <span className="rz-feed-meta"><small>{r.answers?.project_type === "brand" ? "Brand project" : "Artist project"}</small><b>{r.title}</b></span>
                     </a>
                   ))}

@@ -133,3 +133,17 @@
 .rz-pf-slist li{display:flex;justify-content:space-between;gap:.5rem;align-items:center}
 .rz-pf-slist button{background:none;border:0;cursor:pointer;font-size:.72rem}
 @media (max-width:560px){.rz-pf-top{flex-direction:column;align-items:center;text-align:center}.rz-pf-tags,.rz-pf-actions{justify-content:center}.rz-pf-two{grid-template-columns:1fr}.rz-pf-grid{grid-template-columns:1fr 1fr}}
+.rz-cover-up{margin-bottom:.5rem;aspect-ratio:16/9}
+.rz-my{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
+.rz-my-row{display:grid;grid-template-columns:64px 1fr auto auto;gap:.7rem;align-items:center;border:1px solid hsl(var(--line));border-radius:14px;padding:.5rem .6rem}
+.rz-my-thumb{width:64px;height:40px;border-radius:8px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,hsl(var(--coral)/.55),hsl(var(--yellow)/.6),hsl(var(--aqua)/.7));color:hsl(var(--ink));font-weight:700;text-decoration:none}
+.rz-my-thumb img{width:100%;height:100%;object-fit:cover}
+.rz-my-main{min-width:0;display:flex;flex-direction:column;text-decoration:none;color:hsl(var(--ink))}.rz-my-main b{font-size:.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rz-my-main small{font-size:.66rem;color:hsl(var(--mut))}
+.rz-my-status{font-size:.62rem;font-weight:700;border:1px solid hsl(var(--strong));border-radius:999px;padding:.15rem .55rem}
+.rz-my-status.s-published{background:hsl(var(--ink));color:hsl(var(--card));border-color:hsl(var(--ink))}
+.rz-my-status.s-archived{color:hsl(var(--mut))}
+.rz-my-menu{position:relative}
+.rz-my-pop{position:absolute;right:0;top:110%;z-index:20;background:hsl(var(--card));border:1px solid hsl(var(--line));border-radius:12px;box-shadow:0 10px 24px hsl(0 0% 0%/.15);display:flex;flex-direction:column;min-width:130px;padding:.3rem}
+.rz-my-pop a,.rz-my-pop button{background:none;border:0;text-align:left;font:inherit;font-size:.74rem;padding:.45rem .6rem;border-radius:8px;color:hsl(var(--ink));text-decoration:none;cursor:pointer}
+.rz-my-pop a:hover,.rz-my-pop button:hover{background:hsl(var(--line))}.rz-my-pop .danger{color:hsl(var(--destructive))}
+@media (max-width:480px){.rz-my-row{grid-template-columns:52px 1fr auto;}.rz-my-thumb{width:52px;height:36px}.rz-my-status{grid-column:2;justify-self:start;grid-row:2}.rz-my-menu{grid-row:1/3;grid-column:3}}

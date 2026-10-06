@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
 import DiscoverPage from "@/create/DiscoverPage";
+import MyProjects from "@/create/MyProjects";
 import { CreatorProfile, BrandProfile } from "@/create/ProfilePages";
 import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
@@ -15,7 +16,13 @@ const discoverMatch = location.pathname.match(/^\/discover\/?$/);
 
 const profileMatch = location.pathname.match(/^\/(creator|brand)\/([^/]+)\/?$/);
 
-if (profileMatch) {
+if (/^\/my-projects\/?$/.test(location.pathname)) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "profile-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<MyProjects />);
+} else if (profileMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");
   el.id = "profile-root";

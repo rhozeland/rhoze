@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, Milestone, money, uid } from "./shared";
+import AuthModal from "./AuthModal";
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
+const PENDING_KEY = "rz_pending_publish";
 const MINT_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
 function getToken() {
@@ -56,6 +58,9 @@ export default function CreateProject() {
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [publishing, setPublishing] = useState(false);
+  const [cover, setCover] = useState<string | null>(null);
+  const [coverBusy, setCoverBusy] = useState(false);
+  const [authFor, setAuthFor] = useState<string | null>(null);
 
   const budgetCents = Math.max(0, Math.round((parseFloat(budget.replace(/[^0-9.]/g, "")) || 0) * 100));
   const artistPct = Math.max(0, 100 - feePct - causePct - tPct);
@@ -77,11 +82,12 @@ export default function CreateProject() {
       if (booking.description) setMaking(booking.description);
       if (booking.id) setBookingId(booking.id);
     };
+    const fromParam = !!params.get("draft");
     if (!id || params.get("new") === "1") { applyBooking(); return; }
     (async () => {
       const { data } = await (supabase.rpc as any)("release_get_draft", { p_token: token, p_id: id });
       const r = Array.isArray(data) ? data[0] : null;
-      if (!r || r.status === "published") { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
+      if (!r || (!fromParam && r.status !== "draft")) { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
       setDraftId(r.id);
       const lt: PType | null = r.answers?.project_type === "brand" ? "brand" : r.answers?.project_type === "artist" ? "artist" : null;
       setPtype(lt);
@@ -94,6 +100,7 @@ export default function CreateProject() {
       setRows((r.milestones || []).map((m: any) => ({ id: uid(), ...m })));
       if (r.coin_mint) { setMint(r.coin_mint); setTicker(r.coin_ticker || ""); setMeta({ mint: r.coin_mint, name: r.coin_name, image: r.coin_image }); }
       setWallet(r.payout_wallet || "");
+      setCover(r.cover_url || null);
     })();
   }, [token]);
 
@@ -103,7 +110,7 @@ export default function CreateProject() {
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
     coin_mint: coin?.mint ?? "", coin_ticker: coin?.ticker ?? "", coin_name: coin?.name ?? "", coin_image: coin?.image ?? "",
-    payout_wallet: wallet.trim(), current_step: s,
+    payout_wallet: wallet.trim(), cover_url: cover ?? "", current_step: s,
   });
 
   const save = async (s = step): Promise<string | null> => {
@@ -195,16 +202,58 @@ export default function CreateProject() {
 
   const skipCoin = () => { setMint(""); setTicker(""); setMeta(null); setCoinErr(""); setErr(""); setStepKey("publish"); save(flow.length); };
 
+  // Publish a saved draft by id (used directly and after sign-in)
+  const publishingRef = useRef(false);
+  const finishPublish = async (id: string) => {
+    if (publishingRef.current) return; publishingRef.current = true;
+    setPublishing(true); setErr("");
+    await (supabase.rpc as any)("release_claim", { p_token: token });
+    const { data, error } = await (supabase.rpc as any)("release_publish", { p_token: token, p_id: id });
+    setPublishing(false); publishingRef.current = false;
+    if (error) { setErr("We couldn't publish right now. Your project is saved, please try again."); return; }
+    localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(PENDING_KEY);
+    location.href = `/release/${data}`;
+  };
+
   const publish = async () => {
     if (mint.trim() && !coin) { setErr("Fix the coin details or skip the coin step."); setStepKey("coin"); return; }
     setPublishing(true);
     const id = await save(flow.length);
-    if (!id) { setPublishing(false); return; }
-    const { data, error } = await (supabase.rpc as any)("release_publish", { p_token: token, p_id: id });
     setPublishing(false);
-    if (error) { setErr("We couldn't publish right now. Your draft is saved — please try again."); return; }
-    localStorage.removeItem(DRAFT_KEY);
-    location.href = `/release/${data}`;
+    if (!id) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { localStorage.setItem(PENDING_KEY, id); setAuthFor(id); return; }
+    finishPublish(id);
+  };
+
+  // Resume a publish that was waiting on sign-in (same tab or email confirmation link)
+  useEffect(() => {
+    const resume = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      await (supabase.rpc as any)("release_claim", { p_token: token });
+      const pending = localStorage.getItem(PENDING_KEY);
+      const auto = new URLSearchParams(location.search).get("autopublish") === "1" ? new URLSearchParams(location.search).get("draft") : null;
+      const id = pending || auto;
+      if (id) finishPublish(id);
+    };
+    resume();
+    const { data: sub } = supabase.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" && localStorage.getItem(PENDING_KEY)) { setAuthFor(null); resume(); } });
+    return () => sub.subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  const uploadCover = async (file?: File) => {
+    if (!file) return;
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) { setErr("Cover art must be a JPG, PNG or WebP image."); return; }
+    if (file.size > 8 * 1024 * 1024) { setErr("Cover art must be 8 MB or smaller."); return; }
+    setCoverBusy(true); setErr("");
+    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+    const path = `covers/drafts/${uid()}.${ext}`;
+    const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type });
+    setCoverBusy(false);
+    if (error) { setErr("Cover upload failed. Please try again."); return; }
+    setCover(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl);
   };
 
   const updateRow = (id: string, patch: Partial<Milestone>) => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
@@ -262,6 +311,17 @@ export default function CreateProject() {
             <div className="rz-grid">
               <div className="rz-field"><label>Your name</label><input className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
               <div className="rz-field"><label>Project name</label><input className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
+              <div className="rz-field rz-full">
+                <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP)</span></label>
+                <div className="rz-cover rz-cover-up">
+                  {cover ? <img src={cover} alt="Cover art preview" /> : <span>{title || "Your cover art"}</span>}
+                </div>
+                <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>
+                  <label className="rz-btn" style={{ cursor: "pointer" }}>{coverBusy ? "Uploading…" : cover ? "Replace image" : "Upload image"}
+                    <input type="file" accept="image/jpeg,image/png,image/webp" hidden disabled={coverBusy} onChange={(e) => { uploadCover(e.target.files?.[0]); e.target.value = ""; }} /></label>
+                  {cover && <button type="button" className="rz-btn" onClick={() => setCover(null)}>Remove</button>}
+                </div>
+              </div>
               <div className="rz-field rz-full"><label>What are you making?</label><textarea className="rz-in" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art" onChange={(e) => setMaking(e.target.value)} /></div>
               <div className="rz-field rz-full"><label>Who is it for? <span className="rz-opt">(optional)</span></label><input className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto, 18–30" onChange={(e) => setAudience(e.target.value)} /></div>
               <div className="rz-field rz-full">
@@ -398,6 +458,7 @@ export default function CreateProject() {
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Project</span><b style={{ wordBreak: "break-word" }}>{title}</b></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Type</span><span>{isBrand ? "Brand project" : "Artist project"}</span></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">{leadLabel}</span><span>{name}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Cover</span>{cover ? <img src={cover} alt="Cover art" style={{ width: 72, height: 40, objectFit: "cover", borderRadius: 6 }} /> : <span className="rz-opt">Gradient placeholder</span>}</div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{money(budgetCents)}</b></div>
             </div>
             <SplitMini />
@@ -437,6 +498,8 @@ export default function CreateProject() {
         )}
 
         {err && <div className="rz-err">{err}</div>}
+        {authFor && <AuthModal onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
+          redirectTo={`${location.origin}/create.html?draft=${authFor}&autopublish=1`} />}
         {savedAt && <div className="rz-note rz-saved">Draft saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
       </div>
     </Shell>

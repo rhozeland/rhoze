@@ -1,5 +1,5 @@
 (function () {
-  const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&order=created_at.desc&limit=500';
+  const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&order=created_at.desc&limit=500';
   const callsUrl = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/releases?select=slug,title,creator_name,answers&status=eq.published&order=published_at.desc&limit=200';
   const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
   const $ = id => document.getElementById(id);
@@ -7,6 +7,7 @@
   let creators = [], calls = [], selected = 'All', page = 1, failed = false;
   const perPage = 15;
   const search = $('creatorSearch'), grid = $('creatorGrid'), filters = $('creatorFilters'), meta = $('directoryMeta'), pages = $('directoryPages'), dialog = $('creatorProfile');
+  function slugify(t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
   function el(tag, className, text) { const node = document.createElement(tag); if (className) node.className = className; if (text != null) node.textContent = text; return node; }
   function image(creator, className) {
     if (creator.photo_url && /^https:\/\/|^\/__l5e\/|^\/images\/|^\/assets\//.test(creator.photo_url)) {
@@ -55,7 +56,7 @@
     if (!visible.length) { grid.append(el('div', 'directory-empty', 'No open calls right now. Check back soon.')); return; }
     visible.forEach(c => {
       const roles = (c.answers && c.answers.roles) || [];
-      const card = el('a', 'creator-card call-card'); card.href = '/release/' + encodeURIComponent(c.slug); card.setAttribute('aria-label', 'View open call: ' + c.title);
+      const card = el('a', 'creator-card call-card'); card.href = '/brand/' + slugify(c.creator_name || ''); card.setAttribute('aria-label', 'View brand profile: ' + (c.creator_name || c.title));
       const top = el('div', 'creator-top'); top.append(el('h2', '', c.title)); top.append(el('span', 'creator-badge', 'OPEN CALL'));
       card.append(top, el('div', 'creator-tier', (c.creator_name || 'Brand') + ' · Brand project'));
       const list = el('div', 'call-roles');
@@ -67,7 +68,7 @@
         chip.addEventListener('click', go); chip.addEventListener('keydown', e => { if (e.key === 'Enter') go(e); });
         list.append(chip);
       });
-      card.append(list, el('div', 'creator-muted', roles.length + (roles.length === 1 ? ' role needed' : ' roles needed') + ' — tap to view and apply'));
+      card.append(list, el('div', 'creator-muted', roles.length + (roles.length === 1 ? ' role needed' : ' roles needed') + ' · tap a role to apply'));
       grid.append(card);
     });
   }
@@ -86,7 +87,7 @@
       if (creator.trending) badges.append(el('span', 'creator-badge', 'TRENDING ◉'));
       if (creator.rating != null) badges.append(el('span', 'creator-badge rating', Number(creator.rating).toFixed(1) + ' ★'));
       top.append(badges); card.append(top, el('div', 'creator-tier', creator.membership_tier + ' member'), el('div', 'creator-detail', [(creator.disciplines || []).join(' · '), rate(creator)].filter(Boolean).join(' · ')), el('div', 'creator-muted', creator.completed_projects ? creator.completed_projects + ' completed projects' : 'New to the directory'));
-      const view = el('button', 'creator-view', 'View Profile'); view.type = 'button'; view.setAttribute('aria-label', 'View profile for ' + creator.display_name); view.addEventListener('click', () => openProfile(creator)); card.append(view); grid.append(card);
+      const view = el('a', 'creator-view', 'View Profile'); view.href = '/creator/' + encodeURIComponent(creator.slug); view.style.textDecoration = 'none'; card.style.cursor = 'pointer'; card.addEventListener('click', e => { if (!e.target.closest('a')) location.href = view.href; }); view.setAttribute('aria-label', 'View profile for ' + creator.display_name); card.append(view); grid.append(card);
     });
     if (totalPages > 1) for (let i = 1; i <= totalPages; i++) { const b = el('button', '', String(i)); b.type = 'button'; b.setAttribute('aria-label', 'Page ' + i); if (i === page) b.setAttribute('aria-current', 'page'); b.addEventListener('click', () => { page = i; render(); grid.scrollIntoView({behavior:'smooth',block:'start'}); }); pages.append(b); }
   }

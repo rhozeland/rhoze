@@ -3191,6 +3191,7 @@
           .r-inline { padding: 0; margin: 0; }
           .r-inline-frame-wrap { position: relative; width: 100%; min-height: 60vh; background: hsl(var(--surface-card)); }
           .r-inline-frame { width: 100%; height: 100vh; border: 0; display: block; opacity: 0; transition: opacity 260ms ease; background: hsl(var(--surface-card)); }
+          .r-inline-frame[hidden] { display: none !important; }
           .r-inline-frame.is-ready { opacity: 1; }
           /* Skeleton shown while the embedded app boots — replaces the bare "Loading" text. */
           .r-inline-load { position: absolute; inset: 0; padding: 1.6rem clamp(1rem, 3vw, 2.4rem); display: grid; gap: 0.9rem; align-content: start; background: hsl(var(--surface-card)); opacity: 1; transition: opacity 220ms ease; z-index: 20; pointer-events: none; }

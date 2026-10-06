@@ -2171,6 +2171,7 @@ export type Database = {
           coin_mint: string | null
           coin_name: string | null
           coin_ticker: string | null
+          cover_url: string | null
           created_at: string
           creator_email: string | null
           creator_name: string
@@ -2198,6 +2199,7 @@ export type Database = {
           coin_mint?: string | null
           coin_name?: string | null
           coin_ticker?: string | null
+          cover_url?: string | null
           created_at?: string
           creator_email?: string | null
           creator_name?: string
@@ -2225,6 +2227,7 @@ export type Database = {
           coin_mint?: string | null
           coin_name?: string | null
           coin_ticker?: string | null
+          cover_url?: string | null
           created_at?: string
           creator_email?: string | null
           creator_name?: string
@@ -2987,6 +2990,13 @@ export type Database = {
       }
     }
     Functions: {
+      _release_can_access: {
+        Args: {
+          p_token: string
+          r: Database["public"]["Tables"]["releases"]["Row"]
+        }
+        Returns: boolean
+      }
       _rhoze_ensure_balance: {
         Args: { _project_id: string }
         Returns: undefined
@@ -3292,6 +3302,43 @@ export type Database = {
         }
         Returns: number
       }
+      my_releases: {
+        Args: never
+        Returns: {
+          answers: Json
+          artist_pct: number
+          booking_id: string | null
+          budget_cents: number
+          cause_name: string | null
+          cause_pct: number
+          coin_image: string | null
+          coin_mint: string | null
+          coin_name: string | null
+          coin_ticker: string | null
+          cover_url: string | null
+          created_at: string
+          creator_email: string | null
+          creator_name: string
+          current_step: number
+          fee_pct: number
+          id: string
+          milestones: Json
+          owner_token: string
+          payout_wallet: string | null
+          published_at: string | null
+          slug: string | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "releases"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       purchase_rhoze_square: {
         Args: {
           _amount_usd_cents: number
@@ -3326,6 +3373,8 @@ export type Database = {
         }
         Returns: string
       }
+      release_claim: { Args: { p_token: string }; Returns: number }
+      release_delete: { Args: { p_id: string }; Returns: undefined }
       release_get_draft: {
         Args: { p_id: string; p_token: string }
         Returns: {
@@ -3339,6 +3388,7 @@ export type Database = {
           coin_mint: string | null
           coin_name: string | null
           coin_ticker: string | null
+          cover_url: string | null
           created_at: string
           creator_email: string | null
           creator_name: string
@@ -3393,6 +3443,10 @@ export type Database = {
       }
       release_set_application_status: {
         Args: { p_app_id: string; p_status: string; p_token: string }
+        Returns: undefined
+      }
+      release_set_archived: {
+        Args: { p_archived: boolean; p_id: string }
         Returns: undefined
       }
       rhoze_award: {

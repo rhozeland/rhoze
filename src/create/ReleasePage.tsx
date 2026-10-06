@@ -207,9 +207,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
 
             <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
-              {pumpUrl
-                ? <a className="rz-btn pri" href={pumpUrl} target="_blank" rel="noopener noreferrer">Support this project</a>
-                : <button className="rz-btn pri" onClick={() => setNote("This project hasn't attached a coin yet. Follow along and check back soon.")}>Support this project</button>}
+              <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support this project</a>
               {!walletAddr && <button className="rz-btn" onClick={openConnect} disabled={connecting}>{connecting ? "Connecting…" : "Connect wallet"}</button>}
               <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
               <button className="rz-textlink" onClick={() => setShareOpen(true)}>Share</button>
@@ -272,10 +270,10 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 <span className="rz-ico-btn" aria-label="Play">▶</span>
                 <div><b>Behind the scenes update</b><small>Unlocked for everyone</small></div>
               </div>
-              <div className={`rz-unlock ${holds ? "ok" : ""}`}>
-                <span className="rz-ico-btn" aria-label={holds ? "Download" : "Locked"}>{holds ? "↓" : "🔒"}</span>
-                <div><b>Stems and project files</b><small>{holds ? "Unlocked with your wallet" : `Hold ${ticker ? "$" + ticker : "the coin"} to unlock`}</small></div>
-              </div>
+              <a className={`rz-unlock ${holds ? "ok" : ""}`} href={`/release/${encodeURIComponent(slug)}/exclusive`} style={{ color: "inherit", textDecoration: "none" }}>
+                <span className="rz-ico-btn" aria-hidden>{holds ? "→" : "🔒"}</span>
+                <div><b>Holder feed</b><small>{holds ? "Unlocked with your wallet. Open the feed" : `Stems, files and updates for ${ticker ? "$" + ticker : "coin"} holders`}</small></div>
+              </a>
             </div>
             {connErr && (
               <p className="rz-note" style={{ marginTop: ".8rem" }}>

@@ -133,3 +133,4 @@
 .rz-pf-slist li{display:flex;justify-content:space-between;gap:.5rem;align-items:center}
 .rz-pf-slist button{background:none;border:0;cursor:pointer;font-size:.72rem}
 @media (max-width:560px){.rz-pf-top{flex-direction:column;align-items:center;text-align:center}.rz-pf-tags,.rz-pf-actions{justify-content:center}.rz-pf-two{grid-template-columns:1fr}.rz-pf-grid{grid-template-columns:1fr 1fr}}
+.rz-cover-up{margin-bottom:.5rem;aspect-ratio:16/9}

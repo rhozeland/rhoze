@@ -12,5 +12,5 @@
 
 - [x] Remove the blank hidden page above homepage sign-in and verify the form appears below the navigation.
 
-- [ ] Match homepage outer spacing and rounded frame across public pages without nesting frames in embedded views.
-- [ ] Verify matching geometry and no horizontal overflow across public destinations.
+- [x] Match homepage outer spacing and rounded frame across public pages without nesting frames in embedded views.
+- [x] Verify matching geometry and no horizontal overflow across public destinations.

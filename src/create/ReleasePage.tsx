@@ -39,6 +39,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [applyDone, setApplyDone] = useState(false);
   const [showApplicants, setShowApplicants] = useState(false);
   const [applicants, setApplicants] = useState<any[] | null>(null);
+  const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
+  const unlockRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     (supabase.from as any)("releases")

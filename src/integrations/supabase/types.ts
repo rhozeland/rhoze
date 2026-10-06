@@ -732,6 +732,71 @@ export type Database = {
           },
         ]
       }
+      dm_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sender_id: string
+          thread_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          thread_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          thread_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dm_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "dm_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dm_threads: {
+        Row: {
+          created_at: string
+          id: string
+          last_at: string
+          owner_id: string | null
+          profile_kind: string
+          profile_name: string
+          profile_slug: string
+          starter_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_at?: string
+          owner_id?: string | null
+          profile_kind: string
+          profile_name?: string
+          profile_slug: string
+          starter_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_at?: string
+          owner_id?: string | null
+          profile_kind?: string
+          profile_name?: string
+          profile_slug?: string
+          starter_id?: string
+        }
+        Relationships: []
+      }
       doc_completions: {
         Row: {
           completed_at: string
@@ -2468,6 +2533,36 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_profiles: {
+        Row: {
+          created_at: string
+          id: string
+          photo_url: string | null
+          profile_kind: string
+          profile_name: string
+          profile_slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          photo_url?: string | null
+          profile_kind: string
+          profile_name?: string
+          profile_slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          photo_url?: string | null
+          profile_kind?: string
+          profile_name?: string
+          profile_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       service_packages: {
         Row: {
           billing_interval: string | null
@@ -3253,6 +3348,8 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      dm_can_access: { Args: { _thread: string }; Returns: boolean }
+      dm_open: { Args: { p_kind: string; p_slug: string }; Returns: string }
       email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }

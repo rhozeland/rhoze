@@ -6,3 +6,4 @@
 - Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
 - Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.
+- Route profile messaging through the `dm_open` database function, which resolves the profile owner server-side and sends unclaimed profiles to the team inbox, so visitors never pick a recipient account directly.

@@ -147,3 +147,36 @@
 .rz-my-pop a,.rz-my-pop button{background:none;border:0;text-align:left;font:inherit;font-size:.74rem;padding:.45rem .6rem;border-radius:8px;color:hsl(var(--ink));text-decoration:none;cursor:pointer}
 .rz-my-pop a:hover,.rz-my-pop button:hover{background:hsl(var(--line))}.rz-my-pop .danger{color:hsl(var(--destructive))}
 @media (max-width:480px){.rz-my-row{grid-template-columns:52px 1fr auto;}.rz-my-thumb{width:52px;height:36px}.rz-my-status{grid-column:2;justify-self:start;grid-row:2}.rz-my-menu{grid-row:1/3;grid-column:3}}
+button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:100%}
+.rz-pf-icon{display:inline-flex;align-items:center;gap:.35rem}.rz-pf-icon.on{border-color:hsl(var(--ink))}
+.rz-pf-pick{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;flex-direction:column;gap:.1rem;border:1px solid hsl(var(--line));border-radius:12px;padding:.6rem .75rem;color:hsl(var(--ink))}
+.rz-pf-pick:hover{border-color:hsl(var(--strong))}
+.rz-pf-saved{display:flex;align-items:center;gap:.5rem}.rz-pf-saved a{flex:1}.rz-pf-saved button{background:none;border:0;cursor:pointer;font-size:.72rem}
+.rz-pf-more{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+.rz-pf-more a{display:flex;flex-direction:column;gap:.2rem;text-decoration:none;color:hsl(var(--ink));border:1px solid hsl(var(--line));border-radius:14px;padding:.6rem}
+.rz-pf-more-img{width:100%;aspect-ratio:1;border-radius:10px;object-fit:cover;font-size:1.6rem}
+.rz-pf-more b{font-size:.78rem}.rz-pf-more small{font-size:.66rem;color:hsl(var(--mut))}
+.rz-lightbox{position:fixed;inset:0;z-index:1000;background:hsl(0 0% 0%/.85);display:grid;place-items:center;padding:1rem}
+.rz-lightbox-x{position:absolute;top:.6rem;right:.9rem;background:none;border:0;color:hsl(0 0% 100%);font-size:2rem;cursor:pointer;line-height:1}
+.rz-lightbox-body{max-width:min(1100px,100%);max-height:100%;display:grid;place-items:center}
+.rz-lightbox-img{max-width:100%;max-height:88vh;border-radius:10px;object-fit:contain}
+.rz-lightbox-video,.rz-lightbox-audio{width:min(960px,92vw);display:grid;gap:.5rem;justify-items:end}
+.rz-lightbox-video iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px}
+.rz-lightbox-audio iframe{width:100%;height:166px;border:0;border-radius:10px}
+.rz-lightbox .rz-link{color:hsl(0 0% 100%)}
+.rz-dm{display:grid;grid-template-columns:240px 1fr;gap:1rem;min-height:420px}
+.rz-dm-list{display:flex;flex-direction:column;gap:.35rem;border-right:1px solid hsl(var(--line));padding-right:.8rem}
+.rz-dm-list h1{font-size:1.2rem;margin:0 0 .4rem}
+.rz-dm-list button{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:.4rem;padding:.55rem .6rem;border-radius:10px;font-size:.78rem;color:hsl(var(--ink))}
+.rz-dm-list button.on,.rz-dm-list button:hover{background:hsl(var(--line))}
+.rz-dm-list small{color:hsl(var(--mut))}
+.rz-dm-thread{display:flex;flex-direction:column;min-width:0}
+.rz-dm-thread header{display:flex;flex-direction:column;gap:.15rem;border-bottom:1px solid hsl(var(--line));padding-bottom:.5rem}
+.rz-dm-thread header a{color:hsl(var(--ink));text-decoration:none}.rz-dm-thread header small{font-size:.68rem;color:hsl(var(--mut))}
+.rz-dm-back{display:none;background:none;border:0;cursor:pointer;align-self:flex-start;padding:0}
+.rz-dm-msgs{flex:1;overflow:auto;max-height:55vh;display:flex;flex-direction:column;gap:.4rem;padding:.7rem 0}
+.rz-dm-msgs p{margin:0;max-width:80%;padding:.5rem .7rem;border-radius:14px;font-size:.8rem;line-height:1.4;background:hsl(var(--line));white-space:pre-wrap;overflow-wrap:anywhere;align-self:flex-start}
+.rz-dm-msgs p.me{align-self:flex-end;background:hsl(var(--ink));color:hsl(var(--card))}.rz-dm-msgs p.me a{color:inherit}
+.rz-dm-input{display:flex;gap:.4rem;align-items:flex-end}.rz-dm-input textarea{flex:1}
+@media (max-width:560px){.rz-pf-more{grid-template-columns:1fr 1fr}.rz-dm{grid-template-columns:1fr}.rz-dm-list{border-right:0;padding-right:0}.rz-dm.has-active .rz-dm-list{display:none}.rz-dm:not(.has-active) .rz-dm-thread{display:none}.rz-dm-back{display:inline}}
+@media (max-width:560px){.rz-acct-hide{display:none!important}}

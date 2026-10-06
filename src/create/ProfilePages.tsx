@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
+import { ProfileTools, Lightbox, MoreCreators, AccountLinks, embedUrl } from "./ProfileExtras";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -77,6 +78,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const [c, setC] = useState<Creator | null | undefined>(undefined);
   const [credits, setCredits] = useState<Credit[]>([]);
   const [editing, setEditing] = useState(false);
+  const [view, setView] = useState<Sample | null>(null);
   const { uid, team } = useUser();
 
   const load = async () => {
@@ -96,7 +98,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const samples = (c?.work_samples ?? []) as Sample[];
 
   return (
-    <Shell right={<a className="rz-link" href="/community.html">Community</a>}>
+    <Shell right={<AccountLinks />}>
       {isOwner && <OwnerBar label="This is your profile" editing={editing} onEdit={() => setEditing((e) => !e)} />}
       <div className="rz-card">
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
@@ -109,11 +111,11 @@ export function CreatorProfile({ slug }: { slug: string }) {
                 <h1>{c.display_name}</h1>
                 <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
                 <p className="rz-pf-meta"><b>{rate}</b> · {c.membership_tier || "Community"} member{c.rating != null && <> · {Number(c.rating).toFixed(1)} ★</>}</p>
-                <div className="rz-pf-actions">
-                  <a className="rz-btn pri" href={`/create.html?new=1&invite=${encodeURIComponent(c.slug)}`}>Invite to project</a>
+                <ProfileTools kind="creator" slug={c.slug} name={c.display_name} photo={c.photo_url} isOwner={isOwner && c.user_id === uid} />
+                {(ig || web) && <div className="rz-pf-actions" style={{ marginTop: ".4rem" }}>
                   {ig && <a className="rz-btn" href={ig} target="_blank" rel="noopener noreferrer">Instagram ↗</a>}
                   {web && <a className="rz-btn" href={web} target="_blank" rel="noopener noreferrer">Website ↗</a>}
-                </div>
+                </div>}
               </div>
             </div>
 
@@ -126,7 +128,11 @@ export function CreatorProfile({ slug }: { slug: string }) {
               {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
                 <div className="rz-pf-grid">
                   {samples.map((s, i) => s.kind === "image" ? (
-                    <a key={i} className="rz-pf-tile" href={s.url} target="_blank" rel="noopener noreferrer"><BlobImg src={s.url} alt={s.title || `Work sample ${i + 1}`} /></a>
+                    <button key={i} type="button" className="rz-pf-tile" onClick={() => setView(s)} aria-label={`Open ${s.title || `work sample ${i + 1}`}`}><BlobImg src={s.url} alt={s.title || `Work sample ${i + 1}`} /></button>
+                  ) : embedUrl(s.url) ? (
+                    <button key={i} type="button" className="rz-pf-tile rz-pf-link" onClick={() => setView(s)}>
+                      <span>{s.kind === "audio" ? "♪" : "▶"}</span><b>{s.title || host(s.url)}</b><small>{s.kind === "audio" ? "Listen" : "Play"}</small>
+                    </button>
                   ) : (
                     <a key={i} className="rz-pf-tile rz-pf-link" href={s.url} target="_blank" rel="noopener noreferrer">
                       <span>{s.kind === "audio" ? "♪" : "▶"}</span><b>{s.title || host(s.url)}</b><small>{s.kind === "audio" ? "Listen" : "Watch"} ↗</small>
@@ -143,9 +149,19 @@ export function CreatorProfile({ slug }: { slug: string }) {
                   ))}
                 </ul>
               )}</section>
+
+            <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
           </>
         )}
       </div>
+      {view && (
+        <Lightbox onClose={() => setView(null)}>
+          {view.kind === "image" ? <BlobImg src={view.url} alt={view.title || "Work sample"} className="rz-lightbox-img" />
+            : <div className={view.kind === "audio" ? "rz-lightbox-audio" : "rz-lightbox-video"}>
+                <iframe src={embedUrl(view.url)!} title={view.title || "Work sample"} allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowFullScreen />
+                <a className="rz-link" href={view.url} target="_blank" rel="noopener noreferrer">Open in new tab ↗</a></div>}
+        </Lightbox>
+      )}
     </Shell>
   );
 }
@@ -246,7 +262,7 @@ export function BrandProfile({ slug }: { slug: string }) {
       .filter(({ role }: any) => role && String(role.name || "").trim()));
 
   return (
-    <Shell right={<a className="rz-link" href="/community.html">Community</a>}>
+    <Shell right={<AccountLinks />}>
       {canEdit && exists && <OwnerBar label="You manage this brand" editing={editing} onEdit={() => setEditing((e) => !e)} />}
       <div className="rz-card">
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
@@ -259,9 +275,8 @@ export function BrandProfile({ slug }: { slug: string }) {
                 <h1>{name}</h1>
                 <div className="rz-pf-tags"><span>{brand?.category || "Brand"}</span></div>
                 <p className="rz-pf-bio" style={{ margin: ".4rem 0 .7rem" }}>{brand?.bio || "This brand hasn't added a bio yet."}</p>
-                <div className="rz-pf-actions">
-                  <a className="rz-btn pri" href="#hiring">View open roles</a>
-                </div>
+                <ProfileTools kind="brand" slug={slug} name={name} photo={brand?.logo_url} isOwner={canEdit}
+                  onViewRoles={hiring.length === 1 ? `/release/${hiring[0].r.slug}?apply=${hiring[0].i}` : hiring.length ? "#hiring" : rels[0] ? `/release/${rels[0].slug}` : null} />
               </div>
             </div>
 

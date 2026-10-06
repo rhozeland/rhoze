@@ -9,3 +9,5 @@
 - [x] Send the homepage's main action directly to a fresh Create project flow.
 - [x] Make booking a distinctive fixed action across public menu pages rather than a regular menu link.
 - [x] Verify the homepage link and floating booking action across desktop and mobile menu destinations.
+
+- [x] Remove the blank hidden page above homepage sign-in and verify the form appears below the navigation.

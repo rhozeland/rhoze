@@ -123,11 +123,24 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   };
 
   useEffect(() => {
-    if (!walletAddr || !r?.coin_mint) { setHolds(false); setBalState("idle"); return; }
+    if (!walletAddr || !r?.coin_mint) { setHolds(false); setBalState("idle"); setHoldMsg(null); return; }
     let off = false;
     setBalState("loading");
     fetchTokenBalance(walletAddr, r.coin_mint)
-      .then((b) => { if (!off) { setHolds(b > 0); setBalState("ok"); } })
+      .then((b) => {
+        if (off) return;
+        const has = b > 0;
+        setHolds(has);
+        setBalState("ok");
+        const key = `rz_hold_seen:${walletAddr}:${r.coin_mint}`;
+        if (has) {
+          if (!sessionStorage.getItem(key)) {
+            sessionStorage.setItem(key, "1");
+            setHoldMsg("holds");
+            setTimeout(() => unlockRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+          } else setHoldMsg(null);
+        } else setHoldMsg("none");
+      })
       .catch(() => { if (!off) { setHolds(false); setBalState("error"); } });
     return () => { off = true; };
   }, [walletAddr, r?.coin_mint, balTry]);

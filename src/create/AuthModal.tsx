@@ -2,8 +2,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 /** Email/password sign up or log in. Calls onDone once a session exists. */
-export default function AuthModal({ onClose, onDone, redirectTo, intro }: {
-  onClose: () => void; onDone: () => void; redirectTo: string; intro?: string;
+export default function AuthModal({ onClose, onDone, redirectTo, intro, action = " and publish" }: {
+  onClose: () => void; onDone: () => void; redirectTo: string; intro?: string; action?: string;
 }) {
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [email, setEmail] = useState("");
@@ -54,7 +54,7 @@ export default function AuthModal({ onClose, onDone, redirectTo, intro }: {
             {err && <div className="rz-err">{err}</div>}
             <div className="rz-actions">
               <button type="button" className="rz-btn" onClick={onClose} disabled={busy}>Cancel</button>
-              <button type="submit" className="rz-btn pri" disabled={busy}>{busy ? "One moment…" : mode === "signup" ? "Sign up and publish" : "Log in and publish"}</button>
+              <button type="submit" className="rz-btn pri" disabled={busy}>{busy ? "One moment…" : mode === "signup" ? `Sign up${action}` : `Log in${action}`}</button>
             </div>
           </form>
         )}

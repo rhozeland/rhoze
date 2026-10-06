@@ -58,7 +58,7 @@ export default function MyProjects() {
         <div className="rz-head"><h1>My projects</h1><p>Everything you've created, on any device.</p></div>
         {signedIn === false && (
           <AuthModal onClose={() => (location.href = "/")} onDone={load} redirectTo={`${location.origin}/my-projects`}
-            intro="Sign in to see and manage your projects." />
+            intro="Sign in to see and manage your projects." action="" />
         )}
         {signedIn && (
           <>

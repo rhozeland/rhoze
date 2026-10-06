@@ -5,3 +5,4 @@
 - Mount the public floating booking action through `public/shared.js` for static pages and `SiteNav` for React pages, with shared styling in `public/site-nav.css`, so booking stays visible across menu destinations without duplicating page-specific markup.
 - Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
+- Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.

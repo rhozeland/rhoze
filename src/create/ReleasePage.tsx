@@ -15,15 +15,15 @@ const firstSentence = (t?: string) => {
 };
 
 export default function ReleasePage({ slug }: { slug: string }) {
-  return <SolanaWalletProvider><ReleaseInner slug={slug} /></SolanaWalletProvider>;
+  const [connErr, setConnErr] = useState(false);
+  return <SolanaWalletProvider onError={() => setConnErr(true)}><ReleaseInner slug={slug} connErr={connErr} setConnErr={setConnErr} /></SolanaWalletProvider>;
 }
 
-function ReleaseInner({ slug }: { slug: string }) {
+function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; setConnErr: (v: boolean) => void }) {
   const { publicKey, connected, connecting } = useWallet();
   const { setVisible } = useWalletModal();
   const [balState, setBalState] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const [balTry, setBalTry] = useState(0);
-  const [connErr, setConnErr] = useState(false);
   const [r, setR] = useState<any>(undefined);
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);

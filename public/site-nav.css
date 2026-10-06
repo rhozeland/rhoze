@@ -1,4 +1,13 @@
 /* Public-site navigation. The dark surface stays constant across page themes. */
+/* One homepage-sized frame for public pages; embedded pages use their parent's frame. */
+:root{--site-page-gutter:1.5rem;--site-page-width:1480px;--site-page-radius:30px;--site-page-backdrop:0 0% 5%}
+html:not(.site-embedded) body:has(.site-nav){margin:0!important;padding:var(--site-page-gutter)!important;box-sizing:border-box;background:hsl(var(--site-page-backdrop))!important}
+html:not(.site-embedded) body:has(.site-nav) .page-shell,
+html:not(.site-embedded) body:has(.site-nav) div:has(> .site-nav){width:100%!important;max-width:var(--site-page-width)!important;margin:0 auto!important;border-radius:var(--site-page-radius)!important;overflow:clip!important;box-sizing:border-box}
+html:not(.site-embedded) body:has(.site-nav) .rz-flow,
+html:not(.site-embedded) body:has(.site-nav) div.min-h-screen:has(> .site-nav){min-height:calc(100dvh - 2 * var(--site-page-gutter))}
+html:not(.site-embedded) .site-nav{border-radius:0}
+@media(max-width:860px){:root{--site-page-gutter:0rem;--site-page-radius:0px}}
 :root{--site-nav-surface:0 0% 12%;--site-nav-ink:0 0% 100%;--site-nav-line:0 0% 100% / .34;--site-nav-hover:0 0% 100% / .12}
 .site-nav{position:relative;z-index:40;display:flex;align-items:center;gap:clamp(.75rem,1.7vw,1.75rem);min-height:76px;padding:.85rem clamp(1rem,2.5vw,2.5rem)!important;background:hsl(var(--site-nav-surface))!important;border:0!important;border-radius:26px 26px 0 0;color:hsl(var(--site-nav-ink));font-family:Arial,Helvetica,sans-serif;box-sizing:border-box}
 .site-nav *{box-sizing:border-box}

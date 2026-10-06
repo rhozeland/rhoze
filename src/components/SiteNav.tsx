@@ -16,6 +16,11 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [authOpen, setAuthOpen] = useState(false);
   const [hasSession, setHasSession] = useState(false);
   useEffect(() => {
+    let embedded = new URLSearchParams(window.location.search).get("embed") === "1";
+    try { embedded = embedded || window.self !== window.top; } catch { embedded = true; }
+    document.documentElement.classList.toggle("site-embedded", embedded);
+  }, []);
+  useEffect(() => {
     if (signIn) return;
     supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
     const { data } = supabase.auth.onAuthStateChange((_e, s) => setHasSession(!!s));

@@ -46,6 +46,20 @@ Deno.serve(async (req) => {
     }
 
     // DexScreener market data (no key)
+    const mintParam = (body.mint ?? url.searchParams.get('mint') ?? '').toString().trim();
+    if (mintParam) {
+      if (!isBase58Address(mintParam)) {
+        return new Response(JSON.stringify({ error: 'Invalid mint' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      const accts = await rpc<{ value: any[] }>('getTokenAccountsByOwner', [address, { mint: mintParam }, { encoding: 'jsonParsed' }]);
+      let bal = 0;
+      for (const a of accts?.value ?? []) {
+        const amt = a?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
+        if (typeof amt === 'number') bal += amt;
+      }
+      return new Response(JSON.stringify({ address, mint: mintParam, balance: bal }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
     const dexP = fetch(`https://api.dexscreener.com/latest/dex/tokens/${RHOZE_MINT}`)
       .then((r) => r.json())
       .catch(() => null);

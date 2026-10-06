@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, money } from "./shared";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 
 type Status = "Upcoming" | "Funded" | "Delivered";
-const FAKE_WALLET = "7xKq…9fRm";
 const CAUSE_WALLET = "Cz4P…w2Lb";
 
 const firstSentence = (t?: string) => {
@@ -13,10 +15,20 @@ const firstSentence = (t?: string) => {
 };
 
 export default function ReleasePage({ slug }: { slug: string }) {
+  const [connErr, setConnErr] = useState(false);
+  return <SolanaWalletProvider onError={() => setConnErr(true)}><ReleaseInner slug={slug} connErr={connErr} setConnErr={setConnErr} /></SolanaWalletProvider>;
+}
+
+function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; setConnErr: (v: boolean) => void }) {
+  const { publicKey, connected, connecting } = useWallet();
+  const { setVisible } = useWalletModal();
+  const [balState, setBalState] = useState<"idle" | "loading" | "ok" | "error">("idle");
+  const [balTry, setBalTry] = useState(0);
   const [r, setR] = useState<any>(undefined);
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [holds, setHolds] = useState(false);
+  const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
   const [copied, setCopied] = useState(false);
   const [note, setNote] = useState("");
@@ -110,12 +122,30 @@ export default function ReleasePage({ slug }: { slug: string }) {
     }, 2000);
   };
 
+  useEffect(() => {
+    if (!walletAddr || !r?.coin_mint) { setHolds(false); setBalState("idle"); return; }
+    let off = false;
+    setBalState("loading");
+    fetchTokenBalance(walletAddr, r.coin_mint)
+      .then((b) => { if (!off) { setHolds(b > 0); setBalState("ok"); } })
+      .catch(() => { if (!off) { setHolds(false); setBalState("error"); } });
+    return () => { off = true; };
+  }, [walletAddr, r?.coin_mint, balTry]);
+
+  useEffect(() => { if (connected) setConnErr(false); }, [connected]);
+
+  const openConnect = () => {
+    setConnErr(false);
+    try { setVisible(true); } catch { setConnErr(true); }
+  };
+  const shortAddr = walletAddr ? `${walletAddr.slice(0, 4)}…${walletAddr.slice(-4)}` : "";
+
   const pill = (s: Status) => (
     <span className={`rz-status rz-status-${s.toLowerCase()}`}>{s}</span>
   );
 
   return (
-    <Shell right={holds ? <span className="rz-wallet-chip"><i />{FAKE_WALLET} <small>Solana</small></span> : <a className="rz-link" href="/create.html?new=1">Create a project</a>}>
+    <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href="/create.html?new=1">Create a project</a>}>
       {r && isOwner && (
         <div className="rz-owner">
           <span>You own this page</span>
@@ -163,7 +193,7 @@ export default function ReleasePage({ slug }: { slug: string }) {
               {pumpUrl
                 ? <a className="rz-btn pri" href={pumpUrl} target="_blank" rel="noopener noreferrer">Support this project</a>
                 : <button className="rz-btn pri" onClick={() => setNote("This project hasn't attached a coin yet. Follow along and check back soon.")}>Support this project</button>}
-              <button className="rz-btn" onClick={() => setNote("Wallet connection is coming soon.")}>Connect wallet</button>
+              {!walletAddr && <button className="rz-btn" onClick={openConnect} disabled={connecting}>{connecting ? "Connecting…" : "Connect wallet"}</button>}
               <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
             </div>
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
@@ -219,10 +249,17 @@ export default function ReleasePage({ slug }: { slug: string }) {
                 <div><b>Stems and project files</b><small>{holds ? "Unlocked with your wallet" : `Hold ${ticker ? "$" + ticker : "the coin"} to unlock`}</small></div>
               </div>
             </div>
-            <label className="rz-toggle">
-              <input type="checkbox" checked={holds} onChange={(e) => setHolds(e.target.checked)} />
-              <span />Demo: wallet holds coin
-            </label>
+            {connErr && (
+              <p className="rz-note" style={{ marginTop: ".8rem" }}>
+                We couldn't connect your wallet. <button className="rz-textlink" onClick={openConnect}>Try again</button>
+              </p>
+            )}
+            {r.coin_mint && balState === "loading" && <p className="rz-note" style={{ marginTop: ".8rem" }}>Checking your wallet…</p>}
+            {r.coin_mint && balState === "error" && (
+              <p className="rz-note" style={{ marginTop: ".8rem" }}>
+                We couldn't check your wallet right now. <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Retry</button>
+              </p>
+            )}
 
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
           </>

@@ -212,6 +212,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 : <button className="rz-btn pri" onClick={() => setNote("This project hasn't attached a coin yet. Follow along and check back soon.")}>Support this project</button>}
               {!walletAddr && <button className="rz-btn" onClick={openConnect} disabled={connecting}>{connecting ? "Connecting…" : "Connect wallet"}</button>}
               <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
+              <button className="rz-textlink" onClick={() => setShareOpen(true)}>Share</button>
             </div>
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 

@@ -30,19 +30,15 @@ export default function ReleasePage({ slug }: { slug: string }) {
 
   useEffect(() => {
     (supabase.from as any)("releases")
-      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,published_at")
+      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,cover_url,user_id,published_at")
       .eq("slug", slug).eq("status", "published").maybeSingle()
       .then(async ({ data }: any) => {
         setR(data ?? null);
         if (!data) return;
         document.title = `${data.title} | Rhozeland`;
         setStatuses((data.milestones || []).map((_: any, i: number) => (i === 0 ? "Funded" : "Upcoming")));
-        const token = localStorage.getItem("rz_release_token");
-        if (token) {
-          const { data: own } = await (supabase.rpc as any)("release_get_draft", { p_token: token, p_id: data.id });
-          const row = Array.isArray(own) ? own[0] : own;
-          if (row?.id) setIsOwner(true);
-        }
+        const { data: u } = await supabase.auth.getUser();
+        if (u.user && data.user_id === u.user.id) setIsOwner(true);
       }, () => setR(null));
   }, [slug]);
 
@@ -65,6 +61,19 @@ export default function ReleasePage({ slug }: { slug: string }) {
     setApplyBusy(false);
     if (error) return setApplyErr("Your application could not be sent. Please try again.");
     setApplyDone(true);
+  };
+
+  const [confirmDel, setConfirmDel] = useState(false);
+  const archive = async () => {
+    const { error } = await (supabase.rpc as any)("release_set_archived", { p_id: r.id, p_archived: true });
+    if (error) return setNote("Could not archive. Please try again.");
+    location.href = "/my-projects?filter=archived";
+  };
+  const del = async () => {
+    if (r.cover_url) { const m = String(r.cover_url).match(/\/avatars\/(covers\/.+)$/); if (m) await supabase.storage.from("avatars").remove([m[1]]); }
+    const { error } = await (supabase.rpc as any)("release_delete", { p_id: r.id });
+    if (error) { setConfirmDel(false); return setNote("Could not delete. Please try again."); }
+    location.href = "/my-projects";
   };
 
   const loadApplicants = async () => {
@@ -112,7 +121,9 @@ export default function ReleasePage({ slug }: { slug: string }) {
           <span>You own this page</span>
           <div>
             <a className="rz-btn" href={`/create.html?draft=${r.id}`}>Edit project</a>
-            <a className="rz-btn" href="/create.html">My projects</a>
+            <a className="rz-btn" href="/my-projects">My projects</a>
+            <button className="rz-btn" onClick={archive}>Archive</button>
+            <button className="rz-btn" onClick={() => setConfirmDel(true)}>Delete</button>
             {r.answers?.project_type === "brand" && <button className="rz-btn" onClick={loadApplicants}>Applicants</button>}
             <button className="rz-btn pri" onClick={startDeliver}>Mark milestone delivered</button>
           </div>
@@ -127,7 +138,7 @@ export default function ReleasePage({ slug }: { slug: string }) {
         {r && (
           <>
             <div className="rz-cover">
-              {r.coin_image ? <img src={r.coin_image} alt={`${r.title} artwork`} /> : <span>{r.title}</span>}
+              {r.cover_url || r.coin_image ? <img src={r.cover_url || r.coin_image} alt={`${r.title} cover art`} /> : <span>{r.title}</span>}
             </div>
             <div className="rz-head" style={{ marginBottom: "1rem" }}>
               <h1 style={{ fontSize: "1.6rem" }}>{r.title}</h1>
@@ -246,6 +257,15 @@ export default function ReleasePage({ slug }: { slug: string }) {
         </div>
       )}
 
+      {confirmDel && r && (
+        <div className="rz-modal" onClick={() => setConfirmDel(false)}>
+          <div className="rz-card" style={{ maxWidth: 380 }} onClick={(e) => e.stopPropagation()}>
+            <div className="rz-head" style={{ marginBottom: 0 }}><h1>Delete this project?</h1>
+              <p>This can't be undone. The roadmap, roles, applicants, cover art and receipts will be removed.</p>
+              <div className="rz-actions"><button className="rz-btn" onClick={() => setConfirmDel(false)}>Cancel</button><button className="rz-btn pri" onClick={del}>Delete forever</button></div></div>
+          </div>
+        </div>
+      )}
       {showApplicants && r && (
         <div className="rz-modal" onClick={() => setShowApplicants(false)}>
           <div className="rz-card" style={{ maxWidth: 520, maxHeight: "85vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>

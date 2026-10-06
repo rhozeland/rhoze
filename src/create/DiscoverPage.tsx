@@ -25,7 +25,7 @@ export default function DiscoverPage() {
   useEffect(() => {
     document.title = "Discover | Rhozeland";
     (supabase.from as any)("releases")
-      .select("id,slug,title,creator_name,answers,coin_ticker,coin_image,published_at,cause_name")
+      .select("id,slug,title,creator_name,answers,coin_ticker,coin_image,cover_url,published_at,cause_name")
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .then(({ data }: any) => setRows((data ?? []) as Release[]), () => setRows([]));
@@ -89,7 +89,7 @@ export default function DiscoverPage() {
               return (
                 <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
                   <span className="rz-feed-cover">
-                    {r.coin_image ? <img src={r.coin_image} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}
+                    {(r as any).cover_url || r.coin_image ? <img src={(r as any).cover_url || r.coin_image!} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}
                   </span>
                   <span className="rz-feed-meta">
                     <small>{r.creator_name || "Rhozeland artist"}</small>

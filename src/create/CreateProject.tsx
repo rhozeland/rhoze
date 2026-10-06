@@ -203,11 +203,13 @@ export default function CreateProject() {
   const skipCoin = () => { setMint(""); setTicker(""); setMeta(null); setCoinErr(""); setErr(""); setStepKey("publish"); save(flow.length); };
 
   // Publish a saved draft by id (used directly and after sign-in)
+  const publishingRef = useRef(false);
   const finishPublish = async (id: string) => {
+    if (publishingRef.current) return; publishingRef.current = true;
     setPublishing(true); setErr("");
     await (supabase.rpc as any)("release_claim", { p_token: token });
     const { data, error } = await (supabase.rpc as any)("release_publish", { p_token: token, p_id: id });
-    setPublishing(false);
+    setPublishing(false); publishingRef.current = false;
     if (error) { setErr("We couldn't publish right now. Your project is saved, please try again."); return; }
     localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(PENDING_KEY);
     location.href = `/release/${data}`;
@@ -496,7 +498,7 @@ export default function CreateProject() {
         )}
 
         {err && <div className="rz-err">{err}</div>}
-        {authFor && <AuthModal onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => { const id = authFor; setAuthFor(null); if (id) finishPublish(id); }}
+        {authFor && <AuthModal onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
           redirectTo={`${location.origin}/create.html?draft=${authFor}&autopublish=1`} />}
         {savedAt && <div className="rz-note rz-saved">Draft saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
       </div>

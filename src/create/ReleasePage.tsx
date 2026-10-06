@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, money } from "./shared";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -39,6 +39,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [applyDone, setApplyDone] = useState(false);
   const [showApplicants, setShowApplicants] = useState(false);
   const [applicants, setApplicants] = useState<any[] | null>(null);
+  const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
+  const unlockRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     (supabase.from as any)("releases")
@@ -123,11 +125,24 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   };
 
   useEffect(() => {
-    if (!walletAddr || !r?.coin_mint) { setHolds(false); setBalState("idle"); return; }
+    if (!walletAddr || !r?.coin_mint) { setHolds(false); setBalState("idle"); setHoldMsg(null); return; }
     let off = false;
     setBalState("loading");
     fetchTokenBalance(walletAddr, r.coin_mint)
-      .then((b) => { if (!off) { setHolds(b > 0); setBalState("ok"); } })
+      .then((b) => {
+        if (off) return;
+        const has = b > 0;
+        setHolds(has);
+        setBalState("ok");
+        const key = `rz_hold_seen:${walletAddr}:${r.coin_mint}`;
+        if (has) {
+          if (!sessionStorage.getItem(key)) {
+            sessionStorage.setItem(key, "1");
+            setHoldMsg("holds");
+            setTimeout(() => unlockRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+          } else setHoldMsg(null);
+        } else setHoldMsg("none");
+      })
       .catch(() => { if (!off) { setHolds(false); setBalState("error"); } });
     return () => { off = true; };
   }, [walletAddr, r?.coin_mint, balTry]);
@@ -238,7 +253,17 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               </>
             )}
 
-            <h2 className="rz-h2">Unlocks</h2>
+            {holdMsg === "holds" && (
+              <p className="rz-note" style={{ marginTop: "1.2rem", padding: ".8rem 1rem", border: "1px solid hsl(var(--line))", borderRadius: 12 }}>
+                You hold {ticker ? "$" + ticker : "the coin"} — your unlocks are below
+              </p>
+            )}
+            {holdMsg === "none" && (
+              <p className="rz-note" style={{ marginTop: "1.2rem" }}>
+                Connected, but you don't hold {ticker ? "$" + ticker : "the coin"} yet
+              </p>
+            )}
+            <h2 className="rz-h2" ref={unlockRef}>Unlocks</h2>
             <div className="rz-inv">
               <div className="rz-unlock">
                 <span className="rz-ico-btn" aria-label="Play">▶</span>

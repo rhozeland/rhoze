@@ -8,31 +8,78 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import { Button } from "@/components/ui/button";
-import { FileAudio, LockKeyhole, Pin, Plus } from "lucide-react";
+import { FileAudio, LockKeyhole, Pin, Plus, Play, Pause, Quote, Sparkles, Clock } from "lucide-react";
 import "./exclusive.css";
 
-type Post = { id: string; body: string; media_kind: "image" | "video" | null; media_url: string | null; created_at: string; local?: boolean };
+type Post = { id: string; body: string; media_kind: "image" | "video" | "audio" | null; media_url: string | null; created_at: string; local?: boolean };
 
 const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
 
-// Render media through blob: URLs so Chrome never blocks remote uploads.
-function BlobMedia({ url, kind }: { url: string; kind: "image" | "video" }) {
+type Kind = "image" | "video" | "audio";
+// Load remote media through blob: URLs so Chrome never blocks remote uploads.
+function useBlob(url: string, kind: Kind) {
   const [src, setSrc] = useState("");
   useEffect(() => {
     let u = "", off = false;
     if (url.startsWith("blob:")) { setSrc(url); return; }
     fetch(url).then((r) => r.blob()).then((b) => {
       if (off) return;
-      const typed = b.type && b.type !== "application/octet-stream" ? b : new Blob([b], { type: kind === "image" ? "image/jpeg" : "video/mp4" });
+      const typed = b.type && b.type !== "application/octet-stream" ? b : new Blob([b], { type: kind === "image" ? "image/jpeg" : kind === "audio" ? "audio/mpeg" : "video/mp4" });
       u = URL.createObjectURL(typed); setSrc(u);
     }).catch(() => {});
     return () => { off = true; if (u) URL.revokeObjectURL(u); };
   }, [url, kind]);
-  if (!src) return <div className="rz-skel" style={{ aspectRatio: "16/9", marginTop: ".6rem" }} />;
-  return kind === "image"
-    ? <img className="rz-post-media" src={src} alt="" />
-    : <video className="rz-post-media" src={src} controls playsInline />;
+  return src;
 }
+
+function VideoThumb({ src }: { src: string }) {
+  const [play, setPlay] = useState(false);
+  if (play) return <video className="rz-post-media" src={src} controls autoPlay playsInline />;
+  return (
+    <button type="button" className="rz-vthumb" onClick={() => setPlay(true)} aria-label="Play video">
+      <video className="rz-post-media" src={`${src}#t=0.1`} muted playsInline preload="metadata" />
+      <span className="rz-vplay"><Play size={22} fill="currentColor" aria-hidden="true" /></span>
+    </button>
+  );
+}
+
+function Waveform({ src }: { src: string }) {
+  const [peaks, setPeaks] = useState<number[]>([]);
+  const [prog, setProg] = useState(0);
+  const [on, setOn] = useState(false);
+  const ref = useRef<HTMLAudioElement>(null);
+  useEffect(() => {
+    let off = false;
+    fetch(src).then((r) => r.arrayBuffer()).then((buf) => new AudioContext().decodeAudioData(buf)).then((ab) => {
+      const d = ab.getChannelData(0), n = 56, step = Math.floor(d.length / n), out: number[] = [];
+      for (let i = 0; i < n; i++) { let m = 0; for (let j = 0; j < step; j += 64) m = Math.max(m, Math.abs(d[i * step + j] || 0)); out.push(m); }
+      const mx = Math.max(...out, 0.01); if (!off) setPeaks(out.map((v) => Math.max(0.08, v / mx)));
+    }).catch(() => !off && setPeaks(Array.from({ length: 56 }, (_, i) => 0.3 + 0.5 * Math.abs(Math.sin(i * 0.7)))));
+    return () => { off = true; };
+  }, [src]);
+  const toggle = () => { const a = ref.current; if (!a) return; a.paused ? a.play() : a.pause(); };
+  const seek = (e: React.MouseEvent<HTMLDivElement>) => { const a = ref.current; if (!a?.duration) return; const b = e.currentTarget.getBoundingClientRect(); a.currentTime = ((e.clientX - b.left) / b.width) * a.duration; };
+  return (
+    <div className="rz-wave">
+      <audio ref={ref} src={src} preload="metadata" onPlay={() => setOn(true)} onPause={() => setOn(false)} onTimeUpdate={(e) => setProg(e.currentTarget.currentTime / (e.currentTarget.duration || 1))} />
+      <button type="button" className="rz-wave-btn" onClick={toggle} aria-label={on ? "Pause" : "Play"}>{on ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}</button>
+      <div className="rz-wave-bars" onClick={seek} role="slider" aria-label="Seek" aria-valuenow={Math.round(prog * 100)}>
+        {peaks.map((v, i) => <i key={i} style={{ height: `${v * 100}%` }} className={i / peaks.length < prog ? "on" : ""} />)}
+      </div>
+    </div>
+  );
+}
+
+function BlobMedia({ url, kind }: { url: string; kind: Kind }) {
+  const src = useBlob(url, kind);
+  if (!src) return <div className="rz-skel" style={{ aspectRatio: kind === "audio" ? "5/1" : "16/9", marginTop: 0 }} />;
+  if (kind === "image") return <img className="rz-post-media" src={src} alt="" />;
+  if (kind === "audio") return <Waveform src={src} />;
+  return <VideoThumb src={src} />;
+}
+
+// Placeholder until on-chain holder counts are wired in.
+const holderCount = (mint: string) => 120 + (Array.from(mint).reduce((a, c) => a + c.charCodeAt(0), 0) % 380);
 
 export default function ExclusivePage({ slug }: { slug: string }) {
   const [connErr, setConnErr] = useState(false);
@@ -55,9 +102,19 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState("");
+  const [noteErr, setNoteErr] = useState("");
+  useEffect(() => { document.documentElement.classList.add("rz-exclusive"); return () => document.documentElement.classList.remove("rz-exclusive"); }, []);
+  const saveNote = async (v: string) => {
+    setNoteErr("");
+    const { error } = await (supabase as any).rpc("release_set_note", { p_id: r.id, p_note: v });
+    if (error) return setNoteErr("Your note could not be saved. Please try again.");
+    setR({ ...r, owner_note: v.trim() || null }); setNoteOpen(false);
+  };
 
   useEffect(() => {
-    (supabase.from as any)("releases").select("id,title,creator_name,coin_mint,coin_ticker,cover_url,user_id")
+    (supabase.from as any)("releases").select("id,title,creator_name,coin_mint,coin_ticker,cover_url,user_id,milestones,owner_note")
       .eq("slug", slug).eq("status", "published").maybeSingle()
       .then(async ({ data }: any) => {
         setR(data ?? null);
@@ -113,10 +170,10 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
     const body = text.trim();
     if (!body) return setErr("Write something for your update.");
     if (body.length > 5000) return setErr("Keep it under 5000 characters.");
-    let kind: "image" | "video" | null = null;
+    let kind: Kind | null = null;
     if (file) {
-      if (file.type.startsWith("image/")) kind = "image"; else if (file.type.startsWith("video/")) kind = "video";
-      else return setErr("Please choose an image or video.");
+      if (file.type.startsWith("image/")) kind = "image"; else if (file.type.startsWith("video/")) kind = "video"; else if (file.type.startsWith("audio/")) kind = "audio";
+      else return setErr("Please choose an image, video or audio file.");
       if (file.size > 50 * 1024 * 1024) return setErr("Files must be under 50 MB.");
     }
     setBusy(true); setErr("");
@@ -138,6 +195,11 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   };
 
   const unlocked = isOwner || (posts !== null && bal === "holds");
+  const member = posts !== null && bal === "holds";
+  const hasMedia = (posts || []).some((p) => p.media_url);
+  const ms = (r?.milestones || []) as any[];
+  const nextMs = ms[1]?.title || ms[0]?.title || "";
+  let n = 0; const anim = () => ({ style: { ["--i" as any]: n++ } });
 
   return (
     <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href={`/release/${encodeURIComponent(slug)}`}>Back to project</a>}>
@@ -152,13 +214,21 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
           <>
             <a className="rz-textlink" href={`/release/${encodeURIComponent(slug)}`}>← {r.title}</a>
             <div className="rz-board-head">
-              <h1>Exclusive feed</h1>
+              <h1>Exclusive feed {member && <span className="rz-member"><Sparkles size={12} aria-hidden="true" />Member</span>}</h1>
               <p>Updates, stems and files from {r.creator_name || "the creator"}, for people who hold {tk}.</p>
             </div>
 
+            {member && r.coin_mint && <div className="rz-welcome">You're one of <b>{holderCount(r.coin_mint).toLocaleString("en-CA")}</b> {tk} holders with access to this feed.</div>}
+            {(r.owner_note || isOwner) && (
+              <figure className="rz-note-card">
+                <Quote size={22} aria-hidden="true" />
+                {r.owner_note ? <blockquote>{r.owner_note}</blockquote> : <blockquote className="rz-note-empty">Pin a short note for your supporters.</blockquote>}
+                <figcaption>— {r.creator_name || "The creator"}{isOwner && <button className="rz-textlink" onClick={() => { setNoteText(r.owner_note || ""); setNoteErr(""); setNoteOpen(true); }}>{r.owner_note ? "Edit note" : "Add note"}</button>}</figcaption>
+              </figure>
+            )}
             <div className="rz-board-grid" aria-label="Project mood board">
-              {isOwner && <Button variant="outline" className="rz-board-tile rz-board-add" onClick={() => { setErr(""); setFormOpen(true); }}><Plus aria-hidden="true" /><span>Add content</span></Button>}
-              <article className="rz-board-tile">
+              {isOwner && <Button variant="outline" {...anim()} className="rz-board-tile rz-board-add" onClick={() => { setErr(""); setFormOpen(true); }}><Plus aria-hidden="true" /><span>Add content</span></Button>}
+              <article className="rz-board-tile" {...anim()}>
                 <div className="rz-board-media rz-board-cover">
                   {r.cover_url ? <BlobMedia url={r.cover_url} kind="image" /> : <div className="rz-board-art"><Pin aria-hidden="true" /></div>}
                   <span className="rz-board-pinned"><Pin size={12} aria-hidden="true" />Pinned</span>
@@ -170,25 +240,29 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                 </div>
               </article>
               {unlocked && (posts || []).map((p) => (
-                <article className="rz-board-tile" key={p.id}>
+                <article className="rz-board-tile" key={p.id} {...anim()}>
                   {p.media_url && p.media_kind && <div className="rz-board-media"><BlobMedia url={p.media_url} kind={p.media_kind} /></div>}
                   <div className="rz-board-caption"><p>{p.body}</p><small>{fmtDate(p.created_at)} · Holders only</small></div>
                 </article>
               ))}
-              {!unlocked && <article className="rz-board-tile rz-board-locked" aria-label="Locked holder updates">
+              {!unlocked && <article className="rz-board-tile rz-board-locked" {...anim()} aria-label="Locked holder updates">
                 <div className="rz-board-media rz-board-cover">
                   <div className="rz-board-blur" aria-hidden="true">{r.cover_url ? <BlobMedia url={r.cover_url} kind="image" /> : <div className="rz-board-art"><Pin /></div>}</div>
                   <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>
                 </div>
                 <div className="rz-board-caption"><b>Holder updates</b><p>Hold {tk} to open exclusive content.</p></div>
               </article>}
-              <article className={`rz-board-tile ${unlocked ? "" : "rz-board-locked"}`}>
+              {!(unlocked && hasMedia) && <article className={`rz-board-tile ${unlocked ? "" : "rz-board-locked"}`} {...anim()}>
                 <div className="rz-board-media">
                   <div className={`rz-board-art rz-board-files ${unlocked ? "" : "rz-board-blur"}`} aria-hidden="true"><FileAudio /></div>
                   {!unlocked && <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>}
                 </div>
                 <div className="rz-board-caption"><b>Stems and project files</b><p>{unlocked ? "Unlocked. The creator will share files here." : `Hold ${tk} to unlock.`}</p></div>
-              </article>
+              </article>}
+              {nextMs && <div className="rz-board-tile rz-board-soon" aria-disabled="true" {...anim()}>
+                <div className="rz-board-art"><Clock aria-hidden="true" /></div>
+                <div className="rz-board-caption"><small>Coming soon</small><b>Next unlock at {nextMs}</b></div>
+              </div>}
             </div>
 
             {!unlocked && (
@@ -220,14 +294,30 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
         )}
       </div>
 
+      {noteOpen && (
+        <div className="rz-modal" onClick={() => setNoteOpen(false)}>
+          <div className="rz-card" style={{ maxWidth: 420, width: "100%" }} onClick={(e) => e.stopPropagation()}>
+            <div className="rz-head" style={{ marginBottom: "1rem" }}><h1 style={{ fontSize: "1.2rem" }}>Pinned note</h1><p>A short message shown at the top of your feed.</p></div>
+            <textarea className="rz-in" maxLength={280} value={noteText} onChange={(e) => setNoteText(e.target.value)} placeholder="Thanks for backing this project…" />
+            <small style={{ fontSize: ".65rem" }}>{noteText.length}/280</small>
+            {noteErr && <p className="rz-warn">{noteErr}</p>}
+            <div className="rz-actions" style={{ marginTop: "1rem" }}>
+              <button className="rz-btn pri" onClick={() => saveNote(noteText)}>Save note</button>
+              {r?.owner_note && <button className="rz-btn" onClick={() => saveNote("")}>Remove</button>}
+              <button className="rz-btn" onClick={() => setNoteOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {formOpen && (
         <div className="rz-modal" onClick={() => !busy && setFormOpen(false)}>
           <div className="rz-card" style={{ maxWidth: 460, width: "100%" }} onClick={(e) => e.stopPropagation()}>
             <div className="rz-head" style={{ marginBottom: "1rem" }}><h1 style={{ fontSize: "1.2rem" }}>Post update</h1><p>Only holders of {tk} will see this.</p></div>
             <div className="rz-field"><label>Update</label><textarea className="rz-in" maxLength={5000} value={text} onChange={(e) => setText(e.target.value)} placeholder="What's new with the project?" /></div>
             <div className="rz-field" style={{ marginTop: ".7rem" }}>
-              <label>Image or video <span className="rz-opt">(optional)</span></label>
-              <input ref={fileRef} type="file" accept="image/*,video/*" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              <label>Image, video or audio <span className="rz-opt">(optional)</span></label>
+              <input ref={fileRef} type="file" accept="image/*,video/*,audio/*" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
               <div className="rz-actions">
                 <button className="rz-btn" onClick={() => fileRef.current?.click()}>{file ? "Replace file" : "Choose file"}</button>
                 {file && <><small style={{ fontSize: ".7rem", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 180 }}>{file.name}</small><button className="rz-textlink" onClick={() => setFile(null)}>Remove</button></>}

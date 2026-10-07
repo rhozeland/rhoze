@@ -2282,6 +2282,7 @@ export type Database = {
           fee_pct: number
           id: string
           milestones: Json
+          owner_note: string | null
           owner_token: string
           payout_wallet: string | null
           published_at: string | null
@@ -2310,6 +2311,7 @@ export type Database = {
           fee_pct?: number
           id?: string
           milestones?: Json
+          owner_note?: string | null
           owner_token: string
           payout_wallet?: string | null
           published_at?: string | null
@@ -2338,6 +2340,7 @@ export type Database = {
           fee_pct?: number
           id?: string
           milestones?: Json
+          owner_note?: string | null
           owner_token?: string
           payout_wallet?: string | null
           published_at?: string | null
@@ -3458,6 +3461,7 @@ export type Database = {
           fee_pct: number
           id: string
           milestones: Json
+          owner_note: string | null
           owner_token: string
           payout_wallet: string | null
           published_at: string | null
@@ -3531,6 +3535,7 @@ export type Database = {
           fee_pct: number
           id: string
           milestones: Json
+          owner_note: string | null
           owner_token: string
           payout_wallet: string | null
           published_at: string | null
@@ -3582,6 +3587,10 @@ export type Database = {
       }
       release_set_archived: {
         Args: { p_archived: boolean; p_id: string }
+        Returns: undefined
+      }
+      release_set_note: {
+        Args: { p_id: string; p_note: string }
         Returns: undefined
       }
       rhoze_award: {

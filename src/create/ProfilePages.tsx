@@ -5,6 +5,23 @@ import { ProfileTools, Lightbox, MoreCreators, AccountLinks, embedUrl } from "./
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
+const fromSlug = () => new URLSearchParams(location.search).get("from");
+
+function ProjectGrid({ rels }: { rels: any[] }) {
+  const from = fromSlug();
+  useEffect(() => { if (from) document.getElementById(`rz-proj-${from}`)?.scrollIntoView({ block: "nearest" }); }, [from, rels.length]);
+  if (!rels.length) return <p className="rz-pf-empty">No published projects yet.</p>;
+  return (
+    <div className="rz-feed">
+      {rels.map((r) => (
+        <a key={r.id} id={`rz-proj-${r.slug}`} className={`rz-feed-card${r.slug === from ? " rz-came" : ""}`} href={`/release/${r.slug}`}>
+          <span className="rz-feed-cover">{r.cover_url || r.coin_image ? <BlobImg src={r.cover_url || r.coin_image} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}</span>
+          <span className="rz-feed-meta">{r.slug === from && <em className="rz-came-tag">You came from here</em>}<small>{r.answers?.project_type === "brand" ? "Brand project" : "Artist project"}</small><b>{r.title}</b></span>
+        </a>
+      ))}
+    </div>
+  );
+}
 
 type Sample = { kind: "image" | "video" | "audio"; url: string; title?: string };
 
@@ -79,6 +96,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const [credits, setCredits] = useState<Credit[]>([]);
   const [editing, setEditing] = useState(false);
   const [view, setView] = useState<Sample | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
   const { uid, team } = useUser();
 
   const load = async () => {
@@ -87,6 +105,11 @@ export function CreatorProfile({ slug }: { slug: string }) {
       .eq("slug", slug).maybeSingle();
     setC(data ?? null);
     if (data) document.title = `${data.display_name} | Rhozeland Community`;
+    if (data) {
+      const { data: rs } = await db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,user_id,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500);
+      const nm = slugify(data.display_name);
+      setProjects((rs ?? []).filter((x: any) => (data.user_id && x.user_id === data.user_id) || slugify(x.creator_name || "") === nm));
+    }
     const { data: cr } = await db.rpc("creator_credits", { p_slug: slug });
     setCredits(cr ?? []);
   };
@@ -123,6 +146,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
             <section className="rz-pf-sec"><h2>Bio</h2>
               <p className="rz-pf-bio">{c.bio || "This creator hasn't added a bio yet."}</p></section>
+
+            <section className="rz-pf-sec"><h2>Projects</h2><ProjectGrid rels={projects} /></section>
 
             <section className="rz-pf-sec"><h2>Work samples</h2>
               {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
@@ -282,17 +307,8 @@ export function BrandProfile({ slug }: { slug: string }) {
 
             {editing && canEdit && <BrandEditor slug={slug} initial={{ slug, name, logo_url: brand?.logo_url ?? null, category: brand?.category ?? null, bio: brand?.bio ?? null }} onSaved={() => { setEditing(false); load(); }} />}
 
-            <section className="rz-pf-sec"><h2>Published projects</h2>
-              {rels.length === 0 ? <p className="rz-pf-empty">No published projects yet.</p> : (
-                <div className="rz-feed">
-                  {rels.map((r) => (
-                    <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
-                      <span className="rz-feed-cover">{(r as any).cover_url || r.coin_image ? <img src={(r as any).cover_url || r.coin_image!} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}</span>
-                      <span className="rz-feed-meta"><small>{r.answers?.project_type === "brand" ? "Brand project" : "Artist project"}</small><b>{r.title}</b></span>
-                    </a>
-                  ))}
-                </div>
-              )}</section>
+            <section className="rz-pf-sec"><h2>Projects</h2>
+<ProjectGrid rels={rels} /></section>
 
             <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>
               {hiring.length === 0 ? <p className="rz-pf-empty">No open roles right now. Check back soon.</p> : (

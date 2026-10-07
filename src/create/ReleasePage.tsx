@@ -42,6 +42,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [showApplicants, setShowApplicants] = useState(false);
   const [applicants, setApplicants] = useState<any[] | null>(null);
   const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
+  const [profileHref, setProfileHref] = useState<string | null>(null);
   const unlockRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -55,6 +56,15 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         setStatuses((data.milestones || []).map((_: any, i: number) => (i === 0 ? "Funded" : "Upcoming")));
         const { data: u } = await supabase.auth.getUser();
         if (u.user && data.user_id === u.user.id) setIsOwner(true);
+        const nm = (data.creator_name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+        const from = `?from=${encodeURIComponent(slug)}`;
+        let href = nm ? `/brand/${nm}${from}` : null;
+        if (data.answers?.project_type !== "brand") {
+          const q = (supabase.from as any)("creator_directory").select("slug");
+          const { data: cd } = data.user_id ? await q.eq("user_id", data.user_id).limit(1).maybeSingle() : { data: null };
+          if (cd?.slug) href = `/creator/${cd.slug}${from}`;
+        }
+        setProfileHref(href);
       }, () => setR(null));
   }, [slug]);
 
@@ -189,7 +199,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             <div className="rz-head" style={{ marginBottom: "1rem" }}>
               <h1 style={{ fontSize: "1.6rem" }}>{r.title}</h1>
-              <p>by <b>{r.creator_name || "Rhozeland artist"}</b></p>
+              <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
               {r.answers?.making && <p style={{ maxWidth: 480 }}>{firstSentence(r.answers.making)}</p>}
             </div>
 

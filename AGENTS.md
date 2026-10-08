@@ -10,3 +10,4 @@
 - Route profile messaging through the `dm_open` database function, which resolves the profile owner server-side and sends unclaimed profiles to the team inbox, so visitors never pick a recipient account directly.
 - Crop project covers with react-easy-crop and upload a flattened 16:9 image, so existing project cards and pages preserve the chosen framing without schema changes.
 - Use only public cover artwork for locked Exclusive preview cards; keep post text and private media behind existing owner/wallet checks so visual teasers never expose protected content.
+- Keep release market data in the existing `pumpfun-coin` lookup and the collapsible display in `ReleasePrice`; return null for unavailable daily changes so unindexed coins never show fabricated performance.

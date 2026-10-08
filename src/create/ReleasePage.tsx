@@ -69,6 +69,18 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
       }, () => setR(null));
   }, [slug]);
 
+  // Live market cap for the attached coin (text only, via our coin-lookup function).
+  useEffect(() => {
+    if (!r?.coin_mint) { setMcap(null); return; }
+    let alive = true;
+    const load = () => supabase.functions.invoke("pumpfun-coin", { body: { mint: r.coin_mint } })
+      .then(({ data }: any) => { if (alive && typeof data?.mcap === "number") setMcap(data.mcap); })
+      .catch(() => {});
+    load();
+    const t = setInterval(load, 60000);
+    return () => { alive = false; clearInterval(t); };
+  }, [r?.coin_mint]);
+
   useEffect(() => {
     if (!r?.answers?.roles) return;
     const a = new URLSearchParams(location.search).get("apply");

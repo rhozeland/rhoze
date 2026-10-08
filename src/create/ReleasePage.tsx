@@ -40,6 +40,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [applyErr, setApplyErr] = useState("");
   const [applyBusy, setApplyBusy] = useState(false);
   const [applyDone, setApplyDone] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const [showApplicants, setShowApplicants] = useState(false);
   const [applicants, setApplicants] = useState<any[] | null>(null);
   const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
@@ -59,6 +60,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         document.title = `${data.title} | Rhozeland`;
         setStatuses((data.milestones || []).map((_: any, i: number) => (i === 0 ? "Funded" : "Upcoming")));
         const { data: u } = await supabase.auth.getUser();
+        if (u.user) setSignedIn(true);
         if (u.user && data.user_id === u.user.id) setIsOwner(true);
         const nm = (data.creator_name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
         const from = `?from=${encodeURIComponent(slug)}`;

@@ -100,9 +100,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const openApply = (idx: number) => { setApplyErr(""); setApplyDone(false); setApplyForm({ name: "", link: "", availability: "" }); setApplyIdx(idx); };
 
   const submitApply = async () => {
-    const name = applyForm.name.trim(), link = applyForm.link.trim(), availability = applyForm.availability.trim();
+    const name = applyForm.name.trim(), raw = applyForm.link.trim(), link = raw && !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw, availability = applyForm.availability.trim();
     if (!name || name.length > 100) return setApplyErr("Please add your name.");
-    if (!/^https?:\/\/\S+$/i.test(link) || link.length > 500) return setApplyErr("Please add a full link that starts with https://.");
+    if (!/^https?:\/\/[^\s.]+\.\S+$/i.test(link) || link.length > 500) return setApplyErr("Please add a link to your portfolio or profile.");
     if (!availability || availability.length > 500) return setApplyErr("Please tell us when you are available.");
     setApplyBusy(true); setApplyErr("");
     const { error } = await (supabase.rpc as any)("release_apply", { p_slug: slug, p_role_index: applyIdx, p_name: name, p_link: link, p_availability: availability });
@@ -342,7 +342,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             ) : (
               <>
                 <div className="rz-field"><label>Your name</label><input className="rz-in" maxLength={100} value={applyForm.name} onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })} /></div>
-                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Portfolio or Community profile link</label><input className="rz-in" maxLength={500} placeholder="https://" value={applyForm.link} onChange={(e) => setApplyForm({ ...applyForm, link: e.target.value })} /></div>
+                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Portfolio or Community profile link</label><input className="rz-in" maxLength={500} placeholder="yourportfolio.com" value={applyForm.link} onChange={(e) => setApplyForm({ ...applyForm, link: e.target.value })} /></div>
                 <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Availability</label><textarea className="rz-in" maxLength={500} placeholder="Weekends in October, or any weekday after 5pm" value={applyForm.availability} onChange={(e) => setApplyForm({ ...applyForm, availability: e.target.value })} /></div>
                 {applyErr && <p className="rz-note" style={{ color: "hsl(var(--destructive, 0 70% 50%))", marginTop: ".6rem" }}>{applyErr}</p>}
                 <div className="rz-actions" style={{ marginTop: "1.2rem" }}>

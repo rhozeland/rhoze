@@ -43,6 +43,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [applicants, setApplicants] = useState<any[] | null>(null);
   const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
   const [profileHref, setProfileHref] = useState<string | null>(null);
+  const [mcap, setMcap] = useState<number | null>(null);
   const unlockRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {

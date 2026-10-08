@@ -336,8 +336,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             {applyDone ? (
               <>
-                <p style={{ fontSize: ".85rem" }}>Thanks, your application was sent. The project owner will review it.</p>
-                <div className="rz-actions" style={{ marginTop: "1.2rem" }}><button className="rz-btn pri" onClick={() => setApplyIdx(null)}>Done</button></div>
+                <p style={{ fontSize: ".85rem" }}>{signedIn ? "Thanks, your application was sent. A copy is in your Messages and the project owner's inbox." : "Thanks, your application was sent. Sign in next time to get a copy in your Messages and chat with the owner."}</p>
+                <div className="rz-actions" style={{ marginTop: "1.2rem" }}>{signedIn && <a className="rz-btn" href="/messages">Open Messages</a>}<button className="rz-btn pri" onClick={() => setApplyIdx(null)}>Done</button></div>
               </>
             ) : (
               <>

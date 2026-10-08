@@ -58,6 +58,37 @@ Deno.serve(async (req) => {
       }
     } catch { /* ignore */ }
 
+    // 4) On-chain fallback for brand-new pump.fun coins not yet indexed anywhere:
+    //    read the bonding curve account, price = virtualSol/virtualToken, mcap = price × supply × SOL price.
+    try {
+      const key = Deno.env.get("HELIUS_API_KEY");
+      const rpcUrl = key ? `https://mainnet.helius-rpc.com/?api-key=${key}` : "https://api.mainnet-beta.solana.com";
+      const rpcCall = async (method: string, params: unknown[]) => {
+        const r = await fetch(rpcUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) });
+        return (await r.json())?.result;
+      };
+      const PUMP_PROGRAM = new PublicKey("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P");
+      const mintPk = new PublicKey(m);
+      const [curve] = PublicKey.findProgramAddressSync([new TextEncoder().encode("bonding-curve"), mintPk.toBuffer()], PUMP_PROGRAM);
+      const acct = await rpcCall("getAccountInfo", [curve.toBase58(), { encoding: "base64" }]);
+      const b64 = acct?.value?.data?.[0];
+      if (b64) {
+        const buf = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+        const dv = new DataView(buf.buffer);
+        const u64 = (off: number) => Number(dv.getBigUint64(off, true));
+        const vToken = u64(8), vSol = u64(16), supplyRaw = u64(40);
+        if (vToken > 0 && vSol > 0) {
+          const priceSol = vSol / vToken;
+          const supply = supplyRaw > 0 ? supplyRaw / 1e6 : 1_000_000_000;
+          // SOL price in USD via Jupiter quote (1 SOL → USDC)
+          let solUsd = 0;
+          const q = await fetch("https://lite-api.jup.ag/swap/v1/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=1000000000");
+          if (q.ok) { const qj = await q.json(); solUsd = Number(qj?.outAmount) / 1e6; }
+          if (solUsd > 0) return json({ mint: m, mcap: priceSol * supply * solUsd, priceUsd: priceSol * solUsd, source: "onchain" });
+        }
+      }
+    } catch { /* ignore */ }
+
     return json({ error: "Coin not found on Pump.fun." }, 404);
   } catch (e) {
     console.error(e);

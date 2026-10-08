@@ -130,6 +130,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
   const pumpUrl = r?.coin_mint ? `https://pump.fun/coin/${r.coin_mint}` : "";
   const ticker = r?.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
+  const fmtMcap = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(2)}M mcap` : v >= 1_000 ? `$${Math.round(v).toLocaleString("en-US")} mcap` : `$${v.toFixed(0)} mcap`;
   const budget = Number(r?.budget_cents || 0);
   const funded = Math.round(budget * 0.35);
 

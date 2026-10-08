@@ -31,6 +31,32 @@ Deno.serve(async (req) => {
       }
     } catch { /* ignore */ }
 
+    // 3) Jupiter quote (works for graduated pump.fun coins): price of 1 token in USDC,
+    //    then market cap = price × on-chain total supply.
+    try {
+      const USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+      const q = await fetch(`https://lite-api.jup.ag/swap/v1/quote?inputMint=${m}&outputMint=${USDC}&amount=1000000`);
+      if (q.ok) {
+        const quote = await q.json();
+        const out = Number(quote?.outAmount);
+        if (out > 0) {
+          const price = out / 1e6; // USDC has 6 decimals; 1 token quoted
+          let supply = 1_000_000_000; // pump.fun standard
+          try {
+            const key = Deno.env.get("HELIUS_API_KEY");
+            const rpc = await fetch(key ? `https://mainnet.helius-rpc.com/?api-key=${key}` : "https://api.mainnet-beta.solana.com", {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "getTokenSupply", params: [m] }),
+            });
+            const sj = await rpc.json();
+            const ui = sj?.result?.value?.uiAmount;
+            if (typeof ui === "number" && ui > 0) supply = ui;
+          } catch { /* keep default supply */ }
+          return json({ mint: m, mcap: price * supply, priceUsd: price, source: "jupiter" });
+        }
+      }
+    } catch { /* ignore */ }
+
     return json({ error: "Coin not found on Pump.fun." }, 404);
   } catch (e) {
     console.error(e);

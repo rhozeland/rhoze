@@ -220,7 +220,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <div style={{ textAlign: "center", marginBottom: "1rem" }}>
               {ticker && pumpUrl ? (
                 <a className="rz-chip" href={pumpUrl} target="_blank" rel="noopener noreferrer">
-                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b><small>Attached on Pump.fun</small>
+                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
                 </a>
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>

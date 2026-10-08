@@ -43,6 +43,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [applicants, setApplicants] = useState<any[] | null>(null);
   const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
   const [profileHref, setProfileHref] = useState<string | null>(null);
+  const [mcap, setMcap] = useState<number | null>(null);
   const unlockRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -67,6 +68,18 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         setProfileHref(href);
       }, () => setR(null));
   }, [slug]);
+
+  // Live market cap for the attached coin (text only, via our coin-lookup function).
+  useEffect(() => {
+    if (!r?.coin_mint) { setMcap(null); return; }
+    let alive = true;
+    const load = () => supabase.functions.invoke("pumpfun-coin", { body: { mint: r.coin_mint } })
+      .then(({ data }: any) => { if (alive && typeof data?.mcap === "number") setMcap(data.mcap); })
+      .catch(() => {});
+    load();
+    const t = setInterval(load, 60000);
+    return () => { alive = false; clearInterval(t); };
+  }, [r?.coin_mint]);
 
   useEffect(() => {
     if (!r?.answers?.roles) return;
@@ -117,6 +130,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
   const pumpUrl = r?.coin_mint ? `https://pump.fun/coin/${r.coin_mint}` : "";
   const ticker = r?.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
+  const fmtMcap = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(2)}M mcap` : v >= 1_000 ? `$${Math.round(v).toLocaleString("en-US")} mcap` : `$${v.toFixed(0)} mcap`;
   const budget = Number(r?.budget_cents || 0);
   const funded = Math.round(budget * 0.35);
 
@@ -206,7 +220,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <div style={{ textAlign: "center", marginBottom: "1rem" }}>
               {ticker && pumpUrl ? (
                 <a className="rz-chip" href={pumpUrl} target="_blank" rel="noopener noreferrer">
-                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b><small>Attached on Pump.fun</small>
+                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
                 </a>
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>

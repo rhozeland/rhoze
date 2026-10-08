@@ -44,6 +44,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [holdMsg, setHoldMsg] = useState<"holds" | "none" | null>(null);
   const [profileHref, setProfileHref] = useState<string | null>(null);
   const [mcap, setMcap] = useState<number | null>(null);
+  const [priceUsd, setPriceUsd] = useState<number | null>(null);
+  const [change24h, setChange24h] = useState<number | null>(null);
   const unlockRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -71,10 +73,16 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
   // Live market cap for the attached coin (text only, via our coin-lookup function).
   useEffect(() => {
-    if (!r?.coin_mint) { setMcap(null); return; }
+    setMcap(null); setPriceUsd(null); setChange24h(null);
+    if (!r?.coin_mint) return;
     let alive = true;
     const load = () => supabase.functions.invoke("pumpfun-coin", { body: { mint: r.coin_mint } })
-      .then(({ data }: any) => { if (alive && typeof data?.mcap === "number") setMcap(data.mcap); })
+      .then(({ data }: any) => {
+        if (!alive) return;
+        setMcap(typeof data?.mcap === "number" && Number.isFinite(data.mcap) ? data.mcap : null);
+        setPriceUsd(typeof data?.priceUsd === "number" && Number.isFinite(data.priceUsd) && data.priceUsd >= 0 ? data.priceUsd : null);
+        setChange24h(typeof data?.change24h === "number" && Number.isFinite(data.change24h) ? data.change24h : null);
+      })
       .catch(() => {});
     load();
     const t = setInterval(load, 60000);

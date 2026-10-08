@@ -15,3 +15,4 @@
 - [x] Match homepage outer spacing and rounded frame across public pages without nesting frames in embedded views.
 - [x] Verify matching geometry and no horizontal overflow across public destinations.
 - [x] Restyle Exclusive as a masonry mood board with pinned content, safe locked previews, and an owner add-content tile; verify desktop and 390px layout.
+- [ ] Add a muted collapsed price and 24h change after Budget, with an expandable chart; verify live data and expansion.

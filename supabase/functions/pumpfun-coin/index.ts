@@ -6,6 +6,23 @@ const json = (b: unknown, status = 200) =>
 
 const MINT_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
+const finiteNumber = (value: unknown) => {
+  if (value === null || value === undefined || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+};
+
+async function dexMarket(mint: string) {
+  try {
+    const response = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${mint}`, { signal: AbortSignal.timeout(6000) });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return (data?.pairs ?? [])
+      .filter((pair: any) => pair?.chainId === "solana" && pair?.baseToken?.address === mint)
+      .sort((a: any, b: any) => Number(b?.liquidity?.usd || 0) - Number(a?.liquidity?.usd || 0))[0] ?? null;
+  } catch { return null; }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
@@ -18,18 +35,20 @@ Deno.serve(async (req) => {
       const r = await fetch(`https://frontend-api-v3.pump.fun/coins/${m}`, { headers: { accept: "application/json" } });
       if (r.ok) {
         const c = await r.json();
-        if (c?.symbol) return json({ mint: m, ticker: c.symbol, name: c.name ?? c.symbol, image: c.image_uri ?? null, mcap: typeof c.usd_market_cap === "number" ? c.usd_market_cap : null, source: "pump.fun" });
+        if (c?.symbol) {
+          const pair = await dexMarket(m);
+          const supply = finiteNumber(c.total_supply);
+          const cap = finiteNumber(c.usd_market_cap);
+          const derivedPrice = cap !== null && supply !== null && supply > 0 ? cap / (supply / 1e6) : null;
+          return json({ mint: m, ticker: c.symbol, name: c.name ?? c.symbol, image: c.image_uri ?? null, mcap: cap, priceUsd: finiteNumber(pair?.priceUsd) ?? derivedPrice, change24h: finiteNumber(pair?.priceChange?.h24), source: "pump.fun" });
+        }
       }
     } catch { /* fallback */ }
 
     // 2) DexScreener
     try {
-      const r = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${m}`);
-      if (r.ok) {
-        const d = await r.json();
-        const p = (d?.pairs ?? []).find((x: any) => x?.baseToken?.address === m) ?? d?.pairs?.[0];
-        if (p?.baseToken?.symbol) return json({ mint: m, ticker: p.baseToken.symbol, name: p.baseToken.name, image: p.info?.imageUrl ?? null, mcap: typeof p.marketCap === "number" ? p.marketCap : (typeof p.fdv === "number" ? p.fdv : null), source: "dexscreener" });
-      }
+      const p = await dexMarket(m);
+      if (p?.baseToken?.symbol) return json({ mint: m, ticker: p.baseToken.symbol, name: p.baseToken.name, image: p.info?.imageUrl ?? null, mcap: typeof p.marketCap === "number" ? p.marketCap : (typeof p.fdv === "number" ? p.fdv : null), priceUsd: finiteNumber(p.priceUsd), change24h: finiteNumber(p.priceChange?.h24), source: "dexscreener" });
     } catch { /* ignore */ }
 
     // 3) Jupiter quote (works for graduated pump.fun coins): price of 1 token in USDC,

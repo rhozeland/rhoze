@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       const r = await fetch(`https://frontend-api-v3.pump.fun/coins/${m}`, { headers: { accept: "application/json" } });
       if (r.ok) {
         const c = await r.json();
-        if (c?.symbol) return json({ mint: m, ticker: c.symbol, name: c.name ?? c.symbol, image: c.image_uri ?? null, source: "pump.fun" });
+        if (c?.symbol) return json({ mint: m, ticker: c.symbol, name: c.name ?? c.symbol, image: c.image_uri ?? null, mcap: typeof c.usd_market_cap === "number" ? c.usd_market_cap : null, source: "pump.fun" });
       }
     } catch { /* fallback */ }
 
@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       if (r.ok) {
         const d = await r.json();
         const p = (d?.pairs ?? []).find((x: any) => x?.baseToken?.address === m) ?? d?.pairs?.[0];
-        if (p?.baseToken?.symbol) return json({ mint: m, ticker: p.baseToken.symbol, name: p.baseToken.name, image: p.info?.imageUrl ?? null, source: "dexscreener" });
+        if (p?.baseToken?.symbol) return json({ mint: m, ticker: p.baseToken.symbol, name: p.baseToken.name, image: p.info?.imageUrl ?? null, mcap: typeof p.marketCap === "number" ? p.marketCap : (typeof p.fdv === "number" ? p.fdv : null), source: "dexscreener" });
       }
     } catch { /* ignore */ }
 

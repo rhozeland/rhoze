@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
         const u64 = (off: number) => Number(dv.getBigUint64(off, true));
         const vToken = u64(8), vSol = u64(16), supplyRaw = u64(40);
         if (vToken > 0 && vSol > 0) {
-          const priceSol = vSol / vToken;
+          const priceSol = vSol / vToken / 1000; // lamports per raw token → SOL per whole token (×1e6 raw/token, ÷1e9 lamports/SOL)
           const supply = supplyRaw > 0 ? supplyRaw / 1e6 : 1_000_000_000;
           // SOL price in USD via Jupiter quote (1 SOL → USDC)
           let solUsd = 0;

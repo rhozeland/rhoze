@@ -15,4 +15,4 @@
 - [x] Match homepage outer spacing and rounded frame across public pages without nesting frames in embedded views.
 - [x] Verify matching geometry and no horizontal overflow across public destinations.
 - [x] Restyle Exclusive as a masonry mood board with pinned content, safe locked previews, and an owner add-content tile; verify desktop and 390px layout.
-- [x] Add a muted collapsed price and available 24h change after Budget, expanding to the user-selected Pump.fun chart link; verify live data, chart opening, and desktop/390px layout.
+- [x] Show the attached coin's Birdeye chart embedded and always visible after Budget, without expand buttons; verify rendering on desktop and 390px mobile.

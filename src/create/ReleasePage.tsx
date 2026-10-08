@@ -4,6 +4,7 @@ import { Shell, money } from "./shared";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
+import ReleasePrice from "./ReleasePrice";
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -259,6 +260,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 <code>{CAUSE_WALLET}</code>
               </div>
             </div>
+
+            {r.coin_mint && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
 
             <div className="rz-inv">
               <div className="rz-inv-h" style={{ gridTemplateColumns: "1.6rem 1fr 1.4fr 7rem" }}><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span></div>

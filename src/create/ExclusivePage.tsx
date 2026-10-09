@@ -105,6 +105,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteErr, setNoteErr] = useState("");
+  const [supportOpen, setSupportOpen] = useState(false);
   useEffect(() => { document.documentElement.classList.add("rz-exclusive"); return () => document.documentElement.classList.remove("rz-exclusive"); }, []);
   const saveNote = async (v: string) => {
     setNoteErr("");
@@ -245,7 +246,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                   <div className="rz-board-caption"><p>{p.body}</p><small>{fmtDate(p.created_at)} · Holders only</small></div>
                 </article>
               ))}
-              {!unlocked && <article className="rz-board-tile rz-board-locked" {...anim()} aria-label="Locked holder updates">
+              {!unlocked && <article className="rz-board-tile rz-board-locked" {...anim()} aria-label="Locked holder updates" role="button" tabIndex={0} style={{ cursor: "pointer" }} onClick={() => setSupportOpen(true)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSupportOpen(true); } }}>
                 <div className="rz-board-media rz-board-cover">
                   <div className="rz-board-blur" aria-hidden="true">{r.cover_url ? <BlobMedia url={r.cover_url} kind="image" /> : <div className="rz-board-art"><Pin /></div>}</div>
                   <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>

@@ -15,15 +15,21 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [authOpen, setAuthOpen] = useState(false);
   const [hasSession, setHasSession] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    if (signIn || !hasSession) { setAvatar(null); return; }
+    if (signIn || !hasSession) { setAvatar(null); setName(null); return; }
     let on = true;
     supabase.auth.getUser().then(async ({ data }) => {
       const uid = data.user?.id;
       if (!uid) return;
-      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url").eq("user_id", uid).maybeSingle();
-      if (on) setAvatar(c?.photo_url ?? null);
+      const meta = data.user?.user_metadata as any;
+      const fallback = String(meta?.display_name || meta?.full_name || data.user?.email || "").split(/\s|@/)[0] || null;
+      if (on && fallback) setName(fallback);
+      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url,name").eq("user_id", uid).maybeSingle();
+      if (!on) return;
+      setAvatar(c?.photo_url ?? null);
+      if (c?.name) setName(String(c.name).split(/\s|@/)[0]);
     });
     return () => { on = false; };
   }, [hasSession, signIn]);
@@ -49,19 +55,21 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const account = signIn
     ? !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={signIn}>Sign in</Button>
     : hasSession
-      ? <div className="sn-avatar-wrap">
-          <button type="button" className="sn-avatar" aria-label="Account menu" aria-expanded={menuOpen} onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}>
-            {avatar ? <img src={avatar} alt="" /> : <span aria-hidden="true">☺</span>}
-          </button>
+      ? <div className="nav-auth-wrap">
+          <div className="nav-auth" role="group" aria-label="Your Rhozeland account">
+            <button type="button" className="nav-auth-identity" title="Your profile" aria-label="Account menu" aria-expanded={menuOpen} onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}>
+              <span className="nav-auth-avatar" aria-hidden="true">{avatar ? <img src={avatar} alt="" /> : (name ? name.charAt(0).toUpperCase() : "☺")}</span>
+              <span className="nav-auth-name">{name || "You"}</span>
+            </button>
+            <a className="nav-auth-chip" href="/messages" aria-label="Messages"><MessageSquare size={14} aria-hidden="true" /><span className="sn-msg-label">Messages</span></a>
+          </div>
           {menuOpen && <div className="sn-menu" role="menu" onClick={(e) => e.stopPropagation()}>
             <a href="/me" role="menuitem">My profile</a>
             <button type="button" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</button>
           </div>}
         </div>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;
-  const msg = !signIn && hasSession
-    ? <a className="sn-msg" href="/messages" aria-label="Messages"><MessageSquare size={14} aria-hidden="true" /><span className="sn-msg-label">Messages</span></a>
-    : null;
+  const msg = null;
   return <>
     <link rel="stylesheet" href="/site-nav.css" />
     <nav className="site-nav" aria-label="Primary">

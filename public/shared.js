@@ -432,25 +432,33 @@ setupHoverVideos();
     function build(cls){
       var wrap = document.createDocumentFragment();
       if (!signedIn) { var a = document.createElement('a'); a.className = cls; a.href = '/me'; a.textContent = 'Sign in'; wrap.appendChild(a); return wrap; }
-      var mm = document.createElement('a'); mm.href = '/messages'; mm.className = (cls ? cls + ' ' : '') + 'sn-msg'; mm.setAttribute('aria-label', 'Messages');
-      mm.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sn-msg-label">Messages</span>';
-      wrap.appendChild(mm);
-      var w = document.createElement('div'); w.className = 'sn-avatar-wrap';
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'sn-avatar'; b.setAttribute('aria-label', 'Account menu');
-      b.innerHTML = '<span aria-hidden="true">☺</span>';
+      // Same gray account cluster as the landing page: profile identity + Messages.
+      var w = document.createElement('div'); w.className = 'nav-auth-wrap';
+      var cluster = document.createElement('div'); cluster.className = 'nav-auth'; cluster.setAttribute('role', 'group'); cluster.setAttribute('aria-label', 'Your Rhozeland account');
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-auth-identity'; b.setAttribute('aria-label', 'Account menu'); b.title = 'Your profile';
+      var meta = (sess.user && sess.user.user_metadata) || {};
+      var fullName = meta.display_name || meta.full_name || (sess.user && sess.user.email) || 'You';
+      var firstName = String(fullName).split(/\s|@/)[0] || 'You';
+      b.innerHTML = '<span class="nav-auth-avatar" aria-hidden="true">' + (firstName.charAt(0) || 'R').toUpperCase() + '</span><span class="nav-auth-name">' + firstName.replace(/</g, '&lt;') + '</span>';
+      var mm = document.createElement('a'); mm.href = '/messages'; mm.className = 'nav-auth-chip'; mm.setAttribute('aria-label', 'Messages');
+      mm.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sn-msg-label">Messages</span>';
+      cluster.appendChild(b); cluster.appendChild(mm);
       var m = document.createElement('div'); m.className = 'sn-menu'; m.style.display = 'none';
       var p = document.createElement('a'); p.href = '/me'; p.textContent = 'My profile';
       var o = document.createElement('button'); o.type = 'button'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
       m.appendChild(p); m.appendChild(o);
       b.addEventListener('click', function(e){ e.stopPropagation(); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; });
       document.addEventListener('click', function(){ m.style.display = 'none'; });
-      w.appendChild(b); w.appendChild(m); wrap.appendChild(w);
-      // Fill in the profile photo when available.
+      w.appendChild(cluster); w.appendChild(m); wrap.appendChild(w);
+      // Fill in the profile photo and display name when available.
       try {
-        fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=photo_url&user_id=eq.' + encodeURIComponent(sess.user.id), {
+        fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=photo_url,name&user_id=eq.' + encodeURIComponent(sess.user.id), {
           headers: { apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w', Authorization: 'Bearer ' + sess.access_token }
         }).then(function(r){ return r.json(); }).then(function(rows){
-          if (rows && rows[0] && rows[0].photo_url) b.innerHTML = '<img src="' + rows[0].photo_url + '" alt="" />';
+          var row = rows && rows[0]; if (!row) return;
+          var av = b.querySelector('.nav-auth-avatar'), nm = b.querySelector('.nav-auth-name');
+          if (row.photo_url && av) av.innerHTML = '<img src="' + row.photo_url + '" alt="" />';
+          if (row.name && nm) { var fn = String(row.name).split(/\s|@/)[0]; nm.textContent = fn; if (av && !row.photo_url) av.textContent = (fn.charAt(0) || 'R').toUpperCase(); }
         }).catch(function(){});
       } catch(e) {}
       return wrap;

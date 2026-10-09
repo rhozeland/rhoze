@@ -45,7 +45,20 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-nav .sn-extra .rz-btn,.site-nav .sn-extra .rz-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:.5rem .85rem!important;border:1px solid hsl(var(--site-nav-line));border-radius:999px;font-size:.78rem!important;font-weight:600;line-height:1.2;white-space:nowrap;text-decoration:none}
 .site-nav .sn-extra .rz-btn:hover,.site-nav .sn-extra .rz-link:hover{background:hsl(var(--site-nav-hover))}
 .site-nav .sn-extra .rz-wallet-chip{color:hsl(var(--site-nav-ink))}
-.site-nav .nav-auth{margin-left:0!important;border-color:hsl(var(--site-nav-line));background:hsl(var(--site-nav-hover))}
+/* Signed-in account cluster — same gray pill as the landing page, on every page. */
+.site-nav .nav-auth{display:inline-flex;align-items:center;gap:.4rem;padding:.28rem;border:1px solid hsl(var(--site-nav-line));border-radius:999px;background:hsl(var(--site-nav-hover));font-family:Arial,Helvetica,sans-serif}
+.site-nav .nav-auth[hidden]{display:none}
+.site-nav .nav-auth-identity{display:inline-flex;align-items:center;gap:.5rem;height:2.1rem;padding:0 .85rem 0 .35rem;border-radius:999px;background:hsl(0 0% 100% / .06);color:hsl(var(--site-nav-ink))!important;text-decoration:none;border:0;cursor:pointer;font:inherit;transition:background .18s ease}
+.site-nav .nav-auth-identity:hover{background:hsl(0 0% 100% / .12)}
+.site-nav .nav-auth-avatar{width:1.6rem;height:1.6rem;border-radius:999px;background:linear-gradient(135deg,hsl(0 0% 100% / .9),hsl(0 0% 100% / .45));color:hsl(var(--site-nav-surface));display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0;overflow:hidden}
+.site-nav .nav-auth-avatar img{width:100%;height:100%;object-fit:cover;border-radius:999px}
+.site-nav .nav-auth-name{font-size:.78rem;font-weight:700;color:hsl(var(--site-nav-ink));max-width:8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.site-nav .nav-auth-chip{display:inline-flex;align-items:center;gap:.4rem;height:2.1rem;padding:0 .75rem;border-radius:999px;font-size:.72rem;font-weight:700;color:hsl(var(--site-nav-ink))!important;text-decoration:none;background:transparent;border:0;cursor:pointer;font:inherit;transition:background .18s ease}
+.site-nav .nav-auth-chip:hover{background:hsl(0 0% 100% / .08)}
+.site-nav .nav-auth-chip svg{width:.85rem;height:.85rem;flex:none}
+.site-nav .nav-auth .sn-menu{top:calc(100% + .5rem);right:0}
+.site-nav .nav-auth-wrap{position:relative;display:inline-flex}
+.site-nav .nav-auth{margin-left:0!important}
 .site-nav .nav-auth-balance,.site-nav .nav-auth-identity{border-color:hsl(var(--site-nav-line));background:hsl(var(--site-nav-hover))}
 .site-nav .nav-auth-k,.site-nav .nav-auth-v,.site-nav .nav-auth-arrow,.site-nav .nav-auth-name{color:hsl(var(--site-nav-ink))}
 @media(max-width:900px){.site-nav #rSignInCta{display:inline-flex!important;margin-left:auto}.site-nav #rSignInCta + .menu-toggle{margin-left:0}.site-nav .nav-auth{margin-left:auto!important}}

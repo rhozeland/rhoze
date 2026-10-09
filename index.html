@@ -3115,21 +3115,14 @@
 
       <!-- Unified auth cluster (signed-in only; hidden until session detected) -->
       <div id="rSignedInHUD" class="nav-auth" role="group" aria-label="Your Rhozeland account" hidden style="margin-left:auto;">
-        <a class="nav-auth-balance" id="rHudRhozeLink" href="https://dexscreener.com/solana/C4rRvr1GCNEeYHwA6MaSbgyckY7671Rq3X4yfeGm4rmF" target="_blank" rel="noopener" title="View $RHOZE on DexScreener">
-          <span class="nav-auth-dot" aria-hidden="true"></span>
-          <span class="nav-auth-k">$RHOZE</span>
-          <span class="nav-auth-v" id="rHudRhoze" aria-live="polite">—</span>
-          <span class="nav-auth-arrow" aria-hidden="true">↗</span>
-        </a>
-        <a class="nav-auth-identity" href="#workspace" data-home-workspace title="Open your dashboard">
+        <a class="nav-auth-identity" href="/me" title="Your profile">
           <span class="nav-auth-avatar" id="rHudAvatar" aria-hidden="true">R</span>
           <span class="nav-auth-name" id="rHudGreet">Welcome</span>
         </a>
-        <a class="nav-auth-chip is-dashboard" href="#workspace" data-home-workspace>Dashboard</a>
-        <span class="nav-auth-divider" aria-hidden="true"></span>
-        <button type="button" class="nav-auth-icon" id="rHudSignOut" aria-label="Sign out" title="Sign out">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </button>
+        <a class="nav-auth-chip" href="/messages" aria-label="Messages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:0.85rem;height:0.85rem;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Messages
+        </a>
       </div>
       <a class="nav-cta" id="rSignInCta" href="/me" aria-label="Sign in to Rhozeland">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>

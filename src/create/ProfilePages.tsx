@@ -5,7 +5,7 @@ import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
 import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
 import CoverEditor from "./CoverEditor";
-import { LikedProjects } from "./ProjectLikes";
+import { LikedProjects, ProjectHeart } from "./ProjectLikes";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -53,10 +53,10 @@ function ProjectGrid({ rels }: { rels: any[] }) {
   return (
     <div className="rz-feed">
       {rels.map((r) => (
-        <a key={r.id} id={`rz-proj-${r.slug}`} className={`rz-feed-card${r.slug === from ? " rz-came" : ""}`} href={`/release/${r.slug}`}>
+        <div key={r.id} className="rz-like-card"><a id={`rz-proj-${r.slug}`} className={`rz-feed-card${r.slug === from ? " rz-came" : ""}`} href={`/release/${r.slug}`}>
           <span className="rz-feed-cover">{r.cover_url || r.coin_image ? <BlobImg src={r.cover_url || r.coin_image} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}</span>
           <span className="rz-feed-meta">{r.slug === from && <em className="rz-came-tag">You came from here</em>}<small>{r.answers?.project_type === "brand" ? "Brand project" : "Artist project"}</small><b>{r.title}</b></span>
-        </a>
+        </a><ProjectHeart releaseId={r.id} /></div>
       ))}
     </div>
   );

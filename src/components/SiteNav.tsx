@@ -85,7 +85,6 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
     <a className="site-book-float" href="/book.html" aria-label="Book a project">
       <span className="site-book-float__mark" aria-hidden="true">✳</span>
       <span>Book a project</span>
-      <span className="site-book-float__arrow" aria-hidden="true">↗</span>
     </a>
   </>;
 }

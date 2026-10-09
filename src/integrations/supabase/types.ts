@@ -560,6 +560,7 @@ export type Database = {
           disciplines: string[]
           display_name: string
           hourly_rate_cents: number | null
+          hourly_rate_max_cents: number | null
           id: string
           instagram_url: string | null
           is_public: boolean
@@ -583,6 +584,7 @@ export type Database = {
           disciplines?: string[]
           display_name: string
           hourly_rate_cents?: number | null
+          hourly_rate_max_cents?: number | null
           id?: string
           instagram_url?: string | null
           is_public?: boolean
@@ -606,6 +608,7 @@ export type Database = {
           disciplines?: string[]
           display_name?: string
           hourly_rate_cents?: number | null
+          hourly_rate_max_cents?: number | null
           id?: string
           instagram_url?: string | null
           is_public?: boolean
@@ -3378,6 +3381,10 @@ export type Database = {
           p_samples: Json
           p_website: string
         }
+        Returns: undefined
+      }
+      creator_save_rate_max: {
+        Args: { p_id: string; p_max_cents: number }
         Returns: undefined
       }
       creator_set_visibility: {

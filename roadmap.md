@@ -22,5 +22,5 @@
 - [x] Verify chat, application details, review actions, and empty states with automated tests and a controlled browser fixture.
 - [ ] Verify real-account application submission, owner acceptance, and messaging end-to-end — blocked until the user signs in to the preview (no matching account available for session minting).
 
-- [ ] Open published projects in a shared Dribbble-inspired pop-up, preserving the listing and close/back behavior.
-- [ ] Organize release details, breakdown, and support inside the pop-up and verify the live browsing flow.
+- [x] Open published projects in a shared Dribbble-inspired pop-up, preserving the listing and close/back behavior.
+- [x] Organize release details, breakdown, and support inside the pop-up and verify the live browsing flow.

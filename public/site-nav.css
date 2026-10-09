@@ -55,3 +55,5 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-book-float__arrow{display:grid;place-items:center;width:37px;height:37px;border-radius:50%;background:hsl(var(--site-book-edge));color:hsl(var(--site-book-surface));font-size:1.25rem;line-height:1;flex:none}
 @media(max-width:600px){.site-book-float{right:max(.75rem,env(safe-area-inset-right));bottom:max(.75rem,env(safe-area-inset-bottom));min-height:48px;gap:.55rem;padding:.35rem .4rem .35rem .65rem;font-size:.75rem}.site-book-float__mark,.site-book-float__arrow{width:30px;height:30px}.site-book-float__mark{font-size:1.25rem}}
 @media(prefers-reduced-motion:reduce){.site-book-float{transition:none}}
+/* Identical bar height and control size on every page. */
+@media(min-width:901px){.site-nav{height:76px!important;min-height:76px!important;padding-top:0!important;padding-bottom:0!important;margin:0!important}.site-nav .nav-cta,.site-nav .sn-signin{height:40px;min-height:40px;display:inline-flex;align-items:center;font-size:.78rem!important;padding:0 1.1rem!important}}

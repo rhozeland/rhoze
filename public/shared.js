@@ -443,7 +443,7 @@ setupHoverVideos();
       var firstName = String(fullName).split(/\s|@/)[0] || 'You';
       b.innerHTML = '<span class="nav-auth-avatar" aria-hidden="true">' + (firstName.charAt(0) || 'R').toUpperCase() + '</span><span class="nav-auth-name">' + firstName.replace(/</g, '&lt;') + '</span>';
       var mm = document.createElement('a'); mm.href = '/messages'; mm.className = 'nav-auth-chip'; mm.setAttribute('aria-label', 'Messages');
-      mm.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sn-msg-label">Messages</span>';
+      mm.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
       cluster.appendChild(mm); cluster.appendChild(b);
       var m = document.createElement('div'); m.className = 'sn-menu'; m.style.display = 'none';
       var p = document.createElement('a'); p.href = '/me?settings=1'; p.textContent = 'Settings';

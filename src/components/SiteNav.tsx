@@ -6,10 +6,10 @@ import { Menu, X, MessageSquare } from "lucide-react";
 
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
-  { href: "/projects.html", label: "Featured work" },
+  { href: "/projects.html", label: "Featured Projects" },
   { href: "/discover", label: "Discover" },
   { href: "/community.html", label: "Community" },
-  { href: "/community.html?view=open-calls", label: "Opportunities" },
+  { href: "/community.html?view=open-calls", label: "Find Work" },
 ];
 export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [open, setOpen] = useState(false);

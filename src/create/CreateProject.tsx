@@ -43,6 +43,7 @@ export default function CreateProject() {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [making, setMaking] = useState("");
+  const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [budget, setBudget] = useState("");
   const [feePct, setFeePct] = useState(10);
@@ -112,7 +113,7 @@ export default function CreateProject() {
       if (lt === "brand") { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
       setStepKey(lt ? (flowFor(lt)[(r.current_step || 2) - 1] || "details") : "type");
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
-      setTitle(r.title || ""); setMaking(r.answers?.making || ""); setAudience(r.answers?.audience || "");
+      setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || ""); setAudience(r.answers?.audience || "");
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
       setFeePct(Number(r.fee_pct)); setCausePct(Number(r.cause_pct)); setCauseName(r.cause_name || "");
       setRows((r.milestones || []).map((m: any) => ({ id: uid(), ...m })));
@@ -124,7 +125,7 @@ export default function CreateProject() {
 
   const payload = (s = step) => ({
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
-    answers: { making: making.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
+    answers: { making: making.trim(), description: desc.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
     coin_mint: coin?.mint ?? "", coin_ticker: coin?.ticker ?? "", coin_name: coin?.name ?? "", coin_image: coin?.image ?? "",
@@ -146,6 +147,7 @@ export default function CreateProject() {
     if (!name.trim()) return "Add your name.";
     if (!title.trim()) return "Give your project a name.";
     if (!making.trim()) return "Tell us what you're making.";
+    if (!desc.trim()) return "Add a short description of your project.";
     if (budgetCents < 100) return "Enter a budget.";
     if (feePct + causePct + tPct > 100) return "The split can't exceed 100%.";
     return "";
@@ -154,7 +156,7 @@ export default function CreateProject() {
   const generate = async () => {
     setGenBusy(true); setErr("");
     const { data, error } = await supabase.functions.invoke("release-roadmap", {
-      body: { title: title.trim(), answers: { making, audience }, budget_cents: budgetCents, artist_pct: artistPct },
+      body: { title: title.trim(), answers: { making, audience, description: desc }, budget_cents: budgetCents, artist_pct: artistPct },
     });
     setGenBusy(false);
     if (error || !data?.milestones) {
@@ -397,6 +399,7 @@ export default function CreateProject() {
                 {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
               </div>
               <div className="rz-field rz-full"><label>What are you making?</label><textarea className="rz-in" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art" onChange={(e) => setMaking(e.target.value)} /></div>
+              <div className="rz-field rz-full"><label>Brief description <span className="rz-opt">(shown on your project page)</span></label><textarea className="rz-in" value={desc} maxLength={600} rows={4} placeholder="A few sentences about what this project is — the story, what you'll deliver, and who it's for." onChange={(e) => setDesc(e.target.value)} /></div>
               <div className="rz-field rz-full"><label>Who is it for? <span className="rz-opt">(optional)</span></label><input className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto, 18–30" onChange={(e) => setAudience(e.target.value)} /></div>
               <div className="rz-field rz-full">
                 <label>Budget (CAD)</label>

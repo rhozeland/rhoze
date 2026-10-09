@@ -244,7 +244,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <div className="rz-head" style={{ marginBottom: "1rem" }}>
               <h1 style={{ fontSize: "1.6rem" }}>{r.title}</h1>
               <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
-              {r.answers?.making && <p style={{ maxWidth: 480 }}>{firstSentence(r.answers.making)}</p>}
+              {r.answers?.description?.trim() ? <p style={{ maxWidth: 520 }}>{r.answers.description.trim()}</p> : r.answers?.making ? <p style={{ maxWidth: 480 }}>{firstSentence(r.answers.making)}</p> : null}
             </div>
 
             <div style={{ textAlign: "center", marginBottom: "1rem" }}>

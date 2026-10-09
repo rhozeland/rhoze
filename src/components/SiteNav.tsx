@@ -6,8 +6,8 @@ import { Menu, X, MessageSquare } from "lucide-react";
 
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
-  { href: "/discover", label: "Discover" },
   { href: "/projects.html", label: "Featured work" },
+  { href: "/discover", label: "Discover" },
   { href: "/community.html", label: "Community" },
 ];
 export default function SiteNav({ extra, signIn, signedIn = false }: Props) {

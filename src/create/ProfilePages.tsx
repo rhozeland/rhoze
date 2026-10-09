@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
+import AuthModal from "./AuthModal";
 import { ProfileTools, Lightbox, MoreCreators, AccountLinks, embedUrl } from "./ProfileExtras";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -87,7 +88,7 @@ type Creator = {
   id: string; slug: string; display_name: string; photo_url: string | null; disciplines: string[] | null;
   membership_tier: string | null; hourly_rate_cents: number | null; rating: number | null; bio: string | null;
   website_url: string | null; portfolio_url: string | null; instagram_url: string | null; user_id: string | null;
-  work_samples: Sample[] | null;
+  work_samples: Sample[] | null; account_kind?: string;
 };
 type Credit = { release_slug: string; title: string; brand: string | null; role_name: string };
 
@@ -101,7 +102,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
   const load = async () => {
     const { data } = await db.from("creator_directory")
-      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples")
+      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind")
       .eq("slug", slug).maybeSingle();
     setC(data ?? null);
     if (data) document.title = `${data.display_name} | Rhozeland Community`;
@@ -119,6 +120,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const rate = c?.hourly_rate_cents != null ? `$${(c.hourly_rate_cents / 100).toLocaleString("en-CA")}/hr` : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
   const samples = (c?.work_samples ?? []) as Sample[];
+  const fan = c?.account_kind === "fan";
 
   return (
     <Shell right={<AccountLinks />}>
@@ -133,7 +135,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
                 <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
-                <p className="rz-pf-meta"><b>{rate}</b> · {c.membership_tier || "Community"} member{c.rating != null && <> · {Number(c.rating).toFixed(1)} ★</>}</p>
+                <p className="rz-pf-meta">{!fan && <><b>{rate}</b> · </>}{c.membership_tier || "Community"} member{c.rating != null && <> · {Number(c.rating).toFixed(1)} ★</>}</p>
                 <ProfileTools kind="creator" slug={c.slug} name={c.display_name} photo={c.photo_url} isOwner={isOwner && c.user_id === uid} />
                 {(ig || web) && <div className="rz-pf-actions" style={{ marginTop: ".4rem" }}>
                   {ig && <a className="rz-btn" href={ig} target="_blank" rel="noopener noreferrer">Instagram ↗</a>}
@@ -149,7 +151,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
             <section className="rz-pf-sec"><h2>Projects</h2><ProjectGrid rels={projects} /></section>
 
-            <section className="rz-pf-sec"><h2>Work samples</h2>
+            {!fan && <section className="rz-pf-sec"><h2>Work samples</h2>
               {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
                 <div className="rz-pf-grid">
                   {samples.map((s, i) => s.kind === "image" ? (
@@ -164,16 +166,16 @@ export function CreatorProfile({ slug }: { slug: string }) {
                     </a>
                   ))}
                 </div>
-              )}</section>
+              )}</section>}
 
-            <section className="rz-pf-sec"><h2>Credits</h2>
+            {!fan && <section className="rz-pf-sec"><h2>Credits</h2>
               {credits.length === 0 ? <p className="rz-pf-empty">Credits appear here when this creator is hired on a Rhozeland project.</p> : (
                 <ul className="rz-pf-credits">
                   {credits.map((k, i) => (
                     <li key={i}><a href={`/release/${k.release_slug}`}><b>{k.title}</b><span>{k.role_name} · {k.brand || "Brand project"}</span></a></li>
                   ))}
                 </ul>
-              )}</section>
+              )}</section>}
 
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
           </>
@@ -397,7 +399,8 @@ function BrandEditor({ slug, initial, onSaved }: { slug: string; initial: Brand;
 /* ------------------------------ /me ------------------------------ */
 export function MyProfile() {
   const [state, setState] = useState<"load" | "out" | "pick">("load");
-  const [kind, setKind] = useState<"creator" | "brand">("creator");
+  const [kind, setKind] = useState<"artist" | "brand" | "fan">("artist");
+  const [auth, setAuth] = useState(false);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -420,12 +423,12 @@ export function MyProfile() {
     <Shell right={<AccountLinks />}>
       <div className="rz-card">
         {state === "load" && <div className="rz-skel" />}
-        {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in to set up your profile.</p><div className="rz-actions"><a className="rz-btn pri" href="/community.html">Back to Community</a></div></div>}
+        {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in or create an account as an Artist, Brand or Fan.</p><div className="rz-actions"><button className="rz-btn pri" onClick={() => setAuth(true)}>Sign in</button></div>
+          {auth && <AuthModal action="" redirectTo={location.href} onClose={() => setAuth(false)} onDone={() => location.reload()} />}</div>}
         {state === "pick" && (
           <div className="rz-head"><h1>Set up your profile</h1><p>Choose how you show up on Rhozeland. You can edit everything after.</p>
             <div className="rz-actions" style={{ marginTop: ".8rem" }}>
-              <button className={`rz-btn${kind === "creator" ? " pri" : ""}`} onClick={() => setKind("creator")}>Artist</button>
-              <button className={`rz-btn${kind === "brand" ? " pri" : ""}`} onClick={() => setKind("brand")}>Brand</button>
+              {([["artist", "Artist"], ["brand", "Brand"], ["fan", "Fan"]] as const).map(([k, l]) => <button key={k} className={`rz-btn${kind === k ? " pri" : ""}`} onClick={() => setKind(k)}>{l}</button>)}
             </div>
             <div className="rz-field" style={{ marginTop: ".8rem" }}><label>{kind === "brand" ? "Brand name" : "Your name"}</label>
               <input className="rz-in" maxLength={100} placeholder="Leave blank to use your account name" value={name} onChange={(e) => setName(e.target.value)} /></div>

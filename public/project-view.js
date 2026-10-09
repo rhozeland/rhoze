@@ -1,7 +1,7 @@
 (function () {
   if (window.rhozeProjectViewInstalled) return;
   window.rhozeProjectViewInstalled = true;
-  var dialog, frame, opener, returnUrl, previousTitle, pushed = false;
+  var dialog, frame, opener, previousTitle, pushed = false;
   var style = document.createElement('link');
   style.rel = 'stylesheet'; style.href = '/project-view.css'; document.head.appendChild(style);
   function dismiss() {
@@ -32,8 +32,12 @@
         doc.addEventListener('click', function (e) {
           var a = e.target.closest('a[href]'); if (!a || a.target === '_blank') return;
           var url = new URL(a.href, location.origin);
-          if (url.origin === location.origin && !/^\/release\/[^/]+(?:\/exclusive)?\/?$/.test(url.pathname)) {
-            e.preventDefault(); location.href = url.href;
+          if (url.origin === location.origin) {
+            e.preventDefault();
+            if (/^\/release\/[^/]+(?:\/exclusive)?\/?$/.test(url.pathname)) {
+              url.searchParams.set('projectView', '1');
+              frame.contentWindow.location.replace(url.href);
+            } else location.href = url.href;
           }
         });
       } catch (e) {}
@@ -49,7 +53,7 @@
     var url = new URL(a.href, location.origin);
     if (url.origin !== location.origin || !/^\/release\/[^/]+\/?$/.test(url.pathname) || window.self !== window.top) return;
     e.preventDefault(); e.stopPropagation(); ensure();
-    opener = a; returnUrl = location.href; previousTitle = document.title;
+    opener = a; previousTitle = document.title;
     history.pushState({ rhozeProjectPopup: true }, '', url.pathname + url.search); pushed = true;
     url.searchParams.set('projectView', '1');
     frame.src = url.pathname + url.search; dialog.showModal();

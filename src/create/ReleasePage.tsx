@@ -165,9 +165,10 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const fmtMcap = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(2)}M mcap` : v >= 1_000 ? `$${Math.round(v).toLocaleString("en-US")} mcap` : `$${v.toFixed(0)} mcap`;
   const budget = Number(r?.budget_cents || 0);
   const funded = Math.round(budget * 0.35);
+  const projectUrl = `${location.origin}/release/${encodeURIComponent(slug)}`;
 
   const copyLink = async () => {
-    try { await navigator.clipboard.writeText(location.href); setCopied(true); setTimeout(() => setCopied(false), 1800); }
+    try { await navigator.clipboard.writeText(projectUrl); setCopied(true); setTimeout(() => setCopied(false), 1800); }
     catch { setNote("Could not copy the link. Please copy it from the address bar."); }
   };
 
@@ -494,7 +495,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         </div>
       )}
       {shareOpen && r && (() => {
-        const shareUrl = window.location.href;
+        const shareUrl = projectUrl;
         const shareText = `Support ${r.title} on Rhoze`;
         const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
         const doCopy = async () => {

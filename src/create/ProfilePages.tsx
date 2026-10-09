@@ -128,6 +128,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const { uid, team } = useUser();
 
   const load = async () => {
+    // Wait for the saved session so owners can open their own private profile.
+    await supabase.auth.getSession();
     const { data } = await db.from("creator_directory")
       .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
       .eq("slug", slug).maybeSingle();

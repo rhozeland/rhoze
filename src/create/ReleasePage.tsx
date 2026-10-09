@@ -197,7 +197,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   );
 
   return (
-    <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href="/create.html?new=1">Create a project</a>}>
+    <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-btn" href="/create.html?new=1">Create a project</a>}>
       {r && isOwner && (
         <div className="rz-owner">
           <span>You own this page</span>

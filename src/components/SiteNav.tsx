@@ -57,7 +57,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
     : hasSession
       ? <div className="nav-auth-wrap" onMouseEnter={() => setMenuOpen(true)} onMouseLeave={() => setMenuOpen(false)} onFocus={() => setMenuOpen(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setMenuOpen(false); }}>
           <div className="nav-auth" role="group" aria-label="Your Rhozeland account">
-            <a className="nav-auth-chip" href="/messages" aria-label="Messages"><MessageSquare size={14} aria-hidden="true" /><span className="sn-msg-label">Messages</span></a>
+            <a className="nav-auth-chip nav-auth-chip--icon" href="/messages" aria-label="Messages" title="Messages"><MessageSquare size={16} aria-hidden="true" /></a>
             <a href="/me" className="nav-auth-identity" title="Your profile" aria-label="My profile" aria-expanded={menuOpen}>
               <span className="nav-auth-avatar" aria-hidden="true">{avatar ? <img src={avatar} alt="" /> : (name ? name.charAt(0).toUpperCase() : "☺")}</span>
               <span className="nav-auth-name">{name || "You"}</span>

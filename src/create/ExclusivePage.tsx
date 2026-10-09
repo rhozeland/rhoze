@@ -242,7 +242,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   let n = 0; const anim = () => ({ style: { ["--i" as any]: n++ } });
 
   return (
-    <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href={`/release/${encodeURIComponent(slug)}`}>Back to project</a>}>
+    <Shell className={new URLSearchParams(location.search).get("projectView") === "1" ? "rz-release-view rz-release-embedded" : ""} right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href={`/release/${encodeURIComponent(slug)}`}>Back to project</a>}>
       <div className="rz-board-page">
         {r && isOwner && <div className="rz-owner rz-board-owner"><span>You own this project</span></div>}
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}

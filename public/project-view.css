@@ -1,0 +1,9 @@
+:root{--project-view-paper:0 0% 100%;--project-view-ink:0 0% 10%;--project-view-overlay:0 0% 5%;--project-view-edge:0 0% 86%}
+html.project-view-open{overflow:hidden}
+.project-view-dialog{position:fixed;inset:32px 0 0;width:calc(100% - 32px);max-width:1440px;height:calc(100dvh - 32px);max-height:none;margin:0 auto;padding:0;border:0;border-radius:16px 16px 0 0;background:hsl(var(--project-view-paper));color:hsl(var(--project-view-ink));overflow:hidden}
+.project-view-dialog::backdrop{background:hsl(var(--project-view-overlay)/.72)}
+.project-view-frame{display:block;width:100%;height:100%;border:0;background:hsl(var(--project-view-paper))}
+.project-view-close{position:absolute;top:12px;right:16px;z-index:5;display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid hsl(var(--project-view-edge));border-radius:50%;background:hsl(var(--project-view-paper));color:hsl(var(--project-view-ink));cursor:pointer}
+.project-view-close:hover{border-color:hsl(var(--project-view-ink))}
+.project-view-close:focus-visible{outline:2px solid hsl(var(--project-view-ink));outline-offset:3px}
+@media(max-width:600px){.project-view-dialog{inset:12px 0 0;width:100%;height:calc(100dvh - 12px);border-radius:12px 12px 0 0}.project-view-close{top:10px;right:10px}}

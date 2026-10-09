@@ -1,6 +1,33 @@
 .rz-flow{--g:159 58% 49%;--aqua:181 70% 72%;--coral:13 92% 74%;--yellow:43 96% 76%;--surface:0 0% 97%;--card:0 0% 100%;--alt:0 0% 95%;--ink:0 0% 10%;--mut:0 0% 43%;--line:0 0% 86%;--strong:0 0% 32%;--bad:346 72% 44%;
   min-height:100vh;color:hsl(var(--ink));background:hsl(var(--surface));font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column}
 .rz-flow *{box-sizing:border-box}
+/* Editorial project view, shared by direct links and the listing pop-up. */
+.rz-release-view{background:hsl(var(--card));position:relative}
+.rz-release-view>.site-nav,.rz-release-view>.sn-mobile,.rz-release-view>.rz-footer{display:none}
+.rz-release-view .rz-stage{background:hsl(var(--card));padding:64px 40px 56px}
+.rz-release-view .rz-release-content{width:min(1000px,100%);border:0;border-radius:0;box-shadow:none;padding:0}
+.rz-release-view .rz-owner{width:min(1000px,100%)}
+.rz-release-header{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px}
+.rz-release-header .rz-head{text-align:left;margin:0;min-width:0}
+.rz-release-header .rz-head h1{font-size:26px;overflow-wrap:anywhere;line-height:1.25}
+.rz-release-header .rz-head p{margin:10px 0 0;max-width:none;font-size:13px}
+.rz-release-tools{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.rz-release-tools .rz-btn{min-height:40px;padding:0 24px;font-size:13px}
+.rz-release-share,.rz-release-close{border:1px solid hsl(var(--line));border-radius:50%;background:hsl(var(--card));color:hsl(var(--ink))}
+.rz-release-close{position:absolute;right:18px;top:14px;width:32px;height:32px;z-index:45}
+.rz-release-embedded .rz-release-close{display:none}
+.rz-release-view .rz-cover{border-radius:8px;margin-bottom:28px}
+.rz-release-about{padding-bottom:24px;border-bottom:1px solid hsl(var(--line))}
+.rz-release-about .rz-h2{margin-top:0}
+.rz-release-about p{font-size:14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;max-width:760px;margin:10px 0 0}
+.rz-release-audience{color:hsl(var(--mut))}
+.rz-release-view .rz-h2{font-size:18px;margin-top:28px;margin-bottom:14px}
+.rz-release-view .rz-release-coin{text-align:left;margin-bottom:16px}
+.rz-release-view .rz-actions{justify-content:flex-start}
+.rz-release-view .rz-split,.rz-release-view .rz-inv{border-radius:8px;border-color:hsl(var(--line))}
+.rz-release-view .rz-row:last-child{border-bottom:0}
+.rz-release-view .rz-note{text-align:left}
+@media(max-width:600px){.rz-release-view .rz-stage{padding:58px 20px 32px}.rz-release-header{align-items:flex-start;flex-direction:column;gap:16px;margin-bottom:20px}.rz-release-header .rz-head h1{font-size:23px}.rz-release-tools{width:100%;justify-content:flex-end}.rz-release-view .rz-cover{margin-bottom:22px}.rz-release-view .rz-split-row{grid-template-columns:auto minmax(0,1fr) 2.5rem 5rem;gap:.35rem}.rz-release-about p{font-size:13px}}
 .rz-nav{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;background:hsl(var(--card));border-bottom:1px solid hsl(var(--line));min-height:4rem}
 .rz-nav img{height:26px}
 .rz-nav a.rz-link{font-size:.72rem;font-weight:600;color:hsl(var(--ink));text-decoration:none;border:1px solid hsl(var(--ink));border-radius:999px;padding:.4rem .85rem}

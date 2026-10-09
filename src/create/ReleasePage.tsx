@@ -5,6 +5,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import ReleasePrice from "./ReleasePrice";
+import { Button } from "@/components/ui/button";
+import { X, Share2 } from "lucide-react";
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -163,9 +165,10 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const fmtMcap = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(2)}M mcap` : v >= 1_000 ? `$${Math.round(v).toLocaleString("en-US")} mcap` : `$${v.toFixed(0)} mcap`;
   const budget = Number(r?.budget_cents || 0);
   const funded = Math.round(budget * 0.35);
+  const projectUrl = `${location.origin}/release/${encodeURIComponent(slug)}`;
 
   const copyLink = async () => {
-    try { await navigator.clipboard.writeText(location.href); setCopied(true); setTimeout(() => setCopied(false), 1800); }
+    try { await navigator.clipboard.writeText(projectUrl); setCopied(true); setTimeout(() => setCopied(false), 1800); }
     catch { setNote("Could not copy the link. Please copy it from the address bar."); }
   };
 
@@ -214,9 +217,16 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const pill = (s: Status) => (
     <span className={`rz-status rz-status-${s.toLowerCase()}`}>{s}</span>
   );
+  const closeProject = () => {
+    if (window.self !== window.top && new URLSearchParams(location.search).get("projectView") === "1") {
+      window.parent.postMessage("rhoze:close-project", location.origin);
+    } else if (document.referrer.startsWith(location.origin) && history.length > 1) history.back();
+    else location.href = "/discover";
+  };
 
   return (
-    <Shell right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-btn" href="/create.html?new=1">Create a project</a>}>
+    <Shell className={`rz-release-view${new URLSearchParams(location.search).get("projectView") === "1" ? " rz-release-embedded" : ""}`}>
+      <Button variant="ghost" size="icon" className="rz-release-close" aria-label="Close project" title="Close project" onClick={closeProject}><X size={20} /></Button>
       {r && isOwner && (
         <div className="rz-owner">
           <span>You own this page</span>
@@ -230,7 +240,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           </div>
         </div>
       )}
-      <div className="rz-card">
+      <div className="rz-card rz-release-content">
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /><div className="rz-skel" /></>}
         {r === null && (
           <div className="rz-head"><h1>Project not found</h1><p>This page may be unpublished or the link is wrong.</p>
@@ -238,16 +248,27 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         )}
         {r && (
           <>
+            <header className="rz-release-header">
+            <div className="rz-head">
+              <h1>{r.title}</h1>
+              <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
+            </div>
+            <div className="rz-release-tools">
+              <Button variant="outline" size="icon" className="rz-release-share" title="Share project" aria-label="Share project" onClick={() => setShareOpen(true)}><Share2 size={16} /></Button>
+              <Button asChild className="rz-btn pri"><a href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a></Button>
+            </div>
+            </header>
             <div className="rz-cover">
               {r.cover_url || r.coin_image ? <img src={r.cover_url || r.coin_image} alt={`${r.title} cover art`} /> : <span>{r.title}</span>}
             </div>
-            <div className="rz-head" style={{ marginBottom: "1rem" }}>
-              <h1 style={{ fontSize: "1.6rem" }}>{r.title}</h1>
-              <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
-              {r.answers?.description?.trim() ? <p style={{ maxWidth: 520 }}>{r.answers.description.trim()}</p> : r.answers?.making ? <p style={{ maxWidth: 480 }}>{firstSentence(r.answers.making)}</p> : null}
-            </div>
+            <section className="rz-release-about">
+              <h2 className="rz-h2">About the project</h2>
+              {r.answers?.description?.trim() ? <p>{r.answers.description.trim()}</p> : r.answers?.making ? <p>{r.answers.making.trim()}</p> : <p>{r.title} by {r.creator_name || "Rhozeland artist"}.</p>}
+              {r.answers?.audience && <p className="rz-release-audience">{r.answers.audience}</p>}
+            </section>
+            <h2 className="rz-h2">Project release</h2>
 
-            <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+            <div className="rz-release-coin">
               {ticker && pumpUrl ? (
                 <a className="rz-chip" href={pumpUrl} target="_blank" rel="noopener noreferrer">
                   {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
@@ -268,6 +289,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 
+            <h2 className="rz-h2">Project breakdown</h2>
             <div className="rz-split" style={{ marginBottom: "1rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{money(budget)}</span></div>
               <div className="rz-bar">
@@ -284,6 +306,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
             {r.coin_mint && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
 
+            <h2 className="rz-h2">Roadmap &amp; deliverables</h2>
             <div className="rz-inv">
               <div className="rz-inv-h" style={{ gridTemplateColumns: "1.6rem 1fr 1.4fr 7rem" }}><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span></div>
               {(r.milestones || []).map((m: any, i: number) => (
@@ -472,7 +495,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         </div>
       )}
       {shareOpen && r && (() => {
-        const shareUrl = window.location.href;
+        const shareUrl = projectUrl;
         const shareText = `Support ${r.title} on Rhoze`;
         const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
         const doCopy = async () => {

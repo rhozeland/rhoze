@@ -1,4 +1,5 @@
 // Shared JS for all Rhozeland pages
+(function(){var s=document.createElement('script');s.src='/project-view.js';document.head.appendChild(s);})();
 // Embedded sections inherit the outer homepage frame instead of adding a second gutter.
 (function(){
   var embedded = new URLSearchParams(location.search).get('embed') === '1';

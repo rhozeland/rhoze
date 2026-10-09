@@ -113,7 +113,7 @@ export default function CreateProject() {
       if (lt === "brand") { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
       setStepKey(lt ? (flowFor(lt)[(r.current_step || 2) - 1] || "details") : "type");
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
-      setTitle(r.title || ""); setMaking(r.answers?.making || ""); setAudience(r.answers?.audience || "");
+      setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || ""); setAudience(r.answers?.audience || "");
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
       setFeePct(Number(r.fee_pct)); setCausePct(Number(r.cause_pct)); setCauseName(r.cause_name || "");
       setRows((r.milestones || []).map((m: any) => ({ id: uid(), ...m })));
@@ -147,6 +147,7 @@ export default function CreateProject() {
     if (!name.trim()) return "Add your name.";
     if (!title.trim()) return "Give your project a name.";
     if (!making.trim()) return "Tell us what you're making.";
+    if (!desc.trim()) return "Add a short description of your project.";
     if (budgetCents < 100) return "Enter a budget.";
     if (feePct + causePct + tPct > 100) return "The split can't exceed 100%.";
     return "";

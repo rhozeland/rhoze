@@ -2187,6 +2187,7 @@ export type Database = {
         Row: {
           availability: string
           created_at: string
+          files: Json
           id: string
           link: string
           name: string
@@ -2199,6 +2200,7 @@ export type Database = {
         Insert: {
           availability: string
           created_at?: string
+          files?: Json
           id?: string
           link: string
           name: string
@@ -2211,6 +2213,7 @@ export type Database = {
         Update: {
           availability?: string
           created_at?: string
+          files?: Json
           id?: string
           link?: string
           name?: string
@@ -3523,16 +3526,28 @@ export type Database = {
         }[]
       }
       redeem_project_code: { Args: { _code: string }; Returns: string }
-      release_apply: {
-        Args: {
-          p_availability: string
-          p_link: string
-          p_name: string
-          p_role_index: number
-          p_slug: string
-        }
-        Returns: string
-      }
+      release_apply:
+        | {
+            Args: {
+              p_availability: string
+              p_link: string
+              p_name: string
+              p_role_index: number
+              p_slug: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_availability: string
+              p_files?: Json
+              p_link: string
+              p_name: string
+              p_role_index: number
+              p_slug: string
+            }
+            Returns: string
+          }
       release_claim: { Args: { p_token: string }; Returns: number }
       release_delete: { Args: { p_id: string }; Returns: undefined }
       release_get_draft: {
@@ -3578,6 +3593,7 @@ export type Database = {
         Returns: {
           availability: string
           created_at: string
+          files: Json
           id: string
           link: string
           name: string

@@ -90,8 +90,10 @@ export function LikedProjects({ userId }: { userId: string }) {
   return <section className="rz-pf-sec" aria-label="Liked projects">
     <div className="rz-liked-heading"><h2>Liked projects</h2>
       {own && <div className="rz-liked-visibility" role="group" aria-label="Liked projects visibility"><span>Visibility</span>
-        <Button size="sm" variant={isPublic ? "default" : "outline"} aria-pressed={isPublic} disabled={busy} onClick={() => changeVisibility(true)}>Public</Button>
-        <Button size="sm" variant={!isPublic ? "default" : "outline"} aria-pressed={!isPublic} disabled={busy} onClick={() => changeVisibility(false)}>Private</Button>
+        <div className="rz-liked-toggle">
+          <button type="button" aria-pressed={isPublic} disabled={busy} onClick={() => changeVisibility(true)}>Public</button>
+          <button type="button" aria-pressed={!isPublic} disabled={busy} onClick={() => changeVisibility(false)}>Private</button>
+        </div>
       </div>}
     </div>
     {error && <p role="alert" className="rz-pf-empty">{error}</p>}

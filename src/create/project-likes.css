@@ -5,7 +5,12 @@
 .rz-like-error { position:absolute; top:100%; right:0; width:220px; padding:8px; background:hsl(var(--background)); color:hsl(var(--foreground)); border:1px solid hsl(var(--border)); z-index:3; font-size:12px; }
 .rz-liked-heading { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
 .rz-liked-heading h2 { margin:0; }
-.rz-liked-visibility { display:flex; align-items:center; gap:4px; font-size:12px; flex-wrap:wrap; }
-.rz-liked-visibility > span { margin-right:6px; }
+.rz-liked-visibility { display:flex; align-items:center; gap:6px; font-size:11px; color:hsl(var(--muted-foreground)); flex-wrap:wrap; }
+.rz-liked-visibility > span { margin-right:2px; }
+.rz-liked-toggle { display:inline-flex; align-items:center; border:1px solid hsl(var(--border)); border-radius:999px; overflow:hidden; background:hsl(var(--muted)/.4); }
+.rz-liked-toggle button { padding:2px 10px; font-size:11px; line-height:1.6; border:0; background:transparent; color:hsl(var(--muted-foreground)); cursor:pointer; transition:background .15s ease,color .15s ease; }
+.rz-liked-toggle button[aria-pressed="true"] { background:hsl(var(--foreground)); color:hsl(var(--background)); }
+.rz-liked-toggle button[aria-pressed="false"]:hover { color:hsl(var(--foreground)); }
+.rz-liked-toggle button:disabled { opacity:.55; cursor:default; }
 .rz-like-card { position:relative; min-width:0; }
 .rz-like-card > .rz-like-control { position:absolute; top:8px; right:8px; z-index:2; }

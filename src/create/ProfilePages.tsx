@@ -178,7 +178,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
             <section className="rz-pf-sec"><h2>Bio</h2>
               <p className="rz-pf-bio">{c.bio || "This creator hasn't added a bio yet."}</p></section>
 
-            <section className="rz-pf-sec"><h2>Projects</h2><ProjectGrid rels={projects} /></section>
+            <section className="rz-pf-sec"><h2>Projects{isOwner && <DraftsLink />}</h2><ProjectGrid rels={projects} /></section>
 
             {!fan && <section className="rz-pf-sec"><h2>Work samples</h2>
               {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
@@ -367,7 +367,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
             {editing && canEdit && <BrandEditor slug={slug} initial={{ slug, name, logo_url: brand?.logo_url ?? null, category: brand?.category ?? null, bio: brand?.bio ?? null }} onSaved={() => { setEditing(false); load(); }} />}
 
-            <section className="rz-pf-sec"><h2>Projects</h2>
+            <section className="rz-pf-sec"><h2>Projects{canEdit && <DraftsLink />}</h2>
 <ProjectGrid rels={rels} /></section>
 
             <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>

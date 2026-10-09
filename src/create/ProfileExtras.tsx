@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Bookmark, Link2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
@@ -62,11 +63,12 @@ export function ProfileTools({ kind, slug, name, photo, isOwner, onViewRoles }: 
         {kind === "creator" && <button className="rz-btn pri" onClick={doInvite}>Invite to project</button>}
         {kind === "brand" && <a className="rz-btn pri" href={onViewRoles || "#hiring"}>View open roles</a>}
         {!isOwner && <button className="rz-btn" onClick={message}>Message</button>}
-        <button className={`rz-btn rz-pf-icon${saved ? " on" : ""}`} onClick={toggleSave} aria-pressed={saved} aria-label={saved ? "Remove from saved" : "Save profile"} title={saved ? "Saved" : "Save"}>
-          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 3h12v18l-6-4.5L6 21z" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /></svg>
-          {saved ? "Saved" : "Save"}
+        <button className={`rz-btn rz-ico${saved ? " on" : ""}`} onClick={toggleSave} aria-pressed={saved} aria-label={saved ? "Remove from saved" : "Save profile"} title={saved ? "Saved" : "Save profile"}>
+          <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
         </button>
-        <button className="rz-btn" onClick={copy}>{copied ? "Link copied" : "Copy profile link"}</button>
+        <button className="rz-btn rz-ico" onClick={copy} aria-label={copied ? "Link copied" : "Copy profile link"} title={copied ? "Link copied" : "Copy profile link"}>
+          {copied ? <Check size={15} /> : <Link2 size={15} />}
+        </button>
       </div>
       {note && <p className="rz-pf-empty" style={{ marginTop: ".4rem" }}>{note}</p>}
       {auth && (

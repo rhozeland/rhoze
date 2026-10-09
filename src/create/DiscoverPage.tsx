@@ -13,10 +13,24 @@ type Release = {
   published_at: string;
 };
 
-const FILTERS = ["All", "Music", "Cause", "Live", "Unlocks"] as const;
+const FILTERS = ["All", "Music", "Film & Video", "Art & Design", "Fashion", "Brand campaigns"] as const;
 type Filter = (typeof FILTERS)[number];
 
-const MUSIC_WORDS = /\b(music|song|ep|album|single|track|mixtape|beat|record|audio)\b/i;
+const EMPTY_LABEL: Record<Filter, string> = {
+  "All": "No projects yet — create one",
+  "Music": "No music projects yet.",
+  "Film & Video": "No film or video projects yet.",
+  "Art & Design": "No art or design projects yet.",
+  "Fashion": "No fashion projects yet.",
+  "Brand campaigns": "No brand campaigns yet.",
+};
+
+const MUSIC_WORDS = /\b(music|song|ep|album|single|track|mixtape|beat|record|audio|songwriter|rap|trap|singer|singing|melody|lyrics)\b/i;
+const FILM_WORDS = /\b(film|movie|short film|documentary|doc|video|music video|clip|trailer|cinema|cinematic|animation|animated|shoot|photoshoot|director|editing)\b/i;
+const ART_WORDS = /\b(art|artwork|painting|paint|illustration|illustrate|drawing|sketch|poster|mural|exhibition|gallery|sculpture|graphic|design|designer)\b/i;
+const FASHION_WORDS = /\b(fashion|clothing|apparel|streetwear|collection|hoodie|tee|jersey|jean|jeans|denim|jacket|coat|sneaker|shoe|boot|jewelry|accessory|accessories|lookbook|runway|outfit|textile|couture)\b/i;
+
+const textOf = (r: Release) => `${r.title} ${r.creator_name} ${r.answers?.making ?? ""} ${r.answers?.audience ?? ""}`;
 
 export default function DiscoverPage() {
   const [rows, setRows] = useState<Release[] | undefined>(undefined);
@@ -35,14 +49,15 @@ export default function DiscoverPage() {
     if (!rows) return rows;
     switch (filter) {
       case "Music":
-        return rows.filter((r) =>
-          MUSIC_WORDS.test(`${r.title} ${r.answers?.making ?? ""} ${r.answers?.audience ?? ""}`));
-      case "Cause":
-        return rows.filter((r) => (r as any).cause_name);
-      case "Live":
-        return rows; // any published project counts as live
-      case "Unlocks":
-        return rows; // every published project has at least one unlocked item
+        return rows.filter((r) => MUSIC_WORDS.test(textOf(r)));
+      case "Film & Video":
+        return rows.filter((r) => FILM_WORDS.test(textOf(r)));
+      case "Art & Design":
+        return rows.filter((r) => ART_WORDS.test(textOf(r)));
+      case "Fashion":
+        return rows.filter((r) => FASHION_WORDS.test(textOf(r)));
+      case "Brand campaigns":
+        return rows.filter((r) => r.answers?.project_type === "brand");
       default:
         return rows;
     }
@@ -77,7 +92,7 @@ export default function DiscoverPage() {
 
         {rows !== undefined && visible && visible.length === 0 && (
           <div className="rz-empty">
-            <p>No projects yet — create one</p>
+            <p>{EMPTY_LABEL[filter]}</p>
             <a className="rz-btn pri" href="/create.html?new=1">Create a project</a>
           </div>
         )}

@@ -115,7 +115,7 @@
 /* Community profiles */
 .rz-pf-top{display:flex;gap:1.1rem;align-items:flex-start;margin-bottom:1.2rem}
 .rz-pf-photo{width:132px;height:132px;flex:none;border-radius:18px;object-fit:cover;background:hsl(var(--line));border:1px solid hsl(var(--line))}
-.rz-pf-logo{object-fit:contain;background:hsl(var(--card))}
+.rz-pf-logo{object-fit:cover}
 .rz-pf-initial{display:grid;place-items:center;font-size:2.6rem;font-weight:700;color:hsl(var(--ink))}
 .rz-pf-ph{background:hsl(var(--line))}
 .rz-pf-id{min-width:0;flex:1}.rz-pf-id h1{font-size:1.6rem;font-weight:700;margin:0 0 .45rem;line-height:1.15}

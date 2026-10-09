@@ -29,12 +29,13 @@ export function ProfileTools({ kind, slug, name, photo, isOwner, onViewRoles }: 
   const [note, setNote] = useState("");
 
   useEffect(() => {
-    if (!uid) { setSaved(false); return; }
+    if (!uid || isOwner) { setSaved(false); return; }
     db.from("saved_profiles").select("id").eq("profile_kind", kind).eq("profile_slug", slug).maybeSingle()
       .then(({ data }: any) => setSaved(!!data));
-  }, [uid, kind, slug]);
+  }, [uid, kind, slug, isOwner]);
 
   const toggleSave = async () => {
+    if (isOwner) return;
     if (!uid) return setAuth("save");
     if (saved) {
       setSaved(false);
@@ -63,9 +64,9 @@ export function ProfileTools({ kind, slug, name, photo, isOwner, onViewRoles }: 
         {kind === "creator" && <button className="rz-btn pri" onClick={doInvite}>Invite to project</button>}
         {kind === "brand" && <a className="rz-btn pri" href={onViewRoles || "#hiring"}>View open roles</a>}
         {!isOwner && <button className="rz-btn" onClick={message}>Message</button>}
-        <button className={`rz-btn rz-ico${saved ? " on" : ""}`} onClick={toggleSave} aria-pressed={saved} aria-label={saved ? "Remove from saved" : "Save profile"} title={saved ? "Saved" : "Save profile"}>
+        {!isOwner && <button className={`rz-btn rz-ico${saved ? " on" : ""}`} onClick={toggleSave} aria-pressed={saved} aria-label={saved ? "Remove from saved" : "Save profile"} title={saved ? "Saved" : "Save profile"}>
           <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
-        </button>
+        </button>}
         <button className="rz-btn rz-ico" onClick={copy} aria-label={copied ? "Link copied" : "Copy profile link"} title={copied ? "Link copied" : "Copy profile link"}>
           {copied ? <Check size={15} /> : <Link2 size={15} />}
         </button>

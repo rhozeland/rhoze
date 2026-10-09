@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
@@ -66,15 +67,28 @@ function useUser() {
   return { uid, team };
 }
 
-function OwnerBar({ label, onEdit, editing, visibility }: { label: string; onEdit: () => void; editing: boolean; visibility?: { isPublic: boolean; busy: boolean; onChange: (v: boolean) => void } }) {
+function OwnerSettings({ onEdit, editing, visibility }: { onEdit: () => void; editing: boolean; visibility?: { isPublic: boolean; busy: boolean; onChange: (v: boolean) => void } }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="rz-owner">
-      <span>{label}{visibility && <> · {visibility.isPublic ? "Public: shown on Community" : "Private: hidden from Community"}</>}</span>
-      <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>{visibility && (
-        <span className="rz-vis" role="group" aria-label="Profile visibility">
-          <button className={`rz-btn${visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={visibility.isPublic} onClick={() => visibility.onChange(true)}>Public</button>
-          <button className={`rz-btn${!visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={!visibility.isPublic} onClick={() => visibility.onChange(false)}>Private</button>
-        </span>)}<button className="rz-btn pri" onClick={onEdit}>{editing ? "Close editor" : "Edit profile"}</button></div>
+    <div className="rz-settings">
+      <button type="button" className="rz-settings-btn" aria-label="Profile settings" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <Settings size={17} />
+      </button>
+      {open && (
+        <div className="rz-settings-menu" role="menu">
+          <button type="button" className="rz-btn pri" onClick={() => { onEdit(); setOpen(false); }}>{editing ? "Close editor" : "Edit profile"}</button>
+          {visibility && (
+            <div className="rz-settings-vis">
+              <b>Profile visibility</b>
+              <span className="rz-vis" role="group" aria-label="Profile visibility">
+                <button className={`rz-btn${visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={visibility.isPublic} onClick={() => visibility.onChange(true)}>Public</button>
+                <button className={`rz-btn${!visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={!visibility.isPublic} onClick={() => visibility.onChange(false)}>Private</button>
+              </span>
+              <small>{visibility.isPublic ? "Public: shown on Community" : "Private: hidden from Community"}</small>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -136,8 +150,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
   return (
     <Shell right={<AccountLinks />}>
-      {isOwner && <OwnerBar label="This is your profile" editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
       <div className="rz-card">
+        {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}
         {c && (
@@ -329,8 +343,8 @@ export function BrandProfile({ slug }: { slug: string }) {
 
   return (
     <Shell right={<AccountLinks />}>
-      {canEdit && exists && <OwnerBar label="You manage this brand" editing={editing} onEdit={() => setEditing((e) => !e)} />}
       <div className="rz-card">
+        {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {rels !== undefined && !exists && <NotFound what="Brand" />}
         {rels !== undefined && exists && (

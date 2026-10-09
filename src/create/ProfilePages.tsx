@@ -149,9 +149,12 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const fan = c?.account_kind === "supporter";
 
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
-        {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
+        <div className="rz-profile-controls">
+          <AccountLinks />
+          {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
+        </div>
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}
         {c && (
@@ -342,9 +345,12 @@ export function BrandProfile({ slug }: { slug: string }) {
       .filter(({ role }: any) => role && String(role.name || "").trim()));
 
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
-        {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
+        <div className="rz-profile-controls">
+          <AccountLinks />
+          {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
+        </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {rels !== undefined && !exists && <NotFound what="Brand" />}
         {rels !== undefined && exists && (

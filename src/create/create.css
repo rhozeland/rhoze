@@ -7,6 +7,8 @@
 .rz-stage{flex:1;padding:1.25rem .9rem 2.5rem;background:radial-gradient(circle at 0% 64%,hsl(var(--coral)/.7),transparent 29%),radial-gradient(circle at 100% 69%,hsl(var(--aqua)/.86),transparent 31%),radial-gradient(circle at 18% 100%,hsl(var(--yellow)/.82),transparent 29%),radial-gradient(circle at 62% 100%,hsl(var(--aqua)/.72),transparent 34%),hsl(var(--surface))}
 .rz-card{position:relative;width:min(760px,100%);margin:0 auto;background:hsl(var(--card));border:1px solid hsl(var(--line));border-radius:21px;box-shadow:0 12px 28px hsl(0 0% 0%/.13);padding:1.4rem 1.1rem 1.6rem}
 .rz-settings{position:absolute;top:.9rem;right:.9rem;z-index:5}
+.rz-profile-controls{display:flex;align-items:center;justify-content:flex-end;gap:.5rem;margin-bottom:.75rem}
+.rz-profile-controls .rz-settings{position:relative;top:auto;right:auto}
 .rz-settings-btn{display:grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:50%;border:1px solid hsl(var(--line));background:hsl(var(--card));color:hsl(var(--ink));cursor:pointer}
 .rz-settings-btn:hover{border-color:hsl(var(--ink))}
 .rz-settings-menu{position:absolute;top:2.5rem;right:0;min-width:220px;background:hsl(var(--card));border:1px solid hsl(var(--line));border-radius:14px;box-shadow:0 12px 28px hsl(0 0% 0%/.18);padding:.8rem;display:flex;flex-direction:column;gap:.7rem;font-size:.72rem}

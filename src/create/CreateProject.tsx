@@ -43,6 +43,7 @@ export default function CreateProject() {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [making, setMaking] = useState("");
+  const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [budget, setBudget] = useState("");
   const [feePct, setFeePct] = useState(10);
@@ -124,7 +125,7 @@ export default function CreateProject() {
 
   const payload = (s = step) => ({
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
-    answers: { making: making.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
+    answers: { making: making.trim(), description: desc.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
     coin_mint: coin?.mint ?? "", coin_ticker: coin?.ticker ?? "", coin_name: coin?.name ?? "", coin_image: coin?.image ?? "",

@@ -16,6 +16,15 @@ type Release = {
 const FILTERS = ["All", "Music", "Film & Video", "Art & Design", "Fashion", "Brand campaigns"] as const;
 type Filter = (typeof FILTERS)[number];
 
+const EMPTY_LABEL: Record<Filter, string> = {
+  "All": "No projects yet — create one",
+  "Music": "No music projects yet.",
+  "Film & Video": "No film or video projects yet.",
+  "Art & Design": "No art or design projects yet.",
+  "Fashion": "No fashion projects yet.",
+  "Brand campaigns": "No brand campaigns yet.",
+};
+
 const MUSIC_WORDS = /\b(music|song|ep|album|single|track|mixtape|beat|record|audio|songwriter|rap|trap|singer|singing|melody|lyrics)\b/i;
 const FILM_WORDS = /\b(film|movie|short film|documentary|doc|video|music video|clip|trailer|cinema|cinematic|animation|animated|shoot|photoshoot|director|editing)\b/i;
 const ART_WORDS = /\b(art|artwork|painting|paint|illustration|illustrate|drawing|sketch|poster|mural|exhibition|gallery|sculpture|graphic|design|designer)\b/i;

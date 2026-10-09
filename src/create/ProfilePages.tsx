@@ -120,7 +120,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const rate = c?.hourly_rate_cents != null ? `$${(c.hourly_rate_cents / 100).toLocaleString("en-CA")}/hr` : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
   const samples = (c?.work_samples ?? []) as Sample[];
-  const fan = c?.account_kind === "fan";
+  const fan = c?.account_kind === "supporter";
 
   return (
     <Shell right={<AccountLinks />}>
@@ -135,7 +135,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
                 <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
-                <p className="rz-pf-meta">{!fan && <><b>{rate}</b> · </>}{c.membership_tier || "Community"} member{c.rating != null && <> · {Number(c.rating).toFixed(1)} ★</>}</p>
+                <p className="rz-pf-meta">{!fan && <><b>{rate}</b> · </>}{fan ? "Supporter" : `${c.membership_tier || "Community"} member`}{c.rating != null && <> · {Number(c.rating).toFixed(1)} ★</>}</p>
                 <ProfileTools kind="creator" slug={c.slug} name={c.display_name} photo={c.photo_url} isOwner={isOwner && c.user_id === uid} />
                 {(ig || web) && <div className="rz-pf-actions" style={{ marginTop: ".4rem" }}>
                   {ig && <a className="rz-btn" href={ig} target="_blank" rel="noopener noreferrer">Instagram ↗</a>}
@@ -399,7 +399,7 @@ function BrandEditor({ slug, initial, onSaved }: { slug: string; initial: Brand;
 /* ------------------------------ /me ------------------------------ */
 export function MyProfile() {
   const [state, setState] = useState<"load" | "out" | "pick">("load");
-  const [kind, setKind] = useState<"artist" | "brand" | "fan">("artist");
+  const [kind, setKind] = useState<"artist" | "brand" | "supporter">("artist");
   const [auth, setAuth] = useState(false);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -423,12 +423,12 @@ export function MyProfile() {
     <Shell right={<AccountLinks />}>
       <div className="rz-card">
         {state === "load" && <div className="rz-skel" />}
-        {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in or create an account as an Artist, Brand or Fan.</p><div className="rz-actions"><button className="rz-btn pri" onClick={() => setAuth(true)}>Sign in</button></div>
+        {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in or create an account as an Artist, Brand or Supporter.</p><div className="rz-actions"><button className="rz-btn pri" onClick={() => setAuth(true)}>Sign in</button></div>
           {auth && <AuthModal action="" redirectTo={location.href} onClose={() => setAuth(false)} onDone={() => location.reload()} />}</div>}
         {state === "pick" && (
           <div className="rz-head"><h1>Set up your profile</h1><p>Choose how you show up on Rhozeland. You can edit everything after.</p>
             <div className="rz-actions" style={{ marginTop: ".8rem" }}>
-              {([["artist", "Artist"], ["brand", "Brand"], ["fan", "Fan"]] as const).map(([k, l]) => <button key={k} className={`rz-btn${kind === k ? " pri" : ""}`} onClick={() => setKind(k)}>{l}</button>)}
+              {([["artist", "Artist"], ["brand", "Brand"], ["supporter", "Supporter"]] as const).map(([k, l]) => <button key={k} className={`rz-btn${kind === k ? " pri" : ""}`} onClick={() => setKind(k)}>{l}</button>)}
             </div>
             <div className="rz-field" style={{ marginTop: ".8rem" }}><label>{kind === "brand" ? "Brand name" : "Your name"}</label>
               <input className="rz-in" maxLength={100} placeholder="Leave blank to use your account name" value={name} onChange={(e) => setName(e.target.value)} /></div>

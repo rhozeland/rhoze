@@ -195,11 +195,6 @@ export function MoreCreators({ slug, tags, Avatar }: { slug: string; tags: strin
   );
 }
 
-export const AccountLinks = () => (
-  <span style={{ display: "flex", gap: ".8rem", alignItems: "center" }}>
-    <a className="rz-btn rz-ico" href="/saved" aria-label="Saved profiles" title="Saved"><Bookmark size={14} /></a>
-  </span>
-);
 
 function SignInGate({ what }: { what: string }) {
   const [open, setOpen] = useState(false);

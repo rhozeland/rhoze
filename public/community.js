@@ -1,5 +1,5 @@
 (function () {
-  const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&account_kind=neq.supporter&order=created_at.desc&limit=500';
+  const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&is_public=eq.true&account_kind=neq.supporter&order=created_at.desc&limit=500';
   const callsUrl = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/releases?select=slug,title,creator_name,answers&status=eq.published&order=published_at.desc&limit=200';
   const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
   const $ = id => document.getElementById(id);

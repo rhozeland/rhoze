@@ -420,8 +420,17 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                         <div key={a.id} className="rz-row" style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
                           <div style={{ minWidth: 0 }}>
                             <b>{a.name}</b> {a.status === "hired" && <span className="rz-status rz-status-delivered">Hired</span>}
-                            <div><a className="rz-textlink" href={a.link} target="_blank" rel="noopener noreferrer nofollow" style={{ wordBreak: "break-all" }}>{a.link}</a></div>
+                            {a.link && <div><a className="rz-textlink" href={a.link} target="_blank" rel="noopener noreferrer nofollow" style={{ wordBreak: "break-all" }}>{a.link}</a></div>}
                             <div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{a.availability}</div>
+                            {Array.isArray(a.files) && a.files.length > 0 && (
+                              <div style={{ display: "flex", flexWrap: "wrap", gap: ".3rem", marginTop: ".3rem" }}>
+                                {a.files.map((f: any, fi: number) => (
+                                  <a key={fi} className="rz-textlink" href={f.url} target="_blank" rel="noopener noreferrer nofollow" style={{ fontSize: ".72rem" }}>
+                                    {f.kind === "image" ? "🖼" : f.kind === "video" ? "▶" : f.kind === "audio" ? "♪" : "📎"} {f.name || `File ${fi + 1}`}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
                           </div>
                           {a.status === "hired"
                             ? <button className="rz-btn" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} onClick={() => markHired(a.id, "applied")}>Undo</button>

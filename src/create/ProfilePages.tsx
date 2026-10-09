@@ -323,7 +323,7 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
             <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, textTransform: "none", letterSpacing: 0, margin: 0 }}><input type="checkbox" checked={isRange} onChange={(e) => setIsRange(e.target.checked)} /> Use a range</label>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input className="rz-in" inputMode="decimal" placeholder={isRange ? "From" : "85"} value={rateIn} onChange={(e) => setRateIn(e.target.value)} />
+            <input className="rz-in" inputMode="decimal" placeholder={isRange ? "From" : "Starting from"} value={rateIn} onChange={(e) => setRateIn(e.target.value)} />
             {isRange && <><span>–</span><input className="rz-in" inputMode="decimal" placeholder="To" value={rateMax} onChange={(e) => setRateMax(e.target.value)} /></>}
           </div>
         </div>

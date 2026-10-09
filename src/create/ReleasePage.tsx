@@ -37,6 +37,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [note, setNote] = useState("");
   const [applyIdx, setApplyIdx] = useState<number | null>(null);
   const [applyForm, setApplyForm] = useState({ name: "", link: "", availability: "" });
+  const [applyFiles, setApplyFiles] = useState<{ name: string; url: string; kind: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [applyErr, setApplyErr] = useState("");
   const [applyBusy, setApplyBusy] = useState(false);
   const [applyDone, setApplyDone] = useState(false);
@@ -99,15 +101,32 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [r]);
 
-  const openApply = (idx: number) => { setApplyErr(""); setApplyDone(false); setApplyForm({ name: "", link: "", availability: "" }); setApplyIdx(idx); };
+  const openApply = (idx: number) => { setApplyErr(""); setApplyDone(false); setApplyForm({ name: "", link: "", availability: "" }); setApplyFiles([]); setApplyIdx(idx); };
+
+  const addApplyFiles = async (list: FileList | null) => {
+    if (!list?.length) return;
+    if (applyFiles.length + list.length > 6) return setApplyErr("You can attach up to 6 files.");
+    setUploading(true); setApplyErr("");
+    for (const f of Array.from(list)) {
+      if (f.size > 50 * 1024 * 1024) { setApplyErr(`"${f.name}" is over 50 MB.`); continue; }
+      const ext = (f.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8) || "bin";
+      const path = `applications/${crypto.randomUUID()}.${ext}`;
+      const { error } = await supabase.storage.from("avatars").upload(path, f, { contentType: f.type });
+      if (error) { setApplyErr(`"${f.name}" could not be uploaded. Please try again.`); continue; }
+      const url = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
+      const kind = f.type.startsWith("image/") ? "image" : f.type.startsWith("video/") ? "video" : f.type.startsWith("audio/") ? "audio" : "file";
+      setApplyFiles((x) => [...x, { name: f.name, url, kind }]);
+    }
+    setUploading(false);
+  };
 
   const submitApply = async () => {
     const name = applyForm.name.trim(), raw = applyForm.link.trim(), link = raw && !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw, availability = applyForm.availability.trim();
     if (!name || name.length > 100) return setApplyErr("Please add your name.");
-    if (!/^https?:\/\/[^\s.]+\.\S+$/i.test(link) || link.length > 500) return setApplyErr("Please add a link to your portfolio or profile.");
-    if (!availability || availability.length > 500) return setApplyErr("Please tell us when you are available.");
+    if (link && (!/^https?:\/\/[^\s.]+\.\S+$/i.test(link) || link.length > 500)) return setApplyErr("That link doesn't look right. Check it or leave it blank.");
+    if (!availability || availability.length > 2000) return setApplyErr("Please add a short description or inquiry.");
     setApplyBusy(true); setApplyErr("");
-    const { error } = await (supabase.rpc as any)("release_apply", { p_slug: slug, p_role_index: applyIdx, p_name: name, p_link: link, p_availability: availability });
+    const { error } = await (supabase.rpc as any)("release_apply", { p_slug: slug, p_role_index: applyIdx, p_name: name, p_link: link, p_availability: availability, p_files: applyFiles });
     setApplyBusy(false);
     if (error) return setApplyErr("Your application could not be sent. Please try again.");
     setApplyDone(true);
@@ -344,8 +363,22 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             ) : (
               <>
                 <div className="rz-field"><label>Your name</label><input className="rz-in" maxLength={100} value={applyForm.name} onChange={(e) => setApplyForm({ ...applyForm, name: e.target.value })} /></div>
-                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Portfolio or Community profile link</label><input className="rz-in" maxLength={500} placeholder="yourportfolio.com" value={applyForm.link} onChange={(e) => setApplyForm({ ...applyForm, link: e.target.value })} /></div>
-                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Availability</label><textarea className="rz-in" maxLength={500} placeholder="Weekends in October, or any weekday after 5pm" value={applyForm.availability} onChange={(e) => setApplyForm({ ...applyForm, availability: e.target.value })} /></div>
+                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Portfolio or Community profile link <span style={{ color: "hsl(var(--mut))", fontWeight: 400 }}>(optional)</span></label><input className="rz-in" maxLength={500} placeholder="yourportfolio.com" value={applyForm.link} onChange={(e) => setApplyForm({ ...applyForm, link: e.target.value })} /></div>
+                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Description or inquiry</label><textarea className="rz-in" maxLength={2000} placeholder="Tell them about yourself, your experience, or ask a question" value={applyForm.availability} onChange={(e) => setApplyForm({ ...applyForm, availability: e.target.value })} /></div>
+                <div className="rz-field" style={{ marginTop: ".7rem" }}><label>Attachments <span style={{ color: "hsl(var(--mut))", fontWeight: 400 }}>(optional — images, videos or files, up to 6)</span></label>
+                  <input type="file" multiple accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx" onChange={(e) => { addApplyFiles(e.target.files); e.target.value = ""; }} disabled={uploading} />
+                  {uploading && <p className="rz-note" style={{ marginTop: ".3rem" }}>Uploading…</p>}
+                  {applyFiles.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem", marginTop: ".4rem" }}>
+                      {applyFiles.map((f, i) => (
+                        <span key={i} className="rz-chipbtn" style={{ display: "inline-flex", alignItems: "center", gap: ".35rem" }}>
+                          {f.kind === "image" ? "🖼" : f.kind === "video" ? "▶" : f.kind === "audio" ? "♪" : "📎"} {f.name.length > 24 ? f.name.slice(0, 22) + "…" : f.name}
+                          <button type="button" aria-label={`Remove ${f.name}`} onClick={() => setApplyFiles((x) => x.filter((_, j) => j !== i))} style={{ background: "none", border: 0, cursor: "pointer", color: "inherit", padding: 0 }}>×</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 {applyErr && <p className="rz-note" style={{ color: "hsl(var(--destructive, 0 70% 50%))", marginTop: ".6rem" }}>{applyErr}</p>}
                 <div className="rz-actions" style={{ marginTop: "1.2rem" }}>
                   <button className="rz-btn" onClick={() => setApplyIdx(null)}>Cancel</button>

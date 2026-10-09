@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
 import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
+import CoverEditor from "./CoverEditor";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -256,15 +257,20 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
   const [tags, setTags] = useState((c.disciplines ?? []).join(", "));
   const [rateIn, setRateIn] = useState(c.hourly_rate_cents != null ? String(c.hourly_rate_cents / 100) : "");
   const [photo, setPhoto] = useState(c.photo_url ?? "");
-  const uploadPhoto = async (f?: File) => {
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const pickPhoto = (f?: File) => {
     if (!f) return;
-    if (!f.type.startsWith("image/") || f.size > 5 * 1024 * 1024) { setNote("Photo must be an image up to 5 MB."); return; }
+    if (!f.type.startsWith("image/") || f.size > 15 * 1024 * 1024) { setNote("Photo must be an image up to 15 MB."); return; }
+    setPhotoFile(f); setNote("");
+  };
+  const uploadPhoto = async (cropped: File) => {
     setBusy(true);
-    const path = `${uid}/photo-${Date.now()}.${f.name.split(".").pop() || "jpg"}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, f, { contentType: f.type });
+    const path = `${uid}/photo-${Date.now()}.jpg`;
+    const { error } = await supabase.storage.from("avatars").upload(path, cropped, { contentType: cropped.type });
     setBusy(false);
-    if (error) { setNote("Upload failed. Please try again."); return; }
-    setPhoto(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl); setNote("");
+    if (error) { setNote("Upload failed. Please try again."); setPhotoFile(null); return; }
+    setPhoto(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl);
+    setNote(""); setPhotoFile(null);
   };
   const [link, setLink] = useState("");
   const [note, setNote] = useState("");
@@ -309,8 +315,9 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
       </div>
       <div className="rz-pf-two">
         <div className="rz-field"><label>Roles</label><input className="rz-in" placeholder="Photographer, Videographer" value={tags} onChange={(e) => setTags(e.target.value)} /></div>
-        <div className="rz-field"><label>Photo</label><label className="rz-btn" style={{ cursor: "pointer" }}>{photo ? "Replace photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => uploadPhoto(e.target.files?.[0])} /></label></div>
+        <div className="rz-field"><label>Profile photo</label><label className="rz-btn" style={{ cursor: "pointer" }}>{photo ? "Replace photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => { pickPhoto(e.target.files?.[0]); e.currentTarget.value = ""; }} /></label></div>
       </div>
+      {photoFile && <CoverEditor file={photoFile} busy={busy} onCancel={() => setPhotoFile(null)} onApply={uploadPhoto} aspect={1} outWidth={900} outHeight={900} title="Adjust profile photo" saveLabel="Save photo" outputName="profile-photo.jpg" />}
       <div className="rz-field"><label>Bio</label><textarea className="rz-in" value={bio} maxLength={2000} onChange={(e) => setBio(e.target.value)} /></div>
       <div className="rz-pf-two">
         <div className="rz-field"><label>Instagram</label><input className="rz-in" placeholder="https://instagram.com/you" value={ig} onChange={(e) => setIg(e.target.value)} /></div>
@@ -419,17 +426,22 @@ function BrandEditor({ slug, initial, onSaved }: { slug: string; initial: Brand;
   const [busy, setBusy] = useState(false);
   const set = (k: keyof Brand) => (e: any) => setF({ ...f, [k]: e.target.value });
 
-  const uploadLogo = async (file?: File) => {
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const pickPhoto = (file?: File) => {
     if (!file) return;
-    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) { setNote("Logo must be an image up to 5 MB."); return; }
+    if (!file.type.startsWith("image/") || file.size > 15 * 1024 * 1024) { setNote("Photo must be an image up to 15 MB."); return; }
+    setPhotoFile(file); setNote("");
+  };
+  const uploadLogo = async (cropped: File) => {
     const { data: s } = await supabase.auth.getSession();
-    const uid = s.session?.user?.id; if (!uid) return;
+    const uid = s.session?.user?.id; if (!uid) { setPhotoFile(null); return; }
     setBusy(true);
-    const path = `${uid}/brand-${slug}-${Date.now()}.${file.name.split(".").pop() || "png"}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type });
+    const path = `${uid}/brand-${slug}-${Date.now()}.jpg`;
+    const { error } = await supabase.storage.from("avatars").upload(path, cropped, { contentType: cropped.type });
     setBusy(false);
-    if (error) { setNote("Upload failed. Please try again."); return; }
-    setF((x) => ({ ...x, logo_url: supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl })); setNote("");
+    if (error) { setNote("Upload failed. Please try again."); setPhotoFile(null); return; }
+    setF((x) => ({ ...x, logo_url: supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl }));
+    setNote(""); setPhotoFile(null);
   };
   const save = async () => {
     setBusy(true);
@@ -445,8 +457,10 @@ function BrandEditor({ slug, initial, onSaved }: { slug: string; initial: Brand;
         <div className="rz-field"><label>Category</label><input className="rz-in" placeholder="Fashion, beverage, tech…" value={f.category ?? ""} onChange={set("category")} /></div>
       </div>
       <div className="rz-field"><label>Bio</label><textarea className="rz-in" maxLength={2000} value={f.bio ?? ""} onChange={set("bio")} /></div>
-      <div className="rz-field"><label>Logo</label>
-        <label className="rz-btn" style={{ cursor: "pointer" }}>{f.logo_url ? "Replace logo" : "Upload logo"}<input type="file" accept="image/*" hidden onChange={(e) => uploadLogo(e.target.files?.[0])} /></label></div>
+      <div className="rz-field"><label>Profile photo</label>
+        <label className="rz-btn" style={{ cursor: "pointer" }}>{f.logo_url ? "Replace photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => { pickPhoto(e.target.files?.[0]); e.currentTarget.value = ""; }} /></label>
+        {photoFile && <CoverEditor file={photoFile} busy={busy} onCancel={() => setPhotoFile(null)} onApply={uploadLogo} aspect={1} outWidth={900} outHeight={900} title="Adjust profile photo" saveLabel="Save photo" outputName="profile-photo.jpg" />}
+      </div>
       {note && <p className="rz-pf-empty">{note}</p>}
       <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={save}>Save profile</button></div>
     </div>

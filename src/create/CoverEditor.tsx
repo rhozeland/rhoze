@@ -3,9 +3,33 @@ import Cropper, { type Area } from "react-easy-crop";
 import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type Props = { file: Blob; busy: boolean; onCancel: () => void; onApply: (file: File) => Promise<void> };
+type Props = {
+  file: Blob;
+  busy: boolean;
+  onCancel: () => void;
+  onApply: (file: File) => Promise<void>;
+  /** Crop frame aspect ratio (width / height). Defaults to the 16:9 project cover. */
+  aspect?: number;
+  /** Flattened output pixel size. */
+  outWidth?: number;
+  outHeight?: number;
+  title?: string;
+  saveLabel?: string;
+  outputName?: string;
+};
 
-export default function CoverEditor({ file, busy, onCancel, onApply }: Props) {
+export default function CoverEditor({
+  file,
+  busy,
+  onCancel,
+  onApply,
+  aspect = 16 / 9,
+  outWidth = 1600,
+  outHeight = 900,
+  title = "Adjust cover",
+  saveLabel = "Save cover",
+  outputName = "project-cover.jpg",
+}: Props) {
   const [source, setSource] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -33,12 +57,12 @@ export default function CoverEditor({ file, busy, onCancel, onApply }: Props) {
       image.src = source;
       await image.decode();
       const canvas = document.createElement("canvas");
-      canvas.width = 1600; canvas.height = 900;
+      canvas.width = outWidth; canvas.height = outHeight;
       const context = canvas.getContext("2d");
       if (!context) throw new Error("Image editor unavailable");
       context.drawImage(image, area.x, area.y, area.width, area.height, 0, 0, canvas.width, canvas.height);
       const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((result) => result ? resolve(result) : reject(new Error("Unable to crop image")), "image/jpeg", 0.92));
-      await onApply(new File([blob], "project-cover.jpg", { type: "image/jpeg" }));
+      await onApply(new File([blob], outputName, { type: "image/jpeg" }));
     } catch { setError("We couldn't save this image. Please try again."); }
     finally { setWorking(false); }
   }
@@ -46,9 +70,9 @@ export default function CoverEditor({ file, busy, onCancel, onApply }: Props) {
   return (
     <div className="rz-modal rz-cover-modal" role="dialog" aria-modal="true" aria-labelledby="cover-editor-title">
       <div className="rz-cover-editor">
-        <h2 id="cover-editor-title">Adjust cover</h2>
+        <h2 id="cover-editor-title">{title}</h2>
         <div className="rz-cover-crop">
-          {source && <Cropper image={source} crop={crop} zoom={zoom} aspect={16 / 9} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={(_, pixels) => setArea(pixels)} onMediaLoaded={() => setError("")} />}
+          {source && <Cropper image={source} crop={crop} zoom={zoom} aspect={aspect} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={(_, pixels) => setArea(pixels)} onMediaLoaded={() => setError("")} />}
         </div>
         <div className="rz-cover-zoom">
           <label htmlFor="cover-zoom">Zoom</label>
@@ -58,7 +82,7 @@ export default function CoverEditor({ file, busy, onCancel, onApply }: Props) {
         {error && <p className="rz-err" role="alert">{error}</p>}
         <div className="rz-actions">
           <Button className="rz-btn" variant="outline" disabled={busy || working} onClick={onCancel}>Cancel</Button>
-          <Button className="rz-btn pri" disabled={!area || busy || working} onClick={apply}>{busy || working ? "Saving…" : "Save cover"}</Button>
+          <Button className="rz-btn pri" disabled={!area || busy || working} onClick={apply}>{busy || working ? "Saving…" : saveLabel}</Button>
         </div>
       </div>
     </div>

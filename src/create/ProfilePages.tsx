@@ -365,8 +365,8 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
 
 /* ------------------------------ Brand ------------------------------ */
 
-type Brand = { slug: string; name: string; logo_url: string | null; category: string | null; bio: string | null };
-type Rel = { id: string; slug: string; title: string; creator_name: string; answers: any; coin_image: string | null; published_at: string };
+type Brand = { slug: string; name: string; logo_url: string | null; category: string | null; bio: string | null; user_id?: string | null };
+type Rel = { id: string; slug: string; title: string; creator_name: string; answers: any; coin_image: string | null; published_at: string; user_id?: string | null };
 
 export function BrandProfile({ slug }: { slug: string }) {
   const [rels, setRels] = useState<Rel[] | undefined>(undefined);

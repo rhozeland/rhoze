@@ -221,7 +221,7 @@ export function SavedPage() {
   }, [uid]);
   const remove = async (id: string) => { setRows((r) => r?.filter((x) => x.id !== id)); await db.from("saved_profiles").delete().eq("id", id); };
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
         {uid === null ? <SignInGate what="Saved" /> : (
           <>
@@ -278,7 +278,7 @@ export function MessagesPage() {
   const linkify = (s: string) => s.split(/(https?:\/\/\S+)/g).map((p, i) => /^https?:\/\//.test(p) ? <a key={i} href={p}>{p}</a> : p);
 
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
         {uid === null ? <SignInGate what="Messages" /> : (
           <div className={`rz-dm${active ? " has-active" : ""}`}>

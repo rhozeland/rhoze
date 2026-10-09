@@ -3272,8 +3272,8 @@
           .fh-hero::before { content:""; position:absolute; inset:-12%; z-index:-2; background:radial-gradient(ellipse 19% 34% at 76% 32%,hsl(var(--hero-sky)/.58),transparent 100%),radial-gradient(ellipse 16% 30% at 89% 72%,hsl(var(--hero-mint)/.5),transparent 100%),radial-gradient(ellipse 17% 31% at 43% 81%,hsl(var(--hero-sun)/.48),transparent 100%),radial-gradient(ellipse 12% 24% at 20% 18%,hsl(var(--hero-rose)/.18),transparent 100%); animation:fh-hero-drift 18s ease-in-out infinite alternate; }
           .fh-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,hsl(var(--hero-paper)/.55),hsl(var(--hero-paper)/.08) 80%); pointer-events:none; }
           .fh-hero-copy { width:min(1000px,100%); }
-          .fh-hero h1 { margin:0; max-width:21ch; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
-          .fh-hero-rotation { display:grid; width:max-content; max-width:100%; color:hsl(var(--hero-rose)); }
+          .fh-hero h1 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
+          .fh-hero-rotation { display:inline-grid; vertical-align:bottom; width:max-content; max-width:100%; color:hsl(var(--hero-rose)); }
           .fh-hero-rotation > span { grid-area:1 / 1; white-space:nowrap; opacity:0; animation:fh-hero-word 10s ease-in-out infinite; }
           .fh-hero-rotation > span:nth-child(2) { animation-delay:-7.5s; }
           .fh-hero-rotation > span:nth-child(3) { animation-delay:-5s; }
@@ -3390,7 +3390,8 @@
         <div class="fh-announcement">Rhozeland · independent creator support in Toronto and beyond</div>
         <section class="fh-hero" aria-labelledby="homepage-title">
           <div class="fh-hero-copy">
-            <h1 id="homepage-title">A Creator-Owned<br>Content House</h1>
+            <h1 id="homepage-title">Tell us your vision.<br>We'll bring <span class="fh-hero-rotation"><span>music videos</span><span>fashion drops</span><span>brand campaigns</span><span>artist coins</span></span> to life.</h1>
+            <p>A creator-owned content house for shooting, producing, launching, and growing ambitious ideas from brief to final release.</p>
             <ul class="fh-hero-highlights">
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Generate a project roadmap in minutes</li>
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Browse real creator and brand projects</li>

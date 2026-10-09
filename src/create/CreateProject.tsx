@@ -478,7 +478,7 @@ export default function CreateProject() {
             <SplitMini />
             <div className="rz-inv">
               <div className="rz-inv-h"><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span><span /></div>
-              {genBusy && [0, 1, 2].map((i) => <div key={i} className="rz-skel" />)}
+              {genBusy && <GenProgress title={title} />}
               {!genBusy && rows.map((r, i) => (
                 <div className="rz-row" key={r.id}>
                   <span className="rz-num">{String(i + 1).padStart(2, "0")}</span>

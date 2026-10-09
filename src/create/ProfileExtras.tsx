@@ -195,10 +195,8 @@ export function MoreCreators({ slug, tags, Avatar }: { slug: string; tags: strin
 }
 
 export const AccountLinks = () => (
-  <span style={{ display: "flex", gap: ".8rem" }}>
-    <a className="rz-link rz-acct-hide" href="/community.html">Community</a>
-    <a className="rz-link" href="/saved">Saved</a>
-    <a className="rz-link" href="/messages">Messages</a>
+  <span style={{ display: "flex", gap: ".8rem", alignItems: "center" }}>
+    <a className="rz-btn rz-ico" href="/saved" aria-label="Saved profiles" title="Saved"><Bookmark size={14} /></a>
   </span>
 );
 

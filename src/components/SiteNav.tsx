@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/create/AuthModal";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageSquare } from "lucide-react";
 
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
@@ -59,16 +59,19 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
           </div>}
         </div>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;
+  const msg = !signIn && hasSession
+    ? <a className="sn-msg" href="/messages" aria-label="Messages"><MessageSquare size={14} aria-hidden="true" /><span className="sn-msg-label">Messages</span></a>
+    : null;
   return <>
     <link rel="stylesheet" href="/site-nav.css" />
     <nav className="site-nav" aria-label="Primary">
       <a className="sn-brand" href="/" aria-label="Rhozeland home"><img src="/images/logo-white.webp" alt="" /><span>Rhozeland</span></a>
       <div className="sn-links">{items}</div>
-      <div className="sn-extra">{extra}{account}</div>
+      <div className="sn-extra">{extra}{msg}{account}</div>
       <Button type="button" variant="ghost" size="icon" className="sn-toggle" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</Button>
     </nav>
     <div className={`sn-mobile${open ? " open" : ""}`} aria-hidden={!open}>
-      {open && <>{items}{account}</>}
+      {open && <>{items}{msg}{account}</>}
     </div>
     {authOpen && <AuthModal action="" intro="Sign in to save creators, message them and manage your projects." redirectTo={window.location.href} onClose={() => setAuthOpen(false)} onDone={() => setAuthOpen(false)} />}
     <a className="site-book-float" href="/book.html" aria-label="Book a project">

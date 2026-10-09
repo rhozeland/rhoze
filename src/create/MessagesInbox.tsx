@@ -9,7 +9,7 @@ import "./messages.css";
 const db = supabase as any;
 type Message = { id: string; thread_id: string; sender_id: string; body: string; created_at: string };
 type Person = { user_id: string; slug: string; display_name: string; photo_url: string | null; disciplines: string[] };
-type Thread = { id: string; starter_id: string; owner_id: string | null; profile_kind: string; profile_slug: string; profile_name: string; last_at: string; person?: Person; latest?: Message; personal: boolean };
+type Thread = { id: string; starter_id: string; owner_id: string | null; profile_kind: string; profile_slug: string; profile_name: string; last_at: string; personal_started: boolean; person?: Person; latest?: Message; personal: boolean };
 type Application = { id: string; release_id: string; role_name: string; role_index: number; name: string; link: string; description: string; files: { name: string; url: string; kind?: string }[]; status: string; created_at: string; updated_at: string; project_title: string; project_slug: string; brand_name: string; is_owner: boolean; applicant_user_id: string | null; profile_slug: string | null; photo_url: string | null; skills: string[] };
 const statusLabel = (s: string) => ({ applied: "Submitted", hired: "Accepted", submitted: "Submitted", under_review: "Under Review", accepted: "Accepted", rejected: "Rejected" }[s] || s.replace(/_/g, " "));
 const date = (s: string) => new Date(s).toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
@@ -58,14 +58,17 @@ export default function MessagesInbox({ uid }: { uid: string }) {
     const rows: Thread[] = tr.data || [];
     let messages: Message[] = [];
     if (rows.length) {
-      const result = await db.from("dm_messages").select("*").in("thread_id", rows.map(t => t.id)).order("created_at", { ascending: false });
-      if (result.error) { setError("Could not load conversations. Please try again."); setLoading(false); return; }
-      messages = result.data || [];
+      for (let offset = 0; ; offset += 1000) {
+        const result = await db.from("dm_messages").select("*").in("thread_id", rows.map(t => t.id)).order("created_at", { ascending: false }).range(offset, offset + 999);
+        if (result.error) { setError("Could not load conversations. Please try again."); setLoading(false); return; }
+        const batch = result.data || []; messages.push(...batch);
+        if (batch.length < 1000) break;
+      }
     }
     const ids = [...new Set(rows.map(t => t.starter_id === uid ? t.owner_id : t.starter_id).filter(Boolean))];
     const pr = ids.length ? await db.from("creator_directory").select("user_id,slug,display_name,photo_url,disciplines").in("user_id", ids) : { data: [] };
     const people: Person[] = pr.data || [];
-    setThreads(rows.map(t => { const tm = messages.filter(m => m.thread_id === t.id); return { ...t, person: people.find(p => p.user_id === (t.starter_id === uid ? t.owner_id : t.starter_id)), latest: tm[0], personal: !tm.length || tm.some(m => !isApplicationMessage(m.body)) }; }));
+    setThreads(rows.map(t => { const tm = messages.filter(m => m.thread_id === t.id); return { ...t, person: people.find(p => p.user_id === (t.starter_id === uid ? t.owner_id : t.starter_id)), latest: tm[0], personal: t.personal_started || tm.some(m => !isApplicationMessage(m.body)) }; }));
     setApplications(ar.data || []); setLoading(false); setError("");
   }, [uid]);
 

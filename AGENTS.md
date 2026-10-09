@@ -10,6 +10,7 @@
 - Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.
 - Route profile messaging through the `dm_open` database function, which resolves the profile owner server-side and sends unclaimed profiles to the team inbox, so visitors never pick a recipient account directly.
 - Keep the three-tab Messages inbox in a dedicated module and read applications through a caller-scoped function with authenticated submission identity, because applications must never be attributed by display name or exposed to unrelated accounts.
+- Mark explicitly initiated conversations server-side in `dm_threads.personal_started`, because application-only threads must not appear as personal chats until a participant starts a conversation.
 - Crop project covers with react-easy-crop and upload a flattened 16:9 image, so existing project cards and pages preserve the chosen framing without schema changes.
 - Use only public cover artwork for locked Exclusive preview cards; keep post text and private media behind existing owner/wallet checks so visual teasers never expose protected content.
 - Keep release market data in the existing `pumpfun-coin` lookup and the collapsible display in `ReleasePrice`; return null for unavailable daily changes so unindexed coins never show fabricated performance.

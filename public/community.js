@@ -73,6 +73,23 @@
     });
   }
   function render() {
+    const opportunities = selected === 'Open Calls';
+    document.querySelector('.community-head h1').textContent = opportunities ? 'Opportunities' : 'Community';
+    document.querySelector('.community-head p').textContent = opportunities ? 'Find open roles and collaborate on creative projects.' : 'Discover new artists, connect with creatives, and collaborate.';
+    document.title = opportunities ? 'Opportunities — Rhozeland' : 'Community Creators — Rhozeland';
+    search.placeholder = opportunities ? 'Search by project, brand or role...' : 'Search by artist name or skill...';
+    search.setAttribute('aria-label', opportunities ? 'Search by project, brand or role' : 'Search by artist name or skill');
+    const currentUrl = new URL(location.href);
+    if (opportunities) currentUrl.searchParams.set('view', 'open-calls');
+    else currentUrl.searchParams.delete('view');
+    history.replaceState(null, '', currentUrl.pathname + currentUrl.search + currentUrl.hash);
+    document.querySelectorAll('.sn-links a, #mobileMenu a').forEach(link => {
+      const target = new URL(link.href, location.origin);
+      if (!/^\/community(?:\.html|\/)?$/.test(target.pathname)) return;
+      const active = (target.searchParams.get('view') === 'open-calls') === opportunities;
+      if (active) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+    });
     renderFilters();
     if (selected === 'Open Calls') { renderCalls(); return; }
     const q = search.value.trim().toLocaleLowerCase();

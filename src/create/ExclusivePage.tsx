@@ -105,6 +105,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   const [noteOpen, setNoteOpen] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteErr, setNoteErr] = useState("");
+  const [supportOpen, setSupportOpen] = useState(false);
   useEffect(() => { document.documentElement.classList.add("rz-exclusive"); return () => document.documentElement.classList.remove("rz-exclusive"); }, []);
   const saveNote = async (v: string) => {
     setNoteErr("");
@@ -150,6 +151,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   }, [walletAddr, r?.coin_mint, balTry]);
 
   useEffect(() => { if (connected) setConnErr(false); }, [connected]);
+  useEffect(() => { if (posts !== null) setSupportOpen(false); }, [posts]);
 
   const unlockFeed = async () => {
     if (!signMessage || !walletAddr) { setFeedState("error"); return; }
@@ -245,14 +247,14 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                   <div className="rz-board-caption"><p>{p.body}</p><small>{fmtDate(p.created_at)} · Holders only</small></div>
                 </article>
               ))}
-              {!unlocked && <article className="rz-board-tile rz-board-locked" {...anim()} aria-label="Locked holder updates">
+              {!unlocked && <article className="rz-board-tile rz-board-locked" {...anim()} aria-label="Locked holder updates" role="button" tabIndex={0} style={{ cursor: "pointer" }} onClick={() => setSupportOpen(true)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSupportOpen(true); } }}>
                 <div className="rz-board-media rz-board-cover">
                   <div className="rz-board-blur" aria-hidden="true">{r.cover_url ? <BlobMedia url={r.cover_url} kind="image" /> : <div className="rz-board-art"><Pin /></div>}</div>
                   <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>
                 </div>
                 <div className="rz-board-caption"><b>Holder updates</b><p>Hold {tk} to open exclusive content.</p></div>
               </article>}
-              {!(unlocked && hasMedia) && <article className={`rz-board-tile ${unlocked ? "" : "rz-board-locked"}`} {...anim()}>
+              {!(unlocked && hasMedia) && <article className={`rz-board-tile ${unlocked ? "" : "rz-board-locked"}`} {...anim()} {...(!unlocked ? { role: "button", tabIndex: 0, style: { cursor: "pointer" }, onClick: () => setSupportOpen(true), onKeyDown: (e: React.KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSupportOpen(true); } } } : {})}>
                 <div className="rz-board-media">
                   <div className={`rz-board-art rz-board-files ${unlocked ? "" : "rz-board-blur"}`} aria-hidden="true"><FileAudio /></div>
                   {!unlocked && <div className="rz-board-lock-overlay"><span><LockKeyhole size={20} aria-hidden="true" /></span>Holders only</div>}
@@ -293,6 +295,36 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
           </>
         )}
       </div>
+
+      {supportOpen && r && (
+        <div className="rz-modal" onClick={() => setSupportOpen(false)}>
+          <div className="rz-card" style={{ maxWidth: 420, width: "100%" }} onClick={(e) => e.stopPropagation()}>
+            <div className="rz-head" style={{ marginBottom: "1rem" }}>
+              <h1 style={{ fontSize: "1.2rem" }}>Support {r.title}</h1>
+              <p>This content is for people who hold {tk}. Want to support the project and unlock the feed?</p>
+            </div>
+            {!r.coin_mint ? (
+              <p className="rz-note">This project hasn't attached a coin yet. Follow along and check back soon.</p>
+            ) : (
+              <>
+                {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet.</p>}
+                {bal === "loading" && <p className="rz-note">Checking your wallet…</p>}
+                {bal === "error" && <p className="rz-note">We couldn't check your wallet right now. <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Retry</button></p>}
+                {connErr && <p className="rz-note">We couldn't connect your wallet. <button className="rz-textlink" onClick={openConnect}>Try again</button></p>}
+                {feedState === "error" && <p className="rz-note">We couldn't open the feed. <button className="rz-textlink" onClick={unlockFeed}>Try again</button></p>}
+                <div className="rz-actions" style={{ marginTop: ".8rem" }}>
+                  {bal === "holds"
+                    ? <button className="rz-btn pri" onClick={() => { unlockFeed(); }} disabled={feedState === "signing"}>{feedState === "signing" ? "Confirm in your wallet…" : "Open the feed"}</button>
+                    : <a className="rz-btn pri" href={pumpUrl} target="_blank" rel="noopener noreferrer">Buy {tk} on Pump.fun</a>}
+                  {!walletAddr && <button className="rz-btn" onClick={openConnect} disabled={connecting}>{connecting ? "Connecting…" : "Connect wallet"}</button>}
+                  <button className="rz-btn" onClick={() => setSupportOpen(false)}>Not now</button>
+                </div>
+                {bal === "holds" && <p className="rz-note" style={{ marginTop: ".6rem" }}>Your wallet will ask you to sign a message. It's free and doesn't move any funds.</p>}
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {noteOpen && (
         <div className="rz-modal" onClick={() => setNoteOpen(false)}>

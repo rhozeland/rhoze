@@ -52,7 +52,12 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
     return () => data.subscription.unsubscribe();
   }, [signIn]);
   const active = typeof window === "undefined" ? "" : window.location.pathname;
-  const items = links.map(({ href, label }) => <a key={href} href={href} aria-current={active === href ? "page" : undefined}>{label}</a>);
+  const activeView = new URLSearchParams(window.location.search).get("view");
+  const items = links.map(({ href, label }) => {
+    const target = new URL(href, window.location.origin);
+    const isActive = active === target.pathname && activeView === target.searchParams.get("view");
+    return <a key={href} href={href} aria-current={isActive ? "page" : undefined}>{label}</a>;
+  });
   const account = signIn
     ? !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={signIn}>Sign in</Button>
     : hasSession

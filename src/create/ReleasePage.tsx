@@ -136,13 +136,13 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const archive = async () => {
     const { error } = await (supabase.rpc as any)("release_set_archived", { p_id: r.id, p_archived: true });
     if (error) return setNote("Could not archive. Please try again.");
-    location.href = "/my-projects?filter=archived";
+    location.href = "/me";
   };
   const del = async () => {
     if (r.cover_url) { const m = String(r.cover_url).match(/\/avatars\/(covers\/.+)$/); if (m) await supabase.storage.from("avatars").remove([m[1]]); }
     const { error } = await (supabase.rpc as any)("release_delete", { p_id: r.id });
     if (error) { setConfirmDel(false); return setNote("Could not delete. Please try again."); }
-    location.href = "/my-projects";
+    location.href = "/me";
   };
 
   const loadApplicants = async () => {
@@ -222,7 +222,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           <span>You own this page</span>
           <div>
             <a className="rz-btn" href={`/create.html?draft=${r.id}`}>Edit project</a>
-            <a className="rz-btn" href="/my-projects">My projects</a>
+            <a className="rz-btn" href="/me">My profile</a>
             <button className="rz-btn" onClick={archive}>Archive</button>
             <button className="rz-btn" onClick={() => setConfirmDel(true)}>Delete</button>
             {r.answers?.project_type === "brand" && <button className="rz-btn" onClick={loadApplicants}>Applicants</button>}

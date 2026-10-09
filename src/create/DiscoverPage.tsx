@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
+import { ProjectHeart } from "./ProjectLikes";
 
 type Release = {
   id: string;
@@ -102,7 +103,7 @@ export default function DiscoverPage() {
             {visible.map((r) => {
               const ticker = r.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
               return (
-                <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
+                <div key={r.id} className="rz-like-card"><a className="rz-feed-card" href={`/release/${r.slug}`}>
                   <span className="rz-feed-cover">
                     {(r as any).cover_url || r.coin_image ? <img src={(r as any).cover_url || r.coin_image!} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}
                   </span>
@@ -115,7 +116,7 @@ export default function DiscoverPage() {
                     </span>
                   </span>
                   <span className="rz-btn pri rz-feed-cta">{ticker ? "Support" : "Open"}</span>
-                </a>
+                </a><ProjectHeart releaseId={r.id} /></div>
               );
             })}
           </div>

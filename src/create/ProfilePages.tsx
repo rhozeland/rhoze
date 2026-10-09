@@ -5,6 +5,7 @@ import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
 import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
 import CoverEditor from "./CoverEditor";
+import { LikedProjects } from "./ProjectLikes";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -215,6 +216,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
               <p className="rz-pf-bio">{c.bio || "This creator hasn't added a bio yet."}</p></section>
 
             <section className="rz-pf-sec">{isOwner ? <DraftsHeading /> : <h2>Projects</h2>}<ProjectGrid rels={projects} /></section>
+            {c.user_id && <LikedProjects userId={c.user_id} />}
 
             {!fan && <section className="rz-pf-sec"><h2>Work samples</h2>
               {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
@@ -417,6 +419,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
 <section className="rz-pf-sec">{canEdit ? <DraftsHeading /> : <h2>Projects</h2>}
 <ProjectGrid rels={rels} /></section>
+            {(brand?.user_id || rels[0]?.user_id) && <LikedProjects userId={brand?.user_id || rels[0]?.user_id} />}
 
             <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>
               {hiring.length === 0 ? <p className="rz-pf-empty">No open roles right now. Check back soon.</p> : (

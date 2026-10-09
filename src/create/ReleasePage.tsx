@@ -5,6 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import ReleasePrice from "./ReleasePrice";
+import { ProjectHeart } from "./ProjectLikes";
 import { Button } from "@/components/ui/button";
 import { X, Share2 } from "lucide-react";
 
@@ -254,6 +255,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
             </div>
             <div className="rz-release-tools">
+              <ProjectHeart releaseId={r.id} />
               <Button variant="outline" size="icon" className="rz-release-share" title="Share project" aria-label="Share project" onClick={() => setShareOpen(true)}><Share2 size={16} /></Button>
               <Button asChild className="rz-btn pri"><a href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a></Button>
             </div>

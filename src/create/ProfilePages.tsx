@@ -150,8 +150,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
   return (
     <Shell right={<AccountLinks />}>
-      {isOwner && <OwnerBar label="This is your profile" editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
       <div className="rz-card">
+        {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}
         {c && (
@@ -343,8 +343,8 @@ export function BrandProfile({ slug }: { slug: string }) {
 
   return (
     <Shell right={<AccountLinks />}>
-      {canEdit && exists && <OwnerBar label="You manage this brand" editing={editing} onEdit={() => setEditing((e) => !e)} />}
       <div className="rz-card">
+        {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {rels !== undefined && !exists && <NotFound what="Brand" />}
         {rels !== undefined && exists && (

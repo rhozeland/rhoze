@@ -315,8 +315,9 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
       </div>
       <div className="rz-pf-two">
         <div className="rz-field"><label>Roles</label><input className="rz-in" placeholder="Photographer, Videographer" value={tags} onChange={(e) => setTags(e.target.value)} /></div>
-        <div className="rz-field"><label>Photo</label><label className="rz-btn" style={{ cursor: "pointer" }}>{photo ? "Replace photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => uploadPhoto(e.target.files?.[0])} /></label></div>
+        <div className="rz-field"><label>Profile photo</label><label className="rz-btn" style={{ cursor: "pointer" }}>{photo ? "Replace photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => { pickPhoto(e.target.files?.[0]); e.currentTarget.value = ""; }} /></label></div>
       </div>
+      {photoFile && <CoverEditor file={photoFile} busy={busy} onCancel={() => setPhotoFile(null)} onApply={uploadPhoto} aspect={1} outWidth={900} outHeight={900} title="Adjust profile photo" saveLabel="Save photo" outputName="profile-photo.jpg" />}
       <div className="rz-field"><label>Bio</label><textarea className="rz-in" value={bio} maxLength={2000} onChange={(e) => setBio(e.target.value)} /></div>
       <div className="rz-pf-two">
         <div className="rz-field"><label>Instagram</label><input className="rz-in" placeholder="https://instagram.com/you" value={ig} onChange={(e) => setIg(e.target.value)} /></div>

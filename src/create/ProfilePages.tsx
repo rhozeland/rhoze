@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
 import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
+import CoverEditor from "./CoverEditor";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -256,15 +257,20 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
   const [tags, setTags] = useState((c.disciplines ?? []).join(", "));
   const [rateIn, setRateIn] = useState(c.hourly_rate_cents != null ? String(c.hourly_rate_cents / 100) : "");
   const [photo, setPhoto] = useState(c.photo_url ?? "");
-  const uploadPhoto = async (f?: File) => {
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const pickPhoto = (f?: File) => {
     if (!f) return;
-    if (!f.type.startsWith("image/") || f.size > 5 * 1024 * 1024) { setNote("Photo must be an image up to 5 MB."); return; }
+    if (!f.type.startsWith("image/") || f.size > 15 * 1024 * 1024) { setNote("Photo must be an image up to 15 MB."); return; }
+    setPhotoFile(f); setNote("");
+  };
+  const uploadPhoto = async (cropped: File) => {
     setBusy(true);
-    const path = `${uid}/photo-${Date.now()}.${f.name.split(".").pop() || "jpg"}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, f, { contentType: f.type });
+    const path = `${uid}/photo-${Date.now()}.jpg`;
+    const { error } = await supabase.storage.from("avatars").upload(path, cropped, { contentType: cropped.type });
     setBusy(false);
-    if (error) { setNote("Upload failed. Please try again."); return; }
-    setPhoto(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl); setNote("");
+    if (error) { setNote("Upload failed. Please try again."); setPhotoFile(null); return; }
+    setPhoto(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl);
+    setNote(""); setPhotoFile(null);
   };
   const [link, setLink] = useState("");
   const [note, setNote] = useState("");

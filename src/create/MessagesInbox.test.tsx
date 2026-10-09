@@ -45,7 +45,7 @@ describe("Messages inbox", () => {
   it("shows personal application details, attachment and status", async () => {
     render(<MessagesInbox uid="me" />);
     await screen.findByRole("button", { name: "Alex, unread" });
-    fireEvent.click(screen.getByRole("tab", { name: /My Applications/ }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: /My Applications/ }), { button: 0, ctrlKey: false });
     expect(screen.getByText("Submitted")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "View details" }));
     await screen.findByRole("dialog");
@@ -56,7 +56,7 @@ describe("Messages inbox", () => {
   it("groups applicants and uses the existing owner-only acceptance action", async () => {
     render(<MessagesInbox uid="me" />);
     await screen.findByRole("button", { name: "Alex, unread" });
-    fireEvent.click(screen.getByRole("tab", { name: /Applicants/ }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: /Applicants/ }), { button: 0, ctrlKey: false });
     expect(screen.getByText("Jordan")).toBeInTheDocument();
     expect(screen.getByText("Editing")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "View profile" })).toHaveAttribute("href", "/creator/jordan");
@@ -68,9 +68,9 @@ describe("Messages inbox", () => {
     state.threads = []; state.messages = []; state.applications = [];
     render(<MessagesInbox uid="me" />);
     await screen.findByText("No conversations yet");
-    fireEvent.click(screen.getByRole("tab", { name: /My Applications/ }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: /My Applications/ }), { button: 0, ctrlKey: false });
     expect(screen.getByRole("link", { name: "Browse open roles" })).toHaveAttribute("href", "/community.html?view=open-calls");
-    fireEvent.click(screen.getByRole("tab", { name: /Applicants/ }));
+    fireEvent.mouseDown(screen.getByRole("tab", { name: /Applicants/ }), { button: 0, ctrlKey: false });
     expect(screen.getByText("No applicants yet")).toBeInTheDocument();
   });
 });

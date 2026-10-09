@@ -325,6 +325,7 @@ export function BrandProfile({ slug }: { slug: string }) {
   const [editing, setEditing] = useState(false);
 
   const load = async () => {
+    await supabase.auth.getSession();
     const [{ data: r }, { data: b }, { data: ce }] = await Promise.all([
       db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,user_id,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500),
       db.from("brand_profiles").select("slug,name,logo_url,category,bio,user_id").eq("slug", slug).maybeSingle(),

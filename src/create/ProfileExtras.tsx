@@ -89,32 +89,46 @@ function InvitePicker({ slug, name, onClose }: { slug: string; name: string; onC
         && Array.isArray(r.answers?.roles) && r.answers.roles.some((x: any) => String(x?.name || "").trim())));
     });
   }, []);
-  const send = async (r: any, i: number) => {
-    setBusy(true);
+  const [pick, setPick] = useState<{ r: any; i: number } | null>(null);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  const send = async () => {
+    if (!pick) return;
+    const { r, i } = pick;
+    setBusy(true); setErr("");
     const { data: t, error } = await db.rpc("dm_open", { p_kind: "creator", p_slug: slug });
     if (!error) {
       const { data: s } = await supabase.auth.getSession();
       const role = r.answers.roles[i];
-      await db.from("dm_messages").insert({ thread_id: t, sender_id: s.session!.user.id,
-        body: `Hi ${name}, I'd love you on "${r.title}" as ${role.name}${role.rate ? ` (${role.rate})` : ""}. Apply here: ${location.origin}/release/${r.slug}?apply=${i}` });
-      setDone(t);
-    }
+      const personal = msg.trim().slice(0, 2000);
+      const { error: e2 } = await db.from("dm_messages").insert({ thread_id: t, sender_id: s.session!.user.id,
+        body: `${personal ? personal + "\n\n" : ""}Hi ${name}, I'd love you on "${r.title}" as ${role.name}${role.rate ? ` (${role.rate})` : ""}. Apply here: ${location.origin}/release/${r.slug}?apply=${i}` });
+      if (e2) setErr("Could not send the invite. Please try again."); else setDone(t);
+    } else setErr("Could not send the invite. Please try again.");
     setBusy(false);
   };
   return (
     <div className="rz-modal" onClick={() => !busy && onClose()}>
       <div className="rz-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 460, width: "100%" }}>
-        <div className="rz-head"><h1 style={{ fontSize: "1.1rem" }}>Invite {name}</h1><p>Pick a role from one of your published projects.</p></div>
+        <div className="rz-head"><h1 style={{ fontSize: "1.1rem" }}>Invite {name}</h1><p>{pick ? `${pick.r.answers.roles[pick.i].name} · ${pick.r.title}` : "Pick a role from one of your published projects."}</p></div>
         {rows === undefined && <div className="rz-skel" />}
         {done ? (
-          <div className="rz-actions"><p className="rz-pf-empty">Invite sent.</p><a className="rz-btn pri" href={`/messages?t=${done}`}>Open conversation</a><button className="rz-btn" onClick={onClose}>Close</button></div>
+          <div className="rz-actions"><p className="rz-pf-empty">Invite sent. It's in your Messages too.</p><a className="rz-btn pri" href={`/messages?t=${done}`}>Open conversation</a><button className="rz-btn" onClick={onClose}>Close</button></div>
+        ) : pick ? (
+          <>
+            <textarea value={msg} onChange={(e) => setMsg(e.target.value)} maxLength={2000} rows={4} autoFocus
+              placeholder={`Add a personal message to ${name} (optional)`}
+              style={{ width: "100%", padding: ".7rem", borderRadius: 12, border: "1px solid hsl(var(--border, 0 0% 80%))", font: "inherit", resize: "vertical", background: "transparent", color: "inherit" }} />
+            {err && <p className="rz-pf-empty">{err}</p>}
+            <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={send}>{busy ? "Sending…" : "Send invite"}</button><button className="rz-btn" disabled={busy} onClick={() => setPick(null)}>Back</button></div>
+          </>
         ) : rows && rows.length === 0 ? (
           <><p className="rz-pf-empty">You don't have a published project with open roles yet.</p>
             <div className="rz-actions"><a className="rz-btn pri" href="/create.html?new=1">Start a project</a><button className="rz-btn" onClick={onClose}>Cancel</button></div></>
         ) : rows && (
           <ul className="rz-pf-credits">
             {rows.flatMap((r) => r.answers.roles.map((role: any, i: number) => String(role?.name || "").trim() ? (
-              <li key={`${r.id}-${i}`}><button className="rz-pf-pick" disabled={busy} onClick={() => send(r, i)}>
+              <li key={`${r.id}-${i}`}><button className="rz-pf-pick" onClick={() => setPick({ r, i })}>
                 <b>{role.name}</b><span>{r.title}{role.rate ? ` · ${role.rate}` : ""} · Send invite</span></button></li>
             ) : null))}
           </ul>

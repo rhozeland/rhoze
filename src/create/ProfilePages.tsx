@@ -68,7 +68,7 @@ function useUser() {
 }
 
 function OwnerSettings({ onEdit, editing, visibility }: { onEdit: () => void; editing: boolean; visibility?: { isPublic: boolean; busy: boolean; onChange: (v: boolean) => void } }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => new URLSearchParams(location.search).get("settings") === "1");
   return (
     <div className="rz-settings">
       <button type="button" className="rz-settings-btn" aria-label="Profile settings" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
@@ -430,7 +430,7 @@ export function MyProfile() {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
-  const go = (p: any) => location.replace(`/${p.kind}/${p.slug}`);
+  const go = (p: any) => location.replace(`/${p.kind}/${p.slug}${new URLSearchParams(location.search).get("settings") === "1" ? "?settings=1" : ""}`);
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) return setState("out");

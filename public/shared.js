@@ -423,7 +423,9 @@ setupHoverVideos();
   function signOut(e){ e.preventDefault(); localStorage.removeItem(KEY); location.reload(); }
   function mount(){
     var nav = document.querySelector('.site-nav');
-    if (!nav || document.getElementById('rSignInCta')) return;
+    if (!nav) return;
+    var legacyHud = document.getElementById('rSignedInHUD');
+    if (legacyHud) legacyHud.remove();
     var cta = nav.querySelector('.nav-cta');
     var menu = document.getElementById('mobileMenu');
     var mCta = menu && Array.prototype.find.call(menu.querySelectorAll('a'), function(a){ return /sign in/i.test(a.textContent); });
@@ -435,20 +437,24 @@ setupHoverVideos();
       // Same gray account cluster as the landing page: profile identity + Messages.
       var w = document.createElement('div'); w.className = 'nav-auth-wrap';
       var cluster = document.createElement('div'); cluster.className = 'nav-auth'; cluster.setAttribute('role', 'group'); cluster.setAttribute('aria-label', 'Your Rhozeland account');
-      var b = document.createElement('button'); b.type = 'button'; b.className = 'nav-auth-identity'; b.setAttribute('aria-label', 'Account menu'); b.title = 'Your profile';
+      var b = document.createElement('a'); b.href = '/me'; b.className = 'nav-auth-identity'; b.setAttribute('aria-label', 'My profile'); b.title = 'Your profile';
       var meta = (sess.user && sess.user.user_metadata) || {};
       var fullName = meta.display_name || meta.full_name || (sess.user && sess.user.email) || 'You';
       var firstName = String(fullName).split(/\s|@/)[0] || 'You';
       b.innerHTML = '<span class="nav-auth-avatar" aria-hidden="true">' + (firstName.charAt(0) || 'R').toUpperCase() + '</span><span class="nav-auth-name">' + firstName.replace(/</g, '&lt;') + '</span>';
       var mm = document.createElement('a'); mm.href = '/messages'; mm.className = 'nav-auth-chip'; mm.setAttribute('aria-label', 'Messages');
       mm.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sn-msg-label">Messages</span>';
-      cluster.appendChild(b); cluster.appendChild(mm);
+      cluster.appendChild(mm); cluster.appendChild(b);
       var m = document.createElement('div'); m.className = 'sn-menu'; m.style.display = 'none';
-      var p = document.createElement('a'); p.href = '/me'; p.textContent = 'My profile';
+      var p = document.createElement('a'); p.href = '/me?settings=1'; p.textContent = 'Settings';
       var o = document.createElement('button'); o.type = 'button'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
       m.appendChild(p); m.appendChild(o);
-      b.addEventListener('click', function(e){ e.stopPropagation(); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; });
-      document.addEventListener('click', function(){ m.style.display = 'none'; });
+      function showMenu(){ m.style.display = 'flex'; b.setAttribute('aria-expanded', 'true'); }
+      function hideMenu(){ m.style.display = 'none'; b.setAttribute('aria-expanded', 'false'); }
+      w.addEventListener('mouseenter', showMenu);
+      w.addEventListener('mouseleave', hideMenu);
+      w.addEventListener('focusin', showMenu);
+      w.addEventListener('focusout', function(e){ if (!w.contains(e.relatedTarget)) hideMenu(); });
       w.appendChild(cluster); w.appendChild(m); wrap.appendChild(w);
       // Fill in the profile photo and display name when available.
       try {

@@ -55,17 +55,17 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const account = signIn
     ? !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={signIn}>Sign in</Button>
     : hasSession
-      ? <div className="nav-auth-wrap">
+      ? <div className="nav-auth-wrap" onMouseEnter={() => setMenuOpen(true)} onMouseLeave={() => setMenuOpen(false)} onFocus={() => setMenuOpen(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setMenuOpen(false); }}>
           <div className="nav-auth" role="group" aria-label="Your Rhozeland account">
-            <button type="button" className="nav-auth-identity" title="Your profile" aria-label="Account menu" aria-expanded={menuOpen} onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}>
+            <a className="nav-auth-chip" href="/messages" aria-label="Messages"><MessageSquare size={14} aria-hidden="true" /><span className="sn-msg-label">Messages</span></a>
+            <a href="/me" className="nav-auth-identity" title="Your profile" aria-label="My profile" aria-expanded={menuOpen}>
               <span className="nav-auth-avatar" aria-hidden="true">{avatar ? <img src={avatar} alt="" /> : (name ? name.charAt(0).toUpperCase() : "☺")}</span>
               <span className="nav-auth-name">{name || "You"}</span>
-            </button>
-            <a className="nav-auth-chip" href="/messages" aria-label="Messages"><MessageSquare size={14} aria-hidden="true" /><span className="sn-msg-label">Messages</span></a>
+            </a>
           </div>
           {menuOpen && <div className="sn-menu" role="menu" onClick={(e) => e.stopPropagation()}>
-            <a href="/me" role="menuitem">My profile</a>
-            <button type="button" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</button>
+            <a href="/me?settings=1" role="menuitem">Settings</a>
+            <Button type="button" variant="ghost" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</Button>
           </div>}
         </div>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;

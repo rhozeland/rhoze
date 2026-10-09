@@ -1,5 +1,5 @@
 (function () {
-  const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&is_public=eq.true&account_kind=neq.supporter&order=created_at.desc&limit=500';
+  const url = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,hourly_rate_max_cents,completed_projects,rating,trending,bio,portfolio_url,website_url&approved=eq.true&is_public=eq.true&account_kind=neq.supporter&order=created_at.desc&limit=500';
   const callsUrl = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/releases?select=slug,title,creator_name,answers&status=eq.published&order=published_at.desc&limit=200';
   const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
   const $ = id => document.getElementById(id);
@@ -15,7 +15,7 @@
     }
     return el('div', className + ' creator-initial', (creator.display_name || '?').charAt(0).toUpperCase());
   }
-  function rate(creator) { return creator.hourly_rate_cents != null ? '$' + (creator.hourly_rate_cents / 100).toLocaleString('en-CA') + '/hr' : 'Rate on request'; }
+  function rate(creator) { if (creator.hourly_rate_cents == null) return 'Rate on request'; const f = (n) => '$' + (n / 100).toLocaleString('en-CA'); const m = creator.hourly_rate_max_cents; return (m != null && m > creator.hourly_rate_cents ? f(creator.hourly_rate_cents) + '–' + f(m) : f(creator.hourly_rate_cents)) + '/hr'; }
   function validLink(value) { try { const u = new URL(value); return ['https:', 'http:'].includes(u.protocol) ? u.href : null; } catch { return null; } }
   function renderFilters() {
     filters.replaceChildren();

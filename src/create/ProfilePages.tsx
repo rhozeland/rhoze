@@ -141,7 +141,7 @@ function NotFound({ what }: { what: string }) {
 
 type Creator = {
   id: string; slug: string; display_name: string; photo_url: string | null; disciplines: string[] | null;
-  membership_tier: string | null; hourly_rate_cents: number | null; rating: number | null; bio: string | null;
+  membership_tier: string | null; hourly_rate_cents: number | null; hourly_rate_max_cents?: number | null; rating: number | null; bio: string | null;
   website_url: string | null; portfolio_url: string | null; instagram_url: string | null; user_id: string | null;
   work_samples: Sample[] | null; account_kind?: string; is_public?: boolean;
 };
@@ -158,7 +158,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
     // Wait for the saved session so owners can open their own private profile.
     await supabase.auth.getSession();
     const { data } = await db.from("creator_directory")
-      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
+      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,hourly_rate_max_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
       .eq("slug", slug).maybeSingle();
     setC(data ?? null);
     if (data) document.title = `${data.display_name} | Rhozeland Community`;
@@ -179,7 +179,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
     setVisBusy(false);
     if (!error) setC({ ...c, is_public: v });
   };
-  const rate = c?.hourly_rate_cents != null ? `$${(c.hourly_rate_cents / 100).toLocaleString("en-CA")}/hr` : "Rate on request";
+  const fmtR = (n: number) => `$${(n / 100).toLocaleString("en-CA")}`;
+  const rate = c?.hourly_rate_cents != null ? (c.hourly_rate_max_cents != null && c.hourly_rate_max_cents > c.hourly_rate_cents ? `${fmtR(c.hourly_rate_cents)}–${fmtR(c.hourly_rate_max_cents)}/hr` : `${fmtR(c.hourly_rate_cents)}/hr`) : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
   const samples = (c?.work_samples ?? []) as Sample[];
   const fan = c?.account_kind === "supporter";
@@ -256,6 +257,8 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
   const [dname, setDname] = useState(c.display_name);
   const [tags, setTags] = useState((c.disciplines ?? []).join(", "));
   const [rateIn, setRateIn] = useState(c.hourly_rate_cents != null ? String(c.hourly_rate_cents / 100) : "");
+  const [rateMax, setRateMax] = useState(c.hourly_rate_max_cents != null ? String(c.hourly_rate_max_cents / 100) : "");
+  const [isRange, setIsRange] = useState(c.hourly_rate_max_cents != null);
   const [photo, setPhoto] = useState(c.photo_url ?? "");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const pickPhoto = (f?: File) => {
@@ -299,9 +302,12 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
     const rc = rateIn.trim() === "" ? null : Math.round(Number(rateIn) * 100);
     if (!dname.trim()) { setNote("Please add your name."); return; }
     if (rc !== null && (!Number.isFinite(rc) || rc < 0)) { setNote("Rate should be a number, like 85."); return; }
+    const rm = !isRange || rateMax.trim() === "" ? null : Math.round(Number(rateMax) * 100);
+    if (rm !== null && (!Number.isFinite(rm) || rc === null || rm <= rc)) { setNote("The top of your range should be higher than the starting rate."); return; }
     setBusy(true);
     const { error: e1 } = await db.rpc("creator_save_details", { p_id: c.id, p_name: dname, p_disciplines: tags.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 8), p_rate_cents: rc, p_photo: photo });
     if (e1) { setBusy(false); setNote("Could not save. Please try again."); return; }
+    await db.rpc("creator_save_rate_max", { p_id: c.id, p_max_cents: rm });
     const { error } = await db.rpc("creator_save_profile", { p_id: c.id, p_bio: bio, p_instagram: ig, p_website: web, p_samples: samples });
     setBusy(false);
     if (error) setNote("Could not save. Please try again."); else onSaved();
@@ -311,7 +317,13 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
     <div className="rz-pf-edit">
       <div className="rz-pf-two">
         <div className="rz-field"><label>Name</label><input className="rz-in" maxLength={100} value={dname} onChange={(e) => setDname(e.target.value)} /></div>
-        <div className="rz-field"><label>Hourly rate (CAD)</label><input className="rz-in" inputMode="decimal" placeholder="85" value={rateIn} onChange={(e) => setRateIn(e.target.value)} /></div>
+        <div className="rz-field"><label>Hourly rate (CAD)</label>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <input className="rz-in" inputMode="decimal" placeholder={isRange ? "From" : "85"} value={rateIn} onChange={(e) => setRateIn(e.target.value)} />
+            {isRange && <><span>–</span><input className="rz-in" inputMode="decimal" placeholder="To" value={rateMax} onChange={(e) => setRateMax(e.target.value)} /></>}
+          </div>
+          <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, marginTop: 6, textTransform: "none", letterSpacing: 0 }}><input type="checkbox" checked={isRange} onChange={(e) => setIsRange(e.target.checked)} /> Use a range</label>
+        </div>
       </div>
       <div className="rz-pf-two">
         <div className="rz-field"><label>Roles</label><input className="rz-in" placeholder="Photographer, Videographer" value={tags} onChange={(e) => setTags(e.target.value)} /></div>

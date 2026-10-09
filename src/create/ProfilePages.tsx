@@ -317,12 +317,15 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
     <div className="rz-pf-edit">
       <div className="rz-pf-two">
         <div className="rz-field"><label>Name</label><input className="rz-in" maxLength={100} value={dname} onChange={(e) => setDname(e.target.value)} /></div>
-        <div className="rz-field"><label>Hourly rate (CAD)</label>
+        <div className="rz-field">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: ".32rem", flexWrap: "wrap" }}>
+            <label style={{ margin: 0 }}>Hourly rate (CAD)</label>
+            <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, textTransform: "none", letterSpacing: 0, margin: 0 }}><input type="checkbox" checked={isRange} onChange={(e) => setIsRange(e.target.checked)} /> Use a range</label>
+          </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <input className="rz-in" inputMode="decimal" placeholder={isRange ? "From" : "85"} value={rateIn} onChange={(e) => setRateIn(e.target.value)} />
             {isRange && <><span>–</span><input className="rz-in" inputMode="decimal" placeholder="To" value={rateMax} onChange={(e) => setRateMax(e.target.value)} /></>}
           </div>
-          <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, marginTop: 6, textTransform: "none", letterSpacing: 0 }}><input type="checkbox" checked={isRange} onChange={(e) => setIsRange(e.target.checked)} /> Use a range</label>
         </div>
       </div>
       <div className="rz-pf-two">

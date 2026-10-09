@@ -156,7 +156,7 @@ export default function CreateProject() {
   const generate = async () => {
     setGenBusy(true); setErr("");
     const { data, error } = await supabase.functions.invoke("release-roadmap", {
-      body: { title: title.trim(), answers: { making, audience }, budget_cents: budgetCents, artist_pct: artistPct },
+      body: { title: title.trim(), answers: { making, audience, description: desc }, budget_cents: budgetCents, artist_pct: artistPct },
     });
     setGenBusy(false);
     if (error || !data?.milestones) {
@@ -399,6 +399,7 @@ export default function CreateProject() {
                 {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
               </div>
               <div className="rz-field rz-full"><label>What are you making?</label><textarea className="rz-in" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art" onChange={(e) => setMaking(e.target.value)} /></div>
+              <div className="rz-field rz-full"><label>Brief description <span className="rz-opt">(shown on your project page)</span></label><textarea className="rz-in" value={desc} maxLength={800} rows={4} placeholder="A few sentences about what this project is — the story, what you'll deliver, and who it's for." onChange={(e) => setDesc(e.target.value)} /></div>
               <div className="rz-field rz-full"><label>Who is it for? <span className="rz-opt">(optional)</span></label><input className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto, 18–30" onChange={(e) => setAudience(e.target.value)} /></div>
               <div className="rz-field rz-full">
                 <label>Budget (CAD)</label>

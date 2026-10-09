@@ -81,7 +81,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
     <div className={`sn-mobile${open ? " open" : ""}`} aria-hidden={!open}>
       {open && <>{items}{msg}{account}</>}
     </div>
-    {authOpen && <AuthModal action="" intro="Sign in to save creators, message them and manage your projects." redirectTo={window.location.href} onClose={() => setAuthOpen(false)} onDone={() => setAuthOpen(false)} />}
+    {authOpen && <AuthModal action="" intro="Sign in to save creators, message them and manage your projects." redirectTo={`${window.location.origin}/me`} onClose={() => setAuthOpen(false)} onDone={() => { setAuthOpen(false); window.location.href = "/me"; }} />}
     <a className="site-book-float" href="/book.html" aria-label="Book a project">
       <span className="site-book-float__mark" aria-hidden="true">✳</span>
       <span>Book a project</span>

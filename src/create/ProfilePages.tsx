@@ -128,6 +128,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const { uid, team } = useUser();
 
   const load = async () => {
+    // Wait for the saved session so owners can open their own private profile.
+    await supabase.auth.getSession();
     const { data } = await db.from("creator_directory")
       .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
       .eq("slug", slug).maybeSingle();
@@ -323,6 +325,7 @@ export function BrandProfile({ slug }: { slug: string }) {
   const [editing, setEditing] = useState(false);
 
   const load = async () => {
+    await supabase.auth.getSession();
     const [{ data: r }, { data: b }, { data: ce }] = await Promise.all([
       db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,user_id,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500),
       db.from("brand_profiles").select("slug,name,logo_url,category,bio,user_id").eq("slug", slug).maybeSingle(),

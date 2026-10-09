@@ -779,6 +779,7 @@ export type Database = {
           id: string
           last_at: string
           owner_id: string | null
+          personal_started: boolean
           profile_kind: string
           profile_name: string
           profile_slug: string
@@ -789,6 +790,7 @@ export type Database = {
           id?: string
           last_at?: string
           owner_id?: string | null
+          personal_started?: boolean
           profile_kind: string
           profile_name?: string
           profile_slug: string
@@ -799,6 +801,7 @@ export type Database = {
           id?: string
           last_at?: string
           owner_id?: string | null
+          personal_started?: boolean
           profile_kind?: string
           profile_name?: string
           profile_slug?: string

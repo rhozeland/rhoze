@@ -127,6 +127,13 @@
       "when": 1791573130064,
       "tag": "0017_application_inbox_identity",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791573288456,
+      "tag": "0018_personal_conversation_visibility",
+      "breakpoints": true
     }
   ]
 }

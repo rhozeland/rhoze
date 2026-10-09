@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bookmark, Link2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
+import MessagesInbox from "./MessagesInbox";
 
 const db = supabase as any;
 export type Kind = "creator" | "brand";
@@ -241,73 +242,10 @@ export function SavedPage() {
 /* ---------------- /messages ---------------- */
 export function MessagesPage() {
   const uid = useSession();
-  const [threads, setThreads] = useState<any[] | undefined>(undefined);
-  const [active, setActive] = useState<string | null>(new URLSearchParams(location.search).get("t"));
-  const [msgs, setMsgs] = useState<any[]>([]);
-  const [text, setText] = useState("");
-  const [busy, setBusy] = useState(false);
-  const end = useRef<HTMLDivElement>(null);
-
-  const loadThreads = () => db.from("dm_threads").select("*").order("last_at", { ascending: false }).then(({ data }: any) => setThreads(data ?? []));
-  const loadMsgs = (t: string) => db.from("dm_messages").select("*").eq("thread_id", t).order("created_at").then(({ data }: any) => setMsgs(data ?? []));
-
-  useEffect(() => { document.title = "Messages | Rhozeland"; if (uid) loadThreads(); }, [uid]);
-  useEffect(() => {
-    if (!uid || !active) return;
-    loadMsgs(active);
-    const ch = supabase.channel(`dm-${active}`).on("postgres_changes" as any, { event: "INSERT", schema: "public", table: "dm_messages", filter: `thread_id=eq.${active}` }, () => loadMsgs(active)).subscribe();
-    const iv = setInterval(() => loadMsgs(active), 8000);
-    return () => { supabase.removeChannel(ch); clearInterval(iv); };
-  }, [uid, active]);
-  useEffect(() => { end.current?.scrollIntoView({ block: "end" }); }, [msgs.length]);
-
-  const send = async () => {
-    const body = text.trim(); if (!body || !active || !uid) return;
-    setBusy(true);
-    const { error } = await db.from("dm_messages").insert({ thread_id: active, sender_id: uid, body });
-    setBusy(false);
-    if (!error) { setText(""); loadMsgs(active); loadThreads(); }
-  };
-  const cur = threads?.find((t) => t.id === active);
-  const label = (t: any) => t.starter_id === uid ? t.profile_name || t.profile_slug : `About ${t.profile_name || t.profile_slug}`;
-  const linkify = (s: string) => s.split(/(https?:\/\/\S+)/g).map((p, i) => /^https?:\/\//.test(p) ? <a key={i} href={p}>{p}</a> : p);
-
   return (
     <Shell>
       <div className="rz-card">
-        {uid === null ? <SignInGate what="Messages" /> : (
-          <div className={`rz-dm${active ? " has-active" : ""}`}>
-            <aside className="rz-dm-list">
-              <h1>Messages</h1>
-              {threads === undefined && <div className="rz-skel" />}
-              {threads?.length === 0 && <p className="rz-pf-empty">No conversations yet. Tap Message on a profile to start one.</p>}
-              {threads?.map((t) => (
-                <button key={t.id} className={t.id === active ? "on" : ""} onClick={() => { setActive(t.id); history.replaceState(null, "", `/messages?t=${t.id}`); }}>
-                  <b>{label(t)}</b><small>{new Date(t.last_at).toLocaleDateString("en-CA", { month: "short", day: "numeric" })}</small>
-                </button>
-              ))}
-            </aside>
-            <section className="rz-dm-thread">
-              {!cur ? <p className="rz-pf-empty">Pick a conversation.</p> : (
-                <>
-                  <header><button className="rz-link rz-dm-back" onClick={() => setActive(null)}>← All</button>
-                    <a href={`/${cur.profile_kind}/${cur.profile_slug}`}><b>{label(cur)}</b></a>
-                    {!cur.owner_id && <small>This profile isn't claimed yet, so the Rhozeland team will reply.</small>}</header>
-                  <div className="rz-dm-msgs">
-                    {msgs.length === 0 && <p className="rz-pf-empty">Say hello.</p>}
-                    {msgs.map((m) => <p key={m.id} className={m.sender_id === uid ? "me" : ""}>{linkify(m.body)}</p>)}
-                    <div ref={end} />
-                  </div>
-                  <div className="rz-dm-input">
-                    <textarea className="rz-in" rows={2} maxLength={4000} placeholder="Write a message" value={text} onChange={(e) => setText(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} />
-                    <button className="rz-btn pri" disabled={busy || !text.trim()} onClick={send}>Send</button>
-                  </div>
-                </>
-              )}
-            </section>
-          </div>
-        )}
+        {uid === undefined ? <p role="status" className="rz-pf-empty">Loading your inbox…</p> : uid === null ? <SignInGate what="Messages" /> : <MessagesInbox key={uid} uid={uid} />}
       </div>
     </Shell>
   );

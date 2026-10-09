@@ -64,7 +64,7 @@ export default function DiscoverPage() {
   }, [rows, filter]);
 
   return (
-    <Shell right={<a className="rz-btn pri" href="/create.html?new=1">Create a project</a>}>
+    <Shell right={<a className="rz-btn" href="/create.html?new=1">Create a project</a>}>
       <div className="rz-card rz-card-wide">
         <div className="rz-head">
           <h1>Discover</h1>
@@ -93,7 +93,7 @@ export default function DiscoverPage() {
         {rows !== undefined && visible && visible.length === 0 && (
           <div className="rz-empty">
             <p>{EMPTY_LABEL[filter]}</p>
-            <a className="rz-btn pri" href="/create.html?new=1">Create a project</a>
+            <a className="rz-btn" href="/create.html?new=1">Create a project</a>
           </div>
         )}
 

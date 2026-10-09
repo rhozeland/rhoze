@@ -17,3 +17,7 @@
 - [x] Restyle Exclusive as a masonry mood board with pinned content, safe locked previews, and an owner add-content tile; verify desktop and 390px layout.
 - [x] Show the attached coin's Birdeye chart embedded and always visible after Budget, without expand buttons; verify rendering on desktop and 390px mobile.
 - [x] Align shared Messages/Profile controls, remove redundant signed-in Sign in, and verify navigation and hover menu with a controlled browser fixture; real-account settings/sign-out verification requires the user to sign in.
+
+- [x] Separate Messages, My Applications, and Applicants using existing access checks.
+- [x] Verify chat, application details, review actions, and empty states with automated tests and a controlled browser fixture.
+- [ ] Verify real-account application submission, owner acceptance, and messaging end-to-end — blocked until the user signs in to the preview (no matching account available for session minting).

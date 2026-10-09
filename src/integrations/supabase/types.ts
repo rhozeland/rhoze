@@ -1879,6 +1879,47 @@ export type Database = {
           },
         ]
       }
+      project_like_preferences: {
+        Row: {
+          is_public: boolean
+          user_id: string
+        }
+        Insert: {
+          is_public?: boolean
+          user_id: string
+        }
+        Update: {
+          is_public?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      project_likes: {
+        Row: {
+          created_at: string
+          release_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          release_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          release_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_likes_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_line_items: {
         Row: {
           base_amount_cents: number

@@ -134,6 +134,13 @@
       "when": 1791573288456,
       "tag": "0018_personal_conversation_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791588793966,
+      "tag": "0019_project_likes_with_list_privacy",
+      "breakpoints": true
     }
   ]
 }

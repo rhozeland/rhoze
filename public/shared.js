@@ -416,3 +416,27 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 setupHoverVideos();
+// Same account controls as the React menu: Sign in, or My profile + Sign out.
+(function(){
+  var KEY = 'sb-hdlpvcsxyxirywjkhsui-auth-token';
+  function session(){ try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); return s && s.access_token ? s : null; } catch(e) { return null; } }
+  function signOut(e){ e.preventDefault(); localStorage.removeItem(KEY); location.reload(); }
+  function mount(){
+    var nav = document.querySelector('.site-nav');
+    if (!nav || document.getElementById('rSignInCta')) return;
+    var cta = nav.querySelector('.nav-cta');
+    var menu = document.getElementById('mobileMenu');
+    var mCta = menu && Array.prototype.find.call(menu.querySelectorAll('a'), function(a){ return /sign in/i.test(a.textContent); });
+    var signedIn = !!session();
+    function build(cls){
+      var wrap = document.createDocumentFragment();
+      if (!signedIn) { var a = document.createElement('a'); a.className = cls; a.href = '/me'; a.textContent = 'Sign in'; wrap.appendChild(a); return wrap; }
+      var p = document.createElement('a'); p.className = cls; p.href = '/me'; p.textContent = 'My profile'; p.style.marginRight = '.5rem';
+      var o = document.createElement('a'); o.className = cls; o.href = '#'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
+      wrap.appendChild(p); wrap.appendChild(o); return wrap;
+    }
+    if (cta) cta.replaceWith(build('nav-cta'));
+    if (mCta) mCta.replaceWith(build(''));
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
+})();

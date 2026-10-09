@@ -232,9 +232,9 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-gen-dots i:nth-child(2){animation-delay:.15s}.rz-gen-dots i:nth-child(3){animation-delay:.3s}
 @keyframes rzgen{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-.12rem)}}
 .rz-gen-steps{display:flex;flex-wrap:wrap;gap:.3rem;margin:.9rem 0 0;padding:0;list-style:none}
-.rz-gen-step{display:inline-flex;align-items:center;gap:.28rem;border:1px solid hsl(var(--line));border-radius:999px;padding:.22rem .55rem;font-size:.63rem;font-weight:500;color:hsl(var(--mut))}
+.rz-gen-step{display:inline-flex;align-items:center;gap:.28rem;border:1px solid hsl(var(--line));border-radius:999px;padding:.22rem .55rem;font-size:.63rem;font-weight:500;color:hsl(var(--strong))}
 .rz-gen-step .rz-gen-dot{width:.34rem;height:.34rem;border-radius:50%;background:hsl(var(--line))}
 .rz-gen-step.on{border-color:hsl(var(--g));color:hsl(var(--ink));font-weight:700}
 .rz-gen-step.on .rz-gen-dot{background:hsl(var(--g));animation:rzgen 1s ease-in-out infinite}
-.rz-gen-step.done{color:hsl(var(--ink))}.rz-gen-step.done svg{color:hsl(var(--g))}
+.rz-gen-step.done{color:hsl(var(--mut)).rz-gen-step.done svg{color:hsl(var(--g))}
 @media(prefers-reduced-motion:reduce){.rz-gen-dots i,.rz-gen-step.on .rz-gen-dot{animation:none}}

@@ -423,7 +423,7 @@ setupHoverVideos();
   function signOut(e){ e.preventDefault(); localStorage.removeItem(KEY); location.reload(); }
   function mount(){
     var nav = document.querySelector('.site-nav');
-    if (!nav) return;
+    if (!nav || nav.querySelector('.sn-brand')) return;
     var legacyHud = document.getElementById('rSignedInHUD');
     if (legacyHud) legacyHud.remove();
     var cta = nav.querySelector('.nav-cta');

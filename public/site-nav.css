@@ -59,7 +59,9 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-nav .nav-auth .sn-menu{top:calc(100% + .5rem);right:0}
 .site-nav .nav-auth-wrap{position:relative;display:inline-flex}
 .site-nav .nav-auth{margin-left:0!important}
-.site-nav .nav-auth-identity:hover,.site-nav .nav-auth-chip:hover{background:hsl(var(--site-nav-hover))}
+.site-nav .nav-auth-identity,.site-nav .nav-auth-chip{background:transparent!important;font-weight:600!important}
+.site-nav .nav-auth-name{font-weight:600}
+.site-nav .nav-auth-identity:hover,.site-nav .nav-auth-chip:hover{background:hsl(var(--site-nav-hover))!important}
 .site-nav .nav-auth-k,.site-nav .nav-auth-v,.site-nav .nav-auth-arrow,.site-nav .nav-auth-name{color:hsl(var(--site-nav-ink))}
 @media(max-width:900px){.site-nav #rSignInCta{display:inline-flex!important;margin-left:auto}.site-nav #rSignInCta + .menu-toggle{margin-left:0}.site-nav .nav-auth{margin-left:auto!important}}
 .site-nav [hidden]{display:none!important}

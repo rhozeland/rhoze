@@ -50,6 +50,13 @@
       "when": 1791494360060,
       "tag": "0006_release_apply_messages",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791505859923,
+      "tag": "0007_my_profile",
+      "breakpoints": true
     }
   ]
 }

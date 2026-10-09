@@ -3440,6 +3440,7 @@ export type Database = {
         }
         Returns: number
       }
+      my_profile: { Args: { p_kind?: string; p_name?: string }; Returns: Json }
       my_releases: {
         Args: never
         Returns: {

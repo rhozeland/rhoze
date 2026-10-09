@@ -223,7 +223,7 @@ export function SavedPage() {
           <>
             <div className="rz-head"><h1>Saved</h1><p>Creators and brands you've bookmarked.</p></div>
             {rows === undefined && <div className="rz-skel" />}
-            {rows?.length === 0 && <p className="rz-pf-empty">Nothing saved yet. Tap Save on any profile in <a href="/community.html">Community</a>.</p>}
+            {rows?.length === 0 && <p className="rz-pf-empty">Nothing saved yet. Tap Save on any profile in <a href="/community.html">Creators</a>.</p>}
             <ul className="rz-pf-credits">
               {rows?.map((s) => (
                 <li key={s.id} className="rz-pf-saved">

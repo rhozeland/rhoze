@@ -121,7 +121,7 @@ function OwnerSettings({ onEdit, editing, visibility }: { onEdit: () => void; ed
                 <button className={`rz-btn${visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={visibility.isPublic} onClick={() => visibility.onChange(true)}>Public</button>
                 <button className={`rz-btn${!visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={!visibility.isPublic} onClick={() => visibility.onChange(false)}>Private</button>
               </span>
-              <small>{visibility.isPublic ? "Public: shown on Community" : "Private: hidden from Community"}</small>
+              <small>{visibility.isPublic ? "Public: shown on Creators" : "Private: hidden from Creators"}</small>
             </div>
           )}
         </div>
@@ -133,7 +133,7 @@ function OwnerSettings({ onEdit, editing, visibility }: { onEdit: () => void; ed
 function NotFound({ what }: { what: string }) {
   return (
     <div className="rz-head"><h1>{what} not found</h1><p>This profile may not be listed yet or the link is wrong.</p>
-      <div className="rz-actions"><a className="rz-btn pri" href="/community.html">Back to Community</a></div></div>
+      <div className="rz-actions"><a className="rz-btn pri" href="/community.html">Back to Creators</a></div></div>
   );
 }
 
@@ -161,7 +161,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
       .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,hourly_rate_max_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
       .eq("slug", slug).maybeSingle();
     setC(data ?? null);
-    if (data) document.title = `${data.display_name} | Rhozeland Community`;
+    if (data) document.title = `${data.display_name} | Rhozeland Creators`;
     if (data) {
       const { data: rs } = await db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,user_id,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500);
       const nm = slugify(data.display_name);
@@ -381,7 +381,7 @@ export function BrandProfile({ slug }: { slug: string }) {
     ]);
     const mine = ((r ?? []) as Rel[]).filter((x: any) => slugify(x.creator_name || "") === slug || (b?.user_id && x.user_id === b.user_id));
     setRels(mine); setBrand(b ?? null); setCanEdit(!!ce);
-    document.title = `${b?.name || mine[0]?.creator_name || "Brand"} | Rhozeland Community`;
+    document.title = `${b?.name || mine[0]?.creator_name || "Brand"} | Rhozeland Creators`;
   };
   useEffect(() => { load(); }, [slug]);
 

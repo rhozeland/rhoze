@@ -99,6 +99,10 @@
       --hero-blush: 339 56% 86%;
       --hero-cool: 187 51% 90%;
       --hero-ink: 0 0% 7%;
+      --hero-paper: 0 0% 100%;
+      --hero-sky: 198 88% 70%;
+      --hero-mint: 157 68% 73%;
+      --hero-sun: 43 95% 75%;
       --accent-gold: 40 96% 61%;
       --shadow: 248 18% 12%;
       --radius-xl: 30px;
@@ -3264,20 +3268,21 @@
           .figma-home { --fh-dark:#202020; --fh-paper:#f7f7f4; background:var(--fh-paper); color:#171717; overflow:hidden; }
           .figma-home * { box-sizing:border-box; }
           .fh-announcement { min-height:29px; display:flex; align-items:center; justify-content:center; padding:.35rem 1rem; background:#f2d400; color:#171717; font-size:.58rem; line-height:1.3; font-weight:800; letter-spacing:.1em; text-transform:uppercase; text-align:center; }
-          .fh-hero { min-height:535px; padding:4rem clamp(1.15rem,5vw,5.5rem) 3rem; display:flex; align-items:center; position:relative; background:linear-gradient(122deg,hsl(var(--hero-warm)) 4%,hsl(var(--hero-peach)) 35%,hsl(var(--hero-blush)) 61%,hsl(var(--hero-cool)) 100%); background-size:180% 180%; animation:fh-hero-drift 32s ease-in-out infinite; isolation:isolate; }
-          .fh-hero::after { content:""; position:absolute; inset:auto 0 0; height:38%; z-index:-1; background:linear-gradient(to top,rgba(255,255,255,.35),transparent); }
+          .fh-hero { min-height:460px; padding:3.5rem clamp(1.15rem,5vw,5.5rem) 3rem; display:flex; align-items:center; position:relative; overflow:hidden; background:hsl(var(--hero-paper)); isolation:isolate; }
+          .fh-hero::before { content:""; position:absolute; inset:-12%; z-index:-2; background:radial-gradient(ellipse 19% 34% at 76% 32%,hsl(var(--hero-sky)/.58),transparent 100%),radial-gradient(ellipse 16% 30% at 89% 72%,hsl(var(--hero-mint)/.5),transparent 100%),radial-gradient(ellipse 17% 31% at 43% 81%,hsl(var(--hero-sun)/.48),transparent 100%),radial-gradient(ellipse 12% 24% at 20% 18%,hsl(var(--hero-rose)/.18),transparent 100%); animation:fh-hero-drift 18s ease-in-out infinite alternate; }
+          .fh-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,hsl(var(--hero-paper)/.55),hsl(var(--hero-paper)/.08) 80%); pointer-events:none; }
           .fh-hero-copy { width:min(1000px,100%); }
-          .fh-hero h1 { margin:0; max-width:22ch; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
+          .fh-hero h1 { margin:0; max-width:21ch; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
           .fh-hero-rotation { display:grid; width:max-content; max-width:100%; color:hsl(var(--hero-rose)); }
           .fh-hero-rotation > span { grid-area:1 / 1; white-space:nowrap; opacity:0; animation:fh-hero-word 10s ease-in-out infinite; }
           .fh-hero-rotation > span:nth-child(2) { animation-delay:-7.5s; }
           .fh-hero-rotation > span:nth-child(3) { animation-delay:-5s; }
           .fh-hero-rotation > span:nth-child(4) { animation-delay:-2.5s; }
-          .fh-hero-highlights { list-style:none; display:flex; flex-wrap:wrap; gap:.65rem 1.35rem; margin:1.25rem 0 0; padding:0; color:hsl(var(--hero-ink)); font-size:.75rem; line-height:1.5; font-weight:550; }
+          .fh-hero-highlights { list-style:none; display:grid; gap:.7rem; margin:1.75rem 0 1.75rem; padding:0; color:hsl(var(--hero-ink)); font-size:.875rem; line-height:1.5; font-weight:550; }
           .fh-hero-highlights li { display:flex; align-items:flex-start; gap:.4rem; }
           .fh-hero-highlights svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; color:hsl(var(--hero-rose)); }
           @keyframes fh-hero-word { 0%,20% { opacity:1; transform:translateY(0); } 24%,96% { opacity:0; transform:translateY(-.12em); } 100% { opacity:1; transform:translateY(0); } }
-          @keyframes fh-hero-drift { 0%,100% { background-position:0% 35%; } 50% { background-position:100% 65%; } }
+          @keyframes fh-hero-drift { 0% { transform:translate(-5%,-4%) scale(1); } 50% { transform:translate(3%,5%) scale(1.06); } 100% { transform:translate(7%,-3%) scale(1.02); } }
           @media (max-width:1100px) { .fh-hero h1 { font-size:3rem; } }
           .fh-hero p { max-width:690px; margin:1.35rem 0 1.55rem; font-size:clamp(.95rem,1.65vw,1.25rem); line-height:1.38; font-weight:600; color:#1d1d1d; }
           .fh-actions { display:flex; gap:.65rem; flex-wrap:wrap; }
@@ -3359,9 +3364,9 @@
           }
           @media (max-width:640px) {
             .fh-announcement { font-size:.5rem; }
-            .fh-hero { min-height:430px; padding-top:2.75rem; padding-bottom:2rem; align-items:flex-start; }
+            .fh-hero { min-height:370px; padding-top:2.75rem; padding-bottom:2rem; align-items:flex-start; }
             .fh-hero h1 { font-size:1.875rem; }
-            .fh-hero-highlights { display:grid; gap:.55rem; font-size:.7rem; }
+            .fh-hero-highlights { gap:.65rem; font-size:.75rem; margin:1.5rem 0; }
             .fh-hero p { font-size:.82rem; }
             .fh-section { padding-left:.8rem; padding-right:.8rem; }
             .fh-work-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.45rem; }
@@ -3379,23 +3384,22 @@
             .fh-plan { min-height:350px; padding:1rem; }
             .fh-plan > p, .fh-plan ul { font-size:.6rem; }
           }
-          @media (prefers-reduced-motion:reduce) { .fh-project img,.fh-btn { transition:none; } .fh-hero,.fh-hero-rotation > span { animation:none; } .fh-hero-rotation > span:first-child { opacity:1; } }
+          @media (prefers-reduced-motion:reduce) { .fh-project img,.fh-btn { transition:none; } .fh-hero::before,.fh-hero-rotation > span { animation:none; } .fh-hero-rotation > span:first-child { opacity:1; } }
         </style>
 
         <div class="fh-announcement">Rhozeland · independent creator support in Toronto and beyond</div>
         <section class="fh-hero" aria-labelledby="homepage-title">
           <div class="fh-hero-copy">
-            <h1 id="homepage-title" aria-label="Tell us your vision. We’ll bring it to life.">Tell us your<br><span class="fh-hero-rotation" aria-hidden="true"><span>music videos.</span><span>fashion drops.</span><span>brand campaigns.</span><span>artist coins.</span></span>We’ll bring it to life.</h1>
-            <p>A creator-owned content house for shooting, producing, launching and growing ambitious ideas from brief to final release.</p>
-            <div class="fh-actions">
-              <a class="fh-btn" href="/community.html">Browse creators</a>
-              <a class="fh-btn is-dark" href="/create.html?new=1">Start a project <span aria-hidden="true">→</span></a>
-            </div>
+            <h1 id="homepage-title">A Creator-Owned<br>Content House</h1>
             <ul class="fh-hero-highlights">
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Generate a project roadmap in minutes</li>
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Browse real creator and brand projects</li>
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Fund work directly with a coin</li>
             </ul>
+            <div class="fh-actions">
+              <a class="fh-btn" href="/community.html">Browse creators</a>
+              <a class="fh-btn is-dark" href="/create.html?new=1">Start a project <span aria-hidden="true">→</span></a>
+            </div>
           </div>
         </section>
 

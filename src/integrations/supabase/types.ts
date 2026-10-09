@@ -2188,6 +2188,7 @@ export type Database = {
       }
       release_applications: {
         Row: {
+          applicant_user_id: string | null
           availability: string
           created_at: string
           files: Json
@@ -2201,6 +2202,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          applicant_user_id?: string | null
           availability: string
           created_at?: string
           files?: Json
@@ -2214,6 +2216,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          applicant_user_id?: string | null
           availability?: string
           created_at?: string
           files?: Json
@@ -3184,6 +3187,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      application_start_conversation: {
+        Args: { p_application_id: string }
+        Returns: string
+      }
       apply_pending_tier_change: {
         Args: { _subscription_id: string }
         Returns: undefined
@@ -3470,6 +3477,7 @@ export type Database = {
         }
         Returns: number
       }
+      my_application_inbox: { Args: never; Returns: Json }
       my_profile: { Args: { p_kind?: string; p_name?: string }; Returns: Json }
       my_releases: {
         Args: never
@@ -3598,6 +3606,7 @@ export type Database = {
       release_list_applications: {
         Args: { p_id: string; p_token: string }
         Returns: {
+          applicant_user_id: string | null
           availability: string
           created_at: string
           files: Json

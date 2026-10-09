@@ -180,7 +180,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
     if (!error) setC({ ...c, is_public: v });
   };
   const fmtR = (n: number) => `$${(n / 100).toLocaleString("en-CA")}`;
-  const rate = c?.hourly_rate_cents != null ? (c.hourly_rate_max_cents != null && c.hourly_rate_max_cents > c.hourly_rate_cents ? `${fmtR(c.hourly_rate_cents)}–${fmtR(c.hourly_rate_max_cents)}/hr` : `${fmtR(c.hourly_rate_cents)}/hr`) : "Rate on request";
+  const rate = c?.hourly_rate_cents != null && c.hourly_rate_cents > 0 ? `Starting from ${c.hourly_rate_max_cents != null && c.hourly_rate_max_cents > c.hourly_rate_cents ? `${fmtR(c.hourly_rate_cents)}–${fmtR(c.hourly_rate_max_cents)}` : fmtR(c.hourly_rate_cents)}/hr` : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
   const samples = (c?.work_samples ?? []) as Sample[];
   const fan = c?.account_kind === "supporter";

@@ -180,7 +180,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
     if (!error) setC({ ...c, is_public: v });
   };
   const fmtR = (n: number) => `$${(n / 100).toLocaleString("en-CA")}`;
-  const rate = c?.hourly_rate_cents != null ? (c.hourly_rate_max_cents != null && c.hourly_rate_max_cents > c.hourly_rate_cents ? `${fmtR(c.hourly_rate_cents)}–${fmtR(c.hourly_rate_max_cents)}/hr` : `${fmtR(c.hourly_rate_cents)}/hr`) : "Rate on request";
+  const rate = c?.hourly_rate_cents != null && c.hourly_rate_cents > 0 ? `Starting from ${c.hourly_rate_max_cents != null && c.hourly_rate_max_cents > c.hourly_rate_cents ? `${fmtR(c.hourly_rate_cents)}–${fmtR(c.hourly_rate_max_cents)}` : fmtR(c.hourly_rate_cents)}/hr` : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
   const samples = (c?.work_samples ?? []) as Sample[];
   const fan = c?.account_kind === "supporter";
@@ -323,7 +323,7 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
             <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, textTransform: "none", letterSpacing: 0, margin: 0 }}><input type="checkbox" checked={isRange} onChange={(e) => setIsRange(e.target.checked)} /> Use a range</label>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <input className="rz-in" inputMode="decimal" placeholder={isRange ? "From" : "85"} value={rateIn} onChange={(e) => setRateIn(e.target.value)} />
+            <input className="rz-in" inputMode="decimal" placeholder={isRange ? "From" : "Starting from"} value={rateIn} onChange={(e) => setRateIn(e.target.value)} />
             {isRange && <><span>–</span><input className="rz-in" inputMode="decimal" placeholder="To" value={rateMax} onChange={(e) => setRateMax(e.target.value)} /></>}
           </div>
         </div>

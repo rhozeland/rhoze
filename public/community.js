@@ -15,7 +15,7 @@
     }
     return el('div', className + ' creator-initial', (creator.display_name || '?').charAt(0).toUpperCase());
   }
-  function rate(creator) { if (creator.hourly_rate_cents == null) return 'Rate on request'; const f = (n) => '$' + (n / 100).toLocaleString('en-CA'); const m = creator.hourly_rate_max_cents; return (m != null && m > creator.hourly_rate_cents ? f(creator.hourly_rate_cents) + '–' + f(m) : f(creator.hourly_rate_cents)) + '/hr'; }
+  function rate(creator) { const c = creator.hourly_rate_cents; if (c == null || c <= 0) return 'Rate on request'; const f = (n) => '$' + (n / 100).toLocaleString('en-CA'); const m = creator.hourly_rate_max_cents; return 'Starting from ' + (m != null && m > c ? f(c) + '–' + f(m) : f(c)) + '/hr'; }
   function validLink(value) { try { const u = new URL(value); return ['https:', 'http:'].includes(u.protocol) ? u.href : null; } catch { return null; } }
   function renderFilters() {
     filters.replaceChildren();

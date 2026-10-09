@@ -552,6 +552,7 @@ export type Database = {
       }
       creator_directory: {
         Row: {
+          account_kind: string
           approved: boolean
           bio: string | null
           completed_projects: number
@@ -573,6 +574,7 @@ export type Database = {
           work_samples: Json
         }
         Insert: {
+          account_kind?: string
           approved?: boolean
           bio?: string | null
           completed_projects?: number
@@ -594,6 +596,7 @@ export type Database = {
           work_samples?: Json
         }
         Update: {
+          account_kind?: string
           approved?: boolean
           bio?: string | null
           completed_projects?: number

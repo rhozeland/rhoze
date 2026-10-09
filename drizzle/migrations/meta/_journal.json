@@ -64,6 +64,13 @@
       "when": 1791505882632,
       "tag": "0008_creator_save_details",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791506104106,
+      "tag": "0009_account_kind",
+      "breakpoints": true
     }
   ]
 }

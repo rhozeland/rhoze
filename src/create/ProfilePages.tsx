@@ -118,11 +118,10 @@ type Creator = {
   website_url: string | null; portfolio_url: string | null; instagram_url: string | null; user_id: string | null;
   work_samples: Sample[] | null; account_kind?: string; is_public?: boolean;
 };
-type Credit = { release_slug: string; title: string; brand: string | null; role_name: string };
+
 
 export function CreatorProfile({ slug }: { slug: string }) {
   const [c, setC] = useState<Creator | null | undefined>(undefined);
-  const [credits, setCredits] = useState<Credit[]>([]);
   const [editing, setEditing] = useState(false);
   const [view, setView] = useState<Sample | null>(null);
   const [projects, setProjects] = useState<any[]>([]);
@@ -139,8 +138,6 @@ export function CreatorProfile({ slug }: { slug: string }) {
       const nm = slugify(data.display_name);
       setProjects((rs ?? []).filter((x: any) => (data.user_id && x.user_id === data.user_id) || slugify(x.creator_name || "") === nm));
     }
-    const { data: cr } = await db.rpc("creator_credits", { p_slug: slug });
-    setCredits(cr ?? []);
   };
   useEffect(() => { load(); }, [slug]);
 
@@ -173,7 +170,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
                 <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
-                <p className="rz-pf-meta">{!fan && <><b>{rate}</b> · </>}{fan ? "Supporter" : `${c.membership_tier || "Community"} member`}{c.rating != null && <> · {Number(c.rating).toFixed(1)} ★</>}</p>
+                <p className="rz-pf-meta">{!fan && <b>{rate}</b>}{!fan && c.rating != null && " · "}{c.rating != null && <>{Number(c.rating).toFixed(1)} ★</>}</p>
                 <ProfileTools kind="creator" slug={c.slug} name={c.display_name} photo={c.photo_url} isOwner={isOwner && c.user_id === uid} />
                 {(ig || web) && <div className="rz-pf-actions" style={{ marginTop: ".4rem" }}>
                   {ig && <a className="rz-btn" href={ig} target="_blank" rel="noopener noreferrer">Instagram ↗</a>}
@@ -204,15 +201,6 @@ export function CreatorProfile({ slug }: { slug: string }) {
                     </a>
                   ))}
                 </div>
-              )}</section>}
-
-            {!fan && <section className="rz-pf-sec"><h2>Credits</h2>
-              {credits.length === 0 ? <p className="rz-pf-empty">Credits appear here when this creator is hired on a Rhozeland project.</p> : (
-                <ul className="rz-pf-credits">
-                  {credits.map((k, i) => (
-                    <li key={i}><a href={`/release/${k.release_slug}`}><b>{k.title}</b><span>{k.role_name} · {k.brand || "Brand project"}</span></a></li>
-                  ))}
-                </ul>
               )}</section>}
 
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />

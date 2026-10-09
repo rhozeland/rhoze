@@ -29,7 +29,7 @@
   }
   function openProfile(creator) {
     const content = $('profileContent'); content.replaceChildren();
-    content.append(image(creator, 'profile-portrait'), el('h2', '', creator.display_name), el('span', 'creator-tier', creator.membership_tier + ' member'));
+    content.append(image(creator, 'profile-portrait'), el('h2', '', creator.display_name));
     const facts = el('div', 'profile-facts');
     (creator.disciplines || []).forEach(d => facts.append(el('span', '', d)));
     facts.append(el('span', '', rate(creator)));
@@ -86,7 +86,7 @@
       const top = el('div', 'creator-top'); top.append(el('h2', '', creator.display_name)); const badges = el('div', 'creator-badges');
       if (creator.trending) badges.append(el('span', 'creator-badge', 'TRENDING ◉'));
       if (creator.rating != null) badges.append(el('span', 'creator-badge rating', Number(creator.rating).toFixed(1) + ' ★'));
-      top.append(badges); card.append(top, el('div', 'creator-tier', creator.membership_tier + ' member'), el('div', 'creator-detail', [(creator.disciplines || []).join(' · '), rate(creator)].filter(Boolean).join(' · ')), el('div', 'creator-muted', creator.completed_projects ? creator.completed_projects + ' completed projects' : 'New to the directory'));
+      top.append(badges); card.append(top, el('div', 'creator-detail', [(creator.disciplines || []).join(' · '), rate(creator)].filter(Boolean).join(' · ')), el('div', 'creator-muted', creator.completed_projects ? creator.completed_projects + ' completed projects' : 'New to the directory'));
       const view = el('a', 'creator-view', 'View Profile'); view.href = '/creator/' + encodeURIComponent(creator.slug); view.style.textDecoration = 'none'; card.style.cursor = 'pointer'; card.addEventListener('click', e => { if (!e.target.closest('a')) location.href = view.href; }); view.setAttribute('aria-label', 'View profile for ' + creator.display_name); card.append(view); grid.append(card);
     });
     if (totalPages > 1) for (let i = 1; i <= totalPages; i++) { const b = el('button', '', String(i)); b.type = 'button'; b.setAttribute('aria-label', 'Page ' + i); if (i === page) b.setAttribute('aria-current', 'page'); b.addEventListener('click', () => { page = i; render(); grid.scrollIntoView({behavior:'smooth',block:'start'}); }); pages.append(b); }

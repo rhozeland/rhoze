@@ -41,6 +41,11 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
     return () => document.removeEventListener("click", close);
   }, [menuOpen]);
   useEffect(() => {
+    if (!document.querySelector('script[src="/project-view.js"]')) {
+      const script = document.createElement("script");
+      script.src = "/project-view.js";
+      document.head.appendChild(script);
+    }
     let embedded = new URLSearchParams(window.location.search).get("embed") === "1";
     try { embedded = embedded || window.self !== window.top; } catch { embedded = true; }
     document.documentElement.classList.toggle("site-embedded", embedded);

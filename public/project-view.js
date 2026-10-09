@@ -1,0 +1,65 @@
+(function () {
+  if (window.rhozeProjectViewInstalled) return;
+  window.rhozeProjectViewInstalled = true;
+  var dialog, frame, opener, returnUrl, previousTitle, pushed = false;
+  var style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '/project-view.css'; document.head.appendChild(style);
+  function dismiss() {
+    if (!dialog || !dialog.open) return;
+    dialog.close(); frame.src = 'about:blank';
+    document.documentElement.classList.remove('project-view-open');
+    document.title = previousTitle;
+    if (opener && opener.isConnected) opener.focus();
+  }
+  function close() {
+    if (pushed) { pushed = false; history.back(); }
+    else dismiss();
+  }
+  function ensure() {
+    if (dialog) return;
+    dialog = document.createElement('dialog'); dialog.className = 'project-view-dialog';
+    dialog.setAttribute('aria-label', 'Project details');
+    var x = document.createElement('button'); x.className = 'project-view-close'; x.type = 'button';
+    x.setAttribute('aria-label', 'Close project'); x.title = 'Close project';
+    x.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18"/></svg>';
+    x.addEventListener('click', close);
+    frame = document.createElement('iframe'); frame.title = 'Project details'; frame.className = 'project-view-frame';
+    frame.addEventListener('load', function () {
+      try {
+        var doc = frame.contentDocument;
+        if (!doc || frame.src === 'about:blank') return;
+        doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !doc.querySelector('.rz-modal,.wallet-adapter-modal')) close(); });
+        doc.addEventListener('click', function (e) {
+          var a = e.target.closest('a[href]'); if (!a || a.target === '_blank') return;
+          var url = new URL(a.href, location.origin);
+          if (url.origin === location.origin && !/^\/release\/[^/]+(?:\/exclusive)?\/?$/.test(url.pathname)) {
+            e.preventDefault(); location.href = url.href;
+          }
+        });
+      } catch (e) {}
+    });
+    dialog.appendChild(x); dialog.appendChild(frame);
+    (document.querySelector('#profile-root,#discover-root,#release-root,#root') || document.body).appendChild(dialog);
+    dialog.addEventListener('cancel', function (e) { e.preventDefault(); close(); });
+    dialog.addEventListener('click', function (e) { if (e.target === dialog) close(); });
+  }
+  document.addEventListener('click', function (e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    var a = e.target.closest('a[href]'); if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var url = new URL(a.href, location.origin);
+    if (url.origin !== location.origin || !/^\/release\/[^/]+\/?$/.test(url.pathname) || window.self !== window.top) return;
+    e.preventDefault(); e.stopPropagation(); ensure();
+    opener = a; returnUrl = location.href; previousTitle = document.title;
+    history.pushState({ rhozeProjectPopup: true }, '', url.pathname + url.search); pushed = true;
+    url.searchParams.set('projectView', '1');
+    frame.src = url.pathname + url.search; dialog.showModal();
+    document.documentElement.classList.add('project-view-open');
+  }, true);
+  window.addEventListener('popstate', function () {
+    if (dialog && dialog.open) { pushed = false; dismiss(); }
+  });
+  window.addEventListener('message', function (e) {
+    if (e.origin !== location.origin || !frame || e.source !== frame.contentWindow) return;
+    if (e.data === 'rhoze:close-project') close();
+  });
+})();

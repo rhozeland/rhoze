@@ -8,9 +8,9 @@ export const money = (cents: number) =>
 
 export const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
 
-export function Shell({ children, right }: { children: React.ReactNode; right?: React.ReactNode }) {
+export function Shell({ children, right, className = "" }: { children: React.ReactNode; right?: React.ReactNode; className?: string }) {
   return (
-    <div className="rz-flow">
+    <div className={`rz-flow ${className}`}>
       <SiteNav />
       <main className="rz-stage">{right && <div className="rz-subnav">{right}</div>}{children}</main>
       <footer className="rz-footer">

@@ -562,6 +562,7 @@ export type Database = {
           hourly_rate_cents: number | null
           id: string
           instagram_url: string | null
+          is_public: boolean
           membership_tier: string
           photo_url: string | null
           portfolio_url: string | null
@@ -584,6 +585,7 @@ export type Database = {
           hourly_rate_cents?: number | null
           id?: string
           instagram_url?: string | null
+          is_public?: boolean
           membership_tier?: string
           photo_url?: string | null
           portfolio_url?: string | null
@@ -606,6 +608,7 @@ export type Database = {
           hourly_rate_cents?: number | null
           id?: string
           instagram_url?: string | null
+          is_public?: boolean
           membership_tier?: string
           photo_url?: string | null
           portfolio_url?: string | null
@@ -3372,6 +3375,10 @@ export type Database = {
           p_samples: Json
           p_website: string
         }
+        Returns: undefined
+      }
+      creator_set_visibility: {
+        Args: { p_id: string; p_public: boolean }
         Returns: undefined
       }
       credit_request_cancel: {

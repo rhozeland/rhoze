@@ -155,7 +155,7 @@ export function Lightbox({ children, onClose }: { children: React.ReactNode; onC
 export function MoreCreators({ slug, tags, Avatar }: { slug: string; tags: string[]; Avatar: any }) {
   const [list, setList] = useState<any[]>([]);
   useEffect(() => {
-    db.from("creator_directory").select("slug,display_name,photo_url,disciplines").neq("slug", slug).limit(200)
+    db.from("creator_directory").select("slug,display_name,photo_url,disciplines").eq("is_public", true).neq("slug", slug).limit(200)
       .then(({ data }: any) => {
         const t = tags.map((x) => x.toLowerCase());
         const scored = (data ?? []).map((c: any) => ({ c, n: (c.disciplines ?? []).filter((d: string) => t.includes(d.toLowerCase())).length }))

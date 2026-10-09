@@ -66,11 +66,15 @@ function useUser() {
   return { uid, team };
 }
 
-function OwnerBar({ label, onEdit, editing }: { label: string; onEdit: () => void; editing: boolean }) {
+function OwnerBar({ label, onEdit, editing, visibility }: { label: string; onEdit: () => void; editing: boolean; visibility?: { isPublic: boolean; busy: boolean; onChange: (v: boolean) => void } }) {
   return (
     <div className="rz-owner">
-      <span>{label}</span>
-      <div><button className="rz-btn pri" onClick={onEdit}>{editing ? "Close editor" : "Edit profile"}</button></div>
+      <span>{label}{visibility && <> · {visibility.isPublic ? "Public: shown on Community" : "Private: hidden from Community"}</>}</span>
+      <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>{visibility && (
+        <span className="rz-vis" role="group" aria-label="Profile visibility">
+          <button className={`rz-btn${visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={visibility.isPublic} onClick={() => visibility.onChange(true)}>Public</button>
+          <button className={`rz-btn${!visibility.isPublic ? " pri" : ""}`} disabled={visibility.busy} aria-pressed={!visibility.isPublic} onClick={() => visibility.onChange(false)}>Private</button>
+        </span>)}<button className="rz-btn pri" onClick={onEdit}>{editing ? "Close editor" : "Edit profile"}</button></div>
     </div>
   );
 }
@@ -88,7 +92,7 @@ type Creator = {
   id: string; slug: string; display_name: string; photo_url: string | null; disciplines: string[] | null;
   membership_tier: string | null; hourly_rate_cents: number | null; rating: number | null; bio: string | null;
   website_url: string | null; portfolio_url: string | null; instagram_url: string | null; user_id: string | null;
-  work_samples: Sample[] | null; account_kind?: string;
+  work_samples: Sample[] | null; account_kind?: string; is_public?: boolean;
 };
 type Credit = { release_slug: string; title: string; brand: string | null; role_name: string };
 
@@ -102,7 +106,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
   const load = async () => {
     const { data } = await db.from("creator_directory")
-      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind")
+      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
       .eq("slug", slug).maybeSingle();
     setC(data ?? null);
     if (data) document.title = `${data.display_name} | Rhozeland Community`;
@@ -117,6 +121,14 @@ export function CreatorProfile({ slug }: { slug: string }) {
   useEffect(() => { load(); }, [slug]);
 
   const isOwner = !!c && !!uid && (c.user_id === uid || team);
+  const [visBusy, setVisBusy] = useState(false);
+  const setVisibility = async (v: boolean) => {
+    if (!c || c.is_public === v) return;
+    setVisBusy(true);
+    const { error } = await db.rpc("creator_set_visibility", { p_id: c.id, p_public: v });
+    setVisBusy(false);
+    if (!error) setC({ ...c, is_public: v });
+  };
   const rate = c?.hourly_rate_cents != null ? `$${(c.hourly_rate_cents / 100).toLocaleString("en-CA")}/hr` : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
   const samples = (c?.work_samples ?? []) as Sample[];
@@ -124,7 +136,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
   return (
     <Shell right={<AccountLinks />}>
-      {isOwner && <OwnerBar label="This is your profile" editing={editing} onEdit={() => setEditing((e) => !e)} />}
+      {isOwner && <OwnerBar label="This is your profile" editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
       <div className="rz-card">
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}

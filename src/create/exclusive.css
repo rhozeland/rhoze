@@ -70,3 +70,4 @@ html.rz-exclusive body{background:linear-gradient(180deg,hsl(var(--ink)/.07),hsl
 @media(min-width:780px){.rz-si-cols{grid-template-columns:1fr 1fr;gap:1.9rem}}
 @media(max-width:600px){.rz-support-info{padding:1rem .95rem}}
 .rz-si-fine{font-size:.72rem;line-height:1.5;color:hsl(var(--strong));margin:.55rem 0 .7rem}
+@media(max-width:600px){.rz-board-page{padding-bottom:4.2rem}}

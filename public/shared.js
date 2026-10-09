@@ -6,9 +6,10 @@
   document.documentElement.classList.toggle('site-embedded', embedded);
 })();
 
-// Keep booking accessible while visitors browse any public page with the shared menu.
+// The floating booking action belongs on the landing page only.
 (function(){
   function mountBookingAction(){
+    if (!/^(?:\/(?:index\.html)?)$/.test(location.pathname)) return;
     if (!document.querySelector('.site-nav') || document.querySelector('.site-book-float')) return;
     var link = document.createElement('a');
     link.className = 'site-book-float';

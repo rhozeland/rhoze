@@ -6,7 +6,7 @@
   style.rel = 'stylesheet'; style.href = '/project-view.css'; document.head.appendChild(style);
   function dismiss() {
     if (!dialog || !dialog.open) return;
-    dialog.close(); frame.src = 'about:blank';
+    dialog.close(); frame.contentWindow.location.replace('about:blank');
     document.documentElement.classList.remove('project-view-open');
     document.title = previousTitle;
     if (opener && opener.isConnected) opener.focus();
@@ -27,7 +27,7 @@
     frame.addEventListener('load', function () {
       try {
         var doc = frame.contentDocument;
-        if (!doc || frame.src === 'about:blank') return;
+        if (!doc || frame.contentWindow.location.href === 'about:blank') return;
         doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !doc.querySelector('.rz-modal,.wallet-adapter-modal')) close(); });
         doc.addEventListener('click', function (e) {
           var a = e.target.closest('a[href]'); if (!a || a.target === '_blank') return;
@@ -56,7 +56,7 @@
     opener = a; previousTitle = document.title;
     history.pushState({ rhozeProjectPopup: true }, '', url.pathname + url.search); pushed = true;
     url.searchParams.set('projectView', '1');
-    frame.src = url.pathname + url.search; dialog.showModal();
+    frame.contentWindow.location.replace(url.pathname + url.search); dialog.showModal();
     document.documentElement.classList.add('project-view-open');
   }, true);
   window.addEventListener('popstate', function () {

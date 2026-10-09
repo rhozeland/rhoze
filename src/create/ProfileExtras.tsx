@@ -195,11 +195,6 @@ export function MoreCreators({ slug, tags, Avatar }: { slug: string; tags: strin
   );
 }
 
-export const AccountLinks = () => (
-  <span style={{ display: "flex", gap: ".8rem", alignItems: "center" }}>
-    <a className="rz-btn rz-ico" href="/saved" aria-label="Saved profiles" title="Saved"><Bookmark size={14} /></a>
-  </span>
-);
 
 function SignInGate({ what }: { what: string }) {
   const [open, setOpen] = useState(false);
@@ -221,7 +216,7 @@ export function SavedPage() {
   }, [uid]);
   const remove = async (id: string) => { setRows((r) => r?.filter((x) => x.id !== id)); await db.from("saved_profiles").delete().eq("id", id); };
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
         {uid === null ? <SignInGate what="Saved" /> : (
           <>
@@ -278,7 +273,7 @@ export function MessagesPage() {
   const linkify = (s: string) => s.split(/(https?:\/\/\S+)/g).map((p, i) => /^https?:\/\//.test(p) ? <a key={i} href={p}>{p}</a> : p);
 
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
         {uid === null ? <SignInGate what="Messages" /> : (
           <div className={`rz-dm${active ? " has-active" : ""}`}>

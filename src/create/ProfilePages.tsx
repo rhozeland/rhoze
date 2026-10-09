@@ -3,7 +3,7 @@ import { Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
-import { ProfileTools, Lightbox, MoreCreators, AccountLinks, embedUrl } from "./ProfileExtras";
+import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -451,7 +451,7 @@ export function MyProfile() {
     go(p);
   };
   return (
-    <Shell right={<AccountLinks />}>
+    <Shell>
       <div className="rz-card">
         {state === "load" && <div className="rz-skel" />}
         {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in or create an account as an Artist, Brand or Supporter.</p><div className="rz-actions"><button className="rz-btn pri" onClick={() => setAuth(true)}>Sign in</button></div>

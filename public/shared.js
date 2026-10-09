@@ -14,7 +14,7 @@
     link.className = 'site-book-float';
     link.href = '/book.html';
     link.setAttribute('aria-label', 'Book a project');
-    link.innerHTML = '<span class="site-book-float__mark" aria-hidden="true">✳</span><span>Book a project</span><span class="site-book-float__arrow" aria-hidden="true">↗</span>';
+    link.innerHTML = '<span class="site-book-float__mark" aria-hidden="true">✳</span><span>Book a project</span>';
     document.body.appendChild(link);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountBookingAction);

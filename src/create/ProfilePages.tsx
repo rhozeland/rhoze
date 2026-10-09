@@ -77,6 +77,7 @@ function OwnerSettings({ onEdit, editing, visibility }: { onEdit: () => void; ed
       {open && (
         <div className="rz-settings-menu" role="menu">
           <button type="button" className="rz-btn pri" onClick={() => { onEdit(); setOpen(false); }}>{editing ? "Close editor" : "Edit profile"}</button>
+          <a className="rz-btn" href="/saved" role="menuitem">Saved</a>
           {visibility && (
             <div className="rz-settings-vis">
               <b>Profile visibility</b>
@@ -152,7 +153,6 @@ export function CreatorProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
-          <AccountLinks />
           {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         </div>
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
@@ -348,7 +348,6 @@ export function BrandProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
-          <AccountLinks />
           {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}

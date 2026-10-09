@@ -9,6 +9,15 @@ export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]
 const db = supabase as any;
 const fromSlug = () => new URLSearchParams(location.search).get("from");
 
+function DraftsLink() {
+  return (
+    <a className="rz-drafts-link" href="/my-projects?filter=draft" title="See your drafts" aria-label="See your drafts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      Drafts
+    </a>
+  );
+}
+
 function ProjectGrid({ rels }: { rels: any[] }) {
   const from = fromSlug();
   useEffect(() => { if (from) document.getElementById(`rz-proj-${from}`)?.scrollIntoView({ block: "nearest" }); }, [from, rels.length]);
@@ -178,7 +187,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
             <section className="rz-pf-sec"><h2>Bio</h2>
               <p className="rz-pf-bio">{c.bio || "This creator hasn't added a bio yet."}</p></section>
 
-            <section className="rz-pf-sec"><h2>Projects</h2><ProjectGrid rels={projects} /></section>
+            <section className="rz-pf-sec"><h2>Projects{isOwner && <DraftsLink />}</h2><ProjectGrid rels={projects} /></section>
 
             {!fan && <section className="rz-pf-sec"><h2>Work samples</h2>
               {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
@@ -367,7 +376,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
             {editing && canEdit && <BrandEditor slug={slug} initial={{ slug, name, logo_url: brand?.logo_url ?? null, category: brand?.category ?? null, bio: brand?.bio ?? null }} onSaved={() => { setEditing(false); load(); }} />}
 
-            <section className="rz-pf-sec"><h2>Projects</h2>
+            <section className="rz-pf-sec"><h2>Projects{canEdit && <DraftsLink />}</h2>
 <ProjectGrid rels={rels} /></section>
 
             <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>

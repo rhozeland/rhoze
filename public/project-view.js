@@ -30,14 +30,12 @@
         if (!doc || frame.contentWindow.location.href === 'about:blank') return;
         doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !doc.querySelector('.rz-modal,.wallet-adapter-modal')) close(); });
         doc.addEventListener('click', function (e) {
-          var a = e.target.closest('a[href]'); if (!a || a.target === '_blank') return;
+          var a = e.target.closest('a[href]'); if (!a || a.target === '_blank' || a.getAttribute('href').charAt(0) === '#') return;
           var url = new URL(a.href, location.origin);
           if (url.origin === location.origin) {
             e.preventDefault();
-            if (/^\/release\/[^/]+(?:\/exclusive)?\/?$/.test(url.pathname)) {
-              url.searchParams.set('projectView', '1');
-              frame.contentWindow.location.replace(url.href);
-            } else location.href = url.href;
+            url.searchParams.delete('projectView');
+            location.href = url.pathname + url.search + url.hash;
           }
         });
       } catch (e) {}

@@ -251,7 +251,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           <>
             <header className="rz-release-header">
             <div className="rz-head">
-              <h1>{r.title}</h1>
+              <h1>{new URLSearchParams(location.search).get("projectView") === "1" ? <a href={`/release/${encodeURIComponent(slug)}`} target="_top" style={{ color: "inherit", textDecoration: "none" }}>{r.title}</a> : r.title}</h1>
               <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
             </div>
             <div className="rz-release-tools">

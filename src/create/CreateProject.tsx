@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles } from "lucide-react";
+import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, Milestone, money, uid } from "./shared";
 import AuthModal from "./AuthModal";
@@ -24,6 +24,48 @@ const flowFor = (t: PType | null): StepKey[] => ["type", "details", "roadmap", .
 const STEP_LABEL: Record<StepKey, string> = { type: "Type", details: "Details", roadmap: "Roadmap", roles: "Roles", coin: "Coin", publish: "Publish" };
 
 type Coin = { mint: string; ticker: string; name: string; image: string | null } | null;
+
+const GEN_STAGES = [
+  { label: "Reading your brief", detail: "Reading what you're making, who it's for, and the budget you set." },
+  { label: "Splitting the budget", detail: "Dividing your budget into milestones you can pay out as the work lands." },
+  { label: "Writing deliverables", detail: "Writing exactly what you'll deliver at each milestone, and in what format." },
+  { label: "Setting approval checks", detail: "Adding what \"done\" means for each milestone, so nothing stays vague." },
+  { label: "Checking the totals", detail: "Making sure the milestone amounts add up to your budget." },
+];
+
+function GenProgress({ title }: { title: string }) {
+  const [pct, setPct] = useState(4);
+  useEffect(() => {
+    const t0 = Date.now();
+    const t = setInterval(() => {
+      const s = (Date.now() - t0) / 1000;
+      setPct(4 + 90 * (1 - Math.exp(-s / 7)));
+    }, 100);
+    return () => clearInterval(t);
+  }, []);
+  const stage = pct >= 88 ? 4 : pct >= 68 ? 3 : pct >= 45 ? 2 : pct >= 22 ? 1 : 0;
+  return (
+    <div className="rz-gen" role="status" aria-live="polite">
+      <div className="rz-gen-top">
+        <h2>Writing your roadmap{title.trim() ? ` for ${title.trim()}` : ""}</h2>
+        <span className="rz-gen-pct">{Math.round(pct)}%</span>
+      </div>
+      <div className="rz-gen-bar"><i style={{ width: `${pct}%` }} /></div>
+      <p className="rz-gen-now">
+        <span className="rz-gen-dots" aria-hidden="true"><i /><i /><i /></span>
+        {GEN_STAGES[stage].detail}
+      </p>
+      <ul className="rz-gen-steps">
+        {GEN_STAGES.map((s, i) => (
+          <li key={s.label} className={`rz-gen-step${i === stage ? " on" : ""}${i < stage ? " done" : ""}`}>
+            {i < stage ? <Check size={11} aria-hidden="true" /> : <span className="rz-gen-dot" aria-hidden="true" />}
+            {s.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function CreateProject() {
   const token = useMemo(getToken, []);
@@ -436,7 +478,7 @@ export default function CreateProject() {
             <SplitMini />
             <div className="rz-inv">
               <div className="rz-inv-h"><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span><span /></div>
-              {genBusy && [0, 1, 2].map((i) => <div key={i} className="rz-skel" />)}
+              {genBusy && <GenProgress title={title} />}
               {!genBusy && rows.map((r, i) => (
                 <div className="rz-row" key={r.id}>
                   <span className="rz-num">{String(i + 1).padStart(2, "0")}</span>

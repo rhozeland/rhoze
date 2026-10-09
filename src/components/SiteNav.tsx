@@ -49,7 +49,15 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const account = signIn
     ? !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={signIn}>Sign in</Button>
     : hasSession
-      ? <><a className="sn-signin" href="/me" style={{ marginRight: ".5rem" }}>My profile</a><Button type="button" variant="outline" className="sn-signin" onClick={() => supabase.auth.signOut()}>Sign out</Button></>
+      ? <div className="sn-avatar-wrap">
+          <button type="button" className="sn-avatar" aria-label="Account menu" aria-expanded={menuOpen} onClick={(e) => { e.stopPropagation(); setMenuOpen((o) => !o); }}>
+            {avatar ? <img src={avatar} alt="" /> : <span aria-hidden="true">☺</span>}
+          </button>
+          {menuOpen && <div className="sn-menu" role="menu" onClick={(e) => e.stopPropagation()}>
+            <a href="/me" role="menuitem">My profile</a>
+            <button type="button" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</button>
+          </div>}
+        </div>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;
   return <>
     <link rel="stylesheet" href="/site-nav.css" />

@@ -8,7 +8,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import { Button } from "@/components/ui/button";
-import { FileAudio, LockKeyhole, Pin, Plus, Play, Pause, Quote, Sparkles, Clock } from "lucide-react";
+import { FileAudio, LockKeyhole, Pin, Plus, Play, Pause, Quote, Sparkles, Clock, Clapperboard, Wallet, BadgeCheck, Check } from "lucide-react";
 import "./exclusive.css";
 
 type Post = { id: string; body: string; media_kind: "image" | "video" | "audio" | null; media_url: string | null; created_at: string; local?: boolean };
@@ -80,6 +80,44 @@ function BlobMedia({ url, kind }: { url: string; kind: Kind }) {
 
 // Placeholder until on-chain holder counts are wired in.
 const holderCount = (mint: string) => 120 + (Array.from(mint).reduce((a, c) => a + c.charCodeAt(0), 0) % 380);
+
+// Plain-language explainer shown to visitors before any wallet or payment prompt.
+function SupportInfo({ creator, tk, nextMs }: { creator: string; tk: string; nextMs: string }) {
+  const gets = [
+    { icon: Sparkles, t: "Holder updates", d: `Notes from ${creator} as the project moves, newest first.` },
+    { icon: Clapperboard, t: "Photos, video and audio", d: "Early listens, cuts and stills, shared here before anywhere else." },
+    { icon: FileAudio, t: "Stems and project files", d: `The working files ${creator} chooses to hand over.` },
+    { icon: Quote, t: "A pinned note", d: "A personal message from the creator, kept at the top of the feed." },
+    { icon: BadgeCheck, t: "A Member badge", d: "You're marked as a supporter wherever you open this feed." },
+  ];
+  if (nextMs) gets.push({ icon: Clock, t: "New unlocks at each milestone", d: `More opens as the work lands. Next up: ${nextMs}.` });
+  const rules = [
+    { icon: LockKeyhole, t: "What stays locked", d: `Anything tagged "Holders only" — updates, media and files — stays blurred and out of the feed until your wallet holds at least one ${tk}.` },
+    { icon: Wallet, t: "How access is checked", d: `Connect the wallet that holds ${tk} and sign a free message. No funds move, and Rhozeland never asks for a payment here.` },
+    { icon: Check, t: "What's always open", d: "The pinned \"Behind the scenes update\" below needs nothing at all." },
+    { icon: Clock, t: "How long you keep it", d: `Access stays open while your wallet holds ${tk}. Let it go and the feed closes again.` },
+  ];
+  return (
+    <section className="rz-support-info" aria-labelledby="rz-si-h">
+      <h2 id="rz-si-h">What supporting this project means</h2>
+      <p className="rz-si-lead">Supporting means picking up <b>{tk}</b> on Pump.fun — that's how fans fund {creator}'s work directly. The sale is run by Pump.fun, not Rhozeland. Once {tk} is sitting in your wallet, you're a supporter and everything on this page opens up.</p>
+      <div className="rz-si-cols">
+        <div className="rz-si-block">
+          <h3>What supporters get</h3>
+          <ul className="rz-si-list">
+            {gets.map((g) => <li key={g.t}><g.icon size={15} aria-hidden="true" /><span><b>{g.t}</b><small>{g.d}</small></span></li>)}
+          </ul>
+        </div>
+        <div className="rz-si-block">
+          <h3>What's locked, and how to open it</h3>
+          <ul className="rz-si-list">
+            {rules.map((g) => <li key={g.t}><g.icon size={15} aria-hidden="true" /><span><b>{g.t}</b><small>{g.d}</small></span></li>)}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function ExclusivePage({ slug }: { slug: string }) {
   const [connErr, setConnErr] = useState(false);
@@ -220,6 +258,8 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
               <p>Updates, stems and files from {r.creator_name || "the creator"}, for people who hold {tk}.</p>
             </div>
 
+            {!unlocked && <SupportInfo creator={r.creator_name || "the creator"} tk={tk} nextMs={nextMs} />}
+
             {member && r.coin_mint && <div className="rz-welcome">You're one of <b>{holderCount(r.coin_mint).toLocaleString("en-CA")}</b> {tk} holders with access to this feed.</div>}
             {(r.owner_note || isOwner) && (
               <figure className="rz-note-card">
@@ -307,6 +347,13 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
               <p className="rz-note">This project hasn't attached a coin yet. Follow along and check back soon.</p>
             ) : (
               <>
+                <ul className="rz-si-mini" aria-label="What supporters get">
+                  <li><Check size={12} aria-hidden="true" />Holder updates from {r.creator_name || "the creator"}, newest first</li>
+                  <li><Check size={12} aria-hidden="true" />Photos, video and early audio</li>
+                  <li><Check size={12} aria-hidden="true" />Stems and project files</li>
+                  <li><Check size={12} aria-hidden="true" />A Member badge, while you hold {tk}</li>
+                </ul>
+                <p className="rz-si-fine">Connecting a wallet doesn't buy anything — it only checks whether your wallet holds {tk}.</p>
                 {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet.</p>}
                 {bal === "loading" && <p className="rz-note">Checking your wallet…</p>}
                 {bal === "error" && <p className="rz-note">We couldn't check your wallet right now. <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Retry</button></p>}

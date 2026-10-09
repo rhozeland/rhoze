@@ -16,3 +16,4 @@
 - [x] Verify matching geometry and no horizontal overflow across public destinations.
 - [x] Restyle Exclusive as a masonry mood board with pinned content, safe locked previews, and an owner add-content tile; verify desktop and 390px layout.
 - [x] Show the attached coin's Birdeye chart embedded and always visible after Budget, without expand buttons; verify rendering on desktop and 390px mobile.
+- [ ] Align shared Messages/Profile controls, remove redundant signed-in Sign in, and verify profile navigation and hover settings.

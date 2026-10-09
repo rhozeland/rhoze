@@ -11,8 +11,8 @@ export const uid = () => (crypto?.randomUUID ? crypto.randomUUID() : Math.random
 export function Shell({ children, right }: { children: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="rz-flow">
-      <SiteNav extra={right} />
-      <main className="rz-stage">{children}</main>
+      <SiteNav />
+      <main className="rz-stage">{right && <div className="rz-subnav">{right}</div>}{children}</main>
       <footer className="rz-footer">
         © 2026 Rhozeland · <a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>
       </footer>

@@ -203,3 +203,4 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-price-change{font-size:.66rem}
 .rz-price-chart{display:block;width:100%;height:340px;border:1px solid hsl(var(--line));border-radius:8px;background:hsl(var(--card));margin-bottom:.75rem}
 @media(max-width:600px){.rz-price-chart{height:300px}}
+.rz-subnav{display:flex;justify-content:flex-end;gap:.8rem;flex-wrap:wrap;margin:0 auto .8rem;max-width:var(--rz-max,1100px);width:100%;font-size:.8rem}

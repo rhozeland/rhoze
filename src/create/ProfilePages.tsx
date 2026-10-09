@@ -203,15 +203,6 @@ export function CreatorProfile({ slug }: { slug: string }) {
                 </div>
               )}</section>}
 
-            {!fan && <section className="rz-pf-sec"><h2>Credits</h2>
-              {credits.length === 0 ? <p className="rz-pf-empty">Credits appear here when this creator is hired on a Rhozeland project.</p> : (
-                <ul className="rz-pf-credits">
-                  {credits.map((k, i) => (
-                    <li key={i}><a href={`/release/${k.release_slug}`}><b>{k.title}</b><span>{k.role_name} · {k.brand || "Brand project"}</span></a></li>
-                  ))}
-                </ul>
-              )}</section>}
-
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
           </>
         )}

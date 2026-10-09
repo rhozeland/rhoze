@@ -1,0 +1,11 @@
+:root { --project-heart: 331 61% 52%; }
+.rz-project-heart[aria-pressed="true"] { color:hsl(var(--project-heart)); }
+.rz-project-heart[aria-pressed="true"] svg { fill:currentColor; }
+.rz-like-control { position:relative; display:inline-flex; }
+.rz-like-error { position:absolute; top:100%; right:0; width:220px; padding:8px; background:hsl(var(--background)); color:hsl(var(--foreground)); border:1px solid hsl(var(--border)); z-index:3; font-size:12px; }
+.rz-liked-heading { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px; }
+.rz-liked-heading h2 { margin:0; }
+.rz-liked-visibility { display:flex; align-items:center; gap:4px; font-size:12px; flex-wrap:wrap; }
+.rz-liked-visibility > span { margin-right:6px; }
+.rz-like-card { position:relative; min-width:0; }
+.rz-like-card > .rz-like-control { position:absolute; top:8px; right:8px; z-index:2; }

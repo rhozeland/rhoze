@@ -427,13 +427,30 @@ setupHoverVideos();
     var cta = nav.querySelector('.nav-cta');
     var menu = document.getElementById('mobileMenu');
     var mCta = menu && Array.prototype.find.call(menu.querySelectorAll('a'), function(a){ return /sign in/i.test(a.textContent); });
-    var signedIn = !!session();
+    var sess = session();
+    var signedIn = !!sess;
     function build(cls){
       var wrap = document.createDocumentFragment();
       if (!signedIn) { var a = document.createElement('a'); a.className = cls; a.href = '/me'; a.textContent = 'Sign in'; wrap.appendChild(a); return wrap; }
-      var p = document.createElement('a'); p.className = cls; p.href = '/me'; p.textContent = 'My profile'; p.style.marginRight = '.5rem';
-      var o = document.createElement('a'); o.className = cls; o.href = '#'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
-      wrap.appendChild(p); wrap.appendChild(o); return wrap;
+      var w = document.createElement('div'); w.className = 'sn-avatar-wrap';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'sn-avatar'; b.setAttribute('aria-label', 'Account menu');
+      b.innerHTML = '<span aria-hidden="true">☺</span>';
+      var m = document.createElement('div'); m.className = 'sn-menu'; m.style.display = 'none';
+      var p = document.createElement('a'); p.href = '/me'; p.textContent = 'My profile';
+      var o = document.createElement('button'); o.type = 'button'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
+      m.appendChild(p); m.appendChild(o);
+      b.addEventListener('click', function(e){ e.stopPropagation(); m.style.display = m.style.display === 'none' ? 'flex' : 'none'; });
+      document.addEventListener('click', function(){ m.style.display = 'none'; });
+      w.appendChild(b); w.appendChild(m); wrap.appendChild(w);
+      // Fill in the profile photo when available.
+      try {
+        fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=photo_url&user_id=eq.' + encodeURIComponent(sess.user.id), {
+          headers: { apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w', Authorization: 'Bearer ' + sess.access_token }
+        }).then(function(r){ return r.json(); }).then(function(rows){
+          if (rows && rows[0] && rows[0].photo_url) b.innerHTML = '<img src="' + rows[0].photo_url + '" alt="" />';
+        }).catch(function(){});
+      } catch(e) {}
+      return wrap;
     }
     if (cta) cta.replaceWith(build('nav-cta'));
     if (mCta) mCta.replaceWith(build(''));

@@ -49,7 +49,7 @@ export default function DiscoverPage() {
   }, [rows, filter]);
 
   return (
-    <Shell right={<a className="rz-link" href="/create.html?new=1">Create a project</a>}>
+    <Shell right={<a className="rz-btn pri" href="/create.html?new=1">Create a project</a>}>
       <div className="rz-card rz-card-wide">
         <div className="rz-head">
           <h1>Discover</h1>

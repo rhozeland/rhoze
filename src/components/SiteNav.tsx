@@ -31,7 +31,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const account = signIn
     ? !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={signIn}>Sign in</Button>
     : hasSession
-      ? <Button type="button" variant="outline" className="sn-signin" onClick={() => supabase.auth.signOut()}>Sign out</Button>
+      ? <><a className="sn-signin" href="/me" style={{ marginRight: ".5rem" }}>My profile</a><Button type="button" variant="outline" className="sn-signin" onClick={() => supabase.auth.signOut()}>Sign out</Button></>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;
   return <>
     <link rel="stylesheet" href="/site-nav.css" />

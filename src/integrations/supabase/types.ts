@@ -3351,6 +3351,16 @@ export type Database = {
           title: string
         }[]
       }
+      creator_save_details: {
+        Args: {
+          p_disciplines: string[]
+          p_id: string
+          p_name: string
+          p_photo: string
+          p_rate_cents: number
+        }
+        Returns: undefined
+      }
       creator_save_profile: {
         Args: {
           p_bio: string
@@ -3440,6 +3450,7 @@ export type Database = {
         }
         Returns: number
       }
+      my_profile: { Args: { p_kind?: string; p_name?: string }; Returns: Json }
       my_releases: {
         Args: never
         Returns: {

@@ -196,6 +196,20 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
   const [ig, setIg] = useState(c.instagram_url ?? "");
   const [web, setWeb] = useState(c.website_url ?? "");
   const [samples, setSamples] = useState<Sample[]>((c.work_samples ?? []) as Sample[]);
+  const [dname, setDname] = useState(c.display_name);
+  const [tags, setTags] = useState((c.disciplines ?? []).join(", "));
+  const [rateIn, setRateIn] = useState(c.hourly_rate_cents != null ? String(c.hourly_rate_cents / 100) : "");
+  const [photo, setPhoto] = useState(c.photo_url ?? "");
+  const uploadPhoto = async (f?: File) => {
+    if (!f) return;
+    if (!f.type.startsWith("image/") || f.size > 5 * 1024 * 1024) { setNote("Photo must be an image up to 5 MB."); return; }
+    setBusy(true);
+    const path = `${uid}/photo-${Date.now()}.${f.name.split(".").pop() || "jpg"}`;
+    const { error } = await supabase.storage.from("avatars").upload(path, f, { contentType: f.type });
+    setBusy(false);
+    if (error) { setNote("Upload failed. Please try again."); return; }
+    setPhoto(supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl); setNote("");
+  };
   const [link, setLink] = useState("");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
@@ -220,7 +234,12 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
     setBusy(false);
   };
   const save = async () => {
+    const rc = rateIn.trim() === "" ? null : Math.round(Number(rateIn) * 100);
+    if (!dname.trim()) { setNote("Please add your name."); return; }
+    if (rc !== null && (!Number.isFinite(rc) || rc < 0)) { setNote("Rate should be a number, like 85."); return; }
     setBusy(true);
+    const { error: e1 } = await db.rpc("creator_save_details", { p_id: c.id, p_name: dname, p_disciplines: tags.split(",").map((t) => t.trim()).filter(Boolean).slice(0, 8), p_rate_cents: rc, p_photo: photo });
+    if (e1) { setBusy(false); setNote("Could not save. Please try again."); return; }
     const { error } = await db.rpc("creator_save_profile", { p_id: c.id, p_bio: bio, p_instagram: ig, p_website: web, p_samples: samples });
     setBusy(false);
     if (error) setNote("Could not save. Please try again."); else onSaved();
@@ -228,6 +247,14 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
 
   return (
     <div className="rz-pf-edit">
+      <div className="rz-pf-two">
+        <div className="rz-field"><label>Name</label><input className="rz-in" maxLength={100} value={dname} onChange={(e) => setDname(e.target.value)} /></div>
+        <div className="rz-field"><label>Hourly rate (CAD)</label><input className="rz-in" inputMode="decimal" placeholder="85" value={rateIn} onChange={(e) => setRateIn(e.target.value)} /></div>
+      </div>
+      <div className="rz-pf-two">
+        <div className="rz-field"><label>Roles</label><input className="rz-in" placeholder="Photographer, Videographer" value={tags} onChange={(e) => setTags(e.target.value)} /></div>
+        <div className="rz-field"><label>Photo</label><label className="rz-btn" style={{ cursor: "pointer" }}>{photo ? "Replace photo" : "Upload photo"}<input type="file" accept="image/*" hidden onChange={(e) => uploadPhoto(e.target.files?.[0])} /></label></div>
+      </div>
       <div className="rz-field"><label>Bio</label><textarea className="rz-in" value={bio} maxLength={2000} onChange={(e) => setBio(e.target.value)} /></div>
       <div className="rz-pf-two">
         <div className="rz-field"><label>Instagram</label><input className="rz-in" placeholder="https://instagram.com/you" value={ig} onChange={(e) => setIg(e.target.value)} /></div>
@@ -269,11 +296,11 @@ export function BrandProfile({ slug }: { slug: string }) {
 
   const load = async () => {
     const [{ data: r }, { data: b }, { data: ce }] = await Promise.all([
-      db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500),
-      db.from("brand_profiles").select("slug,name,logo_url,category,bio").eq("slug", slug).maybeSingle(),
+      db.from("releases").select("id,slug,title,creator_name,answers,coin_image,cover_url,user_id,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(500),
+      db.from("brand_profiles").select("slug,name,logo_url,category,bio,user_id").eq("slug", slug).maybeSingle(),
       db.rpc("brand_can_edit", { p_slug: slug }),
     ]);
-    const mine = ((r ?? []) as Rel[]).filter((x) => slugify(x.creator_name || "") === slug);
+    const mine = ((r ?? []) as Rel[]).filter((x: any) => slugify(x.creator_name || "") === slug || (b?.user_id && x.user_id === b.user_id));
     setRels(mine); setBrand(b ?? null); setCanEdit(!!ce);
     document.title = `${b?.name || mine[0]?.creator_name || "Brand"} | Rhozeland Community`;
   };
@@ -364,5 +391,49 @@ function BrandEditor({ slug, initial, onSaved }: { slug: string; initial: Brand;
       {note && <p className="rz-pf-empty">{note}</p>}
       <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={save}>Save profile</button></div>
     </div>
+  );
+}
+
+/* ------------------------------ /me ------------------------------ */
+export function MyProfile() {
+  const [state, setState] = useState<"load" | "out" | "pick">("load");
+  const [kind, setKind] = useState<"creator" | "brand">("creator");
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const go = (p: any) => location.replace(`/${p.kind}/${p.slug}`);
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return setState("out");
+      const { data: p } = await db.rpc("my_profile", {});
+      if (p) go(p); else setState("pick");
+    });
+  }, []);
+  const create = async () => {
+    setBusy(true); setErr("");
+    const { data: p, error } = await db.rpc("my_profile", { p_kind: kind, p_name: name.trim() || null });
+    setBusy(false);
+    if (error || !p) return setErr("Your profile could not be created. Please try again.");
+    go(p);
+  };
+  return (
+    <Shell right={<AccountLinks />}>
+      <div className="rz-card">
+        {state === "load" && <div className="rz-skel" />}
+        {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in to set up your profile.</p><div className="rz-actions"><a className="rz-btn pri" href="/community.html">Back to Community</a></div></div>}
+        {state === "pick" && (
+          <div className="rz-head"><h1>Set up your profile</h1><p>Choose how you show up on Rhozeland. You can edit everything after.</p>
+            <div className="rz-actions" style={{ marginTop: ".8rem" }}>
+              <button className={`rz-btn${kind === "creator" ? " pri" : ""}`} onClick={() => setKind("creator")}>Artist</button>
+              <button className={`rz-btn${kind === "brand" ? " pri" : ""}`} onClick={() => setKind("brand")}>Brand</button>
+            </div>
+            <div className="rz-field" style={{ marginTop: ".8rem" }}><label>{kind === "brand" ? "Brand name" : "Your name"}</label>
+              <input className="rz-in" maxLength={100} placeholder="Leave blank to use your account name" value={name} onChange={(e) => setName(e.target.value)} /></div>
+            {err && <p className="rz-pf-empty">{err}</p>}
+            <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={create}>{busy ? "Creating…" : "Create profile"}</button></div>
+          </div>
+        )}
+      </div>
+    </Shell>
   );
 }

@@ -236,5 +236,5 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-gen-step .rz-gen-dot{width:.34rem;height:.34rem;border-radius:50%;background:hsl(var(--line))}
 .rz-gen-step.on{border-color:hsl(var(--g));color:hsl(var(--ink));font-weight:700}
 .rz-gen-step.on .rz-gen-dot{background:hsl(var(--g));animation:rzgen 1s ease-in-out infinite}
-.rz-gen-step.done{color:hsl(var(--mut)).rz-gen-step.done svg{color:hsl(var(--g))}
+.rz-gen-step.done{color:hsl(var(--mut))}.rz-gen-step.done svg{color:hsl(var(--g))}
 @media(prefers-reduced-motion:reduce){.rz-gen-dots i,.rz-gen-step.on .rz-gen-dot{animation:none}}

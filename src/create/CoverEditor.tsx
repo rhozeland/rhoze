@@ -70,9 +70,9 @@ export default function CoverEditor({
   return (
     <div className="rz-modal rz-cover-modal" role="dialog" aria-modal="true" aria-labelledby="cover-editor-title">
       <div className="rz-cover-editor">
-        <h2 id="cover-editor-title">Adjust cover</h2>
+        <h2 id="cover-editor-title">{title}</h2>
         <div className="rz-cover-crop">
-          {source && <Cropper image={source} crop={crop} zoom={zoom} aspect={16 / 9} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={(_, pixels) => setArea(pixels)} onMediaLoaded={() => setError("")} />}
+          {source && <Cropper image={source} crop={crop} zoom={zoom} aspect={aspect} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={(_, pixels) => setArea(pixels)} onMediaLoaded={() => setError("")} />}
         </div>
         <div className="rz-cover-zoom">
           <label htmlFor="cover-zoom">Zoom</label>
@@ -82,7 +82,7 @@ export default function CoverEditor({
         {error && <p className="rz-err" role="alert">{error}</p>}
         <div className="rz-actions">
           <Button className="rz-btn" variant="outline" disabled={busy || working} onClick={onCancel}>Cancel</Button>
-          <Button className="rz-btn pri" disabled={!area || busy || working} onClick={apply}>{busy || working ? "Saving…" : "Save cover"}</Button>
+          <Button className="rz-btn pri" disabled={!area || busy || working} onClick={apply}>{busy || working ? "Saving…" : saveLabel}</Button>
         </div>
       </div>
     </div>

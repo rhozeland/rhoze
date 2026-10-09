@@ -353,7 +353,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                   <li><Check size={12} aria-hidden="true" />Stems and project files</li>
                   <li><Check size={12} aria-hidden="true" />A Member badge, while you hold {tk}</li>
                 </ul>
-                <p className="rz-note">Connecting a wallet doesn't buy anything — it only checks whether your wallet holds {tk}.</p>
+                <p className="rz-si-fine">Connecting a wallet doesn't buy anything — it only checks whether your wallet holds {tk}.</p>
                 {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet.</p>}
                 {bal === "loading" && <p className="rz-note">Checking your wallet…</p>}
                 {bal === "error" && <p className="rz-note">We couldn't check your wallet right now. <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Retry</button></p>}

@@ -148,7 +148,7 @@ export default function MessagesInbox({ uid }: { uid: string }) {
         <TabsContent value="applicants">{!received.length ? <Empty title="No applicants yet" text="Applications to your open roles will appear here once someone applies." /> : Object.entries(grouped).map(([key, group]) => <section className="rz-applicant-group" key={key}><header><a href={`/release/${group[0].project_slug}`}>{group[0].project_title}</a><h2>{group[0].role_name} <span>{group.length}</span></h2></header>{group.map(a => row(a, true))}</section>)}</TabsContent>
       </>}
     </Tabs>
-    <Dialog open={!!selected} onOpenChange={v => { if (!v) setSelected(null); }}><DialogContent className="rz-application-dialog">{selected && <>
+    <Dialog open={!!selected} onOpenChange={v => { if (!v) setSelected(null); }}><DialogContent portalContainer={document.getElementById("root")} className="rz-application-dialog">{selected && <>
       <DialogTitle>{selected.role_name}</DialogTitle><DialogDescription>{selected.project_title} · {selected.brand_name}</DialogDescription>
       <div className="rz-application-detail-person"><Photo src={selected.photo_url} name={selected.name} /><div><b>{selected.name}</b><small>Applied {date(selected.created_at)}</small></div><span className={`rz-application-status s-${selected.status}`}>{statusLabel(selected.status)}</span></div>
       <section><h3>Description or inquiry</h3><p className="rz-application-description">{selected.description}</p></section>

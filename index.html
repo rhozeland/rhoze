@@ -5821,6 +5821,10 @@
         window.__rShowWorkspace = showWorkspace;
         // Intercept clicks on any anchor whose href matches an inline route.
         document.addEventListener('click', function(e){
+          // Inline iframe routing only works on the homepage; on other pages
+          // (Discover, Community, profiles) let links navigate normally.
+          var p = location.pathname;
+          if (p !== '/' && p !== '/index.html') return;
           var a = e.target && e.target.closest && e.target.closest('a[href]');
           if (!a) return;
           if (a.target === '_blank' || a.hasAttribute('download')) return;

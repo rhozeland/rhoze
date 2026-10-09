@@ -83,7 +83,7 @@ export default function DiscoverPage() {
 
         {rows !== undefined && visible && visible.length === 0 && (
           <div className="rz-empty">
-            <p>No projects yet — create one</p>
+            <p>{EMPTY_LABEL[filter]}</p>
             <a className="rz-btn pri" href="/create.html?new=1">Create a project</a>
           </div>
         )}

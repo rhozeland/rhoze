@@ -9,6 +9,7 @@ const links = [
   { href: "/projects.html", label: "Featured work" },
   { href: "/discover", label: "Discover" },
   { href: "/community.html", label: "Community" },
+  { href: "/community.html?view=open-calls", label: "Opportunities" },
 ];
 export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [open, setOpen] = useState(false);

@@ -122,7 +122,6 @@ type Creator = {
 
 export function CreatorProfile({ slug }: { slug: string }) {
   const [c, setC] = useState<Creator | null | undefined>(undefined);
-  const [credits, setCredits] = useState<Credit[]>([]);
   const [editing, setEditing] = useState(false);
   const [view, setView] = useState<Sample | null>(null);
   const [projects, setProjects] = useState<any[]>([]);

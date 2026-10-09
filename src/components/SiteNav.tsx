@@ -14,6 +14,25 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [open, setOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [hasSession, setHasSession] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (signIn || !hasSession) { setAvatar(null); return; }
+    let on = true;
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id;
+      if (!uid) return;
+      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url").eq("user_id", uid).maybeSingle();
+      if (on) setAvatar(c?.photo_url ?? null);
+    });
+    return () => { on = false; };
+  }, [hasSession, signIn]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = () => setMenuOpen(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, [menuOpen]);
   useEffect(() => {
     let embedded = new URLSearchParams(window.location.search).get("embed") === "1";
     try { embedded = embedded || window.self !== window.top; } catch { embedded = true; }

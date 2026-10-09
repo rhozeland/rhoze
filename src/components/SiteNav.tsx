@@ -15,15 +15,21 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [authOpen, setAuthOpen] = useState(false);
   const [hasSession, setHasSession] = useState(false);
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    if (signIn || !hasSession) { setAvatar(null); return; }
+    if (signIn || !hasSession) { setAvatar(null); setName(null); return; }
     let on = true;
     supabase.auth.getUser().then(async ({ data }) => {
       const uid = data.user?.id;
       if (!uid) return;
-      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url").eq("user_id", uid).maybeSingle();
-      if (on) setAvatar(c?.photo_url ?? null);
+      const meta = data.user?.user_metadata as any;
+      const fallback = String(meta?.display_name || meta?.full_name || data.user?.email || "").split(/\s|@/)[0] || null;
+      if (on && fallback) setName(fallback);
+      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url,name").eq("user_id", uid).maybeSingle();
+      if (!on) return;
+      setAvatar(c?.photo_url ?? null);
+      if (c?.name) setName(String(c.name).split(/\s|@/)[0]);
     });
     return () => { on = false; };
   }, [hasSession, signIn]);

@@ -220,3 +220,21 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-drafts-row:hover{border-color:hsl(var(--strong) / .5)}
 .rz-drafts-row b{font-size:.9rem}
 .rz-drafts-row small{color:hsl(var(--mut));font-size:.75rem}
+.rz-gen{margin:.75rem;padding:1.15rem 1.15rem 1rem;border:1px solid hsl(var(--line));border-radius:14px;background:hsl(var(--card))}
+.rz-gen-top{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem}
+.rz-gen-top h2{font-size:.86rem;font-weight:700;letter-spacing:-.01em}
+.rz-gen-pct{font-size:.7rem;font-weight:700;color:hsl(var(--mut));font-variant-numeric:tabular-nums}
+.rz-gen-bar{height:7px;margin-top:.65rem;border:1px solid hsl(var(--line));border-radius:999px;background:hsl(var(--alt));overflow:hidden}
+.rz-gen-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,hsl(var(--g)),hsl(var(--aqua)));transition:width .3s ease-out}
+.rz-gen-now{display:flex;align-items:flex-start;gap:.5rem;margin-top:.85rem;font-size:.76rem;line-height:1.45;min-height:2.1rem}
+.rz-gen-dots{display:inline-flex;gap:.2rem;flex:none;margin-top:.42rem}
+.rz-gen-dots i{width:.3rem;height:.3rem;border-radius:50%;background:hsl(var(--g));animation:rzgen 1s ease-in-out infinite}
+.rz-gen-dots i:nth-child(2){animation-delay:.15s}.rz-gen-dots i:nth-child(3){animation-delay:.3s}
+@keyframes rzgen{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-.12rem)}}
+.rz-gen-steps{display:flex;flex-wrap:wrap;gap:.3rem;margin:.9rem 0 0;padding:0;list-style:none}
+.rz-gen-step{display:inline-flex;align-items:center;gap:.28rem;border:1px solid hsl(var(--line));border-radius:999px;padding:.22rem .55rem;font-size:.63rem;font-weight:500;color:hsl(var(--mut))}
+.rz-gen-step .rz-gen-dot{width:.34rem;height:.34rem;border-radius:50%;background:hsl(var(--line))}
+.rz-gen-step.on{border-color:hsl(var(--g));color:hsl(var(--ink));font-weight:700}
+.rz-gen-step.on .rz-gen-dot{background:hsl(var(--g));animation:rzgen 1s ease-in-out infinite}
+.rz-gen-step.done{color:hsl(var(--ink))}.rz-gen-step.done svg{color:hsl(var(--g))}
+@media(prefers-reduced-motion:reduce){.rz-gen-dots i,.rz-gen-step.on .rz-gen-dot{animation:none}}

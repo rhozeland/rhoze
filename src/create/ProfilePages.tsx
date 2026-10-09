@@ -348,7 +348,6 @@ export function BrandProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
-          <AccountLinks />
           {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}

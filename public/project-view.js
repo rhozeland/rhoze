@@ -53,6 +53,7 @@
     var url = new URL(a.href, location.origin);
     if (url.origin !== location.origin || !/^\/release\/[^/]+\/?$/.test(url.pathname) || window.self !== window.top) return;
     e.preventDefault(); e.stopPropagation(); ensure();
+    dialog.classList.toggle('is-discover', /^\/discover\/?$/.test(location.pathname));
     opener = a; previousTitle = document.title;
     history.pushState({ rhozeProjectPopup: true }, '', url.pathname + url.search); pushed = true;
     url.searchParams.set('projectView', '1');

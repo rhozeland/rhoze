@@ -21,6 +21,11 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-nav .sn-links a:hover,.site-nav .sn-links a:focus-visible,.site-nav .figma-nav-links a:hover,.site-nav .figma-nav-links a:focus-visible,.site-nav .sn-links a[aria-current="page"]{opacity:1;text-decoration:underline;text-underline-offset:5px}
 .site-nav .nav-cta,.site-nav .sn-signin{min-height:36px;padding:.5rem 1rem;border:1px solid hsl(var(--site-nav-line))!important;border-radius:999px;background:transparent!important;color:hsl(var(--site-nav-ink))!important;white-space:nowrap;font-size:.78rem;font-weight:600;line-height:1.2}
 .site-nav .nav-cta svg{width:14px;height:14px}.site-nav .nav-cta:hover,.site-nav .sn-signin:hover{background:hsl(var(--site-nav-hover))!important;transform:none}
+.site-nav .sn-msg{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;min-height:36px;padding:.5rem .85rem;border:1px solid hsl(var(--site-nav-line))!important;border-radius:999px;background:transparent;color:hsl(var(--site-nav-ink))!important;white-space:nowrap;font-size:.78rem;font-weight:600;line-height:1.2;text-decoration:none}
+.site-nav .sn-msg:hover{background:hsl(var(--site-nav-hover))!important}
+.site-nav .sn-msg svg{width:14px;height:14px;flex:none}
+@media(min-width:901px){.site-nav .sn-msg{height:40px;min-height:40px;padding:0 1.1rem}}
+@media(max-width:560px){.site-nav .sn-msg-label{display:none}.site-nav .sn-msg{padding:.45rem .6rem}}
 .site-nav .menu-toggle,.site-nav .sn-toggle{display:none;align-items:center;justify-content:center;width:40px;height:40px;flex-shrink:0;border:1px solid hsl(var(--site-nav-line))!important;border-radius:50%;background:transparent;color:hsl(var(--site-nav-ink))!important;cursor:pointer}
 .site-nav .menu-toggle svg{width:20px;height:20px}
 .site-nav .nav-auth{color:hsl(var(--site-nav-ink))}

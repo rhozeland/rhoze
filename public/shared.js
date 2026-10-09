@@ -432,6 +432,9 @@ setupHoverVideos();
     function build(cls){
       var wrap = document.createDocumentFragment();
       if (!signedIn) { var a = document.createElement('a'); a.className = cls; a.href = '/me'; a.textContent = 'Sign in'; wrap.appendChild(a); return wrap; }
+      var mm = document.createElement('a'); mm.href = '/messages'; mm.className = (cls ? cls + ' ' : '') + 'sn-msg'; mm.setAttribute('aria-label', 'Messages');
+      mm.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sn-msg-label">Messages</span>';
+      wrap.appendChild(mm);
       var w = document.createElement('div'); w.className = 'sn-avatar-wrap';
       var b = document.createElement('button'); b.type = 'button'; b.className = 'sn-avatar'; b.setAttribute('aria-label', 'Account menu');
       b.innerHTML = '<span aria-hidden="true">☺</span>';

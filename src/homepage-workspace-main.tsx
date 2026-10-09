@@ -7,7 +7,7 @@ import ReleasePage from "@/create/ReleasePage";
 import ExclusivePage from "@/create/ExclusivePage";
 import DiscoverPage from "@/create/DiscoverPage";
 import MyProjects from "@/create/MyProjects";
-import { CreatorProfile, BrandProfile } from "@/create/ProfilePages";
+import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
 import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
@@ -27,6 +27,12 @@ if (acctMatch) {
   el.id = "profile-root";
   document.body.appendChild(el);
   createRoot(el).render(acctMatch[1] === "saved" ? <SavedPage /> : <MessagesPage />);
+} else if (/^\/me\/?$/.test(location.pathname)) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "profile-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<MyProfile />);
 } else if (/^\/my-projects\/?$/.test(location.pathname)) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");

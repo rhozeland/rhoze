@@ -3278,6 +3278,7 @@
           .fh-hero-rotation > span:nth-child(2) { animation-delay:-7.5s; }
           .fh-hero-rotation > span:nth-child(3) { animation-delay:-5s; }
           .fh-hero-rotation > span:nth-child(4) { animation-delay:-2.5s; }
+          .fh-hero-tail { white-space:nowrap; }
           .fh-hero-highlights { list-style:none; display:grid; gap:.7rem; margin:1.75rem 0 1.75rem; padding:0; color:hsl(var(--hero-ink)); font-size:.875rem; line-height:1.5; font-weight:550; }
           .fh-hero-highlights li { display:flex; align-items:flex-start; gap:.4rem; }
           .fh-hero-highlights svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; color:hsl(var(--hero-rose)); }
@@ -3365,7 +3366,7 @@
           @media (max-width:640px) {
             .fh-announcement { font-size:.5rem; }
             .fh-hero { min-height:370px; padding-top:2.75rem; padding-bottom:2rem; align-items:flex-start; }
-            .fh-hero h1 { font-size:1.875rem; }
+            .fh-hero h1 { font-size:1.7rem; }
             .fh-hero-highlights { gap:.65rem; font-size:.75rem; margin:1.5rem 0; }
             .fh-hero p { font-size:.82rem; }
             .fh-section { padding-left:.8rem; padding-right:.8rem; }
@@ -3384,13 +3385,14 @@
             .fh-plan { min-height:350px; padding:1rem; }
             .fh-plan > p, .fh-plan ul { font-size:.6rem; }
           }
+          @media (max-width:380px) { .fh-hero h1 { font-size:1.55rem; } }
           @media (prefers-reduced-motion:reduce) { .fh-project img,.fh-btn { transition:none; } .fh-hero::before,.fh-hero-rotation > span { animation:none; } .fh-hero-rotation > span:first-child { opacity:1; } }
         </style>
 
         <div class="fh-announcement">Rhozeland · independent creator support in Toronto and beyond</div>
         <section class="fh-hero" aria-labelledby="homepage-title">
           <div class="fh-hero-copy">
-            <h1 id="homepage-title">Tell us your vision.<br>We'll bring <span class="fh-hero-rotation"><span>music videos</span><span>fashion drops</span><span>brand campaigns</span><span>artist coins</span></span> to life.</h1>
+            <h1 id="homepage-title">Tell us your vision.<br>We'll bring <span class="fh-hero-rotation"><span>music videos</span><span>fashion drops</span><span>brand campaigns</span><span>artist coins</span></span><br><span class="fh-hero-tail">to life.</span></h1>
             <p>A creator-owned content house for shooting, producing, launching, and growing ambitious ideas from brief to final release.</p>
             <ul class="fh-hero-highlights">
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Generate a project roadmap in minutes</li>

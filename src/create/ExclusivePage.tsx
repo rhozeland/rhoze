@@ -151,6 +151,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   }, [walletAddr, r?.coin_mint, balTry]);
 
   useEffect(() => { if (connected) setConnErr(false); }, [connected]);
+  useEffect(() => { if (posts !== null) setSupportOpen(false); }, [posts]);
 
   const unlockFeed = async () => {
     if (!signMessage || !walletAddr) { setFeedState("error"); return; }

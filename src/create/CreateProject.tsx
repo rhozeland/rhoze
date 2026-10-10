@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles, Check } from "lucide-react";
+import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles, Check, ArrowLeft, ArrowRight, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, Milestone, money, uid } from "./shared";
 import AuthModal from "./AuthModal";
@@ -19,9 +19,9 @@ function getToken() {
 
 type Role = { id: string; name: string; count: string; rate: string };
 type PType = "artist" | "brand";
-type StepKey = "type" | "details" | "roadmap" | "roles" | "coin" | "publish";
-const flowFor = (t: PType | null): StepKey[] => ["type", "details", "roadmap", ...(t === "brand" ? ["roles" as StepKey] : []), "coin", "publish"];
-const STEP_LABEL: Record<StepKey, string> = { type: "Type", details: "Details", roadmap: "Roadmap", roles: "Roles", coin: "Coin", publish: "Publish" };
+type StepKey = "type" | "details" | "brief" | "description" | "cover" | "budget" | "split" | "roadmap" | "roles" | "coin" | "publish";
+const flowFor = (t: PType | null): StepKey[] => ["type", "details", "brief", "description", "cover", "budget", "split", "roadmap", ...(t === "brand" ? ["roles" as StepKey] : []), "coin", "publish"];
+const STEP_LABEL: Record<StepKey, string> = { type: "Project type", details: "Project name", brief: "Your brief", description: "Description", cover: "Cover art", budget: "Budget", split: "Budget split", roadmap: "Roadmap", roles: "Roles", coin: "Coin", publish: "Review & publish" };
 
 type Coin = { mint: string; ticker: string; name: string; image: string | null } | null;
 
@@ -153,7 +153,9 @@ export default function CreateProject() {
       const lt: PType | null = r.answers?.project_type === "brand" ? "brand" : r.answers?.project_type === "artist" ? "artist" : null;
       setPtype(lt);
       if (lt === "brand") { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
-      setStepKey(lt ? (flowFor(lt)[(r.current_step || 2) - 1] || "details") : "type");
+      const legacy: StepKey[] = ["type", "details", "roadmap", ...(lt === "brand" ? ["roles" as StepKey] : []), "coin", "publish"];
+      const restored = r.answers?.wizard_step;
+      setStepKey(lt ? (flowFor(lt).includes(restored) ? restored : legacy[(r.current_step || 2) - 1] || "details") : "type");
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
       setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || ""); setAudience(r.answers?.audience || "");
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
@@ -167,11 +169,11 @@ export default function CreateProject() {
 
   const payload = (s = step) => ({
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
-    answers: { making: making.trim(), description: desc.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
+    answers: { wizard_step: flow[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(), project_type: ptype ?? "artist", ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}) },
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
     coin_mint: coin?.mint ?? "", coin_ticker: coin?.ticker ?? "", coin_name: coin?.name ?? "", coin_image: coin?.image ?? "",
-    payout_wallet: wallet.trim(), cover_url: cover ?? "", current_step: s,
+    payout_wallet: wallet.trim(), cover_url: cover ?? "", current_step: Math.max(1, ["type", "details", "roadmap", ...(isBrand ? ["roles"] : []), "coin", "publish"].indexOf(["brief", "description", "cover", "budget", "split"].includes(flow[s - 1]) ? "details" : flow[s - 1]) + 1),
   });
 
   const save = async (s = step): Promise<string | null> => {
@@ -366,7 +368,20 @@ export default function CreateProject() {
   const updateRow = (id: string, patch: Partial<Milestone>) => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   const move = (i: number, d: -1 | 1) => setRows((rs) => { const a = [...rs]; const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; });
 
-  const steps = flow.map((k) => STEP_LABEL[k]);
+  const nextLabel = flow[step] ? STEP_LABEL[flow[step]] : null;
+  const goNext = () => {
+    const message = stepKey === "details" ? (!name.trim() ? "Add your name." : !title.trim() ? "Give your project a name." : "")
+      : stepKey === "brief" && !making.trim() ? "Tell us what you're making."
+      : stepKey === "description" && !desc.trim() ? "Add a short description of your project."
+      : stepKey === "budget" && budgetCents < 100 ? "Enter a budget."
+      : stepKey === "split" && feePct + causePct + tPct > 100 ? "The split can't exceed 100%." : "";
+    if (message) { setErr(message); return; }
+    if (stepKey === "split") { void goStep2(); return; }
+    const next = flow[step];
+    if (next) { setErr(""); setStepKey(next); }
+  };
+  const back = () => { const previous = flow[step - 2]; if (previous) { setErr(""); setStepKey(previous); } };
+  const simpleStep = ["details", "brief", "description", "cover", "budget", "split"].includes(stepKey);
   const SplitMini = () => (
     <div className="rz-split" style={{ marginBottom: ".9rem" }}>
       <div className="rz-bar"><i className="rz-c-a" style={{ width: `${artistPct}%` }} />{isBrand && <i className="rz-c-t" style={{ width: `${talentPct}%` }} />}<i className="rz-c-f" style={{ width: `${feePct}%` }} /><i className="rz-c-c" style={{ width: `${causePct}%` }} /></div>
@@ -383,16 +398,19 @@ export default function CreateProject() {
   ) : <div className="rz-note" style={{ textAlign: "left" }}>No coin attached yet</div>;
 
   return (
-    <Shell right={
-      <button className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</button>
+    <Shell className="rz-create-simple" right={
+      <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
     }>
-      <div className={`rz-card ${stepKey === "roadmap" ? "rz-card-wide" : ""}`}>
-        <div className="rz-progress">
-          {steps.map((s, i) => (
-            <div key={s} className={`rz-pi ${step >= i + 1 ? "on" : ""}`}>
-              <span className="rz-dot">{step > i + 1 ? "✓" : ""}</span>{s}
-            </div>
-          ))}
+      <div className="rz-wizard-toolbar">
+        <Button variant="ghost" className="rz-wizard-back" onClick={step > 1 ? back : () => { location.href = "/"; }}><ArrowLeft size={15} /> Back</Button>
+        <Button variant="outline" className="rz-btn" asChild><a href="/">Cancel</a></Button>
+      </div>
+      <div className={`rz-card rz-wizard ${stepKey === "roadmap" || stepKey === "publish" ? "rz-card-wide" : ""}`}>
+        <FileText className="rz-wizard-mark" size={30} aria-hidden="true" />
+        <div className="rz-wizard-progress">
+          <div className="rz-wizard-count"><span>Step {step} of {flow.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
+          <progress aria-label="Project creation progress" max={flow.length} value={step} />
+          <p>{nextLabel ? `Next: ${nextLabel}` : "Ready to publish"}</p>
         </div>
 
         {stepKey === "type" && (
@@ -403,21 +421,32 @@ export default function CreateProject() {
             </div>
             <div className="rz-type-grid">
               {([["artist", "Artist project", "Music, film, art or a release you're making."], ["brand", "Brand project", "A campaign or shoot where you hire creative talent."]] as const).map(([k, l, d]) => (
-                <button key={k} className={`rz-type ${ptype === k ? "on" : ""}`} onClick={() => chooseType(k)}><b>{l}</b><span>{d}</span></button>
+                <Button variant="outline" key={k} className={`rz-type ${ptype === k ? "on" : ""}`} onClick={() => chooseType(k)}><b>{l}</b><span>{d}</span></Button>
               ))}
             </div>
           </>
         )}
 
-        {stepKey === "details" && (
-          <>
-            <div className="rz-head">
-              <h1>Create your project</h1>
-              <p>Three quick questions and a budget. You can save and come back anytime.</p>
-            </div>
-            <div className="rz-grid">
-              <div className="rz-field"><label>Your name</label><input className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
-              <div className="rz-field"><label>Project name</label><input className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
+        {stepKey === "details" && <>
+          <div className="rz-head"><h1>What’s your project called?</h1><p>A name for your project and the person behind it.</p></div>
+          <div className="rz-wizard-fields">
+            <div className="rz-field"><label htmlFor="project-name">Project name</label><input id="project-name" className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
+            <div className="rz-field"><label htmlFor="creator-name">Your name</label><input id="creator-name" className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
+          </div>
+        </>}
+        {stepKey === "brief" && <>
+          <div className="rz-head"><h1>What are you making?</h1><p>Include deliverables, your preferred style, and references.</p></div>
+          <div className="rz-field"><label className="sr-only" htmlFor="project-brief">Project brief</label><textarea id="project-brief" className="rz-in rz-wizard-textarea" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art…" onChange={(e) => setMaking(e.target.value)} /></div>
+        </>}
+        {stepKey === "description" && <>
+          <div className="rz-head"><h1>Introduce your project</h1><p>A short description for your public project page.</p></div>
+          <div className="rz-wizard-fields">
+            <div className="rz-field"><label htmlFor="project-description">Brief description</label><textarea id="project-description" className="rz-in" value={desc} maxLength={600} rows={4} placeholder="The story behind your project and what you’ll release." onChange={(e) => setDesc(e.target.value)} /></div>
+            <div className="rz-field"><label htmlFor="project-audience">Who is it for? <span className="rz-opt">(optional)</span></label><input id="project-audience" className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto" onChange={(e) => setAudience(e.target.value)} /></div>
+          </div>
+        </>}
+        {stepKey === "cover" && <>
+          <div className="rz-head"><h1>Add your cover art</h1><p>Choose an image for your project, or add one later.</p></div>
               <div className="rz-field rz-full">
                 <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP · drag a photo here)</span></label>
                 <div
@@ -440,13 +469,13 @@ export default function CreateProject() {
                 </div>
                 {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
               </div>
-              <div className="rz-field rz-full"><label>What are you making?</label><textarea className="rz-in" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art" onChange={(e) => setMaking(e.target.value)} /></div>
-              <div className="rz-field rz-full"><label>Brief description <span className="rz-opt">(shown on your project page)</span></label><textarea className="rz-in" value={desc} maxLength={600} rows={4} placeholder="A few sentences about what this project is — the story, what you'll deliver, and who it's for." onChange={(e) => setDesc(e.target.value)} /></div>
-              <div className="rz-field rz-full"><label>Who is it for? <span className="rz-opt">(optional)</span></label><input className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto, 18–30" onChange={(e) => setAudience(e.target.value)} /></div>
-              <div className="rz-field rz-full">
-                <label>Budget (CAD)</label>
-                <div className="rz-money"><span>$</span><input className="rz-in" inputMode="decimal" value={budget} placeholder="5,000" onChange={(e) => setBudget(e.target.value.replace(/[^0-9.,]/g, ""))} /></div>
-              </div>
+        </>}
+        {stepKey === "budget" && <>
+          <div className="rz-head"><h1>What’s your project budget?</h1><p>Set the total amount in CAD.</p></div>
+          <div className="rz-field"><label htmlFor="project-budget" className="sr-only">Budget (CAD)</label><div className="rz-money"><span>$</span><input id="project-budget" className="rz-in" inputMode="decimal" value={budget} placeholder="Enter amount" onChange={(e) => setBudget(e.target.value.replace(/[^0-9.,]/g, ""))} /></div></div>
+        </>}
+        {stepKey === "split" && <>
+          <div className="rz-head"><h1>How is your budget shared?</h1><p>Keep the suggested split or adjust the percentages.</p></div>
               <div className="rz-split rz-full">
                 <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Where the money goes</div>
                 <div className="rz-bar">
@@ -461,19 +490,14 @@ export default function CreateProject() {
                 <div className="rz-split-row"><span className="rz-sw rz-c-c" /><span>{causeLabel}</span><input className="rz-pct" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /><span className="rz-amt">{money(budgetCents * causePct / 100)}</span></div>
                 {causePct > 0 && <input className="rz-in" style={{ marginTop: ".5rem" }} value={causeName} maxLength={120} placeholder={isBrand ? "What is the project share for? (optional)" : "Which cause? (optional)"} onChange={(e) => setCauseName(e.target.value)} />}
               </div>
-            </div>
-            <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("type"); }}>‹ Back</button>
-              <button className="rz-btn pri" onClick={goStep2}>Next: Roadmap ›</button>
-            </div>
-          </>
-        )}
+        </>}
+        {simpleStep && <div className="rz-actions rz-wizard-next"><Button variant="outline" className="rz-btn pri" disabled={coverBusy || !!coverFile} onClick={goNext}>Next <ArrowRight size={14} /></Button>{stepKey === "cover" && !cover && <Button variant="ghost" className="rz-wizard-skip" disabled={coverBusy || !!coverFile} onClick={goNext}>Skip for now</Button>}</div>}
 
         {stepKey === "roadmap" && (
           <>
             <div className="rz-head">
               <h1>Your roadmap</h1>
-              <p>We drafted milestones from your answers. Edit, reorder or remove anything.</p>
+              <p>Review the milestones and adjust anything before continuing.</p>
             </div>
             <SplitMini />
             <div className="rz-inv">
@@ -488,9 +512,9 @@ export default function CreateProject() {
                     <div className="rz-money"><span>$</span><input className="rz-in" style={{ textAlign: "right", fontSize: ".78rem" }} inputMode="decimal" value={r.amount_cents ? String(r.amount_cents / 100) : ""} placeholder="0" onChange={(e) => updateRow(r.id, { amount_cents: Math.round((parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0) * 100) })} /></div>
                   </div>
                   <div className="rz-row-ctrl">
-                    <button className="rz-ico" aria-label="Move up" disabled={i === 0} onClick={() => move(i, -1)}><ChevronUp size={13} /></button>
-                    <button className="rz-ico" aria-label="Move down" disabled={i === rows.length - 1} onClick={() => move(i, 1)}><ChevronDown size={13} /></button>
-                    <button className="rz-ico" aria-label="Delete" onClick={() => setRows((rs) => rs.filter((x) => x.id !== r.id))}><Trash2 size={13} /></button>
+                    <Button variant="outline" className="rz-ico" aria-label="Move up" disabled={i === 0} onClick={() => move(i, -1)}><ChevronUp size={13} /></Button>
+                    <Button variant="outline" className="rz-ico" aria-label="Move down" disabled={i === rows.length - 1} onClick={() => move(i, 1)}><ChevronDown size={13} /></Button>
+                    <Button variant="outline" className="rz-ico" aria-label="Delete" onClick={() => setRows((rs) => rs.filter((x) => x.id !== r.id))}><Trash2 size={13} /></Button>
                   </div>
                 </div>
               ))}
@@ -500,12 +524,12 @@ export default function CreateProject() {
               </div>
             </div>
             <div className="rz-actions" style={{ marginTop: ".9rem" }}>
-              <button className="rz-btn" disabled={rows.length >= 12 || genBusy} onClick={() => setRows((rs) => [...rs, { id: uid(), title: "", deliverable: "", amount_cents: 0 }])}><Plus size={13} /> Add row</button>
-              <button className="rz-btn" disabled={genBusy} onClick={generate}>{rows.length ? <RefreshCw size={13} /> : <Sparkles size={13} />} {genBusy ? "Generating…" : rows.length ? "Regenerate" : "Generate"}</button>
+              <Button variant="outline" className="rz-btn" disabled={rows.length >= 12 || genBusy} onClick={() => setRows((rs) => [...rs, { id: uid(), title: "", deliverable: "", amount_cents: 0 }])}><Plus size={13} /> Add row</Button>
+              <Button variant="outline" className="rz-btn" disabled={genBusy} onClick={generate}>{rows.length ? <RefreshCw size={13} /> : <Sparkles size={13} />} {genBusy ? "Generating…" : rows.length ? "Regenerate" : "Generate"}</Button>
             </div>
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("details"); }}>‹ Back</button>
-              <button className="rz-btn pri" disabled={genBusy} onClick={goStep3}>{isBrand ? "Next: Open roles ›" : "Next: Coin ›"}</button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("split"); }}>‹ Back</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={genBusy} onClick={goStep3}>{isBrand ? "Next: Open roles ›" : "Next: Coin ›"}</Button>
             </div>
           </>
         )}
@@ -523,17 +547,17 @@ export default function CreateProject() {
                   <input className="rz-in" value={x.name} maxLength={80} aria-label={`Role ${i + 1} name`} placeholder="e.g. Model" onChange={(e) => updateRole(x.id, { name: e.target.value })} />
                   <input className="rz-in" inputMode="numeric" value={x.count} maxLength={3} aria-label={`Role ${i + 1} people needed`} placeholder="1" onChange={(e) => updateRole(x.id, { count: e.target.value.replace(/[^0-9]/g, "") })} />
                   <input className="rz-in" value={x.rate} maxLength={60} aria-label={`Role ${i + 1} rate`} placeholder="e.g. $300/day" onChange={(e) => updateRole(x.id, { rate: e.target.value })} />
-                  <button className="rz-ico" aria-label="Remove role" onClick={() => setRoles((rs) => rs.filter((y) => y.id !== x.id))}><Trash2 size={13} /></button>
+                  <Button variant="outline" className="rz-ico" aria-label="Remove role" onClick={() => setRoles((rs) => rs.filter((y) => y.id !== x.id))}><Trash2 size={13} /></Button>
                 </div>
               ))}
               {!roles.length && <div className="rz-note" style={{ padding: ".8rem" }}>No roles yet. Add one below.</div>}
             </div>
             <div className="rz-actions" style={{ marginTop: ".9rem" }}>
-              <button className="rz-btn" disabled={roles.length >= 20} onClick={() => setRoles((rs) => [...rs, { id: uid(), name: "", count: "1", rate: "" }])}><Plus size={13} /> Add role</button>
+              <Button variant="outline" className="rz-btn" disabled={roles.length >= 20} onClick={() => setRoles((rs) => [...rs, { id: uid(), name: "", count: "1", rate: "" }])}><Plus size={13} /> Add role</Button>
             </div>
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("roadmap"); }}>‹ Back</button>
-              <button className="rz-btn pri" onClick={goCoin}>Next: Coin ›</button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("roadmap"); }}>‹ Back</Button>
+              <Button variant="outline" className="rz-btn pri" onClick={goCoin}>Next: Coin ›</Button>
             </div>
           </>
         )}
@@ -557,12 +581,12 @@ export default function CreateProject() {
               <div className="rz-field rz-full">
                 {coinBusy && <div className="rz-note" style={{ textAlign: "left" }}>Looking up coin…</div>}
                 {(mint.trim() || tick) && (coin ? <CoinChip /> : tick ? <div className="rz-coin"><div><b>${tick}</b><small>Add a valid mint address to attach</small></div></div> : null)}
-                <div style={{ marginTop: ".55rem" }}><button className="rz-textlink" onClick={skipCoin}>Skip for now</button></div>
+                <div style={{ marginTop: ".55rem" }}><Button variant="outline" className="rz-textlink" onClick={skipCoin}>Skip for now</Button></div>
               </div>
             </div>
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStepKey(isBrand ? "roles" : "roadmap"); }}>‹ Back</button>
-              <button className="rz-btn pri" disabled={coinBusy} onClick={goStep4}>Next: Review ›</button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey(isBrand ? "roles" : "roadmap"); }}>‹ Back</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={coinBusy} onClick={goStep4}>Next: Review ›</Button>
             </div>
           </>
         )}
@@ -608,10 +632,10 @@ export default function CreateProject() {
             <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Coin</div>
             <CoinChip />
             <div className="rz-actions">
-              <button className="rz-btn" onClick={() => { setErr(""); setStepKey("coin"); }}>‹ Back</button>
-              <button className="rz-btn pri" disabled={publishing} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("coin"); }}>‹ Back</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={publishing} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</Button>
             </div>
-            <div style={{ textAlign: "center", marginTop: ".6rem" }}><button className="rz-textlink" disabled={saving} onClick={() => save(flow.length)}>{saving ? "Saving…" : "Save as draft"}</button></div>
+            <div style={{ textAlign: "center", marginTop: ".6rem" }}><Button variant="outline" className="rz-textlink" disabled={saving} onClick={() => save(flow.length)}>{saving ? "Saving…" : "Save as draft"}</Button></div>
             <p className="rz-note">Publishing creates a public page anyone with the link can view.</p>
           </>
         )}

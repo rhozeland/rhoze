@@ -25,5 +25,7 @@
 - [x] Open published projects in a shared Dribbble-inspired pop-up, preserving the listing and close/back behavior.
 - [x] Organize release details, breakdown, and support inside the pop-up and verify the live browsing flow.
 - [x] Add stable rotating hero text, checkmark highlights, and gentle CSS gradient drift; verify desktop/mobile and reduced motion.
-- [ ] Add persisted project hearts and profile liked projects with independently enforced privacy.
-- [ ] Verify like/unlike, profile readback and public/private access.
+- [x] Add persisted project hearts and profile liked projects with independently enforced privacy.
+- [ ] Verify like/unlike, profile readback and public/private access — requires a selected signed-in account for the separate likes flow.
+- [x] Simplify project creation into focused screens with a progress bar and clear step count.
+- [x] Verify Artist and Brand navigation, validation, retained inputs, roadmap generation, roles, final review, and saved-draft reopening.

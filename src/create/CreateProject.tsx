@@ -462,6 +462,12 @@ export default function CreateProject() {
         {stepKey === "brief" && <>
           <div className="rz-head"><h1>What are you making?</h1><p>Include deliverables, your preferred style, and references.</p></div>
           <div className="rz-field"><label className="sr-only" htmlFor="project-brief">Project brief</label><textarea id="project-brief" className="rz-in rz-wizard-textarea" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art…" onChange={(e) => setMaking(e.target.value)} /></div>
+          <div className="rz-brief-ai">
+            <Button type="button" variant="outline" className="rz-btn" onClick={generateBrief} disabled={briefBusy}>
+              <Sparkles size={14} aria-hidden="true" /> {briefBusy ? "Writing your brief…" : making.trim() ? "Improve with AI" : "Generate with AI"}
+            </Button>
+            {briefErr && <p className="rz-brief-ai-err" role="alert">{briefErr}</p>}
+          </div>
         </>}
         {stepKey === "description" && <>
           <div className="rz-head"><h1>Introduce your project</h1><p>A short description for your public project page.</p></div>

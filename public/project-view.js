@@ -1,7 +1,14 @@
 (function () {
   if (window.rhozeProjectViewInstalled) return;
   window.rhozeProjectViewInstalled = true;
-  var dialog, frame, opener, previousTitle, pushed = false;
+  var dialog, frame, opener, previousTitle, pushed = false, openerHref = null;
+  var OPENER_KEY = 'rhozeProjectOpener';
+  function getReturnUrl() {
+    try { return sessionStorage.getItem(OPENER_KEY); } catch (e) { return null; }
+  }
+  function clearReturnUrl() {
+    try { sessionStorage.removeItem(OPENER_KEY); } catch (e) {}
+  }
   var style = document.createElement('link');
   style.rel = 'stylesheet'; style.href = '/project-view.css'; document.head.appendChild(style);
   function dismiss() {
@@ -9,10 +16,23 @@
     dialog.close(); frame.contentWindow.location.replace('about:blank');
     document.documentElement.classList.remove('project-view-open');
     document.title = previousTitle;
+    clearReturnUrl(); openerHref = null;
     if (opener && opener.isConnected) opener.focus();
   }
   function close() {
-    if (pushed) { pushed = false; history.back(); }
+    if (pushed) {
+      pushed = false;
+      var ret = getReturnUrl();
+      if (ret && openerHref && ret !== openerHref) {
+        // The flow navigated away (e.g. Support -> Exclusive feed) and came back;
+        // return to the page where the pop-up was first opened instead of one step back.
+        clearReturnUrl(); openerHref = null;
+        if (dialog && dialog.open) { dialog.close(); document.documentElement.classList.remove('project-view-open'); document.title = previousTitle; }
+        location.href = ret;
+        return;
+      }
+      history.back();
+    }
     else dismiss();
   }
   function ensure() {
@@ -53,6 +73,8 @@
     e.preventDefault(); e.stopPropagation(); ensure();
     dialog.classList.toggle('is-discover', /^\/discover\/?$/.test(location.pathname));
     opener = a; previousTitle = document.title;
+    openerHref = location.href;
+    if (!getReturnUrl()) { try { sessionStorage.setItem(OPENER_KEY, openerHref); } catch (e) {} }
     history.pushState({ rhozeProjectPopup: true }, '', url.pathname + url.search); pushed = true;
     url.searchParams.set('projectView', '1');
     frame.contentWindow.location.replace(url.pathname + url.search); dialog.showModal();

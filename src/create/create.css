@@ -305,3 +305,6 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-wizard .rz-err{font-size:.8rem;line-height:1.5}
 @media(max-width:600px){.rz-create-simple .rz-stage{padding:1rem 1.15rem 2rem}.rz-wizard-toolbar{margin-bottom:1.5rem}.rz-wizard .rz-split-row{grid-template-columns:auto minmax(0,1fr) 3rem 4.8rem;gap:.35rem}.rz-wizard-mark{margin-bottom:1rem}.rz-wizard-progress{margin-bottom:1.4rem}}
 @media(prefers-reduced-motion:reduce){.rz-wizard-progress progress::-webkit-progress-value{transition:none}}
+.rz-brief-ai{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.6rem}
+.rz-brief-ai .rz-btn{display:inline-flex;align-items:center;gap:.4rem}
+.rz-brief-ai-err{margin:0;font-size:.75rem;color:hsl(var(--destructive,0 72% 45%))}

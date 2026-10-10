@@ -3269,7 +3269,12 @@
           .figma-home * { box-sizing:border-box; }
           .fh-announcement { min-height:29px; display:flex; align-items:center; justify-content:center; padding:.35rem 1rem; background:#f2d400; color:#171717; font-size:.58rem; line-height:1.3; font-weight:800; letter-spacing:.1em; text-transform:uppercase; text-align:center; }
           .fh-hero { min-height:clamp(540px,68vh,640px); padding:4.5rem clamp(1.15rem,5vw,5.5rem) 4rem; display:flex; align-items:center; position:relative; overflow:hidden; background:hsl(var(--hero-paper)); isolation:isolate; }
-          .fh-hero::before { content:""; position:absolute; inset:-12%; z-index:-2; background:radial-gradient(ellipse 19% 34% at 76% 32%,hsl(var(--hero-sky)/.58),transparent 100%),radial-gradient(ellipse 16% 30% at 89% 72%,hsl(var(--hero-mint)/.5),transparent 100%),radial-gradient(ellipse 17% 31% at 43% 81%,hsl(var(--hero-sun)/.48),transparent 100%),radial-gradient(ellipse 12% 24% at 20% 18%,hsl(var(--hero-rose)/.18),transparent 100%); animation:fh-hero-drift 18s ease-in-out infinite alternate; }
+          .fh-hero-orbs { position:absolute; inset:-16%; z-index:-2; pointer-events:none; }
+          .fh-hero-orbs i { position:absolute; display:block; border-radius:50%; background:radial-gradient(closest-side,hsl(var(--o)/var(--a)),transparent 72%); will-change:transform; }
+          .fh-hero-orbs .o1 { --o:var(--hero-sky); --a:.55; width:33%; aspect-ratio:1/1.15; top:4%; right:8%; animation:fh-orb-a 21s ease-in-out infinite alternate; }
+          .fh-hero-orbs .o2 { --o:var(--hero-mint); --a:.5; width:25%; aspect-ratio:1.1/1; bottom:-10%; right:22%; animation:fh-orb-b 27s ease-in-out infinite alternate; }
+          .fh-hero-orbs .o3 { --o:var(--hero-sun); --a:.48; width:30%; aspect-ratio:1/1; bottom:-16%; left:32%; animation:fh-orb-c 24s ease-in-out infinite alternate; }
+          .fh-hero-orbs .o4 { --o:var(--hero-rose); --a:.26; width:21%; aspect-ratio:1/1.2; top:-6%; left:8%; animation:fh-orb-d 31s ease-in-out infinite alternate; }
           .fh-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,hsl(var(--hero-paper)/.55),hsl(var(--hero-paper)/.08) 80%); pointer-events:none; }
           .fh-hero-copy { width:min(1000px,100%); }
           .fh-hero h1 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
@@ -3283,7 +3288,10 @@
           .fh-hero-highlights li { display:flex; align-items:flex-start; gap:.4rem; }
           .fh-hero-highlights svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; color:hsl(var(--hero-rose)); }
           @keyframes fh-hero-word { 0%,20% { opacity:1; transform:translateY(0); } 24%,96% { opacity:0; transform:translateY(-.12em); } 100% { opacity:1; transform:translateY(0); } }
-          @keyframes fh-hero-drift { 0% { transform:translate(-5%,-4%) scale(1); } 50% { transform:translate(3%,5%) scale(1.06); } 100% { transform:translate(7%,-3%) scale(1.02); } }
+          @keyframes fh-orb-a { 0% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(-19vw,9vh,0) scale(1.12); } 100% { transform:translate3d(9vw,-7vh,0) scale(1.04); } }
+          @keyframes fh-orb-b { 0% { transform:translate3d(0,0,0) scale(1.06); } 50% { transform:translate3d(14vw,-14vh,0) scale(.94); } 100% { transform:translate3d(-10vw,6vh,0) scale(1.1); } }
+          @keyframes fh-orb-c { 0% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(17vw,-10vh,0) scale(1.14); } 100% { transform:translate3d(-15vw,-16vh,0) scale(1); } }
+          @keyframes fh-orb-d { 0% { transform:translate3d(0,0,0) scale(1); opacity:.8; } 50% { transform:translate3d(22vw,14vh,0) scale(1.18); opacity:1; } 100% { transform:translate3d(7vw,4vh,0) scale(1.05); opacity:.85; } }
           @media (max-width:1100px) { .fh-hero h1 { font-size:3rem; } }
           .fh-hero p { max-width:690px; margin:1.7rem 0 2rem; font-size:clamp(.95rem,1.65vw,1.25rem); line-height:1.38; font-weight:600; color:#1d1d1d; }
           .fh-actions { display:flex; gap:.65rem; flex-wrap:wrap; }
@@ -3386,11 +3394,12 @@
             .fh-plan > p, .fh-plan ul { font-size:.6rem; }
           }
           @media (max-width:380px) { .fh-hero h1 { font-size:1.55rem; } }
-          @media (prefers-reduced-motion:reduce) { .fh-project img,.fh-btn { transition:none; } .fh-hero::before,.fh-hero-rotation > span { animation:none; } .fh-hero-rotation > span:first-child { opacity:1; } }
+          @media (prefers-reduced-motion:reduce) { .fh-project img,.fh-btn { transition:none; } .fh-hero-orbs i,.fh-hero-rotation > span { animation:none; } .fh-hero-rotation > span:first-child { opacity:1; } }
         </style>
 
         <div class="fh-announcement">Rhozeland · independent creator support in Toronto and beyond</div>
         <section class="fh-hero" aria-labelledby="homepage-title">
+          <span class="fh-hero-orbs" aria-hidden="true"><i class="o1"></i><i class="o2"></i><i class="o3"></i><i class="o4"></i></span>
           <div class="fh-hero-copy">
             <h1 id="homepage-title">Tell us your vision.<br>We'll bring <span class="fh-hero-rotation"><span>music videos</span><span>fashion drops</span><span>brand campaigns</span><span>artist coins</span></span><br><span class="fh-hero-tail">to life.</span></h1>
             <p>A creator-owned content house for shooting, producing, launching, and growing ambitious ideas from brief to final release.</p>

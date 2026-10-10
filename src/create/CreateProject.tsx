@@ -193,6 +193,28 @@ export default function CreateProject() {
     if (!name.trim()) return "Add your name.";
     if (!title.trim()) return "Give your project a name.";
     if (!making.trim()) return "Tell us what you're making.";
+  };
+
+  const generateBrief = async () => {
+    if (briefBusy) return;
+    if (!title.trim()) { setBriefErr("Add your project name first (previous step)."); return; }
+    setBriefBusy(true); setBriefErr("");
+    try {
+      const { data, error } = await supabase.functions.invoke("release-brief", {
+        body: { title: title.trim(), project_type: ptype ?? "artist", audience: audience.trim(), seed: making.trim() },
+      });
+      if (error) throw new Error((data as { error?: string } | null)?.error || error.message);
+      const brief = (data as { brief?: string } | null)?.brief;
+      if (!brief) throw new Error("The AI returned an empty brief. Try again.");
+      setMaking(brief);
+    } catch (e) {
+      setBriefErr(e instanceof Error ? e.message : "Could not generate a brief.");
+    } finally {
+      setBriefBusy(false);
+    }
+  };
+
+  const _unused = () => {
     if (!desc.trim()) return "Add a short description of your project.";
     if (budgetCents < 100) return "Enter a budget.";
     if (feePct + causePct + tPct > 100) return "The split can't exceed 100%.";

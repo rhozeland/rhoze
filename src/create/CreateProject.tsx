@@ -398,12 +398,13 @@ export default function CreateProject() {
   ) : <div className="rz-note" style={{ textAlign: "left" }}>No coin attached yet</div>;
 
   return (
-    <Shell className="rz-create-simple" right={
-      <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
-    }>
+    <Shell className="rz-create-simple">
       <div className="rz-wizard-toolbar">
         <Button variant="ghost" className="rz-wizard-back" onClick={step > 1 ? back : () => { location.href = "/"; }}><ArrowLeft size={15} /> Back</Button>
-        <Button variant="outline" className="rz-btn" asChild><a href="/">Cancel</a></Button>
+        <div className="rz-wizard-toolbar-actions">
+          <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
+          <Button variant="outline" className="rz-btn" asChild><a href="/">Cancel</a></Button>
+        </div>
       </div>
       <div className={`rz-card rz-wizard ${stepKey === "roadmap" || stepKey === "publish" ? "rz-card-wide" : ""}`}>
         <FileText className="rz-wizard-mark" size={30} aria-hidden="true" />
@@ -528,8 +529,8 @@ export default function CreateProject() {
               <Button variant="outline" className="rz-btn" disabled={genBusy} onClick={generate}>{rows.length ? <RefreshCw size={13} /> : <Sparkles size={13} />} {genBusy ? "Generating…" : rows.length ? "Regenerate" : "Generate"}</Button>
             </div>
             <div className="rz-actions">
-              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("split"); }}>‹ Back</Button>
-              <Button variant="outline" className="rz-btn pri" disabled={genBusy} onClick={goStep3}>{isBrand ? "Next: Open roles ›" : "Next: Coin ›"}</Button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("split"); }}><ArrowLeft /> Back</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={genBusy} onClick={goStep3}>{isBrand ? "Next: Open roles" : "Next: Coin"} <ArrowRight /></Button>
             </div>
           </>
         )}
@@ -556,8 +557,8 @@ export default function CreateProject() {
               <Button variant="outline" className="rz-btn" disabled={roles.length >= 20} onClick={() => setRoles((rs) => [...rs, { id: uid(), name: "", count: "1", rate: "" }])}><Plus size={13} /> Add role</Button>
             </div>
             <div className="rz-actions">
-              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("roadmap"); }}>‹ Back</Button>
-              <Button variant="outline" className="rz-btn pri" onClick={goCoin}>Next: Coin ›</Button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("roadmap"); }}><ArrowLeft /> Back</Button>
+              <Button variant="outline" className="rz-btn pri" onClick={goCoin}>Next: Coin <ArrowRight /></Button>
             </div>
           </>
         )}
@@ -585,8 +586,8 @@ export default function CreateProject() {
               </div>
             </div>
             <div className="rz-actions">
-              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey(isBrand ? "roles" : "roadmap"); }}>‹ Back</Button>
-              <Button variant="outline" className="rz-btn pri" disabled={coinBusy} onClick={goStep4}>Next: Review ›</Button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey(isBrand ? "roles" : "roadmap"); }}><ArrowLeft /> Back</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={coinBusy} onClick={goStep4}>Next: Review <ArrowRight /></Button>
             </div>
           </>
         )}
@@ -632,7 +633,7 @@ export default function CreateProject() {
             <div style={{ fontSize: ".72rem", fontWeight: 600 }}>Coin</div>
             <CoinChip />
             <div className="rz-actions">
-              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("coin"); }}>‹ Back</Button>
+              <Button variant="outline" className="rz-btn" onClick={() => { setErr(""); setStepKey("coin"); }}><ArrowLeft /> Back</Button>
               <Button variant="outline" className="rz-btn pri" disabled={publishing} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</Button>
             </div>
             <div style={{ textAlign: "center", marginTop: ".6rem" }}><Button variant="outline" className="rz-textlink" disabled={saving} onClick={() => save(flow.length)}>{saving ? "Saving…" : "Save as draft"}</Button></div>

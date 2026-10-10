@@ -3269,7 +3269,12 @@
           .figma-home * { box-sizing:border-box; }
           .fh-announcement { min-height:29px; display:flex; align-items:center; justify-content:center; padding:.35rem 1rem; background:#f2d400; color:#171717; font-size:.58rem; line-height:1.3; font-weight:800; letter-spacing:.1em; text-transform:uppercase; text-align:center; }
           .fh-hero { min-height:clamp(540px,68vh,640px); padding:4.5rem clamp(1.15rem,5vw,5.5rem) 4rem; display:flex; align-items:center; position:relative; overflow:hidden; background:hsl(var(--hero-paper)); isolation:isolate; }
-          .fh-hero::before { content:""; position:absolute; inset:-12%; z-index:-2; background:radial-gradient(ellipse 19% 34% at 76% 32%,hsl(var(--hero-sky)/.58),transparent 100%),radial-gradient(ellipse 16% 30% at 89% 72%,hsl(var(--hero-mint)/.5),transparent 100%),radial-gradient(ellipse 17% 31% at 43% 81%,hsl(var(--hero-sun)/.48),transparent 100%),radial-gradient(ellipse 12% 24% at 20% 18%,hsl(var(--hero-rose)/.18),transparent 100%); animation:fh-hero-drift 18s ease-in-out infinite alternate; }
+          .fh-hero-orbs { position:absolute; inset:-16%; z-index:-2; pointer-events:none; }
+          .fh-hero-orbs i { position:absolute; display:block; border-radius:50%; background:radial-gradient(closest-side,hsl(var(--o)/var(--a)),transparent 72%); will-change:transform; }
+          .fh-hero-orbs .o1 { --o:var(--hero-sky); --a:.5; width:44%; aspect-ratio:1/1.15; top:2%; right:6%; animation:fh-orb-a 26s ease-in-out infinite alternate; }
+          .fh-hero-orbs .o2 { --o:var(--hero-mint); --a:.44; width:34%; aspect-ratio:1.1/1; bottom:-14%; right:19%; animation:fh-orb-b 33s ease-in-out infinite alternate; }
+          .fh-hero-orbs .o3 { --o:var(--hero-sun); --a:.42; width:40%; aspect-ratio:1/1; bottom:-20%; left:29%; animation:fh-orb-c 29s ease-in-out infinite alternate; }
+          .fh-hero-orbs .o4 { --o:var(--hero-rose); --a:.2; width:26%; aspect-ratio:1/1.2; top:-10%; left:5%; animation:fh-orb-d 38s ease-in-out infinite alternate; }
           .fh-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,hsl(var(--hero-paper)/.55),hsl(var(--hero-paper)/.08) 80%); pointer-events:none; }
           .fh-hero-copy { width:min(1000px,100%); }
           .fh-hero h1 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
@@ -3283,7 +3288,10 @@
           .fh-hero-highlights li { display:flex; align-items:flex-start; gap:.4rem; }
           .fh-hero-highlights svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; color:hsl(var(--hero-rose)); }
           @keyframes fh-hero-word { 0%,20% { opacity:1; transform:translateY(0); } 24%,96% { opacity:0; transform:translateY(-.12em); } 100% { opacity:1; transform:translateY(0); } }
-          @keyframes fh-hero-drift { 0% { transform:translate(-5%,-4%) scale(1); } 50% { transform:translate(3%,5%) scale(1.06); } 100% { transform:translate(7%,-3%) scale(1.02); } }
+          @keyframes fh-orb-a { 0% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(-11vw,7vh,0) scale(1.1); } 100% { transform:translate3d(5vw,-5vh,0) scale(1.02); } }
+          @keyframes fh-orb-b { 0% { transform:translate3d(0,0,0) scale(1.04); } 50% { transform:translate3d(8vw,-9vh,0) scale(.96); } 100% { transform:translate3d(-6vw,4vh,0) scale(1.08); } }
+          @keyframes fh-orb-c { 0% { transform:translate3d(0,0,0) scale(1); } 50% { transform:translate3d(10vw,-6vh,0) scale(1.12); } 100% { transform:translate3d(-9vw,-11vh,0) scale(1); } }
+          @keyframes fh-orb-d { 0% { transform:translate3d(0,0,0) scale(1); opacity:.9; } 50% { transform:translate3d(13vw,10vh,0) scale(1.15); opacity:1; } 100% { transform:translate3d(4vw,3vh,0) scale(1.04); opacity:.85; } }
           @media (max-width:1100px) { .fh-hero h1 { font-size:3rem; } }
           .fh-hero p { max-width:690px; margin:1.7rem 0 2rem; font-size:clamp(.95rem,1.65vw,1.25rem); line-height:1.38; font-weight:600; color:#1d1d1d; }
           .fh-actions { display:flex; gap:.65rem; flex-wrap:wrap; }

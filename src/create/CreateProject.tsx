@@ -87,6 +87,8 @@ export default function CreateProject() {
   const [making, setMaking] = useState("");
   const [briefBusy, setBriefBusy] = useState(false);
   const [briefErr, setBriefErr] = useState("");
+  const [descBusy, setDescBusy] = useState(false);
+  const [descErr, setDescErr] = useState("");
   const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [budget, setBudget] = useState("");

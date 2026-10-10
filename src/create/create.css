@@ -265,13 +265,19 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-gen-step.done{color:hsl(var(--mut))}.rz-gen-step.done svg{color:hsl(var(--g))}
 @media(prefers-reduced-motion:reduce){.rz-gen-dots i,.rz-gen-step.on .rz-gen-dot{animation:none}}
 /* Focused project-creation screens; other release and profile views remain unchanged. */
-.rz-create-simple .rz-stage{background:hsl(var(--card));padding:1.25rem 2rem 3rem}
+.rz-create-simple .rz-stage{padding:1.25rem 2rem 3rem}
 .rz-create-simple .rz-subnav{margin-bottom:0}
 .rz-wizard-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:0 auto 2rem;max-width:1100px}
+.rz-wizard-toolbar-actions{display:flex;align-items:center;gap:.5rem}
+.rz-create-simple .rz-btn{height:auto;min-height:2.2rem}
+.rz-create-simple button svg{width:15px;height:15px;stroke-width:1.75}
+.rz-create-simple .rz-btn:hover,.rz-create-simple .rz-ico:hover{background:hsl(var(--alt));color:hsl(var(--ink))}
+.rz-create-simple .rz-btn.pri:hover{background:hsl(var(--strong));color:hsl(var(--card))}
+.rz-wizard-back:hover,.rz-wizard-skip:hover{background:transparent;color:hsl(var(--ink))}
 .rz-wizard-back{background:transparent;color:hsl(var(--ink));padding:0;font-size:.78rem}
 .rz-wizard{width:min(440px,100%);padding:0;border:0;border-radius:0;box-shadow:none;background:transparent}
 .rz-wizard.rz-card-wide{width:min(900px,100%)}
-.rz-wizard-mark{display:block;margin:0 auto 1.25rem;color:hsl(var(--g))}
+.rz-wizard-mark{display:block;margin:0 auto 1.25rem;color:hsl(var(--ink));width:24px;height:24px;stroke-width:1.75}
 .rz-wizard-progress{max-width:320px;margin:0 auto 1.8rem}
 .rz-wizard-count{display:flex;justify-content:space-between;gap:.75rem;font-size:.7rem;color:hsl(var(--mut));margin-bottom:.55rem}
 .rz-wizard-progress progress{appearance:none;display:block;width:100%;height:5px;border:0;border-radius:999px;overflow:hidden;background:hsl(var(--line));accent-color:hsl(var(--g))}
@@ -291,7 +297,7 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-wizard .rz-split{border-radius:8px;border-color:hsl(var(--line))}
 .rz-wizard .rz-inv,.rz-wizard .rz-coin{border-radius:8px;border-color:hsl(var(--line))}
 .rz-wizard-next{flex-direction:column;gap:.5rem}
-.rz-wizard-next>.pri{width:min(320px,100%);min-height:42px}
+.rz-wizard-next>.pri{width:min(320px,100%);min-height:36px}
 .rz-wizard-skip{background:transparent;color:hsl(var(--mut));font-size:.75rem}
 .rz-wizard .rz-err{font-size:.8rem;line-height:1.5}
 @media(max-width:600px){.rz-create-simple .rz-stage{padding:1rem 1.15rem 2rem}.rz-wizard-toolbar{margin-bottom:1.5rem}.rz-wizard .rz-split-row{grid-template-columns:auto minmax(0,1fr) 3rem 4.8rem;gap:.35rem}.rz-wizard-mark{margin-bottom:1rem}.rz-wizard-progress{margin-bottom:1.4rem}}

@@ -1,7 +1,14 @@
 (function () {
   if (window.rhozeProjectViewInstalled) return;
   window.rhozeProjectViewInstalled = true;
-  var dialog, frame, opener, previousTitle, pushed = false;
+  var dialog, frame, opener, previousTitle, pushed = false, openerHref = null;
+  var OPENER_KEY = 'rhozeProjectOpener';
+  function getReturnUrl() {
+    try { return sessionStorage.getItem(OPENER_KEY); } catch (e) { return null; }
+  }
+  function clearReturnUrl() {
+    try { sessionStorage.removeItem(OPENER_KEY); } catch (e) {}
+  }
   var style = document.createElement('link');
   style.rel = 'stylesheet'; style.href = '/project-view.css'; document.head.appendChild(style);
   function dismiss() {

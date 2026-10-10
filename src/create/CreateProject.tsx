@@ -495,6 +495,12 @@ export default function CreateProject() {
           <div className="rz-head"><h1>Introduce your project</h1><p>A short description for your public project page.</p></div>
           <div className="rz-wizard-fields">
             <div className="rz-field"><label htmlFor="project-description">Brief description</label><textarea id="project-description" className="rz-in" value={desc} maxLength={600} rows={4} placeholder="The story behind your project and what you’ll release." onChange={(e) => setDesc(e.target.value)} /></div>
+            <div className="rz-brief-ai">
+              <Button type="button" variant="outline" className="rz-btn" onClick={generateDesc} disabled={descBusy}>
+                <Sparkles size={14} aria-hidden="true" /> {descBusy ? "Writing your description…" : desc.trim() ? "Improve with AI" : "Generate with AI"}
+              </Button>
+              {descErr && <p className="rz-brief-ai-err" role="alert">{descErr}</p>}
+            </div>
             <div className="rz-field"><label htmlFor="project-audience">Who is it for? <span className="rz-opt">(optional)</span></label><input id="project-audience" className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto" onChange={(e) => setAudience(e.target.value)} /></div>
           </div>
         </>}

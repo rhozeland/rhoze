@@ -73,6 +73,8 @@
     e.preventDefault(); e.stopPropagation(); ensure();
     dialog.classList.toggle('is-discover', /^\/discover\/?$/.test(location.pathname));
     opener = a; previousTitle = document.title;
+    openerHref = location.href;
+    if (!getReturnUrl()) { try { sessionStorage.setItem(OPENER_KEY, openerHref); } catch (e) {} }
     history.pushState({ rhozeProjectPopup: true }, '', url.pathname + url.search); pushed = true;
     url.searchParams.set('projectView', '1');
     frame.contentWindow.location.replace(url.pathname + url.search); dialog.showModal();

@@ -85,6 +85,8 @@ export default function CreateProject() {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [making, setMaking] = useState("");
+  const [briefBusy, setBriefBusy] = useState(false);
+  const [briefErr, setBriefErr] = useState("");
   const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [budget, setBudget] = useState("");
@@ -191,6 +193,28 @@ export default function CreateProject() {
     if (!name.trim()) return "Add your name.";
     if (!title.trim()) return "Give your project a name.";
     if (!making.trim()) return "Tell us what you're making.";
+  };
+
+  const generateBrief = async () => {
+    if (briefBusy) return;
+    if (!title.trim()) { setBriefErr("Add your project name first (previous step)."); return; }
+    setBriefBusy(true); setBriefErr("");
+    try {
+      const { data, error } = await supabase.functions.invoke("release-brief", {
+        body: { title: title.trim(), project_type: ptype ?? "artist", audience: audience.trim(), seed: making.trim() },
+      });
+      if (error) throw new Error((data as { error?: string } | null)?.error || error.message);
+      const brief = (data as { brief?: string } | null)?.brief;
+      if (!brief) throw new Error("The AI returned an empty brief. Try again.");
+      setMaking(brief);
+    } catch (e) {
+      setBriefErr(e instanceof Error ? e.message : "Could not generate a brief.");
+    } finally {
+      setBriefBusy(false);
+    }
+  };
+
+  const _unused = () => {
     if (!desc.trim()) return "Add a short description of your project.";
     if (budgetCents < 100) return "Enter a budget.";
     if (feePct + causePct + tPct > 100) return "The split can't exceed 100%.";
@@ -438,6 +462,12 @@ export default function CreateProject() {
         {stepKey === "brief" && <>
           <div className="rz-head"><h1>What are you making?</h1><p>Include deliverables, your preferred style, and references.</p></div>
           <div className="rz-field"><label className="sr-only" htmlFor="project-brief">Project brief</label><textarea id="project-brief" className="rz-in rz-wizard-textarea" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art…" onChange={(e) => setMaking(e.target.value)} /></div>
+          <div className="rz-brief-ai">
+            <Button type="button" variant="outline" className="rz-btn" onClick={generateBrief} disabled={briefBusy}>
+              <Sparkles size={14} aria-hidden="true" /> {briefBusy ? "Writing your brief…" : making.trim() ? "Improve with AI" : "Generate with AI"}
+            </Button>
+            {briefErr && <p className="rz-brief-ai-err" role="alert">{briefErr}</p>}
+          </div>
         </>}
         {stepKey === "description" && <>
           <div className="rz-head"><h1>Introduce your project</h1><p>A short description for your public project page.</p></div>

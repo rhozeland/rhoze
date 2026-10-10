@@ -115,7 +115,6 @@ export default function DiscoverPage() {
                       {ticker ? <b>${ticker}</b> : <small>No coin yet</small>}
                     </span>
                   </span>
-                  <span className="rz-btn pri rz-feed-cta">{ticker ? "Support" : "Open"}</span>
                 </a><ProjectHeart releaseId={r.id} /></div>
               );
             })}

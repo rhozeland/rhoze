@@ -127,7 +127,6 @@
 .rz-feed-meta b{font-size:.85rem;line-height:1.25}
 .rz-feed-meta .rz-chip{padding:.2rem .6rem .2rem .3rem;font-size:.66rem}
 .rz-feed-meta .rz-chip img{width:16px;height:16px}
-.rz-feed-cta{align-self:stretch;text-align:center;justify-content:center;display:inline-flex}
 .rz-empty{text-align:center;padding:2.5rem 1rem;display:grid;gap:.9rem;justify-items:center}
 .rz-empty p{color:hsl(var(--mut));font-size:.85rem}
 @media(max-width:480px){.rz-feed{grid-template-columns:repeat(2,1fr);gap:.6rem}}

@@ -291,6 +291,8 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-wizard .rz-head p{color:hsl(var(--mut));line-height:1.5}
 .rz-wizard-fields{display:grid;gap:1rem}
 .rz-wizard .rz-in{border-color:hsl(var(--line));border-radius:8px;font-size:.85rem;padding:.8rem;line-height:1.5}
+.rz-wizard .rz-money .rz-in{padding-left:2rem;font-variant-numeric:tabular-nums;font-weight:500}
+.rz-wizard .rz-money>span{pointer-events:none}
 .rz-wizard .rz-wizard-textarea{min-height:200px}
 .rz-wizard .rz-type-grid{grid-template-columns:1fr}
 .rz-wizard .rz-type{height:auto;min-height:80px;white-space:normal;border-radius:8px;align-items:flex-start;justify-content:center}

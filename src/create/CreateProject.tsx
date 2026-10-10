@@ -87,6 +87,8 @@ export default function CreateProject() {
   const [making, setMaking] = useState("");
   const [briefBusy, setBriefBusy] = useState(false);
   const [briefErr, setBriefErr] = useState("");
+  const [descBusy, setDescBusy] = useState(false);
+  const [descErr, setDescErr] = useState("");
   const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [budget, setBudget] = useState("");
@@ -211,6 +213,26 @@ export default function CreateProject() {
       setBriefErr(e instanceof Error ? e.message : "Could not generate a brief.");
     } finally {
       setBriefBusy(false);
+    }
+  };
+
+  const generateDesc = async () => {
+    if (descBusy) return;
+    if (!title.trim()) { setDescErr("Add your project name first (step 2)."); return; }
+    setDescBusy(true); setDescErr("");
+    try {
+      const seed = [making.trim(), desc.trim()].filter(Boolean).join("\n\n");
+      const { data, error } = await supabase.functions.invoke("release-brief", {
+        body: { title: title.trim(), project_type: ptype ?? "artist", audience: audience.trim(), seed },
+      });
+      if (error) throw new Error((data as { error?: string } | null)?.error || error.message);
+      const brief = (data as { brief?: string } | null)?.brief;
+      if (!brief) throw new Error("The AI returned an empty description. Try again.");
+      setDesc(brief);
+    } catch (e) {
+      setDescErr(e instanceof Error ? e.message : "Could not generate a description.");
+    } finally {
+      setDescBusy(false);
     }
   };
 
@@ -473,6 +495,12 @@ export default function CreateProject() {
           <div className="rz-head"><h1>Introduce your project</h1><p>A short description for your public project page.</p></div>
           <div className="rz-wizard-fields">
             <div className="rz-field"><label htmlFor="project-description">Brief description</label><textarea id="project-description" className="rz-in" value={desc} maxLength={600} rows={4} placeholder="The story behind your project and what you’ll release." onChange={(e) => setDesc(e.target.value)} /></div>
+            <div className="rz-brief-ai">
+              <Button type="button" variant="outline" className="rz-btn" onClick={generateDesc} disabled={descBusy}>
+                <Sparkles size={14} aria-hidden="true" /> {descBusy ? "Writing your description…" : desc.trim() ? "Improve with AI" : "Generate with AI"}
+              </Button>
+              {descErr && <p className="rz-brief-ai-err" role="alert">{descErr}</p>}
+            </div>
             <div className="rz-field"><label htmlFor="project-audience">Who is it for? <span className="rz-opt">(optional)</span></label><input id="project-audience" className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto" onChange={(e) => setAudience(e.target.value)} /></div>
           </div>
         </>}

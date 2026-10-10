@@ -16,10 +16,23 @@
     dialog.close(); frame.contentWindow.location.replace('about:blank');
     document.documentElement.classList.remove('project-view-open');
     document.title = previousTitle;
+    clearReturnUrl(); openerHref = null;
     if (opener && opener.isConnected) opener.focus();
   }
   function close() {
-    if (pushed) { pushed = false; history.back(); }
+    if (pushed) {
+      pushed = false;
+      var ret = getReturnUrl();
+      if (ret && openerHref && ret !== openerHref) {
+        // The flow navigated away (e.g. Support -> Exclusive feed) and came back;
+        // return to the page where the pop-up was first opened instead of one step back.
+        clearReturnUrl(); openerHref = null;
+        if (dialog && dialog.open) { dialog.close(); document.documentElement.classList.remove('project-view-open'); document.title = previousTitle; }
+        location.href = ret;
+        return;
+      }
+      history.back();
+    }
     else dismiss();
   }
   function ensure() {

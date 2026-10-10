@@ -85,6 +85,8 @@ export default function CreateProject() {
   const [bookingId, setBookingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [making, setMaking] = useState("");
+  const [briefBusy, setBriefBusy] = useState(false);
+  const [briefErr, setBriefErr] = useState("");
   const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [budget, setBudget] = useState("");

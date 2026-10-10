@@ -216,6 +216,26 @@ export default function CreateProject() {
     }
   };
 
+  const generateDesc = async () => {
+    if (descBusy) return;
+    if (!title.trim()) { setDescErr("Add your project name first (step 2)."); return; }
+    setDescBusy(true); setDescErr("");
+    try {
+      const seed = [making.trim(), desc.trim()].filter(Boolean).join("\n\n");
+      const { data, error } = await supabase.functions.invoke("release-brief", {
+        body: { title: title.trim(), project_type: ptype ?? "artist", audience: audience.trim(), seed },
+      });
+      if (error) throw new Error((data as { error?: string } | null)?.error || error.message);
+      const brief = (data as { brief?: string } | null)?.brief;
+      if (!brief) throw new Error("The AI returned an empty description. Try again.");
+      setDesc(brief);
+    } catch (e) {
+      setDescErr(e instanceof Error ? e.message : "Could not generate a description.");
+    } finally {
+      setDescBusy(false);
+    }
+  };
+
   const _unused = () => {
     if (!desc.trim()) return "Add a short description of your project.";
     if (budgetCents < 100) return "Enter a budget.";

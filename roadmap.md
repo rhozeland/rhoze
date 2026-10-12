@@ -104,5 +104,5 @@
 - [x] Check signed-in portal section changes, website return links, and mobile menus/layouts.
 
 ## Homepage final polish
-- [ ] Integrate Build visuals and copy, align News/Pass/Spotlight, and remove the long news caption.
-- [ ] Verify homepage visuals, links, and narrow-screen layout.
+- [x] Integrate Build visuals and copy, align News/Pass/Spotlight, and remove the long news caption.
+- [x] Verify homepage visuals, links, and narrow-screen layout.

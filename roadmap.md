@@ -103,6 +103,11 @@
 - [x] Put the shared website header above all standalone portal pages without duplicating embedded navigation.
 - [x] Check signed-in portal section changes, website return links, and mobile menus/layouts.
 
+## Rewards shop
+- [ ] Add real Shopify products, local product details and persistent cart inside Rewards; verify checkout handoff.
+- [ ] Reward redemption/discounts — waiting for chosen conversion and secure redemption safeguards.
+- [ ] Creator commerce and mandatory hosted event sales — explicitly deferred.
+
 ## Homepage final polish
 - [x] Fill the two mosaic gaps with True North Transparency and Toronto Palapa Tours; verify all 42 covers, complete columns, and local archive links.
 - [x] Integrate Build visuals and copy, align News/Pass/Spotlight, and remove the long news caption.

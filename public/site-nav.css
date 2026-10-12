@@ -86,3 +86,9 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .sn-menu{position:absolute;top:2.5rem;right:0;min-width:150px;background:#171717;border:1px solid rgba(255,255,255,.14);border-radius:12px;box-shadow:0 12px 28px rgba(0,0,0,.4);padding:.35rem;display:flex;flex-direction:column;z-index:60}
 .sn-menu a,.sn-menu button{display:block;text-align:left;padding:.5rem .7rem;border-radius:8px;color:#fff;text-decoration:none;font-size:.8rem;font-weight:600;background:none;border:0;cursor:pointer;font-family:inherit}
 .sn-menu a:hover,.sn-menu button:hover{background:rgba(255,255,255,.1)}
+
+.sn-create{display:inline-grid;place-items:center;width:38px;height:38px;flex:none;border:1px solid hsl(0 0% 100%/.28);border-radius:50%;color:hsl(0 0% 100%);background:hsl(0 0% 100%/.06);text-decoration:none;margin-right:.45rem;transition:background .18s ease,transform .18s ease}
+.sn-create:hover{background:hsl(0 0% 100%/.16);transform:rotate(90deg);color:hsl(0 0% 100%)}
+.sn-create:focus-visible{outline:2px solid hsl(0 0% 100%);outline-offset:3px}
+.sn-mobile .sn-create{margin:.25rem 0}
+@media(prefers-reduced-motion:reduce){.sn-create{transition:none}}

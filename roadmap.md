@@ -56,5 +56,5 @@
 ## Submission package — October 12, 2026
 - [x] Rewrite final submission answers around evidenced live features, separating future payments and subscriptions.
 - [x] Build a distinctly Rhozeland slideshow with fresh real screenshots; export and inspect every PDF page.
-- [ ] Deliver a reviewed 60-second product demo and report any verification or audio limitations.
-- [ ] Group submission, deck, screenshots and demo together in Files.
+- [x] Deliver a reviewed 60-second product demo with music; disclose sampled-frame review and unverified funded-holder/supporter-home journeys.
+- [x] Group submission, deck, screenshots and demo together in Files.

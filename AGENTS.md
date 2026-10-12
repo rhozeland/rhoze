@@ -30,4 +30,5 @@
 - Adapt Creator OS with CSS tilt only; preserve permission and reward rules.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
-- Keep homepage motion in home-motion.js and reuse live feed hooks to avoid invented data.
+- Keep motion in home-motion.js; use the Discover-derived home-projects registry with original links to avoid invented work.
+- Scope toolbar styles in discover-toolbar.css, mirrored on both Discover pages, to preserve shared navigation.

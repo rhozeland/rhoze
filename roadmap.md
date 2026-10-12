@@ -63,6 +63,9 @@
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
 ## Work-led homepage and Rewards
+- [x] Compact Discover controls, icon-only Shuffle beside search, highlighted Create; verify category/search and narrow layouts.
+- [x] Merge Creator Pass and subtle live price/market cap, remove separate promo/chart/change and duplicate branding.
+- [x] Rotate all 40 local Discover covers; verify artwork, links and motion.
 - [x] Restore the reference-style moving project mosaic, hover animation and minimal identity/recognition.
 - [x] Combine compact news, live tokenomics and randomized project highlights; verify movement, links and layout.
 - [x] Put the featured-work mosaic, identity and recognition first; follow with YouTube news.

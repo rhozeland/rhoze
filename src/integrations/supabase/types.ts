@@ -1883,6 +1883,24 @@ export type Database = {
         }
         Relationships: []
       }
+      project_bookmarks: {
+        Row: {
+          created_at: string
+          project_key: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          project_key: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          project_key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       project_clients: {
         Row: {
           created_at: string

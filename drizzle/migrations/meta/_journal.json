@@ -204,6 +204,13 @@
       "when": 1791788212937,
       "tag": "0028_portfolio_editorial_details",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791788878418,
+      "tag": "0029_private_project_bookmarks",
+      "breakpoints": true
     }
   ]
 }

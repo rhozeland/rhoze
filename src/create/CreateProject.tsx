@@ -482,12 +482,10 @@ export default function CreateProject() {
 
   return (
     <Shell className="rz-create-simple">
-      <ExistingProjects />
+      <ExistingProjects expandedBar />
       <div className="rz-wizard-toolbar">
-        <Button variant="ghost" className="rz-wizard-back" onClick={(step > 1 || ideaIndex > 0) ? back : () => { location.href = "/"; }}><ArrowLeft size={15} /> Back</Button>
         <div className="rz-wizard-toolbar-actions">
           <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
-          <Button variant="outline" className="rz-btn" asChild><a href="/">Cancel</a></Button>
         </div>
       </div>
       <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "review" ? "rz-card-wide" : ""}`}>

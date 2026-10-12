@@ -86,3 +86,9 @@
 - [x] Build a distinctly Rhozeland slideshow with fresh real screenshots; export and inspect every PDF page.
 - [x] Deliver a reviewed 60-second product demo with music; disclose sampled-frame review and unverified funded-holder/supporter-home journeys.
 - [x] Group submission, deck, screenshots and demo together in Files.
+
+## Create and Creator OS discovery
+- [ ] Replace Create shortcut with expandable account projects; remove top Back and Cancel.
+- [ ] Replace Discover scrolling banner with Creator OS-derived globe and flow entry.
+- [ ] Add directional Flow browsing, project engagement and private bookmarks without view rewards.
+- [ ] Verify signed-in project list, globe, flow, bookmarks and layouts.

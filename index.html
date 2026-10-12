@@ -3440,11 +3440,10 @@
         <section class="fh-section fh-channel" aria-label="Inside Rhozeland"><div class="fh-wrap fh-updates-grid">
           <article class="fh-update fh-update-news"><header><h2>Rhozeland News</h2><a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener" aria-label="Visit Rhozeland on YouTube">↗</a></header>
             <div class="r-eco-video"><iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
-            <p id="rEcoFeaturedDek">Conversations and stories from the house.</p>
           </article>
           <article class="fh-update fh-update-token"><header><h2>Creator Pass</h2><a href="/rewards" aria-label="Open Rewards">↗</a></header>
-            <div class="fh-rewards-summary"><img src="/images/logo-white.webp" alt=""><div><strong>Your contribution counts.</strong><p>Create. Support. Keep building.<br>Your rewards, XP and badges.</p></div><a class="fh-rewards-cta" href="/rewards">Open Rewards ↗</a></div>
-            <div class="fh-token-inline"><span>$RHOZE <strong id="rEcoMiniPrice">—</strong></span><span>Market cap <strong id="rEcoMiniMc">—</strong></span><a href="/about.html" aria-label="Supply and token details">↗</a></div>
+            <div class="fh-pass-panel"><div class="fh-rewards-summary"><img src="/images/logo-white.webp" alt=""><div><strong>Your contribution counts.</strong><p>Create. Support. Keep building.<br>Your rewards, XP and badges.</p></div><a class="fh-rewards-cta" href="/rewards">Open Rewards <span aria-hidden="true">↗</span></a></div>
+            <div class="fh-token-inline"><span>$RHOZE <strong id="rEcoMiniPrice">—</strong></span><span>Market cap <strong id="rEcoMiniMc">—</strong></span><a href="/about.html" aria-label="Supply and token details">↗</a></div></div>
           </article>
           <article class="fh-update fh-update-project"><header><h2>In the spotlight</h2><a href="/discover.html" aria-label="Discover all projects">↗</a></header><div id="fh-project-spotlight"></div></article>
         </div></section>
@@ -3453,9 +3452,9 @@
             <p class="fh-eyebrow">Ideas meet people. People make culture.</p>
             <h2 id="how-heading">Build with Rhozeland</h2>
             <div class="fh-steps-grid">
-              <article class="fh-step"><div class="fh-step-num">01</div><div class="fh-step-preview"><img data-workflow="create" alt="Rhozeland create screen" loading="lazy"></div><h3>Create a project</h3><p>Start with your idea. Bring your team or find collaborators, then plan the work in your private workspace.</p><a href="/create.html">Start something ↗</a></article>
-              <article class="fh-step"><div class="fh-step-num">02</div><div class="fh-step-preview"><img data-workflow="discover" alt="Rhozeland discover screen" loading="lazy"></div><h3>Find &amp; showcase</h3><p>Discover the work and people behind it. Publish your project when you’re ready to share it.</p><a href="/discover.html">Discover projects ↗</a></article>
-              <article class="fh-step"><div class="fh-step-num">03</div><div class="fh-step-preview"><img data-workflow="rewards" alt="Rhozeland rewards screen" loading="lazy"></div><h3>Support &amp; earn</h3><p>Show up for the projects you believe in. Your contributions build your rewards balance and creator progress.</p><a href="/rewards">Your rewards ↗</a></article>
+              <article class="fh-step"><a class="fh-step-link" href="/create.html"><div class="fh-step-top"><span class="fh-step-num">01</span><span class="fh-step-arrow" aria-hidden="true">↗</span></div><h3>Create a project</h3><p>Your idea, your people. Plan the work in your private workspace.</p><span class="fh-step-action">Start something</span><div class="fh-step-preview"><img data-workflow="create" alt="Rhozeland create screen" loading="lazy"></div></a></article>
+              <article class="fh-step"><a class="fh-step-link" href="/discover.html"><div class="fh-step-top"><span class="fh-step-num">02</span><span class="fh-step-arrow" aria-hidden="true">↗</span></div><h3>Find &amp; showcase</h3><p>Meet the work and people behind it. Share yours when you’re ready.</p><span class="fh-step-action">Discover projects</span><div class="fh-step-preview"><img data-workflow="discover" alt="Rhozeland discover screen" loading="lazy"></div></a></article>
+              <article class="fh-step"><a class="fh-step-link" href="/rewards"><div class="fh-step-top"><span class="fh-step-num">03</span><span class="fh-step-arrow" aria-hidden="true">↗</span></div><h3>Support &amp; earn</h3><p>Back the projects you believe in. Build your rewards and creator progress.</p><span class="fh-step-action">Your rewards</span><div class="fh-step-preview"><img data-workflow="rewards" alt="Rhozeland rewards screen" loading="lazy"></div></a></article>
             </div>
           </div>
         </section>
@@ -5030,7 +5029,7 @@
         var tag = document.getElementById('rEcoFeaturedTag');
         if (tag) tag.textContent = (latest.live ? 'LIVE NOW · ' : 'Latest · ') + TIME_AGO(latest.published);
         var dek = document.getElementById('rEcoFeaturedDek');
-        if (dek) dek.innerHTML = '<em>' + (latest.title || 'Latest episode').replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — fresh on the Rhozeland channel. New episode every Sunday.';
+        if (dek) dek.textContent = latest.title || 'Latest episode';
         var ep = document.getElementById('rEcoEpDate');
         if (ep) ep.textContent = 'Updated ' + TIME_AGO(latest.published) + ' · Toronto';
 

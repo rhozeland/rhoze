@@ -113,6 +113,6 @@
 - [x] Verify footer-to-story navigation, token copy, video links, theme and mobile layout.
 
 ## Admin portal
-- [ ] Connect real team roles and protect admin access with current account permissions.
-- [ ] Add project-story editing and weekly/all-time historical leaderboard point management.
-- [ ] Verify signed-in editing, saved readback, and denied non-admin access.
+- [x] Connect real team roles and protect admin access with current account permissions.
+- [x] Add project-story editing and weekly/all-time historical leaderboard point management.
+- [x] Verify signed-in story/point editing and saved readback; deny signed-out access even with forged cached roles.

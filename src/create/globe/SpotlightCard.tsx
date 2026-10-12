@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import type { GlobePin } from "./DiscoverGlobe";
 
 export default function SpotlightCard({ pin, onClose }: { pin: GlobePin; onClose: () => void }) {
   return (
     <div className="rz-globe-spotlight" role="dialog" aria-label={`${pin.title} spotlight`}>
-      <button type="button" className="rz-globe-spotlight-close" aria-label="Close" onClick={onClose}>
+      <Button variant="ghost" size="icon" className="rz-globe-spotlight-close" aria-label="Close spotlight" onClick={onClose}>
         ×
-      </button>
+      </Button>
       <div className="rz-globe-spotlight-media">
         {pin.image ? (
           <img src={pin.image} alt="" />
@@ -19,12 +19,12 @@ export default function SpotlightCard({ pin, onClose }: { pin: GlobePin; onClose
         <b>{pin.title}</b>
         {pin.subtitle && <p>{pin.subtitle}</p>}
         <div className="rz-globe-spotlight-actions">
-          <Link className="rz-btn pri" to={pin.href}>
+          <Button variant="outline" asChild><a href={pin.href}>
             View {pin.kind === "release" ? "project" : "profile"}
-          </Link>
-          <a className="rz-btn" href="/create.html?new=1">
+          </a></Button>
+          <Button variant="outline" asChild><a href="/create.html?new=1">
             Start a project here
-          </a>
+          </a></Button>
         </div>
       </div>
     </div>

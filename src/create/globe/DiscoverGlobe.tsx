@@ -8,6 +8,7 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { CONTINENTS } from "./geo";
 import SpotlightCard from "./SpotlightCard";
+import { Button } from "@/components/ui/button";
 import "./globe.css";
 
 export type GlobePin = {
@@ -123,6 +124,7 @@ export default function DiscoverGlobe({ pins }: { pins: GlobePin[] }) {
   );
 
   const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button')) return;
     e.preventDefault();
     dragState.current = { pointerId: e.pointerId, startX: e.clientX, startRotation: rotation };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -154,19 +156,19 @@ export default function DiscoverGlobe({ pins }: { pins: GlobePin[] }) {
         <svg viewBox="0 0 100 100" className="rz-globe-svg">
           <defs>
             <radialGradient id="rz-globe-ocean" cx="38%" cy="30%" r="78%">
-              <stop offset="0%" stopColor="hsl(190 55% 96%)" />
-              <stop offset="55%" stopColor="hsl(190 55% 90%)" />
-              <stop offset="100%" stopColor="hsl(195 45% 82%)" />
+              <stop offset="0%" stopColor="hsl(var(--globe-ocean-light))" />
+              <stop offset="55%" stopColor="hsl(var(--globe-ocean))" />
+              <stop offset="100%" stopColor="hsl(var(--globe-ocean-dark))" />
             </radialGradient>
             <radialGradient id="rz-globe-land" cx="42%" cy="32%" r="80%">
-              <stop offset="0%" stopColor="hsl(43 70% 86%)" />
-              <stop offset="55%" stopColor="hsl(13 60% 84%)" />
-              <stop offset="100%" stopColor="hsl(13 45% 74%)" />
+              <stop offset="0%" stopColor="hsl(var(--globe-land-light))" />
+              <stop offset="55%" stopColor="hsl(var(--globe-land))" />
+              <stop offset="100%" stopColor="hsl(var(--globe-land-dark))" />
             </radialGradient>
             <radialGradient id="rz-globe-highlight" cx="36%" cy="26%" r="55%">
-              <stop offset="0%" stopColor="#fff" stopOpacity="0.55" />
-              <stop offset="60%" stopColor="#fff" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+              <stop offset="0%" stopColor="hsl(var(--card))" stopOpacity="0.55" />
+              <stop offset="60%" stopColor="hsl(var(--card))" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="hsl(var(--card))" stopOpacity="0" />
             </radialGradient>
             <clipPath id="rz-globe-clip">
               <circle cx={cx} cy={cy} r={radius} />
@@ -191,16 +193,16 @@ export default function DiscoverGlobe({ pins }: { pins: GlobePin[] }) {
         </svg>
 
         {projectedPins.map(({ pin, x, y, depth }) => (
-          <button
+          <Button variant="ghost" size="icon"
             key={pin.id}
             type="button"
             className="rz-globe-pin"
+            data-kind={pin.kind}
             style={{
               left: `${x}%`,
               top: `${y}%`,
               opacity: depth > -0.1 ? 1 : 0.25,
               pointerEvents: depth > -0.1 ? "auto" : "none",
-              background: pin.kind === "release" ? "hsl(13 85% 62%)" : "hsl(181 55% 48%)",
             }}
             aria-label={`${pin.title} — open spotlight`}
             onClick={() => setActiveId(pin.id)}

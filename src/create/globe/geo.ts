@@ -25,8 +25,7 @@ export const jitterFor = (id: string) => {
   };
 };
 
-// A handful of landmark coordinates kept for continent outlines only — not
-// tied to any creator data.
+// Continent geometry copied from Creator OS; not creator locations.
 export const CONTINENTS: { name: string; points: [number, number][] }[] = [
   {
     name: "North America",
@@ -74,6 +73,20 @@ export const CONTINENTS: { name: string; points: [number, number][] }[] = [
     points: [
       [-12, 130], [-10, 140], [-12, 152], [-22, 154], [-32, 152], [-38, 146],
       [-36, 138], [-32, 128], [-26, 120], [-18, 122],
+    ],
+  },
+  {
+    name: "Antarctica",
+    points: [
+      [-70, -160], [-68, -120], [-66, -80], [-68, -40], [-70, 0], [-66, 40],
+      [-64, 80], [-66, 120], [-70, 160], [-78, 160], [-82, 100], [-84, 0],
+      [-82, -80], [-78, -160],
+    ],
+  },
+  {
+    name: "Greenland",
+    points: [
+      [82, -32], [80, -18], [70, -22], [62, -42], [70, -52], [78, -50],
     ],
   },
 ];

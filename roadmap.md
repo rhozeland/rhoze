@@ -127,6 +127,6 @@
 - [x] Verify signed-in phone saves, reload/readback and website navigation.
 
 ## Information-first project archives
-- [ ] Prioritize archive details with compact YouTube embeds and photo fallbacks.
-- [ ] Present real points and optional paired-token statistics without invented allocations.
-- [ ] Verify video/photo layouts, links and narrow screens; clarify future Slow Mo discovery options.
+- [x] Prioritize archive details with compact YouTube embeds and photo fallbacks.
+- [x] Present real points and optional paired-token statistics without invented allocations; no archive currently has a paired token to verify live.
+- [x] Verify video/photo layouts, links and narrow screens; keep Slow Mo discovery integration deferred.

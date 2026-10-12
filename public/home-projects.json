@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Sefra",
+    "artist": "Cozal",
+    "image": "/images/cozal-sefra-thumb.jpg",
+    "href": "https://www.youtube.com/watch?v=WLpDRh8JsxY",
+    "tag": "Music Video"
+  },
+  {
+    "title": "Just Call Me",
+    "artist": "Ess B",
+    "image": "/images/ess-b-just-call-me-thumb.webp",
+    "href": "https://www.youtube.com/watch?v=2Nuyr57Xe3o",
+    "tag": "Music Video"
+  },
+  {
+    "title": "The Mask",
+    "artist": "Ooak",
+    "image": "/images/ooak-the-mask-thumb.webp",
+    "href": "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    "tag": "Music Video"
+  },
+  {
+    "title": "Saint Flair West",
+    "artist": "Ooak",
+    "image": "/images/ooak-saint-flair-west-thumb.webp",
+    "href": "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM",
+    "tag": "EP"
+  },
+  {
+    "title": "Mansa Musa",
+    "artist": "MONEE FINGAZ",
+    "image": "/images/fingaz-mansa-musa-thumb.webp",
+    "href": "https://www.youtube.com/watch?v=w9dYE595cBw",
+    "tag": "Music Video"
+  },
+  {
+    "title": "Telephone",
+    "artist": "Runner's Club",
+    "image": "/images/rc4-thumb.webp",
+    "href": "https://www.instagram.com/runnersclubco/reel/DKXax4qA4u3/",
+    "tag": "Project"
+  },
+  {
+    "title": "Who Runs The World?",
+    "artist": "Runner's Club",
+    "image": "/images/rc1-thumb.webp",
+    "href": "https://www.instagram.com/p/DJ90KlZIg3r/",
+    "tag": "Project"
+  },
+  {
+    "title": "Who Runs The World II",
+    "artist": "Runner's Club",
+    "image": "/images/rc2-thumb.webp",
+    "href": "https://www.instagram.com/p/DS0oshoASn1/",
+    "tag": "Project"
+  },
+  {
+    "title": "RC",
+    "artist": "Runner's Club",
+    "image": "/images/rc3-thumb.webp",
+    "href": "https://www.instagram.com/p/CtE_-rjpydB/",
+    "tag": "Project"
+  },
+  {
+    "title": "FUS",
+    "artist": "Rhozeland,Indoléstic,Straightdizzy,Roosevelth,MARV",
+    "image": "/images/rhozeland-fus-thumb.webp",
+    "href": "https://www.youtube.com/watch?v=WULC2OD8EFs",
+    "tag": "EP"
+  },
+  {
+    "title": "Feel Like A Superhero",
+    "artist": "MONEE FINGAZ",
+    "image": "/images/fingaz-superhero-thumb.webp",
+    "href": "https://www.youtube.com/watch?v=_4FotFv6VWc",
+    "tag": "Music Video"
+  },
+  {
+    "title": "Gotta Go",
+    "artist": "Straightdizzy,MARV",
+    "image": "/images/straightdizzy-gotta-go-thumb.webp",
+    "href": "https://www.youtube.com/watch?v=nLlh8k-Uwdg",
+    "tag": "Music Video"
+  }
+]

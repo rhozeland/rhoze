@@ -111,3 +111,8 @@
 - [x] Build a visual mission, history, creator-support and token page using existing studio photos and real video links.
 - [x] Link Our story from shared static and React footers without expanding the header.
 - [x] Verify footer-to-story navigation, token copy, video links, theme and mobile layout.
+
+## Admin portal
+- [ ] Connect real team roles and protect admin access with current account permissions.
+- [ ] Add project-story editing and weekly/all-time historical leaderboard point management.
+- [ ] Verify signed-in editing, saved readback, and denied non-admin access.

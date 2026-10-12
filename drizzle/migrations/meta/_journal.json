@@ -169,6 +169,13 @@
       "when": 1791778835082,
       "tag": "0023_private_project_team_planning",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791780948005,
+      "tag": "0024_project_milestone_payments",
+      "breakpoints": true
     }
   ]
 }

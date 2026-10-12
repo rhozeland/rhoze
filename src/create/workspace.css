@@ -31,3 +31,13 @@
 .rz-studio-work{margin-top:1.5rem}
 .rz-studio-work h2{font-size:1.1rem;font-weight:700;margin-bottom:.8rem}
 .rz-existing{font-size:.75rem;margin-bottom:.6rem}
+.rz-pay{display:grid;gap:.7rem}
+.rz-pay-card{border:1px solid hsl(var(--border));border-radius:12px;padding:.8rem;display:grid;gap:.5rem}
+.rz-pay-head{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.rz-pay-head strong{flex:1}
+.rz-pay-status{font-size:.75rem;padding:.15rem .5rem;border-radius:999px;border:1px solid hsl(var(--border))}
+.rz-pay-row{display:flex;gap:.5rem;align-items:center}
+.rz-pay-people{display:grid;gap:.35rem}
+.rz-pay-person{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
+.rz-pay-person .rz-in{width:4.5rem}
+.rz-pay-payouts{margin:0;padding-left:1rem;font-size:.85rem}

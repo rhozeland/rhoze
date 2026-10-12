@@ -222,6 +222,18 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   // by customer.subscription.created.
   if (session.mode !== "payment") return;
 
+  if (session.metadata?.flow === "release_milestone") {
+    if (session.payment_status !== "paid") return;
+    const { error } = await getSupabase().rpc("release_record_payment", {
+      p_session_id: session.id,
+      p_milestone_id: session.metadata.milestone_id,
+      p_amount_cents: session.amount_total ?? 0,
+      p_currency: session.currency ?? "cad",
+    });
+    if (error) console.error("release_record_payment failed", error);
+    return;
+  }
+
   // Project top-up → credit the existing project's balance, do NOT create a new intake.
   if (session.metadata?.flow === "project_topup") {
     const sb = getSupabase();

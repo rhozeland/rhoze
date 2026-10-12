@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type ViteDevServer } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger(), {
     name: "mirror-discover-entry",
-    configureServer(server) {
+    configureServer(server: ViteDevServer) {
       server.middlewares.use((req, _res, next) => {
         if (req.url && /^\/discover\/?(?:\?|$)/.test(req.url)) req.url = req.url.replace(/^\/discover\/?/, "/discover.html");
         next();

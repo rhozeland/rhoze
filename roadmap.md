@@ -62,6 +62,12 @@
 - [ ] Collaborator access to the private workspace (today owner-only)
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
+## Work-led homepage and Rewards
+- [ ] Unify public navigation as Discover, Create, Rewards with icons and a single Create action.
+- [ ] Rebuild the homepage around real project artwork and recognition; combine Build with Rhozeland.
+- [ ] Adapt the referenced Creator OS pass/profile with real rewards balance, progress, badges and contribution standings.
+- [ ] Verify navigation, public homepage, signed-in rewards and profile flows.
+
 ## Submission package — October 12, 2026
 - [x] Rewrite final submission answers around evidenced live features, separating future payments and subscriptions.
 - [x] Build a distinctly Rhozeland slideshow with fresh real screenshots; export and inspect every PDF page.

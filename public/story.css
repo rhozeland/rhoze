@@ -4,4 +4,8 @@
 @media(min-width:1400px){.story-hero{min-height:470px}}
 @media(max-width:900px){.story-hero{padding:2rem;min-height:390px}.story-hero h1{font-size:52px}.story-section{padding:2rem}.story-history{grid-template-columns:1fr}.story-support{gap:1rem}.story-heading h2,.story-section h2{font-size:26px}}
 @media(max-width:640px){.story-hero{padding:1.25rem;min-height:360px}.story-hero h1{font-size:42px}.story-hero p{font-size:16px}.story-section{padding:1.5rem 1.25rem}.story-intro,.story-token-grid,.story-support{grid-template-columns:1fr;gap:1.25rem}.story-heading{align-items:start;flex-direction:column;gap:.5rem}.story-years li{grid-template-columns:58px 60px 1fr;gap:.65rem}.story-years img{width:60px;height:60px}.story-years strong{font-size:20px}.story-work{grid-template-columns:1fr}.story-work a{aspect-ratio:16/9}.story-close{align-items:start;flex-direction:column}.story-page .footer{padding:1.5rem 1.25rem}.story-page .footer-panel{grid-template-columns:1fr 1fr}.story-page .footer-brand{grid-column:1/-1}}
+/* An embedded story inherits the homepage header and frame. */
+html.site-embedded .story-page{padding:0}
+html.site-embedded .story-page .site-nav,html.site-embedded .story-page .mobile-menu,html.site-embedded .story-page .footer{display:none!important}
+html.site-embedded .story-page .page-shell{max-width:none;margin:0;border:0;border-radius:0;box-shadow:none}
 @media(prefers-reduced-motion:reduce){.story-film img,.story-work img{transition:none}.story-film:hover img,.story-work a:hover img{transform:none}}

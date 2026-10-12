@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Shell, Milestone, money, uid } from "./shared";
 import AuthModal from "./AuthModal";
 import CoverEditor from "./CoverEditor";
+import { LocationFields } from "./ProfileExtras";
 import { Button } from "@/components/ui/button";
 import "./create-flow.css";
 
@@ -112,6 +113,8 @@ export default function CreateProject() {
   const [desc, setDesc] = useState("");
   const [audience, setAudience] = useState("");
   const [category, setCategory] = useState<string>("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   const [budget, setBudget] = useState("");
   const [needQuote, setNeedQuote] = useState(false);
   const [timeline, setTimeline] = useState("");
@@ -217,6 +220,7 @@ export default function CreateProject() {
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
       setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || ""); setAudience(r.answers?.audience || "");
       setCategory(r.answers?.category || "");
+      setCity(r.answers?.city || ""); setCountry(r.answers?.country || "");
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
       setNeedQuote(!!r.answers?.need_quote);
       setTimeline(r.answers?.timeline || "");
@@ -233,7 +237,7 @@ export default function CreateProject() {
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
     answers: {
       wizard_step: FLOW[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(),
-      category, project_type: ptype, need_quote: needQuote, timeline, makers,
+      category, project_type: ptype, need_quote: needQuote, timeline, makers, city: city.trim(), country,
       ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}),
     },
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
@@ -526,6 +530,10 @@ export default function CreateProject() {
               </div>
             </div>
             <div className="rz-field"><label htmlFor="project-audience">Who is it for? <span className="rz-opt">(optional)</span></label><input id="project-audience" className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto" onChange={(e) => setAudience(e.target.value)} /></div>
+            <div className="rz-field rz-full">
+              <label>Where is this project based? <span className="rz-opt">(optional)</span></label>
+              <LocationFields city={city} country={country} onCity={setCity} onCountry={setCountry} />
+            </div>
             <div className="rz-field">
               <label>Category</label>
               <div className="rz-category-grid">

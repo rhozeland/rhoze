@@ -3122,7 +3122,7 @@
       </a>
       <div class="figma-nav-links" aria-label="Homepage sections">
         <a href="/projects.html">Featured Projects</a>
-        <a href="/book.html">Book a project</a>
+        <a href="/create.html">Create a project</a>
         <a href="/discover">Discover</a>
         <a href="/community.html">Creators</a>
         <a href="/community.html?view=open-calls">Find Work</a>
@@ -3151,7 +3151,7 @@
     <div id="mobileMenu" class="mobile-menu">
       <a href="/about.html" data-inline-nav="about" onclick="closeMenu()"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg></span><span class="nav-label">About</span></a>
       <a href="/projects.html" onclick="closeMenu()">Featured Projects</a>
-      <a href="/book.html" onclick="closeMenu()">Book a project</a>
+      <a href="/create.html" onclick="closeMenu()">Create a project</a>
       <a href="/discover" onclick="closeMenu()">Discover</a>
       <a href="/community.html" onclick="closeMenu()">Creators</a>
       <a href="/contact.html" data-inline-nav="connect" onclick="closeMenu()"><span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span class="nav-label">Connect</span></a>
@@ -3269,134 +3269,133 @@
           .figma-nav-links { display:flex; align-items:center; gap:clamp(1rem,2.4vw,2.5rem); margin-left:auto; margin-right:1.25rem; }
           .figma-nav-links a { color:hsl(var(--ink)); font-size:.72rem; font-weight:650; text-decoration:none; }
           .nav-tabs { display:none; }
-          .figma-home { --fh-dark:#202020; --fh-paper:#f7f7f4; background:var(--fh-paper); color:#171717; overflow:hidden; }
+          .figma-home { --fh-dark:#141414; --fh-paper:#f7f6f2; background:var(--fh-paper); color:#141414; overflow:hidden; }
           .figma-home * { box-sizing:border-box; }
-          .fh-announcement { min-height:29px; display:flex; align-items:center; justify-content:center; padding:.35rem 1rem; background:#f2d400; color:#171717; font-size:.58rem; line-height:1.3; font-weight:800; letter-spacing:.1em; text-transform:uppercase; text-align:center; }
-          .fh-hero { min-height:clamp(540px,68vh,640px); padding:4.5rem clamp(1.15rem,5vw,5.5rem) 4rem; display:flex; align-items:center; position:relative; overflow:hidden; background:hsl(var(--hero-paper)); isolation:isolate; }
-          .fh-hero-orbs { position:absolute; inset:-12%; z-index:-2; pointer-events:none; background:radial-gradient(ellipse at 0% 62%,hsl(var(--hero-coral-wash)/.9),transparent 58%),radial-gradient(ellipse at 27% 105%,hsl(var(--hero-yellow-wash)/.95),transparent 55%),radial-gradient(ellipse at 100% 82%,hsl(var(--hero-aqua-wash)/.95),transparent 66%),radial-gradient(ellipse at 62% 110%,hsl(var(--hero-aqua-wash)/.65),transparent 48%); background-size:110% 110%; animation:fh-gradient-flow 28s ease-in-out infinite alternate; will-change:transform; }
-          .fh-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg,hsl(var(--hero-paper)/.8),hsl(var(--hero-paper)/.22) 48%,hsl(var(--hero-paper)/.05)); pointer-events:none; }
-          .fh-hero-copy { width:min(1000px,100%); }
-          .fh-hero h1 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:3.5rem; line-height:1.06; letter-spacing:0; color:hsl(var(--hero-ink)); }
+          .fh-announcement { min-height:27px; display:flex; align-items:center; justify-content:center; padding:.3rem 1rem; background:#f2d400; color:#141414; font-size:.58rem; line-height:1.3; font-weight:800; letter-spacing:.1em; text-transform:uppercase; text-align:center; }
+
+          /* ---------- Hero: editorial grid + one restrained moving gradient accent ---------- */
+          .fh-hero { position:relative; padding:clamp(2.6rem,5.5vw,4.2rem) clamp(1.15rem,5vw,5.5rem) clamp(2.6rem,5vw,3.6rem); display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); gap:clamp(1.5rem,3vw,3rem); align-items:center; background:hsl(var(--hero-paper)); isolation:isolate; border-bottom:1px solid #141414; }
+          .fh-hero::before { content:""; position:absolute; left:0; right:0; top:0; height:3px; z-index:2; background:linear-gradient(90deg,#f2d400,#f46faf 35%,#6dc6f0 68%,#f2d400); background-size:260% 100%; animation:fh-accent-sweep 9s linear infinite; }
+          @keyframes fh-accent-sweep { 0% { background-position:0% 0%; } 100% { background-position:260% 0%; } }
+          .fh-hero-copy { width:100%; min-width:0; }
+          .fh-kicker { display:inline-flex; align-items:center; gap:.45rem; margin:0 0 1rem; padding:.3rem .65rem; border:1px solid #141414; border-radius:999px; font-size:.6rem; font-weight:850; letter-spacing:.14em; text-transform:uppercase; }
+          .fh-kicker::before { content:""; width:6px; height:6px; border-radius:999px; background:#f46faf; }
+          .fh-hero h1 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:clamp(2.1rem,4.6vw,3.65rem); line-height:1.03; letter-spacing:-0.01em; color:#0a0a0a; }
           .fh-hero-rotation { display:inline-grid; vertical-align:bottom; width:max-content; max-width:100%; color:hsl(var(--hero-rose)); }
           .fh-hero-rotation > span { grid-area:1 / 1; white-space:nowrap; opacity:0; animation:fh-hero-word 10s ease-in-out infinite; }
           .fh-hero-rotation > span:nth-child(2) { animation-delay:-7.5s; }
           .fh-hero-rotation > span:nth-child(3) { animation-delay:-5s; }
           .fh-hero-rotation > span:nth-child(4) { animation-delay:-2.5s; }
           .fh-hero-tail { white-space:nowrap; }
-          .fh-hero-highlights { list-style:none; display:grid; gap:.85rem; margin:2.1rem 0 2.1rem; padding:0; color:hsl(var(--hero-ink)); font-size:.875rem; line-height:1.5; font-weight:550; }
-          .fh-hero-highlights li { display:flex; align-items:flex-start; gap:.4rem; }
-          .fh-hero-highlights svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; color:hsl(var(--hero-rose)); }
           @keyframes fh-hero-word { 0%,20% { opacity:1; transform:translateY(0); } 24%,96% { opacity:0; transform:translateY(-.12em); } 100% { opacity:1; transform:translateY(0); } }
-          @keyframes fh-gradient-flow { 0% { transform:translate3d(-2%,1%,0) scale(1); background-position:0% 20%,20% 0%,100% 30%,40% 100%; } 50% { transform:translate3d(3%,-3%,0) scale(1.05); background-position:30% 60%,50% 30%,70% 70%,65% 60%; } 100% { transform:translate3d(-1%,3%,0) scale(1.02); background-position:10% 40%,0% 50%,100% 0%,30% 80%; } }
-          @media (max-width:1100px) { .fh-hero h1 { font-size:3rem; } }
-          .fh-hero p { max-width:690px; margin:1.7rem 0 2rem; font-size:clamp(.95rem,1.65vw,1.25rem); line-height:1.38; font-weight:600; color:#1d1d1d; }
-          .fh-actions { display:flex; gap:.65rem; flex-wrap:wrap; }
-          .fh-btn { min-height:39px; display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border:1px solid #151515; border-radius:999px; padding:.65rem 1rem; background:#fff; color:#111; font-size:.69rem; font-weight:800; text-decoration:none; transition:transform .2s ease,background .2s ease,color .2s ease; }
+          .fh-hero p { max-width:52ch; margin:1.3rem 0 1.6rem; font-size:clamp(.92rem,1.3vw,1.08rem); line-height:1.4; font-weight:600; color:#242424; }
+          .fh-hero-highlights { list-style:none; display:grid; gap:.65rem; margin:0 0 1.7rem; padding:0; color:#141414; font-size:.84rem; line-height:1.5; font-weight:650; }
+          .fh-hero-highlights li { display:flex; align-items:flex-start; gap:.45rem; }
+          .fh-hero-highlights svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; color:hsl(var(--hero-rose)); }
+          .fh-actions { display:flex; gap:.6rem; flex-wrap:wrap; }
+          .fh-btn { min-height:42px; display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border:1.5px solid #141414; border-radius:999px; padding:.7rem 1.25rem; background:#fff; color:#111; font-size:.74rem; font-weight:850; letter-spacing:.01em; text-decoration:none; transition:transform .18s ease,background .18s ease,color .18s ease; }
           .fh-btn:hover { transform:translateY(-2px); }
-          .fh-btn.is-dark { background:#171717; color:#fff; }
+          .fh-btn.is-dark { background:#141414; color:#fff; border-color:#141414; }
+          .fh-btn.is-dark:hover { background:#000; }
           .fh-btn svg { width:13px; height:13px; }
-          .fh-dark { background:var(--fh-dark); color:#fff; }
-          .fh-section { padding:clamp(3.25rem,7vw,7rem) clamp(1rem,4vw,4rem); }
-          .fh-wrap { width:min(1320px,100%); margin:0 auto; }
-          .fh-eyebrow { margin:0 0 .45rem; color:#d4a80b; font-size:.6rem; font-weight:850; letter-spacing:.17em; text-transform:uppercase; text-align:center; }
-          .fh-section h2 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:clamp(1.8rem,4vw,3.5rem); line-height:1; letter-spacing:0; text-align:center; }
-          .fh-work { padding-top:1rem; }
-          .fh-work-head { display:flex; align-items:end; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
-          .fh-work-head h2 { color:#fff; text-align:left; font-size:clamp(1rem,1.5vw,1.35rem); }
-          .fh-work-head a { color:#fff; font-size:.65rem; font-weight:800; text-decoration:none; }
-          .fh-work-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.65rem; }
-          .fh-project { position:relative; min-width:0; aspect-ratio:1.45/1; border-radius:8px; overflow:hidden; color:#fff; text-decoration:none; background:#333; }
-          .fh-project img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease,filter .4s ease; }
-          .fh-project::after { content:""; position:absolute; inset:35% 0 0; background:linear-gradient(transparent,rgba(0,0,0,.78)); }
-          .fh-project:hover img { transform:scale(1.035); }
-          .fh-project-tag { position:absolute; z-index:2; top:.55rem; left:.55rem; padding:.3rem .52rem; border-radius:999px; background:rgba(255,255,255,.9); color:#111; font-size:.48rem; font-weight:850; text-transform:uppercase; }
-          .fh-project-meta { position:absolute; z-index:2; left:.65rem; right:.65rem; bottom:.6rem; display:grid; gap:.12rem; }
-          .fh-project-meta strong { font-size:.76rem; line-height:1.1; }
-          .fh-project-meta span { font-size:.56rem; opacity:.78; text-transform:uppercase; }
-          .fh-paths { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; padding-top:clamp(3rem,6vw,5rem); }
-          .fh-path { min-height:235px; padding:1.6rem; border-radius:8px; background:#f2f2f0; color:#1d1d1d; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; text-decoration:none; border:1px solid rgba(255,255,255,.12); }
-          .fh-path:first-child { background:#fff; }
-          .fh-path-icon { width:70px; height:52px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; color:#171717; }
-          .fh-path-icon svg { width:50px; height:50px; }
-          .fh-path h3 { margin:0 0 .6rem; font-size:1.05rem; }
-          .fh-path p { max-width:26ch; margin:0; color:#525252; font-size:.76rem; line-height:1.45; }
-          .fh-path.is-soon { cursor:default; }
-          .fh-soon-tag { display:inline-block; margin-bottom:.9rem; padding:.34rem .75rem; border-radius:999px; border:1px solid rgba(23,23,23,.28); background:#fff; color:#525252; font-size:.6rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
-          .fh-values { padding-top:clamp(4.5rem,9vw,8rem); padding-bottom:clamp(5rem,10vw,9rem); }
-          .fh-value-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2.5rem; margin-top:4.25rem; }
-          .fh-value { text-align:center; }
-          .fh-value-icon { width:58px; height:58px; margin:0 auto 1.1rem; display:grid; place-items:center; border-radius:18px; background:#64d8c5; color:#151515; box-shadow:7px 7px 0 #111,7px 7px 0 1px #fff; }
-          .fh-value:nth-child(2) .fh-value-icon { background:#f46faf; }
-          .fh-value:nth-child(3) .fh-value-icon { background:#6dc6f0; }
-          .fh-value:nth-child(4) .fh-value-icon { background:#f2d400; }
-          .fh-value-icon svg { width:28px; height:28px; }
-          .fh-value h3 { margin:0 0 .45rem; font-size:.9rem; }
-          .fh-value p { max-width:23ch; margin:0 auto; color:#d2d2d2; font-size:.72rem; line-height:1.45; }
-          .fh-collab { margin:5rem auto 0; display:flex; align-items:center; justify-content:center; gap:1rem; }
-          .fh-collab strong { color:#f1b400; font-size:clamp(2.7rem,5vw,5rem); line-height:1; }
-          .fh-collab span { max-width:120px; font-size:.8rem; font-weight:800; }
-          .fh-collab-copy { max-width:450px; margin:.9rem auto 0; color:#c6c6c6; text-align:center; font-size:.72rem; line-height:1.5; }
-          .fh-story-band { padding:clamp(4.5rem,9vw,8rem) clamp(1rem,5vw,5rem) clamp(7rem,14vw,12rem); background:linear-gradient(145deg,#ff9a8f,#efadd0 48%,#c4ebdf 100%); }
-          .fh-story { width:min(1180px,100%); margin:0 auto; padding:clamp(2.25rem,5vw,5rem); background:#fff; color:#171717; border-radius:16px; box-shadow:0 24px 45px rgba(37,33,33,.18); }
-          .fh-timeline { display:grid; grid-template-columns:repeat(4,1fr); margin-top:4.2rem; }
-          .fh-era { position:relative; padding:2rem 1rem 0; text-align:center; border-top:3px solid #db69a0; }
-          .fh-era::before { content:""; position:absolute; width:14px; height:14px; border-radius:50%; background:#db69a0; border:4px solid #fff; top:-9px; left:50%; transform:translateX(-50%); }
-          .fh-era b { font-size:.84rem; }
-          .fh-era h3 { margin:1.1rem 0 .65rem; color:#9b7600; font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; }
-          .fh-era p { max-width:24ch; margin:0 auto; color:#494949; font-size:.68rem; line-height:1.5; }
-          .fh-membership { padding-top:clamp(5rem,9vw,8rem); }
-          .fh-membership-intro { max-width:670px; margin:.8rem auto 3rem; color:#c7c7c7; font-size:.76rem; line-height:1.5; text-align:center; }
-          .fh-plans { display:grid; grid-template-columns:repeat(4,1fr); gap:.8rem; align-items:stretch; }
-          .fh-plan { position:relative; display:flex; flex-direction:column; min-height:320px; padding:1.4rem; border-radius:10px; background:#fff; color:#171717; }
-          .fh-plan-popular { position:absolute; left:1rem; top:-.7rem; padding:.28rem .55rem; border:1px solid #171717; border-radius:999px; background:#5ed9c0; font-size:.48rem; font-weight:900; text-transform:uppercase; }
-          .fh-plan h3 { margin:0 0 .55rem; font-size:1rem; }
-          .fh-price { font-size:1.5rem; font-weight:850; }
-          .fh-price small { font-size:.62rem; font-weight:600; color:#555; }
-          .fh-plan > p { min-height:3em; color:#555; font-size:.69rem; line-height:1.45; }
-          .fh-plan ul { flex:1; margin:1rem 0; padding-left:1rem; font-size:.65rem; line-height:1.55; }
-          .fh-plan .fh-btn { width:100%; background:#58d6bd; }
-          .fh-partners { padding-top:clamp(5rem,9vw,8rem); text-align:center; }
-          .fh-partner-row { display:flex; justify-content:center; align-items:center; gap:clamp(1.25rem,4vw,4rem); flex-wrap:wrap; margin-top:2rem; color:#fff; }
-          .fh-partner-row a { color:inherit; font-size:.78rem; font-weight:800; text-decoration:none; opacity:.78; }
-          .hero.r-eco, section[aria-label="Featured work"] { display:none !important; }
-          body.workspace-active .figma-home, body.r-inline-active .figma-home { display:none !important; }
-          @media (max-width:900px) {
-            .figma-nav-links { display:none; }
-            .fh-work-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-            .fh-work-grid .fh-project:nth-child(n+7) { display:none; }
-            .fh-value-grid { grid-template-columns:repeat(2,1fr); }
-            .fh-plans { grid-template-columns:repeat(2,1fr); }
+
+          /* Hero visual: tight editorial image grid built from real project thumbnails */
+          .fh-hero-visual { position:relative; display:grid; grid-template-columns:1.1fr .9fr; grid-template-rows:repeat(2,1fr); gap:.5rem; height:clamp(290px,34vw,420px); }
+          .fh-hero-visual a { position:relative; display:block; overflow:hidden; border:1px solid #141414; border-radius:4px; }
+          .fh-hero-visual a:first-child { grid-row:1 / 3; }
+          .fh-hero-visual img { width:100%; height:100%; object-fit:cover; filter:saturate(1.04); transition:transform .5s ease; }
+          .fh-hero-visual a:hover img { transform:scale(1.045); }
+          .fh-hero-visual span { position:absolute; left:.5rem; bottom:.5rem; padding:.25rem .55rem; border-radius:999px; background:rgba(20,20,20,.86); color:#fff; font-size:.56rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+          @media (max-width:980px) {
+            .fh-hero { grid-template-columns:1fr; }
+            .fh-hero-visual { height:220px; grid-template-columns:1.2fr 1fr .9fr; grid-template-rows:1fr; }
+            .fh-hero-visual a:first-child { grid-row:auto; }
           }
           @media (max-width:640px) {
-            .fh-announcement { font-size:.5rem; }
-            .fh-hero { min-height:470px; padding-top:3.5rem; padding-bottom:3rem; align-items:flex-start; }
-            .fh-hero h1 { font-size:1.7rem; }
-            .fh-hero-highlights { gap:.75rem; font-size:.75rem; margin:1.75rem 0; }
-            .fh-hero p { font-size:.82rem; }
-            .fh-section { padding-left:.8rem; padding-right:.8rem; }
-            .fh-work-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:.45rem; }
-            .fh-project { aspect-ratio:1.28/1; }
-            .fh-paths { grid-template-columns:1fr; }
-            .fh-path { min-height:190px; }
-            .fh-value-grid { gap:2.8rem 1rem; }
-            .fh-value p { font-size:.64rem; }
-            .fh-collab { margin-top:4rem; }
-            .fh-timeline { grid-template-columns:1fr; margin-top:2.5rem; }
-            .fh-era { border-top:0; border-left:3px solid #db69a0; padding:.25rem 0 2.4rem 1.5rem; text-align:left; }
-            .fh-era::before { top:0; left:-2px; }
-            .fh-era p { margin:0; max-width:34ch; }
-            .fh-plans { grid-template-columns:1fr 1fr; gap:.55rem; }
-            .fh-plan { min-height:350px; padding:1rem; }
-            .fh-plan > p, .fh-plan ul { font-size:.6rem; }
+            .fh-hero { padding-top:1.6rem; padding-bottom:1.75rem; }
+            .fh-hero h1 { font-size:1.72rem; }
+            .fh-hero p { font-size:.85rem; }
+            .fh-hero-visual { display:none; }
+          }
+
+          /* ---------- Shared section scaffolding ---------- */
+          .fh-dark { background:var(--fh-dark); color:#fff; }
+          .fh-section { padding:clamp(2.6rem,5vw,4rem) clamp(1rem,4vw,4rem); }
+          .fh-wrap { width:min(1320px,100%); margin:0 auto; }
+          .fh-eyebrow { margin:0 0 .4rem; color:#f2d400; font-size:.6rem; font-weight:850; letter-spacing:.17em; text-transform:uppercase; text-align:center; }
+          .fh-section h2 { margin:0; font-family:'Archivo Black','Arial Black',sans-serif; font-size:clamp(1.6rem,3.4vw,2.6rem); line-height:1.02; letter-spacing:-0.01em; text-align:center; }
+
+          /* ---------- Featured work marquee ---------- */
+          .fh-work { padding-top:.9rem; padding-bottom:1.6rem; border-top:1px solid rgba(255,255,255,.1); }
+          .fh-work-head { display:flex; align-items:end; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+          .fh-work-head h2 { color:#fff; text-align:left; font-size:clamp(.95rem,1.4vw,1.2rem); font-family:'Archivo Black','Arial Black',sans-serif; letter-spacing:0; }
+          .fh-work-head a { color:#fff; font-size:.65rem; font-weight:800; text-decoration:none; white-space:nowrap; }
+          .fh-marquee { overflow:hidden; mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent); -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent); }
+          .fh-marquee-track { display:flex; gap:.65rem; width:max-content; animation:fh-marquee-scroll 42s linear infinite; }
+          .fh-marquee:hover .fh-marquee-track { animation-play-state:paused; }
+          @keyframes fh-marquee-scroll { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+          .fh-project { position:relative; flex:0 0 auto; width:clamp(150px,16vw,205px); aspect-ratio:1.4/1; border-radius:8px; overflow:hidden; color:#fff; text-decoration:none; background:#333; }
+          .fh-project img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; }
+          .fh-project::after { content:""; position:absolute; inset:35% 0 0; background:linear-gradient(transparent,rgba(0,0,0,.78)); }
+          .fh-project:hover img { transform:scale(1.035); }
+          .fh-project-tag { position:absolute; z-index:2; top:.5rem; left:.5rem; padding:.28rem .5rem; border-radius:999px; background:rgba(255,255,255,.92); color:#111; font-size:.46rem; font-weight:850; text-transform:uppercase; }
+          .fh-project-meta { position:absolute; z-index:2; left:.6rem; right:.6rem; bottom:.5rem; display:grid; gap:.1rem; }
+          .fh-project-meta strong { font-size:.72rem; line-height:1.1; }
+          .fh-project-meta span { font-size:.54rem; opacity:.78; text-transform:uppercase; }
+
+          /* ---------- How it works ---------- */
+          .fh-steps { padding-top:clamp(2.6rem,5vw,4rem); padding-bottom:clamp(2.6rem,5vw,4rem); background:var(--fh-paper); color:#141414; }
+          .fh-steps h2 { color:#141414; }
+          .fh-steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:2.6rem; border-top:1px solid #141414; }
+          .fh-step { padding:1.7rem 1.5rem 0; border-right:1px solid #141414; }
+          .fh-step:last-child { border-right:0; }
+          .fh-step-num { font-family:'Archivo Black','Arial Black',sans-serif; font-size:2.6rem; line-height:1; color:#e8e5db; -webkit-text-stroke:1.5px #141414; }
+          .fh-step h3 { margin:.9rem 0 .55rem; font-size:1.05rem; letter-spacing:-0.01em; }
+          .fh-step p { margin:0; max-width:32ch; color:#3c3c3c; font-size:.82rem; line-height:1.5; }
+          @media (max-width:860px) {
+            .fh-steps-grid { grid-template-columns:1fr; border-top:0; }
+            .fh-step { border-right:0; border-top:1px solid #141414; padding-top:1.4rem; padding-bottom:1.4rem; }
+          }
+
+          /* ---------- Why Rhozeland (merged) ---------- */
+          .fh-values { padding-top:clamp(2.6rem,5vw,4rem); padding-bottom:clamp(2.8rem,5.5vw,4.5rem); }
+          .fh-value-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:2.2rem; }
+          .fh-value { position:relative; min-height:230px; padding:1.6rem 1.5rem; border-radius:6px; background:#1d1d1d; color:#fff; display:flex; flex-direction:column; justify-content:flex-end; }
+          .fh-value:nth-child(2) { background:#f46faf; color:#141414; }
+          .fh-value:nth-child(3) { background:#f2f2ec; color:#141414; border:1px dashed #141414; }
+          .fh-soon-tag { position:absolute; top:1.4rem; left:1.5rem; padding:.3rem .6rem; border-radius:999px; border:1px solid currentColor; font-size:.56rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; opacity:.85; }
+          .fh-value h3 { margin:0 0 .5rem; font-size:1.15rem; font-family:'Archivo Black','Arial Black',sans-serif; letter-spacing:-0.01em; }
+          .fh-value p { margin:0; max-width:30ch; font-size:.82rem; line-height:1.5; opacity:.9; }
+          @media (max-width:860px) { .fh-value-grid { grid-template-columns:1fr; } .fh-value { min-height:170px; } }
+
+          /* ---------- Partners / media ticker ---------- */
+          .fh-partners { padding:clamp(1.6rem,3vw,2.4rem) 0; background:#141414; border-top:1px solid rgba(255,255,255,.12); }
+          .fh-partners-label { text-align:center; margin:0 0 1.1rem; color:#9a9a9a; font-size:.6rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; }
+          .fh-partner-marquee { overflow:hidden; mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }
+          .fh-partner-track { display:flex; align-items:center; gap:clamp(2rem,5vw,4rem); width:max-content; animation:fh-marquee-scroll 28s linear infinite; }
+          .fh-partner-marquee:hover .fh-partner-track { animation-play-state:paused; }
+          .fh-partner-track a { white-space:nowrap; color:#fff; font-size:.85rem; font-weight:800; text-decoration:none; opacity:.72; }
+          .fh-partner-track a:hover { opacity:1; }
+
+          .hero.r-eco, section[aria-label="Featured work"] { display:none !important; }
+          body.workspace-active .figma-home, body.r-inline-active .figma-home { display:none !important; }
+          @media (prefers-reduced-motion:reduce) {
+            .fh-hero::before, .fh-marquee-track, .fh-partner-track, .fh-hero-rotation > span, .fh-project img, .fh-btn { animation:none !important; transition:none !important; }
+            .fh-hero-rotation > span:first-child { opacity:1; }
+            .fh-marquee, .fh-partner-marquee { overflow-x:auto; }
+          }
+          @media (max-width:900px) {
+            .figma-nav-links { display:none; }
+            .fh-value-grid { grid-template-columns:1fr; }
           }
           @media (max-width:380px) { .fh-hero h1 { font-size:1.55rem; } }
-          @media (prefers-reduced-motion:reduce) { .fh-project img,.fh-btn { transition:none; } .fh-hero-orbs,.fh-hero-rotation > span { animation:none; } .fh-hero-rotation > span:first-child { opacity:1; } }
         </style>
 
         <div class="fh-announcement">Rhozeland · independent creator support in Toronto and beyond</div>
+
         <section class="fh-hero" aria-labelledby="homepage-title">
-          <span class="fh-hero-orbs" aria-hidden="true"></span>
           <div class="fh-hero-copy">
+            <span class="fh-kicker">Creator-owned studio</span>
             <h1 id="homepage-title">Tell us your vision.<br>We'll bring <span class="fh-hero-rotation"><span>music videos</span><span>fashion drops</span><span>brand campaigns</span><span>artist coins</span></span><br><span class="fh-hero-tail">to life.</span></h1>
             <p>A creator-owned content house for shooting, producing, launching, and growing ambitious ideas from brief to final release.</p>
             <ul class="fh-hero-highlights">
@@ -3405,9 +3404,14 @@
               <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 10 4 4 8-8"/></svg>Fund work directly with a coin</li>
             </ul>
             <div class="fh-actions">
-              <a class="fh-btn" href="/community.html">Browse creators</a>
-              <a class="fh-btn is-dark" href="/create.html?new=1">Start a project <span aria-hidden="true">→</span></a>
+              <a class="fh-btn is-dark" href="/create.html">Create a project <span aria-hidden="true">→</span></a>
+              <a class="fh-btn" href="/discover">Discover</a>
             </div>
+          </div>
+          <div class="fh-hero-visual" aria-hidden="true">
+            <a href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener"><img src="/images/fingaz-mansa-musa-thumb.webp" alt="" loading="lazy"><span>Music video</span></a>
+            <a href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener"><img src="/images/cozal-holy-water-thumb.webp" alt="" loading="lazy"><span>Music video</span></a>
+            <a href="/projects.html" data-inline-nav="work"><img src="/images/ooak-saint-flair-west-thumb.webp" alt="" loading="lazy"><span>Album</span></a>
           </div>
         </section>
 
@@ -3415,62 +3419,76 @@
           <section class="fh-section fh-work" id="featured-work" aria-labelledby="work-heading">
             <div class="fh-wrap">
               <div class="fh-work-head"><h2 id="work-heading">Featured Projects</h2><a href="/projects.html" data-inline-nav="work">View all projects →</a></div>
-              <div class="fh-work-grid">
-                <a class="fh-project" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener"><img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa by Monee Fingaz"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Mansa Musa</strong><span>Monee Fingaz</span></span></a>
-                <a class="fh-project" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener"><img src="/images/cozal-holy-water-thumb.webp" alt="Holy Water by Cozal"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Holy Water</strong><span>Cozal</span></span></a>
-                <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/steelo-photoshoot-2.webp" alt="Young Steelo photoshoot"><span class="fh-project-tag">Photography</span><span class="fh-project-meta"><strong>Portrait series</strong><span>Young $teelo</span></span></a>
-                <a class="fh-project" href="https://www.youtube.com/watch?v=Y1v-IBb2aIA" target="_blank" rel="noopener"><img src="/images/semiah-withdrawals-thumb.webp" alt="Withdrawals by Semiah"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Withdrawals</strong><span>Semiah</span></span></a>
-                <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/sonicboy2-thumb.webp" alt="Sonicboy 2"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>Sonicboy 2</strong><span>Rhozeland</span></span></a>
-                <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/rhozeland-fus-thumb.webp" alt="FUS by Rhozeland"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>FUS</strong><span>Rhozeland</span></span></a>
-                <a class="fh-project" href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener"><img src="/images/dubzy-fate-thumb.webp" alt="Fate by Dubzy"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Fate</strong><span>Dubzy33</span></span></a>
-                <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/indigo-son-be-someone-thumb.webp" alt="Be Someone"><span class="fh-project-tag">Visual</span><span class="fh-project-meta"><strong>Be Someone</strong><span>Indigo Son</span></span></a>
-                <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/ooak-saint-flair-west-thumb.webp" alt="Saint Flair West"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>Saint Flair West</strong><span>OOAK</span></span></a>
-                <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/carina-lucky-charm-thumb.webp" alt="Lucky Charm by Carina"><span class="fh-project-tag">Campaign</span><span class="fh-project-meta"><strong>Lucky Charm</strong><span>Carina</span></span></a>
+              <div class="fh-marquee">
+                <div class="fh-marquee-track">
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener"><img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa by Monee Fingaz"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Mansa Musa</strong><span>Monee Fingaz</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener"><img src="/images/cozal-holy-water-thumb.webp" alt="Holy Water by Cozal"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Holy Water</strong><span>Cozal</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/steelo-photoshoot-2.webp" alt="Young Steelo photoshoot"><span class="fh-project-tag">Photography</span><span class="fh-project-meta"><strong>Portrait series</strong><span>Young $teelo</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=Y1v-IBb2aIA" target="_blank" rel="noopener"><img src="/images/semiah-withdrawals-thumb.webp" alt="Withdrawals by Semiah"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Withdrawals</strong><span>Semiah</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/sonicboy2-thumb.webp" alt="Sonicboy 2"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>Sonicboy 2</strong><span>Rhozeland</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/rhozeland-fus-thumb.webp" alt="FUS by Rhozeland"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>FUS</strong><span>Rhozeland</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener"><img src="/images/dubzy-fate-thumb.webp" alt="Fate by Dubzy"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Fate</strong><span>Dubzy33</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/indigo-son-be-someone-thumb.webp" alt="Be Someone"><span class="fh-project-tag">Visual</span><span class="fh-project-meta"><strong>Be Someone</strong><span>Indigo Son</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/ooak-saint-flair-west-thumb.webp" alt="Saint Flair West"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>Saint Flair West</strong><span>OOAK</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/carina-lucky-charm-thumb.webp" alt="Lucky Charm by Carina"><span class="fh-project-tag">Campaign</span><span class="fh-project-meta"><strong>Lucky Charm</strong><span>Carina</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener"><img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa by Monee Fingaz"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Mansa Musa</strong><span>Monee Fingaz</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=VPLyATcs7fE" target="_blank" rel="noopener"><img src="/images/cozal-holy-water-thumb.webp" alt="Holy Water by Cozal"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Holy Water</strong><span>Cozal</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/steelo-photoshoot-2.webp" alt="Young Steelo photoshoot"><span class="fh-project-tag">Photography</span><span class="fh-project-meta"><strong>Portrait series</strong><span>Young $teelo</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=Y1v-IBb2aIA" target="_blank" rel="noopener"><img src="/images/semiah-withdrawals-thumb.webp" alt="Withdrawals by Semiah"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Withdrawals</strong><span>Semiah</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/sonicboy2-thumb.webp" alt="Sonicboy 2"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>Sonicboy 2</strong><span>Rhozeland</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/rhozeland-fus-thumb.webp" alt="FUS by Rhozeland"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>FUS</strong><span>Rhozeland</span></span></a>
+                  <a class="fh-project" href="https://www.youtube.com/watch?v=EPnVN9riFtI" target="_blank" rel="noopener"><img src="/images/dubzy-fate-thumb.webp" alt="Fate by Dubzy"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Fate</strong><span>Dubzy33</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/indigo-son-be-someone-thumb.webp" alt="Be Someone"><span class="fh-project-tag">Visual</span><span class="fh-project-meta"><strong>Be Someone</strong><span>Indigo Son</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/ooak-saint-flair-west-thumb.webp" alt="Saint Flair West"><span class="fh-project-tag">Album</span><span class="fh-project-meta"><strong>Saint Flair West</strong><span>OOAK</span></span></a>
+                  <a class="fh-project" href="/projects.html" data-inline-nav="work"><img src="/images/carina-lucky-charm-thumb.webp" alt="Lucky Charm by Carina"><span class="fh-project-tag">Campaign</span><span class="fh-project-meta"><strong>Lucky Charm</strong><span>Carina</span></span></a>
+                </div>
               </div>
-
-              <div class="fh-paths" id="ecosystem">
-                <a class="fh-path" href="/community.html"><span class="fh-path-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><circle cx="17" cy="18" r="8"/><circle cx="31" cy="18" r="8"/><path d="M4 40c2-9 8-13 14-13s12 4 14 13M24 40c1-7 6-11 12-11 5 0 8 3 10 11"/></svg></span><h3>Creators</h3><p>Meet creators across music, visuals, design and more. Find your next collaborator.</p></a>
-                <a class="fh-path" href="/community.html?view=open-calls"><span class="fh-path-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 35h32M13 35V21h9v14M27 35V13h9v22"/><path d="m12 15 9-7 8 5 10-8"/></svg></span><h3>Find Work</h3><p>Looking to collaborate or grow? Browse active briefs, services and creator opportunities.</p></a>
-                <div class="fh-path is-soon"><span class="fh-soon-tag">Coming soon</span><span class="fh-path-icon"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 17 18-9 18 9-18 9-18-9Z"/><path d="M12 22v12c8 6 16 6 24 0V22M42 18v14"/></svg></span><h3>School</h3><p>Build practical skills through the Rhozeland creator curriculum and guided resources.</p></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="fh-section fh-values" aria-labelledby="why-heading">
-            <div class="fh-wrap">
-              <p class="fh-eyebrow">What we do</p><h2 id="why-heading">Why Rhozeland?</h2>
-              <div class="fh-value-grid">
-                <article class="fh-value"><span class="fh-value-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><circle cx="16" cy="12" r="5"/><path d="M6 27c1-7 5-10 10-10s9 3 10 10M5 8l3 2M27 8l-3 2M16 2v3"/></svg></span><h3>Curated Talent</h3><p>Creators are vetted and managed by Rhozeland.</p></article>
-                <article class="fh-value"><span class="fh-value-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="6" width="16" height="20" rx="5"/><path d="M5 11v10M27 11v10M12 3h8M12 29h8"/></svg></span><h3>Studio Access</h3><p>Need space or equipment? We’ve got you covered.</p></article>
-                <article class="fh-value"><span class="fh-value-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="17" width="9" height="11"/><rect x="20" y="17" width="9" height="11"/><rect x="12" y="4" width="8" height="10"/><path d="M16 14v4M12 22H9M20 22h3"/></svg></span><h3>Managed Workflow</h3><p>Scheduling, briefs and contracts live in one place.</p></article>
-                <article class="fh-value"><span class="fh-value-icon"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 3 2.8 7.2L26 13l-7.2 2.8L16 23l-2.8-7.2L6 13l7.2-2.8L16 3Z"/><path d="m25 22 1.2 3.1L29 26l-2.8 1L25 30l-1.1-3-2.9-1 2.9-.9L25 22Z"/></svg></span><h3>Consistent Quality</h3><p>Professional content, on time, every time.</p></article>
-              </div>
-              <div class="fh-collab"><strong>1000+</strong><span>Creator collaborations</span></div>
-              <p class="fh-collab-copy">A creator ecosystem with a studio in Toronto, connecting culture, talent and opportunity.</p>
             </div>
           </section>
         </div>
 
-        <section class="fh-story-band" aria-labelledby="story-heading">
-          <div class="fh-story"><p class="fh-eyebrow">Who we are</p><h2 id="story-heading">Our Story</h2>
-            <div class="fh-timeline">
-              <article class="fh-era"><b>2016</b><h3>The origin story</h3><p>Rhozeland began as friends building a shared passion for creative arts and culture.</p></article>
-              <article class="fh-era"><b>2021</b><h3>Building the hub</h3><p>We grew into a digital platform connecting creators, resources and services.</p></article>
-              <article class="fh-era"><b>2023</b><h3>Studio launch</h3><p>We opened our first physical studio for recording, production and collaboration.</p></article>
-              <article class="fh-era"><b>Today</b><h3>Creator ownership</h3><p>The ecosystem now connects studio access, projects, credits and community rewards.</p></article>
+        <section class="fh-section fh-steps" aria-labelledby="how-heading">
+          <div class="fh-wrap">
+            <p class="fh-eyebrow">How it works</p>
+            <h2 id="how-heading">From idea to launch, in three moves</h2>
+            <div class="fh-steps-grid">
+              <article class="fh-step"><div class="fh-step-num">01</div><h3>Create</h3><p>Start a project in four steps. No account needed until you're ready to publish.</p></article>
+              <article class="fh-step"><div class="fh-step-num">02</div><h3>Build together</h3><p>Work with Rhozeland, bring your own team, or open roles in a private workspace.</p></article>
+              <article class="fh-step"><div class="fh-step-num">03</div><h3>Support &amp; earn</h3><p>Fans like, back, hold coins, unlock perks, and earn $RHOZE rewards.</p></article>
             </div>
           </div>
         </section>
 
-        <section class="fh-dark fh-section fh-membership" id="membership" aria-labelledby="member-heading">
-          <div class="fh-wrap"><p class="fh-eyebrow">How we work</p><h2 id="member-heading">Become a Member</h2><p class="fh-membership-intro">Create regularly? Monthly plans offer consistent studio credits, priority booking and a workflow built around your output.</p>
-            <div class="fh-plans">
-              <article class="fh-plan"><h3>Spark</h3><div class="fh-price">$0 <small>CAD/mo · pay as you go</small></div><p>No monthly commitment. Book when you need it.</p><ul><li>Rollover unused credits</li><li>$RHOZE rewards per dollar spent</li></ul><a class="fh-btn" href="/create.html">Start a project</a></article>
-              <article class="fh-plan"><span class="fh-plan-popular">Most popular</span><h3>Bloom</h3><div class="fh-price">$240 <small>CAD/mo</small></div><p>Four credits each month for steady creative work.</p><ul><li>Priority queue</li><li>30-day credit rollover</li><li>$RHOZE yield per dollar spent</li></ul><a class="fh-btn" href="/start.html#subscribe">Choose Bloom</a></article>
-              <article class="fh-plan"><h3>Glow</h3><div class="fh-price">$560 <small>CAD/mo</small></div><p>Ten credits per month for active artists with momentum.</p><ul><li>Priority queue</li><li>30-day credit rollover</li><li>$RHOZE yield per dollar spent</li></ul><a class="fh-btn" href="/start.html#subscribe">Choose Glow</a></article>
-              <article class="fh-plan"><h3>Play</h3><div class="fh-price">$1250 <small>CAD/mo</small></div><p>Twenty-five credits per month for all-in creative teams.</p><ul><li>Priority queue</li><li>30-day credit rollover</li><li>$RHOZE yield per dollar spent</li></ul><a class="fh-btn" href="/start.html#subscribe">Choose Play</a></article>
+        <div class="fh-dark">
+          <section class="fh-section fh-values" aria-labelledby="why-heading">
+            <div class="fh-wrap">
+              <p class="fh-eyebrow">Why Rhozeland</p><h2 id="why-heading">Built for the whole ecosystem</h2>
+              <div class="fh-value-grid">
+                <a class="fh-value" href="/community.html"><h3>For creators &amp; brands</h3><p>Meet vetted talent across music, visuals, design and more — or post a brief and find your next collaborator.</p></a>
+                <a class="fh-value" href="/community.html?view=open-calls"><h3>For supporters</h3><p>Like, back, hold coins, unlock perks, and earn $RHOZE rewards on the projects you believe in.</p></a>
+                <div class="fh-value is-soon"><span class="fh-soon-tag">Coming soon</span><h3>Rhozeland School</h3><p>Creators teach, members unlock lessons — practical skills from the Rhozeland curriculum.</p></div>
+              </div>
             </div>
-            <div class="fh-partners"><p class="fh-eyebrow">Recognition &amp; partners</p><div class="fh-partner-row"><a href="https://pump.fun" target="_blank" rel="noopener">Pump.fun</a><a href="https://arena.colosseum.org/projects/explore/rhozeland" target="_blank" rel="noopener">Colosseum</a><a href="https://fi.co" target="_blank" rel="noopener">Founder Institute</a><a href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener">VoyageHouston</a><a href="https://capacoa.ca" target="_blank" rel="noopener">CAPACOA</a><a href="https://vectorfestival.org" target="_blank" rel="noopener">Vector Festival</a></div></div>
+          </section>
+        </div>
+
+        <section class="fh-partners" aria-label="Recognition and partners">
+          <p class="fh-partners-label">Recognition &amp; partners</p>
+          <div class="fh-partner-marquee">
+            <div class="fh-partner-track">
+              <a href="https://pump.fun" target="_blank" rel="noopener">Pump.fun</a>
+              <a href="https://arena.colosseum.org/projects/explore/rhozeland" target="_blank" rel="noopener">Colosseum</a>
+              <a href="https://fi.co" target="_blank" rel="noopener">Founder Institute</a>
+              <a href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener">VoyageHouston</a>
+              <a href="https://capacoa.ca" target="_blank" rel="noopener">CAPACOA</a>
+              <a href="https://vectorfestival.org" target="_blank" rel="noopener">Vector Festival</a>
+              <a href="https://pump.fun" target="_blank" rel="noopener" aria-hidden="true">Pump.fun</a>
+              <a href="https://arena.colosseum.org/projects/explore/rhozeland" target="_blank" rel="noopener" aria-hidden="true">Colosseum</a>
+              <a href="https://fi.co" target="_blank" rel="noopener" aria-hidden="true">Founder Institute</a>
+              <a href="https://voyagehouston.com/interview/hidden-gems-introducing-rhozeland/" target="_blank" rel="noopener" aria-hidden="true">VoyageHouston</a>
+              <a href="https://capacoa.ca" target="_blank" rel="noopener" aria-hidden="true">CAPACOA</a>
+              <a href="https://vectorfestival.org" target="_blank" rel="noopener" aria-hidden="true">Vector Festival</a>
+            </div>
           </div>
         </section>
       </div>

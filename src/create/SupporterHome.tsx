@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+import { RewardsCard } from "./Rewards";
 
 const db = supabase as any;
 
@@ -110,6 +111,7 @@ export function SupporterHome({ userId, heading }: { userId: string; heading: st
   return (
     <section className="rz-pf-sec rz-sup-home" aria-label={heading}>
       <h2>{heading}</h2>
+      <RewardsCard userId={userId} />
       <div className="rz-sup-block"><h3>Projects I liked</h3><LikedList userId={userId} /></div>
       <div className="rz-sup-block">
         <h3>Coins I hold</h3>

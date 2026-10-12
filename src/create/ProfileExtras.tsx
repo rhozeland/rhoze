@@ -250,3 +250,36 @@ export function MessagesPage() {
     </Shell>
   );
 }
+
+/* ---------------- Shared location options ---------------- */
+export const COUNTRY_OPTIONS: [string, string][] = [
+  ["", "Other / prefer not to say"],
+  ["CA", "Canada"],
+  ["US", "United States"],
+  ["GB", "United Kingdom"],
+  ["NG", "Nigeria"],
+  ["JM", "Jamaica"],
+  ["FR", "France"],
+  ["DE", "Germany"],
+  ["JP", "Japan"],
+  ["KR", "South Korea"],
+  ["BR", "Brazil"],
+  ["MX", "Mexico"],
+  ["AU", "Australia"],
+];
+
+export const COUNTRY_NAMES: Record<string, string> = Object.fromEntries(COUNTRY_OPTIONS.filter(([c]) => c));
+
+export function LocationFields({ city, country, onCity, onCountry }: { city: string; country: string; onCity: (v: string) => void; onCountry: (v: string) => void }) {
+  return (
+    <div className="rz-pf-two">
+      <div className="rz-field"><label>City <span className="rz-opt">(optional)</span></label>
+        <input className="rz-in" maxLength={80} placeholder="Toronto" value={city} onChange={(e) => onCity(e.target.value)} /></div>
+      <div className="rz-field"><label>Country <span className="rz-opt">(optional)</span></label>
+        <select className="rz-in" value={country} onChange={(e) => onCountry(e.target.value)}>
+          {COUNTRY_OPTIONS.map(([code, label]) => <option key={code} value={code}>{label}</option>)}
+        </select>
+      </div>
+    </div>
+  );
+}

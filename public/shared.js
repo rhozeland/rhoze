@@ -488,7 +488,7 @@ setupHoverVideos();
       var discover = null;
       menu.querySelectorAll('a').forEach(function(a){
         var href = a.getAttribute('href') || '';
-        if (/^(?:\/projects(?:\.html)?|\/discover)\/?$/.test(href)) {
+        if (/^(?:\/projects(?:\.html)?|\/discover(?:\.html)?)\/?$/.test(href)) {
           if (discover) { a.remove(); return; }
           discover = a; a.href = '/discover.html'; a.textContent = 'Discover';
         } else if (href.indexOf('view=open-calls') >= 0 || /^(Find Work|Opportunities)$/.test(a.textContent.trim())) a.remove();

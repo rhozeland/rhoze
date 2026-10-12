@@ -23,5 +23,5 @@
 
 - Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
 - Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.
-- Preserve the static studio portfolio as the legacy content source consumed by Discover, because historical work must retain its real external destinations without invented account owners.
+- Discover is the static former Featured Projects page mirrored in `public/discover.html` and `public/discover/index.html` (projects.html only redirects); it prepends published releases that open the project pop-up and keeps legacy cards on their real external links, because historical work must not get invented owners.
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.

@@ -8,3 +8,4 @@
 - Store owner-editable story/context/contribution/source in release answers via release_save; use admin-write portfolio_details for legacy archive metadata, because names must not confer ownership.
 - Pair optional existing tokens through saved coin_mint in Scope/Budget without requiring ticker metadata, because unavailable market indexing must not block pairing.
 - Keep portfolio likes as persistent owner-only identities with immutable project references and trigger-awarded points; unlike/re-like must never mint twice.
+- Archive media uses validated YouTube URLs in a compact side column with photo fallback; paired-token statistics reuse pumpfun-coin and ReleasePrice, so stories lead without fabricated market data.

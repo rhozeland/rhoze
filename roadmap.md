@@ -125,3 +125,8 @@
 ## Phone-friendly admin portal
 - [x] Restyle admin navigation, project-story editing and points controls for phone screens.
 - [x] Verify signed-in phone saves, reload/readback and website navigation.
+
+## Information-first project archives
+- [x] Prioritize archive details with compact YouTube embeds and photo fallbacks.
+- [x] Present real points and optional paired-token statistics without invented allocations; no archive currently has a paired token to verify live.
+- [x] Verify video/photo layouts, links and narrow screens; keep Slow Mo discovery integration deferred.

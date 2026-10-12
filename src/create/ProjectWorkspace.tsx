@@ -1,21 +1,27 @@
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import TeamPlanner from "./TeamPlanner";
+import { saveTeam } from "./team-storage";
+import { useEffect } from "react";
+import type { TeamPerson } from "./project-flow";
 import { money, uid } from "./shared";
 import "./workspace.css";
+import "./create-flow.css";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
 type Tab = "overview" | "plan" | "team" | "money";
 export type PublicSections = { overview: boolean; plan: boolean; team: boolean; money: boolean };
 
-export const DEFAULT_PUBLIC_SECTIONS: PublicSections = { overview: true, plan: true, team: true, money: true };
+export const DEFAULT_PUBLIC_SECTIONS: PublicSections = { overview: true, plan: false, team: false, money: false };
 
 const TOKEN_KEY = "rz_release_token";
 const MINT_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const MAKERS_OPTIONS: { value: string; label: string }[] = [
-  { value: "rhoze", label: "Work with Rhozeland" },
-  { value: "own", label: "My own team" },
-  { value: "open", label: "Open roles" },
+  { value: "rhozeland", label: "Work with Rhozeland" },
+  { value: "own_team", label: "My own team" },
+  { value: "open_roles", label: "Open roles" },
 ];
 
 /** Owner-only workspace: Overview, Plan, Team & chat, Money tabs, each with a public-visibility switch.
@@ -23,7 +29,16 @@ const MAKERS_OPTIONS: { value: string; label: string }[] = [
 export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (next: any) => void }) {
   const [tab, setTab] = useState<Tab>("overview");
   const [milestones, setMilestones] = useState<Milestone[]>(() => (r.milestones || []).map((m: any) => ({ id: m.id || uid(), title: m.title || "", deliverable: m.deliverable || "", amount_cents: Number(m.amount_cents) || 0, done: !!m.done })));
-  const [makers, setMakers] = useState<string>(r.answers?.makers?.mode || (Array.isArray(r.answers?.roles) && r.answers.roles.length ? "open" : "own"));
+  const [makers, setMakers] = useState<string[]>(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
+  const [people, setPeople] = useState<TeamPerson[]>([]);
+  const [title, setTitle] = useState(r.title || "");
+  const [description, setDescription] = useState(r.answers?.description || "");
+  const [budget, setBudget] = useState(String((r.budget_cents || 0) / 100));
+  const [deadline, setDeadline] = useState(r.answers?.deadline || "");
+  const [timeline, setTimeline] = useState(r.answers?.timeline || "Flexible");
+  useEffect(() => {
+    supabase.from("release_team_members").select("creator_id,display_name,email").eq("release_id", r.id).then(({ data }) => setPeople(data || []));
+  }, [r.id]);
   const [pub, setPub] = useState<PublicSections>({ ...DEFAULT_PUBLIC_SECTIONS, ...(r.answers?.public_sections || {}) });
   const [artistPct, setArtistPct] = useState(Number(r.artist_pct) || 0);
   const [feePct, setFeePct] = useState(Number(r.fee_pct) || 0);
@@ -39,9 +54,9 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   const splitTotal = Math.round(artistPct + feePct + causePct);
 
   const buildPayload = (overrides: Record<string, any> = {}) => ({
-    title: r.title, creator_name: r.creator_name, creator_email: r.creator_email, booking_id: r.booking_id,
-    answers: { ...(r.answers || {}), public_sections: pub, makers: { ...(r.answers?.makers || {}), mode: makers } },
-    budget_cents: r.budget_cents,
+    title: title.trim(), creator_name: r.creator_name, creator_email: r.creator_email, booking_id: r.booking_id,
+    answers: { ...(r.answers || {}), public_sections: pub, makers, description: description.trim(), deadline, timeline },
+    budget_cents: Math.max(0, Math.round(Number(budget) * 100) || 0),
     artist_pct: artistPct, fee_pct: feePct, cause_pct: causePct, cause_name: r.cause_name,
     milestones: milestones.map(({ id, ...m }) => m),
     coin_mint: mint.trim(), coin_ticker: ticker.trim(), coin_name: r.coin_name, coin_image: r.coin_image,
@@ -55,6 +70,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
     localStorage.setItem(TOKEN_KEY, token);
     const payload = buildPayload(overrides);
     const { error } = await (supabase.rpc as any)("release_save", { p_token: token, p_id: r.id, p_data: payload });
+    if (!error) { try { await saveTeam(r.id, people); } catch { setBusy(false); setErr("Project saved, but team changes could not be saved."); return; } }
     setBusy(false);
     if (error) { setErr("Couldn't save your changes. Please try again."); return; }
     setSavedAt(Date.now());
@@ -64,9 +80,16 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   const setPublic = (key: keyof PublicSections, value: boolean) => {
     const next = { ...pub, [key]: value };
     setPub(next);
-    save({ answers: { ...(r.answers || {}), public_sections: next, makers: { ...(r.answers?.makers || {}), mode: makers } } });
+    save({ answers: { ...(r.answers || {}), public_sections: next, makers, description: description.trim(), deadline, timeline } });
   };
 
+  const generateRoadmap = async () => {
+    setBusy(true); setErr("");
+    const { data, error } = await supabase.functions.invoke("release-roadmap", { body: { title, answers: { ...r.answers, description }, budget_cents: Math.round(Number(budget) * 100), artist_pct: artistPct } });
+    setBusy(false);
+    if (error || !Array.isArray(data?.milestones)) { setErr("Couldn't generate a roadmap. Add milestones manually or try again."); return; }
+    setMilestones(data.milestones.map((m: Milestone) => ({ ...m, id: uid(), done: false })));
+  };
   const addMilestone = () => setMilestones((m) => [...m, { id: uid(), title: "", deliverable: "", amount_cents: 0, done: false }]);
   const updateMilestone = (i: number, patch: Partial<Milestone>) => setMilestones((m) => m.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   const removeMilestone = (i: number) => setMilestones((m) => m.filter((_, j) => j !== i));
@@ -96,15 +119,17 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   return (
     <div className="rz-ws">
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
-        {([["overview", "Overview"], ["plan", "Plan"], ["team", "Team & chat"], ["money", "Money"]] as [Tab, string][]).map(([k, label]) => (
-          <button key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</button>
+        {([["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"]] as [Tab, string][]).map(([k, label]) => (
+          <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>
         ))}
       </div>
 
       {tab === "overview" && (
         <div>
           <div className="rz-ws-panel-head"><h3>Overview</h3><PublicSwitch sectionKey="overview" label="Overview" /></div>
-          <p className="rz-ws-note">The title, cover and description shown above come from your project details. Edit them from <a className="rz-textlink" href={`/create.html?draft=${r.id}`}>Edit project</a>.</p>
+          <label>Project name<input className="rz-in" value={title} maxLength={120} onChange={(e) => setTitle(e.target.value)} /></label>
+          <label>Brief description<textarea className="rz-in" value={description} maxLength={600} rows={4} onChange={(e) => setDescription(e.target.value)} /></label>
+          <div className="rz-ws-save"><Button variant="outline" className="rz-btn pri" disabled={busy || !title.trim()} onClick={() => save()}>Save details</Button><Button variant="outline" className="rz-btn" asChild><a href={`/create.html?draft=${r.id}`}>Edit all details</a></Button></div>
         </div>
       )}
 
@@ -117,15 +142,16 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
               <div className="rz-ws-milestone-fields">
                 <input className="rz-in" placeholder="Milestone title" value={m.title} onChange={(e) => updateMilestone(i, { title: e.target.value })} />
                 <input className="rz-in" placeholder="Deliverable" value={m.deliverable} onChange={(e) => updateMilestone(i, { deliverable: e.target.value })} />
-                <input className="rz-in" type="number" min={0} placeholder="Amount (cents)" value={m.amount_cents || ""} onChange={(e) => updateMilestone(i, { amount_cents: Math.max(0, parseInt(e.target.value) || 0) })} />
+                <input className="rz-in" type="number" min={0} aria-label={`Milestone ${i + 1} budget (CAD)`} placeholder="Budget (CAD)" value={m.amount_cents / 100 || ""} onChange={(e) => updateMilestone(i, { amount_cents: Math.max(0, Math.round(Number(e.target.value) * 100) || 0) })} />
                 <span className="rz-ws-note">{money(m.amount_cents || 0)}</span>
               </div>
-              <button type="button" className="rz-btn" onClick={() => removeMilestone(i)} aria-label={`Remove milestone ${i + 1}`}>Remove</button>
+              <Button variant="outline" type="button" className="rz-btn" onClick={() => removeMilestone(i)} aria-label={`Remove milestone ${i + 1}`}>Remove</Button>
             </div>
           ))}
           <div className="rz-ws-save">
-            <button type="button" className="rz-btn" onClick={addMilestone}>Add milestone</button>
-            <button type="button" className="rz-btn pri" disabled={busy} onClick={() => save()}>{busy ? "Saving…" : "Save plan"}</button>
+            <Button variant="outline" type="button" className="rz-btn" onClick={addMilestone}>Add milestone</Button>
+             <Button variant="outline" className="rz-btn" disabled={busy} onClick={generateRoadmap}>Generate with AI</Button>
+            <Button variant="outline" type="button" className="rz-btn pri" disabled={busy} onClick={() => save()}>{busy ? "Saving…" : "Save plan"}</Button>
             {savedAt && <span className="rz-ws-note">Saved</span>}
           </div>
         </div>
@@ -133,16 +159,16 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
 
       {tab === "team" && (
         <div>
-          <div className="rz-ws-panel-head"><h3>Team &amp; chat</h3><PublicSwitch sectionKey="team" label="Team & chat" /></div>
-          <p className="rz-ws-note">Who's making it</p>
+          <div className="rz-ws-panel-head"><h3>People</h3><PublicSwitch sectionKey="team" label="Team & chat" /></div>
+          <TeamPlanner people={people} onChange={setPeople} />
           <div className="rz-ws-makers">
             {MAKERS_OPTIONS.map((o) => (
-              <label key={o.value}><input type="radio" name="rz-ws-makers" checked={makers === o.value} onChange={() => setMakers(o.value)} />{o.label}</label>
+              <label key={o.value}><input type="checkbox" checked={makers.includes(o.value)} onChange={() => setMakers((prev) => prev.includes(o.value) ? prev.filter((x) => x !== o.value) : [...prev, o.value])} />{o.label}</label>
             ))}
           </div>
           {openRoles > 0 && <p className="rz-ws-note">{openRoles} open {openRoles === 1 ? "role" : "roles"} listed below on the public page.</p>}
           <div className="rz-ws-save">
-            <button type="button" className="rz-btn pri" disabled={busy} onClick={() => save()}>{busy ? "Saving…" : "Save team"}</button>
+            <Button variant="outline" type="button" className="rz-btn pri" disabled={busy} onClick={() => save()}>{busy ? "Saving…" : "Save team"}</Button>
             <a className="rz-btn" href="/messages">Open Messages</a>
             {savedAt && <span className="rz-ws-note">Saved</span>}
           </div>
@@ -151,19 +177,23 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
 
       {tab === "money" && (
         <div>
-          <div className="rz-ws-panel-head"><h3>Money</h3><PublicSwitch sectionKey="money" label="Money" /></div>
-          <div className="rz-ws-split-row"><span>Artist %</span><input className="rz-in" type="number" min={0} max={100} value={artistPct} onChange={(e) => setArtistPct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
+          <div className="rz-ws-panel-head"><h3>Budget</h3><PublicSwitch sectionKey="money" label="Money" /></div>
+          <label>Planning budget (CAD)<input className="rz-in" type="number" min={0} value={budget} onChange={(e) => setBudget(e.target.value)} /></label>
+          <label>Target date<input className="rz-in" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} /></label>
+          <label>Flexible timeline<select className="rz-in" value={timeline} onChange={(e) => setTimeline(e.target.value)}>{["1 week", "2 weeks", "1 month", "3 months", "Flexible"].map((value) => <option key={value}>{value}</option>)}</select></label>
+          <p className="rz-ws-note">Planning only · applicable taxes may be added to the final estimate. No money has been paid.</p>
+          <div className="rz-ws-split-row"><span>Project %</span><input className="rz-in" type="number" min={0} max={100} value={artistPct} onChange={(e) => setArtistPct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <div className="rz-ws-split-row"><span>Rhozeland fee %</span><input className="rz-in" type="number" min={0} max={100} value={feePct} onChange={(e) => setFeePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <div className="rz-ws-split-row"><span>Cause %</span><input className="rz-in" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <p className="rz-ws-note">{splitTotal === 100 ? "Totals 100%" : `Must total 100% (currently ${splitTotal}%)`}</p>
           <div className="rz-ws-row" style={{ marginTop: ".8rem" }}>
             <input className="rz-in" placeholder="Coin mint address" value={mint} onChange={(e) => setMint(e.target.value)} />
             <input className="rz-in" placeholder="Ticker" style={{ maxWidth: "7rem" }} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} />
-            <button type="button" className="rz-btn" disabled={coinBusy} onClick={lookupCoin}>{coinBusy ? "Checking…" : "Look up"}</button>
+            <Button variant="outline" type="button" className="rz-btn" disabled={coinBusy} onClick={lookupCoin}>{coinBusy ? "Checking…" : "Look up"}</Button>
           </div>
           {coinErr && <p className="rz-ws-note">{coinErr}</p>}
           <div className="rz-ws-save">
-            <button type="button" className="rz-btn pri" disabled={busy || splitTotal !== 100} onClick={() => save()}>{busy ? "Saving…" : "Save money"}</button>
+            <Button variant="outline" type="button" className="rz-btn pri" disabled={busy || splitTotal !== 100} onClick={() => save()}>{busy ? "Saving…" : "Save money"}</Button>
             {savedAt && <span className="rz-ws-note">Saved</span>}
           </div>
         </div>

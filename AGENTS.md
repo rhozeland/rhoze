@@ -14,12 +14,14 @@
 - Keep the three-tab Messages inbox in a dedicated module and read applications through a caller-scoped function with authenticated submission identity, because applications must never be attributed by display name or exposed to unrelated accounts.
 - Mark explicitly initiated conversations server-side in `dm_threads.personal_started`, because application-only threads must not appear as personal chats until a participant starts a conversation.
 - Portal inbox dialogs into the page's active React mount, because release-mode hides other direct children of the document body.
-- Crop project covers with react-easy-crop and upload a flattened 16:9 image, so existing project cards and pages preserve the chosen framing without schema changes.
 - Use only public cover artwork for locked Exclusive preview cards; keep post text and private media behind existing owner/wallet checks so visual teasers never expose protected content.
-- Keep release market data in the existing `pumpfun-coin` lookup and the collapsible display in `ReleasePrice`; return null for unavailable daily changes so unindexed coins never show fabricated performance.
-- Keep expanded project-wizard screen keys in draft `answers.wizard_step` while retaining legacy `current_step` numbering, because existing saved drafts must reopen without a database migration.
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
-- Keep Discover globe code under `src/create/globe/` fed only by public release and creator data, because discovery must never read private profile fields.
+- Follow `src/create/AGENTS.md` for cover cropping, market data, wizard compatibility, and globe rules.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
 - Keep the submission presentation in a separate Vite entry with one fixed-resolution slide registry and scaling component, because deck navigation and print export must never change the public website.
 - Resolve presentation screenshot pointers against the published asset host only on localhost, because Vite does not serve the asset CDN while hosted deployments use same-origin assets.
+
+- Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
+- Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.
+- Preserve the static studio portfolio as the legacy content source consumed by Discover, because historical work must retain its real external destinations without invented account owners.
+- Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.

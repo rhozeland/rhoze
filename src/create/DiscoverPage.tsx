@@ -3,6 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import { ProjectHeart } from "./ProjectLikes";
 import DiscoverGlobe, { type GlobePin } from "./globe/DiscoverGlobe";
+import "./workspace.css";
+import { Button } from "@/components/ui/button";
+import StudioProjects from "./StudioProjects";
+import ExistingProjects from "./ExistingProjects";
+import { hasOpenRoles } from "./project-flow";
 import { jitterFor } from "./globe/geo";
 
 type Release = {
@@ -24,10 +29,11 @@ type Creator = {
   bio: string | null;
 };
 
-const FILTERS = ["All", "Music", "Film & Video", "Art & Design", "Fashion", "Brand campaigns"] as const;
+const FILTERS = ["All", "Music", "Film & Video", "Art & Design", "Fashion", "Brand campaigns", "Open roles"] as const;
 type Filter = (typeof FILTERS)[number];
 
 const EMPTY_LABEL: Record<Filter, string> = {
+  "Open roles": "No open roles yet.",
   "All": "No projects yet — create one",
   "Music": "No music projects yet.",
   "Film & Video": "No film or video projects yet.",
@@ -46,7 +52,7 @@ const textOf = (r: Release) => `${r.title} ${r.creator_name} ${r.answers?.making
 export default function DiscoverPage() {
   const [rows, setRows] = useState<Release[] | undefined>(undefined);
   const [creators, setCreators] = useState<Creator[]>([]);
-  const [filter, setFilter] = useState<Filter>("All");
+  const [filter, setFilter] = useState<Filter>(new URLSearchParams(location.search).get("filter") === "Open roles" ? "Open roles" : "All");
 
   useEffect(() => {
     document.title = "Discover | Rhozeland";
@@ -65,6 +71,7 @@ export default function DiscoverPage() {
   const visible = useMemo(() => {
     if (!rows) return rows;
     switch (filter) {
+      case "Open roles": return rows.filter((r) => hasOpenRoles(r.answers));
       case "Music":
         return rows.filter((r) => MUSIC_WORDS.test(textOf(r)));
       case "Film & Video":
@@ -112,24 +119,24 @@ export default function DiscoverPage() {
 
   return (
     <Shell right={<a className="rz-btn" href="/create.html?new=1">Create a project</a>}>
-      <div className="rz-card rz-card-wide">
+      <div className="rz-discover-content">
         <div className="rz-head">
           <h1>Discover</h1>
-          <p>New projects from independent artists, newest first.</p>
+          <ExistingProjects />
         </div>
 
         <DiscoverGlobe pins={pins} />
 
         <div className="rz-chips" role="tablist" aria-label="Filter projects">
           {FILTERS.map((f) => (
-            <button
+            <Button variant="outline"
               key={f}
               type="button"
               className={`rz-chipbtn ${filter === f ? "on" : ""}`}
               onClick={() => setFilter(f)}
             >
               {f}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -139,7 +146,7 @@ export default function DiscoverPage() {
           </div>
         )}
 
-        {rows !== undefined && visible && visible.length === 0 && (
+        {rows !== undefined && visible && visible.length === 0 && filter !== "All" && (
           <div className="rz-empty">
             <p>{EMPTY_LABEL[filter]}</p>
             <a className="rz-btn" href="/create.html?new=1">Create a project</a>
@@ -153,7 +160,7 @@ export default function DiscoverPage() {
               return (
                 <div key={r.id} className="rz-like-card"><a className="rz-feed-card" href={`/release/${r.slug}`}>
                   <span className="rz-feed-cover">
-                    {(r as any).cover_url || r.coin_image ? <img src={(r as any).cover_url || r.coin_image!} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}
+                    {(r as any).cover_url || r.coin_image ? <img src={(r as any).cover_url || r.coin_image || ""} alt={`${r.title} artwork`} /> : <i>{r.title}</i>}
                   </span>
                   <span className="rz-feed-meta">
                     <small>{r.creator_name || "Rhozeland artist"}</small>
@@ -168,6 +175,7 @@ export default function DiscoverPage() {
             })}
           </div>
         )}
+        <StudioProjects filter={filter} />
       </div>
     </Shell>
   );

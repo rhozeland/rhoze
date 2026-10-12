@@ -109,7 +109,7 @@
 - [x] Verify homepage visuals, links, and narrow-screen layout.
 
 ## Rhozeland story
-- [ ] Simplify the opening, embed the documentary, add 12 diverse moving projects and expandable token chart/activity; verify shared navigation and links.
+- [x] Simplify the opening, embed the documentary, add 12 diverse moving projects and expandable token chart/activity; verify playback, 100 real indexed trades, shared header/footer and Discover navigation.
 - [x] Build a visual mission, history, creator-support and token page using existing studio photos and real video links.
 - [x] Link Our story from shared static and React footers without expanding the header.
 - [x] Verify footer-to-story navigation, token copy, video links, theme and mobile layout.

@@ -9,17 +9,18 @@ import BenefitsAdmin from "../components/BenefitsAdmin";
 import ProjectStories from "./ProjectStories";
 import Leaderboard from "./Leaderboard";
 import { useAuth } from "../lib/auth";
+import '../components/admin-mobile.css';
 
 export default function TeamAdmin() {
   const { isAdmin } = useAuth();
   if (!isAdmin) return <p role="alert">Admin access required.</p>;
   return (
-    <div className="space-y-4">
+    <div className="team-admin space-y-4">
       <div>
         <h1 className="text-2xl font-semibold">Admin portal</h1>
       </div>
       <Tabs defaultValue="roles" className="space-y-4">
-        <TabsList className="flex h-auto flex-wrap justify-start gap-1">
+        <TabsList className="team-admin-tabs flex h-auto flex-wrap justify-start gap-1">
           <TabsTrigger value="hire">Hire</TabsTrigger>
           <TabsTrigger value="roles">Team roles</TabsTrigger>
           <TabsTrigger value="stories">Project stories</TabsTrigger>

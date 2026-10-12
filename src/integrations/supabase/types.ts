@@ -3691,6 +3691,7 @@ export type Database = {
           title: string
         }[]
       }
+      creator_progress: { Args: { p_user_id?: string }; Returns: Json }
       creator_save_details: {
         Args: {
           p_disciplines: string[]
@@ -3722,6 +3723,17 @@ export type Database = {
       creator_set_visibility: {
         Args: { p_id: string; p_public: boolean }
         Returns: undefined
+      }
+      creator_standings: {
+        Args: never
+        Returns: {
+          contributions: number
+          display_name: string
+          photo_url: string
+          rank_position: number
+          slug: string
+          xp: number
+        }[]
       }
       credit_request_cancel: {
         Args: { _request_id: string }

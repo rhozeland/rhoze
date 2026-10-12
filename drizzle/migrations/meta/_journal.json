@@ -183,6 +183,13 @@
       "when": 1791781580241,
       "tag": "0025_rhoze_payment_rewards_and_sends",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791782431019,
+      "tag": "0026_creator_pass_progress",
+      "breakpoints": true
     }
   ]
 }

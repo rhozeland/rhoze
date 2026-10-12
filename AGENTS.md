@@ -25,7 +25,7 @@
 - Build Discover as a Vite entry mirrored to static URLs; resolve only unique public account-backed creators, preserve source links, and keep globe/Flow public-only to prevent invented ownership.
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
-- Derive XP from verified earnings; list approved public account-backed newcomers at zero and keep historical community points separate, because handles cannot prove account ownership or token balances.
+- Rank verified XP alongside labeled historical identities without merging ownership; weekly stats are caller-scoped and project totals public-only, to protect private activity.
 - Adapt Creator OS with CSS tilt only; preserve permission and reward rules.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.

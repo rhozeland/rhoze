@@ -1694,6 +1694,38 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_project_likes: {
+        Row: {
+          created_at: string
+          id: string
+          liked: boolean
+          slug: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          liked?: boolean
+          slug: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          liked?: boolean
+          slug?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_project_likes_slug_fkey"
+            columns: ["slug"]
+            isOneToOne: false
+            referencedRelation: "portfolio_details"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       profile_employment_history: {
         Row: {
           created_at: string
@@ -3892,6 +3924,7 @@ export type Database = {
         Returns: number
       }
       my_application_inbox: { Args: never; Returns: Json }
+      my_contribution_stats: { Args: never; Returns: Json }
       my_profile: { Args: { p_kind?: string; p_name?: string }; Returns: Json }
       my_releases: {
         Args: never
@@ -3938,6 +3971,7 @@ export type Database = {
           entries: Json
         }[]
       }
+      portfolio_reward_stats: { Args: { p_slug: string }; Returns: Json }
       project_discussion: {
         Args: { p_release_id: string }
         Returns: {
@@ -3949,6 +3983,7 @@ export type Database = {
           slug: string
         }[]
       }
+      project_reward_stats: { Args: { p_release_id: string }; Returns: Json }
       purchase_rhoze_square: {
         Args: {
           _amount_usd_cents: number

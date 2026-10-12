@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { X, Share2 } from "lucide-react";
 import ProjectDiscussion from "./ProjectDiscussion";
 import ProjectStory from "./ProjectStory";
+import ProjectRewards from "./ProjectRewards";
+import './leaderboard.css';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -137,6 +139,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
     setApplyBusy(false);
     if (error) return setApplyErr("Your application could not be sent. Please try again.");
     setApplyDone(true);
+    window.dispatchEvent(new Event('rhoze:rewards'));
   };
 
   const [confirmDel, setConfirmDel] = useState(false);
@@ -267,6 +270,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               <Button asChild className="rz-btn pri"><a href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a></Button>
             </div>
             </header>
+            <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
             <div className="rz-cover">
               {r.cover_url || r.coin_image ? <img src={r.cover_url || r.coin_image} alt={`${r.title} cover art`} /> : <span>{r.title}</span>}

@@ -116,3 +116,8 @@
 - [x] Connect real team roles and protect admin access with current account permissions.
 - [x] Add project-story editing and weekly/all-time historical leaderboard point management.
 - [x] Verify signed-in story/point editing and saved readback; deny signed-out access even with forged cached roles.
+
+## Minimal real-points leaderboard
+- [x] Replace source switches and prize clutter with one honest all-time list and personal weekly stats.
+- [x] Connect project-page earning feedback to verified rewards and show project-earned points.
+- [x] Verify signed-in earning, repeat-action protection, saved totals, and public privacy.

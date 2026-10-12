@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Shell } from "./shared";
 import ProjectStory from "./ProjectStory";
-import ReleasePrice from "./ReleasePrice";
+import ReleasePrice, { formatReleasePrice } from "./ReleasePrice";
+import { archiveYouTubeEmbed } from './archive-media';
+import { Copy, ExternalLink, ArrowLeft } from 'lucide-react';
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import "./portfolio.css";
 import PortfolioHeart from './PortfolioHeart';
@@ -20,6 +22,8 @@ export default function PortfolioPage({ slug }: { slug: string }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [price, setPrice] = useState<number | null>(null);
+  const [marketCap, setMarketCap] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
   useEffect(() => {
     let active = true;
     supabase.from('portfolio_details').select('*').eq('slug', slug).maybeSingle().then(({ data }) => { if (active && data) { setDetails(data); setSaved(data); } });
@@ -27,9 +31,9 @@ export default function PortfolioPage({ slug }: { slug: string }) {
     return () => { active = false; };
   }, [slug]);
   useEffect(() => {
-    let active = true; setPrice(null);
+    let active = true; setPrice(null); setMarketCap(null);
     if (!saved.coin_mint) return;
-    const load = () => supabase.functions.invoke('pumpfun-coin', { body: { mint: saved.coin_mint } }).then(({ data }) => { if (active) setPrice(typeof data?.priceUsd === 'number' ? data.priceUsd : null); });
+    const load = () => supabase.functions.invoke('pumpfun-coin', { body: { mint: saved.coin_mint } }).then(({ data }) => { if (active) { setPrice(typeof data?.priceUsd === 'number' && Number.isFinite(data.priceUsd) ? data.priceUsd : null); setMarketCap(typeof data?.mcap === 'number' && Number.isFinite(data.mcap) ? data.mcap : null); } });
     load(); const timer = setInterval(load, 60000);
     return () => { active = false; clearInterval(timer); };
   }, [saved.coin_mint]);
@@ -54,21 +58,32 @@ export default function PortfolioPage({ slug }: { slug: string }) {
     return () => { active = false; };
   }, [slug]);
   useEffect(() => { if (entry) document.title = `${entry.title} — Project archive | Rhozeland`; }, [entry]);
+  const videoUrl = entry ? archiveYouTubeEmbed(entry.source_url) : null;
   return <Shell className="rz-release-view"><article className="rz-portfolio">
-    <Button variant="ghost" asChild><a href="/discover.html">← Discover</a></Button>
+    <Button variant="ghost" asChild><a href="/discover.html"><ArrowLeft size={16} /> Discover</a></Button>
     {entry === undefined ? <p>Loading project…</p> : !entry ? <h1>Project not found</h1> : <>
       {admin && <Button variant="outline" onClick={() => setEditing(!editing)}>{editing ? 'Close editor' : 'Edit project record'}</Button>}
       {editing && <section className="rz-ws"><h2>Edit project record</h2>{([['story', 'The story'], ['cultural_context', 'Cultural context'], ['rhozeland_contribution', "Rhozeland's contribution"]] as const).map(([key, label]) => <label key={key}>{label}<textarea className="rz-in" rows={4} value={details[key]} onChange={e => setDetails({ ...details, [key]: e.target.value })} /></label>)}<label>Solana contract address<input className="rz-in" value={details.coin_mint} onChange={e => setDetails({ ...details, coin_mint: e.target.value })} /></label><label>Ticker<input className="rz-in" value={details.coin_ticker} onChange={e => setDetails({ ...details, coin_ticker: e.target.value.toUpperCase() })} /></label><p className="rz-note">{TOKEN_PAIRING_NOTICE}</p><Button variant="outline" disabled={busy} onClick={saveDetails}>{busy ? 'Saving…' : 'Save project record'}</Button>{error && <p role="alert">{error}</p>}</section>}
       <header><p className="rz-portfolio-kicker">Project archive · {entry.tag}</p><h1>{entry.title}</h1><p>{entry.artist.split(',').map((name, i) => { const profile = profiles[name.normalize('NFC').trim().toLowerCase()]; return <span key={name}>{i > 0 && ' · '}{profile ? <a href={`/creator/${profile}`}>{name}</a> : name}</span>; })}{entry.date && ` · ${entry.date}`}</p></header>
-      <PortfolioHeart slug={slug} />
-      <ProjectRewards portfolioSlug={slug} />
-      <img className="rz-portfolio-cover" src={entry.image} alt={`${entry.title} — ${entry.artist}`} />
-      <div className="rz-portfolio-body"><aside><h2>Project record</h2><dl><dt>Creator</dt><dd>{entry.artist}</dd><dt>Format</dt><dd>{entry.tag}</dd>{entry.date && <><dt>Released</dt><dd>{entry.date}</dd></>}</dl><Button variant="outline" asChild><a href={entry.source_url} target="_blank" rel="noopener noreferrer">View original work ↗</a></Button></aside><div>
+      <div className="rz-portfolio-body"><div className="rz-portfolio-narrative">
         <section><h2>About the project</h2><p>{entry.title} is a {entry.tag.toLowerCase()} by {entry.artist}{entry.date ? `, released in ${entry.date}` : ''}, featured in the Rhozeland portfolio.</p></section>
         <ProjectStory story={saved} />
         {!saved.rhozeland_contribution && <section><h2>Rhozeland's contribution</h2><p className="text-muted-foreground">Detailed production credits and the project's story have not been documented here yet.</p></section>}
-        {saved.coin_mint && <><h2>Paired token</h2><p className="break-all text-sm">{saved.coin_mint}</p><ReleasePrice mint={saved.coin_mint} ticker={saved.coin_ticker} price={price} change={null} /><p className="text-sm text-muted-foreground">{TOKEN_PAIRING_NOTICE}</p></>}
-      </div></div>
+      </div><aside className="rz-portfolio-sidebar">
+        <section className="rz-portfolio-media" aria-label="Original media">
+          {videoUrl ? <iframe src={videoUrl} title={`${entry.title} — original YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /> : <img className="rz-portfolio-cover" src={entry.image} alt={`${entry.title} — ${entry.artist}`} />}
+          <Button variant="outline" size="sm" asChild><a href={entry.source_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={14} />{videoUrl ? 'Open on YouTube' : 'View original work'}</a></Button>
+        </section>
+        <section><h2>Project record</h2><dl><dt>Creator</dt><dd>{entry.artist}</dd><dt>Format</dt><dd>{entry.tag}</dd>{entry.date && <><dt>Released</dt><dd>{entry.date}</dd></>}</dl></section>
+        <section className="rz-portfolio-activity" aria-label="Project activity"><h2>Project activity</h2><PortfolioHeart slug={slug} /><ProjectRewards portfolioSlug={slug} /></section>
+      </aside></div>
+      {saved.coin_mint && <section className="rz-portfolio-token" aria-label="Paired token">
+        <header><h2>{saved.coin_ticker ? `$${saved.coin_ticker}` : 'Paired token'}</h2><span>Solana · Paired token</span></header>
+        <dl className="rz-portfolio-token-stats"><div><dt>Price · USD</dt><dd>{price === null ? 'Unavailable' : formatReleasePrice(price)}</dd></div><div><dt>Market cap · USD</dt><dd>{marketCap === null ? 'Unavailable' : formatReleasePrice(marketCap)}</dd></div></dl>
+        <div className="rz-portfolio-contract"><code>{saved.coin_mint}</code><Button size="icon" variant="outline" aria-label={copied ? 'Address copied' : 'Copy token address'} title={copied ? 'Address copied' : 'Copy token address'} onClick={async () => { try { await navigator.clipboard.writeText(saved.coin_mint); setCopied(true); } catch { setCopied(false); } }}><Copy size={16} /></Button><Button size="sm" variant="outline" asChild><a href={`https://solscan.io/token/${encodeURIComponent(saved.coin_mint)}`} target="_blank" rel="noopener noreferrer"><ExternalLink size={14} /> Token details</a></Button></div>
+        <details><summary>Live chart</summary><ReleasePrice mint={saved.coin_mint} ticker={saved.coin_ticker} price={price} change={null} /></details>
+        <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>
+      </section>}
     </>}
   </article></Shell>;
 }

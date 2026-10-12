@@ -31,6 +31,15 @@
 - [x] Verify Artist and Brand navigation, validation, retained inputs, roadmap generation, roles, final review, and saved-draft reopening.
 
 ## Unified platform (Colosseum: Mon Oct 12 3:00 AM ET)
+## Private project flow and consolidated discovery
+- [ ] Restore one-question Idea screens inside four stages; remove project-type selector.
+- [ ] Add estimate terminology, calendar deadline and flexible periods, and tax information.
+- [ ] Add public creator selection and team email planning alongside open roles.
+- [ ] Create private workspaces, deliberate later publishing, and editable project details.
+- [ ] Consolidate Discover navigation and studio work, update Create actions and Existing Projects access.
+- [ ] Verify private creation, editing/readback, and public access restrictions.
+
+## Unified platform (Colosseum: Mon Oct 12 3:00 AM ET)
 - [x] W1: One account, create/support paths
 - [x] W1: Merged 4-step Create flow (Artist + Brand)
 - [x] W1: Create project button on dashboard + Discover

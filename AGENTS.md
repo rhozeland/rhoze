@@ -34,4 +34,4 @@
 
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
 
-- Resolve portal roles from authenticated database reads, never cached privileges; reuse RLS-protected stories and historical points, keeping verified XP read-only.
+- Read portal roles from authenticated database, never cached privileges; reuse protected stories and historical points; verified XP is read-only.

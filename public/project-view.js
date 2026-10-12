@@ -70,6 +70,7 @@
     var a = e.target.closest('a[href]'); if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
     var url = new URL(a.href, location.origin);
     if (url.origin !== location.origin || !/^\/release\/[^/]+\/?$/.test(url.pathname) || window.self !== window.top) return;
+    if (a.closest('.work-card,.fh-project,.artist-timeline-item') || /^\/discover(?:\.html)?\/?$/.test(location.pathname)) return;
     e.preventDefault(); e.stopPropagation(); ensure();
     dialog.classList.toggle('is-discover', /^\/discover\/?$/.test(location.pathname));
     opener = a; previousTitle = document.title;

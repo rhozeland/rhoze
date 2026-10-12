@@ -3,7 +3,7 @@
 .rz-flow *{box-sizing:border-box}
 /* Editorial project view, shared by direct links and the listing pop-up. */
 .rz-release-view{background:hsl(var(--card));position:relative}
-.rz-release-view>.site-nav,.rz-release-view>.sn-mobile,.rz-release-view>.rz-footer{display:none}
+.rz-release-embedded>.site-nav,.rz-release-embedded>.sn-mobile,.rz-release-embedded>.rz-footer{display:none}
 .rz-release-view .rz-stage{background:hsl(var(--card));padding:64px 40px 56px}
 .rz-release-view .rz-release-content{width:min(1000px,100%);border:0;border-radius:0;box-shadow:none;padding:0}
 .rz-release-view .rz-owner{width:min(1000px,100%)}

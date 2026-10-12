@@ -63,6 +63,9 @@
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
 ## Work-led homepage and Rewards
+- [ ] Remove portfolio view counters and make all Discover/home project cards open same-origin project pages.
+- [ ] Restore editorial project stories and owner-editable context/contribution/source fields.
+- [ ] Add optional token pairing in Scope and owner editing; verify saved address and project chart.
 - [x] Compact Discover controls, icon-only Shuffle beside search, highlighted Create; verify category/search and narrow layouts.
 - [x] Merge Creator Pass and subtle live price/market cap, remove separate promo/chart/change and duplicate branding.
 - [x] Rotate all 40 local Discover covers; verify artwork, links and motion.

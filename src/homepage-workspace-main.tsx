@@ -6,6 +6,7 @@ import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
 import ExclusivePage from "@/create/ExclusivePage";
 import PrivateWorkspace from "@/create/PrivateWorkspace";
+import PortfolioPage from "@/create/PortfolioPage";
 import RewardsPage from "@/create/RewardsPage";
 import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
@@ -18,6 +19,7 @@ const exclusiveMatch = location.pathname.match(/^\/release\/([^/]+)\/exclusive\/
 
 const discoverMatch = location.pathname.match(/^\/(discover|projects)\/?$/);
 const workspaceMatch = location.pathname.match(/^\/workspace\/([^/]+)\/?$/);
+const portfolioMatch = location.pathname.match(/^\/project\/([^/]+)\/?$/);
 
 const profileMatch = location.pathname.match(/^\/(creator|brand)\/([^/]+)\/?$/);
 
@@ -28,6 +30,12 @@ if (/^\/rewards\/?$/.test(location.pathname)) {
   el.id = "profile-root";
   document.body.appendChild(el);
   createRoot(el).render(<RewardsPage />);
+} else if (portfolioMatch) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "release-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<PortfolioPage slug={decodeURIComponent(portfolioMatch[1])} />);
 } else if (workspaceMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");

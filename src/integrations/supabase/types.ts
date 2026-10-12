@@ -1667,6 +1667,33 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_details: {
+        Row: {
+          coin_mint: string
+          coin_ticker: string
+          cultural_context: string
+          rhozeland_contribution: string
+          slug: string
+          story: string
+        }
+        Insert: {
+          coin_mint?: string
+          coin_ticker?: string
+          cultural_context?: string
+          rhozeland_contribution?: string
+          slug: string
+          story?: string
+        }
+        Update: {
+          coin_mint?: string
+          coin_ticker?: string
+          cultural_context?: string
+          rhozeland_contribution?: string
+          slug?: string
+          story?: string
+        }
+        Relationships: []
+      }
       profile_employment_history: {
         Row: {
           created_at: string

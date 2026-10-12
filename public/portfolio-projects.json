@@ -1,0 +1,762 @@
+[
+  {
+    "slug": "sefra-cozal",
+    "title": "Sefra",
+    "artist": "Cozal",
+    "image": "/images/cozal-sefra-thumb.jpg",
+    "source_url": "https://www.youtube.com/watch?v=WLpDRh8JsxY",
+    "tag": "Music Video",
+    "date": "Jul 2026",
+    "categories": "visual,audio"
+  },
+  {
+    "slug": "just-call-me-ess-b",
+    "title": "Just Call Me",
+    "artist": "Ess B",
+    "image": "/images/ess-b-just-call-me-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=2Nuyr57Xe3o",
+    "tag": "Music Video",
+    "date": "Apr 2026",
+    "categories": "visual,audio"
+  },
+  {
+    "slug": "the-mask-ooak",
+    "title": "The Mask",
+    "artist": "Ooak",
+    "image": "/images/ooak-the-mask-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=Ht1RPGlJBZg",
+    "tag": "Music Video",
+    "date": "Feb 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "saint-flair-west-ooak",
+    "title": "Saint Flair West",
+    "artist": "Ooak",
+    "image": "/images/ooak-saint-flair-west-thumb.webp",
+    "source_url": "https://www.youtube.com/playlist?list=OLAK5uy_nEqURlEWs2C0dJXjln2XYNJS2KjS3kHSM",
+    "tag": "EP",
+    "date": "Dec 2025",
+    "categories": "audio"
+  },
+  {
+    "slug": "mansa-musa-monee-fingaz",
+    "title": "Mansa Musa",
+    "artist": "MONEE FINGAZ",
+    "image": "/images/fingaz-mansa-musa-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=w9dYE595cBw",
+    "tag": "Music Video",
+    "date": "Feb 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "telephone-runner-s-club",
+    "title": "Telephone",
+    "artist": "Runner's Club",
+    "image": "/images/rc4-thumb.webp",
+    "source_url": "https://www.instagram.com/runnersclubco/reel/DKXax4qA4u3/",
+    "tag": "Project",
+    "date": "Jun 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "who-runs-the-world-runner-s-club",
+    "title": "Who Runs The World?",
+    "artist": "Runner's Club",
+    "image": "/images/rc1-thumb.webp",
+    "source_url": "https://www.instagram.com/p/DJ90KlZIg3r/",
+    "tag": "Project",
+    "date": "May 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "who-runs-the-world-ii-runner-s-club",
+    "title": "Who Runs The World II",
+    "artist": "Runner's Club",
+    "image": "/images/rc2-thumb.webp",
+    "source_url": "https://www.instagram.com/p/DS0oshoASn1/",
+    "tag": "Project",
+    "date": "Dec 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "rc-runner-s-club",
+    "title": "RC",
+    "artist": "Runner's Club",
+    "image": "/images/rc3-thumb.webp",
+    "source_url": "https://www.instagram.com/p/CtE_-rjpydB/",
+    "tag": "Project",
+    "date": "Jun 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "fus-rhozeland-indolestic-straightdizzy-roosevelth-marv",
+    "title": "FUS",
+    "artist": "Rhozeland,Indoléstic,Straightdizzy,Roosevelth,MARV",
+    "image": "/images/rhozeland-fus-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=WULC2OD8EFs",
+    "tag": "EP",
+    "date": "Sep 2025",
+    "categories": "audio,visual"
+  },
+  {
+    "slug": "feel-like-a-superhero-monee-fingaz",
+    "title": "Feel Like A Superhero",
+    "artist": "MONEE FINGAZ",
+    "image": "/images/fingaz-superhero-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=_4FotFv6VWc",
+    "tag": "Music Video",
+    "date": "Mar 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "gotta-go-straightdizzy-marv",
+    "title": "Gotta Go",
+    "artist": "Straightdizzy,MARV",
+    "image": "/images/straightdizzy-gotta-go-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=nLlh8k-Uwdg",
+    "tag": "Music Video",
+    "date": "Sep 2020",
+    "categories": "visual"
+  },
+  {
+    "slug": "2027-vampurp",
+    "title": "2027",
+    "artist": "Vampurp",
+    "image": "/images/vampurp-2027-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=XTy-FFH_PAg",
+    "tag": "Music Video",
+    "date": "Feb 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "holy-water-cozal",
+    "title": "Holy Water",
+    "artist": "Cozal",
+    "image": "/images/holy-water-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=VPLyATcs7fE",
+    "tag": "Full Release",
+    "date": "Jan 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "u-outta-know-young-teelo",
+    "title": "U OUTTA KNOW",
+    "artist": "YOUNG $TEELO",
+    "image": "/images/steelo-u-outta-know-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=JL85Aej4Je4",
+    "tag": "Music Video",
+    "date": "Nov 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "true-north-transparency-true-north-transparency",
+    "title": "True North Transparency",
+    "artist": "True North Transparency",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/69aef6d8134a3f18311f8d27_admin-ajax.png",
+    "source_url": "https://www.youtube.com/@truenorthtransparency",
+    "tag": "Web Series",
+    "date": "Jun 2024 — Present",
+    "categories": "visual"
+  },
+  {
+    "slug": "indo-lelonglegs-indolestic",
+    "title": "Indo LeLongLegs",
+    "artist": "Indoléstic",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9e1a5aa06bee135ced3c_admin-ajax%20(19).png",
+    "source_url": "https://www.lelonglegs.lol/",
+    "tag": "Web Series",
+    "date": "Oct 2025",
+    "categories": "development"
+  },
+  {
+    "slug": "fate-dubzy33",
+    "title": "FATE",
+    "artist": "DUBZY33",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9daf5a1bbda0a4020231_admin-ajax%20(18).png",
+    "source_url": "https://www.youtube.com/watch?v=EPnVN9riFtI",
+    "tag": "Music Video",
+    "date": "Oct 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "lucky-charm-carina",
+    "title": "Lucky Charm",
+    "artist": "Carina",
+    "image": "/images/carina-lucky-charm-thumb.webp",
+    "source_url": "https://www.instagram.com/p/DXdWvKNDsOA/",
+    "tag": "Reel",
+    "date": "Apr 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "bombaaa-monee-fingaz-1cuzzmn",
+    "title": "Bombaaa",
+    "artist": "MONEE FINGAZ,1CUZZMN",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9d4b828465eeb8dd63ce_admin-ajax%20(17).png",
+    "source_url": "https://www.youtube.com/watch?v=QSFF9jI8f4g",
+    "tag": "Music Video",
+    "date": "Oct 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "we-the-ones-monee-fingaz-1cuzzmn",
+    "title": "We The Ones",
+    "artist": "MONEE FINGAZ,1CUZZMN",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9ca403ddb9c178904d5e_admin-ajax%20(16).png",
+    "source_url": "https://www.youtube.com/watch?v=IDnaGbAzRlk",
+    "tag": "Music Video",
+    "date": "Oct 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "in-2-deep-monee-fingaz-1cuzzmn",
+    "title": "In 2 Deep",
+    "artist": "MONEE FINGAZ,1CUZZMN",
+    "image": "/images/fingaz-in2deep-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=3obuWhWFLD0",
+    "tag": "Music Video",
+    "date": "Sep 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "server-incognito-indolestic",
+    "title": "Server Incognito",
+    "artist": "Indoléstic",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ac7c1a22a5a13554dd92dd_AdobeExpress-ServerIncognito1-ezgif.com-resize.gif",
+    "source_url": "https://vectorfestival.org/window-activation",
+    "tag": "Art Installation",
+    "date": "Aug 2025",
+    "categories": "development"
+  },
+  {
+    "slug": "nothing-at-all-semiah",
+    "title": "Nothing At All",
+    "artist": "Semiah",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9b4591a36ab4564c8560_admin-ajax%20(15).png",
+    "source_url": "https://www.youtube.com/watch?v=xhAA_iVJP0w",
+    "tag": "Music Video",
+    "date": "Oct 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "united-mma-sponsorship-bk-whiskey",
+    "title": "United MMA Sponsorship",
+    "artist": "BK Whiskey",
+    "image": "/images/bk-whiskey-mma-thumb.webp",
+    "source_url": "https://www.instagram.com/p/DKvf2jXMbRs",
+    "tag": "Commercial",
+    "date": "Jun 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "milad-zareian-bk-whiskey",
+    "title": "Milad Zareian",
+    "artist": "BK Whiskey",
+    "image": "/images/bk-milad-thumb.webp",
+    "source_url": "https://www.instagram.com/p/DINIm3lMhZj/",
+    "tag": "Commercial",
+    "date": "Apr 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "salar-gholami-bk-whiskey",
+    "title": "Salar Gholami",
+    "artist": "BK Whiskey",
+    "image": "/images/bk-salar-thumb.webp",
+    "source_url": "https://www.instagram.com/p/DDr6K4fJTOJ/",
+    "tag": "Commercial",
+    "date": "Dec 2024",
+    "categories": "visual"
+  },
+  {
+    "slug": "the-greatest-gift-cozal",
+    "title": "The Greatest Gift",
+    "artist": "Cozal",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9975361a00a78d2c4a14_admin-ajax%20(13).png",
+    "source_url": "https://www.youtube.com/watch?v=GVptvbn9BmQ",
+    "tag": "Full Release",
+    "date": "Oct 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "lisa-cozal",
+    "title": "Lisa",
+    "artist": "Cozal",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9834a8f9280ee15e26aa_admin-ajax%20(6).jpeg",
+    "source_url": "https://www.youtube.com/watch?v=g4S6C9TGIZo",
+    "tag": "Full Release",
+    "date": "Mar 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "show-me-something-marv",
+    "title": "Show Me Something",
+    "artist": "MARV",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e9789c2a98b5fea259afc_admin-ajax%20(11).png",
+    "source_url": "https://www.youtube.com/watch?v=c7HxJdX_jyQ&list=RDc7HxJdX_jyQ&start_radio=1",
+    "tag": "Music Video",
+    "date": "Apr 2025",
+    "categories": "visual"
+  },
+  {
+    "slug": "2025-2026-development-toronto-palapa-tours",
+    "title": "2025/2026 Development",
+    "artist": "Toronto Palapa Tours",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e962a828465eeb8dcd60e_admin-ajax%20(7).webp",
+    "source_url": "https://torontopalapa.tours/",
+    "tag": "Rebrand",
+    "date": "May 2024",
+    "categories": "development"
+  },
+  {
+    "slug": "sofina-young-teelo",
+    "title": "SOFINA",
+    "artist": "YOUNG $TEELO",
+    "image": "/images/sofina-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=q8NaoLH_W8U",
+    "tag": "Full Release",
+    "date": "Oct 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "withdrawals-semiah",
+    "title": "Withdrawals",
+    "artist": "Semiah",
+    "image": "/images/semiah-withdrawals-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=Y1v-IBb2aIA",
+    "tag": "Music Video",
+    "date": "Nov 2024",
+    "categories": "visual"
+  },
+  {
+    "slug": "no-one-to-love-gaeln",
+    "title": "No One To Love",
+    "artist": "Gaeln",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e94809c8bc1f3c5d1a7fa_admin-ajax%20(4).gif",
+    "source_url": "https://www.youtube.com/watch?v=BwxU4Pub52w",
+    "tag": "Live Performance",
+    "date": "Oct 2024",
+    "categories": "visual"
+  },
+  {
+    "slug": "surfin-straightdizzy",
+    "title": "Surfin'",
+    "artist": "Straightdizzy",
+    "image": "/images/surfin-thumb.webp",
+    "source_url": "https://open.spotify.com/track/1kiOOHclAXCBH6w6MWyZ63?si=157021a0c33e4a8f",
+    "tag": "Single",
+    "date": "Sep 2024",
+    "categories": "audio"
+  },
+  {
+    "slug": "figure-it-out-mee-ch",
+    "title": "Figure It Out",
+    "artist": "MEE$CH",
+    "image": "/images/meesch-figure-it-out-thumb.webp",
+    "source_url": "https://music.apple.com/ca/album/figure-it-out-single/1750641530",
+    "tag": "Artwork",
+    "date": "Jul 2024",
+    "categories": "visual"
+  },
+  {
+    "slug": "blast-processing-julzmadethisone",
+    "title": "Blast Processing",
+    "artist": "JulzMadeThisOne",
+    "image": "/images/julz-blast-processing.webp",
+    "source_url": "https://open.spotify.com/album/5IDXkQ482uLsFLwhsVJfDf",
+    "tag": "Full Release",
+    "date": "Mar 2018",
+    "categories": "audio"
+  },
+  {
+    "slug": "sensimelia-julzmadethisone",
+    "title": "Sensimelia",
+    "artist": "JulzMadeThisOne",
+    "image": "/images/julz-sensimelia.webp",
+    "source_url": "https://open.spotify.com/album/09tM0lhctM6aEfwG4mYmN5",
+    "tag": "Full Release",
+    "date": "Dec 2018",
+    "categories": "audio"
+  },
+  {
+    "slug": "1998-julzmadethisone",
+    "title": "1998",
+    "artist": "JulzMadeThisOne",
+    "image": "/images/julz-1998.webp",
+    "source_url": "https://open.spotify.com/album/11nuL3YFvOwkKS6Zm6CpS4",
+    "tag": "Full Release",
+    "date": "Sep 2021",
+    "categories": "audio"
+  },
+  {
+    "slug": "baby-blue-godfrey-noir",
+    "title": "Baby Blue",
+    "artist": "Godfrey Noir",
+    "image": "/images/godfrey-noir-baby-blue.webp",
+    "source_url": "https://www.youtube.com/watch?v=7-nqVh05kZ8",
+    "tag": "Single",
+    "date": "Feb 2024",
+    "categories": "audio"
+  },
+  {
+    "slug": "3561-luckz",
+    "title": "3561",
+    "artist": "Luckz",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8da55d1cae4f9fb31d7a_admin-ajax%20(9).png",
+    "source_url": "https://open.spotify.com/album/0zhoy2ExT6BOW9bGSVKYUy?si=hbdk1LbxRC-E0C-14CNg_w",
+    "tag": "Album",
+    "date": "Mar 2024",
+    "categories": "audio"
+  },
+  {
+    "slug": "bank-marv",
+    "title": "Bank",
+    "artist": "MARV",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8b17b7931a27455c65b9_admin-ajax%20(7).png",
+    "source_url": "https://youtu.be/Y_-kHUwLCWM",
+    "tag": "Single",
+    "date": "Jan 2024",
+    "categories": "audio,visual"
+  },
+  {
+    "slug": "60-seconds-luckz",
+    "title": "60 Seconds",
+    "artist": "Luckz",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e8a3ed8b1cc652638e388_admin-ajax%20(6).png",
+    "source_url": "https://www.youtube.com/watch?v=Tg3XY_SnswM&list=RDTg3XY_SnswM&start_radio=1",
+    "tag": "Single",
+    "date": "Nov 2023",
+    "categories": "audio"
+  },
+  {
+    "slug": "envy-luckz",
+    "title": "Envy",
+    "artist": "Luckz",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e89c8ed77bd02fcbb7fd5_admin-ajax%20(5).png",
+    "source_url": "https://open.spotify.com/album/5ZkQQl4jtPdbTGGW952rQR?si=GnCq4z9AQ_qM9TSRViWjiw",
+    "tag": "Single",
+    "date": "Oct 2023",
+    "categories": "audio"
+  },
+  {
+    "slug": "songwriting-camp-documentary-global-masterminds",
+    "title": "Songwriting Camp Documentary",
+    "artist": "Global Masterminds",
+    "image": "/images/documentary-thumbnail.webp",
+    "source_url": "https://www.youtube.com/watch?v=mHP4M-CIMls",
+    "tag": "Documentary",
+    "date": "Jun 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "bet-the-house-lex-carter",
+    "title": "Bet The House",
+    "artist": "Lex Carter",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e83d144f8861770224c7b_admin-ajax%20(3).jpeg",
+    "source_url": "https://www.youtube.com/watch?v=2MP56asIWVg",
+    "tag": "Music Video",
+    "date": "Dec 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "night-come-luckz",
+    "title": "Night Come",
+    "artist": "Luckz",
+    "image": "/images/luckz-night-come-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=pDO4sTpWKng",
+    "tag": "Music Video",
+    "date": "Nov 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "on-my-own-luckz",
+    "title": "On My Own",
+    "artist": "Luckz",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/690e7ec15d38a34bc4a525c7_on-my-own.gif",
+    "source_url": "https://open.spotify.com/album/65YoCetjYqnw3CDfJFp6ys",
+    "tag": "Song & Artwork",
+    "date": "Sep 2023",
+    "categories": "audio"
+  },
+  {
+    "slug": "for-the-dot-luckz",
+    "title": "For The Dot",
+    "artist": "Luckz",
+    "image": "/images/luckz-forthedot-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=VKzcwcNTlaU",
+    "tag": "Full Release",
+    "date": "Apr 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "photoshoot-young-teelo",
+    "title": "Photoshoot",
+    "artist": "YOUNG $TEELO",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fd2fa549e80530bb29f92c_young-steelo.png",
+    "source_url": "https://www.instagram.com/p/Ck2JBEDLcxA/?img_index=1",
+    "tag": "Photography",
+    "date": "Jan 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "photoshoot-young-teelo-2",
+    "title": "Photoshoot",
+    "artist": "YOUNG $TEELO",
+    "image": "/images/steelo-photoshoot-2.webp",
+    "source_url": "https://www.instagram.com/p/DWp2HNMDc50/?img_index=1",
+    "tag": "Photography",
+    "date": "Apr 2026",
+    "categories": "visual"
+  },
+  {
+    "slug": "dead-2-me-maizy-f",
+    "title": "Dead 2 Me",
+    "artist": "Maizy F",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fd2b080a1722c9119be6ed_image_2024-09-25_140430498-e1761421918140.webp",
+    "source_url": "https://soundcloud.com/maizyf/dead-to-me-explicit-mastered-bounce-1",
+    "tag": "Song & Artwork",
+    "date": "Sep 2024",
+    "categories": "audio"
+  },
+  {
+    "slug": "indigo-son-indigo-son",
+    "title": "Indigo Son",
+    "artist": "Indigo Son",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa82b16330085d876800d9_indigo%20son%20(1).webp",
+    "source_url": "https://www.youtube.com/watch?v=GByVLmiiODw",
+    "tag": "Photography",
+    "date": "Jun 2022",
+    "categories": "visual"
+  },
+  {
+    "slug": "my-love-young-teelo",
+    "title": "MY LOVE",
+    "artist": "YOUNG $TEELO",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa7f79f570003671e2e9da_my%20love.gif",
+    "source_url": "https://www.youtube.com/watch?v=tsW5qU0Qx-I&t=2s",
+    "tag": "Song & Artwork",
+    "date": "Feb 2022",
+    "categories": "audio"
+  },
+  {
+    "slug": "be-someone-indigo-son",
+    "title": "Be Someone",
+    "artist": "Indigo Son",
+    "image": "/images/indigo-son-be-someone-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=OVGfQ7dyo7c",
+    "tag": "Music Video",
+    "date": "Jul 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "sonic-boy-sonicrealm",
+    "title": "Sonic Boy",
+    "artist": "Sonicrealm",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68fa79f9adcfb055c6141875_sonic%20boy.webp",
+    "source_url": "https://open.spotify.com/album/5PwYTCrLbWtFKMhLSDse4K",
+    "tag": "Full Release",
+    "date": "Mar 2023",
+    "categories": "audio"
+  },
+  {
+    "slug": "hacking-the-tower-indolestic",
+    "title": "Hacking The Tower",
+    "artist": "Indoléstic",
+    "image": "/images/ethdenver-hacking-tower-thumb.webp",
+    "source_url": "https://www.youtube.com/watch?v=xiYRiPtRxcU",
+    "tag": "Art Installation",
+    "date": "Mar 2020",
+    "categories": "visual"
+  },
+  {
+    "slug": "ella-quiere-baila-p-j-c",
+    "title": "ELLA QUIERE BAILA",
+    "artist": "P.J.C",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ede2813da82277288ea23a_ezgif.com-video-to-gif-converter%20(2).gif",
+    "source_url": "https://www.youtube.com/watch?v=MzlnePpnvo0",
+    "tag": "Music Video",
+    "date": "Nov 2020",
+    "categories": "visual"
+  },
+  {
+    "slug": "collection-2-straightdizzy-indolestic",
+    "title": "Collection 2",
+    "artist": "Straightdizzy,Indoléstic",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ede15b98d00c27f4ec7be1_C2-300x300.jpg",
+    "source_url": "https://open.spotify.com/album/5t4cBxUm01aHVMKXImW7E0?si=izZQ3QVaSN66BU29pow8fA",
+    "tag": "EP",
+    "date": "Oct 2020",
+    "categories": "audio"
+  },
+  {
+    "slug": "collection-1-straightdizzy-indolestic",
+    "title": "Collection 1",
+    "artist": "Straightdizzy,Indoléstic",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ede0b5d3073f2188f9be08_admin-ajax%20(2).jpeg",
+    "source_url": "https://open.spotify.com/album/70Ml0FkeN0hKs7PcrdnLCe?si=9zWsJ0MRT-GPRZH475oCRw",
+    "tag": "EP",
+    "date": "Mar 2020",
+    "categories": "audio"
+  },
+  {
+    "slug": "wait-roosevelth-indolestic",
+    "title": "Wait",
+    "artist": "Roosevelth,Indoléstic",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68eddf1b4a8a6e4bbd436874_admin-ajax%20(1).png",
+    "source_url": "https://soundcloud.com/roosevelth/wait",
+    "tag": "Single",
+    "date": "Dec 2019",
+    "categories": "audio"
+  },
+  {
+    "slug": "m-c-marv",
+    "title": "M C",
+    "artist": "MARV",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68eddbffb702c1f04dd49282_admin-ajax%20(2).webp",
+    "source_url": "https://open.spotify.com/album/1yKktFw5LhmFQubwQ6tU0A?si=ghwIzhIhShSMpqe9vDmh4w",
+    "tag": "EP",
+    "date": "Jan 2023",
+    "categories": "audio"
+  },
+  {
+    "slug": "privilege-jevy",
+    "title": "Privilege",
+    "artist": "Jevy",
+    "image": "/images/jevy-privilege-thumb.webp",
+    "source_url": "https://open.spotify.com/track/48FdIGtXonO8Wll38PUIi0",
+    "tag": "Artwork",
+    "date": "May 2019",
+    "categories": "visual"
+  },
+  {
+    "slug": "swish-straightdizzy",
+    "title": "Swish",
+    "artist": "Straightdizzy",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68edd56a93bf414c65930f70_admin-ajax.webp",
+    "source_url": "https://open.spotify.com/album/0e5aeV4Kt9hVE28QsjJcQc?si=ljK88I83RYGWHEk3Sjmucw",
+    "tag": "Single",
+    "date": "Nov 2022",
+    "categories": "audio"
+  },
+  {
+    "slug": "lost-straightdizzy",
+    "title": "Lost",
+    "artist": "Straightdizzy",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ed5494a155546a21a729cd_admin-ajax.jpeg",
+    "source_url": "https://open.spotify.com/album/1LqMeUxrKFLPGEocbiDq1v?si=mMsipWVqSLSPk3pjEchzEA",
+    "tag": "Single",
+    "date": "Aug 2022",
+    "categories": "audio"
+  },
+  {
+    "slug": "on-your-own-straightdizzy",
+    "title": "On Your Own",
+    "artist": "Straightdizzy",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ed50b5a155546a21a6138c_admin-ajax.png",
+    "source_url": "https://open.spotify.com/album/5C93rPWKivVliGhX5CKiT4?si=BNhC99KRTYS5Gw33GQvkJg",
+    "tag": "Single",
+    "date": "Jun 2022",
+    "categories": "audio"
+  },
+  {
+    "slug": "89-32-rhozeland-roosevelth-straightdizzy-indolestic",
+    "title": "89/32",
+    "artist": "Rhozeland,Roosevelth,Straightdizzy,Indoléstic",
+    "image": "/images/rhozeland-89-32-thumb.webp",
+    "source_url": "https://open.spotify.com/album/6N2DVcO0zVlXbfOMZAFHUt",
+    "tag": "Album",
+    "date": "Mar 2017",
+    "categories": "audio"
+  },
+  {
+    "slug": "rhozeland-roosevelth-indolestic",
+    "title": "Rhozeland",
+    "artist": "Roosevelth,Indoléstic",
+    "image": "https://cdn.prod.website-files.com/68953b64959803ee0c77db20/68ed234c00af8fc5265e080b_image_2024-10-08_224006635.png",
+    "source_url": "https://open.spotify.com/album/17vEVvrKdexB5n6pdnc1Lf?si=K_T9cYIgSt6BzwDG2nNJUw",
+    "tag": "Full Release",
+    "date": "Dec 2019",
+    "categories": "audio"
+  },
+  {
+    "slug": "welcome-to-toronto-academy-of-emc-toronto-emc",
+    "title": "Welcome to Toronto Academy of EMC",
+    "artist": "Toronto EMC",
+    "image": "/images/toronto-emc-commercial.webp",
+    "source_url": "https://www.youtube.com/watch?v=Xi2Cw-jb19Q",
+    "tag": "Commercial",
+    "date": "Apr 2023",
+    "categories": "visual"
+  },
+  {
+    "slug": "sonicboy-2-sonicrealm-gk-marv",
+    "title": "Sonicboy 2",
+    "artist": "Sonicrealm,GK,MARV",
+    "image": "/images/sonicboy2-thumb.webp",
+    "source_url": "https://lnkfi.re/SONICBOY2",
+    "tag": "Single",
+    "date": "Aug 2025",
+    "categories": "audio"
+  },
+  {
+    "slug": "home-for-the-holidays-3-lex-carter-marv",
+    "title": "Home For The Holidays 3",
+    "artist": "Lex Carter,MARV",
+    "image": "/images/lex-carter-hfth3-thumb.webp",
+    "source_url": "https://lnkfi.re/HFTH3",
+    "tag": "EP",
+    "date": "Dec 2024",
+    "categories": "audio"
+  },
+  {
+    "slug": "angry-mortgage-podcast-indolestic-marv",
+    "title": "Angry Mortgage Podcast",
+    "artist": "Indoléstic,MARV",
+    "image": "/images/angry-mortgage-thumb.jpg",
+    "source_url": "https://www.youtube.com/@angrymortgage",
+    "tag": "Podcast",
+    "date": "2021 — 2026",
+    "categories": "audio,visual"
+  },
+  {
+    "slug": "on-my-mind-marv-julz",
+    "title": "On My Mind",
+    "artist": "MARV,Julz",
+    "image": "https://img.youtube.com/vi/rvWxGznri9c/hqdefault.jpg",
+    "source_url": "https://youtu.be/rvWxGznri9c",
+    "tag": "Music Video",
+    "date": "Sep 2024",
+    "categories": "visual,audio"
+  },
+  {
+    "slug": "7pm-on-college-st-lex-carter-marv",
+    "title": "7PM on College St.",
+    "artist": "Lex Carter,MARV",
+    "image": "https://img.youtube.com/vi/v7vh984voyA/hqdefault.jpg",
+    "source_url": "https://youtu.be/v7vh984voyA",
+    "tag": "Music Video",
+    "date": "Aug 2024",
+    "categories": "visual,audio"
+  },
+  {
+    "slug": "1st-spliff-lex-carter-motionmusik-marv",
+    "title": "1st Spliff",
+    "artist": "Lex Carter,MotionMusik,MARV",
+    "image": "https://img.youtube.com/vi/h3A6WFkgSnM/hqdefault.jpg",
+    "source_url": "https://youtu.be/h3A6WFkgSnM",
+    "tag": "Visualizer",
+    "date": "Apr 2024",
+    "categories": "visual,audio"
+  },
+  {
+    "slug": "iceland-pickups-yeriim-straightdizzy-indolestic",
+    "title": "Iceland / PickUps",
+    "artist": "Yeriim,Straightdizzy,Indoléstic",
+    "image": "https://img.youtube.com/vi/cQ7W37Qznl4/hqdefault.jpg",
+    "source_url": "https://youtu.be/cQ7W37Qznl4",
+    "tag": "Visualizer",
+    "date": "Jul 2024",
+    "categories": "visual"
+  }
+]

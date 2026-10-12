@@ -11,6 +11,7 @@ import { ProjectMetricsBadges } from "./ProjectMetrics";
 import { Button } from "@/components/ui/button";
 import { X, Share2 } from "lucide-react";
 import ProjectDiscussion from "./ProjectDiscussion";
+import ProjectStory from "./ProjectStory";
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -72,9 +73,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         if (u.user && data.user_id === u.user.id) setIsOwner(true);
         const nm = (data.creator_name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
         const from = `?from=${encodeURIComponent(slug)}`;
-        let href = nm ? `/brand/${nm}${from}` : null;
+        let href: string | null = null;
         if (data.user_id) {
-          const q = (supabase.from as any)("creator_directory").select("slug");
+          const q = (supabase.from as any)("creator_directory").select("slug").eq("is_public", true).eq("approved", true);
           const { data: cd } = data.user_id ? await q.eq("user_id", data.user_id).limit(1).maybeSingle() : { data: null };
           if (cd?.slug) href = `/creator/${cd.slug}${from}`;
         }
@@ -168,7 +169,6 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const ticker = r?.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
   const fmtMcap = (v: number) => v >= 1_000_000 ? `$${(v / 1_000_000).toFixed(2)}M mcap` : v >= 1_000 ? `$${Math.round(v).toLocaleString("en-US")} mcap` : `$${v.toFixed(0)} mcap`;
   const budget = Number(r?.budget_cents || 0);
-  const funded = Math.round(budget * 0.35);
   const projectUrl = `${location.origin}/release/${encodeURIComponent(slug)}`;
 
   const copyLink = async () => {
@@ -276,6 +276,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               {r.answers?.description?.trim() ? <p>{r.answers.description.trim()}</p> : r.answers?.making ? <p>{r.answers.making.trim()}</p> : <p>{r.title} by {r.creator_name || "Rhozeland artist"}.</p>}
               {r.answers?.audience && <p className="rz-release-audience">{r.answers.audience}</p>}
             </section>}
+            {(isOwner || pubs.overview) && <ProjectStory story={r.answers || {}} />}
             <h2 className="rz-h2">Project release</h2>
 
             <div className="rz-release-coin">
@@ -286,10 +287,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>
 
-            <div className="rz-fund">
-              <div><span>Funded <b>{money(funded)}</b> of {money(budget)}</span><span>{budget ? Math.round((funded / budget) * 100) : 0}%</span></div>
-              <div className="rz-fund-bar"><i style={{ width: `${budget ? (funded / budget) * 100 : 0}%` }} /></div>
-            </div>
+             {(isOwner || pubs.money) && <p className="rz-note">Planning budget: {money(budget)} · payment status is tracked in the private workspace.</p>}
 
             <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
               <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support this project</a>
@@ -317,6 +315,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
             {r.coin_mint && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
             </>}
+            {r.coin_mint && !isOwner && !pubs.money && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
+            {r.coin_mint && <p className="rz-note break-all">Solana contract: <code>{r.coin_mint}</code> <Button variant="ghost" size="sm" onClick={async () => { try { await navigator.clipboard.writeText(r.coin_mint); setNote("Contract address copied."); } catch { setNote("Could not copy the address."); } }}>Copy address</Button></p>}
 
             {(isOwner || pubs.plan) && <>
             <h2 className="rz-h2">Roadmap &amp; deliverables</h2>

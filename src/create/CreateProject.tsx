@@ -14,6 +14,7 @@ import { IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, t
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
+import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -182,7 +183,7 @@ export default function CreateProject() {
   const artistPct = Math.max(0, 100 - feePct - causePct - tPct);
   const mintOk = MINT_RE.test(mint.trim());
   const tick = ticker.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 12);
-  const coin: Coin = mintOk && tick ? { mint: mint.trim(), ticker: tick, name: meta?.mint === mint.trim() ? meta.name : tick, image: meta?.mint === mint.trim() ? meta.image : null } : null;
+  const coin: Coin = mintOk ? { mint: mint.trim(), ticker: tick, name: meta?.mint === mint.trim() ? meta.name : tick, image: meta?.mint === mint.trim() ? meta.image : null } : null;
   const rowsTotal = rows.reduce((s, r) => s + (r.amount_cents || 0), 0);
 
   const applySplitDefaults = (t: PType) => {
@@ -338,8 +339,7 @@ export default function CreateProject() {
   const updateRole = (id: string, patch: Partial<Role>) => setRoles((rs) => rs.map((x) => (x.id === id ? { ...x, ...patch } : x)));
   const toggleMaker = (id: string) => setMakers((ms) => (ms.includes(id) ? ms.filter((x) => x !== id) : [...ms, id]));
 
-  // Coin lookup kept for backward compatibility (field no longer shown in the
-  // wizard — attach/change happens on the project page after publish).
+  // Optional existing-token pairing in Scope, retained in old drafts too.
   const lookupRef = useRef(0);
   useEffect(() => {
     const m = mint.trim();
@@ -352,7 +352,7 @@ export default function CreateProject() {
       try {
         const { data } = await supabase.functions.invoke("pumpfun-coin", { body: { mint: m } });
         if (n !== lookupRef.current) return;
-        if (data?.ticker) { setMeta({ mint: m, name: data.name, image: data.image }); setTicker((x) => x || data.ticker); }
+        if (data?.ticker) { setMeta({ mint: m, name: data.name, image: data.image }); setTicker(data.ticker); }
       } catch { /* manual ticker still works */ }
     }, 400);
     return () => clearTimeout(t);
@@ -453,7 +453,7 @@ export default function CreateProject() {
     if (!desc.trim()) return "Add a short description of your project.";
     return "";
   };
-  const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline);
+  const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline) || tokenPairingError(mint);
   const validateTeam = () => makers.includes("open_roles") && !roles.some((r) => r.name.trim()) ? "Add at least one open role, or remove that option." : "";
   const goNext = () => {
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
@@ -583,6 +583,12 @@ export default function CreateProject() {
               </div></>}
             </div>
           </div>
+          <div className="rz-field">
+            <label htmlFor="project-contract">Pair a token <span className="rz-opt">· optional</span></label>
+            <input id="project-contract" className="rz-in" placeholder="Solana contract address" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); setMeta(null); }} />
+            {mintOk && <label htmlFor="project-ticker">Ticker <span className="rz-opt">· optional</span><input id="project-ticker" className="rz-in" placeholder="e.g. RHOZE" maxLength={12} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} /></label>}
+            <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>
+          </div>
           <div className="rz-actions">
             <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
             <Button variant="outline" className="rz-btn pri" onClick={goNext}>Next <ArrowRight size={14} /></Button>
@@ -639,6 +645,7 @@ export default function CreateProject() {
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{needQuote ? "Estimate needed" : money(budgetCents)}</b></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Timeline</span><span>{timelineMode === "date" ? deadline : timeline || "—"}</span></div>
+              {coin && <div className="rz-split-row"><span>Paired token</span><span className="break-all">{coin.ticker ? `$${coin.ticker} · ` : ""}{coin.mint}</span></div>}
             </div>
 
             <div className="rz-review-section">Who's making it</div>

@@ -36,6 +36,7 @@ const adminNav = [
   { to: "/catalog", label: "Catalog", icon: Package },
   { to: "/rewards", label: "$RHOZE Rewards", icon: Sparkles },
   { to: "/invest", label: "Investor pledges", icon: Rocket },
+  { to: "/payouts", label: "Payouts", icon: Package },
 ];
 
 function navClass({ isActive }: { isActive: boolean }) {

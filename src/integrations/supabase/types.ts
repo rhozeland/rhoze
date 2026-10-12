@@ -2289,6 +2289,161 @@ export type Database = {
           },
         ]
       }
+      release_milestones: {
+        Row: {
+          amount_cents: number
+          approved_at: string | null
+          assignees: Json
+          created_at: string
+          due_date: string | null
+          funded_at: string | null
+          id: string
+          position: number
+          release_id: string
+          status: string
+          title: string
+        }
+        Insert: {
+          amount_cents?: number
+          approved_at?: string | null
+          assignees?: Json
+          created_at?: string
+          due_date?: string | null
+          funded_at?: string | null
+          id?: string
+          position: number
+          release_id: string
+          status?: string
+          title?: string
+        }
+        Update: {
+          amount_cents?: number
+          approved_at?: string | null
+          assignees?: Json
+          created_at?: string
+          due_date?: string | null
+          funded_at?: string | null
+          id?: string
+          position?: number
+          release_id?: string
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_milestones_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      release_payments: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          kind: string
+          milestone_id: string | null
+          release_id: string
+          stripe_session_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: string
+          milestone_id?: string | null
+          release_id: string
+          stripe_session_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: string
+          milestone_id?: string | null
+          release_id?: string
+          stripe_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_payments_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "release_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "release_payments_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      release_payouts: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          id: string
+          milestone_id: string
+          recipient_email: string | null
+          recipient_name: string
+          reference: string | null
+          release_id: string
+          sent_at: string | null
+          status: string
+          team_member_id: string | null
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          id?: string
+          milestone_id: string
+          recipient_email?: string | null
+          recipient_name: string
+          reference?: string | null
+          release_id: string
+          sent_at?: string | null
+          status?: string
+          team_member_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          id?: string
+          milestone_id?: string
+          recipient_email?: string | null
+          recipient_name?: string
+          reference?: string | null
+          release_id?: string
+          sent_at?: string | null
+          status?: string
+          team_member_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_payouts_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "release_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "release_payouts_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       release_posts: {
         Row: {
           body: string
@@ -3309,6 +3464,10 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      admin_mark_payout_sent: {
+        Args: { p_payout_id: string; p_reference: string }
+        Returns: undefined
+      }
       application_start_conversation: {
         Args: { p_application_id: string }
         Returns: string
@@ -3696,6 +3855,10 @@ export type Database = {
             }
             Returns: string
           }
+      release_approve_milestone: {
+        Args: { p_milestone_id: string }
+        Returns: undefined
+      }
       release_claim: { Args: { p_token: string }; Returns: number }
       release_delete: { Args: { p_id: string }; Returns: undefined }
       release_get_draft: {
@@ -3770,6 +3933,15 @@ export type Database = {
         Args: { p_id: string; p_token: string }
         Returns: string
       }
+      release_record_payment: {
+        Args: {
+          p_amount_cents: number
+          p_currency: string
+          p_milestone_id: string
+          p_session_id: string
+        }
+        Returns: undefined
+      }
       release_save: {
         Args: { p_data: Json; p_id: string; p_token: string }
         Returns: string
@@ -3782,9 +3954,35 @@ export type Database = {
         Args: { p_archived: boolean; p_id: string }
         Returns: undefined
       }
+      release_set_milestone_plan: {
+        Args: { p_assignees: Json; p_due_date: string; p_milestone_id: string }
+        Returns: undefined
+      }
       release_set_note: {
         Args: { p_id: string; p_note: string }
         Returns: undefined
+      }
+      release_sync_milestones: {
+        Args: { p_id: string }
+        Returns: {
+          amount_cents: number
+          approved_at: string | null
+          assignees: Json
+          created_at: string
+          due_date: string | null
+          funded_at: string | null
+          id: string
+          position: number
+          release_id: string
+          status: string
+          title: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "release_milestones"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       rhoze_award: {
         Args: {

@@ -6,6 +6,8 @@ import AuthModal from "./AuthModal";
 import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
 import CoverEditor from "./CoverEditor";
 import { LikedProjects, ProjectHeart } from "./ProjectLikes";
+import { SupporterHome } from "./SupporterHome";
+import "./supporter.css";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -190,12 +192,14 @@ export function CreatorProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
+          <a className="rz-btn rz-create-pill" href="/create.html">Create a project</a>
           {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         </div>
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}
         {c && (
           <>
+            {isOwner && fan && <SupporterHome userId={uid!} heading="Your supporter home" />}
             <div className="rz-pf-top">
               <Avatar src={c.photo_url} name={c.display_name} className="rz-pf-photo" />
               <div className="rz-pf-id">
@@ -234,6 +238,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
                   ))}
                 </div>
               )}</section>}
+
+            {isOwner && !fan && <SupporterHome userId={uid!} heading="Supporting" />}
 
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
           </>
@@ -398,6 +404,7 @@ export function BrandProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
+          <a className="rz-btn rz-create-pill" href="/create.html">Create a project</a>
           {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}

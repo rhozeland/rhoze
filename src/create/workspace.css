@@ -1,0 +1,22 @@
+/* Owner workspace tabs + public metrics badges — editorial, compact, outlined pills. */
+.rz-metrics-badges{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0 1.1rem}
+.rz-metric-badge{display:inline-flex;align-items:baseline;gap:.3rem;border:1px solid hsl(var(--line));border-radius:999px;padding:.28rem .75rem;font-size:.72rem;color:hsl(var(--mut))}
+.rz-metric-badge b{font-size:.78rem;color:hsl(var(--ink))}
+
+.rz-ws{margin:1rem 0 1.6rem;border:1px solid hsl(var(--line));border-radius:14px;padding:1rem 1.1rem 1.2rem;background:hsl(var(--card))}
+.rz-ws-tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+.rz-ws-tab{border:1px solid hsl(var(--line));background:hsl(var(--card));color:hsl(var(--ink));border-radius:999px;padding:.32rem .9rem;font-size:.72rem;font-weight:600;cursor:pointer}
+.rz-ws-tab[aria-selected="true"]{background:hsl(var(--ink));color:hsl(var(--card));border-color:hsl(var(--ink))}
+.rz-ws-panel-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.8rem}
+.rz-ws-panel-head h3{font-size:.95rem;margin:0}
+.rz-ws-pub{display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:hsl(var(--mut))}
+.rz-ws-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
+.rz-ws-milestone{border:1px solid hsl(var(--line));border-radius:10px;padding:.6rem .7rem;margin-bottom:.5rem;display:flex;gap:.6rem;align-items:flex-start}
+.rz-ws-milestone .rz-in{margin-bottom:.35rem}
+.rz-ws-milestone-fields{flex:1;min-width:0}
+.rz-ws-save{display:flex;align-items:center;gap:.6rem;margin-top:.9rem}
+.rz-ws-note{font-size:.72rem;color:hsl(var(--mut))}
+.rz-ws-makers{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.8rem}
+.rz-ws-makers label{display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer}
+.rz-ws-split-row{display:grid;grid-template-columns:1fr 6rem;align-items:center;gap:.6rem;margin-bottom:.4rem;font-size:.8rem}
+@media(max-width:600px){.rz-ws{padding:.8rem .8rem 1rem}.rz-ws-panel-head{flex-direction:column;align-items:flex-start;gap:.4rem}}

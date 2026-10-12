@@ -483,19 +483,19 @@ setupHoverVideos();
 // One public project destination, shared by static public pages and React navigation.
 (function(){
   function normalize(){
-    if (/^\/projects\/?$/.test(location.pathname)) { location.replace('/discover' + location.search); return; }
+    if (/^\/projects\/?$/.test(location.pathname)) { location.replace('/discover.html' + location.search); return; }
     document.querySelectorAll('.site-nav .sn-links, .site-nav .nav-links, #mobileMenu').forEach(function(menu){
       var discover = null;
       menu.querySelectorAll('a').forEach(function(a){
         var href = a.getAttribute('href') || '';
-        if (/^(?:\/projects(?:\.html)?|\/discover)\/?$/.test(href)) {
+        if (/^(?:\/projects(?:\.html)?|\/discover(?:\.html)?)\/?$/.test(href)) {
           if (discover) { a.remove(); return; }
-          discover = a; a.href = '/discover'; a.textContent = 'Discover';
+          discover = a; a.href = '/discover.html'; a.textContent = 'Discover';
         } else if (href.indexOf('view=open-calls') >= 0 || /^(Find Work|Opportunities)$/.test(a.textContent.trim())) a.remove();
         else if (/Book a project/i.test(a.textContent)) { a.href='/create.html?new=1'; a.textContent='Create a Project'; }
       });
     });
-    document.querySelectorAll('a[href="/projects.html"]').forEach(function(a){ a.href='/discover'; if (/^(Featured Projects|Projects|Work)$/.test(a.textContent.trim())) a.textContent='Discover'; });
+    document.querySelectorAll('a[href="/projects.html"]').forEach(function(a){ a.href='/discover.html'; if (/^(Featured Projects|Projects|Work)$/.test(a.textContent.trim())) a.textContent='Discover'; });
     document.querySelectorAll('a').forEach(function(a){ if (/^Book a project$/i.test(a.textContent.trim())) { a.href='/create.html?new=1'; a.textContent='Create a Project'; } });
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',normalize); else normalize();

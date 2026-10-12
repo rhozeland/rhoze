@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
 import ExclusivePage from "@/create/ExclusivePage";
-import DiscoverPage from "@/create/DiscoverPage";
 import PrivateWorkspace from "@/create/PrivateWorkspace";
 import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
@@ -48,11 +47,8 @@ if (workspaceMatch) {
   const pslug = decodeURIComponent(profileMatch[2]);
   createRoot(el).render(profileMatch[1] === "creator" ? <CreatorProfile slug={pslug} /> : <BrandProfile slug={pslug} />);
 } else if (discoverMatch) {
-  document.documentElement.classList.add("release-mode");
-  const el = document.createElement("div");
-  el.id = "discover-root";
-  document.body.appendChild(el);
-  createRoot(el).render(<DiscoverPage />);
+  // Discover is the static Featured Projects page (public/discover.html).
+  location.replace("/discover.html" + location.search);
 } else if (exclusiveMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");

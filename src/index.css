@@ -51,6 +51,9 @@
     --shadow-soft: 0 4px 24px -4px hsl(0 0% 0% / 0.06);
     --shadow-lift: 0 8px 40px -8px hsl(0 0% 0% / 0.08);
     --pass-sky: 201 96% 63%;
+    --house-chart: 163 52% 32%;
+    --house-card-shade: linear-gradient(transparent, hsl(0 0% 0% / .8));
+    --house-hover-shadow: 0 8px 22px hsl(0 0% 0% / .3);
     --pass-blue: 224 88% 40%;
     --pass-text: 0 0% 100%;
     --pass-gradient: linear-gradient(115deg, hsl(var(--pass-sky)), hsl(216 90% 55%) 48%, hsl(var(--pass-blue)));

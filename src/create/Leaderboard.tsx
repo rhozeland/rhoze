@@ -16,7 +16,7 @@ export default function Leaderboard({userId,onBalance}:{userId:string|null|undef
  const actions:Record<Tier,{title:string;amount:number;Icon:typeof Heart;href:string;detail:string}[]>={
   quick:[{title:'Support a project',amount:REWARD_AMOUNTS.project_like,Icon:Heart,href:'/discover.html',detail:'Your first like on each published project.'}],
   create:[{title:'Publish your work',amount:REWARD_AMOUNTS.release_published,Icon:FileText,href:'/create.html',detail:'Your first publication of a project.'}],
-  big:[{title:'Apply to collaborate',amount:REWARD_AMOUNTS.role_application,Icon:Users,href:'/discover.html?filter=open-roles',detail:'A submitted role application.'},{title:'Back a project milestone',amount:REWARD_AMOUNTS.project_payment??1,Icon:Wallet,href:'/discover.html',detail:'Fund a milestone on a real project.'}],
+  big:[{title:'Apply to collaborate',amount:REWARD_AMOUNTS.role_application,Icon:Users,href:'/discover.html?filter=open-roles',detail:'A submitted role application.'},{title:'Back a project milestone',amount:1,Icon:Wallet,href:'/discover.html',detail:'Fund a milestone on a real project. +1 $RHOZE per $1.'}],
  };
  const filtered=rows.filter(r=>r.display_name.toLowerCase().includes(search.toLowerCase()));
  const previous=legacy.filter(r=>r.username.toLowerCase().includes(search.toLowerCase())).sort((a,b)=>(period==='all'?b.points-a.points:b.weekly_points-a.weekly_points));

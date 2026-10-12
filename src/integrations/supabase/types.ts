@@ -555,7 +555,9 @@ export type Database = {
           account_kind: string
           approved: boolean
           bio: string | null
+          city: string | null
           completed_projects: number
+          country: string | null
           created_at: string
           disciplines: string[]
           display_name: string
@@ -579,7 +581,9 @@ export type Database = {
           account_kind?: string
           approved?: boolean
           bio?: string | null
+          city?: string | null
           completed_projects?: number
+          country?: string | null
           created_at?: string
           disciplines?: string[]
           display_name: string
@@ -603,7 +607,9 @@ export type Database = {
           account_kind?: string
           approved?: boolean
           bio?: string | null
+          city?: string | null
           completed_projects?: number
+          country?: string | null
           created_at?: string
           disciplines?: string[]
           display_name?: string
@@ -3422,6 +3428,10 @@ export type Database = {
           p_photo: string
           p_rate_cents: number
         }
+        Returns: undefined
+      }
+      creator_save_location: {
+        Args: { p_city: string; p_country: string; p_id: string }
         Returns: undefined
       }
       creator_save_profile: {

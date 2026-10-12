@@ -1,0 +1,9 @@
+.rz-rewards-card{display:flex;flex-direction:column;gap:1.1rem}
+.rz-rewards-balance{display:flex;flex-direction:column;gap:.15rem;padding:.9rem 1rem;border-radius:14px;background:hsl(var(--line)/.5)}
+.rz-rewards-balance-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;color:hsl(var(--mut))}
+.rz-rewards-balance strong{font-size:1.4rem;font-weight:800}
+.rz-rewards-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem}
+.rz-rewards-list li{display:flex;align-items:center;justify-content:space-between;font-size:.82rem;padding:.4rem .6rem;border-radius:10px;background:hsl(var(--line)/.35)}
+.rz-rewards-list li b{color:hsl(var(--mut));font-weight:700}
+.rz-rewards-earn li b{color:inherit}
+.rz-rewards-note{font-size:.72rem;color:hsl(var(--mut));line-height:1.4;margin:0}

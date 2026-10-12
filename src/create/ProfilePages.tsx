@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Settings } from "lucide-react";
+import { Settings, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
-import { ProfileTools, Lightbox, MoreCreators, embedUrl } from "./ProfileExtras";
+import { ProfileTools, Lightbox, MoreCreators, embedUrl, LocationFields, COUNTRY_NAMES } from "./ProfileExtras";
 import CoverEditor from "./CoverEditor";
 import { LikedProjects, ProjectHeart } from "./ProjectLikes";
 import { SupporterHome } from "./SupporterHome";
@@ -146,7 +146,7 @@ type Creator = {
   id: string; slug: string; display_name: string; photo_url: string | null; disciplines: string[] | null;
   membership_tier: string | null; hourly_rate_cents: number | null; hourly_rate_max_cents?: number | null; rating: number | null; bio: string | null;
   website_url: string | null; portfolio_url: string | null; instagram_url: string | null; user_id: string | null;
-  work_samples: Sample[] | null; account_kind?: string; is_public?: boolean;
+  work_samples: Sample[] | null; account_kind?: string; is_public?: boolean; city?: string | null; country?: string | null;
 };
 
 
@@ -161,7 +161,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
     // Wait for the saved session so owners can open their own private profile.
     await supabase.auth.getSession();
     const { data } = await db.from("creator_directory")
-      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,hourly_rate_max_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public")
+      .select("id,slug,display_name,photo_url,disciplines,membership_tier,hourly_rate_cents,hourly_rate_max_cents,rating,bio,website_url,portfolio_url,instagram_url,user_id,work_samples,account_kind,is_public,city,country")
       .eq("slug", slug).maybeSingle();
     setC(data ?? null);
     if (data) document.title = `${data.display_name} | Rhozeland Creators`;
@@ -206,6 +206,12 @@ export function CreatorProfile({ slug }: { slug: string }) {
                 <h1>{c.display_name}</h1>
                 <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
                 <p className="rz-pf-meta">{!fan && <b>{rate}</b>}{!fan && c.rating != null && " · "}{c.rating != null && <>{Number(c.rating).toFixed(1)} ★</>}</p>
+                {(c.city || c.country) && (
+                  <p className="rz-pf-meta rz-pf-loc" style={{ opacity: .65, display: "flex", alignItems: "center", gap: 4, fontSize: ".8rem" }}>
+                    <MapPin size={13} aria-hidden="true" />
+                    {[c.city, COUNTRY_NAMES[c.country || ""] || c.country].filter(Boolean).join(", ")}
+                  </p>
+                )}
                 <ProfileTools kind="creator" slug={c.slug} name={c.display_name} photo={c.photo_url} isOwner={isOwner && c.user_id === uid} />
                 {(ig || web) && <div className="rz-pf-actions" style={{ marginTop: ".4rem" }}>
                   {ig && <a className="rz-btn" href={ig} target="_blank" rel="noopener noreferrer">Instagram ↗</a>}
@@ -263,6 +269,8 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
   const [web, setWeb] = useState(c.website_url ?? "");
   const [samples, setSamples] = useState<Sample[]>((c.work_samples ?? []) as Sample[]);
   const [dname, setDname] = useState(c.display_name);
+  const [city, setCity] = useState(c.city ?? "");
+  const [country, setCountry] = useState(c.country ?? "");
   const [tags, setTags] = useState((c.disciplines ?? []).join(", "));
   const [rateIn, setRateIn] = useState(c.hourly_rate_cents != null ? String(c.hourly_rate_cents / 100) : "");
   const [rateMax, setRateMax] = useState(c.hourly_rate_max_cents != null ? String(c.hourly_rate_max_cents / 100) : "");
@@ -317,6 +325,7 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
     if (e1) { setBusy(false); setNote("Could not save. Please try again."); return; }
     await db.rpc("creator_save_rate_max", { p_id: c.id, p_max_cents: rm });
     const { error } = await db.rpc("creator_save_profile", { p_id: c.id, p_bio: bio, p_instagram: ig, p_website: web, p_samples: samples });
+    if (!error) await db.rpc("creator_save_location", { p_id: c.id, p_city: city.trim() || null, p_country: country || null });
     setBusy(false);
     if (error) setNote("Could not save. Please try again."); else onSaved();
   };
@@ -346,6 +355,7 @@ function CreatorEditor({ c, uid, onSaved }: { c: Creator; uid: string; onSaved: 
         <div className="rz-field"><label>Instagram</label><input className="rz-in" placeholder="https://instagram.com/you" value={ig} onChange={(e) => setIg(e.target.value)} /></div>
         <div className="rz-field"><label>Website</label><input className="rz-in" placeholder="https://yoursite.com" value={web} onChange={(e) => setWeb(e.target.value)} /></div>
       </div>
+      <LocationFields city={city} country={country} onCity={setCity} onCountry={setCountry} />
       <div className="rz-field"><label>Work samples</label>
         <div className="rz-pf-two">
           <input className="rz-in" placeholder="Paste a YouTube, Vimeo, SoundCloud or Spotify link" value={link} onChange={(e) => setLink(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addLink()} />
@@ -499,6 +509,8 @@ export function MyProfile() {
   const [kind, setKind] = useState<"artist" | "brand" | "supporter">("artist");
   const [auth, setAuth] = useState(false);
   const [name, setName] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const go = (p: any) => location.replace(`/${p.kind}/${p.slug}${new URLSearchParams(location.search).get("settings") === "1" ? "?settings=1" : ""}`);
@@ -511,7 +523,12 @@ export function MyProfile() {
   }, []);
   const create = async (useKind?: typeof kind) => {
     setBusy(true); setErr("");
-    const { data: p, error } = await db.rpc("my_profile", { p_kind: useKind ?? kind, p_name: name.trim() || null });
+    const k = useKind ?? kind;
+    const { data: p, error } = await db.rpc("my_profile", { p_kind: k, p_name: name.trim() || null });
+    if (!error && p && k === "artist" && (city.trim() || country)) {
+      const { data: row } = await db.from("creator_directory").select("id").eq("slug", p.slug).maybeSingle();
+      if (row?.id) await db.rpc("creator_save_location", { p_id: row.id, p_city: city.trim() || null, p_country: country || null });
+    }
     setBusy(false);
     if (error || !p) return setErr("Your profile could not be created. Please try again.");
     go(p);
@@ -538,6 +555,7 @@ export function MyProfile() {
             </div>
             <div className="rz-field" style={{ marginTop: ".8rem" }}><label>{kind === "brand" ? "Brand name" : "Your name"}</label>
               <input className="rz-in" maxLength={100} placeholder="Leave blank to use your account name" value={name} onChange={(e) => setName(e.target.value)} /></div>
+            {kind === "artist" && <LocationFields city={city} country={country} onCity={setCity} onCountry={setCountry} />}
             {err && <p className="rz-pf-empty">{err}</p>}
             <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={() => create()}>{busy ? "Creating…" : "Create profile"}</button><button className="rz-btn" disabled={busy} onClick={() => setPath("")}>Back</button></div>
           </div>

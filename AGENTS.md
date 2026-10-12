@@ -20,3 +20,4 @@
 - Keep expanded project-wizard screen keys in draft `answers.wizard_step` while retaining legacy `current_step` numbering, because existing saved drafts must reopen without a database migration.
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
 - Keep Discover globe code under `src/create/globe/` fed only by public release and creator data, because discovery must never read private profile fields.
+- Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.

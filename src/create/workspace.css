@@ -20,3 +20,14 @@
 .rz-ws-makers label{display:flex;align-items:center;gap:.5rem;font-size:.8rem;cursor:pointer}
 .rz-ws-split-row{display:grid;grid-template-columns:1fr 6rem;align-items:center;gap:.6rem;margin-bottom:.4rem;font-size:.8rem}
 @media(max-width:600px){.rz-ws{padding:.8rem .8rem 1rem}.rz-ws-panel-head{flex-direction:column;align-items:flex-start;gap:.4rem}}
+
+.rz-ws{border:0;border-radius:0;box-shadow:none;background:transparent;max-width:960px;margin:1rem auto;padding:1rem 0}
+.rz-private-head h1{font-size:1.65rem;font-weight:700;color:hsl(var(--ink));margin-bottom:.35rem}
+.rz-ws label{display:block;font-size:.8rem;margin:.5rem 0}
+.rz-ws label>.rz-in{display:block;margin-top:.35rem}
+.rz-ws .rz-ws-makers label{display:flex}
+.rz-ws-panel-head{border-top:1px solid hsl(var(--line));padding-top:1rem}
+.rz-discover-content{max-width:1400px;margin:0 auto;padding:1rem}
+.rz-studio-work{margin-top:1.5rem}
+.rz-studio-work h2{font-size:1.1rem;font-weight:700;margin-bottom:.8rem}
+.rz-existing{font-size:.75rem;margin-bottom:.6rem}

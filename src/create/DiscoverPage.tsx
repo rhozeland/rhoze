@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import { ProjectHeart } from "./ProjectLikes";
 import DiscoverGlobe, { type GlobePin } from "./globe/DiscoverGlobe";
+import "./workspace.css";
 import { Button } from "@/components/ui/button";
 import StudioProjects from "./StudioProjects";
 import ExistingProjects from "./ExistingProjects";

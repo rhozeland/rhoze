@@ -631,10 +631,9 @@ export default function CreateProject() {
             <div className="rz-review-section">The idea</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Project</span><b style={{ wordBreak: "break-word" }}>{title}</b></div>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Type</span><span>{isBrand ? "Brand project" : "Artist project"}</span></div>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">{leadLabel}</span><span>{name}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Creator</span><span>{name}</span></div>
               {category && <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Category</span><span>{category}</span></div>}
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Cover</span>{coverPreview ? <img src={coverPreview} alt="Cover art" style={{ width: 72, height: 40, objectFit: "cover", borderRadius: 6 }} /> : <span className="rz-opt">Gradient placeholder</span>}</div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Cover</span>{coverPreview ? <img src={coverPreview} alt="Cover art" style={{ width: 72, height: 40, objectFit: "cover", borderRadius: 6 }} /> : <span className="rz-opt">No cover yet</span>}</div>
             </div>
             <div className="rz-review-section">Scope</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
@@ -644,7 +643,7 @@ export default function CreateProject() {
 
             <div className="rz-review-section">Who's making it</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Makers</span><span>{makers.map((id) => MAKERS.find((m) => m.id === id)?.title).filter(Boolean).join(", ") || "—"}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Makers</span><span>{[...makers.map((id) => MAKERS.find((m) => m.id === id)?.title).filter(Boolean), ...people.map((p) => p.display_name)].join(", ") || "You"}</span></div>
             </div>
             {makers.includes("open_roles") && roles.filter((x) => x.name.trim()).length > 0 && (
               <>

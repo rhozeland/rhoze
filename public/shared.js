@@ -483,6 +483,7 @@ setupHoverVideos();
 // One public project destination, shared by static public pages and React navigation.
 (function(){
   function normalize(){
+    if (/^\/projects\/?$/.test(location.pathname)) { location.replace('/discover' + location.search); return; }
     document.querySelectorAll('.site-nav .sn-links, .site-nav .nav-links, #mobileMenu').forEach(function(menu){
       var discover = null;
       menu.querySelectorAll('a').forEach(function(a){

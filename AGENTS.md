@@ -23,3 +23,8 @@
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
 - Keep the submission presentation in a separate Vite entry with one fixed-resolution slide registry and scaling component, because deck navigation and print export must never change the public website.
 - Resolve presentation screenshot pointers against the published asset host only on localhost, because Vite does not serve the asset CDN while hosted deployments use same-origin assets.
+
+- Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
+- Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.
+- Preserve the static studio portfolio as the legacy content source consumed by Discover, because historical work must retain its real external destinations without invented account owners.
+- Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.

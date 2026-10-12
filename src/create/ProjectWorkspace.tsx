@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import type { TeamPerson } from "./project-flow";
 import { money, uid } from "./shared";
 import "./workspace.css";
+import "./create-flow.css";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
 type Tab = "overview" | "plan" | "team" | "money";
@@ -82,6 +83,13 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
     save({ answers: { ...(r.answers || {}), public_sections: next, makers, description: description.trim(), deadline, timeline } });
   };
 
+  const generateRoadmap = async () => {
+    setBusy(true); setErr("");
+    const { data, error } = await supabase.functions.invoke("release-roadmap", { body: { title, answers: { ...r.answers, description }, budget_cents: Math.round(Number(budget) * 100), artist_pct: artistPct } });
+    setBusy(false);
+    if (error || !Array.isArray(data?.milestones)) { setErr("Couldn't generate a roadmap. Add milestones manually or try again."); return; }
+    setMilestones(data.milestones.map((m: Milestone) => ({ ...m, id: uid(), done: false })));
+  };
   const addMilestone = () => setMilestones((m) => [...m, { id: uid(), title: "", deliverable: "", amount_cents: 0, done: false }]);
   const updateMilestone = (i: number, patch: Partial<Milestone>) => setMilestones((m) => m.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   const removeMilestone = (i: number) => setMilestones((m) => m.filter((_, j) => j !== i));
@@ -142,6 +150,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
           ))}
           <div className="rz-ws-save">
             <Button variant="outline" type="button" className="rz-btn" onClick={addMilestone}>Add milestone</Button>
+             <Button variant="outline" className="rz-btn" disabled={busy} onClick={generateRoadmap}>Generate with AI</Button>
             <Button variant="outline" type="button" className="rz-btn pri" disabled={busy} onClick={() => save()}>{busy ? "Saving…" : "Save plan"}</Button>
             {savedAt && <span className="rz-ws-note">Saved</span>}
           </div>
@@ -150,7 +159,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
 
       {tab === "team" && (
         <div>
-          <div className="rz-ws-panel-head"><h3>Team &amp; chat</h3><PublicSwitch sectionKey="team" label="Team & chat" /></div>
+          <div className="rz-ws-panel-head"><h3>People</h3><PublicSwitch sectionKey="team" label="Team & chat" /></div>
           <TeamPlanner people={people} onChange={setPeople} />
           <div className="rz-ws-makers">
             {MAKERS_OPTIONS.map((o) => (

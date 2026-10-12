@@ -15,6 +15,12 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [react(), mode === "development" && componentTagger(), {
     name: "mirror-discover-entry",
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        if (req.url && /^\/discover\/?(?:\?|$)/.test(req.url)) req.url = req.url.replace(/^\/discover\/?/, "/discover.html");
+        next();
+      });
+    },
     closeBundle() {
       // The nested static address must use the same built scripts/styles as the Vite entry.
       const html = readFileSync(path.resolve(__dirname, "dist/discover.html"), "utf8");

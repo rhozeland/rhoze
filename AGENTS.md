@@ -17,12 +17,12 @@
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
 - Follow `src/create/AGENTS.md` for cover cropping, market data, wizard compatibility, and globe rules.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
-- Keep the submission presentation in a separate Vite entry with one fixed-resolution slide registry and scaling component, because deck navigation and print export must never change the public website.
-- Resolve presentation screenshot pointers against the published asset host only on localhost, because Vite does not serve the asset CDN while hosted deployments use same-origin assets.
+- Keep the fixed-slide presentation in its own Vite entry, so navigation/print never alter the website.
+- Resolve deck screenshots to the published host on localhost only; Vite lacks the asset CDN.
 
 - Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
 - Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.
-- Mirror Discover static pages; resolve names with creator-profile-links.js only to unique public account-backed profiles, because legacy work must not get invented owners. Preserve external media links.
+- Build Discover as a Vite entry mirrored to static URLs; resolve only unique public account-backed creators, preserve source links, and keep globe/Flow public-only to prevent invented ownership.
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
 - Derive Creator Pass XP and public standings from verified earned ledger kinds through visibility-checked functions, excluding refunds and spending, because progress tracks contributions, not balances.
@@ -31,3 +31,5 @@
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
 - Keep home-motion.js fed by Discover registries; portfolio-projects preserves sources and admin-write portfolio_details stores lore/tokens, never inferred ownership.
 - Scope toolbar styles in discover-toolbar.css, mirrored on both Discover pages, to preserve shared navigation.
+
+- Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.

@@ -3391,13 +3391,13 @@
         </style>
 
         <section class="fh-house-intro" aria-labelledby="homepage-title">
-          <div><span class="fh-house-label">Independent. Connected. Creator-owned.</span><h1 id="homepage-title">Rhozeland</h1></div>
+          <div><h1 id="homepage-title">Rhozeland</h1><span class="fh-house-label">Independent. Connected. Creator-owned.</span></div>
           <p>A content house. A launchpad for culture.<br>Connecting people, ideas and production to make real work.</p>
         </section>
         <div class="fh-dark">
-          <section class="fh-section fh-work" id="featured-work" aria-labelledby="work-heading">
+          <section class="fh-section fh-work" id="featured-work" aria-label="Projects made with Rhozeland">
             <div class="fh-wrap">
-              <div class="fh-work-head"><h2 id="work-heading">Featured Projects</h2><a href="/discover.html">View all projects →</a></div>
+              <div class="fh-work-head"><span class="fh-work-note">Ideas, people, real work.</span><a href="/discover.html">View all projects →</a></div>
               <div class="fh-marquee">
                 <div class="fh-marquee-track">
 <a class="fh-project" href="https://www.youtube.com/watch?v=w9dYE595cBw" target="_blank" rel="noopener"><img src="/images/fingaz-mansa-musa-thumb.webp" alt="Mansa Musa by Monee Fingaz"><span class="fh-project-tag">Music video</span><span class="fh-project-meta"><strong>Mansa Musa</strong><span>Monee Fingaz</span></span></a>
@@ -3437,23 +3437,31 @@
             </div>
           </div>
         </section>
-        <section class="fh-section fh-channel" aria-labelledby="channel-heading"><div class="fh-wrap"><div class="fh-channel-head"><div><p class="fh-eyebrow">Inside the house</p><h2 id="channel-heading">Rhozeland News</h2><p>Conversations, studio stories and the people behind the work.</p></div><a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">Visit our YouTube ↗</a></div>                <section class="r-home-news">
-                  <div class="r-home-news-head"><strong>Rhozeland News</strong><a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">Full channel ↗</a></div>
-                  <div class="r-eco-video">
-                    <iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-                    <span class="r-eco-live-tag"><span class="r-eco-live-dot" aria-hidden="true"></span><span id="rEcoFeaturedTag">Latest</span></span>
+        <section class="fh-section fh-channel" aria-label="Inside Rhozeland"><div class="fh-wrap fh-updates-grid">
+          <article class="fh-update fh-update-news"><header><h2>Rhozeland News</h2><a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener" aria-label="Visit Rhozeland on YouTube">↗</a></header>
+            <div class="r-eco-video"><iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+            <p id="rEcoFeaturedDek">Conversations and stories from the house.</p>
+          </article>
+          <article class="fh-update fh-update-token"><header><h2>Tokenomics <span>$RHOZE</span></h2><a href="/about.html" aria-label="View Rhozeland tokenomics">↗</a></header>
+            <div class="fh-token-price"><strong id="rEcoMiniPrice">—</strong><span id="rEcoMiniChg">—</span></div>
+                  <div class="r-rz-chart">
+                    <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 96" preserveAspectRatio="none" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="rRzGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="currentColor" stop-opacity="0.28"/>
+                          <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
+                        </linearGradient>
+                      </defs>
+                      <path id="rEcoSparkFill" d="" fill="url(#rRzGrad)" stroke="none"/>
+                      <path id="rEcoSparkLine" d="" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                      <g id="rEcoCandles"></g>
+                    </svg>
+                    <span class="r-rz-chart-tag" id="rRzRangeTag">All time</span>
                   </div>
-                  <p class="r-home-news-title" id="rEcoFeaturedDek">Podcast, documentaries and studio stories from the Rhozeland channel.</p>
-                  <div class="r-eco-eps-head" style="margin-top:0.9rem;">
-                    <span class="r-eco-eps-label">More from the channel</span>
-                    <a class="r-eco-eps-all" href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener">All videos ↗</a>
-                  </div>
-                  <div class="r-eco-eps-rail">
-                    <button class="r-eco-eps-nav is-prev" id="rEcoEpsPrev" type="button" aria-label="Previous videos">‹</button>
-                    <div class="r-eco-eps-grid" id="rEcoEpsGrid"></div>
-                    <button class="r-eco-eps-nav is-next" id="rEcoEpsNext" type="button" aria-label="More videos">›</button>
-                  </div>
-                </section></div></section>
+            <div class="fh-token-foot"><span>Market cap <strong id="rEcoMiniMc">—</strong></span><a href="/about.html">Supply &amp; token details ↗</a></div>
+          </article>
+          <article class="fh-update fh-update-project"><header><h2>In the spotlight</h2><a href="/discover.html" aria-label="Discover all projects">↗</a></header><div id="fh-project-spotlight"></div></article>
+        </div></section>
         <section class="fh-section fh-steps" aria-labelledby="how-heading">
           <div class="fh-wrap">
             <p class="fh-eyebrow">Ideas meet people. People make culture.</p>
@@ -4198,22 +4206,22 @@
                     <span class="r-eco-stats-label">$RHOZE · Live on Solana</span>
                     <span class="r-rz-src" id="rRzSrcTag">Live</span>
                   </div>
-                  <div class="r-eco-mini"><div class="r-eco-mini-price" id="rEcoMiniPrice">—</div><div class="r-eco-mini-chg flat" id="rEcoMiniChg">—</div></div>
+                  <div class="r-eco-mini"><div class="r-eco-mini-price" id="legacyrEcoMiniPrice">—</div><div class="r-eco-mini-chg flat" id="legacyrEcoMiniChg">—</div></div>
                   <div class="r-rz-chart">
-                    <svg class="r-eco-spark" id="rEcoSpark" viewBox="0 0 200 96" preserveAspectRatio="none" aria-hidden="true">
+                    <svg class="r-eco-spark" id="legacyrEcoSpark" viewBox="0 0 200 96" preserveAspectRatio="none" aria-hidden="true">
                       <defs>
-                        <linearGradient id="rRzGrad" x1="0" y1="0" x2="0" y2="1">
+                        <linearGradient id="legacyrRzGrad" x1="0" y1="0" x2="0" y2="1">
                           <stop offset="0%" stop-color="currentColor" stop-opacity="0.28"/>
                           <stop offset="100%" stop-color="currentColor" stop-opacity="0"/>
                         </linearGradient>
                       </defs>
-                      <path id="rEcoSparkFill" d="" fill="url(#rRzGrad)" stroke="none"/>
-                      <path id="rEcoSparkLine" d="" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-                      <g id="rEcoCandles"></g>
+                      <path id="legacylegacyrEcoSparkFill" d="" fill="url(#legacyrRzGrad)" stroke="none"/>
+                      <path id="legacylegacyrEcoSparkLine" d="" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                      <g id="legacyrEcoCandles"></g>
                     </svg>
-                    <span class="r-rz-chart-tag" id="rRzRangeTag">All time</span>
+                    <span class="r-rz-chart-tag" id="legacyrRzRangeTag">All time</span>
                   </div>
-                  <div class="r-eco-mini-row"><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="rEcoMiniMc">—</div></div><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Your credits</div><div class="r-eco-stat-v" id="rEcoMiniCredits">—</div></div></div>
+                  <div class="r-eco-mini-row"><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Market Cap</div><div class="r-eco-stat-v" id="legacyrEcoMiniMc">—</div></div><div class="r-eco-mini-cell r-eco-stat"><div class="r-eco-stat-k">Your credits</div><div class="r-eco-stat-v" id="rEcoMiniCredits">—</div></div></div>
                   <a class="r-rz-buy" href="#workspace/tokens" data-home-workspace data-ws-tab="tokens">
                     <span>Get $RHOZE</span>
                     <span aria-hidden="true">→</span>
@@ -5944,5 +5952,6 @@
   </script>
   <script type="module" src="/src/homepage-workspace-main.tsx"></script>
 <script type="module" src="/src/home-workflow-previews.ts"></script>
+<script src="/home-motion.js" defer></script>
 </body>
 </html>

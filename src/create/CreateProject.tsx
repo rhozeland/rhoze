@@ -217,7 +217,7 @@ export default function CreateProject() {
       if (!r || (!fromParam && r.status !== "draft")) { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
       setDraftId(r.id);
       setOriginalAnswers(r.answers || {});
-      setIdeaIndex(Number(r.answers?.idea_question) || 0);
+      setIdeaIndex(fromParam ? 0 : Math.max(0, Math.min(IDEA_QUESTIONS.length - 1, Number(r.answers?.idea_question) || 0)));
       setTimelineMode(r.answers?.timeline_mode || "flexible");
       setDeadline(r.answers?.deadline || "");
       const { data: team } = await supabase.from("release_team_members").select("creator_id,display_name,email").eq("release_id", r.id);

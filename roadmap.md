@@ -32,12 +32,12 @@
 
 ## Unified platform (Colosseum: Mon Oct 12 3:00 AM ET)
 ## Private project flow and consolidated discovery
-- [ ] Restore one-question Idea screens inside four stages; remove project-type selector.
-- [ ] Add estimate terminology, calendar deadline and flexible periods, and tax information.
-- [ ] Add public creator selection and team email planning alongside open roles.
-- [ ] Create private workspaces, deliberate later publishing, and editable project details.
-- [ ] Consolidate Discover navigation and studio work, update Create actions and Existing Projects access.
-- [ ] Verify private creation, editing/readback, and public access restrictions.
+- [x] Restore one-question Idea screens inside four stages; remove project-type selector.
+- [x] Add estimate terminology, calendar deadline and flexible periods, and tax information.
+- [x] Add public creator selection and private team email planning alongside open roles; no invitations are sent.
+- [x] Create private workspaces, deliberate later publishing, and editable project details.
+- [x] Consolidate Discover navigation and studio work, update Create actions and Existing Projects access.
+- [x] Verify private creation, editing/readback, deliberate publish/unpublish, and public access restrictions.
 
 ## Unified platform (Colosseum: Mon Oct 12 3:00 AM ET)
 - [x] W1: One account, create/support paths

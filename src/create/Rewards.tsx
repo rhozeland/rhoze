@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import "./rewards.css";
+import { Button } from "@/components/ui/button";
+import "./pass.css";
 
 const db = supabase as any;
 
@@ -45,6 +47,7 @@ export function RewardsCard({ userId }: { userId: string }) {
   const [wallet, setWallet] = useState("");
   const [sendMsg, setSendMsg] = useState("");
   const [tick, setTick] = useState(0);
+  const [sending,setSending] = useState(false);
 
   useEffect(() => {
     db.from("rhoze_send_requests").select("id,amount,status,tx_signature,created_at").eq("user_id", userId).order("created_at", { ascending: false }).limit(10).then(({ data }: any) => setSends(data || []));
@@ -52,10 +55,12 @@ export function RewardsCard({ userId }: { userId: string }) {
 
   const requestSend = async () => {
     setSendMsg("");
-    const n = Math.floor(Number(amt));
-    if (!n || n < 1) { setSendMsg("Enter how much $RHOZE to send."); return; }
+    const n = Number(amt);
+    if (!Number.isSafeInteger(n) || n < 1) { setSendMsg("Enter a whole number of $RHOZE to send."); return; }
     if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(wallet.trim())) { setSendMsg("Enter a valid Solana wallet address."); return; }
+    setSending(true);
     const { error } = await db.rpc("request_rhoze_send", { p_amount: n, p_wallet: wallet.trim() });
+    setSending(false);
     if (error) { setSendMsg(error.message.includes("insufficient") ? "That's more than your balance." : "Couldn't send the request. Try again."); return; }
     setAmt(""); setSendMsg("Request sent. The team will send your $RHOZE and post the transaction here."); setTick((t) => t + 1);
   };
@@ -74,7 +79,7 @@ export function RewardsCard({ userId }: { userId: string }) {
 
   return (
     <section className="rz-pf-sec rz-rewards-card" aria-label="$RHOZE rewards">
-      <h2>$RHOZE rewards</h2>
+      <h2>Rewards balance</h2>
       <div className="rz-rewards-balance">
         <span className="rz-rewards-balance-label">Your balance</span>
         <strong>{err ? "—" : formatRhoze(balance)}</strong>
@@ -112,10 +117,10 @@ export function RewardsCard({ userId }: { userId: string }) {
 
       <div className="rz-sup-block">
         <h3>Send to my wallet</h3>
-        <div className="rz-ws-row" style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>
-          <input className="rz-in" type="number" min={1} placeholder="Amount" value={amt} onChange={(e) => setAmt(e.target.value)} style={{ maxWidth: "8rem" }} aria-label="Amount of $RHOZE" />
-          <input className="rz-in" placeholder="Solana wallet address" value={wallet} onChange={(e) => setWallet(e.target.value)} style={{ flex: 1, minWidth: "14rem" }} aria-label="Solana wallet address" />
-          <button type="button" className="rz-btn pri" onClick={requestSend}>Request</button>
+        <div className="rz-rewards-wallet-row">
+          <input className="rz-in" type="number" min={1} placeholder="Amount" value={amt} onChange={(e) => setAmt(e.target.value)} aria-label="Amount of $RHOZE" />
+          <input className="rz-in" placeholder="Solana wallet address" value={wallet} onChange={(e) => setWallet(e.target.value)} aria-label="Solana wallet address" />
+          <Button type="button" variant="outline" className="rz-btn pri" disabled={sending} onClick={requestSend}>{sending ? "Requesting…" : "Request"}</Button>
         </div>
         {sendMsg && <p className="rz-pf-empty">{sendMsg}</p>}
         {sends.length > 0 && (

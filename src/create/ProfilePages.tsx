@@ -8,6 +8,7 @@ import CoverEditor from "./CoverEditor";
 import { LikedProjects, ProjectHeart } from "./ProjectLikes";
 import { SupporterHome } from "./SupporterHome";
 import "./supporter.css";
+import { ProfileProgress } from "./CreatorPass";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -77,7 +78,8 @@ const blobCache = new Map<string, string>();
 function BlobImg({ src, alt, className }: { src: string; alt: string; className?: string }) {
   const [url, setUrl] = useState<string | null>(blobCache.get(src) ?? null);
   useEffect(() => {
-    if (blobCache.has(src)) { setUrl(blobCache.get(src)!); return; }
+    const cached = blobCache.get(src);
+    if (cached) { setUrl(cached); return; }
     if (src.startsWith("/")) { setUrl(src); return; }
     let live = true;
     fetch(src).then((r) => r.blob()).then((b) => {
@@ -192,18 +194,18 @@ export function CreatorProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
-          <a className="rz-btn rz-create-pill" href="/create.html">Create a project</a>
           {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         </div>
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}
         {c && (
           <>
-            {isOwner && fan && <SupporterHome userId={uid!} heading="Your supporter home" />}
+            {isOwner && fan && uid && <SupporterHome userId={uid} heading="Your supporter home" />}
             <div className="rz-pf-top">
               <Avatar src={c.photo_url} name={c.display_name} className="rz-pf-photo" />
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
+                {c.user_id && <ProfileProgress userId={c.user_id} />}
                 <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
                 <p className="rz-pf-meta">{!fan && <b>{rate}</b>}{!fan && c.rating != null && " · "}{c.rating != null && <>{Number(c.rating).toFixed(1)} ★</>}</p>
                 {(c.city || c.country) && (
@@ -220,7 +222,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
               </div>
             </div>
 
-            {editing && isOwner && <CreatorEditor c={c} uid={uid!} onSaved={() => { setEditing(false); load(); }} />}
+            {editing && isOwner && uid && <CreatorEditor c={c} uid={uid} onSaved={() => { setEditing(false); load(); }} />}
 
             <section className="rz-pf-sec"><h2>Bio</h2>
               <p className="rz-pf-bio">{c.bio || "This creator hasn't added a bio yet."}</p></section>
@@ -245,7 +247,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
                 </div>
               )}</section>}
 
-            {isOwner && !fan && <SupporterHome userId={uid!} heading="Supporting" />}
+            {isOwner && !fan && uid && <SupporterHome userId={uid} heading="Supporting" />}
 
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
           </>
@@ -414,7 +416,6 @@ export function BrandProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card">
         <div className="rz-profile-controls">
-          <a className="rz-btn rz-create-pill" href="/create.html">Create a project</a>
           {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
@@ -425,6 +426,7 @@ export function BrandProfile({ slug }: { slug: string }) {
               <Avatar src={brand?.logo_url} name={name} className="rz-pf-photo rz-pf-logo" />
               <div className="rz-pf-id">
                 <h1>{name}</h1>
+                {brand?.user_id && <ProfileProgress userId={brand.user_id} />}
                 <div className="rz-pf-tags"><span>{brand?.category || "Brand"}</span></div>
                 <p className="rz-pf-bio" style={{ margin: ".4rem 0 .7rem" }}>{brand?.bio || "This brand hasn't added a bio yet."}</p>
                 <ProfileTools kind="brand" slug={slug} name={name} photo={brand?.logo_url} isOwner={canEdit}

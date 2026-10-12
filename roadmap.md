@@ -106,3 +106,8 @@
 ## Homepage final polish
 - [x] Integrate Build visuals and copy, align News/Pass/Spotlight, and remove the long news caption.
 - [x] Verify homepage visuals, links, and narrow-screen layout.
+
+## Rhozeland story
+- [x] Build a visual mission, history, creator-support and token page using existing studio photos and real video links.
+- [x] Link Our story from shared static and React footers without expanding the header.
+- [x] Verify footer-to-story navigation, token copy, video links, theme and mobile layout.

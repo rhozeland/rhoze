@@ -29,7 +29,7 @@ const nav = [
 ];
 
 const adminNav = [
-  { to: "/team-admin", label: "People", icon: Shield },
+  { to: "/team-admin", label: "Admin portal", icon: Shield },
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/requests", label: "Credit requests", icon: MessageSquare },
   { to: "/catalog", label: "Catalog", icon: Package },
@@ -53,9 +53,9 @@ function collapsedNavClass({ isActive }: { isActive: boolean }) {
 }
 
 export default function TeamLayout() {
-  const { user, isAdmin, department, signOut } = useAuth();
+  const { user, isAdmin, department, roles, signOut } = useAuth();
   const accessMap = loadSectionAccess();
-  const visibleNav = nav.filter((n) => canAccessSection(n.to, { isAdmin, department }, accessMap));
+  const visibleNav = nav.filter((n) => (n.to === "/leaderboard" && roles.includes("marketing")) || canAccessSection(n.to, { isAdmin, department }, accessMap));
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState<boolean>(() => {

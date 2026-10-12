@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "../lib/auth";
+import { TEAM_ROLES, type TeamRole } from "../lib/adminRules";
 import { formatPhone, validateAll, validateField, type MastersheetField } from "../lib/validation";
 
 const WEEK_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -27,8 +28,8 @@ const DAY_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 const DAYS_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const TIME_BLOCKS = ["Morning", "Afternoon", "Evening", "Overnight"];
 
-type Role = "admin" | "employee" | "client";
-const ROLES: Role[] = ["admin", "employee", "client"];
+type Role = TeamRole;
+const ROLES: readonly Role[] = TEAM_ROLES;
 type Dept = "marketing" | "hr" | "development" | "sales" | "operations";
 const DEPTS: { value: Dept; label: string }[] = [
   { value: "marketing", label: "Marketing" },
@@ -68,7 +69,7 @@ const UNASSIGNED_ROLES: Role[] = ["client"];
 // Admins have absolute control: any role can be granted to any user regardless
 // of department. The DEPT_ROLE_MATRIX above is kept only for reference.
 function allowedRoles(_dept: Dept | null | undefined): Role[] {
-  return ROLES;
+  return [...ROLES];
 }
 
 function validateRoleForDept(_role: Role, _dept: Dept | null | undefined): string | null {

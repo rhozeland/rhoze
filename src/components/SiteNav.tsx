@@ -81,6 +81,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
             <a href="/me" role="menuitem">My profile</a>
             <a href="/me?settings=1" role="menuitem">Edit profile & settings</a>
             <a href="/saved" role="menuitem">Saved</a>
+            {teamRole && <a href="/team.html#/" role="menuitem">{teamRole === "admin" ? "Admin" : "Team portal"}</a>}
             <Button type="button" variant="ghost" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</Button>
           </div>}
         </div>

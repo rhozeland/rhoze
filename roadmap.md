@@ -63,8 +63,8 @@
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
 ## Work-led homepage and Rewards
-- [ ] Restore the reference-style moving project mosaic, hover animation and minimal identity/recognition.
-- [ ] Combine compact news, live tokenomics and randomized project highlights; verify movement, links and layout.
+- [x] Restore the reference-style moving project mosaic, hover animation and minimal identity/recognition.
+- [x] Combine compact news, live tokenomics and randomized project highlights; verify movement, links and layout.
 - [x] Put the featured-work mosaic, identity and recognition first; follow with YouTube news.
 - [x] Add real Create/Discover/Rewards screenshot previews to Build with Rhozeland.
 - [x] Add Creator OS-style pass tilt and badge; correct Rewards contrast and verify layouts.

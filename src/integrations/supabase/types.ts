@@ -2327,6 +2327,48 @@ export type Database = {
           },
         ]
       }
+      release_team_members: {
+        Row: {
+          created_at: string
+          creator_id: string | null
+          display_name: string
+          email: string | null
+          id: string
+          release_id: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id?: string | null
+          display_name?: string
+          email?: string | null
+          id?: string
+          release_id: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string | null
+          display_name?: string
+          email?: string | null
+          id?: string
+          release_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "release_team_members_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creator_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "release_team_members_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       releases: {
         Row: {
           answers: Json
@@ -3717,6 +3759,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      release_make_private: { Args: { p_id: string }; Returns: undefined }
       release_public_metrics: {
         Args: { p_slug: string }
         Returns: {

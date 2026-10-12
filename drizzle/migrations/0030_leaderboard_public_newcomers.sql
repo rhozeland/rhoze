@@ -1,0 +1,7 @@
+CREATE OR REPLACE FUNCTION public.creator_standings() RETURNS TABLE(slug text,display_name text,photo_url text,xp bigint,contributions bigint,rank_position bigint) LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$
+WITH earned AS (SELECT user_id,sum(greatest(amount,0))::bigint AS xp,count(*)::bigint AS contributions FROM public.user_rewards_ledger WHERE kind IN ('release_published','project_like','role_application','project_payment') GROUP BY user_id), people AS (SELECT DISTINCT ON(c.user_id) c.slug,c.display_name,c.photo_url,coalesce(e.xp,0)::bigint AS xp,coalesce(e.contributions,0)::bigint AS contributions FROM public.creator_directory c LEFT JOIN earned e ON e.user_id=c.user_id WHERE c.is_public AND c.approved AND c.user_id IS NOT NULL ORDER BY c.user_id,c.created_at)
+SELECT slug,display_name,photo_url,xp,contributions,dense_rank() OVER(ORDER BY xp DESC) FROM people ORDER BY xp DESC,slug LIMIT 100;
+$$;
+REVOKE ALL ON FUNCTION public.creator_standings() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.creator_standings() TO anon,authenticated;
+COMMENT ON FUNCTION public.creator_standings() IS 'Public approved account-backed contributors, including newcomers with zero verified XP. Private/unclaimed accounts excluded; no historical handle matching or token minting.';

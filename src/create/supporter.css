@@ -1,0 +1,13 @@
+.rz-sup-home{display:flex;flex-direction:column;gap:1.1rem}
+.rz-sup-block h3{font-size:.78rem;font-weight:700;margin:0 0 .5rem;text-transform:uppercase;letter-spacing:.03em;color:hsl(var(--mut))}
+.rz-sup-sub{margin-top:.9rem}
+.rz-sup-empty{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem}
+.rz-sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.6rem}
+.rz-sup-card{display:flex;flex-direction:column;gap:.3rem;text-decoration:none;color:inherit}
+.rz-sup-cover{display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:hsl(var(--line));display:flex;align-items:center;justify-content:center}
+.rz-sup-cover img{width:100%;height:100%;object-fit:cover}
+.rz-sup-cover i{font-style:normal;font-size:.68rem;color:hsl(var(--mut));padding:.4rem;text-align:center}
+.rz-sup-card b{font-size:.78rem;font-weight:600;line-height:1.2}
+.rz-sup-card small{font-size:.68rem;color:hsl(var(--mut))}
+.rz-create-pill{margin-right:auto}
+@media (max-width:420px){.rz-sup-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}}

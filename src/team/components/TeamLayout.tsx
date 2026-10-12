@@ -190,7 +190,7 @@ export default function TeamLayout() {
           aria-expanded={mobileOpen} aria-controls="team-sidebar"
           onClick={() => setMobileOpen(true)}
           aria-label="Open team menu"
-          className="h-9 w-9 inline-flex items-center justify-center rounded-md text-foreground hover:bg-accent"
+          className="h-11 w-11 inline-flex items-center justify-center rounded-md text-foreground hover:bg-accent"
         >
           <Menu size={18} />
         </Button>
@@ -199,7 +199,7 @@ export default function TeamLayout() {
         </div>
         <NavLink
           to="/settings"
-          className="h-9 w-9 inline-flex items-center justify-center rounded-md"
+          className="h-11 w-11 inline-flex items-center justify-center rounded-md"
           aria-label="My account"
         >
           <Avatar className="h-7 w-7">
@@ -260,7 +260,7 @@ export default function TeamLayout() {
               onClick={() => setMobileOpen(false)}
               variant="ghost"
               size="icon"
-              className="h-8 w-8 shrink-0 md:hidden"
+              className="h-11 w-11 shrink-0 md:hidden"
               aria-label="Close team menu"
             >
               <X size={16} />

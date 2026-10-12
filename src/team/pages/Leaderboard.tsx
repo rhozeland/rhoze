@@ -9,6 +9,7 @@ import { Plus, Trash2, Save, ExternalLink, Check, X, Pencil } from "lucide-react
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { validLeaderboardPoints } from "../lib/adminRules";
+import '../components/admin-mobile.css';
 
 type Row = {
   id?: string;
@@ -264,12 +265,12 @@ export default function Leaderboard() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="team-points-editor space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Leaderboard points</h1>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="team-points-actions flex gap-2 flex-wrap">
           <a href="/rewards" target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm"><ExternalLink size={14} /> Open public page</Button>
           </a>
@@ -280,7 +281,7 @@ export default function Leaderboard() {
 
       {loadError && <p role="alert" className="text-sm text-destructive">{loadError}</p>}
       <Tabs defaultValue="entries" className="space-y-5">
-        <TabsList className="flex h-auto flex-wrap justify-start">
+        <TabsList className="team-points-tabs flex h-auto flex-wrap justify-start">
           <TabsTrigger value="verified">Verified XP</TabsTrigger>
           <TabsTrigger value="submissions">
             Submissions{pendingCount > 0 && <span className="ml-1.5 text-xs">({pendingCount})</span>}
@@ -290,7 +291,7 @@ export default function Leaderboard() {
         </TabsList>
         <TabsContent value="verified" className="space-y-3">
           <p className="text-sm text-muted-foreground">Verified XP comes from recorded contributions. Historical point edits do not mint tokens or change XP.</p>
-          {standings.map(person => <div key={person.slug} className="flex justify-between gap-3 border-b border-border py-3 text-sm"><a href={`/creator/${person.slug}`} className="font-medium">{person.display_name}</a><span>{person.xp.toLocaleString()} XP · {person.contributions} contributions</span></div>)}
+          {standings.map(person => <div key={person.slug} className="team-points-verified flex justify-between gap-3 border-b border-border py-3 text-sm"><a href={`/creator/${person.slug}`} className="font-medium">{person.display_name}</a><span>{person.xp.toLocaleString()} XP · {person.contributions} contributions</span></div>)}
           {!standings.length && <p className="text-sm text-muted-foreground">No eligible public accounts yet.</p>}
         </TabsContent>
 
@@ -372,25 +373,25 @@ export default function Leaderboard() {
           <div className="space-y-3">
             {rows.map((r, i) => (
               <div key={r.id ?? `new-${i}`} className="border border-border rounded-lg p-3 bg-card space-y-2">
-                <div className="flex flex-wrap items-end gap-2">
-                  <div className="flex-1 min-w-[180px]">
-                    <Label className="text-[10px]">Handle</Label>
-                    <Input value={r.username} onChange={(e) => updateRow(i, { username: e.target.value })} />
+                <div className="team-points-primary flex flex-wrap items-end gap-2">
+                  <div className="team-points-handle flex-1 min-w-[180px]">
+                    <Label htmlFor={`handle-${i}`} className="text-[10px]">Handle</Label>
+                    <Input id={`handle-${i}`} value={r.username} onChange={(e) => updateRow(i, { username: e.target.value })} />
                   </div>
-                  <div className="w-20">
+                  <div className="team-points-number w-20">
                     <Label htmlFor={`alltime-${i}`} className="text-[10px]">All-time</Label>
                     <Input id={`alltime-${i}`} min={0} step={1} type="number" value={r.points} onChange={(e) => updateRow(i, { points: +e.target.value })} />
                   </div>
-                  <div className="w-20">
+                  <div className="team-points-number w-20">
                     <Label htmlFor={`weekly-${i}`} className="text-[10px]">Weekly</Label>
                     <Input id={`weekly-${i}`} min={0} step={1} type="number" value={r.weekly_points} onChange={(e) => updateRow(i, { weekly_points: +e.target.value })} />
                   </div>
-                  <div className="flex gap-2 ml-auto">
+                  <div className="team-points-row-actions flex gap-2 ml-auto">
                     <Button onClick={() => saveRow(r)} size="sm" disabled={busy}><Save size={14} /> Save</Button>
-                    {r.id && <Button onClick={() => deleteRow(r)} size="sm" variant="outline"><Trash2 size={14} /></Button>}
+                    {r.id && <Button onClick={() => deleteRow(r)} size="sm" variant="outline" aria-label={`Delete ${r.username}`} title={`Delete ${r.username}`}><Trash2 size={16} /></Button>}
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="team-points-counters grid grid-cols-4 gap-2">
                   <div><Label className="text-[10px]">Raids</Label><Input type="number" value={r.raids} onChange={(e) => updateRow(i, { raids: +e.target.value })} /></div>
                   <div><Label className="text-[10px]">Memes</Label><Input type="number" value={r.memes} onChange={(e) => updateRow(i, { memes: +e.target.value })} /></div>
                   <div><Label className="text-[10px]">Threads</Label><Input type="number" value={r.edu_threads} onChange={(e) => updateRow(i, { edu_threads: +e.target.value })} /></div>

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Save, ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "../lib/auth";
+import '../components/admin-mobile.css';
 type Entry = { slug: string; title: string; artist: string; image: string };
 type Story = { story: string; cultural_context: string; rhozeland_contribution: string };
 const emptyStory: Story = { story: "", cultural_context: "", rhozeland_contribution: "" };
@@ -54,7 +55,7 @@ export default function ProjectStories() {
     setBusy(false);
   }
   if (!isAdmin) return <p role="alert">Admin access required.</p>;
-  return <section className="space-y-5">
+  return <section className="team-story-editor space-y-5">
     <header className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-xl font-semibold">Project stories</h2>
       {selected && <Button variant="outline" size="sm" asChild><a href={`/project/${slug}`} target="_blank" rel="noreferrer"><ExternalLink size={14} /> View project</a></Button>}
     </header>
@@ -64,9 +65,9 @@ export default function ProjectStories() {
         <Select value={slug} onValueChange={choose} disabled={busy}><SelectTrigger aria-label="Select project"><SelectValue placeholder="Choose project" /></SelectTrigger><SelectContent>{visible.map(e => <SelectItem value={e.slug} key={e.slug}>{e.title} · {e.artist}</SelectItem>)}</SelectContent></Select>
       </div>
       {visible.length === 0 && <p className="text-sm text-muted-foreground">No matching projects.</p>}
-      {selected && <div className="grid gap-5 md:grid-cols-[180px_minmax(0,1fr)]"><aside className="space-y-2"><img src={selected.image} alt={selected.title} className="aspect-square w-full max-w-[180px] rounded-md object-cover" /><h3 className="font-medium">{selected.title}</h3><p className="text-sm text-muted-foreground">{selected.artist}</p></aside>
+      {selected && <div className="grid gap-5 md:grid-cols-[180px_minmax(0,1fr)]"><aside className="team-story-identity space-y-2"><img src={selected.image} alt={selected.title} className="aspect-square w-full max-w-[180px] rounded-md object-cover" /><h3 className="font-medium">{selected.title}</h3><p className="text-sm text-muted-foreground">{selected.artist}</p></aside>
         <div className="min-w-0 space-y-4">{([["story", "Project lore"], ["cultural_context", "Cultural significance"], ["rhozeland_contribution", "Rhozeland’s contribution"]] as const).map(([key, label]) => <div className="space-y-2" key={key}><Label htmlFor={`editor-${key}`}>{label}</Label><Textarea id={`editor-${key}`} rows={5} value={draft[key]} onChange={e => setDraft(previous => ({ ...previous, [key]: e.target.value }))} /></div>)}
-          <Button onClick={save} disabled={busy || !dirty}><Save size={14} />{busy ? "Saving…" : "Save story"}</Button></div>
+          <div className="team-story-save"><span role="status">{busy ? "Saving…" : dirty ? "Unsaved changes" : "Up to date"}</span><Button onClick={save} disabled={busy || !dirty}><Save size={16} />{busy ? "Saving…" : "Save story"}</Button></div></div>
       </div>}
     </>}
   </section>;

@@ -121,3 +121,7 @@
 - [x] Replace source switches and prize clutter with one honest all-time list and personal weekly stats.
 - [x] Connect project-page earning feedback to verified rewards and show project-earned points.
 - [x] Verify signed-in earning, repeat-action protection, saved totals, and public privacy.
+
+## Phone-friendly admin portal
+- [x] Restyle admin navigation, project-story editing and points controls for phone screens.
+- [x] Verify signed-in phone saves, reload/readback and website navigation.

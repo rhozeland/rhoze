@@ -35,6 +35,13 @@
 
     --radius: 0.75rem;
 
+    --ledger-surface:0 0% 10%;
+    --ledger-ink:0 0% 96%;
+    --ledger-muted:0 0% 68%;
+    --ledger-line:0 0% 27%;
+    --ledger-accent:43 96% 76%;
+    --ledger-confirm:159 58% 49%;
+    
     /* Custom Rhoze tokens */
     --rhoze-mint: 170 60% 60%;
     --rhoze-pink: 300 60% 90%;

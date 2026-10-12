@@ -5165,9 +5165,9 @@
       function fmtPct(n){ if (n == null || !isFinite(n)) return '—'; return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
 
       function paintTicker(stats){
-        var p = document.getElementById('legacyrEcoMiniPrice'); if (p) p.textContent = fmtPrice(stats.price);
+        var p = document.getElementById('rEcoMiniPrice'); if (p) p.textContent = fmtPrice(stats.price);
         var spatialPrice = document.getElementById('rSpatialTickerPrice'); if (spatialPrice) spatialPrice.textContent = fmtPrice(stats.price);
-        var c = document.getElementById('legacyrEcoMiniChg');
+        var c = document.getElementById('rEcoMiniChg');
         if (c) {
           c.textContent = fmtPct(stats.change24h);
           if (c.classList.contains('r-market-v')) {
@@ -5177,7 +5177,7 @@
           }
         }
         var spatialChange = document.getElementById('rSpatialTickerChange'); if (spatialChange) spatialChange.textContent = fmtPct(stats.change24h);
-        var mc = document.getElementById('legacyrEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
+        var mc = document.getElementById('rEcoMiniMc'); if (mc) mc.textContent = fmtCompact(stats.marketCap);
         var vol = document.getElementById('rEcoMiniVol');
         if (vol) vol.textContent = (stats.volume24h === 0) ? '$0' : fmtCompact(stats.volume24h);
         var cr = document.getElementById('rEcoMiniCredits');
@@ -5284,7 +5284,7 @@
             var y = function(v){ return pad + (H - pad*2) * (1 - (v - min) / range); };
             var UP = '#15803d', DN = '#b91c1c';
             var svgns = 'http://www.w3.org/2000/svg';
-            var g = document.getElementById('legacyrEcoCandles');
+            var g = document.getElementById('rEcoCandles');
             if (g) {
               while (g.firstChild) g.removeChild(g.firstChild);
               rows.forEach(function(r, i){
@@ -5312,12 +5312,12 @@
               return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y(v).toFixed(1);
             }).join(' ');
             var fill = line + ' L' + (W - pad).toFixed(1) + ' ' + (H - pad) + ' L' + pad + ' ' + (H - pad) + ' Z';
-            var l = document.getElementById('legacylegacyrEcoSparkLine'); if (l) l.setAttribute('d', '');
-            var f = document.getElementById('legacylegacyrEcoSparkFill'); if (f) f.setAttribute('d', fill);
+            var l = document.getElementById('rEcoSparkLine'); if (l) l.setAttribute('d', '');
+            var f = document.getElementById('rEcoSparkFill'); if (f) f.setAttribute('d', fill);
             var up = closes[closes.length-1] >= closes[0];
             var wrap = document.querySelector('.r-rz-chart');
             if (wrap) wrap.style.color = up ? UP : DN;
-            var tag = document.getElementById('legacyrRzRangeTag');
+            var tag = document.getElementById('rRzRangeTag');
             if (tag) tag.textContent = rows.length + ' hourly candles · $RHOZE/USD';
           })
           .catch(function(){});

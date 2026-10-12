@@ -63,6 +63,7 @@
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
 ## Work-led homepage and Rewards
+- [ ] Link Indoléstic and other confirmed account names on Discover directly to their profiles; leave unclaimed names anonymous.
 - [x] Unify public navigation as Discover, Create, Rewards with icons and a single Create action.
 - [x] Rebuild the homepage around real project artwork and recognition; combine Build with Rhozeland.
 - [x] Adapt Creator OS pass/profile with real balance, earned XP, badges and privacy-filtered standings.

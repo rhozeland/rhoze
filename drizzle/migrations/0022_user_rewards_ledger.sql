@@ -23,7 +23,6 @@ create policy "Users read own reward entries"
   to authenticated
   using (user_id = auth.uid());
 
--- Single place for reward amounts, easy to change.
 create or replace function public.rz_reward_amount(p_kind text)
 returns bigint
 language sql
@@ -38,7 +37,6 @@ as $$
   end;
 $$;
 
--- +500 when a release becomes published for the first time
 create or replace function public.rz_award_release_published()
 returns trigger
 language plpgsql
@@ -61,7 +59,6 @@ create trigger trg_rz_award_release_published
   for each row
   execute function public.rz_award_release_published();
 
--- +25 when a user likes a project (ref = release_id, so unlike/relike can't farm)
 create or replace function public.rz_award_project_like()
 returns trigger
 language plpgsql
@@ -82,7 +79,6 @@ create trigger trg_rz_award_project_like
   for each row
   execute function public.rz_award_project_like();
 
--- +100 when a signed-in user submits a role application
 create or replace function public.rz_award_role_application()
 returns trigger
 language plpgsql
@@ -105,12 +101,8 @@ create trigger trg_rz_award_role_application
   for each row
   execute function public.rz_award_role_application();
 
--- Balance + recent activity for the signed-in user
 create or replace function public.my_rewards()
-returns table (
-  balance bigint,
-  entries jsonb
-)
+returns table (balance bigint, entries jsonb)
 language sql
 stable
 security definer
@@ -130,4 +122,5 @@ as $$
     ), '[]'::jsonb) as entries;
 $$;
 
+revoke all on function public.my_rewards() from public, anon;
 grant execute on function public.my_rewards() to authenticated;

@@ -46,8 +46,8 @@
 - [ ] Add city to creator profiles so globe pins spread beyond Toronto
 - [ ] Settings switch between creator/supporter — needs one owner-checked function
 - [x] Create (+) icon in header; floating button now Create a project
-- [ ] Homepage redesign (condensed, How it works, merged Why Rhozeland, tiers removed)
-- [ ] Cities on profiles + projects; globe pins by city
-- [ ] $RHOZE rewards for creating, liking, applying
+- [x] Homepage redesign (condensed, How it works, merged Why Rhozeland, tiers removed)
+- [x] Cities on profiles + projects; globe pins by city
+- [x] $RHOZE rewards for creating, liking, applying
 - [ ] Collaborator access to the private workspace (today owner-only)
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass

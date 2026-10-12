@@ -5,5 +5,5 @@ import rewards from './assets/workflow-rewards.asset.json';
 const previews: Record<string, {url: string}> = {create, discover, rewards};
 document.querySelectorAll<HTMLImageElement>('img[data-workflow]').forEach(img => {
   const asset = previews[img.dataset.workflow ?? ''];
-  if (asset) img.src = asset.url;
+  if (asset) img.src = location.hostname === 'localhost' ? new URL(asset.url, 'https://rhoze.lovable.app').href : asset.url;
 });

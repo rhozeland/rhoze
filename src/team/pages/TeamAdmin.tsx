@@ -10,17 +10,32 @@ import ProjectStories from "./ProjectStories";
 import Leaderboard from "./Leaderboard";
 import { useAuth } from "../lib/auth";
 import '../components/admin-mobile.css';
+import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const adminSections = [
+  ['roles', 'Team roles'], ['stories', 'Project stories'], ['leaderboard', 'Leaderboard points'],
+  ['hire', 'Hire'], ['pay', 'Pay details'], ['benefits', 'Benefits'],
+  ['role-settings', 'Roles Settings'], ['invites', 'Invites'], ['referral-codes', 'Referral codes'],
+];
 
 export default function TeamAdmin() {
   const { isAdmin } = useAuth();
+  const [section, setSection] = useState('roles');
   if (!isAdmin) return <p role="alert">Admin access required.</p>;
   return (
     <div className="team-admin space-y-4">
       <div>
         <h1 className="text-2xl font-semibold">Admin portal</h1>
       </div>
-      <Tabs defaultValue="roles" className="space-y-4">
-        <TabsList className="team-admin-tabs flex h-auto flex-wrap justify-start gap-1">
+      <Tabs value={section} onValueChange={setSection} className="space-y-4">
+        <div className="md:hidden">
+          <Select value={section} onValueChange={setSection}>
+            <SelectTrigger aria-label="Admin section"><SelectValue /></SelectTrigger>
+            <SelectContent>{adminSections.map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <TabsList className="team-admin-tabs hidden h-auto flex-wrap justify-start gap-1 md:flex">
           <TabsTrigger value="hire">Hire</TabsTrigger>
           <TabsTrigger value="roles">Team roles</TabsTrigger>
           <TabsTrigger value="stories">Project stories</TabsTrigger>

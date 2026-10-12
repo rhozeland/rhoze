@@ -34,4 +34,4 @@
 
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
 
-- Read portal roles from authenticated database, never cached privileges; reuse protected stories and historical points; verified XP is read-only.
+- Read portal roles from the database, never cache; preserve story/point permissions and read-only XP. Scope phone selectors and stacked editors in admin-mobile.css to preserve saves.

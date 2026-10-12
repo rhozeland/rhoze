@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/create/AuthModal";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare } from "lucide-react";
+import { Menu, X, MessageSquare, Plus } from "lucide-react";
 
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
@@ -80,7 +80,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
           </div>}
         </div>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;
-  const msg = null;
+  const msg = <a className="sn-create" href="/create.html" aria-label="Create a project" title="Create a project"><Plus size={16} aria-hidden="true" /></a>;
   return <>
     <link rel="stylesheet" href="/site-nav.css" />
     <nav className="site-nav" aria-label="Primary">

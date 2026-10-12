@@ -14,9 +14,9 @@
     if (!document.querySelector('.site-nav') || document.querySelector('.site-book-float')) return;
     var link = document.createElement('a');
     link.className = 'site-book-float';
-    link.href = '/book.html';
-    link.setAttribute('aria-label', 'Book a project');
-    link.innerHTML = '<span class="site-book-float__mark" aria-hidden="true">✳</span><span>Book a project</span>';
+    link.href = '/create.html';
+    link.setAttribute('aria-label', 'Create a project');
+    link.innerHTML = '<span class="site-book-float__mark" aria-hidden="true">+</span><span>Create a project</span>';
     document.body.appendChild(link);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountBookingAction);
@@ -435,6 +435,9 @@ setupHoverVideos();
     var signedIn = !!sess;
     function build(cls){
       var wrap = document.createDocumentFragment();
+      var plus = document.createElement('a'); plus.href = '/create.html'; plus.className = 'sn-create'; plus.setAttribute('aria-label', 'Create a project'); plus.title = 'Create a project';
+      plus.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+      wrap.appendChild(plus);
       if (!signedIn) { var a = document.createElement('a'); a.className = cls; a.href = '/me'; a.textContent = 'Sign in'; wrap.appendChild(a); return wrap; }
       // Same gray account cluster as the landing page: profile identity + Messages.
       var w = document.createElement('div'); w.className = 'nav-auth-wrap';

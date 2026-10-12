@@ -1,6 +1,6 @@
 - Keep the public talent marketplace in `creator_directory`, separate from private account `profiles`, because visitors must never gain access to payroll or account details through discovery.
 - Store project likes and liked-list preferences separately with database-enforced owner writes and public visibility checks, because list privacy must hold beyond the browser.
-- Mount published-project pop-ups through the shared `public/project-view.js` from static shared navigation and React SiteNav, reusing the same-origin release view, because project browsing must preserve the source page while retaining existing support and owner checks.
+- Mount project pop-ups through project-view.js from shared.js and SiteNav using the same-origin release view, because browsing must preserve its source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
 - Share public links and styles through site-nav.css, shared.js and SiteNav, because headers must match.

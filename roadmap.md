@@ -63,10 +63,11 @@
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
 ## Work-led homepage and Rewards
-- [ ] Unify public navigation as Discover, Create, Rewards with icons and a single Create action.
-- [ ] Rebuild the homepage around real project artwork and recognition; combine Build with Rhozeland.
-- [ ] Adapt the referenced Creator OS pass/profile with real rewards balance, progress, badges and contribution standings.
-- [ ] Verify navigation, public homepage, signed-in rewards and profile flows.
+- [x] Unify public navigation as Discover, Create, Rewards with icons and a single Create action.
+- [x] Rebuild the homepage around real project artwork and recognition; combine Build with Rhozeland.
+- [x] Adapt Creator OS pass/profile with real balance, earned XP, badges and privacy-filtered standings.
+- [x] Verify matching headers, artwork, real signed-in pass/balance, and posting/deleting comments.
+- [ ] Verify profile editor readback — signed-in account has no public profile yet; preserve its onboarding rather than inventing profile details.
 
 ## Submission package — October 12, 2026
 - [x] Rewrite final submission answers around evidenced live features, separating future payments and subscriptions.

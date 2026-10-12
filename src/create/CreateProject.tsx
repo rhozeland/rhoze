@@ -7,10 +7,16 @@ import CoverEditor from "./CoverEditor";
 import { LocationFields } from "./ProfileExtras";
 import { Button } from "@/components/ui/button";
 import "./create-flow.css";
+import TeamPlanner from "./TeamPlanner";
+import { saveTeam } from "./team-storage";
+import { IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Info } from "lucide-react";
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
-const PENDING_KEY = "rz_pending_publish";
+const PENDING_KEY = "rz_pending_workspace";
 const MINT_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
 function getToken() {
@@ -25,7 +31,7 @@ type PType = "artist" | "brand";
 // The wizard is now a single merged 4-step flow shared by both project types.
 type StepKey = "idea" | "scope" | "team" | "review";
 const FLOW: StepKey[] = ["idea", "scope", "team", "review"];
-const STEP_LABEL: Record<StepKey, string> = { idea: "The idea", scope: "Scope", team: "Who's making it", review: "Review & publish" };
+const STEP_LABEL: Record<StepKey, string> = { idea: "The idea", scope: "Scope", team: "Who's making it", review: "Review" };
 
 // Old (pre-merge) step keys map onto the new 4 steps so drafts saved by the
 // previous wizard still reopen at a sensible place.
@@ -38,7 +44,7 @@ const OLD_TO_NEW: Record<string, StepKey> = {
 const OLD_LEGACY_ORDER = ["type", "details", "roadmap", "roles", "coin", "publish"];
 
 const CATEGORIES = ["Music", "Film & Video", "Art & Design", "Fashion", "Brand campaigns"] as const;
-const TIMELINES = ["ASAP", "1 month", "3 months", "Flexible"] as const;
+const TIMELINES = FLEXIBLE_TIMELINES;
 const MAKERS = [
   { id: "rhozeland", title: "Work with Rhozeland", desc: "We match you with vetted creative talent." },
   { id: "own_team", title: "My own team", desc: "You already have the people for this." },
@@ -93,6 +99,11 @@ export default function CreateProject() {
   const token = useMemo(getToken, []);
   const [draftId, setDraftId] = useState<string | null>(null);
   const [ptype, setPtype] = useState<PType>("artist");
+  const [ideaIndex, setIdeaIndex] = useState(0);
+  const [originalAnswers, setOriginalAnswers] = useState<Record<string, unknown>>({});
+  const [people, setPeople] = useState<TeamPerson[]>([]);
+  const [timelineMode, setTimelineMode] = useState("flexible");
+  const [deadline, setDeadline] = useState("");
   const [stepKey, setStepKey] = useState<StepKey>("idea");
   const [talentPct, setTalentPct] = useState(15);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -204,9 +215,15 @@ export default function CreateProject() {
       const r = Array.isArray(data) ? data[0] : null;
       if (!r || (!fromParam && r.status !== "draft")) { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
       setDraftId(r.id);
+      setOriginalAnswers(r.answers || {});
+      setIdeaIndex(Number(r.answers?.idea_question) || 0);
+      setTimelineMode(r.answers?.timeline_mode || "flexible");
+      setDeadline(r.answers?.deadline || "");
+      const { data: team } = await supabase.from("release_team_members").select("creator_id,display_name,email").eq("release_id", r.id);
+      setPeople(team || []);
       const lt: PType = r.answers?.project_type === "brand" ? "brand" : "artist";
       setPtype(lt);
-      if (lt === "brand") { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
+      { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
 
       // Resolve the step to reopen on: new wizard_step keys win, otherwise map
       // the old key (or old numeric current_step) onto the new 4-step flow.
@@ -215,7 +232,7 @@ export default function CreateProject() {
       if (restored && (FLOW as string[]).includes(restored)) resolved = restored as StepKey;
       else if (restored && OLD_TO_NEW[restored]) resolved = OLD_TO_NEW[restored];
       else { const oldKey = OLD_LEGACY_ORDER[(r.current_step || 1) - 1]; resolved = OLD_TO_NEW[oldKey] || "idea"; }
-      setStepKey(resolved);
+      setStepKey(fromParam ? "idea" : resolved);
 
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
       setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || ""); setAudience(r.answers?.audience || "");
@@ -236,9 +253,10 @@ export default function CreateProject() {
   const payload = (s = step) => ({
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
     answers: {
+      ...originalAnswers, idea_question: ideaIndex, timeline_mode: timelineMode, deadline,
       wizard_step: FLOW[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(),
       category, project_type: ptype, need_quote: needQuote, timeline, makers, city: city.trim(), country,
-      ...(isBrand ? { talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) } : {}),
+      ...{ talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) },
     },
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
@@ -253,6 +271,8 @@ export default function CreateProject() {
     if (error) { setErr("We couldn't save your draft. Check your connection and try again."); return null; }
     setDraftId(data); localStorage.setItem(DRAFT_KEY, data);
     const u = new URL(location.href); u.searchParams.set("draft", data); u.searchParams.delete("new"); history.replaceState(null, "", u);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) { try { await saveTeam(data, people); } catch { setErr("Project saved, but your team shortlist couldn't be saved. Try again."); return null; } }
     setSavedAt(new Date());
     return data as string;
   };
@@ -337,51 +357,30 @@ export default function CreateProject() {
     return () => clearTimeout(t);
   }, [mint]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Publish a saved draft by id (used directly and after sign-in)
-  const publishingRef = useRef(false);
   const finishPublish = async (id: string) => {
-    if (publishingRef.current) return; publishingRef.current = true;
     setPublishing(true); setErr("");
-    await (supabase.rpc as any)("release_claim", { p_token: token });
-    const { data, error } = await (supabase.rpc as any)("release_publish", { p_token: token, p_id: id });
-    setPublishing(false); publishingRef.current = false;
-    if (error) { setErr("We couldn't publish right now. Your project is saved, please try again."); return; }
+    const { error } = await supabase.rpc("release_claim", { p_token: token });
+    if (error) { setPublishing(false); setErr("Couldn't open your workspace. Please try again."); return; }
+    try { await saveTeam(id, people); } catch { setPublishing(false); setErr("Couldn't save your team shortlist. Please try again."); return; }
     localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(PENDING_KEY);
-    location.href = `/release/${data}`;
+    location.href = `/workspace/${id}`;
   };
-
   const publish = async () => {
-    setPublishing(true); setErr("");
-    // Roadmap generation and coin attach are no longer wizard steps — generate
-    // a roadmap silently so the project page still has milestones, but never
-    // block publishing if it fails.
-    if (!rows.length && budgetCents > 0) {
-      try { await generate(); } catch { /* publish anyway */ }
-    }
     const id = await save(FLOW.length);
-    setPublishing(false);
     if (!id) return;
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { localStorage.setItem(PENDING_KEY, id); setAuthFor(id); return; }
-    finishPublish(id);
+    await finishPublish(id);
   };
-
-  // Resume a publish that was waiting on sign-in (same tab or email confirmation link)
   useEffect(() => {
-    const resume = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      await (supabase.rpc as any)("release_claim", { p_token: token });
-      const pending = localStorage.getItem(PENDING_KEY);
-      const auto = new URLSearchParams(location.search).get("autopublish") === "1" ? new URLSearchParams(location.search).get("draft") : null;
-      const id = pending || auto;
-      if (id) finishPublish(id);
-    };
-    resume();
-    const { data: sub } = supabase.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_IN" && localStorage.getItem(PENDING_KEY)) { setAuthFor(null); setTimeout(resume, 0); } });
-    return () => sub.subscription.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        const pending = localStorage.getItem(PENDING_KEY);
+        if (pending) setTimeout(() => { setAuthFor(null); finishPublish(pending); }, 0);
+      }
+    });
+    return () => data.subscription.unsubscribe();
+  }, [people]);
 
   const uploadCover = async (file?: File) => {
     if (!file) return;
@@ -453,25 +452,23 @@ export default function CreateProject() {
     if (!desc.trim()) return "Add a short description of your project.";
     return "";
   };
-  const validateScope = () => {
-    if (!needQuote && budgetCents < 100) return "Enter a budget, or ask for a quote.";
-    if (!timeline) return "Pick a timeline.";
-    return "";
-  };
-  const validateTeam = () => {
-    if (!makers.length) return "Pick at least one option for who's making it.";
-    if (makers.includes("open_roles") && !roles.some((r) => r.name.trim())) return "Add at least one open role, or remove that option.";
-    return "";
-  };
-
+  const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline);
+  const validateTeam = () => makers.includes("open_roles") && !roles.some((r) => r.name.trim()) ? "Add at least one open role, or remove that option." : "";
   const goNext = () => {
-    const message = stepKey === "idea" ? validateIdea() : stepKey === "scope" ? validateScope() : stepKey === "team" ? validateTeam() : "";
+    const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
+    const question = IDEA_QUESTIONS[ideaIndex];
+    const message = stepKey === "idea" ? validateIdeaQuestion(question || "", values[question] || "") : stepKey === "scope" ? validateScope() : stepKey === "team" ? validateTeam() : "";
     if (message) { setErr(message); return; }
     setErr("");
+    if (stepKey === "idea" && ideaIndex < IDEA_QUESTIONS.length - 1) { setIdeaIndex(ideaIndex + 1); return; }
     const next = FLOW[step];
     if (next) { setStepKey(next); save(FLOW.indexOf(next) + 1); }
   };
-  const back = () => { const previous = FLOW[step - 2]; if (previous) { setErr(""); setStepKey(previous); } };
+  const back = () => {
+    setErr("");
+    if (stepKey === "idea" && ideaIndex > 0) { setIdeaIndex(ideaIndex - 1); return; }
+    const previous = FLOW[step - 2]; if (previous) { setStepKey(previous); if (previous === "idea") setIdeaIndex(IDEA_QUESTIONS.length - 1); }
+  };
 
   const SplitMini = () => (
     <div className="rz-split" style={{ marginBottom: ".9rem" }}>
@@ -485,7 +482,7 @@ export default function CreateProject() {
   return (
     <Shell className="rz-create-simple">
       <div className="rz-wizard-toolbar">
-        <Button variant="ghost" className="rz-wizard-back" onClick={step > 1 ? back : () => { location.href = "/"; }}><ArrowLeft size={15} /> Back</Button>
+        <Button variant="ghost" className="rz-wizard-back" onClick={(step > 1 || ideaIndex > 0) ? back : () => { location.href = "/"; }}><ArrowLeft size={15} /> Back</Button>
         <div className="rz-wizard-toolbar-actions">
           <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
           <Button variant="outline" className="rz-btn" asChild><a href="/">Cancel</a></Button>
@@ -496,17 +493,12 @@ export default function CreateProject() {
         <div className="rz-wizard-progress">
           <div className="rz-wizard-count"><span>Step {step} of {FLOW.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
           <progress aria-label="Project creation progress" max={FLOW.length} value={step} />
-          <p>{nextLabel ? `Next: ${nextLabel}` : "Ready to publish"}</p>
+          <p>{nextLabel ? `Next: ${nextLabel}` : "Ready to create"}</p>
         </div>
 
         {stepKey === "idea" && <>
-          <div className="rz-for-toggle" role="tablist" aria-label="This is for">
-            {([["artist", "Artist"], ["brand", "Brand"]] as const).map(([k, l]) => (
-              <button key={k} type="button" role="tab" aria-selected={ptype === k} className={ptype === k ? "on" : ""} onClick={() => chooseType(k)}>This is for: {l}</button>
-            ))}
-          </div>
-          <div className="rz-head"><h1>What's the idea?</h1><p>Tell us what you're making and who it's for.</p></div>
-          <div className="rz-wizard-fields">
+          <div className="rz-head"><h1>{["What's your project called?", "What's your name?", "What are you making?", "A brief description", "Who is it for?", "Where is it based?", "Choose a category", "Add a cover"][ideaIndex]}</h1><p>Question {ideaIndex + 1} of {IDEA_QUESTIONS.length}</p></div>
+          <div className={`rz-wizard-fields rz-idea-question rz-idea-q-${ideaIndex}`}>
             <div className="rz-field"><label htmlFor="project-name">Project name</label><input id="project-name" className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
             <div className="rz-field"><label htmlFor="creator-name">Your name</label><input id="creator-name" className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
             <div className="rz-field">
@@ -569,20 +561,24 @@ export default function CreateProject() {
         </>}
 
         {stepKey === "scope" && <>
-          <div className="rz-head"><h1>What's the scope?</h1><p>Set a budget and a timeline, or ask for a quote.</p></div>
+          <div className="rz-head"><h1>What's the scope?</h1><p>Set a budget and a timeline, or plan with an estimate.</p></div>
           <div className="rz-wizard-fields">
             <div className="rz-field">
               <label htmlFor="project-budget" className={needQuote ? "rz-opt" : ""}>Budget (CAD)</label>
               <div className="rz-money"><span>$</span><input id="project-budget" className="rz-in" disabled={needQuote} inputMode="decimal" value={budget} placeholder="Enter amount" onChange={(e) => setBudget(e.target.value.replace(/[^0-9.,]/g, ""))} /></div>
-              <label className="rz-quote-toggle"><input type="checkbox" checked={needQuote} onChange={(e) => { setNeedQuote(e.target.checked); if (e.target.checked) setBudget(""); }} /> Need a quote instead (no fixed budget yet)</label>
+              <Popover><PopoverTrigger asChild><Button variant="ghost" size="icon" aria-label="Budget and taxes"><Info size={14} /></Button></PopoverTrigger><PopoverContent>Applicable taxes may be added to the final estimate. Your planning budget is not a payment.</PopoverContent></Popover>
+              <label className="rz-quote-toggle"><input type="checkbox" checked={needQuote} onChange={(e) => { setNeedQuote(e.target.checked); if (e.target.checked) setBudget(""); }} /> Estimate needed (no fixed budget yet)</label>
             </div>
             <div className="rz-field">
               <label>Timeline</label>
+              <div className="rz-timeline-grid">{[["flexible", "Flexible timing"], ["date", "Exact date"]].map(([key, label]) => <Button key={key} variant="outline" className={`rz-chipbtn ${timelineMode === key ? "on" : ""}`} aria-pressed={timelineMode === key} onClick={() => setTimelineMode(key)}>{label}</Button>)}</div>
+              {timelineMode === "date" && <Calendar mode="single" selected={deadline ? new Date(`${deadline}T12:00:00`) : undefined} onSelect={(date) => setDeadline(date ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}` : "")} />}
+              {timelineMode === "flexible" && <>
               <div className="rz-timeline-grid">
                 {TIMELINES.map((t) => (
                   <button key={t} type="button" className={`rz-chipbtn ${timeline === t ? "on" : ""}`} onClick={() => setTimeline(t)}>{t}</button>
                 ))}
-              </div>
+              </div></>}
             </div>
           </div>
           <div className="rz-actions">
@@ -593,11 +589,12 @@ export default function CreateProject() {
 
         {stepKey === "team" && <>
           <div className="rz-head"><h1>Who's making it?</h1><p>Pick one or more. You can change this later.</p></div>
+          <TeamPlanner people={people} onChange={setPeople} />
           <div className="rz-maker-grid">
             {MAKERS.map((m) => (
-              <button key={m.id} type="button" className={`rz-maker-card ${makers.includes(m.id) ? "on" : ""}`} onClick={() => toggleMaker(m.id)}>
+              <Button variant="outline" key={m.id} type="button" className={`rz-maker-card ${makers.includes(m.id) ? "on" : ""}`} onClick={() => toggleMaker(m.id)}>
                 <b>{m.title}</b><span>{m.desc}</span>
-              </button>
+              </Button>
             ))}
           </div>
           {makers.includes("open_roles") && (
@@ -626,7 +623,7 @@ export default function CreateProject() {
         {stepKey === "review" && (
           <>
             <div className="rz-head">
-              <h1>Review and publish</h1>
+              <h1>Review your project</h1>
               <p>Check everything below. You can go back to edit any step.</p>
             </div>
             <div className="rz-review-section">The idea</div>
@@ -639,10 +636,10 @@ export default function CreateProject() {
             </div>
             <div className="rz-review-section">Scope</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{needQuote ? "Quote requested" : money(budgetCents)}</b></div>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Timeline</span><span>{timeline || "—"}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{needQuote ? "Estimate needed" : money(budgetCents)}</b></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Timeline</span><span>{timelineMode === "date" ? deadline : timeline || "—"}</span></div>
             </div>
-            {!needQuote && budgetCents > 0 && <SplitMini />}
+
             <div className="rz-review-section">Who's making it</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Makers</span><span>{makers.map((id) => MAKERS.find((m) => m.id === id)?.title).filter(Boolean).join(", ") || "—"}</span></div>
@@ -664,17 +661,17 @@ export default function CreateProject() {
             {genBusy && <GenProgress title={title} />}
             <div className="rz-actions">
               <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
-              <Button variant="outline" className="rz-btn pri" disabled={publishing || genBusy} onClick={publish}>{publishing ? "Publishing…" : "Publish project"}</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={publishing || genBusy} onClick={publish}>{publishing ? "Opening…" : "Create private project"}</Button>
             </div>
             <div style={{ textAlign: "center", marginTop: ".6rem" }}><Button variant="outline" className="rz-textlink" disabled={saving} onClick={() => save(FLOW.length)}>{saving ? "Saving…" : "Save as draft"}</Button></div>
-            <p className="rz-note">Publishing creates a public page anyone with the link can view.</p>
+            <p className="rz-note">Private workspace · publish to Discover later, only when you choose.</p>
           </>
         )}
 
         {err && <div className="rz-err">{err}</div>}
         {authFor && <AuthModal onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
-          redirectTo={`${location.origin}/create.html?draft=${authFor}&autopublish=1`} />}
-        {savedAt && <div className="rz-note rz-saved">Draft saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
+          redirectTo={`${location.origin}/create.html?draft=${authFor}`} />}
+        {savedAt && <div className="rz-note rz-saved">Project saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
       </div>
     </Shell>
   );

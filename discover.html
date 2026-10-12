@@ -933,8 +933,9 @@
     }
   };
   </script>
-  <script type="module" vite-ignore>
-  import { indexCreatorProfiles } from '/creator-profile-links.js';
+  <script type="module">
+  const profileLinksUrl = '/creator-profile-links.js';
+  const { indexCreatorProfiles } = await import(/* @vite-ignore */ profileLinksUrl);
   /* Discover: prepend published community projects (open project pop-up) and link names to real profiles. */
   (function () {
     var API = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/';

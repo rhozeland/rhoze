@@ -17,8 +17,10 @@ export function CreatorPass({ userId }: { userId: string }) {
   const [error, setError] = useState(false);
   useEffect(() => {
     let live = true;
-    Promise.all([db.rpc("creator_progress", {p_user_id:userId}), db.from("creator_directory").select("display_name").eq("user_id",userId).maybeSingle()]).then(([progress, profile]: any[]) => {
-      if (!live) return; setError(!!progress.error); setP(progress.data); if(profile.data?.display_name) setName(profile.data.display_name);
+    Promise.all([db.rpc("creator_progress", {p_user_id:userId}), supabase.auth.getUser()]).then(([progress, account]: any[]) => {
+      if (!live) return; setError(!!progress.error); setP(progress.data);
+      const meta = account.data?.user?.user_metadata;
+      if (meta?.display_name || meta?.full_name) setName(meta.display_name || meta.full_name);
     }); return () => {live = false;};
   },[userId]);
   const level = passLevel(p?.xp ?? 0);

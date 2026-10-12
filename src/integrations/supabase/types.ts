@@ -1885,6 +1885,38 @@ export type Database = {
           },
         ]
       }
+      project_comments: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          release_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          release_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          release_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_comments_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_like_preferences: {
         Row: {
           is_public: boolean
@@ -3859,6 +3891,17 @@ export type Database = {
         Returns: {
           balance: number
           entries: Json
+        }[]
+      }
+      project_discussion: {
+        Args: { p_release_id: string }
+        Returns: {
+          body: string
+          created_at: string
+          display_name: string
+          id: string
+          is_mine: boolean
+          slug: string
         }[]
       }
       purchase_rhoze_square: {

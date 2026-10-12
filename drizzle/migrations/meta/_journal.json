@@ -190,6 +190,13 @@
       "when": 1791782431019,
       "tag": "0026_creator_pass_progress",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1791782561978,
+      "tag": "0027_public_project_discussion",
+      "breakpoints": true
     }
   ]
 }

@@ -23,7 +23,7 @@
 
 - Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
 - Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.
-- Discover is the static Featured Projects page mirrored in `public/discover.html` and `public/discover/index.html`; it prepends published releases (pop-up) and keeps legacy cards on real external links, so old work gets no invented owners.
+- Mirror Discover static pages; resolve names with creator-profile-links.js only to unique public account-backed profiles, because legacy work must not get invented owners. Preserve external media links.
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
 - Derive Creator Pass XP and public standings from verified earned ledger kinds through visibility-checked functions, excluding refunds and spending, because progress tracks contributions, not balances.

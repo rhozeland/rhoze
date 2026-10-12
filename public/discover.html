@@ -938,13 +938,13 @@
     }
   };
   </script>
-  <script>
+  <script type="module">
+  import { indexCreatorProfiles } from '/creator-profile-links.js';
   /* Discover: prepend published community projects (open project pop-up) and link names to real profiles. */
   (function () {
     var API = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/';
     var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w';
     var H = { headers: { apikey: KEY, Authorization: 'Bearer ' + KEY } };
-    var slugify = function (t) { return (t || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); };
     var esc = function (s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
     var get = function (q) { return fetch(API + q, H).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }); };
     var done = false;
@@ -952,11 +952,11 @@
     setTimeout(start, 3000);
     Promise.all([
       get('releases?select=slug,title,creator_name,cover_url,coin_image,user_id,published_at,answers&status=eq.published&order=published_at.desc&limit=60'),
-      get('creator_directory?select=slug,display_name,user_id&is_public=eq.true&limit=1000')
+      get('creator_directory?select=slug,display_name,user_id&is_public=eq.true&approved=eq.true&user_id=not.is.null&limit=1000')
     ]).then(function (res) {
       var rels = res[0] || [], people = res[1] || [];
-      var byUser = {}, byName = {};
-      people.forEach(function (p) { if (p.user_id) byUser[p.user_id] = p; if (p.display_name) byName[p.display_name.trim().toLowerCase()] = p; });
+      var profiles = indexCreatorProfiles(people);
+      var byUser = profiles.byUser, byName = profiles.byName;
       window.__rzProfiles = byName;
       var grid = document.getElementById('projectsGrid');
       if (grid && !done) {
@@ -968,7 +968,7 @@
           var dc = /music|audio|song|album|beat/.test(cat) ? 'audio' : /web|app|design|dev/.test(cat) ? 'development' : 'visual';
           var d = r.published_at ? new Date(r.published_at) : new Date();
           var who = byUser[r.user_id];
-          var href = who ? '/creator/' + who.slug : '/brand/' + slugify(r.creator_name);
+          var href = who ? '/creator/' + encodeURIComponent(who.slug) : '';
           var a = document.createElement('a');
           a.href = '/release/' + encodeURIComponent(r.slug);
           a.className = 'work-card fade-in work-card--project';
@@ -990,7 +990,7 @@
       var p = e.target.closest && e.target.closest('.profile-link[data-href], .artist-link[data-artist]');
       if (!p) return;
       var href = p.getAttribute('data-href');
-      if (!href) { var m = (window.__rzProfiles || {})[(p.getAttribute('data-artist') || '').trim().toLowerCase()]; if (m) href = '/creator/' + m.slug; }
+      if (!href) { var m = (window.__rzProfiles || {})[(p.getAttribute('data-artist') || '').normalize('NFC').trim().toLowerCase()]; if (m) href = '/creator/' + encodeURIComponent(m.slug); }
       if (!href) return;
       e.preventDefault(); e.stopPropagation(); location.href = href;
     }, true);

@@ -7,6 +7,43 @@ type Row = { id: string; recipient_name: string; recipient_email: string | null;
 const fmt = (c: number) => new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD" }).format(c / 100);
 
 /** Admin queue: approved milestone payouts Rhozeland sends by e-transfer or bank, then marks sent. */
+type Send = { id: string; amount: number; wallet: string; status: string; tx_signature: string | null; created_at: string };
+
+function RhozeSends() {
+  const [rows, setRows] = useState<Send[]>([]);
+  const [tx, setTx] = useState<Record<string, string>>({});
+  const [err, setErr] = useState("");
+  const load = () => (supabase as any).from("rhoze_send_requests").select("id,amount,wallet,status,tx_signature,created_at").order("created_at", { ascending: false }).limit(200).then(({ data }: any) => setRows(data || []));
+  useEffect(() => { load(); }, []);
+  const decide = async (id: string, approve: boolean) => {
+    setErr("");
+    const { error } = await (supabase.rpc as any)("admin_decide_rhoze_send", { p_id: id, p_approve: approve, p_tx: tx[id] || "", p_note: "" });
+    if (error) setErr(error.message.includes("signature") ? "Paste the Solana transaction signature after sending." : "Couldn't update this request."); else load();
+  };
+  const pending = rows.filter((r) => r.status === "pending");
+  return (
+    <div className="space-y-3">
+      <h2 className="text-xl font-semibold">$RHOZE sends</h2>
+      <p className="text-sm text-muted-foreground">{pending.length} waiting · {pending.reduce((s, r) => s + Number(r.amount), 0).toLocaleString()} $RHOZE. Send from the team wallet, then paste the transaction signature.</p>
+      {err && <p className="text-sm text-destructive">{err}</p>}
+      <div className="divide-y rounded-lg border">
+        {rows.length === 0 && <p className="p-4 text-sm text-muted-foreground">No requests yet.</p>}
+        {rows.map((r) => (
+          <div key={r.id} className="flex flex-wrap items-center gap-3 p-3 text-sm">
+            <div className="min-w-[14rem] flex-1"><div className="font-medium">{Number(r.amount).toLocaleString()} $RHOZE</div><div className="break-all text-muted-foreground">{r.wallet}</div></div>
+            {r.status === "pending" ? (<>
+              <Input className="w-64" placeholder="Transaction signature" value={tx[r.id] || ""} onChange={(e) => setTx({ ...tx, [r.id]: e.target.value.trim() })} />
+              <Button size="sm" onClick={() => decide(r.id, true)}>Mark sent</Button>
+              <Button size="sm" variant="outline" onClick={() => decide(r.id, false)}>Decline</Button>
+            </>) : r.status === "sent" ? <a className="underline" href={`https://solscan.io/tx/${r.tx_signature}`} target="_blank" rel="noreferrer">Sent · view</a> : <span className="text-muted-foreground">Declined</span>}
+          </div>
+        ))}
+      </div>
+      <RhozeSends />
+    </div>
+  );
+}
+
 export default function Payouts() {
   const [rows, setRows] = useState<Row[]>([]);
   const [refs, setRefs] = useState<Record<string, string>>({});
@@ -41,6 +78,7 @@ export default function Payouts() {
           </div>
         ))}
       </div>
+      <RhozeSends />
     </div>
   );
 }

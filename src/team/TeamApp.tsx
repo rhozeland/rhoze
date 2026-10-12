@@ -29,7 +29,8 @@ import { useAuth } from "./lib/auth";
 import { canAccessSection, DEPT_LABELS, loadSectionAccess } from "./lib/access";
 
 function RequireSection({ path, children }: { path: string; children: React.ReactNode }) {
-  const { isAdmin, department } = useAuth();
+  const { isAdmin, department, roles } = useAuth();
+  if (path === "/leaderboard" && roles.includes("marketing")) return <>{children}</>;
   if (canAccessSection(path, { isAdmin, department }, loadSectionAccess())) return <>{children}</>;
   const allowed = loadSectionAccess()[path];
   return (
@@ -115,7 +116,7 @@ export default function TeamApp() {
         <Route path="docs" element={<Docs />} />
         <Route path="directory" element={<Directory />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="team-admin" element={<TeamAdmin />} />
+        <Route path="team-admin" element={<RequireSection path="/team-admin"><TeamAdmin /></RequireSection>} />
         <Route path="payouts" element={<Payouts />} />
         <Route path="roles" element={<Navigate to="/team-admin" replace />} />
         <Route path="invites" element={<Navigate to="/team-admin" replace />} />

@@ -8,11 +8,13 @@ import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Save, ExternalLink, Check, X, Pencil } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { validLeaderboardPoints } from "../lib/adminRules";
 
 type Row = {
   id?: string;
   username: string;
   points: number;
+  weekly_points: number;
   raids: number;
   memes: number;
   edu_threads: number;
@@ -78,17 +80,25 @@ export default function Leaderboard() {
   const [editingSub, setEditingSub] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [loadError, setLoadError] = useState("");
+  const [standings, setStandings] = useState<{slug: string; display_name: string; xp: number; contributions: number}[]>([]);
 
   async function load() {
     setLoading(true);
+    setLoadError("");
     const [a, d, p] = await Promise.all([
       supabase.from("community_leaderboard").select("*").order("points", { ascending: false }),
       supabase.from("community_submissions").select("*").order("created_at", { ascending: false }).limit(100),
-      supabase.from("profiles").select("id,display_name,community_username,email,payment_email,social_handle,created_at").order("created_at", { ascending: false }),
+      isAdmin ? supabase.from("profiles").select("id,display_name,community_username,email,payment_email,social_handle,created_at").order("created_at", { ascending: false }) : Promise.resolve({ data: [], error: null }),
     ]);
     if (a.data) setRows(a.data as any);
     if (d.data) setSubs(d.data as any);
     if (p.data) setProfiles(p.data as any);
+    const failure = a.error || d.error || p.error;
+    if (failure) setLoadError(failure.message);
+    const verified = await supabase.rpc("creator_standings");
+    if (verified.error) setLoadError(verified.error.message);
+    else setStandings(verified.data || []);
     setLoading(false);
   }
 
@@ -121,7 +131,7 @@ export default function Leaderboard() {
     } finally { setBusy(false); }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { if (canEdit) load(); }, [canEdit, isAdmin]);
 
   function updateRow(i: number, patch: Partial<Row>) {
     setRows((r) => r.map((x, idx) => (idx === i ? { ...x, ...patch } : x)));
@@ -131,7 +141,7 @@ export default function Leaderboard() {
       ...r,
       {
         username: "@newuser",
-        points: 0, raids: 0, memes: 0, edu_threads: 0, videos: 0,
+        points: 0, weekly_points: 0, raids: 0, memes: 0, edu_threads: 0, videos: 0,
         challenges_completed: 0,
         last_updated: new Date().toISOString().slice(0, 10),
         sort_order: r.length + 1,
@@ -139,6 +149,10 @@ export default function Leaderboard() {
     ]);
   }
   async function saveRow(row: Row) {
+    if (!row.username.trim() || !validLeaderboardPoints(row.points) || !validLeaderboardPoints(row.weekly_points)) {
+      toast({ title: "Enter a handle and non-negative whole points", variant: "destructive" });
+      return;
+    }
     setBusy(true);
     try {
       const payload: any = { ...row };
@@ -253,13 +267,10 @@ export default function Leaderboard() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Community Leaderboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Review submissions, manage leaderboard entries, and browse community profiles. Publish a snapshot to push changes live.
-          </p>
+          <h1 className="text-2xl font-semibold">Leaderboard points</h1>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <a href="/leaderboard.html" target="_blank" rel="noreferrer">
+          <a href="/rewards" target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm"><ExternalLink size={14} /> Open public page</Button>
           </a>
           <Button onClick={resetWeekly} disabled={busy} size="sm" variant="outline">Reset weekly</Button>
@@ -267,14 +278,21 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      <Tabs defaultValue="submissions" className="space-y-5">
-        <TabsList>
+      {loadError && <p role="alert" className="text-sm text-destructive">{loadError}</p>}
+      <Tabs defaultValue="entries" className="space-y-5">
+        <TabsList className="flex h-auto flex-wrap justify-start">
+          <TabsTrigger value="verified">Verified XP</TabsTrigger>
           <TabsTrigger value="submissions">
             Submissions{pendingCount > 0 && <span className="ml-1.5 text-xs">({pendingCount})</span>}
           </TabsTrigger>
-          <TabsTrigger value="entries">Entries ({rows.length})</TabsTrigger>
-          <TabsTrigger value="users">Users ({profiles.length})</TabsTrigger>
+          <TabsTrigger value="entries">Historical points ({rows.length})</TabsTrigger>
+          {isAdmin && <TabsTrigger value="users">Users ({profiles.length})</TabsTrigger>}
         </TabsList>
+        <TabsContent value="verified" className="space-y-3">
+          <p className="text-sm text-muted-foreground">Verified XP comes from recorded contributions. Historical point edits do not mint tokens or change XP.</p>
+          {standings.map(person => <div key={person.slug} className="flex justify-between gap-3 border-b border-border py-3 text-sm"><a href={`/creator/${person.slug}`} className="font-medium">{person.display_name}</a><span>{person.xp.toLocaleString()} XP · {person.contributions} contributions</span></div>)}
+          {!standings.length && <p className="text-sm text-muted-foreground">No eligible public accounts yet.</p>}
+        </TabsContent>
 
         <TabsContent value="submissions" className="space-y-3">
         {subs.length === 0 ? (
@@ -360,8 +378,12 @@ export default function Leaderboard() {
                     <Input value={r.username} onChange={(e) => updateRow(i, { username: e.target.value })} />
                   </div>
                   <div className="w-20">
-                    <Label className="text-[10px]">Points</Label>
-                    <Input type="number" value={r.points} onChange={(e) => updateRow(i, { points: +e.target.value })} />
+                    <Label htmlFor={`alltime-${i}`} className="text-[10px]">All-time</Label>
+                    <Input id={`alltime-${i}`} min={0} step={1} type="number" value={r.points} onChange={(e) => updateRow(i, { points: +e.target.value })} />
+                  </div>
+                  <div className="w-20">
+                    <Label htmlFor={`weekly-${i}`} className="text-[10px]">Weekly</Label>
+                    <Input id={`weekly-${i}`} min={0} step={1} type="number" value={r.weekly_points} onChange={(e) => updateRow(i, { weekly_points: +e.target.value })} />
                   </div>
                   <div className="flex gap-2 ml-auto">
                     <Button onClick={() => saveRow(r)} size="sm" disabled={busy}><Save size={14} /> Save</Button>

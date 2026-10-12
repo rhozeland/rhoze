@@ -6,7 +6,7 @@
 - Share public navigation through site-nav.css, shared.js and SiteNav, including account controls. Wrap standalone portal pages in PortalShell; embedded portals inherit the parent header to prevent duplication.
 - Share frame geometry via site-nav.css and embed markers via shared.js/SiteNav; keep one Create header destination for compact navigation.
 - Mirror the story at public/about.html and public/about/index.html with story.css and shared footer links, preserving public navigation.
-- Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.
+- Derive brand URLs from creator-name slugs (`rz_slugify`/`slugify`); optional details live in `brand_profiles`.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
 - Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.
 - Route profile messaging through the `dm_open` database function, which resolves the profile owner server-side and sends unclaimed profiles to the team inbox, so visitors never pick a recipient account directly.
@@ -33,3 +33,5 @@
 - Scope toolbar styles in discover-toolbar.css, mirrored on both Discover pages, to preserve shared navigation.
 
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
+
+- Resolve portal roles from authenticated database reads, never cached privileges; reuse RLS-protected stories and historical points, keeping verified XP read-only.

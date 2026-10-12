@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
 import ExclusivePage from "@/create/ExclusivePage";
-import DiscoverPage from "@/create/DiscoverPage";
 import PrivateWorkspace from "@/create/PrivateWorkspace";
 import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";

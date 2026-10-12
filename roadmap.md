@@ -29,3 +29,16 @@
 - [ ] Verify like/unlike, profile readback and public/private access — requires a selected signed-in account for the separate likes flow.
 - [x] Simplify project creation into focused screens with a progress bar and clear step count.
 - [x] Verify Artist and Brand navigation, validation, retained inputs, roadmap generation, roles, final review, and saved-draft reopening.
+
+## Unified platform (Colosseum: Mon Oct 12 3:00 AM ET)
+- [ ] W1: One account, create/support paths
+- [ ] W1: Merged 4-step Create flow (Artist + Brand)
+- [ ] W1: Create project button on dashboard + Discover
+- [ ] W1: Project workspace tabs + public visibility switches
+- [ ] W2: Spinning globe on Discover (port from Creator OS)
+- [ ] W2: Supporter home
+- [ ] W2: Public project metrics
+- [ ] W3: Work with Rhozeland requests + quotes (after submission)
+- [ ] W3: Deposit, milestone, final payment (after submission)
+- [ ] W4: Updated Colosseum answers
+- [ ] W4: Brand refresh + pitch deck

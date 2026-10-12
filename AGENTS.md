@@ -3,9 +3,8 @@
 - Route Discover/home cards to local records; use project-view.js for other pop-ups, preserving source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
-- Share public navigation through site-nav.css, shared.js and SiteNav, including account controls. Wrap standalone portal pages in PortalShell; embedded portals inherit the parent header to prevent duplication.
-- Share frame geometry via site-nav.css and embed markers via shared.js/SiteNav; keep one Create header destination for compact navigation.
-- Mirror the story at public/about.html and public/about/index.html with story.css and shared footer links, preserving public navigation.
+- Share navigation, account controls, frame geometry and embed markers via site-nav.css, shared.js and SiteNav; keep one Create destination. Use PortalShell for standalone portals; embedded portals inherit the parent header to prevent duplication.
+- Mirror both About URLs with story.css/story.js; use public Discover records and indexed trades, inheriting parent navigation when embedded to avoid duplicates.
 - Derive brand URLs from creator-name slugs (`rz_slugify`/`slugify`); optional details live in `brand_profiles`.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
 - Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.
@@ -26,7 +25,7 @@
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
 - Rank verified XP alongside labeled historical identities without merging ownership; weekly stats are caller-scoped and project totals public-only, to protect private activity.
-- Adapt Creator OS with CSS tilt only; preserve permission and reward rules.
+- Use CSS tilt for Creator OS; preserve permissions and rewards.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
 - Keep home-motion.js fed by Discover registries; portfolio-projects preserves sources and admin-write portfolio_details stores lore/tokens, never inferred ownership.

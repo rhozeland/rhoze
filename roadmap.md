@@ -130,3 +130,13 @@
 - [x] Prioritize archive details with compact YouTube embeds and photo fallbacks.
 - [x] Present real points and optional paired-token statistics without invented allocations; no archive currently has a paired token to verify live.
 - [x] Verify video/photo layouts, links and narrow screens; keep Slow Mo discovery integration deferred.
+
+
+## Final presentation package — October 12, 2026
+- [x] Refresh the existing deck with current product, story and honest delivery status; export and inspect all slides.
+- [x] Deliver developer/designer briefing with updates, missing connections, priorities and acceptance checks.
+- [x] Refresh Colosseum answers, descriptions and link checklist without submitting.
+- [x] Deliver reviewed 60-second horizontal and vertical product videos.
+- [x] Group final documents and both reviewed videos; disclose financial/deployment blockers.
+
+- [ ] Publish/recheck current public product and deck destinations — waiting for explicit publish request; custom domain still serves an older site.

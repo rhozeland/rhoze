@@ -10,6 +10,7 @@ import type { TeamPerson } from "./project-flow";
 import { money, uid } from "./shared";
 import "./workspace.css";
 import "./create-flow.css";
+import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
 type Tab = "overview" | "plan" | "team" | "money" | "payments";
@@ -34,6 +35,10 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   const [people, setPeople] = useState<TeamPerson[]>([]);
   const [title, setTitle] = useState(r.title || "");
   const [description, setDescription] = useState(r.answers?.description || "");
+  const [story, setStory] = useState(r.answers?.story || "");
+  const [context, setContext] = useState(r.answers?.cultural_context || "");
+  const [contribution, setContribution] = useState(r.answers?.rhozeland_contribution || "");
+  const [source, setSource] = useState(r.answers?.source_url || "");
   const [budget, setBudget] = useState(String((r.budget_cents || 0) / 100));
   const [deadline, setDeadline] = useState(r.answers?.deadline || "");
   const [timeline, setTimeline] = useState(r.answers?.timeline || "Flexible");
@@ -56,7 +61,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
 
   const buildPayload = (overrides: Record<string, any> = {}) => ({
     title: title.trim(), creator_name: r.creator_name, creator_email: r.creator_email, booking_id: r.booking_id,
-    answers: { ...(r.answers || {}), public_sections: pub, makers, description: description.trim(), deadline, timeline },
+    answers: { ...(r.answers || {}), public_sections: pub, makers, description: description.trim(), deadline, timeline, story: story.trim(), cultural_context: context.trim(), rhozeland_contribution: contribution.trim(), source_url: source.trim() },
     budget_cents: Math.max(0, Math.round(Number(budget) * 100) || 0),
     artist_pct: artistPct, fee_pct: feePct, cause_pct: causePct, cause_name: r.cause_name,
     milestones: milestones.map(({ id, ...m }) => m),
@@ -66,6 +71,9 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   });
 
   const save = async (overrides: Record<string, any> = {}) => {
+    const invalid = tokenPairingError(mint);
+    if (invalid) { setErr(invalid); return; }
+    if (source.trim() && !/^https?:\/\/\S+$/i.test(source.trim())) { setErr("Use a complete https:// link for the original work."); return; }
     setBusy(true); setErr("");
     const token = localStorage.getItem(TOKEN_KEY) || uid() + uid();
     localStorage.setItem(TOKEN_KEY, token);
@@ -81,7 +89,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   const setPublic = (key: keyof PublicSections, value: boolean) => {
     const next = { ...pub, [key]: value };
     setPub(next);
-    save({ answers: { ...(r.answers || {}), public_sections: next, makers, description: description.trim(), deadline, timeline } });
+    save({ answers: { ...buildPayload().answers, public_sections: next } });
   };
 
   const generateRoadmap = async () => {
@@ -130,6 +138,10 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
           <div className="rz-ws-panel-head"><h3>Overview</h3><PublicSwitch sectionKey="overview" label="Overview" /></div>
           <label>Project name<input className="rz-in" value={title} maxLength={120} onChange={(e) => setTitle(e.target.value)} /></label>
           <label>Brief description<textarea className="rz-in" value={description} maxLength={600} rows={4} onChange={(e) => setDescription(e.target.value)} /></label>
+          <label>The story<textarea className="rz-in" value={story} maxLength={10000} rows={5} onChange={(e) => setStory(e.target.value)} /></label>
+          <label>Cultural context<textarea className="rz-in" value={context} maxLength={10000} rows={4} onChange={(e) => setContext(e.target.value)} /></label>
+          <label>Rhozeland's contribution<textarea className="rz-in" value={contribution} maxLength={10000} rows={4} onChange={(e) => setContribution(e.target.value)} /></label>
+          <label>Original work / source link<input className="rz-in" type="url" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://" /></label>
           <div className="rz-ws-save"><Button variant="outline" className="rz-btn pri" disabled={busy || !title.trim()} onClick={() => save()}>Save details</Button><Button variant="outline" className="rz-btn" asChild><a href={`/create.html?draft=${r.id}`}>Edit all details</a></Button></div>
         </div>
       )}
@@ -188,10 +200,11 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
           <div className="rz-ws-split-row"><span>Cause %</span><input className="rz-in" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <p className="rz-ws-note">{splitTotal === 100 ? "Totals 100%" : `Must total 100% (currently ${splitTotal}%)`}</p>
           <div className="rz-ws-row" style={{ marginTop: ".8rem" }}>
-            <input className="rz-in" placeholder="Coin mint address" value={mint} onChange={(e) => setMint(e.target.value)} />
+            <input className="rz-in" aria-label="Solana contract address" placeholder="Solana contract address · optional" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); }} />
             <input className="rz-in" placeholder="Ticker" style={{ maxWidth: "7rem" }} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} />
             <Button variant="outline" type="button" className="rz-btn" disabled={coinBusy} onClick={lookupCoin}>{coinBusy ? "Checking…" : "Look up"}</Button>
           </div>
+          <p className="rz-ws-note">{TOKEN_PAIRING_NOTICE}</p>
           {coinErr && <p className="rz-ws-note">{coinErr}</p>}
           <div className="rz-ws-save">
             <Button variant="outline" type="button" className="rz-btn pri" disabled={busy || splitTotal !== 100} onClick={() => save()}>{busy ? "Saving…" : "Save money"}</Button>

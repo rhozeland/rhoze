@@ -1,0 +1,3 @@
+export default function ProjectStory({ story }: { story: { story?: string; cultural_context?: string; rhozeland_contribution?: string; source_url?: string } }) {
+  return <>{[["The story", story.story], ["Cultural context", story.cultural_context], ["Rhozeland's contribution", story.rhozeland_contribution]].map(([heading, text]) => text?.trim() ? <section className="rz-release-about" key={heading}><h2 className="rz-h2">{heading}</h2><p className="whitespace-pre-line">{text}</p></section> : null)}{story.source_url && /^https?:\/\//.test(story.source_url) && <p><a href={story.source_url} target="_blank" rel="noopener noreferrer">Original release / source ↗</a></p>}</>;
+}

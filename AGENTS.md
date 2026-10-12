@@ -1,6 +1,6 @@
 - Keep the public talent marketplace in `creator_directory`, separate from private account `profiles`, because visitors must never gain access to payroll or account details through discovery.
 - Store project likes and liked-list preferences separately with database-enforced owner writes and public visibility checks, because list privacy must hold beyond the browser.
-- Mount project pop-ups through project-view.js from shared.js and SiteNav using the same-origin release view, because browsing must preserve its source and owner checks.
+- Route Discover/home cards to local records; use project-view.js for other pop-ups, preserving source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
 - Share public links/styles through site-nav.css, shared.js and SiteNav; mount static account controls via shared.js (including home) and mirror them in SiteNav so headers and session visibility match.
@@ -29,5 +29,5 @@
 - Adapt Creator OS with CSS tilt only; preserve permission and reward rules.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
-- Keep motion in home-motion.js; use the Discover-derived home-projects registry with original links to avoid invented work.
+- Keep home-motion.js fed by Discover registries; portfolio-projects preserves sources and admin-write portfolio_details stores lore/tokens, never inferred ownership.
 - Scope toolbar styles in discover-toolbar.css, mirrored on both Discover pages, to preserve shared navigation.

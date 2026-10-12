@@ -197,6 +197,13 @@
       "when": 1791782561978,
       "tag": "0027_public_project_discussion",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1791788212937,
+      "tag": "0028_portfolio_editorial_details",
+      "breakpoints": true
     }
   ]
 }

@@ -31,14 +31,17 @@
 - [x] Verify Artist and Brand navigation, validation, retained inputs, roadmap generation, roles, final review, and saved-draft reopening.
 
 ## Unified platform (Colosseum: Mon Oct 12 3:00 AM ET)
-- [ ] W1: One account, create/support paths
-- [ ] W1: Merged 4-step Create flow (Artist + Brand)
-- [ ] W1: Create project button on dashboard + Discover
-- [ ] W1: Project workspace tabs + public visibility switches
-- [ ] W2: Spinning globe on Discover (port from Creator OS)
-- [ ] W2: Supporter home
-- [ ] W2: Public project metrics
+- [x] W1: One account, create/support paths
+- [x] W1: Merged 4-step Create flow (Artist + Brand)
+- [x] W1: Create project button on dashboard + Discover
+- [x] W1: Project workspace tabs + public visibility switches
+- [x] W2: Spinning globe on Discover (port from Creator OS)
+- [x] W2: Supporter home
+- [x] W2: Public project metrics
 - [ ] W3: Work with Rhozeland requests + quotes (after submission)
 - [ ] W3: Deposit, milestone, final payment (after submission)
 - [ ] W4: Updated Colosseum answers
 - [ ] W4: Brand refresh + pitch deck
+- [ ] Verify owner workspace editing + supporter home signed in — needs a real signed-in account
+- [ ] Add city to creator profiles so globe pins spread beyond Toronto
+- [ ] Settings switch between creator/supporter — needs one owner-checked function

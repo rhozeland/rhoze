@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import { ProjectHeart } from "./ProjectLikes";
+import DiscoverGlobe, { type GlobePin } from "./globe/DiscoverGlobe";
+import { jitterFor } from "./globe/geo";
 
 type Release = {
   id: string;
@@ -12,6 +14,14 @@ type Release = {
   coin_ticker: string | null;
   coin_image: string | null;
   published_at: string;
+};
+
+type Creator = {
+  id: string;
+  slug: string | null;
+  display_name: string;
+  photo_url: string | null;
+  bio: string | null;
 };
 
 const FILTERS = ["All", "Music", "Film & Video", "Art & Design", "Fashion", "Brand campaigns"] as const;
@@ -35,6 +45,7 @@ const textOf = (r: Release) => `${r.title} ${r.creator_name} ${r.answers?.making
 
 export default function DiscoverPage() {
   const [rows, setRows] = useState<Release[] | undefined>(undefined);
+  const [creators, setCreators] = useState<Creator[]>([]);
   const [filter, setFilter] = useState<Filter>("All");
 
   useEffect(() => {
@@ -44,6 +55,11 @@ export default function DiscoverPage() {
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .then(({ data }: any) => setRows((data ?? []) as Release[]), () => setRows([]));
+
+    (supabase.from as any)("creator_directory")
+      .select("id,slug,display_name,photo_url,bio")
+      .eq("is_public", true)
+      .then(({ data }: any) => setCreators((data ?? []) as Creator[]), () => setCreators([]));
   }, []);
 
   const visible = useMemo(() => {
@@ -64,6 +80,36 @@ export default function DiscoverPage() {
     }
   }, [rows, filter]);
 
+  const pins = useMemo<GlobePin[]>(() => {
+    const releasePins: GlobePin[] = (rows ?? []).slice(0, 24).map((r) => {
+      const coords = jitterFor(`release-${r.id}`);
+      return {
+        id: `release-${r.id}`,
+        kind: "release",
+        title: r.title,
+        subtitle: r.creator_name || "Rhozeland artist",
+        image: (r as any).cover_url || r.coin_image || null,
+        href: `/release/${r.slug}`,
+        city: "Toronto",
+        ...coords,
+      };
+    });
+    const creatorPins: GlobePin[] = creators.slice(0, 24).map((c) => {
+      const coords = jitterFor(`creator-${c.id}`);
+      return {
+        id: `creator-${c.id}`,
+        kind: "creator",
+        title: c.display_name,
+        subtitle: c.bio,
+        image: c.photo_url,
+        href: `/creator/${c.slug || c.id}`,
+        city: "Toronto",
+        ...coords,
+      };
+    });
+    return [...releasePins, ...creatorPins];
+  }, [rows, creators]);
+
   return (
     <Shell right={<a className="rz-btn" href="/create.html?new=1">Create a project</a>}>
       <div className="rz-card rz-card-wide">
@@ -71,6 +117,8 @@ export default function DiscoverPage() {
           <h1>Discover</h1>
           <p>New projects from independent artists, newest first.</p>
         </div>
+
+        <DiscoverGlobe pins={pins} />
 
         <div className="rz-chips" role="tablist" aria-label="Filter projects">
           {FILTERS.map((f) => (

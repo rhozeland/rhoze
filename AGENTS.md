@@ -18,3 +18,5 @@
 - Use only public cover artwork for locked Exclusive preview cards; keep post text and private media behind existing owner/wallet checks so visual teasers never expose protected content.
 - Keep release market data in the existing `pumpfun-coin` lookup and the collapsible display in `ReleasePrice`; return null for unavailable daily changes so unindexed coins never show fabricated performance.
 - Keep expanded project-wizard screen keys in draft `answers.wizard_step` while retaining legacy `current_step` numbering, because existing saved drafts must reopen without a database migration.
+- Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
+- Keep Discover globe code under `src/create/globe/` fed only by public release and creator data, because discovery must never read private profile fields.

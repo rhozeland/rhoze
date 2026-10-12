@@ -6,6 +6,8 @@ import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import ReleasePrice from "./ReleasePrice";
 import { ProjectHeart } from "./ProjectLikes";
+import ProjectWorkspace, { DEFAULT_PUBLIC_SECTIONS } from "./ProjectWorkspace";
+import { ProjectMetricsBadges } from "./ProjectMetrics";
 import { Button } from "@/components/ui/button";
 import { X, Share2 } from "lucide-react";
 
@@ -218,6 +220,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const pill = (s: Status) => (
     <span className={`rz-status rz-status-${s.toLowerCase()}`}>{s}</span>
   );
+  const pubs = { ...DEFAULT_PUBLIC_SECTIONS, ...(r?.answers?.public_sections || {}) };
   const closeProject = () => {
     if (window.self !== window.top && new URLSearchParams(location.search).get("projectView") === "1") {
       window.parent.postMessage("rhoze:close-project", location.origin);
@@ -241,6 +244,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           </div>
         </div>
       )}
+      {r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1" && (
+        <ProjectWorkspace r={r} onSaved={(next) => setR({ ...r, ...next })} />
+      )}
       <div className="rz-card rz-release-content">
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /><div className="rz-skel" /></>}
         {r === null && (
@@ -260,14 +266,15 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               <Button asChild className="rz-btn pri"><a href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a></Button>
             </div>
             </header>
+            <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
             <div className="rz-cover">
               {r.cover_url || r.coin_image ? <img src={r.cover_url || r.coin_image} alt={`${r.title} cover art`} /> : <span>{r.title}</span>}
             </div>
-            <section className="rz-release-about">
+            {(isOwner || pubs.overview) && <section className="rz-release-about">
               <h2 className="rz-h2">About the project</h2>
               {r.answers?.description?.trim() ? <p>{r.answers.description.trim()}</p> : r.answers?.making ? <p>{r.answers.making.trim()}</p> : <p>{r.title} by {r.creator_name || "Rhozeland artist"}.</p>}
               {r.answers?.audience && <p className="rz-release-audience">{r.answers.audience}</p>}
-            </section>
+            </section>}
             <h2 className="rz-h2">Project release</h2>
 
             <div className="rz-release-coin">
@@ -291,6 +298,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 
+            {(isOwner || pubs.money) && <>
             <h2 className="rz-h2">Project breakdown</h2>
             <div className="rz-split" style={{ marginBottom: "1rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{money(budget)}</span></div>
@@ -307,7 +315,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
 
             {r.coin_mint && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
+            </>}
 
+            {(isOwner || pubs.plan) && <>
             <h2 className="rz-h2">Roadmap &amp; deliverables</h2>
             <div className="rz-inv">
               <div className="rz-inv-h" style={{ gridTemplateColumns: "1.6rem 1fr 1.4fr 7rem" }}><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span></div>
@@ -320,7 +330,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               ))}
             </div>
 
-            {r.answers?.project_type === "brand" && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
+            </>}
+
+            {(isOwner || pubs.team) && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
               <>
                 <h2 className="rz-h2">We're hiring</h2>
                 <div className="rz-inv">

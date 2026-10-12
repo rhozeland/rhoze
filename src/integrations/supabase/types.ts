@@ -3670,6 +3670,12 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      release_public_metrics: {
+        Args: { p_slug: string }
+        Returns: {
+          likes: number
+        }[]
+      }
       release_publish: {
         Args: { p_id: string; p_token: string }
         Returns: string

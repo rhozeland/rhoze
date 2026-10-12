@@ -15,6 +15,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
+import { RHOZE_MINT } from "@/lib/rhozeChain";
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -584,6 +585,7 @@ export default function CreateProject() {
           <div className="rz-field">
             <label htmlFor="project-contract">Pair a token <span className="rz-opt">· optional</span></label>
             <input id="project-contract" className="rz-in" placeholder="Solana contract address" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); setMeta(null); }} />
+            <Button type="button" variant="outline" size="sm" className="rz-chipbtn" aria-pressed={mint.trim() === RHOZE_MINT} onClick={() => { setMint(RHOZE_MINT); setTicker("RHOZE"); setMeta(null); }}>Use $RHOZE</Button>
             {mintOk && <label htmlFor="project-ticker">Ticker <span className="rz-opt">· optional</span><input id="project-ticker" className="rz-in" placeholder="e.g. RHOZE" maxLength={12} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} /></label>}
             <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>
           </div>

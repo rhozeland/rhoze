@@ -63,6 +63,9 @@
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
 ## Work-led homepage and Rewards
+- [ ] Put the featured-work mosaic, identity and recognition first; follow with YouTube news.
+- [ ] Add real Create/Discover/Rewards screenshot previews to Build with Rhozeland.
+- [ ] Add Creator OS-style pass tilt and badge; correct Rewards contrast and verify layouts.
 - [x] Link Indoléstic and other confirmed account names on Discover directly to their profiles; leave unclaimed names anonymous.
 - [x] Unify public navigation as Discover, Create, Rewards with icons and a single Create action.
 - [x] Rebuild the homepage around real project artwork and recognition; combine Build with Rhozeland.

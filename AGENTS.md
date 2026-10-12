@@ -27,6 +27,6 @@
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
 - Derive Creator Pass XP and public standings from verified earned ledger kinds through visibility-checked functions, excluding refunds and spending, because progress tracks contributions, not balances.
-- Adapt Creator OS presentation without importing its schema, hold-based benefits or 3D tilt, because existing permissions and reward rules remain authoritative.
+- Adapt Creator OS presentation with CSS pass tilt, not its schema or hold-based benefits, because existing permissions and reward rules remain authoritative.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.

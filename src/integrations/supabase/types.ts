@@ -2776,6 +2776,42 @@ export type Database = {
         }
         Relationships: []
       }
+      rhoze_send_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          decided_at: string | null
+          id: string
+          note: string | null
+          status: string
+          tx_signature: string | null
+          user_id: string
+          wallet: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          decided_at?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          tx_signature?: string | null
+          user_id: string
+          wallet: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          decided_at?: string | null
+          id?: string
+          note?: string | null
+          status?: string
+          tx_signature?: string | null
+          user_id?: string
+          wallet?: string
+        }
+        Relationships: []
+      }
       rhoze_settings: {
         Row: {
           bonus_first_project: number
@@ -3429,6 +3465,10 @@ export type Database = {
         Args: { _project_id: string }
         Returns: undefined
       }
+      admin_decide_rhoze_send: {
+        Args: { p_approve: boolean; p_id: string; p_note: string; p_tx: string }
+        Returns: undefined
+      }
       admin_fulfill_investor_pledge: {
         Args: {
           _pledge_id: string
@@ -3983,6 +4023,10 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      request_rhoze_send: {
+        Args: { p_amount: number; p_wallet: string }
+        Returns: string
       }
       rhoze_award: {
         Args: {

@@ -88,7 +88,7 @@
 - [x] Group submission, deck, screenshots and demo together in Files.
 
 ## Create and Creator OS discovery
-- [ ] Replace Create shortcut with expandable account projects; remove top Back and Cancel.
-- [ ] Replace Discover scrolling banner with Creator OS-derived globe and flow entry.
-- [ ] Add directional Flow browsing, project engagement and private bookmarks without view rewards.
-- [ ] Verify signed-in project list, globe, flow, bookmarks and layouts.
+- [x] Replace Create shortcut with expandable account projects; remove top Back and Cancel.
+- [x] Replace Discover scrolling banner with Creator OS-derived globe and flow entry.
+- [x] Add directional Flow browsing, project engagement and private bookmarks without view rewards.
+- [x] Verify signed-in project list, globe, flow, bookmarks and layouts.

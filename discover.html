@@ -53,7 +53,16 @@
     <main>
 
       <div id="discover-explorer-root"></div>
-      <script type="module" src="/src/discover-explorer-main.tsx"></script>
+      <script type="module">
+        if (location.hostname === 'localhost') {
+          const runtime = await import('/@react-refresh');
+          runtime.default.injectIntoGlobalHook(window);
+          window.$RefreshReg$ = () => {};
+          window.$RefreshSig$ = () => type => type;
+          window.__vite_plugin_react_preamble_installed__ = true;
+        }
+        await import('/src/discover-explorer-main.tsx');
+      </script>
 
       <!-- FILTER BAR — one slim icon-led mono bar -->
       <div class="filter-bar" id="filterBar">

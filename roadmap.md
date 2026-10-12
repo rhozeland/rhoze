@@ -118,6 +118,6 @@
 - [x] Verify signed-in story/point editing and saved readback; deny signed-out access even with forged cached roles.
 
 ## Minimal real-points leaderboard
-- [ ] Replace source switches and prize clutter with one honest all-time list and personal weekly stats.
-- [ ] Connect project-page earning feedback to verified rewards and show project-earned points.
-- [ ] Verify signed-in earning, repeat-action protection, saved totals, and public privacy.
+- [x] Replace source switches and prize clutter with one honest all-time list and personal weekly stats.
+- [x] Connect project-page earning feedback to verified rewards and show project-earned points.
+- [x] Verify signed-in earning, repeat-action protection, saved totals, and public privacy.

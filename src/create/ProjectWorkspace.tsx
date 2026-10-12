@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import TeamPlanner from "./TeamPlanner";
+import ProjectPayments from "./ProjectPayments";
 import { saveTeam } from "./team-storage";
 import { useEffect } from "react";
 import type { TeamPerson } from "./project-flow";
@@ -11,7 +12,7 @@ import "./workspace.css";
 import "./create-flow.css";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
-type Tab = "overview" | "plan" | "team" | "money";
+type Tab = "overview" | "plan" | "team" | "money" | "payments";
 export type PublicSections = { overview: boolean; plan: boolean; team: boolean; money: boolean };
 
 export const DEFAULT_PUBLIC_SECTIONS: PublicSections = { overview: true, plan: false, team: false, money: false };
@@ -27,7 +28,7 @@ const MAKERS_OPTIONS: { value: string; label: string }[] = [
 /** Owner-only workspace: Overview, Plan, Team & chat, Money tabs, each with a public-visibility switch.
  *  Saves through the existing owner-checked release_save(p_token, p_id, p_data) function. */
 export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (next: any) => void }) {
-  const [tab, setTab] = useState<Tab>("overview");
+  const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "overview"));
   const [milestones, setMilestones] = useState<Milestone[]>(() => (r.milestones || []).map((m: any) => ({ id: m.id || uid(), title: m.title || "", deliverable: m.deliverable || "", amount_cents: Number(m.amount_cents) || 0, done: !!m.done })));
   const [makers, setMakers] = useState<string[]>(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
   const [people, setPeople] = useState<TeamPerson[]>([]);
@@ -119,7 +120,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   return (
     <div className="rz-ws">
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
-        {([["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"]] as [Tab, string][]).map(([k, label]) => (
+        {([["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]] as [Tab, string][]).map(([k, label]) => (
           <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>
         ))}
       </div>
@@ -198,6 +199,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
           </div>
         </div>
       )}
+      {tab === "payments" && <div><div className="rz-ws-panel-head"><h3>Payments &amp; schedule</h3></div><ProjectPayments r={r} /></div>}
       {err && <p className="rz-note" style={{ marginTop: ".6rem" }}>{err}</p>}
     </div>
   );

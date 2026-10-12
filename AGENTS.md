@@ -3,9 +3,8 @@
 - Mount project pop-ups through project-view.js from shared.js and SiteNav using the same-origin release view, because browsing must preserve its source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
-- Share public links and styles through site-nav.css, shared.js and SiteNav, because headers must match.
-- Mount static public account controls through `shared.js`, including the homepage, and mirror their behavior in `SiteNav` so account layouts and session visibility cannot diverge.
-- Keep frame geometry in site-nav.css and embedded markers in shared.js/SiteNav, because pages share one frame.
+- Share public links/styles through site-nav.css, shared.js and SiteNav; mount static account controls via shared.js (including home) and mirror them in SiteNav so headers and session visibility match.
+- Keep frame geometry in site-nav.css and embedded markers in shared.js/SiteNav so pages share one frame.
 - Keep Create as one header destination in shared.js and SiteNav, without a floating duplicate, because navigation must stay compact.
 - Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.

@@ -110,4 +110,4 @@
 ## Rhozeland story
 - [x] Build a visual mission, history, creator-support and token page using existing studio photos and real video links.
 - [x] Link Our story from shared static and React footers without expanding the header.
-- [ ] Verify footer-to-story navigation, token copy, video links, theme and mobile layout.
+- [x] Verify footer-to-story navigation, token copy, video links, theme and mobile layout.

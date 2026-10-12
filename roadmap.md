@@ -40,9 +40,10 @@
 - [x] W2: Public project metrics
 - [ ] W3: Work with Rhozeland requests + quotes (after submission)
 - [ ] W3: Deposit, milestone, final payment (after submission)
-- [ ] W4: Updated Colosseum answers
-- [ ] W4: Brand refresh + pitch deck
-- [ ] Verify owner workspace editing + supporter home signed in — needs a real signed-in account
+- [x] W4: Updated Colosseum answers
+- [x] W4: Brand refresh + pitch deck
+- [x] Verify owner workspace plan save and readback signed in.
+- [ ] Verify personalised supporter home signed in — test account remains at onboarding; do not alter the owner's profile for a screenshot.
 - [ ] Add city to creator profiles so globe pins spread beyond Toronto
 - [ ] Settings switch between creator/supporter — needs one owner-checked function
 - [x] Create (+) icon in header; floating button now Create a project
@@ -51,3 +52,9 @@
 - [x] $RHOZE rewards for creating, liking, applying
 - [ ] Collaborator access to the private workspace (today owner-only)
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
+
+## Submission package — October 12, 2026
+- [x] Rewrite final submission answers around evidenced live features, separating future payments and subscriptions.
+- [x] Build a distinctly Rhozeland slideshow with fresh real screenshots; export and inspect every PDF page.
+- [ ] Deliver a reviewed 60-second product demo and report any verification or audio limitations.
+- [ ] Group submission, deck, screenshots and demo together in Files.

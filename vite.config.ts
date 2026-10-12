@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => ({
         start: path.resolve(__dirname, "start.html"),
         invest: path.resolve(__dirname, "invest.html"),
         create: path.resolve(__dirname, "create.html"),
+        pitch: path.resolve(__dirname, "pitch.html"),
       },
     },
   },

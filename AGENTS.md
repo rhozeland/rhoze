@@ -3,8 +3,7 @@
 - Route Discover/home cards to local records; use project-view.js for other pop-ups, preserving source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
-- Share public navigation through site-nav.css, shared.js and SiteNav, including account controls. Wrap standalone portal pages in PortalShell; embedded portals inherit the parent header to prevent duplication.
-- Share frame geometry via site-nav.css and embed markers via shared.js/SiteNav; keep one Create header destination for compact navigation.
+- Share navigation, account controls, frame geometry and embed markers via site-nav.css, shared.js and SiteNav; keep one Create destination. Use PortalShell for standalone portals; embedded portals inherit the parent header to prevent duplication.
 - Mirror both About URLs with story.css/story.js; use public Discover records and indexed trades, inheriting parent navigation when embedded to avoid duplicates.
 - Derive brand URLs from creator-name slugs (`rz_slugify`/`slugify`); optional details live in `brand_profiles`.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.

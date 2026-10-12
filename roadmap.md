@@ -51,3 +51,9 @@
 - [x] $RHOZE rewards for creating, liking, applying
 - [ ] Collaborator access to the private workspace (today owner-only)
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
+
+## Submission package — October 12, 2026
+- [ ] Rewrite final submission answers around evidenced live features, separating future payments and subscriptions.
+- [ ] Build a distinctly Rhozeland slideshow with fresh real screenshots; export and inspect every PDF page.
+- [ ] Deliver a reviewed 60-second product demo and report any verification or audio limitations.
+- [ ] Group submission, deck, screenshots and demo together in Files.

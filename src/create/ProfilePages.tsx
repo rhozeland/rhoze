@@ -488,6 +488,7 @@ function BrandEditor({ slug, initial, onSaved }: { slug: string; initial: Brand;
 /* ------------------------------ /me ------------------------------ */
 export function MyProfile() {
   const [state, setState] = useState<"load" | "out" | "pick">("load");
+  const [path, setPath] = useState<"" | "create" | "support">("");
   const [kind, setKind] = useState<"artist" | "brand" | "supporter">("artist");
   const [auth, setAuth] = useState(false);
   const [name, setName] = useState("");
@@ -501,28 +502,45 @@ export function MyProfile() {
       if (p) go(p); else setState("pick");
     });
   }, []);
-  const create = async () => {
+  const create = async (useKind?: typeof kind) => {
     setBusy(true); setErr("");
-    const { data: p, error } = await db.rpc("my_profile", { p_kind: kind, p_name: name.trim() || null });
+    const { data: p, error } = await db.rpc("my_profile", { p_kind: useKind ?? kind, p_name: name.trim() || null });
     setBusy(false);
     if (error || !p) return setErr("Your profile could not be created. Please try again.");
     go(p);
   };
+  const chooseSupport = () => { setPath("support"); setKind("supporter"); };
   return (
     <Shell>
       <div className="rz-card">
         {state === "load" && <div className="rz-skel" />}
         {state === "out" && <div className="rz-head"><h1>Your profile</h1><p>Sign in or create an account as an Artist, Brand or Supporter.</p><div className="rz-actions"><button className="rz-btn pri" onClick={() => setAuth(true)}>Sign in</button></div>
           {auth && <AuthModal action="" redirectTo={location.href} onClose={() => setAuth(false)} onDone={() => location.reload()} />}</div>}
-        {state === "pick" && (
-          <div className="rz-head"><h1>Set up your profile</h1><p>Choose how you show up on Rhozeland. You can edit everything after.</p>
+        {state === "pick" && !path && (
+          <div className="rz-head"><h1>Welcome to Rhozeland</h1><p>How do you want to show up here? You can switch this later from Settings.</p>
             <div className="rz-actions" style={{ marginTop: ".8rem" }}>
-              {([["artist", "Artist"], ["brand", "Brand"], ["supporter", "Supporter"]] as const).map(([k, l]) => <button key={k} className={`rz-btn${kind === k ? " pri" : ""}`} onClick={() => setKind(k)}>{l}</button>)}
+              <button className="rz-btn pri" onClick={() => { setPath("create"); setKind("artist"); }}>I create</button>
+              <button className="rz-btn" onClick={chooseSupport}>I support</button>
+            </div>
+          </div>
+        )}
+        {state === "pick" && path === "create" && (
+          <div className="rz-head"><h1>What are you creating as?</h1><p>Choose how you show up on Rhozeland. You can edit everything after.</p>
+            <div className="rz-actions" style={{ marginTop: ".8rem" }}>
+              {([["artist", "Artist"], ["brand", "Brand"]] as const).map(([k, l]) => <button key={k} className={`rz-btn${kind === k ? " pri" : ""}`} onClick={() => setKind(k)}>{l}</button>)}
             </div>
             <div className="rz-field" style={{ marginTop: ".8rem" }}><label>{kind === "brand" ? "Brand name" : "Your name"}</label>
               <input className="rz-in" maxLength={100} placeholder="Leave blank to use your account name" value={name} onChange={(e) => setName(e.target.value)} /></div>
             {err && <p className="rz-pf-empty">{err}</p>}
-            <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={create}>{busy ? "Creating…" : "Create profile"}</button></div>
+            <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={() => create()}>{busy ? "Creating…" : "Create profile"}</button><button className="rz-btn" disabled={busy} onClick={() => setPath("")}>Back</button></div>
+          </div>
+        )}
+        {state === "pick" && path === "support" && (
+          <div className="rz-head"><h1>Set up your supporter profile</h1><p>Follow projects, hold creator coins and unlock exclusive perks.</p>
+            <div className="rz-field" style={{ marginTop: ".8rem" }}><label>Your name</label>
+              <input className="rz-in" maxLength={100} placeholder="Leave blank to use your account name" value={name} onChange={(e) => setName(e.target.value)} /></div>
+            {err && <p className="rz-pf-empty">{err}</p>}
+            <div className="rz-actions"><button className="rz-btn pri" disabled={busy} onClick={() => create("supporter")}>{busy ? "Creating…" : "Create profile"}</button><button className="rz-btn" disabled={busy} onClick={() => setPath("")}>Back</button></div>
           </div>
         )}
       </div>

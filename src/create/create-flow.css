@@ -1,0 +1,21 @@
+/* Merged 4-step create wizard — additive styles only (shared.rz-*  classes from create.css are reused). */
+.rz-for-toggle{display:inline-flex;border:1px solid hsl(var(--ink));border-radius:999px;padding:.2rem;gap:.2rem;margin-bottom:1.1rem}
+.rz-for-toggle button{border:0;background:transparent;color:hsl(var(--ink));border-radius:999px;padding:.38rem .95rem;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit}
+.rz-for-toggle button.on{background:hsl(var(--ink));color:hsl(var(--card))}
+
+.rz-category-grid{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.3rem}
+
+.rz-quote-toggle{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:hsl(var(--mut));margin-top:.6rem}
+.rz-quote-toggle input{width:1rem;height:1rem}
+
+.rz-timeline-grid{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.3rem}
+
+.rz-maker-grid{display:grid;grid-template-columns:1fr;gap:.6rem;margin-top:.3rem}
+.rz-maker-card{display:flex;flex-direction:column;gap:.25rem;text-align:left;padding:.85rem 1rem;border:1px solid hsl(var(--ink) / .15);border-radius:12px;background:transparent;cursor:pointer;font:inherit;color:inherit}
+.rz-maker-card b{font-size:.88rem}
+.rz-maker-card span{font-size:.74rem;color:hsl(var(--mut))}
+.rz-maker-card:hover,.rz-maker-card.on{border-color:hsl(var(--ink));background:hsl(var(--ink) / .04)}
+@media(min-width:620px){.rz-maker-grid{grid-template-columns:1fr 1fr 1fr}}
+
+.rz-review-section{font-size:.72rem;font-weight:600;margin:.9rem 0 .4rem}
+.rz-review-section:first-child{margin-top:0}

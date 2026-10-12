@@ -9,6 +9,7 @@ import exclusive from "@/assets/pitch/exclusive-board.asset.json";
 
 export type Slide = { id: string; title: string; notes: string; content: ReactNode; theme?: string };
 const art = (name: string) => `/images/${name}.webp`;
+const capture = (asset: { url: string }) => location.hostname === "localhost" ? new URL(asset.url, "https://rhoze.lovable.app").href : asset.url;
 const work = [
   { name: "Mansa Musa", creator: "MONEE FINGAZ", image: "fingaz-mansa-musa-thumb" },
   { name: "Holy Water", creator: "COZAL", image: "cozal-holy-water-thumb" },
@@ -35,7 +36,7 @@ export const slides: Slide[] = [
   {
     id: "platform", title: "One place to create, collaborate and release", theme: "wash",
     notes: "The live public website connects project creation, discovery, public creator profiles and published releases. The practical studio relationship remains central. A supporter path sits alongside creation rather than turning every project into a crowdfunding campaign.",
-    content: <><div className="product-split"><div><span className="status-dot">Live website</span><h2 className="slide-title">From idea<br />to release.</h2><p className="slide-body-lg">A project is the centre.<br />Not another social feed.</p><div className="steps-list"><div><b>01</b><span>Create a focused brief.</span></div><div><b>02</b><span>Choose who makes it.</span></div><div><b>03</b><span>Manage the work.</span></div><div><b>04</b><span>Publish and share.</span></div></div><p className="side-note">Fresh screenshot of the current homepage.</p></div><img className="screen-fit" src={home.url} alt="Rhozeland live homepage with project artwork and creator flow" /></div></>,
+    content: <><div className="product-split"><div><span className="status-dot">Live website</span><h2 className="slide-title">From idea<br />to release.</h2><p className="slide-body-lg">A project is the centre.<br />Not another social feed.</p><div className="steps-list"><div><b>01</b><span>Create a focused brief.</span></div><div><b>02</b><span>Choose who makes it.</span></div><div><b>03</b><span>Manage the work.</span></div><div><b>04</b><span>Publish and share.</span></div></div><p className="side-note">Live homepage capture.<br />Coin purchases are external—not project payments.</p></div><img className="screen-fit" src={capture(home)} alt="Rhozeland live homepage with project artwork and creator flow" /></div></>,
   },
   {
     id: "create", title: "A shared four-step project flow",

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
@@ -6,8 +7,8 @@ const withTimeout = <T,>(p: Promise<T>, ms = 15000) =>
   Promise.race([p, new Promise<never>((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
 
 /** Email/password (or Google) sign up / log in. Calls onDone once a session exists. */
-export default function AuthModal({ onClose, onDone, redirectTo, intro, action = " and publish" }: {
-  onClose: () => void; onDone: () => void; redirectTo: string; intro?: string; action?: string;
+export default function AuthModal({ onClose, onDone, redirectTo, intro, inline = false, action = " and publish" }: {
+  onClose: () => void; onDone: () => void; redirectTo: string; intro?: string; action?: string; inline?: boolean;
 }) {
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [email, setEmail] = useState("");
@@ -77,35 +78,35 @@ export default function AuthModal({ onClose, onDone, redirectTo, intro, action =
   };
 
   return (
-    <div className="rz-modal" onClick={() => !busy && onClose()}>
-      <div className="rz-card" style={{ maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
+    <div className={inline ? "rz-auth-inline" : "rz-modal"} onClick={() => !inline && !busy && onClose()}>
+      <div className={inline ? "rz-auth-inline-content" : "rz-card"} style={inline ? undefined : { maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
         {sent ? (
           <div className="rz-head" style={{ marginBottom: 0 }}>
             <h1>Check your email</h1>
             <p>We sent a confirmation link to <b>{email}</b>. Open it to finish signing in. Everything you entered is saved.</p>
-            <div className="rz-actions"><button className="rz-btn" onClick={onClose}>Close</button></div>
+            <div className="rz-actions">{!inline && <Button className="rz-btn" variant="outline" onClick={onClose}>Close</Button>}</div>
           </div>
         ) : (
           <form onSubmit={submit} noValidate>
             <div className="rz-chips" style={{ justifyContent: "center" }}>
-              <button type="button" className={`rz-chipbtn ${mode === "signup" ? "on" : ""}`} onClick={() => switchTo("signup")}>Sign up</button>
-              <button type="button" className={`rz-chipbtn ${mode === "login" ? "on" : ""}`} onClick={() => switchTo("login")}>Log in</button>
+              <Button variant="outline" type="button" className={`rz-chipbtn ${mode === "signup" ? "on" : ""}`} onClick={() => switchTo("signup")}>Sign up</Button>
+              <Button variant="outline" type="button" className={`rz-chipbtn ${mode === "login" ? "on" : ""}`} onClick={() => switchTo("login")}>Log in</Button>
             </div>
             <div className="rz-head" style={{ marginBottom: "1rem" }}>
-              <h1>{mode === "signup" ? "Create your account" : "Welcome back"}</h1>
+              {!inline && <h1>{mode === "signup" ? "Create your account" : "Welcome back"}</h1>}
               <p>{intro || "Your project is saved. Sign in to publish it and manage it from any device."}</p>
             </div>
-            <button type="button" className="rz-btn" style={{ width: "100%", marginBottom: ".8rem" }} onClick={google} disabled={busy}>Continue with Google</button>
+            <Button variant="outline" type="button" className="rz-btn" style={{ width: "100%", marginBottom: ".8rem" }} onClick={google} disabled={busy}>Continue with Google</Button>
             <div className="rz-note" style={{ margin: "0 0 .7rem" }}>or use your email</div>
-            <div className="rz-field" style={{ marginBottom: ".7rem" }}><label>Email</label><input className="rz-in" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-            <div className="rz-field"><label>Password</label><input className="rz-in" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} />
-              {mode === "login" && <div style={{ textAlign: "right", marginTop: ".3rem" }}><button type="button" className="rz-textlink" onClick={forgot} disabled={busy}>Forgot password?</button></div>}
+            <div className="rz-field" style={{ marginBottom: ".7rem" }}><label htmlFor={inline ? "leaderboard-email" : "auth-email"}>Email</label><input id={inline ? "leaderboard-email" : "auth-email"} className="rz-in" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+            <div className="rz-field"><label htmlFor={inline ? "leaderboard-password" : "auth-password"}>Password</label><input id={inline ? "leaderboard-password" : "auth-password"} className="rz-in" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} />
+              {mode === "login" && <div style={{ textAlign: "right", marginTop: ".3rem" }}><Button variant="outline" type="button" className="rz-textlink" onClick={forgot} disabled={busy}>Forgot password?</Button></div>}
             </div>
             {err && <div className="rz-err">{err}</div>}
             {info && <div className="rz-note">{info}</div>}
             <div className="rz-actions">
-              <button type="button" className="rz-btn" onClick={onClose} disabled={busy}>Cancel</button>
-              <button type="submit" className="rz-btn pri" disabled={busy}>{busy ? "One moment…" : mode === "signup" ? `Sign up${action}` : `Log in${action}`}</button>
+              {!inline && <Button variant="outline" type="button" className="rz-btn" onClick={onClose} disabled={busy}>Cancel</Button>}
+              <Button variant="outline" type="submit" className="rz-btn pri" disabled={busy}>{busy ? "One moment…" : mode === "signup" ? inline ? "Create account" : `Sign up${action}` : `Log in${action}`}</Button>
             </div>
           </form>
         )}

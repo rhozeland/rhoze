@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Sun, Moon } from "lucide-react";
 import logoBlack from "@/assets/logo-black.webp";
@@ -19,11 +20,11 @@ const Footer = () => {
 
   return (
     <footer className="py-8 px-6 border-t border-border">
-      <div className="container mx-auto max-w-6xl flex items-center justify-between">
+      <div className="container mx-auto max-w-6xl flex flex-wrap gap-4 items-center justify-between">
         <p className="text-sm text-muted-foreground font-body">
           © {new Date().getFullYear()} Rhozeland. All rights reserved.
         </p>
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap items-center gap-6">
           <a
             href="/team.html#/portal"
             className="text-xs text-muted-foreground/60 hover:text-foreground transition-colors font-body"
@@ -31,15 +32,8 @@ const Footer = () => {
           >
             Portal
           </a>
-          <a
-            href="https://dexscreener.com/solana/c4rrvr1gcneeyhwa6masbgycky7671rq3x4yfegm4rmf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-muted-foreground hover:text-primary transition-colors font-body"
-          >
-            DexScreener
-          </a>
-          <button
+          {[["/discover.html","Discover"],["/create.html","Create"],["/rewards","Rewards"],["mailto:collab@rhozeland.com","Project inquiries"]].map(([href,label])=><a key={href} href={href} className="text-sm text-muted-foreground hover:text-foreground transition-colors font-body">{label}</a>)}
+          <Button variant="ghost"
             onClick={toggleTheme}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-body"
             aria-label="Toggle theme"
@@ -47,7 +41,7 @@ const Footer = () => {
           >
             {isDark ? <Sun size={16} /> : <Moon size={16} />}
             <span>{isDark ? "Light" : "Dark"}</span>
-          </button>
+          </Button>
         </div>
       </div>
     </footer>

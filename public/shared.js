@@ -467,6 +467,12 @@ setupHoverVideos();
 (function(){
   function normalize(){
     if (/^\/projects\/?$/.test(location.pathname)) { location.replace('/discover.html' + location.search); return; }
+    document.querySelectorAll('.footer-links').forEach(function(menu){
+      menu.innerHTML='<h3 class="footer-heading">Explore</h3><a href="/discover.html">Discover</a><a href="/create.html">Create</a><a href="/rewards">Rewards</a>';
+    });
+    document.querySelectorAll('.footer-contact').forEach(function(menu){
+      menu.innerHTML='<h3 class="footer-heading">Project inquiries</h3><a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>';
+    });
     var paths=['<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/>','<path d="M12 5v14M5 12h14"/>','<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/>'];
     document.querySelectorAll('.site-nav .sn-links, .site-nav .nav-links, .site-nav .figma-nav-links, #mobileMenu').forEach(function(menu){
       Array.from(menu.children).forEach(function(el){if(!el.classList.contains('nav-auth-wrap') && !/sign in/i.test(el.textContent)) el.remove();});

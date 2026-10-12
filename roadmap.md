@@ -92,3 +92,9 @@
 - [x] Replace Discover scrolling banner with Creator OS-derived globe and flow entry.
 - [x] Add directional Flow browsing, project engagement and private bookmarks without view rewards.
 - [x] Verify signed-in project list, globe, flow, bookmarks and layouts.
+
+## Rewards leaderboard refresh
+- [ ] Restore editorial leaderboard, participation details and inline account signup.
+- [ ] Include eligible public accounts with zero XP; preserve private profiles and verified reward rules.
+- [ ] Simplify shared footer links, retaining project inquiries; leave dashboard unchanged.
+- [ ] Fix Discover publishing error and verify Rewards signed-in/signed-out flows.

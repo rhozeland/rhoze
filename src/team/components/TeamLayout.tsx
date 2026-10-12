@@ -64,6 +64,7 @@ export default function TeamLayout() {
   });
   // Mobile drawer is separate state — sidebar collapse only applies on md+.
   const [mobileOpen, setMobileOpen] = useState(false);
+  const sidebarCollapsed = collapsed && !mobileOpen;
   // Close the drawer whenever the route changes.
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
   useEffect(() => {
@@ -229,10 +230,10 @@ export default function TeamLayout() {
         <div
           className={cn(
             "border-b border-border flex items-center",
-            collapsed ? "px-2 py-3 justify-center" : "px-5 py-5 justify-between",
+            sidebarCollapsed ? "px-2 py-3 justify-center" : "px-5 py-5 justify-between",
           )}
         >
-          {!collapsed && (
+          {!sidebarCollapsed && (
             <NavLink
               to="/settings"
               className="flex items-center gap-2 group"
@@ -266,37 +267,37 @@ export default function TeamLayout() {
             </Button>
           </div>
         </div>
-        <nav className={cn("flex-1 space-y-1 overflow-y-auto", collapsed ? "p-2" : "p-3")}>
-          <NavLink to="/settings" className={collapsed ? collapsedNavClass : navClass} title={collapsed ? accountLabel : undefined}>
+        <nav onClick={() => setMobileOpen(false)} className={cn("flex-1 space-y-1 overflow-y-auto", sidebarCollapsed ? "p-2" : "p-3")}>
+          <NavLink to="/settings" className={sidebarCollapsed ? collapsedNavClass : navClass} title={sidebarCollapsed ? accountLabel : undefined}>
             <Avatar className="h-5 w-5">
               {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
               <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
             </Avatar>
-            {!collapsed && accountLabel}
+            {!sidebarCollapsed && accountLabel}
           </NavLink>
           {visibleNav.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
+            <NavLink key={n.to} to={n.to} end={n.end} className={sidebarCollapsed ? collapsedNavClass : navClass} title={sidebarCollapsed ? n.label : undefined}>
               <n.icon size={16} />
-              {!collapsed && n.label}
+              {!sidebarCollapsed && n.label}
             </NavLink>
           ))}
           {isAdmin && (
             <>
-              {!collapsed && (
+              {!sidebarCollapsed && (
                 <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>
               )}
-              {collapsed && <div className="my-2 mx-auto w-6 border-t border-border" />}
+              {sidebarCollapsed && <div className="my-2 mx-auto w-6 border-t border-border" />}
               {adminNav.map((n) => (
-                <NavLink key={n.to} to={n.to} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
+                <NavLink key={n.to} to={n.to} className={sidebarCollapsed ? collapsedNavClass : navClass} title={sidebarCollapsed ? n.label : undefined}>
                   <n.icon size={16} />
-                  {!collapsed && n.label}
+                  {!sidebarCollapsed && n.label}
                 </NavLink>
               ))}
             </>
           )}
         </nav>
-        <div className={cn("border-t border-border space-y-2", collapsed ? "p-2" : "p-3")}>
-          {!collapsed && (
+        <div className={cn("border-t border-border space-y-2", sidebarCollapsed ? "p-2" : "p-3")}>
+          {!sidebarCollapsed && (
             <>
               <div className="text-xs text-muted-foreground truncate px-1">{user?.email}</div>
               <a
@@ -307,17 +308,17 @@ export default function TeamLayout() {
               </a>
             </>
           )}
-          <ThemeToggle collapsed={collapsed} />
-          <AccentPicker collapsed={collapsed} />
+          <ThemeToggle collapsed={sidebarCollapsed} />
+          <AccentPicker collapsed={sidebarCollapsed} />
           <Button
             onClick={handleSignOut}
             variant="outline"
-            size={collapsed ? "icon" : "sm"}
-            className={collapsed ? "h-9 w-9 mx-auto" : "w-full"}
+            size={sidebarCollapsed ? "icon" : "sm"}
+            className={sidebarCollapsed ? "h-9 w-9 mx-auto" : "w-full"}
             aria-label="Sign out"
-            title={collapsed ? "Sign out" : undefined}
+            title={sidebarCollapsed ? "Sign out" : undefined}
           >
-            <LogOut size={14} /> {!collapsed && "Sign out"}
+            <LogOut size={14} /> {!sidebarCollapsed && "Sign out"}
           </Button>
         </div>
       </aside>

@@ -7,6 +7,7 @@ import CoverEditor from "./CoverEditor";
 import { LocationFields } from "./ProfileExtras";
 import { Button } from "@/components/ui/button";
 import "./create-flow.css";
+import ExistingProjects from "./ExistingProjects";
 import TeamPlanner from "./TeamPlanner";
 import { saveTeam } from "./team-storage";
 import { IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
@@ -481,6 +482,7 @@ export default function CreateProject() {
 
   return (
     <Shell className="rz-create-simple">
+      <ExistingProjects />
       <div className="rz-wizard-toolbar">
         <Button variant="ghost" className="rz-wizard-back" onClick={(step > 1 || ideaIndex > 0) ? back : () => { location.href = "/"; }}><ArrowLeft size={15} /> Back</Button>
         <div className="rz-wizard-toolbar-actions">

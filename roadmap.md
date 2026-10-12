@@ -104,6 +104,7 @@
 - [x] Check signed-in portal section changes, website return links, and mobile menus/layouts.
 
 ## Homepage final polish
+- [x] Fill the two mosaic gaps with True North Transparency and Toronto Palapa Tours; verify all 42 covers, complete columns, and local archive links.
 - [x] Integrate Build visuals and copy, align News/Pass/Spotlight, and remove the long news caption.
 - [x] Verify homepage visuals, links, and narrow-screen layout.
 

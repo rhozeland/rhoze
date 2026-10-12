@@ -1,11 +1,11 @@
 - Keep the public talent marketplace in `creator_directory`, separate from private account `profiles`, because visitors must never gain access to payroll or account details through discovery.
 - Store project likes and liked-list preferences separately with database-enforced owner writes and public visibility checks, because list privacy must hold beyond the browser.
 - Mount published-project pop-ups through the shared `public/project-view.js` from static shared navigation and React SiteNav, reusing the same-origin release view, because project browsing must preserve the source page while retaining existing support and owner checks.
-- Mirror static page updates between `public/community.html` and `public/community/index.html`, because hosted direct `.html` and clean `/community/` URLs should match; link to `/community.html` for reliable Vite preview navigation.
+- Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
 - Share public links and styles through site-nav.css, shared.js and SiteNav, because headers must match.
 - Mount static public account controls through `shared.js`, including the homepage, and mirror their behavior in `SiteNav` so account layouts and session visibility cannot diverge.
-- Keep public outer-frame geometry in `public/site-nav.css` and mark embedded views through `shared.js` and `SiteNav`, because every public page must share the homepage frame without duplicate gutters inside embedded sections.
+- Keep frame geometry in site-nav.css and embedded markers in shared.js/SiteNav, because pages share one frame.
 - Keep Create as one header destination in shared.js and SiteNav, without a floating duplicate, because navigation must stay compact.
 - Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
@@ -28,3 +28,5 @@
 
 - Derive Creator Pass XP and public standings from verified earned ledger kinds through visibility-checked functions, excluding refunds and spending, because progress tracks contributions, not balances.
 - Adapt Creator OS presentation without importing its schema, hold-based benefits or 3D tilt, because existing permissions and reward rules remain authoritative.
+
+- Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.

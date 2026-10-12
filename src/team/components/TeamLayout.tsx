@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AccentPicker } from "@/components/AccentPicker";
 import { canAccessSection, loadSectionAccess } from "../lib/access";
-import rhozelandLogo from "@/assets/rhozeland-logo.webp";
 
 const nav = [
   { to: "/directory", label: "Directory", icon: Calendar },
@@ -65,8 +64,22 @@ export default function TeamLayout() {
   });
   // Mobile drawer is separate state — sidebar collapse only applies on md+.
   const [mobileOpen, setMobileOpen] = useState(false);
+  const sidebarCollapsed = collapsed && !mobileOpen;
   // Close the drawer whenever the route changes.
   useEffect(() => { setMobileOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [mobileOpen]);
   useEffect(() => {
     localStorage.setItem("team-sidebar-collapsed", collapsed ? "1" : "0");
   }, [collapsed]);
@@ -75,10 +88,11 @@ export default function TeamLayout() {
     queryKey: ["my-profile-nav", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
+      if (!user) return null;
       const { data } = await supabase
         .from("profiles")
         .select("avatar_url, display_name")
-        .eq("id", user!.id)
+        .eq("id", user.id)
         .maybeSingle();
       return data;
     },
@@ -168,19 +182,20 @@ export default function TeamLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground md:flex">
+    <div className="team-layout min-h-screen bg-background text-foreground md:flex">
       {/* Mobile top bar */}
       <header className="md:hidden sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card px-4 py-2.5">
-        <button
+        <Button
+          type="button" variant="ghost" size="icon"
+          aria-expanded={mobileOpen} aria-controls="team-sidebar"
           onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
+          aria-label="Open team menu"
           className="h-9 w-9 inline-flex items-center justify-center rounded-md text-foreground hover:bg-accent"
         >
           <Menu size={18} />
-        </button>
+        </Button>
         <div className="flex items-center gap-2">
-          <img src={rhozelandLogo} alt="" className="h-6 w-6 object-contain" />
-          <span className="text-xs font-semibold tracking-wider uppercase">Rhozeland</span>
+          <span className="text-xs font-semibold">Team portal</span>
         </div>
         <NavLink
           to="/settings"
@@ -202,8 +217,9 @@ export default function TeamLayout() {
         />
       )}
       <aside
+        id="team-sidebar" aria-label="Team navigation"
         className={cn(
-          "border-r border-border bg-card flex flex-col transition-transform duration-200",
+          "team-sidebar border-r border-border bg-card flex flex-col transition-transform duration-200",
           // Mobile: off-canvas drawer
           "fixed inset-y-0 left-0 z-50 w-64 md:static md:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
@@ -214,23 +230,18 @@ export default function TeamLayout() {
         <div
           className={cn(
             "border-b border-border flex items-center",
-            collapsed ? "px-2 py-3 justify-center" : "px-5 py-5 justify-between",
+            sidebarCollapsed ? "px-2 py-3 justify-center" : "px-5 py-5 justify-between",
           )}
         >
-          {!collapsed && (
+          {!sidebarCollapsed && (
             <NavLink
               to="/settings"
               className="flex items-center gap-2 group"
               title="My Profile"
             >
-              <img
-                src={rhozelandLogo}
-                alt="Rhozeland"
-                className="h-8 w-8 object-contain shrink-0"
-              />
               <div>
-                <div className="text-sm font-semibold tracking-wider uppercase group-hover:text-primary transition-colors">Rhozeland</div>
-                <div className="text-xs text-muted-foreground">Team Portal</div>
+                <div className="text-sm font-semibold group-hover:text-primary transition-colors">Team portal</div>
+                <div className="text-xs text-muted-foreground">{isAdmin ? "Admin" : "Workspace"}</div>
               </div>
             </NavLink>
           )}
@@ -250,70 +261,68 @@ export default function TeamLayout() {
               variant="ghost"
               size="icon"
               className="h-8 w-8 shrink-0 md:hidden"
-              aria-label="Close menu"
+              aria-label="Close team menu"
             >
               <X size={16} />
             </Button>
           </div>
         </div>
-        <nav className={cn("flex-1 space-y-1 overflow-y-auto", collapsed ? "p-2" : "p-3")}>
-          <NavLink to="/settings" className={collapsed ? collapsedNavClass : navClass} title={collapsed ? accountLabel : undefined}>
+        <nav onClick={() => setMobileOpen(false)} className={cn("flex-1 space-y-1 overflow-y-auto", sidebarCollapsed ? "p-2" : "p-3")}>
+          <NavLink to="/settings" className={sidebarCollapsed ? collapsedNavClass : navClass} title={sidebarCollapsed ? accountLabel : undefined}>
             <Avatar className="h-5 w-5">
               {profile?.avatar_url ? <AvatarImage src={profile.avatar_url} alt="" /> : null}
               <AvatarFallback className="text-[10px]">{initials}</AvatarFallback>
             </Avatar>
-            {!collapsed && accountLabel}
+            {!sidebarCollapsed && accountLabel}
           </NavLink>
           {visibleNav.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.end} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
+            <NavLink key={n.to} to={n.to} end={n.end} className={sidebarCollapsed ? collapsedNavClass : navClass} title={sidebarCollapsed ? n.label : undefined}>
               <n.icon size={16} />
-              {!collapsed && n.label}
+              {!sidebarCollapsed && n.label}
             </NavLink>
           ))}
           {isAdmin && (
             <>
-              {!collapsed && (
+              {!sidebarCollapsed && (
                 <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Admin</div>
               )}
-              {collapsed && <div className="my-2 mx-auto w-6 border-t border-border" />}
+              {sidebarCollapsed && <div className="my-2 mx-auto w-6 border-t border-border" />}
               {adminNav.map((n) => (
-                <NavLink key={n.to} to={n.to} className={collapsed ? collapsedNavClass : navClass} title={collapsed ? n.label : undefined}>
+                <NavLink key={n.to} to={n.to} className={sidebarCollapsed ? collapsedNavClass : navClass} title={sidebarCollapsed ? n.label : undefined}>
                   <n.icon size={16} />
-                  {!collapsed && n.label}
+                  {!sidebarCollapsed && n.label}
                 </NavLink>
               ))}
             </>
           )}
         </nav>
-        <div className={cn("border-t border-border space-y-2", collapsed ? "p-2" : "p-3")}>
-          {!collapsed && (
+        <div className={cn("border-t border-border space-y-2", sidebarCollapsed ? "p-2" : "p-3")}>
+          {!sidebarCollapsed && (
             <>
               <div className="text-xs text-muted-foreground truncate px-1">{user?.email}</div>
               <a
-                href="https://www.rhozeland.com"
-                target="_blank"
-                rel="noreferrer"
+                href="/"
                 className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground px-1"
               >
-                <ExternalLink size={12} /> Rhozeland.com
+                <ExternalLink size={12} /> Back to website
               </a>
             </>
           )}
-          <ThemeToggle collapsed={collapsed} />
-          <AccentPicker collapsed={collapsed} />
+          <ThemeToggle collapsed={sidebarCollapsed} />
+          <AccentPicker collapsed={sidebarCollapsed} />
           <Button
             onClick={handleSignOut}
             variant="outline"
-            size={collapsed ? "icon" : "sm"}
-            className={collapsed ? "h-9 w-9 mx-auto" : "w-full"}
+            size={sidebarCollapsed ? "icon" : "sm"}
+            className={sidebarCollapsed ? "h-9 w-9 mx-auto" : "w-full"}
             aria-label="Sign out"
-            title={collapsed ? "Sign out" : undefined}
+            title={sidebarCollapsed ? "Sign out" : undefined}
           >
-            <LogOut size={14} /> {!collapsed && "Sign out"}
+            <LogOut size={14} /> {!sidebarCollapsed && "Sign out"}
           </Button>
         </div>
       </aside>
-      <main className="flex-1 overflow-auto min-w-0">
+      <main className="team-content flex-1 overflow-auto min-w-0">
         <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8">
           <Outlet />
         </div>

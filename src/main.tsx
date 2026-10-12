@@ -8,18 +8,20 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import TeamApp from "@/team/TeamApp";
 import { AuthProvider } from "@/team/lib/auth";
 import { PageTracker } from "@/lib/analytics";
+import PortalShell from "@/team/components/PortalShell";
 import "@/index.css";
 
 const queryClient = new QueryClient();
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root");
+if (root) createRoot(root).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <HashRouter>
         <PageTracker />
         <AuthProvider>
           <TooltipProvider>
-            <TeamApp />
+            <PortalShell><TeamApp /></PortalShell>
             <Toaster />
             <Sonner />
           </TooltipProvider>

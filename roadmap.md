@@ -98,3 +98,7 @@
 - [x] Include eligible public accounts with zero XP; preserve private profiles and verified reward rules.
 - [x] Simplify shared footer links, retaining project inquiries; leave dashboard unchanged.
 - [x] Fix Discover publishing error and verify Rewards signed-in/signed-out flows.
+
+## Shared portal navigation
+- [x] Put the shared website header above all standalone portal pages without duplicating embedded navigation.
+- [x] Check signed-in portal section changes, website return links, and mobile menus/layouts.

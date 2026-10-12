@@ -3,7 +3,7 @@
 - Route Discover/home cards to local records; use project-view.js for other pop-ups, preserving source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
-- Share public links/styles through site-nav.css, shared.js and SiteNav; mount static account controls via shared.js (including home) and mirror them in SiteNav so headers and session visibility match.
+- Share public navigation through site-nav.css, shared.js and SiteNav, including account controls. Wrap standalone portal pages in PortalShell; embedded portals inherit the parent header to prevent duplication.
 - Keep frame geometry in site-nav.css and embedded markers in shared.js/SiteNav so pages share one frame.
 - Keep Create as one header destination in shared.js and SiteNav, without a floating duplicate, because navigation must stay compact.
 - Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.

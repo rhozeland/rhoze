@@ -17,7 +17,7 @@ export default function TeamAdmin() {
         </p>
       </div>
       <Tabs defaultValue="hire" className="space-y-4">
-        <TabsList className="flex flex-wrap">
+        <TabsList className="flex h-auto flex-wrap justify-start gap-1">
           <TabsTrigger value="hire">Hire</TabsTrigger>
           <TabsTrigger value="roles">Roster</TabsTrigger>
           <TabsTrigger value="pay">Pay details</TabsTrigger>

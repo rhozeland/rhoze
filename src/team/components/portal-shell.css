@@ -1,0 +1,8 @@
+.portal-shell { display:flex; flex-direction:column; min-height:calc(100dvh - 2 * var(--site-page-gutter, 0px)); background:hsl(var(--background)); color:hsl(var(--foreground)); }
+.portal-shell__content { flex:1; min-width:0; }
+.portal-shell .team-layout,.portal-shell .client-layout,.portal-shell__content > .min-h-screen:not(.team-layout):not(.client-layout) { min-height:calc(100dvh - 76px - 2 * var(--site-page-gutter)); }
+.portal-shell .team-content { overflow-x:auto; }
+@media(min-width:768px) { .portal-shell .team-sidebar { position:sticky; top:0; align-self:flex-start; height:calc(100dvh - 76px - 2 * var(--site-page-gutter)); flex-shrink:0; } }
+@media(max-width:900px) { .portal-shell .team-layout,.portal-shell .client-layout,.portal-shell__content > .min-h-screen:not(.team-layout):not(.client-layout) { min-height:calc(100dvh - 65px - 2 * var(--site-page-gutter)); } .portal-shell .site-nav .nav-auth-name { max-width:5rem; } .portal-shell .sn-mobile .nav-auth-wrap { display:none; } }
+@media(max-width:380px) { .portal-shell .site-nav .nav-auth-name { display:none; } }
+@media(prefers-reduced-motion:reduce) { .portal-shell .team-sidebar { transition:none; } }

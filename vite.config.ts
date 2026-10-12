@@ -42,6 +42,8 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
+      // Plain scripts served from public/ are loaded at runtime, not bundled.
+      external: ["/creator-profile-links.js"],
       input: {
         main: path.resolve(__dirname, "index.html"),
         team: path.resolve(__dirname, "team.html"),

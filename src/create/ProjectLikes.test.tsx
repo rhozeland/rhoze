@@ -53,7 +53,7 @@ describe("Project likes", () => {
   it("shows public lists without owner controls", async () => {
     state.viewer = null; state.liked = true; state.public = true;
     render(<LikedProjects userId="owner" />);
-    await screen.findByText("Winter");
+    await screen.findByRole("link", { name: /Winter/ });
     expect(screen.queryByRole("button", { name: "Private" })).not.toBeInTheDocument();
   });
 });

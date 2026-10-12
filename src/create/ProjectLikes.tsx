@@ -32,7 +32,7 @@ export function ProjectHeart({ releaseId }: { releaseId: string }) {
         ? await supabase.from("project_likes").delete().eq("user_id", session.user.id).eq("release_id", releaseId)
         : await supabase.from("project_likes").insert({ user_id: session.user.id, release_id: releaseId });
       if (result.error) setError("Couldn’t save your like. Please try again.");
-      else setLiked(!liked);
+      else { setLiked(!liked); window.dispatchEvent(new CustomEvent('rhoze:rewards', { detail: { releaseId } })); }
     } catch { setError("Couldn’t save your like. Please try again."); }
     finally { setBusy(false); }
   };
@@ -41,7 +41,7 @@ export function ProjectHeart({ releaseId }: { releaseId: string }) {
       <Button variant="outline" size="icon" className="rz-project-heart rz-release-share" aria-label={liked ? "Unlike project" : "Like project"} title={liked ? "Unlike project" : "Like project"} aria-pressed={liked} disabled={busy} onClick={toggle}><Heart size={16} /></Button>
       {error && <span className="rz-like-error" role="alert">{error}</span>}
     </span>
-    {auth && <AuthModal action="" intro="Sign in to like this project." redirectTo={`${location.origin}/me`} onClose={() => setAuth(false)} onDone={() => { setAuth(false); toggle(); }} />}
+    {auth && <AuthModal action="" intro="Sign in to like this project." redirectTo={location.href} onClose={() => setAuth(false)} onDone={() => { setAuth(false); toggle(); }} />}
   </>;
 }
 

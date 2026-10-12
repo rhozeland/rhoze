@@ -6,6 +6,9 @@ import ProjectStory from "./ProjectStory";
 import ReleasePrice from "./ReleasePrice";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import "./portfolio.css";
+import PortfolioHeart from './PortfolioHeart';
+import ProjectRewards from './ProjectRewards';
+import './leaderboard.css';
 type Entry = { slug: string; title: string; artist: string; image: string; source_url: string; tag: string; date: string; categories: string; story?: string; cultural_context?: string; rhozeland_contribution?: string };
 export default function PortfolioPage({ slug }: { slug: string }) {
   const [entry, setEntry] = useState<Entry | null | undefined>();
@@ -57,6 +60,8 @@ export default function PortfolioPage({ slug }: { slug: string }) {
       {admin && <Button variant="outline" onClick={() => setEditing(!editing)}>{editing ? 'Close editor' : 'Edit project record'}</Button>}
       {editing && <section className="rz-ws"><h2>Edit project record</h2>{([['story', 'The story'], ['cultural_context', 'Cultural context'], ['rhozeland_contribution', "Rhozeland's contribution"]] as const).map(([key, label]) => <label key={key}>{label}<textarea className="rz-in" rows={4} value={details[key]} onChange={e => setDetails({ ...details, [key]: e.target.value })} /></label>)}<label>Solana contract address<input className="rz-in" value={details.coin_mint} onChange={e => setDetails({ ...details, coin_mint: e.target.value })} /></label><label>Ticker<input className="rz-in" value={details.coin_ticker} onChange={e => setDetails({ ...details, coin_ticker: e.target.value.toUpperCase() })} /></label><p className="rz-note">{TOKEN_PAIRING_NOTICE}</p><Button variant="outline" disabled={busy} onClick={saveDetails}>{busy ? 'Saving…' : 'Save project record'}</Button>{error && <p role="alert">{error}</p>}</section>}
       <header><p className="rz-portfolio-kicker">Project archive · {entry.tag}</p><h1>{entry.title}</h1><p>{entry.artist.split(',').map((name, i) => { const profile = profiles[name.normalize('NFC').trim().toLowerCase()]; return <span key={name}>{i > 0 && ' · '}{profile ? <a href={`/creator/${profile}`}>{name}</a> : name}</span>; })}{entry.date && ` · ${entry.date}`}</p></header>
+      <PortfolioHeart slug={slug} />
+      <ProjectRewards portfolioSlug={slug} />
       <img className="rz-portfolio-cover" src={entry.image} alt={`${entry.title} — ${entry.artist}`} />
       <div className="rz-portfolio-body"><aside><h2>Project record</h2><dl><dt>Creator</dt><dd>{entry.artist}</dd><dt>Format</dt><dd>{entry.tag}</dd>{entry.date && <><dt>Released</dt><dd>{entry.date}</dd></>}</dl><Button variant="outline" asChild><a href={entry.source_url} target="_blank" rel="noopener noreferrer">View original work ↗</a></Button></aside><div>
         <section><h2>About the project</h2><p>{entry.title} is a {entry.tag.toLowerCase()} by {entry.artist}{entry.date ? `, released in ${entry.date}` : ''}, featured in the Rhozeland portfolio.</p></section>

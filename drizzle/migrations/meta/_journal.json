@@ -218,6 +218,20 @@
       "when": 1791789648198,
       "tag": "0030_leaderboard_public_newcomers",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1791824983455,
+      "tag": "0031_verified_reward_stats",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1791825110930,
+      "tag": "0032_portfolio_project_points",
+      "breakpoints": true
     }
   ]
 }

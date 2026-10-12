@@ -1885,6 +1885,38 @@ export type Database = {
           },
         ]
       }
+      project_comments: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          release_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          release_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          release_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_comments_release_id_fkey"
+            columns: ["release_id"]
+            isOneToOne: false
+            referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_like_preferences: {
         Row: {
           is_public: boolean
@@ -3691,6 +3723,7 @@ export type Database = {
           title: string
         }[]
       }
+      creator_progress: { Args: { p_user_id?: string }; Returns: Json }
       creator_save_details: {
         Args: {
           p_disciplines: string[]
@@ -3722,6 +3755,17 @@ export type Database = {
       creator_set_visibility: {
         Args: { p_id: string; p_public: boolean }
         Returns: undefined
+      }
+      creator_standings: {
+        Args: never
+        Returns: {
+          contributions: number
+          display_name: string
+          photo_url: string
+          rank_position: number
+          slug: string
+          xp: number
+        }[]
       }
       credit_request_cancel: {
         Args: { _request_id: string }
@@ -3847,6 +3891,17 @@ export type Database = {
         Returns: {
           balance: number
           entries: Json
+        }[]
+      }
+      project_discussion: {
+        Args: { p_release_id: string }
+        Returns: {
+          body: string
+          created_at: string
+          display_name: string
+          id: string
+          is_mine: boolean
+          slug: string
         }[]
       }
       purchase_rhoze_square: {

@@ -2,12 +2,13 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/create/AuthModal";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Plus } from "lucide-react";
+import { Menu, X, MessageSquare, Plus, Compass, Gift } from "lucide-react";
 
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
-  { href: "/discover.html", label: "Discover" },
-  { href: "/community.html", label: "Creators" },
+  { href: "/discover.html", label: "Discover", icon: Compass },
+  { href: "/create.html", label: "Create", icon: Plus },
+  { href: "/rewards", label: "Rewards", icon: Gift },
 ];
 export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [open, setOpen] = useState(false);
@@ -25,10 +26,10 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
       const meta = data.user?.user_metadata as any;
       const fallback = String(meta?.display_name || meta?.full_name || data.user?.email || "").split(/\s|@/)[0] || null;
       if (on && fallback) setName(fallback);
-      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url,name").eq("user_id", uid).maybeSingle();
+      const { data: c } = await (supabase as any).from("creator_directory").select("photo_url,display_name").eq("user_id", uid).maybeSingle();
       if (!on) return;
       setAvatar(c?.photo_url ?? null);
-      if (c?.name) setName(String(c.name).split(/\s|@/)[0]);
+      if (c?.display_name) setName(String(c.display_name).split(/\s|@/)[0]);
     });
     return () => { on = false; };
   }, [hasSession, signIn]);
@@ -56,10 +57,10 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   }, [signIn]);
   const active = typeof window === "undefined" ? "" : window.location.pathname;
   const activeView = new URLSearchParams(window.location.search).get("view");
-  const items = links.map(({ href, label }) => {
+  const items = links.map(({ href, label, icon: Icon }) => {
     const target = new URL(href, window.location.origin);
     const isActive = active === target.pathname && activeView === target.searchParams.get("view");
-    return <a key={href} href={href} aria-current={isActive ? "page" : undefined}>{label}</a>;
+    return <a key={href} href={href} aria-current={isActive ? "page" : undefined}><Icon size={15} aria-hidden="true" />{label}</a>;
   });
   const account = signIn
     ? !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={signIn}>Sign in</Button>
@@ -73,22 +74,23 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
             </a>
           </div>
           {menuOpen && <div className="sn-menu" role="menu" onClick={(e) => e.stopPropagation()}>
-            <a href="/me?settings=1" role="menuitem">Settings</a>
+            <a href="/me" role="menuitem">My profile</a>
+            <a href="/me?settings=1" role="menuitem">Edit profile & settings</a>
+            <a href="/saved" role="menuitem">Saved</a>
             <Button type="button" variant="ghost" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</Button>
           </div>}
         </div>
       : !signedIn && <Button type="button" variant="outline" className="sn-signin" onClick={() => { setOpen(false); setAuthOpen(true); }}>Sign in</Button>;
-  const msg = <a className="sn-create" href="/create.html" aria-label="Create a project" title="Create a project"><Plus size={16} aria-hidden="true" /></a>;
   return <>
     <link rel="stylesheet" href="/site-nav.css" />
     <nav className="site-nav" aria-label="Primary">
       <a className="sn-brand" href="/" aria-label="Rhozeland home"><img src="/images/logo-white.webp" alt="" /><span>Rhozeland</span></a>
       <div className="sn-links">{items}</div>
-      <div className="sn-extra">{extra}{msg}{account}</div>
+      <div className="sn-extra">{extra}{account}</div>
       <Button type="button" variant="ghost" size="icon" className="sn-toggle" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</Button>
     </nav>
     <div className={`sn-mobile${open ? " open" : ""}`} aria-hidden={!open}>
-      {open && <>{items}{msg}{account}</>}
+      {open && <>{items}{account}</>}
     </div>
     {authOpen && <AuthModal action="" intro="Sign in to save creators, message them and manage your projects." redirectTo={`${window.location.origin}/me`} onClose={() => setAuthOpen(false)} onDone={() => { setAuthOpen(false); window.location.href = "/me"; }} />}
   </>;

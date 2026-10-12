@@ -62,6 +62,14 @@
 - [ ] Collaborator access to the private workspace (today owner-only)
 - [ ] Later: pay with $RHOZE discount, Creator plan, School tab, Fan Pass
 
+## Work-led homepage and Rewards
+- [x] Link Indoléstic and other confirmed account names on Discover directly to their profiles; leave unclaimed names anonymous.
+- [x] Unify public navigation as Discover, Create, Rewards with icons and a single Create action.
+- [x] Rebuild the homepage around real project artwork and recognition; combine Build with Rhozeland.
+- [x] Adapt Creator OS pass/profile with real balance, earned XP, badges and privacy-filtered standings.
+- [x] Verify matching headers, artwork, real signed-in pass/balance, and posting/deleting comments.
+- [x] Verify account profile creation and Discover-to-profile readback for Indoléstic.
+
 ## Submission package — October 12, 2026
 - [x] Rewrite final submission answers around evidenced live features, separating future payments and subscriptions.
 - [x] Build a distinctly Rhozeland slideshow with fresh real screenshots; export and inspect every PDF page.

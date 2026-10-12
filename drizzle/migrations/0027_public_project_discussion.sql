@@ -1,0 +1,13 @@
+CREATE TABLE public.project_comments(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), release_id uuid NOT NULL REFERENCES public.releases(id) ON DELETE CASCADE, user_id uuid NOT NULL, body text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT,INSERT,DELETE ON public.project_comments TO authenticated;
+GRANT ALL ON public.project_comments TO service_role;
+ALTER TABLE public.project_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Read comments on published projects" ON public.project_comments FOR SELECT TO authenticated USING(EXISTS(SELECT 1 FROM public.releases r WHERE r.id=release_id AND r.status='published'));
+CREATE POLICY "Comment as self on published projects" ON public.project_comments FOR INSERT TO authenticated WITH CHECK(user_id=auth.uid() AND EXISTS(SELECT 1 FROM public.releases r WHERE r.id=release_id AND r.status='published'));
+CREATE POLICY "Delete own comments" ON public.project_comments FOR DELETE TO authenticated USING(user_id=auth.uid());
+CREATE INDEX project_comments_release_idx ON public.project_comments(release_id,created_at DESC);
+CREATE FUNCTION public.validate_project_comment() RETURNS trigger LANGUAGE plpgsql SET search_path=public AS $$ BEGIN IF char_length(trim(NEW.body))<1 OR char_length(NEW.body)>1000 THEN RAISE EXCEPTION 'Comment must be between 1 and 1000 characters'; END IF; IF EXISTS(SELECT 1 FROM public.project_comments WHERE user_id=NEW.user_id AND created_at>now()-interval '15 seconds') THEN RAISE EXCEPTION 'Please wait before posting again'; END IF; NEW.body=trim(NEW.body); RETURN NEW; END $$;
+CREATE TRIGGER validate_project_comment BEFORE INSERT ON public.project_comments FOR EACH ROW EXECUTE FUNCTION public.validate_project_comment();
+CREATE FUNCTION public.project_discussion(p_release_id uuid) RETURNS TABLE(id uuid,body text,created_at timestamptz,display_name text,slug text,is_mine boolean) LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT pc.id,pc.body,pc.created_at,coalesce(c.display_name,'Rhozeland member'),c.slug,coalesce(pc.user_id=auth.uid(),false) FROM public.project_comments pc LEFT JOIN LATERAL (SELECT cd.display_name,cd.slug FROM public.creator_directory cd WHERE cd.user_id=pc.user_id AND cd.is_public AND cd.approved ORDER BY cd.created_at LIMIT 1) c ON true WHERE pc.release_id=p_release_id AND EXISTS(SELECT 1 FROM public.releases r WHERE r.id=p_release_id AND r.status='published') ORDER BY pc.created_at DESC LIMIT 100; $$;
+REVOKE ALL ON FUNCTION public.project_discussion(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.project_discussion(uuid) TO anon,authenticated;

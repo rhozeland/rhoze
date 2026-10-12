@@ -7,22 +7,6 @@
   document.documentElement.classList.toggle('site-embedded', embedded);
 })();
 
-// The floating booking action belongs on the landing page only.
-(function(){
-  function mountBookingAction(){
-    if (!/^(?:\/(?:index\.html)?)$/.test(location.pathname)) return;
-    if (!document.querySelector('.site-nav') || document.querySelector('.site-book-float')) return;
-    var link = document.createElement('a');
-    link.className = 'site-book-float';
-    link.href = '/create.html';
-    link.setAttribute('aria-label', 'Create a project');
-    link.innerHTML = '<span class="site-book-float__mark" aria-hidden="true">+</span><span>Create a project</span>';
-    document.body.appendChild(link);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountBookingAction);
-  else mountBookingAction();
-})();
-
 // Create modal — injected once on every page
 (function(){
   // Pool of recent projects — 3 random are picked each time the modal opens
@@ -435,9 +419,6 @@ setupHoverVideos();
     var signedIn = !!sess;
     function build(cls){
       var wrap = document.createDocumentFragment();
-      var plus = document.createElement('a'); plus.href = '/create.html'; plus.className = 'sn-create'; plus.setAttribute('aria-label', 'Create a project'); plus.title = 'Create a project';
-      plus.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
-      wrap.appendChild(plus);
       if (!signedIn) { var a = document.createElement('a'); a.className = cls; a.href = '/me'; a.textContent = 'Sign in'; wrap.appendChild(a); return wrap; }
       // Same gray account cluster as the landing page: profile identity + Messages.
       var w = document.createElement('div'); w.className = 'nav-auth-wrap';
@@ -451,9 +432,11 @@ setupHoverVideos();
       mm.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
       cluster.appendChild(mm); cluster.appendChild(b);
       var m = document.createElement('div'); m.className = 'sn-menu'; m.style.display = 'none';
-      var p = document.createElement('a'); p.href = '/me?settings=1'; p.textContent = 'Settings';
+      var p = document.createElement('a'); p.href = '/me?settings=1'; p.textContent = 'Edit profile & settings';
       var o = document.createElement('button'); o.type = 'button'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
-      m.appendChild(p); m.appendChild(o);
+      var profile=document.createElement('a'); profile.href='/me'; profile.textContent='My profile';
+      var saved=document.createElement('a'); saved.href='/saved'; saved.textContent='Saved';
+      m.appendChild(profile); m.appendChild(p); m.appendChild(saved); m.appendChild(o);
       function showMenu(){ m.style.display = 'flex'; b.setAttribute('aria-expanded', 'true'); }
       function hideMenu(){ m.style.display = 'none'; b.setAttribute('aria-expanded', 'false'); }
       w.addEventListener('mouseenter', showMenu);
@@ -463,13 +446,13 @@ setupHoverVideos();
       w.appendChild(cluster); w.appendChild(m); wrap.appendChild(w);
       // Fill in the profile photo and display name when available.
       try {
-        fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=photo_url,name&user_id=eq.' + encodeURIComponent(sess.user.id), {
+        fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/creator_directory?select=photo_url,display_name&user_id=eq.' + encodeURIComponent(sess.user.id), {
           headers: { apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w', Authorization: 'Bearer ' + sess.access_token }
         }).then(function(r){ return r.json(); }).then(function(rows){
           var row = rows && rows[0]; if (!row) return;
           var av = b.querySelector('.nav-auth-avatar'), nm = b.querySelector('.nav-auth-name');
           if (row.photo_url && av) av.innerHTML = '<img src="' + row.photo_url + '" alt="" />';
-          if (row.name && nm) { var fn = String(row.name).split(/\s|@/)[0]; nm.textContent = fn; if (av && !row.photo_url) av.textContent = (fn.charAt(0) || 'R').toUpperCase(); }
+          if (row.display_name && nm) { var fn = String(row.display_name).split(/\s|@/)[0]; nm.textContent = fn; if (av && !row.photo_url) av.textContent = (fn.charAt(0) || 'R').toUpperCase(); }
         }).catch(function(){});
       } catch(e) {}
       return wrap;
@@ -484,15 +467,14 @@ setupHoverVideos();
 (function(){
   function normalize(){
     if (/^\/projects\/?$/.test(location.pathname)) { location.replace('/discover.html' + location.search); return; }
-    document.querySelectorAll('.site-nav .sn-links, .site-nav .nav-links, #mobileMenu').forEach(function(menu){
-      var discover = null;
-      menu.querySelectorAll('a').forEach(function(a){
-        var href = a.getAttribute('href') || '';
-        if (/^(?:\/projects(?:\.html)?|\/discover(?:\.html)?)\/?$/.test(href)) {
-          if (discover) { a.remove(); return; }
-          discover = a; a.href = '/discover.html'; a.textContent = 'Discover';
-        } else if (href.indexOf('view=open-calls') >= 0 || /^(Find Work|Opportunities)$/.test(a.textContent.trim())) a.remove();
-        else if (/Book a project/i.test(a.textContent)) { a.href='/create.html?new=1'; a.textContent='Create a Project'; }
+    var paths=['<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/>','<path d="M12 5v14M5 12h14"/>','<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/>'];
+    document.querySelectorAll('.site-nav .sn-links, .site-nav .nav-links, .site-nav .figma-nav-links, #mobileMenu').forEach(function(menu){
+      Array.from(menu.children).forEach(function(el){if(!el.classList.contains('nav-auth-wrap') && !/sign in/i.test(el.textContent)) el.remove();});
+      ['/discover.html','/create.html','/rewards'].forEach(function(href,i){
+        var a=document.createElement('a'); a.href=href;
+        a.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths[i]+'</svg><span>'+['Discover','Create','Rewards'][i]+'</span>';
+        if(location.pathname===href) a.setAttribute('aria-current','page');
+        menu.insertBefore(a,menu.children[i] || null);
       });
     });
     document.querySelectorAll('a[href="/projects.html"]').forEach(function(a){ a.href='/discover.html'; if (/^(Featured Projects|Projects|Work)$/.test(a.textContent.trim())) a.textContent='Discover'; });

@@ -18,7 +18,7 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-nav .brand-logo-wrap img{display:none!important;position:static;inset:auto}.site-nav .brand-logo-wrap .logo-light{display:block!important;opacity:1!important;transform:none!important}
 .site-nav .brand-text,.site-nav .sn-brand span{font-size:1.35rem;font-weight:750;color:hsl(var(--site-nav-ink))!important;letter-spacing:0}
 .site-nav .sn-links,.site-nav .figma-nav-links{position:static!important;transform:none!important;display:flex;align-items:center;justify-content:flex-end;gap:clamp(.7rem,1.55vw,1.9rem);margin:0 0 0 auto!important;white-space:nowrap}
-.site-nav .sn-links a,.site-nav .figma-nav-links a{display:inline-flex;align-items:center;padding:.3rem 0!important;color:hsl(var(--site-nav-ink))!important;font-size:.78rem!important;font-weight:600!important;opacity:.83;transition:opacity .2s ease}
+.site-nav .sn-links a,.site-nav .figma-nav-links a{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem 0!important;color:hsl(var(--site-nav-ink))!important;font-size:.78rem!important;font-weight:600!important;opacity:.83;transition:opacity .2s ease}
 .site-nav .sn-links a:hover,.site-nav .sn-links a:focus-visible,.site-nav .figma-nav-links a:hover,.site-nav .figma-nav-links a:focus-visible,.site-nav .sn-links a[aria-current="page"]{opacity:1;text-decoration:underline;text-underline-offset:5px}
 .site-nav .nav-cta,.site-nav .sn-signin{min-height:36px;padding:.5rem 1rem;border:1px solid hsl(var(--site-nav-line))!important;border-radius:999px;background:transparent!important;color:hsl(var(--site-nav-ink))!important;white-space:nowrap;font-size:.78rem;font-weight:600;line-height:1.2}
 .site-nav .nav-cta svg{width:14px;height:14px}.site-nav .nav-cta:hover,.site-nav .sn-signin:hover{background:hsl(var(--site-nav-hover))!important;transform:none}
@@ -92,3 +92,5 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .sn-create:focus-visible{outline:2px solid hsl(0 0% 100%);outline-offset:3px}
 .sn-mobile .sn-create{margin:.25rem 0}
 @media(prefers-reduced-motion:reduce){.sn-create{transition:none}}
+
+.site-nav .nav-links{display:flex;align-items:center;gap:1.5rem;margin-left:auto}.site-nav .nav-links>a{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600}.site-nav + .mobile-menu>a,.sn-mobile>a{display:flex;align-items:center;gap:.5rem}.site-nav .nav-links>a[aria-current="page"],.site-nav .figma-nav-links>a[aria-current="page"]{text-decoration:underline;text-underline-offset:5px}@media(max-width:900px){.site-nav .nav-links{display:none}}

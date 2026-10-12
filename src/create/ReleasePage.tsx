@@ -10,6 +10,7 @@ import ProjectWorkspace, { DEFAULT_PUBLIC_SECTIONS } from "./ProjectWorkspace";
 import { ProjectMetricsBadges } from "./ProjectMetrics";
 import { Button } from "@/components/ui/button";
 import { X, Share2 } from "lucide-react";
+import ProjectDiscussion from "./ProjectDiscussion";
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -381,6 +382,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             )}
 
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
+            <ProjectDiscussion releaseId={r.id} />
           </>
         )}
       </div>

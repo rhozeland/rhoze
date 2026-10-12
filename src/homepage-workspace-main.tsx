@@ -6,6 +6,7 @@ import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
 import ExclusivePage from "@/create/ExclusivePage";
 import PrivateWorkspace from "@/create/PrivateWorkspace";
+import RewardsPage from "@/create/RewardsPage";
 import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
 import { PageTracker } from "@/lib/analytics";
@@ -21,7 +22,13 @@ const workspaceMatch = location.pathname.match(/^\/workspace\/([^/]+)\/?$/);
 const profileMatch = location.pathname.match(/^\/(creator|brand)\/([^/]+)\/?$/);
 
 const acctMatch = location.pathname.match(/^\/(saved|messages)\/?$/);
-if (workspaceMatch) {
+if (/^\/rewards\/?$/.test(location.pathname)) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "profile-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<RewardsPage />);
+} else if (workspaceMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");
   el.id = "release-root";

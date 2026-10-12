@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => ({
     configureServer(server: ViteDevServer) {
       server.middlewares.use((req, _res, next) => {
         if (req.url && /^\/discover\/?(?:\?|$)/.test(req.url)) req.url = req.url.replace(/^\/discover\/?/, "/discover.html");
+        if (req.url && /^\/about\/?(?:\?|$)/.test(req.url)) req.url = req.url.replace(/^\/about\/?/, "/about.html");
         next();
       });
     },

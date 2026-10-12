@@ -4,8 +4,8 @@
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
 - Share public navigation through site-nav.css, shared.js and SiteNav, including account controls. Wrap standalone portal pages in PortalShell; embedded portals inherit the parent header to prevent duplication.
-- Keep frame geometry in site-nav.css and embedded markers in shared.js/SiteNav so pages share one frame.
-- Keep Create as one header destination in shared.js and SiteNav, without a floating duplicate, because navigation must stay compact.
+- Share frame geometry via site-nav.css and embed markers via shared.js/SiteNav; keep one Create header destination for compact navigation.
+- Mirror the story at public/about.html and public/about/index.html with story.css and shared footer links, preserving public navigation.
 - Derive brand identity from a slug of each release's creator name (matching `rz_slugify` in SQL and `slugify` in JS), with optional details in `brand_profiles`, because releases have no brand table and both sides must agree on URLs.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.
 - Decide release ownership by the signed-in account (`releases.user_id`) through owner-checked database functions; the browser token only covers signed-out drafts until `release_claim` attaches them at sign-in, so owners can manage projects from any device.

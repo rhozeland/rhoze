@@ -479,7 +479,7 @@ setupHoverVideos();
   function normalize(){
     if (/^\/projects\/?$/.test(location.pathname)) { location.replace('/discover.html' + location.search); return; }
     document.querySelectorAll('.footer-links').forEach(function(menu){
-      menu.innerHTML='<h3 class="footer-heading">Explore</h3><a href="/discover.html">Discover</a><a href="/create.html">Create</a><a href="/rewards">Rewards</a>';
+      menu.innerHTML='<h3 class="footer-heading">Explore</h3><a href="/discover.html">Discover</a><a href="/create.html">Create</a><a href="/rewards">Rewards</a><a href="/about.html">Our story</a>';
     });
     document.querySelectorAll('.footer-contact').forEach(function(menu){
       menu.innerHTML='<h3 class="footer-heading">Project inquiries</h3><a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>';

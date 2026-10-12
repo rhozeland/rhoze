@@ -37,7 +37,7 @@ function DraftsHeading() {
           {drafts === undefined && <p className="rz-pf-empty">Loading…</p>}
           {drafts && drafts.length === 0 && <p className="rz-pf-empty">No drafts yet.</p>}
           {drafts?.map((d) => (
-            <a key={d.id} className="rz-drafts-row" href={`/create.html?draft=${d.id}`}>
+            <a key={d.id} className="rz-drafts-row" href={`/workspace/${d.id}`}>
               <b>{d.title || "Untitled project"}</b>
               <small>Updated {new Date(d.updated_at).toLocaleDateString("en-CA", { month: "short", day: "numeric" })} · Keep editing →</small>
             </a>

@@ -59,7 +59,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
   useEffect(() => {
     (supabase.from as any)("releases")
-      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,cover_url,user_id,published_at")
+      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,cover_url,user_id,published_at,status")
       .eq("slug", slug).eq("status", "published").maybeSingle()
       .then(async ({ data }: any) => {
         setR(data ?? null);
@@ -72,7 +72,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         const nm = (data.creator_name || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
         const from = `?from=${encodeURIComponent(slug)}`;
         let href = nm ? `/brand/${nm}${from}` : null;
-        if (data.answers?.project_type !== "brand") {
+        if (data.user_id) {
           const q = (supabase.from as any)("creator_directory").select("slug");
           const { data: cd } = data.user_id ? await q.eq("user_id", data.user_id).limit(1).maybeSingle() : { data: null };
           if (cd?.slug) href = `/creator/${cd.slug}${from}`;
@@ -235,12 +235,12 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         <div className="rz-owner">
           <span>You own this page</span>
           <div>
-            <a className="rz-btn" href={`/create.html?draft=${r.id}`}>Edit project</a>
+            <a className="rz-btn" href={`/workspace/${r.id}`}>Edit project</a>
             <a className="rz-btn" href="/me">My profile</a>
             <button className="rz-btn" onClick={archive}>Archive</button>
             <button className="rz-btn" onClick={() => setConfirmDel(true)}>Delete</button>
-            {r.answers?.project_type === "brand" && <button className="rz-btn" onClick={loadApplicants}>Applicants</button>}
-            <button className="rz-btn pri" onClick={startDeliver}>Mark milestone delivered</button>
+            {r.answers?.roles?.length > 0 && <button className="rz-btn" onClick={loadApplicants}>Applicants</button>}
+            <a className="rz-btn" href={`/workspace/${r.id}`}>Workspace</a>
           </div>
         </div>
       )}

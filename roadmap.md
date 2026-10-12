@@ -104,6 +104,7 @@
 - [x] Check signed-in portal section changes, website return links, and mobile menus/layouts.
 
 ## Homepage final polish
+- [ ] Fill the two mosaic gaps with real non-music projects and verify images and archive links.
 - [x] Integrate Build visuals and copy, align News/Pass/Spotlight, and remove the long news caption.
 - [x] Verify homepage visuals, links, and narrow-screen layout.
 

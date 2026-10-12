@@ -437,6 +437,17 @@ setupHoverVideos();
       var profile=document.createElement('a'); profile.href='/me'; profile.textContent='My profile';
       var saved=document.createElement('a'); saved.href='/saved'; saved.textContent='Saved';
       m.appendChild(profile); m.appendChild(p); m.appendChild(saved); m.appendChild(o);
+      // Team portal link only for admin/employee roles (the portal itself re-checks access).
+      try {
+        fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/user_roles?select=role&user_id=eq.' + encodeURIComponent(sess.user.id), {
+          headers: { apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbHB2Y3N4eXhpcnl3amtoc3VpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTAwMzQsImV4cCI6MjA5Mjk4NjAzNH0.mfI7RcFIMUEH3QzxhtYI7Z2gkm-V2VdKAcGaF6p523w', Authorization: 'Bearer ' + sess.access_token }
+        }).then(function(r){ return r.ok ? r.json() : []; }).then(function(rows){
+          var roles = (rows || []).map(function(x){ return x.role; });
+          if (roles.indexOf('admin') < 0 && roles.indexOf('employee') < 0) return;
+          var t = document.createElement('a'); t.href = '/team.html#/'; t.textContent = roles.indexOf('admin') >= 0 ? 'Admin' : 'Team portal';
+          m.insertBefore(t, o);
+        }).catch(function(){});
+      } catch(e) {}
       function showMenu(){ m.style.display = 'flex'; b.setAttribute('aria-expanded', 'true'); }
       function hideMenu(){ m.style.display = 'none'; b.setAttribute('aria-expanded', 'false'); }
       w.addEventListener('mouseenter', showMenu);

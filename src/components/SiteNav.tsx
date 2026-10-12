@@ -17,8 +17,9 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
   const [avatar, setAvatar] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [teamRole, setTeamRole] = useState<"admin" | "employee" | null>(null);
   useEffect(() => {
-    if (signIn || !hasSession) { setAvatar(null); setName(null); return; }
+    if (signIn || !hasSession) { setAvatar(null); setName(null); setTeamRole(null); return; }
     let on = true;
     supabase.auth.getUser().then(async ({ data }) => {
       const uid = data.user?.id;
@@ -26,6 +27,9 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
       const meta = data.user?.user_metadata as any;
       const fallback = String(meta?.display_name || meta?.full_name || data.user?.email || "").split(/\s|@/)[0] || null;
       if (on && fallback) setName(fallback);
+      const { data: r } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      const roles = (r ?? []).map((x) => x.role as string);
+      if (on) setTeamRole(roles.includes("admin") ? "admin" : roles.includes("employee") ? "employee" : null);
       const { data: c } = await (supabase as any).from("creator_directory").select("photo_url,display_name").eq("user_id", uid).maybeSingle();
       if (!on) return;
       setAvatar(c?.photo_url ?? null);
@@ -77,6 +81,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
             <a href="/me" role="menuitem">My profile</a>
             <a href="/me?settings=1" role="menuitem">Edit profile & settings</a>
             <a href="/saved" role="menuitem">Saved</a>
+            {teamRole && <a href="/team.html#/" role="menuitem">{teamRole === "admin" ? "Admin" : "Team portal"}</a>}
             <Button type="button" variant="ghost" role="menuitem" onClick={() => supabase.auth.signOut()}>Sign out</Button>
           </div>}
         </div>

@@ -22,3 +22,4 @@
 - Keep Discover globe code under `src/create/globe/` fed only by public release and creator data, because discovery must never read private profile fields.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
 - Keep the submission presentation in a separate Vite entry with one fixed-resolution slide registry and scaling component, because deck navigation and print export must never change the public website.
+- Resolve presentation screenshot pointers against the published asset host only on localhost, because Vite does not serve the asset CDN while hosted deployments use same-origin assets.

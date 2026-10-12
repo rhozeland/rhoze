@@ -2,8 +2,9 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import type { Dept } from "./access";
+import { hasTeamAccess, type TeamRole } from "./adminRules";
 
-export type AppRole = "admin" | "employee" | "client";
+export type AppRole = TeamRole;
 
 interface AuthCtx {
   session: Session | null;
@@ -19,31 +20,16 @@ interface AuthCtx {
 
 const Ctx = createContext<AuthCtx | undefined>(undefined);
 
-const ROLE_CACHE_KEY = "rhoze.auth.cache.v1";
-
-type RoleCache = { uid: string; roles: AppRole[]; department: Dept | null };
-
-function readRoleCache(): RoleCache | null {
-  try {
-    const raw = localStorage.getItem(ROLE_CACHE_KEY);
-    return raw ? (JSON.parse(raw) as RoleCache) : null;
-  } catch {
-    return null;
-  }
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const cached = readRoleCache();
   const [session, setSession] = useState<Session | null>(null);
-  const [roles, setRoles] = useState<AppRole[]>(cached?.roles ?? []);
-  const [department, setDepartment] = useState<Dept | null>(cached?.department ?? null);
+  const [roles, setRoles] = useState<AppRole[]>([]);
+  const [department, setDepartment] = useState<Dept | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadRoles = async (uid: string | undefined) => {
     if (!uid) {
       setRoles([]);
       setDepartment(null);
-      try { localStorage.removeItem(ROLE_CACHE_KEY); } catch { /* ignore */ }
       return;
     }
     // Both lookups run in parallel — they used to be sequential round-trips.
@@ -55,9 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const nextDept = (prof?.department as Dept | null) ?? null;
     setRoles(nextRoles);
     setDepartment(nextDept);
-    try {
-      localStorage.setItem(ROLE_CACHE_KEY, JSON.stringify({ uid, roles: nextRoles, department: nextDept }));
-    } catch { /* ignore */ }
   };
 
 
@@ -65,6 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Set listener BEFORE getSession (required pattern)
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
+      setRoles([]);
+      setDepartment(null);
+      setLoading(true);
       // Tell the parent shell (homepage embeds this app in an iframe) so its
       // header swaps out of the "Sign in" state immediately.
       try {
@@ -90,11 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const { error } = await supabase.rpc("redeem_project_code", { _code: pendingProject });
             if (!error) localStorage.removeItem("pending_project_code");
           }
-          loadRoles(s.user.id);
+          await loadRoles(s.user.id).finally(() => setLoading(false));
         }, 0);
       } else {
         setRoles([]);
         setDepartment(null);
+        setLoading(false);
       }
     });
 
@@ -106,7 +93,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // session is gone, clear it locally so the sign-in screen shows.
         const { error: userErr } = await supabase.auth.getUser();
         if (userErr) {
-          try { localStorage.removeItem(ROLE_CACHE_KEY); } catch { /* ignore */ }
           await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
           setSession(null);
           setRoles([]);
@@ -114,10 +100,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
           return;
         }
-        // If we already know this account's roles, render straight away and
-        // refresh them in the background instead of blocking on the network.
-        const c = readRoleCache();
-        if (c && c.uid === s.user.id) setLoading(false);
         loadRoles(s.user.id).finally(() => setLoading(false));
       } else {
         setLoading(false);
@@ -135,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     roles,
     department,
     loading,
-    isTeam: roles.includes("admin") || roles.includes("employee"),
+    isTeam: hasTeamAccess(roles),
     isAdmin: roles.includes("admin"),
     signOut: async () => {
       await supabase.auth.signOut();

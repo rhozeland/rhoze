@@ -1,4 +1,5 @@
 :root{--house-paper:0 0% 98%;--house-ink:0 0% 8%;--house-light:0 0% 100%;--house-muted:0 0% 65%;--house-rose:332 72% 73%;--house-yellow:49 96% 64%;--house-photo-shadow:linear-gradient(90deg,hsl(0 0% 0%/.65),hsl(0 0% 0%/.18));--house-pass-shadow:6px 6px 0 hsl(0 0% 8%/.2)}
+:root{--house-build-surface:0 0% 12%;--house-build-edge:0 0% 24%;--house-build-preview:linear-gradient(135deg,hsl(var(--rhoze-peach)),hsl(var(--rhoze-mint)))}
 .figma-home .fh-house{display:block;position:relative;isolation:isolate;height:520px;padding:52px 48px;border:0;overflow:hidden;background:hsl(var(--house-ink));color:hsl(var(--house-light))}
 .fh-house-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 46%;z-index:-2}
 .fh-house::after{content:"";position:absolute;inset:0;z-index:-1;background:var(--house-photo-shadow)}

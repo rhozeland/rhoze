@@ -3100,6 +3100,36 @@ export type Database = {
           },
         ]
       }
+      user_rewards_ledger: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          kind: string
+          reason: string | null
+          ref_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          kind: string
+          reason?: string | null
+          ref_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          reason?: string | null
+          ref_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -3571,6 +3601,13 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      my_rewards: {
+        Args: never
+        Returns: {
+          balance: number
+          entries: Json
+        }[]
+      }
       purchase_rhoze_square: {
         Args: {
           _amount_usd_cents: number
@@ -3724,6 +3761,7 @@ export type Database = {
         Args: { _credits: number; _project_id: string }
         Returns: number
       }
+      rz_reward_amount: { Args: { p_kind: string }; Returns: number }
       rz_slugify: { Args: { _t: string }; Returns: string }
       validate_referral_code: {
         Args: { _code: string }

@@ -94,7 +94,7 @@
 - [x] Verify signed-in project list, globe, flow, bookmarks and layouts.
 
 ## Rewards leaderboard refresh
-- [ ] Restore editorial leaderboard, participation details and inline account signup.
-- [ ] Include eligible public accounts with zero XP; preserve private profiles and verified reward rules.
-- [ ] Simplify shared footer links, retaining project inquiries; leave dashboard unchanged.
-- [ ] Fix Discover publishing error and verify Rewards signed-in/signed-out flows.
+- [x] Restore editorial leaderboard, participation details and inline account signup.
+- [x] Include eligible public accounts with zero XP; preserve private profiles and verified reward rules.
+- [x] Simplify shared footer links, retaining project inquiries; leave dashboard unchanged.
+- [x] Fix Discover publishing error and verify Rewards signed-in/signed-out flows.

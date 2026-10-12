@@ -41,6 +41,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    target: "es2022",
     rollupOptions: {
       // Plain scripts served from public/ are loaded at runtime, not bundled.
       external: ["/creator-profile-links.js"],

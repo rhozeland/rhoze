@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ShoppingBag, Plus, Minus, Trash2, X, ArrowUpRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Shell } from '@/create/shared';
@@ -20,13 +21,14 @@ function ProductItem({product,detail=false}:{product:Product;detail?:boolean}){
 }
 function ShoppingCart(){
  const [open,setOpen]=useState(false);const {cart,busy,error,quantity,sync}=useCartStore();
+ const portalRoot=document.getElementById('profile-root')??document.getElementById('release-root');
  useEffect(()=>{if(open)void sync();},[open,sync]);
  useEffect(()=>{if(!open)return;const close=(e:KeyboardEvent)=>{if(e.key==='Escape')setOpen(false);};document.addEventListener('keydown',close);return()=>document.removeEventListener('keydown',close);},[open]);
  return <><Button variant="outline" className="rz-btn" onClick={()=>setOpen(true)}><ShoppingBag size={16}/>Cart ({cart?.totalQuantity??0})</Button>
- {open&&<div className="rz-shop-shade" onClick={()=>setOpen(false)}><section role="dialog" aria-modal="true" aria-label="Shopping cart" className="rz-shop-cart" onClick={e=>e.stopPropagation()}><header><h2>Your cart</h2><Button variant="ghost" size="icon" aria-label="Close cart" onClick={()=>setOpen(false)}><X size={20}/></Button></header>
+ {open&&portalRoot&&createPortal(<div className="rz-shop-shade" onClick={()=>setOpen(false)}><section role="dialog" aria-modal="true" aria-label="Shopping cart" className="rz-shop-cart" onClick={e=>e.stopPropagation()}><header><h2>Your cart</h2><Button variant="ghost" size="icon" aria-label="Close cart" onClick={()=>setOpen(false)}><X size={20}/></Button></header>
  <div className="rz-shop-lines">{!cart?.totalQuantity&&<p>Your cart is empty.</p>}{cart?.lines.nodes.map(line=><article key={line.id}>{line.merchandise.product.featuredImage&&<img src={line.merchandise.product.featuredImage.url} alt={line.merchandise.product.title}/>}<div><h3>{line.merchandise.product.title}</h3><p>{line.merchandise.title} · {money(line.merchandise.price)}</p><div className="rz-shop-quantity"><Button variant="outline" size="icon" aria-label="Decrease quantity" disabled={busy} onClick={()=>void quantity(line.id,line.quantity-1)}><Minus size={14}/></Button><span>{line.quantity}</span><Button variant="outline" size="icon" aria-label="Increase quantity" disabled={busy} onClick={()=>void quantity(line.id,line.quantity+1)}><Plus size={14}/></Button><Button variant="ghost" size="icon" aria-label="Remove item" disabled={busy} onClick={()=>void quantity(line.id,0)}><Trash2 size={14}/></Button></div></div></article>)}</div>
  {error&&<p role="alert">{error}</p>}<footer>{cart&&<p>Subtotal <strong>{money(cart.cost.subtotalAmount)}</strong></p>}<p>Shipping and taxes calculated at checkout. Reward redemption is not available yet.</p><Button variant="outline" className="rz-btn pri" disabled={busy||!cart?.totalQuantity} onClick={()=>{if(cart)window.open(checkoutUrl(cart),'_blank','noopener,noreferrer');}}>Checkout with Shopify <ArrowUpRight size={16}/></Button></footer>
- </section></div>}</>;
+ </section></div>,portalRoot)}</>;
 }
 export default function Shop({handle}:{handle?:string}){
  useCartSync();const [products,setProducts]=useState<Product[]>([]);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const cartError=useCartStore(s=>s.error);

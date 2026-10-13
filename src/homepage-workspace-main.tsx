@@ -8,6 +8,7 @@ import ExclusivePage from "@/create/ExclusivePage";
 import PrivateWorkspace from "@/create/PrivateWorkspace";
 import PortfolioPage from "@/create/PortfolioPage";
 import RewardsPage from "@/create/RewardsPage";
+import { ShopProductPage } from "@/shop/Shop";
 import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
 import { PageTracker } from "@/lib/analytics";
@@ -24,7 +25,15 @@ const portfolioMatch = location.pathname.match(/^\/project\/([^/]+)\/?$/);
 const profileMatch = location.pathname.match(/^\/(creator|brand)\/([^/]+)\/?$/);
 
 const acctMatch = location.pathname.match(/^\/(saved|messages)\/?$/);
-if (/^\/rewards\/?$/.test(location.pathname)) {
+const productMatch = location.pathname.match(/^\/product\/([^/]+)\/?$/);
+if (productMatch) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "profile-root";
+  document.body.appendChild(el);
+  document.title = "Shop | Rhozeland";
+  createRoot(el).render(<ShopProductPage handle={decodeURIComponent(productMatch[1])} />);
+} else if (/^\/rewards\/?$/.test(location.pathname)) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");
   el.id = "profile-root";

@@ -14,7 +14,7 @@
 - Portal inbox dialogs into the page's active React mount, because release-mode hides other direct children of the document body.
 - Use only public cover artwork for locked Exclusive preview cards; keep post text and private media behind existing owner/wallet checks so visual teasers never expose protected content.
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
-- Follow `src/create/AGENTS.md` for cover cropping, market data, wizard compatibility, and globe rules.
+- Read scoped rules in `src/create/AGENTS.md` and `src/shop/AGENTS.md` before editing those directories.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
 - Keep the fixed-slide presentation in its own Vite entry, so navigation/print never alter the website.
 - Resolve deck screenshots to the published host on localhost only; Vite lacks the asset CDN.

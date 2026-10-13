@@ -104,7 +104,7 @@
 - [x] Check signed-in portal section changes, website return links, and mobile menus/layouts.
 
 ## Rewards shop
-- [ ] Add real Shopify products, local product details and persistent cart inside Rewards; verify checkout handoff.
+- [x] Add real Shopify products, local product details and persistent cart inside Rewards; verified eight products, quantity changes/removal, saved-cart readback and checkout handoff to rhozeland.shop without purchasing.
 - [ ] Reward redemption/discounts — waiting for chosen conversion and secure redemption safeguards.
 - [ ] Creator commerce and mandatory hosted event sales — explicitly deferred.
 

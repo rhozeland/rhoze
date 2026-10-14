@@ -2641,6 +2641,7 @@ export type Database = {
           budget_cents: number
           cause_name: string | null
           cause_pct: number
+          chain_signature: string | null
           coin_image: string | null
           coin_mint: string | null
           coin_name: string | null
@@ -2651,6 +2652,8 @@ export type Database = {
           creator_name: string
           current_step: number
           fee_pct: number
+          fingerprint: string | null
+          fingerprinted_at: string | null
           id: string
           milestones: Json
           owner_note: string | null
@@ -2670,6 +2673,7 @@ export type Database = {
           budget_cents?: number
           cause_name?: string | null
           cause_pct?: number
+          chain_signature?: string | null
           coin_image?: string | null
           coin_mint?: string | null
           coin_name?: string | null
@@ -2680,6 +2684,8 @@ export type Database = {
           creator_name?: string
           current_step?: number
           fee_pct?: number
+          fingerprint?: string | null
+          fingerprinted_at?: string | null
           id?: string
           milestones?: Json
           owner_note?: string | null
@@ -2699,6 +2705,7 @@ export type Database = {
           budget_cents?: number
           cause_name?: string | null
           cause_pct?: number
+          chain_signature?: string | null
           coin_image?: string | null
           coin_mint?: string | null
           coin_name?: string | null
@@ -2709,6 +2716,8 @@ export type Database = {
           creator_name?: string
           current_step?: number
           fee_pct?: number
+          fingerprint?: string | null
+          fingerprinted_at?: string | null
           id?: string
           milestones?: Json
           owner_note?: string | null
@@ -3935,6 +3944,7 @@ export type Database = {
           budget_cents: number
           cause_name: string | null
           cause_pct: number
+          chain_signature: string | null
           coin_image: string | null
           coin_mint: string | null
           coin_name: string | null
@@ -3945,6 +3955,8 @@ export type Database = {
           creator_name: string
           current_step: number
           fee_pct: number
+          fingerprint: string | null
+          fingerprinted_at: string | null
           id: string
           milestones: Json
           owner_note: string | null
@@ -4045,6 +4057,7 @@ export type Database = {
           budget_cents: number
           cause_name: string | null
           cause_pct: number
+          chain_signature: string | null
           coin_image: string | null
           coin_mint: string | null
           coin_name: string | null
@@ -4055,6 +4068,8 @@ export type Database = {
           creator_name: string
           current_step: number
           fee_pct: number
+          fingerprint: string | null
+          fingerprinted_at: string | null
           id: string
           milestones: Json
           owner_note: string | null

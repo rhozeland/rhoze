@@ -232,6 +232,13 @@
       "when": 1791825110930,
       "tag": "0032_portfolio_project_points",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791938629423,
+      "tag": "0033_migration",
+      "breakpoints": true
     }
   ]
 }

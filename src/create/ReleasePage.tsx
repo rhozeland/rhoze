@@ -9,7 +9,7 @@ import { ProjectHeart } from "./ProjectLikes";
 import ProjectWorkspace, { DEFAULT_PUBLIC_SECTIONS } from "./ProjectWorkspace";
 import { ProjectMetricsBadges } from "./ProjectMetrics";
 import { Button } from "@/components/ui/button";
-import { X, Share2 } from "lucide-react";
+import { X, Share2, Fingerprint } from "lucide-react";
 import ProjectDiscussion from "./ProjectDiscussion";
 import ProjectStory from "./ProjectStory";
 import ProjectRewards from "./ProjectRewards";

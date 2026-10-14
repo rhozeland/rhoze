@@ -263,6 +263,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <div className="rz-head">
               <h1>{new URLSearchParams(location.search).get("projectView") === "1" ? <a href={`/release/${encodeURIComponent(slug)}`} target="_top" style={{ color: "inherit", textDecoration: "none" }}>{r.title}</a> : r.title}</h1>
               <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
+              {r.fingerprint && <details className="rz-note" style={{ marginTop: 6 }}><summary style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}><Fingerprint size={14} /> Fingerprinted{r.chain_signature ? " · on Solana" : ""}</summary><p style={{ margin: "6px 0 0", fontSize: 12 }}>SHA-256 of this project as published{r.fingerprinted_at ? ` on ${new Date(r.fingerprinted_at).toLocaleDateString()}` : ""}:<br /><code style={{ wordBreak: "break-all" }}>{r.fingerprint}</code><br />{r.chain_signature ? <a href={`https://solscan.io/tx/${r.chain_signature}`} target="_blank" rel="noopener noreferrer">View on-chain record</a> : "Solana stamp pending."}</p></details>}
             </div>
             <div className="rz-release-tools">
               <ProjectHeart releaseId={r.id} />

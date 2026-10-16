@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Coins, Copy, KeyRound, Loader2 } from "lucide-react";
+import { linkWalletWithProof } from "@/lib/walletProof";
 import type { Session } from "@supabase/supabase-js";
 
 type Wallet = { pubkey: string; is_custodial: boolean };
@@ -71,29 +72,15 @@ export default function WalletSlot({ session }: { session: Session | null }) {
   };
 
   const submitExternal = async () => {
-    const v = addr.trim();
-    if (v.length < 32 || v.length > 44) {
-      toast({ title: "Doesn't look like a Solana address", variant: "destructive" });
-      return;
-    }
+    if (!session) return;
     setBusy(true);
-    const { data: fresh } = await supabase.auth.getSession();
-    const token = fresh.session?.access_token;
-    if (!token) { setBusy(false); toast({ title: "Please sign in again", variant: "destructive" }); return; }
-    const { data, error } = await supabase.functions.invoke("wallet-replace-external", {
-      body: { pubkey: v },
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    setBusy(false);
-    if (error || !data?.pubkey) {
-      toast({ title: "Couldn't replace wallet", description: error?.message ?? data?.error, variant: "destructive" });
-    } else {
-      setWallet({ pubkey: data.pubkey, is_custodial: false });
-      setReplacing(false);
-      setAddr("");
-      toast({ title: "Wallet replaced" });
-    }
+    try {
+      const pubkey = await linkWalletWithProof(session.user.id);
+      setWallet({ pubkey, is_custodial: false }); setReplacing(false);
+      toast({ title: "Wallet linked", description: "Ownership verified by signature." });
+    } catch (e) {
+      toast({ title: "Couldn't link wallet", description: (e as Error).message, variant: "destructive" });
+    } finally { setBusy(false); }
   };
 
   if (!session) return null;
@@ -130,9 +117,9 @@ export default function WalletSlot({ session }: { session: Session | null }) {
       </div>
       {replacing && (
         <div className="mt-3 flex gap-2">
-          <Input value={addr} onChange={(e) => setAddr(e.target.value)} placeholder="Your Solana address (base58)" className="text-xs" />
+          <p className="text-[11px] text-muted-foreground flex-1">Sign a free message in Phantom or Solflare to prove it's yours.</p>
           <Button size="sm" onClick={submitExternal} disabled={busy}>
-            {busy ? "…" : "Replace"}
+            {busy ? "…" : "Connect & sign"}
           </Button>
         </div>
       )}

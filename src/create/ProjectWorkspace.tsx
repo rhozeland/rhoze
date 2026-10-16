@@ -39,6 +39,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   const [context, setContext] = useState(r.answers?.cultural_context || "");
   const [contribution, setContribution] = useState(r.answers?.rhozeland_contribution || "");
   const [source, setSource] = useState(r.answers?.source_url || "");
+  const [mediaLinks, setMediaLinks] = useState<string>((r.answers?.media_links || []).join("\n"));
   const [budget, setBudget] = useState(String((r.budget_cents || 0) / 100));
   const [deadline, setDeadline] = useState(r.answers?.deadline || "");
   const [timeline, setTimeline] = useState(r.answers?.timeline || "Flexible");
@@ -61,7 +62,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
 
   const buildPayload = (overrides: Record<string, any> = {}) => ({
     title: title.trim(), creator_name: r.creator_name, creator_email: r.creator_email, booking_id: r.booking_id,
-    answers: { ...(r.answers || {}), public_sections: pub, makers, description: description.trim(), deadline, timeline, story: story.trim(), cultural_context: context.trim(), rhozeland_contribution: contribution.trim(), source_url: source.trim() },
+    answers: { ...(r.answers || {}), public_sections: pub, makers, description: description.trim(), deadline, timeline, story: story.trim(), cultural_context: context.trim(), rhozeland_contribution: contribution.trim(), source_url: source.trim(), media_links: mediaLinks.split(/\s+/).map((x) => x.trim()).filter((x) => /^https?:\/\/\S+$/i.test(x)).slice(0, 24) },
     budget_cents: Math.max(0, Math.round(Number(budget) * 100) || 0),
     artist_pct: artistPct, fee_pct: feePct, cause_pct: causePct, cause_name: r.cause_name,
     milestones: milestones.map(({ id, ...m }) => m),
@@ -142,6 +143,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
           <label>Cultural context<textarea className="rz-in" value={context} maxLength={10000} rows={4} onChange={(e) => setContext(e.target.value)} /></label>
           <label>Rhozeland's contribution<textarea className="rz-in" value={contribution} maxLength={10000} rows={4} onChange={(e) => setContribution(e.target.value)} /></label>
           <label>Original work / source link<input className="rz-in" type="url" value={source} onChange={(e) => setSource(e.target.value)} placeholder="https://" /></label>
+          <label>Media &amp; links <small>— one per line: YouTube, Vimeo, Spotify, SoundCloud, images, Instagram, TikTok, Eventbrite, Luma, your site</small><textarea className="rz-in" value={mediaLinks} rows={4} onChange={(e) => setMediaLinks(e.target.value)} placeholder={"https://youtu.be/…\nhttps://lu.ma/…"} /></label>
           <div className="rz-ws-save"><Button variant="outline" className="rz-btn pri" disabled={busy || !title.trim()} onClick={() => save()}>Save details</Button><Button variant="outline" className="rz-btn" asChild><a href={`/create.html?draft=${r.id}`}>Edit all details</a></Button></div>
         </div>
       )}

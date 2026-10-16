@@ -1,3 +1,5 @@
+import ProjectMedia from "./ProjectMedia";
+import { parseMediaLinks } from "./project-media";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, money } from "./shared";
@@ -273,9 +275,12 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </header>
             <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
+            {parseMediaLinks([...(r.answers?.media_links || []), r.answers?.source_url].filter(Boolean)).length ? (
+              <ProjectMedia links={[...(r.answers?.media_links || []), r.answers?.source_url].filter(Boolean)} cover={r.cover_url || r.coin_image} title={r.title} />
+            ) : (
             <div className="rz-cover">
               {r.cover_url || r.coin_image ? <img src={r.cover_url || r.coin_image} alt={`${r.title} cover art`} /> : <span>{r.title}</span>}
-            </div>
+            </div>)}
             {(isOwner || pubs.overview) && <section className="rz-release-about">
               <h2 className="rz-h2">About the project</h2>
               {r.answers?.description?.trim() ? <p>{r.answers.description.trim()}</p> : r.answers?.making ? <p>{r.answers.making.trim()}</p> : <p>{r.title} by {r.creator_name || "Rhozeland artist"}.</p>}

@@ -1,6 +1,7 @@
 // /invest — Market + on-chain explorer for $RHOZE.
 // Live market stats, chart, and a searchable/scrollable explorer:
 // Trades · Top traders · Wallet check (SOL + $RHOZE holdings via edge function).
+import { linkWalletWithProof } from "@/lib/walletProof";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -160,10 +161,12 @@ export default function WalletPanel({ session }: { session: Session | null }) {
 
   const saveToProfile = async () => {
     if (!session || !data) return;
-    const { error } = await supabase.from("profiles").update({ solana_wallet: data.address }).eq("id", session.user.id);
-    if (error) { toast({ title: "Couldn't save", description: error.message, variant: "destructive" }); return; }
-    setSaved(data.address);
-    toast({ title: "Wallet saved to your profile" });
+    try {
+      const linked = await linkWalletWithProof(session.user.id);
+      if (linked !== data.address) toast({ title: "Linked the wallet you signed with", description: "It differs from the address you looked up." });
+      setSaved(linked); setAddr(linked);
+      toast({ title: "Wallet verified and saved" });
+    } catch (e) { toast({ title: "Couldn't save", description: (e as Error).message, variant: "destructive" }); }
   };
   const clearFromProfile = async () => {
     if (!session) return;

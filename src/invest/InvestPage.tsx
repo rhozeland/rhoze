@@ -213,22 +213,24 @@ function BuyDialog({
 
   const submit = async () => {
     if (!session) return;
-    if (amount < 20) { toast({ title: "Minimum is $20 CAD" }); return; }
+    if (amount < 50) { toast({ title: "Minimum is $50" }); return; }
     setBusy(true);
     try {
-      const { data, error } = await (supabase.rpc as any)("purchase_rhoze_square", {
+      const { data, error } = await (supabase.rpc as any)("create_investor_pledge", {
         _amount_usd_cents: amount * 100,
         _lock_months: 0,
+        _path: "assisted",
+        _payment_method: "square",
         _solana_wallet: undefined,
         _notes: undefined,
       });
       if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
+      const row = { pledge_id: data as string };
       if (row?.pledge_id) {
         supabase.functions.invoke("notify-new-pledge", { body: { pledgeId: row.pledge_id } })
           .catch((e) => console.warn("notify-new-pledge failed", e));
       }
-      setCredited({ credits: Number(row?.credits_awarded ?? 0), balance: Number(row?.new_balance ?? 0) });
+      // Credits are added only after the team confirms payment.
       setDone({ ref: String(row?.pledge_id ?? "").slice(0, 8).toUpperCase() });
       onCreated();
       if (squareUrl) window.open(squareUrl, "_blank", "noopener");

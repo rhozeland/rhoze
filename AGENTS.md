@@ -16,8 +16,8 @@
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
 - Read scoped rules in `src/create/AGENTS.md` and `src/shop/AGENTS.md` before editing those directories.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
-- Keep the fixed-slide presentation in its own Vite entry, so navigation/print never alter the website.
-- Resolve deck screenshots to the published host on localhost only; Vite lacks the asset CDN.
+- Keep the slide deck in its own Vite entry so it never alters the website.
+- Deck screenshots use the published host on localhost (no asset CDN in Vite).
 
 - Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
 - Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.
@@ -25,7 +25,6 @@
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
 - Rank verified XP alongside labeled historical identities without merging ownership; weekly stats are caller-scoped and project totals public-only, to protect private activity.
-- Use CSS tilt for Creator OS; preserve permissions and rewards.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
 - Keep home-motion.js fed by Discover registries; portfolio-projects preserves sources and admin-write portfolio_details stores lore/tokens, never inferred ownership.
@@ -34,3 +33,4 @@
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
 
 - Read portal roles from the database, never cache; preserve story/point permissions and read-only XP. Scope phone selectors and stacked editors in admin-mobile.css to preserve saves.
+- Link wallets only via signed-message proof (wallet-replace-external), trigger-guarded, because addresses alone prove nothing; credits only from confirmed payments.

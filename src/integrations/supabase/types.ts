@@ -3983,6 +3983,17 @@ export type Database = {
           entries: Json
         }[]
       }
+      portfolio_detail: {
+        Args: { p_slug: string }
+        Returns: {
+          coin_mint: string
+          coin_ticker: string
+          cultural_context: string
+          rhozeland_contribution: string
+          slug: string
+          story: string
+        }[]
+      }
       portfolio_reward_stats: { Args: { p_slug: string }; Returns: Json }
       project_discussion: {
         Args: { p_release_id: string }

@@ -34,3 +34,4 @@
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
 
 - Read portal roles from the database, never cache; preserve story/point permissions and read-only XP. Scope phone selectors and stacked editors in admin-mobile.css to preserve saves.
+- Link wallets only via signed-message proof (wallet-replace-external); a trigger blocks direct profile wallet edits, and token credits come only from confirmed payments.

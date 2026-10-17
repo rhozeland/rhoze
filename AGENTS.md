@@ -25,7 +25,6 @@
 - Use /workspace/:id for account-owned private release management and owner-scoped my_releases for reads, because private projects have no public slug requirement.
 
 - Rank verified XP alongside labeled historical identities without merging ownership; weekly stats are caller-scoped and project totals public-only, to protect private activity.
-- Use CSS tilt for Creator OS; preserve permissions and rewards.
 
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
 - Keep home-motion.js fed by Discover registries; portfolio-projects preserves sources and admin-write portfolio_details stores lore/tokens, never inferred ownership.

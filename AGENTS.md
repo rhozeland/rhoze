@@ -16,8 +16,8 @@
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
 - Read scoped rules in `src/create/AGENTS.md` and `src/shop/AGENTS.md` before editing those directories.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.
-- Keep the fixed-slide presentation in its own Vite entry, so navigation/print never alter the website.
-- Resolve deck screenshots to the published host on localhost only; Vite lacks the asset CDN.
+- Keep the slide deck in its own Vite entry so it never alters the website.
+- Deck screenshots use the published host on localhost (no asset CDN in Vite).
 
 - Create releases as private workspaces through release_save; publish only through a separate confirmed owner action, because planning must not expose projects automatically.
 - Keep collaborator email shortlists in owner-only release_team_members, never release answers, because published answers are publicly readable.

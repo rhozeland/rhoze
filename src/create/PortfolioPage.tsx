@@ -26,7 +26,7 @@ export default function PortfolioPage({ slug }: { slug: string }) {
   const [copied, setCopied] = useState(false);
   useEffect(() => {
     let active = true;
-    supabase.from('portfolio_details').select('*').eq('slug', slug).maybeSingle().then(({ data }) => { if (active && data) { setDetails(data); setSaved(data); } });
+    (supabase.rpc as any)('portfolio_detail', { p_slug: slug }).then(({ data: rows }: any) => { const data = Array.isArray(rows) ? rows[0] : rows; if (active && data) { setDetails(data); setSaved(data); } });
     supabase.auth.getUser().then(async ({ data }) => { if (!data.user) return; const result = await supabase.rpc('has_role', { _user_id: data.user.id, _role: 'admin' }); if (active) setAdmin(result.data === true); });
     return () => { active = false; };
   }, [slug]);

@@ -147,3 +147,9 @@
 - [x] Group final documents and both reviewed videos; disclose financial/deployment blockers.
 
 - [ ] Publish/recheck current public product and deck destinations — waiting for explicit publish request; custom domain still serves an older site.
+
+## Employee sign-in review
+- [ ] Restore hosted account availability — database is paused.
+- [ ] Check shared-account employee routing, referral handling and recovery; fix confirmed defects and run checks.
+- [ ] Verify employee access with a real signed-in session after hosted accounts resume.
+- [ ] Give guidance on artist/brand homepage separation without changing the homepage.

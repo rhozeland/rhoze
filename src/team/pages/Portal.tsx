@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { portalDestination, type PortalIntent } from "../lib/portalRouting";
 
 /**
  * Unified portal — one page handles client + team, sign-in + sign-up,
@@ -32,7 +33,13 @@ export default function Portal() {
   // What the user explicitly picked at sign-in time. This wins over the
   // automatic role-based routing so a team member signing in via the Team
   // tab never gets dumped into the client portal (and vice versa).
-  const [intent, setIntent] = useState<"client" | "team" | null>(null);
+  const [intent, setIntent] = useState<PortalIntent | null>(() => {
+    const requested = params.get("as");
+    if (requested === "team" || requested === "client") return requested;
+    const stored = localStorage.getItem("portal_intent");
+    localStorage.removeItem("portal_intent");
+    return stored === "team" || stored === "client" ? stored : null;
+  });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -52,7 +59,7 @@ export default function Portal() {
       // Pending project code (from URL or stored at signup) → redeem then route.
       const pendingCode =
         code.trim() || localStorage.getItem("pending_project_code") || "";
-      if (pendingCode) {
+      if (pendingCode && intent !== "team") {
         setRedeeming(true);
         const { data: projectId, error } = await supabase.rpc("redeem_project_code", {
           _code: pendingCode.trim(),
@@ -76,39 +83,15 @@ export default function Portal() {
       }
       // Route by explicit intent first (what they picked on the form),
       // then fall back to roles.
-      const hasClient = roles.includes("client");
-      const stashed = (localStorage.getItem("portal_intent") as
-        | "team"
-        | "client"
-        | null) ?? intent;
-      if (stashed === "team" && isTeam) {
-        localStorage.removeItem("portal_intent");
-        navigate("/", { replace: true });
-        return;
-      }
-      if (stashed === "client") {
-        localStorage.removeItem("portal_intent");
-        navigate("/client/home", { replace: true });
-        return;
-      }
-      if (stashed === "team" && !isTeam) {
-        // They asked for team but have no team role — keep them on the
-        // chooser so they see the explanation, don't silently demote.
-        localStorage.removeItem("portal_intent");
-        return;
-      }
-      // No explicit intent → single-surface auto-route.
-      if (isTeam && !hasClient) navigate("/", { replace: true });
-      else if (hasClient && !isTeam) navigate("/client/home", { replace: true });
-      else if (!isTeam && !hasClient && roles.length === 0)
-        navigate("/client/home", { replace: true });
-      // else: dual-role user with no explicit intent → chooser UI below.
+      localStorage.removeItem("portal_intent");
+      const destination = portalDestination(roles, intent);
+      if (destination) navigate(destination, { replace: true });
     })();
     return () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, session, isTeam, roles.join(",")]);
+  }, [loading, session, isTeam, roles.join(","), intent]);
 
   async function onGoogle() {
     setBusy(true);
@@ -186,16 +169,16 @@ export default function Portal() {
     }
     setBusy(true);
     try {
+      if (audience === "client" && code.trim()) localStorage.setItem("pending_project_code", code.trim());
+      if (audience === "team" && referral.trim()) localStorage.setItem("pending_referral_code", referral.trim());
       if (mode === "signin") {
         // Stash intent BEFORE auth so the post-auth effect (which may run
         // in a different tab after email confirmation) can read it.
         localStorage.setItem("portal_intent", audience);
         setIntent(audience);
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: okEmail.data, password });
         if (error) throw error;
         // Stash codes so the post-auth effect picks them up.
-        if (code.trim()) localStorage.setItem("pending_project_code", code.trim());
-        if (referral.trim()) localStorage.setItem("pending_referral_code", referral.trim());
         toast({ title: "Welcome back" });
       } else {
         localStorage.setItem("portal_intent", audience);
@@ -213,8 +196,6 @@ export default function Portal() {
           },
         });
         if (error) throw error;
-        if (code.trim()) localStorage.setItem("pending_project_code", code.trim());
-        if (referral.trim()) localStorage.setItem("pending_referral_code", referral.trim());
         if (!data.session) {
           toast({
             title: "Check your email",
@@ -247,6 +228,7 @@ export default function Portal() {
   if (session) {
     const hasClient = roles.includes("client");
     const showChooser = isTeam && hasClient;
+    const deniedTeam = intent === "team" && !isTeam;
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-6">
         <div className="w-full max-w-sm space-y-5 text-center">
@@ -260,9 +242,15 @@ export default function Portal() {
             Rhozeland
           </div>
           <h1 className="text-2xl font-semibold">
-            {showChooser ? "Where are you going?" : "Signing you in…"}
+            {deniedTeam ? "Team access not assigned" : showChooser ? "Where are you going?" : "Signing you in…"}
           </h1>
-          {showChooser ? (
+          {deniedTeam ? (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">Your account is signed in. Ask an admin to check your team role for this email; you don't need a second account.</p>
+              <Button variant="outline" className="w-full" onClick={() => setIntent("client")}>Continue to client portal</Button>
+              <Button variant="ghost" className="w-full" onClick={() => { localStorage.removeItem("portal_intent"); void supabase.auth.signOut(); }}>Use another account</Button>
+            </div>
+          ) : showChooser ? (
             <div className="space-y-2">
               <Button className="w-full" onClick={() => navigate("/", { replace: true })}>
                 Team dashboard

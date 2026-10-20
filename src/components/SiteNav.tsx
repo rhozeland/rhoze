@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AuthModal from "@/create/AuthModal";
 import { Button } from "@/components/ui/button";
 import { Menu, X, MessageSquare, Plus, Compass, Gift } from "lucide-react";
+import { hasTeamAccess } from "@/team/lib/adminRules";
 
 type Props = { extra?: ReactNode; signIn?: () => void; signedIn?: boolean };
 const links = [
@@ -29,7 +30,7 @@ export default function SiteNav({ extra, signIn, signedIn = false }: Props) {
       if (on && fallback) setName(fallback);
       const { data: r } = await supabase.from("user_roles").select("role").eq("user_id", uid);
       const roles = (r ?? []).map((x) => x.role as string);
-      if (on) setTeamRole(roles.includes("admin") ? "admin" : roles.includes("employee") ? "employee" : null);
+      if (on) setTeamRole(roles.includes("admin") ? "admin" : hasTeamAccess(roles) ? "employee" : null);
       const { data: c } = await (supabase as any).from("creator_directory").select("photo_url,display_name").eq("user_id", uid).maybeSingle();
       if (!on) return;
       setAvatar(c?.photo_url ?? null);

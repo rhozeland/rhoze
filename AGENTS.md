@@ -32,5 +32,5 @@
 
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
 
-- Read portal roles from the database, never cache; preserve story/point permissions and read-only XP. Scope phone selectors and stacked editors in admin-mobile.css to preserve saves.
+- Read portal roles from the database, never cache; preserve permissions and read-only XP. Share destinations via portalRouting; team-entry denial stays visible. Scope phone editors in admin-mobile.css.
 - Link wallets only via signed-message proof (wallet-replace-external), trigger-guarded, because addresses alone prove nothing; credits only from confirmed payments.

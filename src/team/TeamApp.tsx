@@ -48,7 +48,7 @@ function RequireSection({ path, children }: { path: string; children: React.Reac
 function RequireTeam({ children }: { children: React.ReactNode }) {
   const { loading, session, isTeam } = useAuth();
   if (loading) return <div className="p-8 text-sm text-muted-foreground">Loading…</div>;
-  if (!session) return <Navigate to="/login" replace />;
+  if (!session) return <Navigate to="/login?as=team" replace />;
   if (!isTeam)
     return (
       <div className="p-8 max-w-md mx-auto text-center space-y-3">

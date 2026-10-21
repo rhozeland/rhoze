@@ -149,7 +149,8 @@
 - [ ] Publish/recheck current public product and deck destinations — waiting for explicit publish request; custom domain still serves an older site.
 
 ## Employee sign-in review
-- [ ] Restore hosted account availability — database is paused.
-- [ ] Check shared-account employee routing, referral handling and recovery; fix confirmed defects and run checks.
+- [ ] Restore hosted account availability — database is paused; approved resume was refused as disabled, requires Cloud settings or Lovable staff.
+- [x] Fix employee/client entry routing, missing marketing navigation, pre-auth referral timing, duplicate project redemption and outage session handling; verify routing and outage tests.
+- [ ] Verify password-reset email delivery and provider settings — hosted service remains paused; no live recovery check possible.
 - [ ] Verify employee access with a real signed-in session after hosted accounts resume.
-- [ ] Give guidance on artist/brand homepage separation without changing the homepage.
+- [x] Recommend one homepage with artist/brand paths sharing accounts and projects; leave the homepage unchanged.

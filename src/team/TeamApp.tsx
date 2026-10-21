@@ -74,9 +74,9 @@ export default function TeamApp() {
   return (
     <Routes>
       {/* Unified portal — single smart router for client + team auth. */}
-      <Route path="/login" element={<Portal />} />
-      <Route path="/portal" element={<Portal />} />
-      <Route path="/client" element={<Portal />} />
+      <Route path="/login" element={<Portal key="login" />} />
+      <Route path="/portal" element={<Portal key="portal" />} />
+      <Route path="/client" element={<Portal key="client" />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       {/* Client-facing portal — wrapped in ClientLayout so signed-in clients
           stay inside the client surface and never land in team pages. */}

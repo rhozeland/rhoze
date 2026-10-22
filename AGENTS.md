@@ -34,3 +34,5 @@
 
 - Read portal roles from the database, never cache; preserve permissions and read-only XP. Share destinations via portalRouting; team-entry denial stays visible. Scope phone editors in admin-mobile.css.
 - Link wallets only via signed-message proof (wallet-replace-external), trigger-guarded, because addresses alone prove nothing; credits only from confirmed payments.
+
+- Project calls are booked only through owner-checked `book_project_call` (slot, credit spend and release link in one transaction), because clients must never pick times or spend credits directly.

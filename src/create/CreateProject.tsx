@@ -500,7 +500,7 @@ export default function CreateProject() {
           <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
         </div>
       </div>
-      <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "review" ? "rz-card-wide" : ""}`}>
+      <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "call" || stepKey === "review" ? "rz-card-wide" : ""}`}>
         <FileText className="rz-wizard-mark" size={30} aria-hidden="true" />
         <div className="rz-wizard-progress">
           <div className="rz-wizard-count"><span>Step {step} of {FLOW.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
@@ -635,7 +635,7 @@ export default function CreateProject() {
           )}
           <div className="rz-actions" style={{ marginTop: ".9rem" }}>
             <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
-            <Button variant="outline" className="rz-btn pri" onClick={goNext}>Next: Review <ArrowRight size={14} /></Button>
+            <Button variant="outline" className="rz-btn pri" onClick={goNext}>Next: Book a call <ArrowRight size={14} /></Button>
           </div>
         </>}
 

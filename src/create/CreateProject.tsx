@@ -12,7 +12,7 @@ import "./create-flow.css";
 import ExistingProjects from "./ExistingProjects";
 import TeamPlanner from "./TeamPlanner";
 import { saveTeam } from "./team-storage";
-import { IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
+import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
@@ -143,6 +143,7 @@ export default function CreateProject() {
   const [rows, setRows] = useState<Milestone[]>([]);
   const [genBusy, setGenBusy] = useState(false);
   const [mint, setMint] = useState("");
+  const [coinChoice, setCoinChoice] = useState<CoinChoice>("skip");
   const [ticker, setTicker] = useState("");
   const [meta, setMeta] = useState<{ mint: string; name: string; image: string | null } | null>(null);
   const [coinErr, setCoinErr] = useState("");
@@ -188,7 +189,7 @@ export default function CreateProject() {
   const artistPct = Math.max(0, 100 - feePct - causePct - tPct);
   const mintOk = MINT_RE.test(mint.trim());
   const tick = ticker.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 12);
-  const coin: Coin = mintOk ? { mint: mint.trim(), ticker: tick, name: meta?.mint === mint.trim() ? meta.name : tick, image: meta?.mint === mint.trim() ? meta.image : null } : null;
+  const coin: Coin = coinChoice === "own" && mintOk ? { mint: mint.trim(), ticker: tick, name: meta?.mint === mint.trim() ? meta.name : tick, image: meta?.mint === mint.trim() ? meta.image : null } : null;
   const rowsTotal = rows.reduce((s, r) => s + (r.amount_cents || 0), 0);
 
   const applySplitDefaults = (t: PType) => {
@@ -251,6 +252,7 @@ export default function CreateProject() {
       setMakers(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
       setFeePct(Number(r.fee_pct)); setCausePct(Number(r.cause_pct)); setCauseName(r.cause_name || "");
       setRows((r.milestones || []).map((m: any) => ({ id: uid(), ...m })));
+      setCoinChoice(r.coin_mint ? "own" : (r.answers?.coin_choice as CoinChoice) || "skip");
       if (r.coin_mint) { setMint(r.coin_mint); setTicker(r.coin_ticker || ""); setMeta({ mint: r.coin_mint, name: r.coin_name, image: r.coin_image }); }
       setWallet(r.payout_wallet || "");
       setCover(r.cover_url || null);
@@ -260,6 +262,7 @@ export default function CreateProject() {
   const payload = (s = step) => ({
     title: title.trim(), creator_name: name.trim(), creator_email: email.trim(), booking_id: bookingId,
     answers: {
+      coin_choice: coinChoice,
       ...originalAnswers, idea_question: ideaIndex, timeline_mode: timelineMode, deadline,
       wizard_step: FLOW[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(),
       category, project_type: ptype, need_quote: needQuote, timeline, makers, city: city.trim(), country,
@@ -465,7 +468,7 @@ export default function CreateProject() {
     if (!desc.trim()) return "Add a short description of your project.";
     return "";
   };
-  const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline) || tokenPairingError(mint);
+  const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline) || (coinChoice === "own" ? (mint.trim() ? tokenPairingError(mint) : "Paste your Pump.fun coin address, or pick another option.") : "");
   const validateTeam = () => makers.includes("open_roles") && !roles.some((r) => r.name.trim()) ? "Add at least one open role, or remove that option." : "";
   const goNext = () => {
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
@@ -486,7 +489,7 @@ export default function CreateProject() {
   const SplitMini = () => (
     <div className="rz-split" style={{ marginBottom: ".9rem" }}>
       <div className="rz-bar"><i className="rz-c-a" style={{ width: `${artistPct}%` }} />{isBrand && <i className="rz-c-t" style={{ width: `${talentPct}%` }} />}<i className="rz-c-f" style={{ width: `${feePct}%` }} /><i className="rz-c-c" style={{ width: `${causePct}%` }} /></div>
-      {([["rz-c-a", leadLabel, artistPct], ...(isBrand ? [["rz-c-t", "Talent", talentPct]] : []), ["rz-c-f", "Rhozeland fee", feePct], ["rz-c-c", causeName.trim() ? `${causeLabel} · ${causeName.trim()}` : causeLabel, causePct]] as [string, string, number][]).map(([c, l, p]) => (
+      {([["rz-c-a", leadLabel, artistPct], ...(isBrand ? [["rz-c-t", "Talent", talentPct]] : []), ["rz-c-f", FEE_LABEL, feePct], ["rz-c-c", causeName.trim() ? `${causeLabel} · ${causeName.trim()}` : causeLabel, causePct]] as [string, string, number][]).map(([c, l, p]) => (
         <div className="rz-split-row" key={c}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{p}%</span><span className="rz-amt">{needQuote ? "—" : money(budgetCents * p / 100)}</span></div>
       ))}
     </div>
@@ -594,11 +597,17 @@ export default function CreateProject() {
             </div>
           </div>
           <div className="rz-field">
-            <label htmlFor="project-contract">Pair a token <span className="rz-opt">· optional</span></label>
-            <input id="project-contract" className="rz-in" placeholder="Solana contract address" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); setMeta(null); }} />
+            <label>Coin <span className="rz-opt">· optional</span></label>
+            <div className="rz-timeline-grid" role="radiogroup" aria-label="Coin">
+              {COIN_CHOICES.map(([k, l]) => <button key={k} type="button" role="radio" aria-checked={coinChoice === k} className={`rz-chipbtn ${coinChoice === k ? "on" : ""}`} onClick={() => setCoinChoice(k)}>{l}</button>)}
+            </div>
+            {coinChoice === "rhozeland" && <p className="rz-note">Rhozeland launches the coin for you. It's covered by the Rhozeland fee in your budget breakdown, so there's no extra cost. Your project shows "Coin launch requested" until the team adds it.</p>}
+            {coinChoice === "own" && <>
+            <input id="project-contract" className="rz-in" aria-label="Pump.fun coin address" placeholder="Pump.fun coin address (mint)" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); setMeta(null); }} />
             <Button type="button" variant="outline" size="sm" className="rz-chipbtn" aria-pressed={mint.trim() === RHOZE_MINT} onClick={() => { setMint(RHOZE_MINT); setTicker("RHOZE"); setMeta(null); }}>Use $RHOZE</Button>
             {mintOk && <label htmlFor="project-ticker">Ticker <span className="rz-opt">· optional</span><input id="project-ticker" className="rz-in" placeholder="e.g. RHOZE" maxLength={12} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} /></label>}
-            <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>
+            </>}
+            {coinChoice === "own" && <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>}
           </div>
           <div className="rz-actions">
             <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
@@ -664,6 +673,7 @@ export default function CreateProject() {
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{needQuote ? "Estimate needed" : money(budgetCents)}</b></div>
               <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Timeline</span><span>{timelineMode === "date" ? deadline : timeline || "—"}</span></div>
+              {coinChoice === "rhozeland" && <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Coin</span><span>Coin launch requested</span></div>}
               {coin && <div className="rz-split-row"><span>Paired token</span><span className="break-all">{coin.ticker ? `$${coin.ticker} · ` : ""}{coin.mint}</span></div>}
             </div>
 

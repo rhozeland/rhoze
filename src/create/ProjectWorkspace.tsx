@@ -1,3 +1,4 @@
+import { coinLaunchRequested } from "./project-flow";
 import ProjectCall from "./ProjectCall";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -130,6 +131,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   return (
     <div className="rz-ws">
       <ProjectCall releaseId={r.id} />
+      {coinLaunchRequested({ coin_mint: mint, answers: r.answers }) && <div className="rz-split" role="status" style={{ marginBottom: ".9rem" }}><div className="rz-split-row" style={{ gridTemplateColumns: "1fr" }}><b>Coin launch requested</b></div></div>}
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
         {([["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]] as [Tab, string][]).map(([k, label]) => (
           <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>
@@ -200,7 +202,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
           <label>Flexible timeline<select className="rz-in" value={timeline} onChange={(e) => setTimeline(e.target.value)}>{["1 week", "2 weeks", "1 month", "3 months", "Flexible"].map((value) => <option key={value}>{value}</option>)}</select></label>
           <p className="rz-ws-note">Planning only · applicable taxes may be added to the final estimate. No money has been paid.</p>
           <div className="rz-ws-split-row"><span>Project %</span><input className="rz-in" type="number" min={0} max={100} value={artistPct} onChange={(e) => setArtistPct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
-          <div className="rz-ws-split-row"><span>Rhozeland fee %</span><input className="rz-in" type="number" min={0} max={100} value={feePct} onChange={(e) => setFeePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
+          <div className="rz-ws-split-row"><span>Rhozeland fee (includes coin launch) %</span><input className="rz-in" type="number" min={0} max={100} value={feePct} onChange={(e) => setFeePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <div className="rz-ws-split-row"><span>Cause %</span><input className="rz-in" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <p className="rz-ws-note">{splitTotal === 100 ? "Totals 100%" : `Must total 100% (currently ${splitTotal}%)`}</p>
           <div className="rz-ws-row" style={{ marginTop: ".8rem" }}>

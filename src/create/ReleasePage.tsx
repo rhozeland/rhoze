@@ -314,7 +314,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               <div className="rz-bar">
                 <i className="rz-c-a" style={{ width: `${r.artist_pct}%` }} /><i className="rz-c-f" style={{ width: `${r.fee_pct}%` }} /><i className="rz-c-c" style={{ width: `${r.cause_pct}%` }} />
               </div>
-              {[["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland fee", r.fee_pct], ["rz-c-c", r.cause_name ? `Cause: ${r.cause_name}` : "Cause", r.cause_pct]].map(([c, l, p]) => (
+              {[["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland fee (includes coin launch)", r.fee_pct], ["rz-c-c", r.cause_name ? `Cause: ${r.cause_name}` : "Cause", r.cause_pct]].map(([c, l, p]) => (
                 <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{money(budget * Number(p) / 100)}</span></div>
               ))}
               <div className="rz-cause">

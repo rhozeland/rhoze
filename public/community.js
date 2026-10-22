@@ -37,7 +37,7 @@
     if (creator.rating != null) facts.append(el('span', '', Number(creator.rating).toFixed(1) + ' ★'));
     content.append(facts, el('p', 'profile-bio', creator.bio || 'Explore this creator’s work and get in touch about a project.'));
     const actions = el('div', 'profile-actions');
-    const book = el('a', '', 'Book a project'); book.href = '/book/?creator=' + encodeURIComponent(creator.display_name); actions.append(book);
+    const book = el('a', '', 'Book a project'); book.href = '/create.html?new=1'; actions.append(book);
     const portfolio = validLink(creator.portfolio_url) || validLink(creator.website_url);
     if (portfolio) { const link = el('a', '', 'View portfolio ↗'); link.href = portfolio; link.target = '_blank'; link.rel = 'noopener noreferrer'; actions.append(link); }
     const contact = el('a', '', 'Get in touch'); contact.href = 'mailto:collab@rhozeland.com?subject=' + encodeURIComponent('Project inquiry for ' + creator.display_name); actions.append(contact);

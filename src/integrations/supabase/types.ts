@@ -108,12 +108,15 @@ export type Database = {
           id: string
           name: string
           notes: string | null
+          paid_credits: number
           phone: string | null
+          release_id: string | null
           slot_end: string
           slot_start: string
           status: string
           timezone: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -121,12 +124,15 @@ export type Database = {
           id?: string
           name: string
           notes?: string | null
+          paid_credits?: number
           phone?: string | null
+          release_id?: string | null
           slot_end: string
           slot_start: string
           status?: string
           timezone?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -134,12 +140,15 @@ export type Database = {
           id?: string
           name?: string
           notes?: string | null
+          paid_credits?: number
           phone?: string | null
+          release_id?: string | null
           slot_end?: string
           slot_start?: string
           status?: string
           timezone?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -3650,6 +3659,14 @@ export type Database = {
         Returns: undefined
       }
       archive_expired_projects: { Args: never; Returns: number }
+      book_project_call: {
+        Args: {
+          _pay_with_credits?: boolean
+          _release_id: string
+          _slot_start: string
+        }
+        Returns: string
+      }
       brand_can_edit: { Args: { p_slug: string }; Returns: boolean }
       brand_save_profile: {
         Args: {
@@ -3933,8 +3950,26 @@ export type Database = {
         Returns: number
       }
       my_application_inbox: { Args: never; Returns: Json }
+      my_call_credits: {
+        Args: never
+        Returns: {
+          balance_credits: number
+          call_cost: number
+          rhoze_per_credit: number
+        }[]
+      }
       my_contribution_stats: { Args: never; Returns: Json }
       my_profile: { Args: { p_kind?: string; p_name?: string }; Returns: Json }
+      my_project_calls: {
+        Args: never
+        Returns: {
+          booking_id: string
+          paid_credits: number
+          release_id: string
+          slot_end: string
+          slot_start: string
+        }[]
+      }
       my_releases: {
         Args: never
         Returns: {

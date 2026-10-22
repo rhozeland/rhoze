@@ -3,6 +3,8 @@ import { ChevronUp, ChevronDown, Trash2, Plus, RefreshCw, Sparkles, Check, Arrow
 import { supabase } from "@/integrations/supabase/client";
 import { Shell, Milestone, money, uid } from "./shared";
 import AuthModal from "./AuthModal";
+import BookCallStep, { type CallChoice } from "./BookCallStep";
+import { fmtSlot } from "./call-slots";
 import CoverEditor from "./CoverEditor";
 import { LocationFields } from "./ProfileExtras";
 import { Button } from "@/components/ui/button";
@@ -32,9 +34,10 @@ type Role = { id: string; name: string; count: string; rate: string };
 type PType = "artist" | "brand";
 
 // The wizard is now a single merged 4-step flow shared by both project types.
-type StepKey = "idea" | "scope" | "team" | "review";
-const FLOW: StepKey[] = ["idea", "scope", "team", "review"];
-const STEP_LABEL: Record<StepKey, string> = { idea: "The idea", scope: "Scope", team: "Who's making it", review: "Review" };
+type StepKey = "idea" | "scope" | "team" | "call" | "review";
+const FLOW: StepKey[] = ["idea", "scope", "team", "call", "review"];
+const STEP_LABEL: Record<StepKey, string> = { idea: "The idea", scope: "Scope", team: "Who's making it", call: "Book a call", review: "Review" };
+const CALL_KEY = "rz_pending_call";
 
 // Old (pre-merge) step keys map onto the new 4 steps so drafts saved by the
 // previous wizard still reopen at a sensible place.
@@ -118,6 +121,7 @@ export default function CreateProject() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [bookingId, setBookingId] = useState<string | null>(null);
+  const [callChoice, setCallChoice] = useState<CallChoice>(() => { try { return JSON.parse(localStorage.getItem(CALL_KEY) || "null"); } catch { return null; } });
   const [title, setTitle] = useState("");
   const [making, setMaking] = useState("");
   const [briefBusy, setBriefBusy] = useState(false);
@@ -364,13 +368,20 @@ export default function CreateProject() {
     const { error } = await supabase.rpc("release_claim", { p_token: token });
     if (error) { setPublishing(false); setErr("Couldn't open your workspace. Please try again."); return; }
     try { await saveTeam(id, people); } catch { setPublishing(false); setErr("Couldn't save your team shortlist. Please try again."); return; }
+    let call: CallChoice = null; try { call = JSON.parse(localStorage.getItem(CALL_KEY) || "null"); } catch { /* */ }
+    if (call) {
+      const { error: bookErr } = await (supabase.rpc as any)("book_project_call", { _release_id: id, _slot_start: call.slot, _pay_with_credits: call.pay });
+      if (bookErr) { setPublishing(false); setErr(/taken|available/i.test(bookErr.message) ? "That call time was just taken. Go back to Book a call and pick another." : /credits/i.test(bookErr.message) ? "You don't have enough credits. Untick Pay with credits and try again." : "Couldn't book your call. Please try again."); return; }
+      localStorage.removeItem(CALL_KEY);
+    }
     localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(PENDING_KEY);
-    location.href = `/workspace/${id}`;
+    location.href = `/workspace/${id}${call ? "?booked=1" : ""}`;
   };
   const publish = async () => {
     const id = await save(FLOW.length);
     if (!id) return;
     const { data: { session } } = await supabase.auth.getSession();
+    if (callChoice) localStorage.setItem(CALL_KEY, JSON.stringify(callChoice)); else localStorage.removeItem(CALL_KEY);
     if (!session) { localStorage.setItem(PENDING_KEY, id); setAuthFor(id); return; }
     await finishPublish(id);
   };
@@ -489,7 +500,7 @@ export default function CreateProject() {
           <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
         </div>
       </div>
-      <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "review" ? "rz-card-wide" : ""}`}>
+      <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "call" || stepKey === "review" ? "rz-card-wide" : ""}`}>
         <FileText className="rz-wizard-mark" size={30} aria-hidden="true" />
         <div className="rz-wizard-progress">
           <div className="rz-wizard-count"><span>Step {step} of {FLOW.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
@@ -624,7 +635,15 @@ export default function CreateProject() {
           )}
           <div className="rz-actions" style={{ marginTop: ".9rem" }}>
             <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
-            <Button variant="outline" className="rz-btn pri" onClick={goNext}>Next: Review <ArrowRight size={14} /></Button>
+            <Button variant="outline" className="rz-btn pri" onClick={goNext}>Next: Book a call <ArrowRight size={14} /></Button>
+          </div>
+        </>}
+
+        {stepKey === "call" && <>
+          <BookCallStep choice={callChoice} onChoice={setCallChoice} booked={null} />
+          <div className="rz-actions">
+            <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
+            <Button variant="outline" className="rz-btn pri" onClick={goNext}>{callChoice ? "Next: Review" : "Skip for now"} <ArrowRight size={14} /></Button>
           </div>
         </>}
 
@@ -666,10 +685,14 @@ export default function CreateProject() {
                 </div>
               </>
             )}
+            <div className="rz-review-section">Call</div>
+            <div className="rz-split" style={{ marginBottom: ".9rem" }}>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Call</span><span>{callChoice ? `${fmtSlot(new Date(callChoice.slot))}${callChoice.pay ? " · paid with 1 credit" : ""}` : "No call booked"}</span></div>
+            </div>
             {genBusy && <GenProgress title={title} />}
             <div className="rz-actions">
               <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
-              <Button variant="outline" className="rz-btn pri" disabled={publishing || genBusy} onClick={publish}>{publishing ? "Opening…" : "Create private project"}</Button>
+              <Button variant="outline" className="rz-btn pri" disabled={publishing || genBusy} onClick={publish}>{publishing ? "Opening…" : callChoice ? "Create project & book call" : "Create private project"}</Button>
             </div>
             <div style={{ textAlign: "center", marginTop: ".6rem" }}><Button variant="outline" className="rz-textlink" disabled={saving} onClick={() => save(FLOW.length)}>{saving ? "Saving…" : "Save as draft"}</Button></div>
             <p className="rz-note">Private workspace · publish to Discover later, only when you choose.</p>
@@ -677,7 +700,7 @@ export default function CreateProject() {
         )}
 
         {err && <div className="rz-err">{err}</div>}
-        {authFor && <AuthModal onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
+        {authFor && <AuthModal intro={callChoice ? "Create an account to confirm your call. We'll pick up right where you left off." : undefined} onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
           redirectTo={`${location.origin}/create.html?draft=${authFor}`} />}
         {savedAt && <div className="rz-note rz-saved">Project saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
       </div>

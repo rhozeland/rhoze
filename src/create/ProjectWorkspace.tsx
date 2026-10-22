@@ -1,3 +1,4 @@
+import ProjectCall from "./ProjectCall";
 import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
@@ -128,6 +129,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
 
   return (
     <div className="rz-ws">
+      <ProjectCall releaseId={r.id} />
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
         {([["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]] as [Tab, string][]).map(([k, label]) => (
           <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>

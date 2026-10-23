@@ -64,3 +64,4 @@ html.dark .page-projects .rz-discovery-hub{--directory-page-ink:0 0% 94%;--direc
 @media(max-width:350px){.rz-directory-grid.rz-people-masonry{columns:1}}/* Dark mode: muted dark versions of the hub palette (mirrors .dark .rz-flow). */
 .dark .page-projects .rz-discovery-hub{--ink:0 0% 95%;--mut:0 0% 72%;--line:240 4% 28%;--card:240 5% 12%;--alt:240 5% 16%;--directory-highlight:159 45% 62%;--directory-page-ink:0 0% 95%;--directory-page-muted:0 0% 68%}
 .dark .rz-discovery-role-menu{--popover:240 5% 14%;--popover-foreground:0 0% 95%;--accent:240 5% 18%;--accent-foreground:0 0% 95%;--border:240 4% 28%}
+.rz-discovery-chips .rz-discovery-coin-filter{margin-left:auto}

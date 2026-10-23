@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { indexCoinPairs, coinBadgeLabel, applyCoinBadges } from './coin-badges.js';
+import { indexCoinPairs, coinBadgeLabel, applyCoinBadges, matchesCoinFilter } from './coin-badges.js';
 
 describe('Discover coin badges', () => {
   beforeEach(() => {
@@ -39,5 +39,14 @@ describe('Discover coin badges', () => {
   it('falls back to a plain label when no ticker is stored', () => {
     expect(coinBadgeLabel('')).toBe('Coin');
     expect(coinBadgeLabel('$RHOZE')).toBe('$RHOZE');
+  });
+  it('filters to connected coins, excluding ticker-only and launch-requested projects', () => {
+    applyCoinBadges(document.getElementById('grid'), indexCoinPairs([
+      { slug: 'rhozeland', coin_mint: '7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump' },
+      { slug: 'sefra-cozal', coin_ticker: 'RHOZE', coin_launch_requested: true },
+    ]));
+    const cards = Array.from(document.querySelectorAll('.work-card'));
+    expect(cards.filter(card => matchesCoinFilter(card, true)).map(card => card.getAttribute('href'))).toEqual(['/release/rhozeland']);
+    expect(cards.filter(card => matchesCoinFilter(card, false))).toHaveLength(3);
   });
 });

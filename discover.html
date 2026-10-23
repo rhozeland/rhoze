@@ -648,10 +648,13 @@
     var selectedChip = document.querySelector('.rz-discovery-chips [aria-pressed=true]');
     var categoryLabel = selectedChip ? selectedChip.textContent.trim().toLowerCase() : '';
     var currentFilter = ['visual','audio','development'].includes(categoryLabel) ? categoryLabel : 'portfolio';
+    var connectedOnly = document.body.dataset.discoverCoinFilter === 'connected';
+    window.addEventListener('rz-discover-coins-ready', function() { renderGrid(); });
     window.addEventListener('rz-discover-work', function(e) {
       if (document.body.dataset.discoverView !== 'work') return;
       currentSearch = e.detail.query.trim().toLowerCase();
       currentFilter = e.detail.category;
+      connectedOnly = !!e.detail.connectedOnly;
       renderGrid();
     });
 
@@ -779,7 +782,7 @@
     }
 
     function renderGrid(mode, opts) {
-      var visible = getOrderedCards(cards.filter(function(c) { return matchesSearch(c) && matchesCategory(c); }));
+      var visible = getOrderedCards(cards.filter(function(c) { return matchesSearch(c) && matchesCategory(c) && (!connectedOnly || (window.__rzMatchesCoinFilter && window.__rzMatchesCoinFilter(c, true))); }));
       if (mode === 'shuffle' || currentFilter === 'portfolio') visible = shuffleList(visible);
       var hidden = cards.filter(function(card) { return visible.indexOf(card) === -1; });
 
@@ -794,13 +797,14 @@
       });
 
       if (filterResults) {
-        var isFiltered = currentSearch || (currentFilter !== 'portfolio' && currentFilter !== 'newest');
+        var isFiltered = connectedOnly || currentSearch || (currentFilter !== 'portfolio' && currentFilter !== 'newest');
         filterResults.textContent = isFiltered
           ? visible.length + (visible.length === 1 ? ' project' : ' projects')
           : '';
         filterResults.classList.toggle('visible', !!isFiltered);
       }
 
+      emptyResults.textContent = connectedOnly ? 'No connected-coin projects match these filters.' : 'No projects match your search.';
       emptyResults.hidden = visible.length > 0;
       syncProjectGridRows();
       if (typeof setupHoverVideos === 'function') setupHoverVideos();
@@ -951,7 +955,8 @@
   </script>
   <script type="module">
   import { indexCreatorProfiles } from '/creator-profile-links.js';
-  import { indexCoinPairs, applyCoinBadges } from '/coin-badges.js';
+  import { indexCoinPairs, applyCoinBadges, matchesCoinFilter } from '/coin-badges.js';
+  window.__rzMatchesCoinFilter = matchesCoinFilter;
   /* Discover: prepend published community projects (open project pop-up) and link names to real profiles. */
   (function () {
     var API = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/';
@@ -998,6 +1003,7 @@
       }
       if (grid) applyCoinBadges(grid, indexCoinPairs(rels.concat(archive)));
       start();
+      window.dispatchEvent(new CustomEvent('rz-discover-coins-ready'));
     });
     /* Names: community project creators and matching real accounts open their profile page. */
     document.addEventListener('click', function (e) {

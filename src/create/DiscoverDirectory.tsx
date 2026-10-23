@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowUpRight, Search, Shuffle } from 'lucide-react';
+import { ArrowUpRight, Search, Shuffle, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +21,7 @@ export default function DiscoverDirectory() {
   const [view, setView] = useState<DiscoverView>(() => discoverView(new URLSearchParams(location.search).get('view')));
   const [query, setQuery] = useState(''), [category, setCategory] = useState('All'), [people, setPeople] = useState<Person[]>([]), [calls, setCalls] = useState<Call[]>([]);
   const [loading, setLoading] = useState(true), [error, setError] = useState(''), [page, setPage] = useState(1);
+  const [connectedOnly, setConnectedOnly] = useState(false);
   const load = async () => {
     setLoading(true); setError('');
     try {
@@ -39,10 +40,11 @@ export default function DiscoverDirectory() {
     const url = new URL(location.href); if (view === 'work') url.searchParams.delete('view'); else url.searchParams.set('view', view);
     history.replaceState(null, '', url.pathname + url.search + url.hash);
     document.body.dataset.discoverView = view;
-    window.dispatchEvent(new CustomEvent('rz-discover-work', { detail: { query, category: category === 'All' ? 'portfolio' : category.toLowerCase() } }));
+    document.body.dataset.discoverCoinFilter = connectedOnly ? 'connected' : 'all';
+    window.dispatchEvent(new CustomEvent('rz-discover-work', { detail: { query, category: category === 'All' ? 'portfolio' : category.toLowerCase(), connectedOnly } }));
     const input = document.getElementById('projectSearch') as HTMLInputElement | null;
     if (input) input.value = query;
-  }, [view, query, category]);
+  }, [view, query, category, connectedOnly]);
   const changeView = (next: DiscoverView) => { setView(next); setCategory('All'); setPage(1); };
   const roles = useMemo(() => Array.from(new Set(calls.flatMap(c => c.answers?.roles?.map(r => r.name).filter(Boolean) || []))).sort(), [calls]);
   const chips = view === 'work' ? ['All', 'Visual', 'Audio', 'Development'] : view === 'people' ? ['All', ...PEOPLE_ROLES] : ['All', ...roles];
@@ -52,7 +54,7 @@ export default function DiscoverDirectory() {
     <div className="rz-discovery-top"><h1>Discover</h1><Button asChild><a href="/create.html?new=1">Create a project<ArrowUpRight size={15}/></a></Button></div>
     <nav aria-label="Discover sections" className="rz-discovery-switch">{views.map(v => <Button key={v.id} variant="ghost" aria-pressed={view === v.id} onClick={() => changeView(v.id)}>{v.label}</Button>)}</nav>
     <div className="rz-discovery-search-row"><label className="rz-discovery-search"><Search size={17}/><input type="search" aria-label="Search Discover" placeholder={view === 'work' ? 'Search projects…' : view === 'people' ? 'Search people or skills…' : 'Search projects or roles…'} value={query} onChange={e => { setQuery(e.target.value); setPage(1); }}/></label>{view === 'work' ? <Button variant="outline" size="icon" aria-label="Shuffle projects" title="Shuffle projects" onClick={() => document.getElementById('shuffleToggle')?.click()}><Shuffle size={16}/></Button> : <Select value={category} onValueChange={value => { setCategory(value); setPage(1); }}><SelectTrigger className="rz-discovery-role-filter" aria-label="Filter by role"><SelectValue/></SelectTrigger><SelectContent className="rz-discovery-role-menu">{chips.map(c => <SelectItem key={c} value={c}>{c === 'All' ? 'All roles' : c}</SelectItem>)}</SelectContent></Select>}</div>
-    {view === 'work' && <div className="rz-discovery-chips" role="group" aria-label="Work categories">{chips.map(c => <Button key={c} variant="outline" aria-pressed={category === c} onClick={() => { setCategory(c); setPage(1); }}>{c === 'All' ? 'All work' : c}</Button>)}</div>}
+    {view === 'work' && <div className="rz-discovery-chips" role="group" aria-label="Work categories">{chips.map(c => <Button key={c} variant="outline" aria-pressed={category === c} onClick={() => { setCategory(c); setPage(1); }}>{c === 'All' ? 'All work' : c}</Button>)}<Button className="rz-discovery-coin-filter" variant="outline" aria-pressed={connectedOnly} onClick={() => setConnectedOnly(value => !value)}><Coins size={14}/>Connected coin</Button></div>}
     {view === 'work' ? <details className="rz-discovery-explore"><summary>Globe & Flow</summary><DiscoverExplorer/></details> : <>
       {loading ? <p role="status" className="rz-directory-status">Loading {view === 'people' ? 'people' : 'open calls'}…</p> : error ? <div role="alert" className="rz-directory-status">{error}<Button variant="outline" onClick={load}>Retry</Button></div> : <>
       <p role="status" className="rz-directory-status">{view === 'people' ? `${filteredPeople.length} people` : `${filteredCalls.length} open calls`}</p>

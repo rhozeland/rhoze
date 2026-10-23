@@ -86,7 +86,7 @@ export function LikedProjects({ userId }: { userId: string }) {
     if (error) setError("Couldn’t update visibility. Please try again."); else setPublic(value);
     setBusy(false);
   };
-  if (!own && !isPublic) return null;
+  if ((!own && !isPublic) || !rows?.length) return null;
   return <section className="rz-pf-sec" aria-label="Liked projects">
     <div className="rz-liked-heading"><h2>Liked projects</h2>
       {own && <div className="rz-liked-visibility" role="group" aria-label="Liked projects visibility"><span>Visibility</span>
@@ -97,7 +97,7 @@ export function LikedProjects({ userId }: { userId: string }) {
       </div>}
     </div>
     {error && <p role="alert" className="rz-pf-empty">{error}</p>}
-    {rows === null ? <p className="rz-pf-empty">Loading…</p> : rows.length === 0 ? <p className="rz-pf-empty">{own ? "No liked projects yet." : "No liked projects yet."}</p> : <div className="rz-feed">{rows.map(r => <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
+    {<div className="rz-feed">{rows.map(r => <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
       <span className="rz-feed-cover">{r.cover_url || r.coin_image ? <LikedCover url={r.cover_url || r.coin_image} title={r.title} /> : <i>{r.title}</i>}</span>
       <span className="rz-feed-meta"><small>{r.creator_name}</small><b>{r.title}</b></span>
     </a>)}</div>}

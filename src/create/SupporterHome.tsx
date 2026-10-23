@@ -31,7 +31,7 @@ function LikedList({ userId }: { userId: string }) {
 
 type Held = { slug: string; title: string; creator_name: string; coin_ticker: string | null };
 
-function WalletCoins() {
+function WalletCoins({ heading }: { heading: string }) {
   const { publicKey, connected } = useWallet();
   const { setVisible } = useWalletModal();
   const addr = publicKey?.toBase58() ?? "";
@@ -58,18 +58,9 @@ function WalletCoins() {
     return () => { off = true; };
   }, [addr]);
 
-  if (!connected) {
-    return (
-      <div className="rz-sup-empty">
-        <p className="rz-pf-empty">Connect a Solana wallet to see which creator coins you hold.</p>
-        <button type="button" className="rz-btn" onClick={() => setVisible(true)}>Connect wallet</button>
-      </div>
-    );
-  }
-  if (state === "loading") return <p className="rz-pf-empty">Checking your wallet…</p>;
-  if (!held.length) return <p className="rz-pf-empty">No held creator coins yet. <a className="rz-link" href="/discover">Discover projects to support →</a></p>;
+  if (!connected || state !== "done" || !held.length) return null;
   return (
-    <>
+    <section className="rz-pf-sec rz-sup-home"><h2>{heading}</h2>
       <ul className="rz-pf-credits">
         {held.map((h) => (
           <li key={h.slug}><a href={`/release/${h.slug}`}><b>{h.coin_ticker ? `$${h.coin_ticker.replace(/^\$/, "")}` : h.title}</b><span>{h.title} · {h.creator_name}</span></a></li>
@@ -81,7 +72,7 @@ function WalletCoins() {
           <li key={`perk-${h.slug}`}><a href={`/release/${h.slug}/exclusive`}><b>Exclusive feed</b><span>{h.title} · Unlocked ↗</span></a></li>
         ))}
       </ul>
-    </>
+    </section>
   );
 }
 
@@ -92,33 +83,26 @@ function Suggested({ userId }: { userId: string }) {
       .order("created_at", { ascending: false }).limit(6)
       .then(({ data }: any) => setRows(data ?? []));
   }, [userId]);
-  if (rows === null) return <p className="rz-pf-empty">Loading…</p>;
-  if (!rows.length) return <p className="rz-pf-empty">No suggestions yet. <a className="rz-link" href="/discover">Discover creators →</a></p>;
+  if (!rows?.length) return null;
   return (
-    <div className="rz-sup-grid">
+    <section className="rz-pf-sec"><h2>Suggested creators</h2><div className="rz-sup-grid">
       {rows.map((c) => (
         <a key={c.slug} className="rz-sup-card" href={`/creator/${c.slug}`}>
           <span className="rz-sup-cover">{c.photo_url ? <img src={c.photo_url} alt="" loading="lazy" /> : <i>{c.display_name}</i>}</span>
           <b>{c.display_name}</b><small>{(c.disciplines ?? []).slice(0, 2).join(" · ")}</small>
         </a>
       ))}
-    </div>
+    </div></section>
   );
 }
 
 export function SupporterHome({ userId, heading }: { userId: string; heading: string }) {
   const [walletErr, setWalletErr] = useState(false);
   return (
-    <section className="rz-pf-sec rz-sup-home" aria-label={heading}>
-      <h2>{heading}</h2>
-      <RewardsCard userId={userId} />
-      <div className="rz-sup-block"><h3>Projects I liked</h3><LikedList userId={userId} /></div>
-      <div className="rz-sup-block">
-        <h3>Coins I hold</h3>
-        <SolanaWalletProvider onError={() => setWalletErr(true)}><WalletCoins /></SolanaWalletProvider>
-        {walletErr && <p className="rz-pf-empty">Couldn't connect to your wallet. Please try again.</p>}
-      </div>
-      <div className="rz-sup-block"><h3>Suggested creators</h3><Suggested userId={userId} /></div>
-    </section>
+    <>
+      <RewardsCard userId={userId} hideEmpty />
+      {!walletErr && <SolanaWalletProvider onError={() => setWalletErr(true)}><WalletCoins heading={heading} /></SolanaWalletProvider>}
+      <Suggested userId={userId} />
+    </>
   );
 }

@@ -14,13 +14,13 @@ export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]
 const db = supabase as any;
 const fromSlug = () => new URLSearchParams(location.search).get("from");
 
-function DraftsHeading() {
+function ProfileProjects({ projects, owner }: { projects: any[]; owner: boolean }) {
   const [open, setOpen] = useState(() => new URLSearchParams(location.search).get("drafts") === "1");
   const [drafts, setDrafts] = useState<any[] | undefined>(undefined);
   useEffect(() => {
-    if (!open || drafts !== undefined) return;
+    if (!owner || drafts !== undefined) return;
     supabase.rpc("my_releases").then(({ data }) => setDrafts((data || []).filter(r => r.status !== "published" && r.status !== "archived")));
-  }, [open, drafts]);
+  }, [owner, drafts]);
   const toggle = async () => {
     const next = !open;
     setOpen(next);
@@ -29,19 +29,18 @@ function DraftsHeading() {
       setDrafts(((data ?? []) as any[]).filter((r) => r.status !== "published" && r.status !== "archived"));
     }
   };
+  if (!projects.length && !drafts?.length) return null;
   return (
-    <>
+    <section className="rz-pf-sec">
       <h2>Projects
-        <button type="button" className={`rz-drafts-link${open ? " on" : ""}`} onClick={toggle} aria-expanded={open} title="See your drafts">
+        {owner && !!drafts?.length && <button type="button" className={`rz-drafts-link${open ? " on" : ""}`} onClick={toggle} aria-expanded={open} title="See your drafts">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="14" height="14" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
           Drafts
-        </button>
+        </button>}
       </h2>
-      {new URLSearchParams(location.search).get("saved") === "1" && <p className="rz-note" role="status">Draft saved to your profile · only you can see it.</p>}
-      {open && (
+      {owner && new URLSearchParams(location.search).get("saved") === "1" && <p className="rz-note" role="status">Draft saved to your profile · only you can see it.</p>}
+      {owner && open && !!drafts?.length && (
         <div className="rz-drafts-list">
-          {drafts === undefined && <p className="rz-pf-empty">Loading…</p>}
-          {drafts && drafts.length === 0 && <p className="rz-pf-empty">No drafts yet.</p>}
           {drafts?.map((d) => (
             <a key={d.id} className="rz-drafts-row" href={`/workspace/${d.id}`}>
               <b>{d.title || "Untitled project"}</b>
@@ -50,14 +49,15 @@ function DraftsHeading() {
           ))}
         </div>
       )}
-    </>
+      <ProjectGrid rels={projects} />
+    </section>
   );
 }
 
 function ProjectGrid({ rels }: { rels: any[] }) {
   const from = fromSlug();
   useEffect(() => { if (from) document.getElementById(`rz-proj-${from}`)?.scrollIntoView({ block: "nearest" }); }, [from, rels.length]);
-  if (!rels.length) return <p className="rz-pf-empty">No published projects yet.</p>;
+  if (!rels.length) return null;
   return (
     <div className="rz-feed">
       {rels.map((r) => (
@@ -192,7 +192,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   const fmtR = (n: number) => `$${(n / 100).toLocaleString("en-CA")}`;
   const rate = c?.hourly_rate_cents != null && c.hourly_rate_cents > 0 ? `Starting from ${c.hourly_rate_max_cents != null && c.hourly_rate_max_cents > c.hourly_rate_cents ? `${fmtR(c.hourly_rate_cents)}–${fmtR(c.hourly_rate_max_cents)}` : fmtR(c.hourly_rate_cents)}/hr` : "Rate on request";
   const ig = safeUrl(c?.instagram_url), web = safeUrl(c?.website_url) || safeUrl(c?.portfolio_url);
-  const samples = (c?.work_samples ?? []) as Sample[];
+  const samples = ((c?.work_samples ?? []) as Sample[]).filter(s => s.url?.trim());
   const fan = c?.account_kind === "supporter";
 
   return (
@@ -211,8 +211,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
                 {c.user_id && <ProfileProgress userId={c.user_id} />}
-                <div className="rz-pf-tags">{(c.disciplines ?? []).map((d) => <span key={d}>{d}</span>)}</div>
-                <p className="rz-pf-meta">{!fan && <b>{rate}</b>}{!fan && c.rating != null && " · "}{c.rating != null && <>{Number(c.rating).toFixed(1)} ★</>}</p>
+                {!!c.disciplines?.length && <div className="rz-pf-tags">{c.disciplines.map((d) => <span key={d}>{d}</span>)}</div>}
+                {(!fan || c.rating != null) && <p className="rz-pf-meta">{!fan && <b>{rate}</b>}{!fan && c.rating != null && " · "}{c.rating != null && <>{Number(c.rating).toFixed(1)} ★</>}</p>}
                 {(c.city || c.country) && (
                   <p className="rz-pf-meta rz-pf-loc" style={{ opacity: .65, display: "flex", alignItems: "center", gap: 4, fontSize: ".8rem" }}>
                     <MapPin size={13} aria-hidden="true" />
@@ -229,14 +229,14 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
             {editing && isOwner && uid && <CreatorEditor c={c} uid={uid} onSaved={() => { setEditing(false); load(); }} />}
 
-            <section className="rz-pf-sec"><h2>Bio</h2>
-              <p className="rz-pf-bio">{c.bio || "This creator hasn't added a bio yet."}</p></section>
+            {c.bio?.trim() && <section className="rz-pf-sec"><h2>Bio</h2>
+              <p className="rz-pf-bio">{c.bio}</p></section>}
 
-            <section className="rz-pf-sec">{isOwner ? <DraftsHeading /> : <h2>Projects</h2>}<ProjectGrid rels={projects} /></section>
+            <ProfileProjects projects={projects} owner={isOwner} />
             {c.user_id && <LikedProjects userId={c.user_id} />}
 
-            {!fan && <section className="rz-pf-sec"><h2>Work samples</h2>
-              {samples.length === 0 ? <p className="rz-pf-empty">No work samples yet.</p> : (
+            {!fan && samples.length > 0 && <section className="rz-pf-sec"><h2>Work samples</h2>
+              {(
                 <div className="rz-pf-grid">
                   {samples.map((s, i) => s.kind === "image" ? (
                     <button key={i} type="button" className="rz-pf-tile" onClick={() => setView(s)} aria-label={`Open ${s.title || `work sample ${i + 1}`}`}><BlobImg src={s.url} alt={s.title || `Work sample ${i + 1}`} /></button>
@@ -433,7 +433,7 @@ export function BrandProfile({ slug }: { slug: string }) {
                 <h1>{name}</h1>
                 {brand?.user_id && <ProfileProgress userId={brand.user_id} />}
                 <div className="rz-pf-tags"><span>{brand?.category || "Brand"}</span></div>
-                <p className="rz-pf-bio" style={{ margin: ".4rem 0 .7rem" }}>{brand?.bio || "This brand hasn't added a bio yet."}</p>
+                {brand?.bio?.trim() && <p className="rz-pf-bio" style={{ margin: ".4rem 0 .7rem" }}>{brand.bio}</p>}
                 <ProfileTools kind="brand" slug={slug} name={name} photo={brand?.logo_url} isOwner={canEdit}
                   onViewRoles={hiring.length === 1 ? `/release/${hiring[0].r.slug}?apply=${hiring[0].i}` : hiring.length ? "#hiring" : rels[0] ? `/release/${rels[0].slug}` : null} />
               </div>
@@ -441,12 +441,11 @@ export function BrandProfile({ slug }: { slug: string }) {
 
             {editing && canEdit && <BrandEditor slug={slug} initial={{ slug, name, logo_url: brand?.logo_url ?? null, category: brand?.category ?? null, bio: brand?.bio ?? null }} onSaved={() => { setEditing(false); load(); }} />}
 
-<section className="rz-pf-sec">{canEdit ? <DraftsHeading /> : <h2>Projects</h2>}
-<ProjectGrid rels={rels} /></section>
+            <ProfileProjects projects={rels} owner={canEdit} />
             {(brand?.user_id || rels[0]?.user_id) && <LikedProjects userId={brand?.user_id || rels[0]?.user_id} />}
 
-            <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>
-              {hiring.length === 0 ? <p className="rz-pf-empty">No open roles right now. Check back soon.</p> : (
+            {hiring.length > 0 && <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>
+              {(
                 <ul className="rz-pf-credits">
                   {hiring.map(({ role, i, r }: any) => (
                     <li key={`${r.id}-${i}`}><a href={`/release/${r.slug}?apply=${i}`}>
@@ -454,7 +453,7 @@ export function BrandProfile({ slug }: { slug: string }) {
                       <span>{r.title}{role.rate ? ` · ${role.rate}` : ""} · Apply ↗</span></a></li>
                   ))}
                 </ul>
-              )}</section>
+              )}</section>}
           </>
         )}
       </div>

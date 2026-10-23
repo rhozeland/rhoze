@@ -2407,6 +2407,48 @@ export type Database = {
           },
         ]
       }
+      release_board_items: {
+        Row: {
+          body: string | null
+          color: string | null
+          created_at: string
+          id: string
+          kind: string
+          release_id: string
+          storage_path: string | null
+          updated_at: string
+          url: string | null
+          x: number
+          y: number
+        }
+        Insert: {
+          body?: string | null
+          color?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          release_id: string
+          storage_path?: string | null
+          updated_at?: string
+          url?: string | null
+          x?: number
+          y?: number
+        }
+        Update: {
+          body?: string | null
+          color?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          release_id?: string
+          storage_path?: string | null
+          updated_at?: string
+          url?: string | null
+          x?: number
+          y?: number
+        }
+        Relationships: []
+      }
       release_milestones: {
         Row: {
           amount_cents: number
@@ -4280,6 +4322,8 @@ export type Database = {
         Args: { _credits: number; _project_id: string }
         Returns: number
       }
+      rz_owns_release: { Args: { _rid: string }; Returns: boolean }
+      rz_owns_release_path: { Args: { _name: string }; Returns: boolean }
       rz_reward_amount: { Args: { p_kind: string }; Returns: number }
       rz_slugify: { Args: { _t: string }; Returns: string }
       validate_referral_code: {

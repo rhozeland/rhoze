@@ -39,7 +39,7 @@ function ProfileProjects({ projects, owner }: { projects: any[]; owner: boolean 
         </button>}
       </h2>
       {owner && new URLSearchParams(location.search).get("saved") === "1" && <p className="rz-note" role="status">Draft saved to your profile · only you can see it.</p>}
-      {owner && open && !!drafts?.length && (
+      {owner && (open || !projects.length) && !!drafts?.length && (
         <div className="rz-drafts-list">
           {drafts?.map((d) => (
             <a key={d.id} className="rz-drafts-row" href={`/workspace/${d.id}`}>

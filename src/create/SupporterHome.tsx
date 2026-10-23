@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { RewardsCard } from "./Rewards";
 
 const db = supabase as any;
@@ -33,7 +32,6 @@ type Held = { slug: string; title: string; creator_name: string; coin_ticker: st
 
 function WalletCoins({ heading }: { heading: string }) {
   const { publicKey, connected } = useWallet();
-  const { setVisible } = useWalletModal();
   const addr = publicKey?.toBase58() ?? "";
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
   const [held, setHeld] = useState<Held[]>([]);

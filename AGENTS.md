@@ -1,4 +1,5 @@
 - Keep the public talent marketplace in `creator_directory`, separate from private account `profiles`, because visitors must never gain access to payroll or account details through discovery.
+- Use a shared profile-project section for creator and brand pages, resolving owner drafts separately from public projects so draft-only profiles retain access without empty public sections.
 - Store project likes and liked-list preferences separately with database-enforced owner writes and public visibility checks, because list privacy must hold beyond the browser.
 - Route Discover/home cards to local records; use project-view.js for other pop-ups, preserving source and owner checks.
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.

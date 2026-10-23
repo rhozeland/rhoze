@@ -170,7 +170,7 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Save draft account handoff
-- [ ] Hide all empty creator/brand profile sections and verify populated content remains visible.
+- [x] Hide empty creator/brand profile sections; verified Madi’s populated projects and likes remain visible at 1280/855/390px, with liked-project privacy tests passing.
 - [x] Make both Save draft actions resume account setup when signed out and attach drafts before opening the owner's profile.
 - [x] Verify real signed-out save opens signup/login; test ownership claim and private-list readback without call confirmation.
 - [ ] Verify signed-in save and profile readback with the requesting account — no matching account exists for session minting; needs preview sign-in.

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function ThemeToggle() {
+export function ThemeToggle({ collapsed = false }: { collapsed?: boolean }) {
   const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'));
   useEffect(() => {
     const saved = localStorage.getItem('theme-override');
@@ -18,6 +18,6 @@ export function ThemeToggle() {
     localStorage.setItem('theme-override', next);
     document.documentElement.classList.toggle('dark', next === 'dark');
     window.dispatchEvent(new Event('theme-changed'));
-  }}>{dark ? <Sun size={16}/> : <Moon size={16}/>}<span>{dark ? 'Light' : 'Dark'}</span></Button>;
+  }}>{dark ? <Sun size={16}/> : <Moon size={16}/>} {!collapsed && <span>{dark ? 'Light' : 'Dark'}</span>}</Button>;
 }
 export default ThemeToggle;

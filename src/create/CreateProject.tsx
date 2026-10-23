@@ -682,9 +682,11 @@ export default function CreateProject() {
                   <input className="rz-in" value={x.rate} maxLength={60} aria-label={`Role ${i + 1} rate`} placeholder="e.g. $300/day" onChange={(e) => updateRole(x.id, { rate: e.target.value })} />
                   <Button variant="outline" className="rz-ico" aria-label="Remove role" onClick={() => setRoles((rs) => rs.filter((y) => y.id !== x.id))}><Trash2 size={13} /></Button>
                 </div>
-                <details className="rz-role-details-editor" open={Object.keys(roleDetails(x)).length > 0 || undefined}>
-                  <summary>Role details <span>(optional)</span></summary>
-                  <div className="rz-role-details-fields">{ROLE_DETAIL_FIELDS.map(({ key, label, placeholder, multiline }) => <label key={key}><span>{label}</span>{multiline ? <textarea className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} rows={3} maxLength={2000} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/> : <input className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} maxLength={300} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/>}</label>)}</div>
+                <div className="rz-role-details-editor">
+                  <div className="rz-role-details-caption">Role details <span>(timing optional)</span></div>
+                  <div className="rz-role-details-fields">{ROLE_DETAIL_FIELDS.map(({ key, label, placeholder, multiline, optional }) => <label key={key}><span>{label}{optional && <em>(optional)</em>}</span>{multiline ? <textarea className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} rows={3} maxLength={2000} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/> : <input className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} maxLength={300} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/>}</label>)}</div>
+                </div>
+
                 </details>
                 </div>
               ))}

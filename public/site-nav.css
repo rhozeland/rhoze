@@ -108,3 +108,4 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 
 .site-nav .nav-links{display:flex;align-items:center;gap:1.5rem;margin-left:auto}.site-nav .nav-links>a{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600}.site-nav + .mobile-menu>a,.sn-mobile>a{display:flex;align-items:center;gap:.5rem}.site-nav .nav-links>a[aria-current="page"],.site-nav .figma-nav-links>a[aria-current="page"]{text-decoration:underline;text-underline-offset:5px}@media(max-width:900px){.site-nav .nav-links{display:none}}
 .site-nav :is(.sn-signin,.nav-cta),.site-nav :is(.sn-signin,.nav-cta):hover{background:hsl(var(--site-nav-surface))!important;color:hsl(var(--site-nav-ink))!important}
+.site-nav :is(.sn-toggle,.menu-toggle){background:hsl(var(--site-nav-surface))!important;color:hsl(var(--site-nav-ink))!important}

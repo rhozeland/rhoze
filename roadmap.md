@@ -169,6 +169,10 @@
 - [x] Add shared More like this recommendations below all public archive, release and Exclusive project views.
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
+## Unified Discover
+- [x] Combine Work, People and Open calls with one search, matching category chips and existing card styles.
+- [x] Verify real public results, search/category filters, profile/project/Create links, view URLs and desktop/phone layouts; nine tests pass.
+
 ## Save draft account handoff
 - [x] Fix shared button contrast; checked nine public destinations in both themes, sign-in forms and all five workspace tabs at 1280/855/390px using a controlled workspace fixture; eight existing action tests pass.
 - [x] Hide empty creator/brand profile sections; verified Madi’s populated projects and likes remain visible at 1280/855/390px, with liked-project privacy tests passing.

@@ -1,0 +1,67 @@
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowUpRight, Search, Shuffle, Users, LayoutGrid, Megaphone } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import DiscoverExplorer from './DiscoverExplorer';
+import { hasOpenRoles } from './project-flow';
+import { discoverView, matchesDirectory, PEOPLE_ROLES, type DiscoverView } from './discover-directory';
+import './discover-directory.css';
+
+type Person = { id: string; slug: string | null; display_name: string; photo_url: string | null; disciplines: string[] | null; bio: string | null; hourly_rate_cents: number | null; hourly_rate_max_cents: number | null; rating: number | null; completed_projects: number | null; trending: boolean | null };
+type Call = { slug: string; title: string; creator_name: string; answers: { roles?: { name: string; count?: number; rate?: string }[]; makers?: unknown; description?: string } | null };
+const views = [{ id: 'work', label: 'Work', icon: LayoutGrid }, { id: 'people', label: 'People', icon: Users }, { id: 'open-calls', label: 'Open calls', icon: Megaphone }] as const;
+const rate = (p: Person) => {
+  if (!p.hourly_rate_cents || p.hourly_rate_cents <= 0) return 'Rate on request';
+  const f = (n: number) => '$' + (n / 100).toLocaleString('en-CA');
+  return `Starting from ${f(p.hourly_rate_cents)}${p.hourly_rate_max_cents && p.hourly_rate_max_cents > p.hourly_rate_cents ? '–' + f(p.hourly_rate_max_cents) : ''}/hr`;
+};
+export default function DiscoverDirectory() {
+  const [view, setView] = useState<DiscoverView>(() => discoverView(new URLSearchParams(location.search).get('view')));
+  const [query, setQuery] = useState(''), [category, setCategory] = useState('All'), [people, setPeople] = useState<Person[]>([]), [calls, setCalls] = useState<Call[]>([]);
+  const [loading, setLoading] = useState(true), [error, setError] = useState(''), [page, setPage] = useState(1);
+  const load = async () => {
+    setLoading(true); setError('');
+    try {
+      const [p, c] = await Promise.all([
+        supabase.from('creator_directory').select('id,slug,display_name,photo_url,disciplines,bio,hourly_rate_cents,hourly_rate_max_cents,rating,completed_projects,trending').eq('approved', true).eq('is_public', true).neq('account_kind', 'supporter').order('created_at', { ascending: false }),
+        supabase.from('releases').select('slug,title,creator_name,answers').eq('status', 'published').order('published_at', { ascending: false }),
+      ]);
+      if (p.error || c.error) throw Error();
+      setPeople((p.data || []).filter(p => p.slug) as Person[]);
+      setCalls((c.data || []).filter(c => c.slug && hasOpenRoles(c.answers as Call['answers'])) as Call[]);
+    } catch { setError('People and open calls could not load. Please try again.'); }
+    finally { setLoading(false); }
+  };
+  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    const url = new URL(location.href); if (view === 'work') url.searchParams.delete('view'); else url.searchParams.set('view', view);
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+    document.body.dataset.discoverView = view;
+    window.dispatchEvent(new CustomEvent('rz-discover-work', { detail: { query, category: category === 'All' ? 'portfolio' : category.toLowerCase() } }));
+    const input = document.getElementById('projectSearch') as HTMLInputElement | null;
+    if (input) input.value = query;
+  }, [view, query, category]);
+  const changeView = (next: DiscoverView) => { setView(next); setCategory('All'); setPage(1); };
+  const roles = useMemo(() => Array.from(new Set(calls.flatMap(c => c.answers?.roles?.map(r => r.name).filter(Boolean) || []))).sort(), [calls]);
+  const chips = view === 'work' ? ['All', 'Visual', 'Audio', 'Development'] : view === 'people' ? ['All', ...PEOPLE_ROLES] : ['All', ...roles];
+  const filteredPeople = people.filter(p => matchesDirectory([p.display_name, p.bio, ...(p.disciplines || [])].join(' '), p.disciplines || [], query, category));
+  const filteredCalls = calls.filter(c => matchesDirectory([c.title, c.creator_name, c.answers?.description, ...(c.answers?.roles?.map(r => r.name) || [])].join(' '), c.answers?.roles?.map(r => r.name) || [], query, category));
+  return <section className="rz-discovery-hub">
+    <div className="rz-discovery-top"><h1>Discover</h1><div role="group" aria-label="Discover section" className="rz-discovery-switch">{views.map(v => <Button key={v.id} variant="outline" aria-pressed={view === v.id} onClick={() => changeView(v.id)}><v.icon size={15}/>{v.label}</Button>)}</div><Button asChild><a href="/create.html?new=1">Create a project<ArrowUpRight size={15}/></a></Button></div>
+    <div className="rz-discovery-search-row"><label className="rz-discovery-search"><Search size={17}/><input type="search" aria-label="Search Discover" placeholder={view === 'work' ? 'Search projects…' : view === 'people' ? 'Search people or skills…' : 'Search projects or roles…'} value={query} onChange={e => { setQuery(e.target.value); setPage(1); }}/></label>{view === 'work' && <Button variant="outline" size="icon" aria-label="Shuffle projects" title="Shuffle projects" onClick={() => document.getElementById('shuffleToggle')?.click()}><Shuffle size={16}/></Button>}</div>
+    <div className="rz-discovery-chips" role="group" aria-label={view === 'work' ? 'Work categories' : 'Filter by role'}>{chips.map(c => <Button key={c} variant="outline" aria-pressed={category === c} onClick={() => { setCategory(c); setPage(1); }}>{c === 'All' ? view === 'work' ? 'All work' : view === 'people' ? 'All people' : 'All open calls' : c}</Button>)}</div>
+    {view === 'work' ? <details className="rz-discovery-explore"><summary>Globe & Flow</summary><DiscoverExplorer/></details> : <>
+      {loading ? <p role="status" className="rz-directory-status">Loading {view === 'people' ? 'people' : 'open calls'}…</p> : error ? <div role="alert" className="rz-directory-status">{error}<Button variant="outline" onClick={load}>Retry</Button></div> : <>
+      <p role="status" className="rz-directory-status">{view === 'people' ? `${filteredPeople.length} people` : `${filteredCalls.length} open calls`}</p>
+      <div className="rz-directory-grid">{view === 'people' ? filteredPeople.slice((page - 1) * 15, page * 15).map(p => <article className="rz-person-card" key={p.id}>
+        <a href={'/creator/' + encodeURIComponent(p.slug || '')} className="rz-person-portrait" aria-label={'View profile for ' + p.display_name}>{p.photo_url ? <img src={p.photo_url} alt={p.display_name} loading="lazy"/> : <span>{p.display_name.charAt(0)}</span>}</a>
+        <div className="rz-person-title"><h2>{p.display_name}</h2>{p.rating !== null && <small className="rz-person-rating">{Number(p.rating).toFixed(1)} ★</small>}</div>
+        {p.trending && <small className="rz-person-trending">Trending</small>}<p>{(p.disciplines || []).join(' · ')}</p><p>{rate(p)}</p>{!!p.completed_projects && <small>{p.completed_projects} completed projects</small>}
+        <Button variant="outline" asChild><a href={'/creator/' + encodeURIComponent(p.slug || '')}>View profile<ArrowUpRight size={14}/></a></Button>
+      </article>) : filteredCalls.map(c => <article key={c.slug} className="rz-call-card"><div className="rz-person-title"><h2><a href={'/release/' + encodeURIComponent(c.slug)}>{c.title}</a></h2><small className="rz-person-trending">Open call</small></div><p>{c.creator_name}</p><div className="rz-call-roles">{c.answers?.roles?.map((r, i) => r.name?.trim() && <Button variant="outline" asChild key={i}><a href={'/release/' + encodeURIComponent(c.slug) + '?apply=' + i}>{r.name}{Number(r.count) > 1 ? ' ×' + r.count : ''}{r.rate ? ' · ' + r.rate : ''}<ArrowUpRight size={13}/></a></Button>)}</div><Button variant="outline" asChild><a href={'/release/' + encodeURIComponent(c.slug)}>View project<ArrowUpRight size={14}/></a></Button></article>)}</div>
+      {(view === 'people' ? !filteredPeople.length : !filteredCalls.length) && <p className="rz-directory-empty">{query || category !== 'All' ? 'No matches. Try another search or role.' : view === 'people' ? 'No public people listed yet.' : 'No open calls right now.'}</p>}
+      {view === 'people' && filteredPeople.length > 15 && <nav className="rz-directory-pages" aria-label="People pages">{Array.from({ length: Math.ceil(filteredPeople.length / 15) }, (_, i) => <Button key={i} variant="outline" aria-current={page === i + 1 ? 'page' : undefined} onClick={() => setPage(i + 1)}>{i + 1}</Button>)}</nav>}
+      </>}
+    </>}
+  </section>;
+}

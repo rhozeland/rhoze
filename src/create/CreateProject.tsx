@@ -19,6 +19,8 @@ import { Info } from "lucide-react";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
 import { completeDraftHandoff, PENDING_DRAFT_KEY } from "./draft-handoff";
+import RoleDetails from './RoleDetails';
+import { ROLE_DETAIL_FIELDS, roleDetails, type RoleDetails as RoleDetailValues } from './role-details';
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -31,7 +33,7 @@ function getToken() {
   return t;
 }
 
-type Role = { id: string; name: string; count: string; rate: string };
+type Role = { id: string; name: string; count: string; rate: string } & RoleDetailValues;
 type PType = "artist" | "brand";
 
 // The wizard is now a single merged 4-step flow shared by both project types.
@@ -234,7 +236,7 @@ export default function CreateProject() {
       setPeople(team || []);
       const lt: PType = r.answers?.project_type === "brand" ? "brand" : "artist";
       setPtype(lt);
-      { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "" }))); }
+      { setTalentPct(Number(r.answers?.talent_pct ?? 15)); setRoles((r.answers?.roles || []).map((x: any) => ({ id: uid(), name: x.name || "", count: String(x.count ?? ""), rate: x.rate || "", ...roleDetails(x) }))); }
 
       // Resolve the step to reopen on: new wizard_step keys win, otherwise map
       // the old key (or old numeric current_step) onto the new 4-step flow.
@@ -269,7 +271,7 @@ export default function CreateProject() {
       ...originalAnswers, idea_question: ideaIndex, timeline_mode: timelineMode, deadline,
       wizard_step: FLOW[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(),
       category, project_type: ptype, need_quote: needQuote, timeline, makers, city: city.trim(), country,
-      ...{ talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim() })) },
+      ...{ talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim(), ...roleDetails(x) })) },
     },
     budget_cents: budgetCents, artist_pct: artistPct + tPct, fee_pct: feePct, cause_pct: causePct, cause_name: causeName.trim(),
     milestones: rows.map(({ title, deliverable, amount_cents }) => ({ title: title.trim(), deliverable: deliverable.trim(), amount_cents })),
@@ -673,11 +675,17 @@ export default function CreateProject() {
             <div className="rz-inv" style={{ marginTop: ".9rem" }}>
               <div className="rz-roles-h"><span>Role</span><span>People</span><span>Rate</span><span /></div>
               {roles.map((x, i) => (
-                <div className="rz-role" key={x.id}>
+                <div className="rz-role-editor" key={x.id}>
+                <div className="rz-role">
                   <input className="rz-in" value={x.name} maxLength={80} aria-label={`Role ${i + 1} name`} placeholder="e.g. Model" onChange={(e) => updateRole(x.id, { name: e.target.value })} />
                   <input className="rz-in" inputMode="numeric" value={x.count} maxLength={3} aria-label={`Role ${i + 1} people needed`} placeholder="1" onChange={(e) => updateRole(x.id, { count: e.target.value.replace(/[^0-9]/g, "") })} />
                   <input className="rz-in" value={x.rate} maxLength={60} aria-label={`Role ${i + 1} rate`} placeholder="e.g. $300/day" onChange={(e) => updateRole(x.id, { rate: e.target.value })} />
                   <Button variant="outline" className="rz-ico" aria-label="Remove role" onClick={() => setRoles((rs) => rs.filter((y) => y.id !== x.id))}><Trash2 size={13} /></Button>
+                </div>
+                <details className="rz-role-details-editor" open={Object.keys(roleDetails(x)).length > 0 || undefined}>
+                  <summary>Role details <span>(optional)</span></summary>
+                  <div className="rz-role-details-fields">{ROLE_DETAIL_FIELDS.map(({ key, label, placeholder, multiline }) => <label key={key}><span>{label}</span>{multiline ? <textarea className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} rows={3} maxLength={2000} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/> : <input className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} maxLength={300} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/>}</label>)}</div>
+                </details>
                 </div>
               ))}
               {!roles.length && <div className="rz-note" style={{ padding: ".8rem" }}>No roles yet. Add one below.</div>}
@@ -731,7 +739,7 @@ export default function CreateProject() {
                 <div className="rz-inv" style={{ marginBottom: ".9rem" }}>
                   {roles.filter((x) => x.name.trim()).map((x) => (
                     <div key={x.id} className="rz-row" style={{ gridTemplateColumns: "1fr auto auto", fontSize: ".78rem", gap: ".8rem" }}>
-                      <b style={{ minWidth: 0, wordBreak: "break-word" }}>{x.name}</b>
+                      <div className="min-w-0"><b>{x.name}</b><RoleDetails role={x}/></div>
                       <span className="rz-opt">{Math.max(1, parseInt(x.count) || 1)} needed</span>
                       <span className="rz-amt">{x.rate || "Rate open"}</span>
                     </div>

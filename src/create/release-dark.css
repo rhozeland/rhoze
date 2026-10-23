@@ -5,6 +5,11 @@
 .rz-release-dark .rz-h2,.rz-release-dark b,.rz-release-dark .rz-bylink{color:hsl(var(--wst))}
 .rz-rd-tabs{display:flex;flex-wrap:wrap;gap:.2rem;width:max-content;max-width:100%;margin:0 0 1rem!important}
 .rz-rd-main{min-width:0}
+.rz-opening-details{grid-column:1/-1;min-width:0}
+.rz-opening-details:has(> :empty),.rz-opening-details:empty{display:none}
+.rz-opening-details .rz-role-detail-display{display:grid;gap:12px;margin:6px 0;font-size:13px}
+.rz-opening-details dt{font-size:11px;color:hsl(var(--wsm));margin-bottom:3px}
+.rz-opening-details dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
 .rz-release-dark #open-roles{scroll-margin-top:90px}
 .rz-release-dark .rz-role-target{background:hsl(var(--wsp));box-shadow:inset 3px 0 hsl(var(--wsy));scroll-margin-top:90px}
 .rz-rd-side{text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}

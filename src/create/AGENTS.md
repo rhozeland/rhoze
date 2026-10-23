@@ -1,4 +1,5 @@
 # Creation and release views
+- Keep optional role details in release answers using role-details normalization for save/restore, and share the display across Review and public openings; this preserves the existing owner-checked save path without new storage.
 - Discover role links use release-navigation to select and scroll to advertised openings without auto-opening applications; open-role visibility is independent of private team details so directory links never reach a hidden section.
 
 - Crop project covers with react-easy-crop and upload a flattened 16:9 image, so existing project cards and pages preserve the chosen framing without schema changes.

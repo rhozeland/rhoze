@@ -38,7 +38,7 @@ export function rewardEntryLabel(entry: Pick<RewardEntry, "kind" | "reason">): s
   return entry.reason || KIND_LABEL[entry.kind] || entry.kind;
 }
 
-export function RewardsCard({ userId }: { userId: string }) {
+export function RewardsCard({ userId, hideEmpty = false }: { userId: string; hideEmpty?: boolean }) {
   const [balance, setBalance] = useState<number | null>(null);
   const [entries, setEntries] = useState<RewardEntry[]>([]);
   const [err, setErr] = useState(false);
@@ -77,6 +77,7 @@ export function RewardsCard({ userId }: { userId: string }) {
     return () => { off = true; };
   }, [userId, tick]);
 
+  if (hideEmpty && (balance === null || (balance === 0 && !entries.length && !sends.length))) return null;
   return (
     <section className="rz-pf-sec rz-rewards-card" aria-label="$RHOZE rewards">
       <h2>Rewards balance</h2>
@@ -85,7 +86,7 @@ export function RewardsCard({ userId }: { userId: string }) {
         <strong>{err ? "—" : formatRhoze(balance)}</strong>
       </div>
 
-      <div className="rz-sup-block">
+      {(!hideEmpty || entries.length > 0) && <div className="rz-sup-block">
         <h3>Recent activity</h3>
         {err ? (
           <p className="rz-pf-empty">Couldn't load your rewards right now.</p>
@@ -103,7 +104,7 @@ export function RewardsCard({ userId }: { userId: string }) {
             ))}
           </ul>
         )}
-      </div>
+      </div>}
 
       <div className="rz-sup-block">
         <h3>How to earn</h3>

@@ -15,6 +15,7 @@ import { X, Share2, Fingerprint } from "lucide-react";
 import ProjectDiscussion from "./ProjectDiscussion";
 import ProjectStory from "./ProjectStory";
 import ProjectRewards from "./ProjectRewards";
+import RelatedProjects from "./RelatedProjects";
 import './leaderboard.css';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
@@ -396,6 +397,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           </>
         )}
       </div>
+
+      {r && <RelatedProjects href={`/release/${slug}`} artist={r.creator_name} categories={r.answers?.category} />}
 
       {applyIdx !== null && r && (
         <div className="rz-modal" onClick={() => !applyBusy && setApplyIdx(null)}>

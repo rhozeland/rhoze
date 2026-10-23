@@ -116,6 +116,15 @@
 .rz-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.1rem}
 .rz-chipbtn{border:1px solid hsl(var(--strong));background:transparent;color:hsl(var(--ink));border-radius:999px;padding:.32rem .85rem;font-size:.7rem;font-weight:600;cursor:pointer;transition:.15s}
 .rz-chipbtn.on{background:hsl(var(--ink));color:hsl(var(--card))}
+/* Pair authentication button foregrounds with their surface, independent of
+   the global outline-button theme and stylesheet load order. */
+.rz-auth :is(.rz-btn,.rz-chipbtn){background:hsl(var(--ink));color:hsl(var(--card));border-color:hsl(var(--ink))}
+.rz-auth :is(.rz-btn,.rz-chipbtn):hover{background:hsl(var(--strong));color:hsl(var(--card));border-color:hsl(var(--strong))}
+.rz-auth .rz-chipbtn.on{outline:2px solid hsl(var(--strong));outline-offset:2px}
+.rz-auth :is(.rz-btn,.rz-chipbtn):focus-visible{outline:2px solid hsl(var(--ink));outline-offset:3px}
+.rz-auth :is(.rz-btn,.rz-chipbtn):disabled{background:hsl(var(--strong));color:hsl(var(--card));border-color:hsl(var(--strong));opacity:.75}
+.rz-auth .rz-textlink,.rz-auth .rz-textlink:hover{background:transparent;color:hsl(var(--ink));border:0}
+.rz-auth.rz-modal>.rz-card{max-height:calc(100dvh - 2rem);overflow-y:auto}
 .rz-feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.9rem}
 .rz-feed-card{display:flex;flex-direction:column;gap:.6rem;border:1px solid hsl(var(--line));border-radius:16px;padding:.7rem;background:hsl(var(--card));text-decoration:none;color:hsl(var(--ink));transition:.15s}
 .rz-feed-card:hover{border-color:hsl(var(--strong));transform:translateY(-2px)}

@@ -78,7 +78,7 @@ export default function AuthModal({ onClose, onDone, redirectTo, intro, inline =
   };
 
   return (
-    <div className={inline ? "rz-auth-inline" : "rz-modal"} onClick={() => !inline && !busy && onClose()}>
+    <div className={`rz-auth ${inline ? "rz-auth-inline" : "rz-modal"}`} onClick={() => !inline && !busy && onClose()}>
       <div className={inline ? "rz-auth-inline-content" : "rz-card"} style={inline ? undefined : { maxWidth: 400 }} onClick={(e) => e.stopPropagation()}>
         {sent ? (
           <div className="rz-head" style={{ marginBottom: 0 }}>

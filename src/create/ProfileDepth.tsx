@@ -23,9 +23,7 @@ export function ProfileDepth() {
   }, []);
   return (
     <div className="rz-pf-depth" aria-hidden="true">
-      <span className="rz-pf-orb a" /><span className="rz-pf-orb b" /><span className="rz-pf-orb c" />
       <div className="rz-pf-cube"><i className="f1" /><i className="f2" /><i className="f3" /><i className="f4" /><i className="f5" /><i className="f6" /></div>
-      <span className="rz-pf-ring" />
     </div>
   );
 }

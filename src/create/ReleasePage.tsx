@@ -19,6 +19,8 @@ import RelatedProjects from "./RelatedProjects";
 import './leaderboard.css';
 import './board.css';
 import './release-dark.css';
+import { hasOpenRoles } from './project-flow';
+import { openRoleTarget } from './release-navigation';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -66,6 +68,23 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [priceUsd, setPriceUsd] = useState<number | null>(null);
   const [change24h, setChange24h] = useState<number | null>(null);
   const unlockRef = useRef<HTMLHeadingElement>(null);
+  const rolesRef = useRef<HTMLElement>(null);
+  const roleTarget = openRoleTarget(location.search, location.hash, r?.answers?.roles?.length || 0);
+  const rolesVisible = isOwner || hasOpenRoles(r?.answers);
+
+  useEffect(() => {
+    if (!r || !rolesVisible || !roleTarget.requested) return;
+    setTab('people');
+  }, [r, rolesVisible, roleTarget.requested]);
+
+  useEffect(() => {
+    if (tab !== 'people' || !roleTarget.requested || !rolesVisible) return;
+    const frame = requestAnimationFrame(() => {
+      const target = roleTarget.index === null ? rolesRef.current : document.getElementById(`open-role-${roleTarget.index}`);
+      target?.scrollIntoView({ block: 'center', behavior: 'instant' });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [tab, r, rolesVisible, roleTarget.requested, roleTarget.index]);
 
   useEffect(() => {
     (supabase.from as any)("releases")
@@ -284,7 +303,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
               const list: [typeof tab, string][] = [["overview", "Overview"]];
               if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
-              if ((isOwner || pubs.team) && roleCount > 0) list.push(["people", "People"]);
+              if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
               if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Budget"]);
               list.push(["unlocks", "Unlocks"]);
               if (merged) return <div className="rz-ws-eyebrow rz-rd-merged-label">Public page · what visitors see</div>;
@@ -367,19 +386,19 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
             </>}
 
-            {show("people") && (isOwner || pubs.team) && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
-              <>
+            {show("people") && rolesVisible && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
+              <section id="open-roles" ref={rolesRef} aria-label="Open roles">
                 <h2 className="rz-h2">We're hiring</h2>
                 <div className="rz-inv">
                   <div className="rz-inv-h" style={{ gridTemplateColumns: "1fr 5rem 6rem" }}><span>Role</span><span>Spots</span><span style={{ textAlign: "right" }}>Rate</span></div>
                   {r.answers.roles.map((role: any, i: number) => (
-                    <div key={i} className="rz-row" style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
+                    <div key={i} id={`open-role-${i}`} className={`rz-row${roleTarget.index === i ? ' rz-role-target' : ''}`} style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
                       <div><b>{role.name}</b><div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{role.count} {Number(role.count) === 1 ? "spot" : "spots"}{role.rate ? ` · ${role.rate}` : ""}</div></div>
-                      <button className="rz-btn" style={{ padding: ".28rem .8rem", fontSize: ".68rem" }} onClick={() => openApply(i)}>Apply</button>
+                      <Button variant="outline" size="sm" onClick={() => openApply(i)}>Apply</Button>
                     </div>
                   ))}
                 </div>
-              </>
+              </section>
             )}
 
             {show("unlocks") && <>
@@ -430,7 +449,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a>
                 {pumpUrl && <a className="rz-btn" href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a>}
               </div>
-              {(isOwner || pubs.team) && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("people")}><h4>Open roles</h4>
+              {rolesVisible && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("people")}><h4>Open roles</h4>
                 {r.answers.roles.slice(0, 4).map((role: any, i: number) => <div className="rz-side-row" key={i}><span>{role.name}</span><small>{role.rate || `${role.count || 1} spot`}</small></div>)}
               </button>}
             </aside>}

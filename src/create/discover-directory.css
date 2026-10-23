@@ -26,3 +26,27 @@
 html.dark .page-projects .rz-discovery-hub{--directory-page-ink:0 0% 94%;--directory-page-muted:0 0% 72%}
 .page-projects .rz-discovery-top h1,.page-projects .rz-discovery-explore>summary{color:hsl(var(--directory-page-ink))}
 .page-projects .rz-directory-status,.page-projects .rz-directory-empty{color:hsl(var(--directory-page-muted))}
+/* Compact editorial identities and opening slips. */
+.rz-directory-grid{gap:10px;align-items:start}
+.rz-person-card,.rz-call-card{--card:var(--directory-surface);--ink:var(--directory-ink);--mut:var(--directory-muted);--line:var(--directory-line);--alt:var(--directory-aqua);--card-tint:var(--directory-aqua);position:relative;color:hsl(var(--ink));padding:14px;gap:10px;background:linear-gradient(125deg,hsl(var(--card-tint)/.6),hsl(var(--card)) 65%);box-shadow:var(--directory-shadow);transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease}
+.rz-person-card:nth-child(3n+2),.rz-call-card:nth-child(3n+2){--card-tint:var(--directory-peach)}
+.rz-person-card:nth-child(3n),.rz-call-card:nth-child(3n){--card-tint:var(--directory-yellow)}
+.rz-person-card:hover,.rz-call-card:hover,.rz-person-card:focus-within,.rz-call-card:focus-within{box-shadow:var(--directory-shadow-hover);border-color:hsl(var(--directory-muted));transform:translateY(-2px)}
+.rz-person-card .rz-person-portrait{width:58px;height:58px;border:1px solid hsl(var(--line));background:hsl(var(--card-tint));box-shadow:var(--shadow-soft)}
+.rz-person-info h2,.rz-call-identity h2{font-size:15px;font-weight:650}
+.rz-person-card .rz-person-signals{gap:8px;font-size:10px;margin-left:70px}
+.rz-person-footer{padding-top:8px;gap:8px}
+.rz-person-footer p{color:hsl(var(--ink));font-size:11px}
+.rz-person-footer a,.rz-call-heading>a{min-height:28px;width:28px;border-radius:50%}
+.rz-person-footer a[data-button-variant=default],.rz-call-heading>a[data-button-variant=default]{background:hsl(var(--primary));color:hsl(var(--primary-foreground));border-color:hsl(var(--primary))}
+.rz-call-card{border-top:3px solid hsl(var(--card-tint));gap:10px}
+.rz-call-heading{align-items:center;gap:8px}
+.rz-discovery-hub .rz-call-roles a{padding:8px 6px;min-height:34px;border-bottom:1px solid hsl(var(--line)/.5);border-radius:0}
+.rz-discovery-hub .rz-call-roles a:last-child{border-bottom:0}
+.rz-discovery-hub .rz-call-roles a:hover{background:hsl(var(--card-tint)/.65)}
+.rz-call-role-meta{flex-shrink:1;flex-wrap:wrap;gap:6px;max-width:45%}
+.rz-call-role-meta small{overflow-wrap:anywhere;min-width:0}
+.page-projects .rz-discovery-hub .rz-discovery-search,.page-projects .rz-discovery-hub .rz-discovery-role-filter{background:hsl(var(--directory-surface));color:hsl(var(--directory-ink));border-color:hsl(var(--directory-line));box-shadow:var(--directory-shadow)}
+.page-projects .rz-discovery-search input{color:hsl(var(--directory-ink))}
+.page-projects .rz-discovery-search input::placeholder{color:hsl(var(--directory-muted))}
+@media(prefers-reduced-motion:reduce){.rz-person-card,.rz-call-card{transition:none}.rz-person-card:hover,.rz-call-card:hover,.rz-person-card:focus-within,.rz-call-card:focus-within{transform:none}}

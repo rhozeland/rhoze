@@ -71,6 +71,15 @@
     --gradient-mint: linear-gradient(135deg, hsl(170 60% 55%), hsl(170 80% 65%));
     --shadow-soft: 0 4px 24px -4px hsl(0 0% 0% / 0.06);
     --shadow-lift: 0 8px 40px -8px hsl(0 0% 0% / 0.08);
+    --directory-surface: 0 0% 98%;
+    --directory-ink: 0 0% 10%;
+    --directory-muted: 0 0% 38%;
+    --directory-line: 0 0% 80%;
+    --directory-peach: 20 75% 89%;
+    --directory-aqua: 165 44% 86%;
+    --directory-yellow: 48 75% 87%;
+    --directory-shadow: 0 4px 8px hsl(0 0% 0% / .07), 0 12px 24px -16px hsl(0 0% 0% / .3);
+    --directory-shadow-hover: 0 8px 16px hsl(0 0% 0% / .1), 0 18px 30px -16px hsl(0 0% 0% / .35);
     --pass-sky: 201 96% 63%;
     --house-chart: 163 52% 32%;
     --house-card-shade: linear-gradient(transparent, hsl(0 0% 0% / .8));
@@ -121,6 +130,15 @@
     --gradient-mint: linear-gradient(135deg, hsl(170 60% 40%), hsl(170 80% 50%));
     --shadow-soft: 0 4px 24px -4px hsl(0 0% 0% / 0.3);
     --shadow-lift: 0 8px 40px -8px hsl(0 0% 0% / 0.4);
+    --directory-surface: 240 5% 12%;
+    --directory-ink: 0 0% 95%;
+    --directory-muted: 0 0% 72%;
+    --directory-line: 240 4% 28%;
+    --directory-peach: 18 24% 21%;
+    --directory-aqua: 163 23% 19%;
+    --directory-yellow: 48 23% 20%;
+    --directory-shadow: 0 4px 8px hsl(0 0% 0% / .24), 0 12px 24px -12px hsl(0 0% 0% / .65);
+    --directory-shadow-hover: 0 8px 16px hsl(0 0% 0% / .32), 0 18px 30px -12px hsl(0 0% 0% / .75);
   }
 }
 

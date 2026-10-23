@@ -170,7 +170,7 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Unified Discover
-- [ ] Simplify role filters and profile cards; verify live filtering, profile links and narrow layouts.
+- [x] Simplify role filters and profile cards; verified real role filtering, search, profile links and layouts at 1280/855/390px.
 - [x] Combine Work, People and Open calls with one search, matching category chips and existing card styles.
 - [x] Verify real public results, search/category filters, profile/project/Create links, view URLs and desktop/phone layouts; nine tests pass.
 

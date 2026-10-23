@@ -465,11 +465,13 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
       {applyIdx !== null && r && (
         <div className="rz-modal" onClick={() => !applyBusy && setApplyIdx(null)}>
-          <div className="rz-card" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
+          <div className="rz-card rz-apply-card" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
             <div className="rz-head" style={{ marginBottom: "1rem" }}>
               <h1 style={{ fontSize: "1.1rem" }}>Apply: {r.answers.roles[applyIdx]?.name}</h1>
               <p>{r.title}{r.answers.roles[applyIdx]?.rate ? ` · ${r.answers.roles[applyIdx].rate}` : ""}</p>
             </div>
+            <RoleDetails role={r.answers.roles[applyIdx] ?? {}} />
+
             {applyDone ? (
               <>
                 <p style={{ fontSize: ".85rem" }}>{signedIn ? "Thanks, your application was sent. A copy is in your Messages and the project owner's inbox." : "Thanks, your application was sent. Sign in next time to get a copy in your Messages and chat with the owner."}</p>

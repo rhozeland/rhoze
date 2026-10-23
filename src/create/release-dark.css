@@ -26,3 +26,6 @@
 .rz-rd-merged-label{padding:1rem 0 .4rem;border-top:1px solid hsl(var(--wsl));margin-bottom:.6rem}
 .rz-ws.rz-ws-dark:has(+ .rz-release-merged){border-radius:16px 16px 0 0;padding-bottom:2rem}
 .rz-release-merged.rz-card{max-width:1440px!important;width:100%!important;box-sizing:border-box;margin-inline:auto!important;padding-inline:1.5rem!important}
+/* Apply modal: role details block + scrollable card when details are long */
+.rz-apply-card{max-height:calc(100dvh - 2rem);overflow-y:auto}
+.rz-apply-card .rz-role-detail-display{margin:0 0 14px;padding:10px 12px;border:1px solid hsl(var(--line));border-radius:10px;font-size:12px}

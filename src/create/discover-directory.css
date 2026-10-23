@@ -14,13 +14,12 @@
 .page-projects .rz-discovery-top{flex-wrap:nowrap;justify-content:space-between;gap:16px}
 .page-projects .rz-discovery-top h1{width:auto;font-size:26px}
 .page-projects .rz-discovery-top>a{width:auto;margin:0;flex:none}
-.page-projects .rz-discovery-switch{display:flex;align-items:center;gap:0;width:100%;margin-top:20px;border-bottom:1px solid hsl(var(--line))}
-.page-projects .rz-discovery-switch button{position:relative;flex:none;min-height:46px;padding:10px 22px;background:transparent!important;color:hsl(var(--mut))!important;border:0;border-radius:0;box-shadow:none;font-size:15px;font-weight:400;white-space:nowrap;transition:color .18s ease}
-.page-projects .rz-discovery-switch button:first-child{padding-left:0;padding-right:24px}
-.page-projects .rz-discovery-switch button+button:before{content:"";position:absolute;left:0;top:16px;height:14px;width:1px;background:hsl(var(--line))}
-.page-projects .rz-discovery-switch button[aria-pressed=true]{color:hsl(var(--ink))!important;font-weight:600}
-.page-projects .rz-discovery-switch button[aria-pressed=true]:after{content:"";position:absolute;bottom:-1px;left:22px;right:22px;height:2px;background:hsl(var(--ink))}
-.page-projects .rz-discovery-switch button:first-child:after{left:0;right:24px}
-.page-projects .rz-discovery-switch button:hover{color:hsl(var(--ink))!important}
-@media(max-width:520px){.page-projects .rz-discovery-switch{margin-top:14px}.page-projects .rz-discovery-switch button{padding:10px 18px;font-size:14px}.page-projects .rz-discovery-switch button[aria-pressed=true]:after{left:18px;right:18px}.page-projects .rz-discovery-switch button:first-child:after{left:0;right:24px}}
+.page-projects .rz-discovery-switch{display:flex;align-items:stretch;gap:0;width:100%;margin-top:20px;border-bottom:1px solid hsl(var(--line));background:hsl(var(--card))}
+.page-projects .rz-discovery-switch button{position:relative;flex:1;min-height:52px;padding:12px 22px;background:transparent!important;color:hsl(var(--ink))!important;border:0;border-radius:0;box-shadow:none;font-size:17px;font-weight:600;white-space:nowrap;opacity:1!important;cursor:pointer;transition:background-color .18s ease}
+.page-projects .rz-discovery-switch button+button{border-left:1px solid hsl(var(--line))}
+.page-projects .rz-discovery-switch button[aria-pressed=true]{background:hsl(var(--alt))!important;color:hsl(var(--ink))!important;font-weight:700}
+.page-projects .rz-discovery-switch button[aria-pressed=true]:after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:4px;background:hsl(var(--ink))}
+.page-projects .rz-discovery-switch button:hover{background:hsl(var(--alt))!important;color:hsl(var(--ink))!important;text-decoration:underline;text-underline-offset:5px}
+.page-projects .rz-discovery-switch button:focus-visible{outline:2px solid hsl(var(--ink));outline-offset:-4px}
+@media(max-width:520px){.page-projects .rz-discovery-switch{margin-top:14px}.page-projects .rz-discovery-switch button{padding:12px 8px;font-size:15px}}
 @media(prefers-reduced-motion:reduce){.page-projects .rz-discovery-switch button{transition:none}}

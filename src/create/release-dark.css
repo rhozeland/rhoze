@@ -29,3 +29,7 @@
 /* Apply modal: role details block + scrollable card when details are long */
 .rz-apply-card{max-height:calc(100dvh - 2rem);overflow-y:auto}
 .rz-apply-card .rz-role-detail-display{margin:0 0 14px;padding:10px 12px;border:1px solid hsl(var(--line));border-radius:10px;font-size:12px}
+.rz-release-dark .rz-public-canvas-content>.rz-cover{width:min(100%,360px);aspect-ratio:16/9;margin:0 0 16px;border-radius:8px}
+.rz-release-dark .rz-public-canvas-content>.rz-cover img{object-fit:contain;background:hsl(var(--wsp))}
+.rz-release-dark .rz-public-canvas-content>.rz-media{max-width:480px}
+.rz-release-dark .rz-media-stage.img{max-height:240px;min-height:0}

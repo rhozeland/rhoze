@@ -1,4 +1,5 @@
 # Creation and release views
+- Control embedded owner workspace navigation from ReleasePage with public-section extensions, so private editors and public views share one menu without sharing private data.
 - Share ProfileSections across creator and brand profiles; discover tabs from mounted nonempty sections so asynchronous owner drafts and private liked-list checks remain authoritative without duplicate data reads.
 - Scope People masonry styling to its own directory modifier, preserving the Work grid and Open Calls layout; use natural-height CSS columns and a stretched profile link for whole-card navigation.
 - Keep optional role details in release answers using role-details normalization for save/restore, and share the display across Review and public openings; this preserves the existing owner-checked save path without new storage.

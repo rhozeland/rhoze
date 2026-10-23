@@ -186,6 +186,7 @@
 - [ ] Verify signed-in save and profile readback with the requesting account — no matching account exists for session minting; needs preview sign-in.
 
 ## Discover coin badges
+- [ ] Compact the release cover and replace duplicated owner menus with one; verify signed-in section switching and public layout.
 - [x] Integrate Exclusive into the release Board; verified legacy redirect, Support/tab navigation, locked public previews, desktop/phone layout and navigation tests. Real holder signing remains wallet-dependent.
 - [x] Add a corner coin badge to every Discover project card whose own record carries a paired mint (release or archive), mirrored on all Discover copies.
 - [x] Verify the real paired project, archive pairing, duplicate protection and desktop/phone layouts; four badge tests pass.

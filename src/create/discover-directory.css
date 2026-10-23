@@ -10,3 +10,17 @@
 .rz-call-card{padding:18px;gap:14px;align-self:start}.rz-call-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.rz-call-identity{min-width:0}.rz-call-identity h2{margin:0;font-size:15px;line-height:1.35;font-weight:600;overflow-wrap:anywhere}.rz-call-identity h2 a{color:inherit;text-decoration:none}.rz-call-identity p{font-size:11px;color:hsl(var(--mut));margin-top:4px}.rz-call-heading>a{width:32px;min-height:32px;flex:none;padding:0}.rz-call-card .rz-call-roles{display:flex;flex-direction:column;gap:0;margin:0;border-top:1px solid hsl(var(--line));padding-top:4px}.rz-discovery-hub .rz-call-roles a{width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 0;min-height:38px;background:transparent;color:hsl(var(--ink));border-radius:4px;gap:12px}.rz-discovery-hub .rz-call-roles a:hover{background:hsl(var(--alt));color:hsl(var(--ink))}.rz-call-role-name{min-width:0;overflow-wrap:anywhere;font-size:12px}.rz-call-role-meta{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0;color:hsl(var(--mut))}.rz-call-role-meta small{font-size:11px}.rz-call-role-meta svg{flex:none}
 @media(max-width:860px){.rz-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rz-discovery-top{gap:12px}.rz-discovery-top h1{width:100%}.rz-discovery-top>a{margin-left:auto}}
 @media(max-width:520px){.page-projects .rz-discovery-hub{padding:20px 14px 14px}.rz-discovery-top{gap:10px}.rz-discovery-top>a{width:100%;margin:0}.rz-discovery-switch{width:100%}.rz-discovery-switch button{flex:1;padding:8px}.rz-directory-grid{grid-template-columns:1fr}}
+/* Editorial section navigation, not boxed actions. */
+.page-projects .rz-discovery-top{flex-wrap:nowrap;justify-content:space-between;gap:16px}
+.page-projects .rz-discovery-top h1{width:auto;font-size:26px}
+.page-projects .rz-discovery-top>a{width:auto;margin:0;flex:none}
+.page-projects .rz-discovery-switch{display:flex;align-items:center;gap:0;width:100%;margin-top:20px;border-bottom:1px solid hsl(var(--line))}
+.page-projects .rz-discovery-switch button{position:relative;flex:none;min-height:46px;padding:10px 22px;background:transparent!important;color:hsl(var(--mut))!important;border:0;border-radius:0;box-shadow:none;font-size:15px;font-weight:400;white-space:nowrap;transition:color .18s ease}
+.page-projects .rz-discovery-switch button:first-child{padding-left:0;padding-right:24px}
+.page-projects .rz-discovery-switch button+button:before{content:"";position:absolute;left:0;top:16px;height:14px;width:1px;background:hsl(var(--line))}
+.page-projects .rz-discovery-switch button[aria-pressed=true]{color:hsl(var(--ink))!important;font-weight:600}
+.page-projects .rz-discovery-switch button[aria-pressed=true]:after{content:"";position:absolute;bottom:-1px;left:22px;right:22px;height:2px;background:hsl(var(--ink))}
+.page-projects .rz-discovery-switch button:first-child:after{left:0;right:24px}
+.page-projects .rz-discovery-switch button:hover{color:hsl(var(--ink))!important}
+@media(max-width:520px){.page-projects .rz-discovery-switch{margin-top:14px}.page-projects .rz-discovery-switch button{padding:10px 18px;font-size:14px}.page-projects .rz-discovery-switch button[aria-pressed=true]:after{left:18px;right:18px}.page-projects .rz-discovery-switch button:first-child:after{left:0;right:24px}}
+@media(prefers-reduced-motion:reduce){.page-projects .rz-discovery-switch button{transition:none}}

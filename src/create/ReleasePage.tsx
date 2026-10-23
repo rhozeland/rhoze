@@ -22,6 +22,7 @@ import './release-dark.css';
 import { hasOpenRoles } from './project-flow';
 import { openRoleTarget } from './release-navigation';
 import RoleDetails from './RoleDetails';
+import PublicProjectCanvas from './PublicProjectCanvas';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -45,7 +46,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [r, setR] = useState<any>(undefined);
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
-  const [tab, setTab] = useState<"overview" | "roadmap" | "people" | "budget" | "unlocks">("overview");
+  const [tab, setTab] = useState<"board" | "overview" | "roadmap" | "people" | "budget" | "unlocks">("board");
   const [holds, setHolds] = useState(false);
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
@@ -252,7 +253,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   );
   const pubs = { ...DEFAULT_PUBLIC_SECTIONS, ...(r?.answers?.public_sections || {}) };
   const merged = !!(r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1");
-  const show = (k: typeof tab) => merged || tab === k;
+  const show = (k: typeof tab) => merged || tab === 'board' || tab === k;
   const closeProject = () => {
     if (window.self !== window.top && new URLSearchParams(location.search).get("projectView") === "1") {
       window.parent.postMessage("rhoze:close-project", location.origin);
@@ -302,7 +303,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </header>}
             {(() => {
               const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
-              const list: [typeof tab, string][] = [["overview", "Overview"]];
+              const list: [typeof tab, string][] = [["board", "Board"], ["overview", "Overview"]];
               if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
               if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
               if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Budget"]);
@@ -310,7 +311,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               if (merged) return <div className="rz-ws-eyebrow rz-rd-merged-label">Public page · what visitors see</div>;
               return <nav className="rz-ws-tabs rz-rd-tabs" role="tablist" aria-label="Project sections">{list.map(([k, l]) => <button key={k} role="tab" type="button" className="rz-ws-tab" aria-selected={tab === k} onClick={() => setTab(k)}>{l}</button>)}</nav>;
             })()}
-            <div className="rz-board-layout rz-rd-layout"><div className="rz-rd-main">
+            <div className="rz-board-layout rz-rd-layout"><div className="rz-rd-main"><PublicProjectCanvas>
             {show("overview") && <>
             <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
@@ -440,7 +441,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
             </>}
             {show("overview") && <ProjectDiscussion releaseId={r.id} />}
-            </div>
+            </PublicProjectCanvas></div>
             {!merged && <aside className="rz-board-side">
               {(isOwner || pubs.plan) && (r.milestones || []).length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("roadmap")}><h4>Roadmap</h4>
                 <div className="rz-side-big">{statuses.filter((x) => x === "Delivered").length}/{(r.milestones || []).length}</div>

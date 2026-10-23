@@ -12,10 +12,11 @@ import type { TeamPerson } from "./project-flow";
 import { money, uid } from "./shared";
 import "./workspace.css";
 import "./create-flow.css";
+import ProjectBoard from "./ProjectBoard";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
-type Tab = "overview" | "plan" | "team" | "money" | "payments";
+type Tab = "board" | "overview" | "plan" | "team" | "money" | "payments";
 export type PublicSections = { overview: boolean; plan: boolean; team: boolean; money: boolean };
 
 export const DEFAULT_PUBLIC_SECTIONS: PublicSections = { overview: true, plan: false, team: false, money: false };
@@ -31,7 +32,7 @@ const MAKERS_OPTIONS: { value: string; label: string }[] = [
 /** Owner-only workspace: Overview, Plan, Team & chat, Money tabs, each with a public-visibility switch.
  *  Saves through the existing owner-checked release_save(p_token, p_id, p_data) function. */
 export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (next: any) => void }) {
-  const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "overview"));
+  const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "board"));
   const [milestones, setMilestones] = useState<Milestone[]>(() => (r.milestones || []).map((m: any) => ({ id: m.id || uid(), title: m.title || "", deliverable: m.deliverable || "", amount_cents: Number(m.amount_cents) || 0, done: !!m.done })));
   const [makers, setMakers] = useState<string[]>(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
   const [people, setPeople] = useState<TeamPerson[]>([]);
@@ -129,14 +130,31 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
   const openRoles = useMemo(() => (Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0), [r.answers?.roles]);
 
   return (
-    <div className="rz-ws">
-      <ProjectCall releaseId={r.id} />
+    <div className="rz-ws rz-ws-dark">
+      <div className="rz-ws-top"><div><div className="rz-ws-eyebrow">{r.status === "published" ? "Public project" : "Private space"} · {milestones.length} {milestones.length === 1 ? "phase" : "phases"}</div><h1 className="rz-ws-title">{title || "Untitled project"}</h1></div>
       {coinLaunchRequested({ coin_mint: mint, answers: r.answers }) && <div className="rz-split" role="status" style={{ marginBottom: ".9rem" }}><div className="rz-split-row" style={{ gridTemplateColumns: "1fr" }}><b>Coin launch requested</b></div></div>}
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
-        {([["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]] as [Tab, string][]).map(([k, label]) => (
+        {([["board", "Board"], ["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]] as [Tab, string][]).map(([k, label]) => (
           <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>
         ))}
-      </div>
+      </div></div>
+      <ProjectCall releaseId={r.id} />
+
+      {tab === "board" && (
+        <div className="rz-board-layout">
+          <ProjectBoard releaseId={r.id} />
+          <aside className="rz-board-side">
+            <div className="rz-side-card"><h4>Roadmap</h4><div className="rz-side-big">{milestones.filter((m) => m.done).length}/{milestones.length}</div>
+              {milestones.map((m, i) => <div className="rz-side-row" key={m.id ?? i}><span>{m.title || `Phase ${i + 1}`}</span><small>{m.done ? "Done" : money(m.amount_cents || 0)}</small></div>)}
+              {!milestones.length && <Button variant="outline" type="button" className="rz-btn" onClick={() => setTab("plan")}>Add the first phase</Button>}
+            </div>
+            <div className="rz-side-card"><h4>Release as a coin</h4>
+              {mint ? <p>Paired with {ticker ? `$${ticker}` : "a coin"}.</p> : coinLaunchRequested({ coin_mint: mint, answers: r.answers }) ? <p>Coin launch requested. Rhozeland will add the coin once it's live.</p> : <><p>Let fans hold a piece of this release. Rhozeland handles the launch.</p>
+              <a className="rz-btn rz-side-cta" href="https://pump.fun/create" target="_blank" rel="noopener noreferrer">Launch on pump.fun</a><Button variant="outline" type="button" className="rz-btn" onClick={() => setTab("money")}>Have us run it</Button></>}
+            </div>
+          </aside>
+        </div>
+      )}
 
       {tab === "overview" && (
         <div>

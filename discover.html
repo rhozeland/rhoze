@@ -967,7 +967,7 @@
       get('portfolio_details?select=slug,coin_mint,coin_ticker&coin_mint=not.is.null&limit=500'),
       get('creator_directory?select=slug,display_name,user_id&is_public=eq.true&approved=eq.true&user_id=not.is.null&limit=1000')
     ]).then(function (res) {
-      var rels = res[0] || [], people = res[1] || [], archive = res[2] || [];
+      var rels = res[0] || [], archive = res[1] || [], people = res[2] || [];
       var profiles = indexCreatorProfiles(people);
       var byUser = profiles.byUser, byName = profiles.byName;
       window.__rzProfiles = byName;

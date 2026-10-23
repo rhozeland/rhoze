@@ -6,6 +6,7 @@ import Docs from "./pages/Docs";
 import Directory from "./pages/Directory";
 import Settings from "./pages/Settings";
 import TeamAdmin from "./pages/TeamAdmin";
+import WaitlistAdmin from "./pages/WaitlistAdmin";
 import Payouts from "./pages/Payouts";
 import Rewards from "./pages/Rewards";
 import Leaderboard from "./pages/Leaderboard";
@@ -117,6 +118,7 @@ export default function TeamApp() {
         <Route path="directory" element={<Directory />} />
         <Route path="settings" element={<Settings />} />
         <Route path="team-admin" element={<RequireSection path="/team-admin"><TeamAdmin /></RequireSection>} />
+        <Route path="waitlist" element={<WaitlistAdmin />} />
         <Route path="payouts" element={<Payouts />} />
         <Route path="roles" element={<Navigate to="/team-admin" replace />} />
         <Route path="invites" element={<Navigate to="/team-admin" replace />} />

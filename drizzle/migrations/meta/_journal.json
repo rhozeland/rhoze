@@ -260,6 +260,13 @@
       "when": 1792706256691,
       "tag": "0036_project_call_booking",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1792729601506,
+      "tag": "0037_early_access_waitlist",
+      "breakpoints": true
     }
   ]
 }

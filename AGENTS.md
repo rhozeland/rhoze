@@ -36,3 +36,4 @@
 - Link wallets only via signed-message proof (wallet-replace-external), trigger-guarded, because addresses alone prove nothing; credits only from confirmed payments.
 
 - Project calls are booked only through owner-checked `book_project_call` (slot, credit spend and release link in one transaction), because clients must never pick times or spend credits directly.
+- Keep waitlist submission/referral resolution in validated database functions, with admin-only list/export and thresholded public counts; duplicates never disclose share codes, because anonymous visitors must not access signup identities or referral ownership.

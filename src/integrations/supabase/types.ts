@@ -3538,6 +3538,44 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_entries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          project_line: string
+          referrer_id: string | null
+          role: string
+          share_code: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          project_line?: string
+          referrer_id?: string | null
+          role: string
+          share_code?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          project_line?: string
+          referrer_id?: string | null
+          role?: string
+          share_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlist_entries_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "waitlist_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       community_avatars: {
@@ -4248,6 +4286,29 @@ export type Database = {
         Args: { _code: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      waitlist_admin_list: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          project_line: string
+          referrals: number
+          referrer: string
+          role: string
+          share_code: string
+        }[]
+      }
+      waitlist_join: {
+        Args: {
+          p_email: string
+          p_project_line?: string
+          p_referrer?: string
+          p_role: string
+        }
+        Returns: Json
+      }
+      waitlist_public_count: { Args: never; Returns: number }
     }
     Enums: {
       activity_type: "call" | "email" | "meeting" | "note" | "task"

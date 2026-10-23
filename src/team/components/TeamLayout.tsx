@@ -29,6 +29,7 @@ const nav = [
 ];
 
 const adminNav = [
+  { to: "/waitlist", label: "Waitlist", icon: Users },
   { to: "/team-admin", label: "Admin portal", icon: Shield },
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/requests", label: "Credit requests", icon: MessageSquare },

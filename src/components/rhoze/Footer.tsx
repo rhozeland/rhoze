@@ -32,7 +32,7 @@ const Footer = () => {
           >
             Portal
           </a>
-          {[["/discover.html","Discover"],["/create.html","Create"],["/rewards","Rewards"],["/about.html","Our story"],["mailto:collab@rhozeland.com","Project inquiries"]].map(([href,label])=><a key={href} href={href} className="text-sm text-muted-foreground hover:text-foreground transition-colors font-body">{label}</a>)}
+          {[["/discover.html","Discover"],["/create.html","Create"],["/rewards","Rewards"],["/about.html","Our story"],["/waitlist","Join the waitlist"],["mailto:collab@rhozeland.com","Project inquiries"]].map(([href,label])=><a key={href} href={href} className="text-sm text-muted-foreground hover:text-foreground transition-colors font-body">{label}</a>)}
           <Button variant="ghost"
             onClick={toggleTheme}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-body"

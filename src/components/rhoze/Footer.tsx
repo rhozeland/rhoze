@@ -1,24 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { useState, useCallback } from "react";
-import { Sun, Moon } from "lucide-react";
-import logoBlack from "@/assets/logo-black.webp";
-import logoWhite from "@/assets/logo-white.webp";
-import logoColor from "@/assets/logo-color.webp";
 import ThemeToggle from '@/components/ThemeToggle';
 
 const Footer = () => {
-  const [hovered, setHovered] = useState(false);
-  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
-
-  const toggleTheme = useCallback(() => {
-    const currentlyDark = document.documentElement.classList.contains("dark");
-    const newMode = currentlyDark ? "light" : "dark";
-    localStorage.setItem("theme-override", newMode);
-    document.documentElement.classList.toggle("dark", newMode === "dark");
-    setIsDark(newMode === "dark");
-    window.dispatchEvent(new Event("theme-changed"));
-  }, []);
-
   return (
     <footer className="site-footer py-8 px-6 border-t border-border">
       <div className="container mx-auto max-w-6xl flex flex-wrap gap-4 items-center justify-between">

@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function ThemeToggle() {
+export function ThemeToggle() {
   const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'));
   useEffect(() => {
+    const saved = localStorage.getItem('theme-override');
+    if (saved === 'dark' || saved === 'light') document.documentElement.classList.toggle('dark', saved === 'dark');
     const sync = () => setDark(document.documentElement.classList.contains('dark'));
+    sync();
     const observer = new MutationObserver(sync);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
@@ -17,3 +20,4 @@ export default function ThemeToggle() {
     window.dispatchEvent(new Event('theme-changed'));
   }}>{dark ? <Sun size={16}/> : <Moon size={16}/>}<span>{dark ? 'Light' : 'Dark'}</span></Button>;
 }
+export default ThemeToggle;

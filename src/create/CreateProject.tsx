@@ -277,7 +277,7 @@ export default function CreateProject() {
     payout_wallet: wallet.trim(), cover_url: cover ?? "", current_step: s,
   });
 
-  const save = async (s = step): Promise<string | null> => {
+  const save = async (s = step, includeTeam = true): Promise<string | null> => {
     setSaving(true); setErr("");
     try {
     const { data, error } = await (supabase.rpc as any)("release_save", { p_token: token, p_id: draftId, p_data: payload(s) });
@@ -285,7 +285,7 @@ export default function CreateProject() {
     setDraftId(data); localStorage.setItem(DRAFT_KEY, data);
     const u = new URL(location.href); u.searchParams.set("draft", data); u.searchParams.delete("new"); history.replaceState(null, "", u);
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) { try { await saveTeam(data, people); } catch { setErr("Project saved, but your team shortlist couldn't be saved. Try again."); return null; } }
+    if (session && includeTeam) { try { await saveTeam(data, people); } catch { setErr("Project saved, but your team shortlist couldn't be saved. Try again."); return null; } }
     setSavedAt(new Date());
     return data as string;
     } catch { setErr("We couldn't save your draft. Check your connection and try again."); return null; }
@@ -315,7 +315,7 @@ export default function CreateProject() {
 
   const saveToProfile = async () => {
     if (saving || savingToProfile) return;
-    const id = await save();
+    const id = await save(step, false);
     if (!id) return;
     localStorage.removeItem(PENDING_KEY);
     localStorage.setItem(PENDING_DRAFT_KEY, id);

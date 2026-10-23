@@ -170,5 +170,6 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Save draft account handoff
-- [ ] Make both Save draft actions resume account setup when signed out and attach drafts before opening the owner's profile.
-- [ ] Verify signed-in save and signed-out account handoff, keeping drafts private and separate from call confirmation.
+- [x] Make both Save draft actions resume account setup when signed out and attach drafts before opening the owner's profile.
+- [x] Verify real signed-out save opens signup/login; test ownership claim and private-list readback without call confirmation.
+- [ ] Verify signed-in save and profile readback with the requesting account — no matching account exists for session minting; needs preview sign-in.

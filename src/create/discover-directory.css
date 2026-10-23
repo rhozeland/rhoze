@@ -50,3 +50,15 @@ html.dark .page-projects .rz-discovery-hub{--directory-page-ink:0 0% 94%;--direc
 .page-projects .rz-discovery-search input{color:hsl(var(--directory-ink))}
 .page-projects .rz-discovery-search input::placeholder{color:hsl(var(--directory-muted))}
 @media(prefers-reduced-motion:reduce){.rz-person-card,.rz-call-card{transition:none}.rz-person-card:hover,.rz-call-card:hover,.rz-person-card:focus-within,.rz-call-card:focus-within{transform:none}}
+/* Natural-height profile tiles, packed independently in each column. */
+.rz-directory-grid.rz-people-masonry{display:block;columns:4;column-gap:12px}
+.rz-people-masonry .rz-person-card{display:inline-flex;width:100%;break-inside:avoid;margin:0 0 12px;padding:16px;gap:12px;vertical-align:top}
+.rz-people-masonry .rz-person-identity{flex-direction:column;align-items:flex-start;gap:12px}
+.rz-people-masonry .rz-person-portrait{width:80px;height:80px;font-size:30px;position:relative;z-index:1}
+.rz-people-masonry .rz-person-info h2 a:after{content:"";position:absolute;inset:0;border-radius:8px}
+.rz-people-masonry .rz-person-card:focus-within{outline:2px solid hsl(var(--directory-ink));outline-offset:2px}
+.rz-people-masonry .rz-person-signals{margin-left:0;gap:6px}
+.rz-people-masonry .rz-person-footer{margin-top:0;padding-top:10px}
+@media(max-width:1100px){.rz-directory-grid.rz-people-masonry{columns:3}}
+@media(max-width:700px){.rz-directory-grid.rz-people-masonry{columns:2}.rz-people-masonry .rz-person-card{padding:12px}.rz-people-masonry .rz-person-info h2{font-size:14px}}
+@media(max-width:350px){.rz-directory-grid.rz-people-masonry{columns:1}}

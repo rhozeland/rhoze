@@ -198,7 +198,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
   return (
     <Shell>
-      <div className="rz-card">
+      <div className="rz-card rz-profile-glass">
         <div className="rz-profile-controls">
           {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         </div>
@@ -420,7 +420,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
   return (
     <Shell>
-      <div className="rz-card">
+      <div className="rz-card rz-profile-glass">
         <div className="rz-profile-controls">
           {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>

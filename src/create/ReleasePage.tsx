@@ -423,7 +423,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 {(r.milestones || []).slice(0, 4).map((m: any, i: number) => <div className="rz-side-row" key={i}><span>{m.title}</span><small>{statuses[i] || "Upcoming"}</small></div>)}
               </button>}
               <div className="rz-side-card"><h4>Release as a coin</h4>
-                <p>{ticker ? <>Paired with <b>${ticker}</b>{mcap !== null ? ` · ${fmtMcap(mcap)} mcap` : ""}.</> : "No coin attached yet."}</p>
+                <p>{ticker ? <>Paired with <b>${ticker}</b>{mcap !== null ? ` · ${fmtMcap(mcap)}` : ""}.</> : "No coin attached yet."}</p>
                 <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a>
                 {pumpUrl && <a className="rz-btn" href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a>}
               </div>

@@ -168,3 +168,7 @@
 ## Related project browsing
 - [x] Add shared More like this recommendations below all public archive, release and Exclusive project views.
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
+
+## Save draft account handoff
+- [ ] Make both Save draft actions resume account setup when signed out and attach drafts before opening the owner's profile.
+- [ ] Verify signed-in save and signed-out account handoff, keeping drafts private and separate from call confirmation.

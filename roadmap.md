@@ -164,3 +164,7 @@
 - [x] Build /waitlist and team-admin list/export; connect Soon destinations and shared footers.
 - [x] Verify real signup, duplicate, stored referral, public privacy and desktop/390px form flows; remove temporary signups.
 - [ ] Verify signed-in admin list/export — requesting account has no matched auth user; needs preview admin sign-in.
+
+## Related project browsing
+- [x] Add shared More like this recommendations below all public archive, release and Exclusive project views.
+- [ ] Verify related-project links, real artwork and desktop/phone layout.

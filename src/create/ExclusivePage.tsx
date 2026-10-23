@@ -10,6 +10,7 @@ import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import { Button } from "@/components/ui/button";
 import { FileAudio, LockKeyhole, Pin, Plus, Play, Pause, Quote, Sparkles, Clock, Clapperboard, Wallet, BadgeCheck, Check } from "lucide-react";
 import "./exclusive.css";
+import RelatedProjects from "./RelatedProjects";
 
 type Post = { id: string; body: string; media_kind: "image" | "video" | "audio" | null; media_url: string | null; created_at: string; local?: boolean };
 
@@ -332,6 +333,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
               </div>
             )}
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
+            <RelatedProjects href={`/release/${slug}`} artist={r.creator_name} categories={r.answers?.category} />
           </>
         )}
       </div>

@@ -10,6 +10,7 @@ import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import "./portfolio.css";
 import PortfolioHeart from './PortfolioHeart';
 import ProjectRewards from './ProjectRewards';
+import RelatedProjects from './RelatedProjects';
 import './leaderboard.css';
 type Entry = { slug: string; title: string; artist: string; image: string; source_url: string; tag: string; date: string; categories: string; story?: string; cultural_context?: string; rhozeland_contribution?: string };
 export default function PortfolioPage({ slug }: { slug: string }) {
@@ -84,6 +85,7 @@ export default function PortfolioPage({ slug }: { slug: string }) {
         <details><summary>Live chart</summary><ReleasePrice mint={saved.coin_mint} ticker={saved.coin_ticker} price={price} change={null} /></details>
         <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>
       </section>}
+      <RelatedProjects href={`/project/${slug}`} artist={entry.artist} categories={entry.categories || entry.tag} />
     </>}
   </article></Shell>;
 }

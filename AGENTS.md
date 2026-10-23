@@ -5,7 +5,7 @@
 - Mirror community.html and community/index.html; link to /community.html, because clean and direct URLs must match.
 
 - Share navigation, account controls, frame geometry and embed markers via site-nav.css, shared.js and SiteNav; keep one Create destination. Use PortalShell for standalone portals; embedded portals inherit the parent header to prevent duplication.
-- Pair button surface and foreground tokens at the shared control level; public shells map UI tokens to their editorial palette so host themes cannot make outline controls unreadable.
+- Pair button surface and foreground tokens at the shared control level; public shells map UI tokens to their editorial palette so host themes cannot make outline controls unreadable. Dark mode darkens every public shell too: hardcoded light tokens (create.css `.rz-flow`, discover hub/explorer, messages dialog, homepage `.figma-home`) must ship a matching muted-dark `.dark` override; light mode keeps the bright peach/yellow/aqua palette.
 - Mirror both About URLs with story.css/story.js; use public Discover records and indexed trades, inheriting parent navigation when embedded to avoid duplicates.
 - Derive brand URLs from creator-name slugs (`rz_slugify`/`slugify`); optional details live in `brand_profiles`.
 - Route profile edits through owner-checked database functions rather than direct table updates, so owners can never change approval, rating, or tier fields.

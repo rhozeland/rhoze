@@ -79,8 +79,6 @@ function BlobMedia({ url, kind }: { url: string; kind: Kind }) {
   return <VideoThumb src={src} />;
 }
 
-// Placeholder until on-chain holder counts are wired in.
-const holderCount = (mint: string) => 120 + (Array.from(mint).reduce((a, c) => a + c.charCodeAt(0), 0) % 380);
 
 // Plain-language explainer shown to visitors before any wallet or payment prompt.
 function SupportInfo({ creator, tk, nextMs }: { creator: string; tk: string; nextMs: string }) {
@@ -190,6 +188,12 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   }, [walletAddr, r?.coin_mint, balTry]);
 
   useEffect(() => { if (connected) setConnErr(false); }, [connected]);
+  // After buying on Pump.fun in another tab, re-check the wallet when the supporter comes back.
+  useEffect(() => {
+    const recheck = () => { if (document.visibilityState === "visible" && walletAddr && posts === null) setBalTry((n) => n + 1); };
+    document.addEventListener("visibilitychange", recheck); window.addEventListener("focus", recheck);
+    return () => { document.removeEventListener("visibilitychange", recheck); window.removeEventListener("focus", recheck); };
+  }, [walletAddr, posts]);
   useEffect(() => { if (posts !== null) setSupportOpen(false); }, [posts]);
 
   const unlockFeed = async () => {
@@ -261,7 +265,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
 
             {!unlocked && <SupportInfo creator={r.creator_name || "the creator"} tk={tk} nextMs={nextMs} />}
 
-            {member && r.coin_mint && <div className="rz-welcome">You're one of <b>{holderCount(r.coin_mint).toLocaleString("en-CA")}</b> {tk} holders with access to this feed.</div>}
+            {member && r.coin_mint && <div className="rz-welcome">Welcome in. As a {tk} holder you can see every update on this feed.</div>}
             {(r.owner_note || isOwner) && (
               <figure className="rz-note-card">
                 <Quote size={22} aria-hidden="true" />
@@ -316,7 +320,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                 ) : (
                   <>
                     <p>Hold {tk} in your wallet to unlock every update, plus stems and project files. Connect the wallet that holds it to open the feed.</p>
-                    {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet.</p>}
+                    {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet. Just bought it? <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Check again</button></p>}
                     {bal === "loading" && <p className="rz-note">Checking your wallet…</p>}
                     {bal === "error" && <p className="rz-note">We couldn't check your wallet right now. <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Retry</button></p>}
                     {connErr && <p className="rz-note">We couldn't connect your wallet. <button className="rz-textlink" onClick={openConnect}>Try again</button></p>}
@@ -356,7 +360,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
                   <li><Check size={12} aria-hidden="true" />A Member badge, while you hold {tk}</li>
                 </ul>
                 <p className="rz-si-fine">Connecting a wallet doesn't buy anything — it only checks whether your wallet holds {tk}.</p>
-                {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet.</p>}
+                {bal === "none" && <p className="rz-note">Connected, but you don't hold {tk} yet. Just bought it? <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Check again</button></p>}
                 {bal === "loading" && <p className="rz-note">Checking your wallet…</p>}
                 {bal === "error" && <p className="rz-note">We couldn't check your wallet right now. <button className="rz-textlink" onClick={() => setBalTry((n) => n + 1)}>Retry</button></p>}
                 {connErr && <p className="rz-note">We couldn't connect your wallet. <button className="rz-textlink" onClick={openConnect}>Try again</button></p>}

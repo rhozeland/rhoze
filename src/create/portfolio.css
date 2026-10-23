@@ -1,4 +1,10 @@
 .rz-portfolio{max-width:1050px;margin:0 auto;color:hsl(var(--ink));padding:0 0 2rem}
+.rz-portfolio :is(button,a.inline-flex){background:hsl(var(--ink));color:hsl(var(--card));border-color:hsl(var(--ink))}
+.rz-portfolio :is(button,a.inline-flex):hover{background:hsl(var(--strong,var(--ink)));color:hsl(var(--card));border-color:hsl(var(--ink))}
+.rz-portfolio :is(button,a.inline-flex):focus-visible{outline:2px solid hsl(var(--ink));outline-offset:3px}
+.rz-portfolio .rz-project-heart[aria-pressed=true]{color:hsl(var(--card))}
+.rz-portfolio .rz-project-points a{color:hsl(var(--ink))}
+.rz-portfolio .rz-project-points span,.rz-portfolio .text-muted-foreground{color:hsl(var(--mut))}
 .rz-portfolio header{padding:1.25rem 0}
 .rz-portfolio h1{font-size:2.2rem;line-height:1.15;font-weight:700;margin:.5rem 0;overflow-wrap:anywhere}
 .rz-portfolio header p{font-size:.85rem;color:hsl(var(--mut))}

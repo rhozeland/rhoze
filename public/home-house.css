@@ -57,3 +57,26 @@
 @media(max-width:640px){.figma-home .fh-updates-grid{grid-template-columns:1fr;gap:22px}.figma-home .fh-update,.figma-home .fh-update:first-child,.figma-home .fh-update:last-child{padding:0!important;border-left:0!important;grid-column:auto;display:flex}.figma-home .fh-update+.fh-update{padding-top:20px!important;border-top:1px solid hsl(var(--house-ink)/.15)}.figma-home .fh-update .r-eco-video,.figma-home #fh-project-spotlight,.figma-home .fh-pass-panel{height:220px}.figma-home .fh-rewards-summary{grid-template-columns:32px 1fr}.figma-home .fh-steps-grid{grid-template-columns:1fr;gap:14px}.figma-home .fh-step>.fh-step-link{padding:20px 20px 0}.figma-home .fh-step p{min-height:0;max-width:38ch}.fh-step-top{margin-bottom:14px}.figma-home .fh-step-preview{aspect-ratio:1.65}.figma-home .fh-section.fh-steps{padding-top:26px}}
 @media(prefers-reduced-motion:reduce){.figma-home .fh-step-preview,.fh-step-arrow{transition:none;transform:none!important}}
 body.r-inline-active:has(#rInlineFrame[src^="/about.html"]) .page-shell footer.footer{display:block!important}
+
+/* ============ Dark mode: the homepage darkens too ============ */
+/* Muted dark paper, light ink, same editorial accents. Scoped token flips
+   keep sections (news band, build steps, pass intro) readable in both themes. */
+.dark .figma-home{--fh-paper:#141414;background:#141414;color:#f7f6f2}
+.dark .figma-home .fh-announcement{background:#f2d400;color:#141414}
+.dark .figma-home .fh-hero{background:hsl(240 10% 7%);border-bottom-color:hsl(0 0% 100%/.14);color:#f7f6f2}
+.dark .figma-home .fh-hero .fh-kicker{border-color:hsl(0 0% 100%/.4)}
+.dark .figma-home .fh-hero-highlights{color:#f7f6f2}
+.dark .figma-home .fh-btn{background:transparent;color:#f7f6f2;border-color:hsl(0 0% 100%/.4)}
+.dark .figma-home .fh-btn:hover{background:hsl(0 0% 100%/.08)}
+.dark .figma-home .fh-btn.is-dark{background:#f7f6f2;color:#141414;border-color:#f7f6f2}
+.dark .figma-home .fh-hero-visual a{border-color:hsl(0 0% 100%/.14)}
+.dark .figma-home .fh-steps{background:#141414;color:#f7f6f2;--house-paper:240 10% 11%;--house-ink:0 0% 95%;--house-muted:0 0% 58%}
+.dark .figma-home .fh-steps h2{color:#f7f6f2}
+.dark .figma-home .fh-steps-grid{border-top-color:hsl(0 0% 100%/.16)}
+.dark .figma-home .fh-step{border-color:hsl(0 0% 100%/.16)}
+.dark .figma-home .fh-step-num{color:#3c3c3c;-webkit-text-stroke-color:hsl(0 0% 100%/.85)}
+.dark .figma-home .fh-values{color:#f7f6f2}
+.dark .figma-home .fh-value{border:1px solid hsl(0 0% 100%/.12)}
+.dark .figma-home .fh-value:nth-child(3){background:#242424;color:#f7f6f2;border:1px dashed hsl(0 0% 100%/.3)}
+.dark .figma-home .fh-channel{--house-paper:240 10% 9%;--house-ink:0 0% 92%;--house-muted:0 0% 58%}
+.dark .figma-home .fh-pass-intro{--house-rose:332 45% 26%;--house-ink:0 0% 95%;--house-light:0 0% 12%;--house-muted:0 0% 60%;--house-pass-shadow:6px 6px 0 hsl(0 0% 0%/.45)}

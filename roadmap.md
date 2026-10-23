@@ -167,4 +167,4 @@
 
 ## Related project browsing
 - [x] Add shared More like this recommendations below all public archive, release and Exclusive project views.
-- [ ] Verify related-project links, real artwork and desktop/phone layout.
+- [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.

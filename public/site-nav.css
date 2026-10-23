@@ -109,3 +109,12 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-nav .nav-links{display:flex;align-items:center;gap:1.5rem;margin-left:auto}.site-nav .nav-links>a{display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600}.site-nav + .mobile-menu>a,.sn-mobile>a{display:flex;align-items:center;gap:.5rem}.site-nav .nav-links>a[aria-current="page"],.site-nav .figma-nav-links>a[aria-current="page"]{text-decoration:underline;text-underline-offset:5px}@media(max-width:900px){.site-nav .nav-links{display:none}}
 .site-nav :is(.sn-signin,.nav-cta),.site-nav :is(.sn-signin,.nav-cta):hover{background:hsl(var(--site-nav-surface))!important;color:hsl(var(--site-nav-ink))!important}
 .site-nav :is(.sn-toggle,.menu-toggle){background:hsl(var(--site-nav-surface))!important;color:hsl(var(--site-nav-ink))!important}
+/* Footer text must not reuse --muted: React defines it as a surface color. */
+:root{--site-footer-surface:0 0% 98%;--site-footer-ink:0 0% 10%;--site-footer-muted:0 0% 36%;--site-footer-line:0 0% 82%}
+html.dark{--site-footer-surface:240 10% 9%;--site-footer-ink:0 0% 94%;--site-footer-muted:0 0% 72%;--site-footer-line:240 8% 28%}
+:is(.footer,.site-footer){--muted:var(--site-footer-muted);--ink:var(--site-footer-ink);--line:var(--site-footer-line);background:hsl(var(--site-footer-surface))!important;color:hsl(var(--site-footer-ink))!important}
+:is(.footer,.site-footer) :is(p,a,.footer-copy,.footer-copyright,.footer-bottom){color:hsl(var(--site-footer-muted))!important;opacity:1!important}
+:is(.footer,.site-footer) :is(h3,.footer-brand-header,.footer-brand-header span,.footer-social a,.theme-toggle,button){color:hsl(var(--site-footer-ink))!important;opacity:1!important}
+:is(.footer,.site-footer) a:hover,:is(.footer,.site-footer) a:focus-visible{color:hsl(var(--site-footer-ink))!important}
+:is(.footer,.site-footer) a:focus-visible{outline:2px solid hsl(var(--site-footer-ink));outline-offset:4px}
+.rz-footer{--footer-strip-surface:0 0% 10%;--footer-strip-ink:0 0% 96%;background:hsl(var(--footer-strip-surface))!important;color:hsl(var(--footer-strip-ink))!important}.rz-footer a,.rz-footer span{color:hsl(var(--footer-strip-ink))!important;opacity:1!important}

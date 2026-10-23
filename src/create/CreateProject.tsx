@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import "./create-flow.css";
 import ExistingProjects from "./ExistingProjects";
 import TeamPlanner from "./TeamPlanner";
+import RhozelandTeam from "./RhozelandTeam";
 import { saveTeam } from "./team-storage";
 import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
@@ -676,6 +677,7 @@ export default function CreateProject() {
               </Button>
             ))}
           </div>
+          {makers.includes("rhozeland") && <RhozelandTeam projectTitle={title} />}
           {makers.includes("open_roles") && (
             <div className="rz-inv" style={{ marginTop: ".9rem" }}>
               <div className="rz-roles-h"><span>Role</span><span>People</span><span>Rate</span><span /></div>

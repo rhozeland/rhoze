@@ -691,10 +691,8 @@ export default function CreateProject() {
                   <div className="rz-role-details-caption">Role details <span>(timing optional)</span></div>
                   <div className="rz-role-details-fields">{ROLE_DETAIL_FIELDS.map(({ key, label, placeholder, multiline, optional }) => <label key={key}><span>{label}{optional && <em>(optional)</em>}</span>{multiline ? <textarea className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} rows={3} maxLength={2000} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/> : <input className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} maxLength={300} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/>}</label>)}</div>
                 </div>
-
-                </details>
-                </div>
               ))}
+
               {!roles.length && <div className="rz-note" style={{ padding: ".8rem" }}>No roles yet. Add one below.</div>}
               <div className="rz-actions" style={{ marginTop: ".6rem" }}>
                 <Button variant="outline" className="rz-btn" disabled={roles.length >= 20} onClick={() => setRoles((rs) => [...rs, { id: uid(), name: "", count: "1", rate: "" }])}><Plus size={13} /> Add role</Button>

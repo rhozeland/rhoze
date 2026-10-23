@@ -13,6 +13,7 @@ import { CreatorProfile, BrandProfile, MyProfile } from "@/create/ProfilePages";
 import { SavedPage, MessagesPage } from "@/create/ProfileExtras";
 import { PageTracker } from "@/lib/analytics";
 import "@/index.css";
+import WaitlistPage from "@/waitlist/WaitlistPage";
 
 const releaseMatch = location.pathname.match(/^\/release\/([^/]+)\/?$/);
 
@@ -26,7 +27,13 @@ const profileMatch = location.pathname.match(/^\/(creator|brand)\/([^/]+)\/?$/);
 
 const acctMatch = location.pathname.match(/^\/(saved|messages)\/?$/);
 const productMatch = location.pathname.match(/^\/product\/([^/]+)\/?$/);
-if (productMatch) {
+if (/^\/waitlist\/?$/.test(location.pathname)) {
+  document.documentElement.classList.add("release-mode");
+  const el = document.createElement("div");
+  el.id = "profile-root";
+  document.body.appendChild(el);
+  createRoot(el).render(<WaitlistPage />);
+} else if (productMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");
   el.id = "profile-root";

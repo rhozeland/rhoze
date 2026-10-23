@@ -8,7 +8,12 @@ html:not(.site-embedded) body:has(.site-nav) .rz-flow,
 html:not(.site-embedded) body:has(.site-nav) div.min-h-screen:has(> .site-nav){min-height:calc(100dvh - 2 * var(--site-page-gutter))}
 html:not(.site-embedded) .site-nav{border-radius:0}
 @media(max-width:860px){:root{--site-page-gutter:0rem;--site-page-radius:0px;--site-page-border:0px}}
-:root{--site-nav-surface:0 0% 12%;--site-nav-ink:0 0% 100%;--site-nav-line:0 0% 100% / .34;--site-nav-hover:0 0% 100% / .12}
+:root{--site-nav-surface:0 0% 12%;--site-nav-ink:0 0% 100%;--site-nav-line:0 0% 100% / .34;--site-nav-hover:0 0% 100% / .12;--button-surface:0 0% 10%;--button-ink:0 0% 100%;--button-hover:0 0% 25%}
+/* Shared action palette also covers standalone portals and static pages. */
+[data-button-variant="default"]{background:hsl(var(--button-surface));color:hsl(var(--button-ink))}
+[data-button-variant="default"]:hover{background:hsl(var(--button-hover));color:hsl(var(--button-ink))}
+:is(.theme-toggle,.newsletter-modal-close,.artist-modal-close){color:hsl(var(--ink))!important}
+.site-nav :is(.sn-signin,.nav-cta){background:hsl(var(--site-nav-surface))!important}
 .site-nav{position:relative;z-index:40;display:flex;align-items:center;gap:clamp(.75rem,1.7vw,1.75rem);min-height:76px;padding:.85rem clamp(1rem,2.5vw,2.5rem)!important;background:linear-gradient(180deg,hsl(0 0% 17%) 0%,hsl(0 0% 12%) 46%,hsl(0 0% 8%) 100%)!important;box-shadow:inset 0 1px 0 hsl(0 0% 100% / .18),inset 0 -1px 0 hsl(0 0% 0% / .55),0 18px 36px -22px hsl(0 0% 0% / .7)!important;border:0!important;border-radius:26px 26px 0 0;color:hsl(var(--site-nav-ink));font-family:Arial,Helvetica,sans-serif;box-sizing:border-box}
 .site-nav *{box-sizing:border-box}
 .site-nav a{color:hsl(var(--site-nav-ink));text-decoration:none}

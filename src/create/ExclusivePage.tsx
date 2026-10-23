@@ -10,6 +10,7 @@ import { SolanaWalletProvider, fetchTokenBalance } from "./SolanaWallet";
 import { Button } from "@/components/ui/button";
 import { FileAudio, LockKeyhole, Pin, Plus, Play, Pause, Quote, Sparkles, Clock, Clapperboard, Wallet, BadgeCheck, Check } from "lucide-react";
 import "./exclusive.css";
+import { HolderBoard, type SharedBoardItem } from "./ProjectBoard";
 import RelatedProjects from "./RelatedProjects";
 
 type Post = { id: string; body: string; media_kind: "image" | "video" | "audio" | null; media_url: string | null; created_at: string; local?: boolean };
@@ -196,6 +197,13 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   }, [walletAddr, posts]);
   useEffect(() => { if (posts !== null) setSupportOpen(false); }, [posts]);
 
+  const [board, setBoard] = useState<SharedBoardItem[]>([]);
+  useEffect(() => {
+    if (!isOwner || !r?.id) return;
+    (supabase.from as any)("release_board_items").select("id,kind,x,y,color,body,url,storage_path").eq("release_id", r.id).eq("holders_visible", true).then(async ({ data }: any) => {
+      setBoard(await Promise.all((data || []).map(async (it: any) => ({ ...it, url: it.storage_path ? (await supabase.storage.from("board-media").createSignedUrl(it.storage_path, 3600)).data?.signedUrl ?? null : it.url }))));
+    });
+  }, [isOwner, r?.id]);
   const unlockFeed = async () => {
     if (!signMessage || !walletAddr) { setFeedState("error"); return; }
     setFeedState("signing");
@@ -204,7 +212,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
       const sig = await signMessage(new TextEncoder().encode(message));
       const { data, error } = await supabase.functions.invoke("release-exclusive", { body: { slug, wallet: walletAddr, message, signature: bs58.encode(sig) } });
       if (error || !data?.holds) throw new Error("x");
-      setPosts(data.posts || []); setFeedState("idle");
+      setBoard(data.board || []); setPosts(data.posts || []); setFeedState("idle");
     } catch { setFeedState("error"); }
   };
 
@@ -312,6 +320,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
               </div>}
             </div>
 
+            {unlocked && <HolderBoard items={board} />}
             {!unlocked && (
               <div className="rz-lock">
                 <b>🔒 Holders only</b>

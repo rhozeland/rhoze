@@ -62,7 +62,17 @@ Deno.serve(async (req) => {
       }
       return { id: p.id, body: p.body, media_kind: p.media_kind, media_url, created_at: p.created_at };
     }));
-    return json({ holds: true, posts: out });
+    const { data: items } = await db.from('release_board_items').select('id,kind,x,y,color,body,url,storage_path')
+      .eq('release_id', rel.id).eq('holders_visible', true).order('created_at').limit(200);
+    const board = await Promise.all((items ?? []).map(async (it) => {
+      let url = it.kind === 'link' ? it.url : null;
+      if (it.storage_path) {
+        const { data } = await db.storage.from('board-media').createSignedUrl(it.storage_path, 3600);
+        url = data?.signedUrl ?? null;
+      }
+      return { id: it.id, kind: it.kind, x: it.x, y: it.y, color: it.color, body: it.body, url };
+    }));
+    return json({ holds: true, posts: out, board });
   } catch {
     return json({ error: 'server' }, 500);
   }

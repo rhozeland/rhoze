@@ -9,6 +9,7 @@ import { LikedProjects, ProjectHeart } from "./ProjectLikes";
 import { SupporterHome } from "./SupporterHome";
 import "./supporter.css";
 import { ProfileProgress } from "./CreatorPass";
+import { ProfileDepth } from "./ProfileDepth";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -206,7 +207,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
         {c && (
           <>
             {isOwner && fan && uid && <SupporterHome userId={uid} heading="Your supporter home" />}
-            <div className="rz-pf-top">
+            <div className="rz-pf-top"><ProfileDepth />
               <Avatar src={c.photo_url} name={c.display_name} className="rz-pf-photo" />
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
@@ -427,7 +428,7 @@ export function BrandProfile({ slug }: { slug: string }) {
         {rels !== undefined && !exists && <NotFound what="Brand" />}
         {rels !== undefined && exists && (
           <>
-            <div className="rz-pf-top">
+            <div className="rz-pf-top"><ProfileDepth />
               <Avatar src={brand?.logo_url} name={name} className="rz-pf-photo rz-pf-logo" />
               <div className="rz-pf-id">
                 <h1>{name}</h1>

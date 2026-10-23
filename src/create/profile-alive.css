@@ -1,0 +1,29 @@
+.rz-pf-top{position:relative;isolation:isolate;padding:1.6rem;margin:-.25rem -.25rem 1.4rem;border-radius:22px;overflow:hidden;border:1px solid hsl(var(--line)/.7);background:linear-gradient(135deg,hsl(18 90% 92%/.75),hsl(48 95% 90%/.6) 45%,hsl(182 60% 88%/.7));background-size:200% 200%;animation:rzpf-shift 14s ease-in-out infinite;perspective:900px;transform:perspective(1100px) rotateX(calc(var(--rx,0deg)*.35)) rotateY(calc(var(--ry,0deg)*.35));transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s;box-shadow:0 24px 50px -36px hsl(var(--ink)/.45)}
+html.dark .rz-pf-top{background:linear-gradient(135deg,hsl(18 40% 18%/.9),hsl(48 30% 14%/.8) 45%,hsl(182 30% 16%/.9));background-size:200% 200%}
+.rz-pf-top::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(420px circle at var(--mx,70%) 0%,hsl(0 0% 100%/.55),transparent 60%);pointer-events:none}
+html.dark .rz-pf-top::after{background:radial-gradient(420px circle at var(--mx,70%) 0%,hsl(0 0% 100%/.08),transparent 60%)}
+.rz-pf-top>*:not(.rz-pf-depth){position:relative;z-index:1}
+.rz-pf-top .rz-pf-photo{transform:translateZ(40px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 20px 34px -18px hsl(var(--ink)/.55),0 0 0 4px hsl(var(--card)/.8);border-radius:22px}
+.rz-pf-top h1{letter-spacing:-.02em;font-size:clamp(1.8rem,3.4vw,2.4rem)}
+.rz-pf-depth{position:absolute;inset:0;z-index:0;pointer-events:none;perspective:500px}
+.rz-pf-orb{position:absolute;border-radius:50%;filter:blur(28px);opacity:.55;animation:rzpf-float 9s ease-in-out infinite}
+.rz-pf-orb.a{width:160px;height:160px;right:8%;top:-40px;background:hsl(18 92% 70%)}
+.rz-pf-orb.b{width:120px;height:120px;right:28%;bottom:-50px;background:hsl(48 96% 62%);animation-delay:-3s}
+.rz-pf-orb.c{width:110px;height:110px;right:-20px;bottom:10%;background:hsl(182 62% 60%);animation-delay:-6s}
+.rz-pf-cube{position:absolute;right:9%;top:50%;width:54px;height:54px;margin-top:-27px;transform-style:preserve-3d;animation:rzpf-spin 18s linear infinite}
+.rz-pf-cube i{position:absolute;inset:0;border-radius:8px;border:1.5px solid hsl(var(--ink)/.75)}
+.rz-pf-cube .f1{transform:translateZ(27px);background:hsl(330 70% 70%/.55)}.rz-pf-cube .f2{transform:rotateY(180deg) translateZ(27px);background:hsl(48 96% 60%/.55)}
+.rz-pf-cube .f3{transform:rotateY(90deg) translateZ(27px);background:hsl(28 88% 60%/.55)}.rz-pf-cube .f4{transform:rotateY(-90deg) translateZ(27px);background:hsl(208 70% 64%/.55)}
+.rz-pf-cube .f5{transform:rotateX(90deg) translateZ(27px);background:hsl(0 0% 100%/.35)}.rz-pf-cube .f6{transform:rotateX(-90deg) translateZ(27px);background:hsl(0 0% 100%/.2)}
+.rz-pf-ring{position:absolute;right:calc(9% - 30px);top:50%;width:114px;height:114px;margin-top:-57px;border-radius:50%;border:1px dashed hsl(var(--ink)/.25);transform:rotateX(68deg);animation:rzpf-ring 12s linear infinite}
+.rz-pf-tile{transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.rz-pf-tile:hover{box-shadow:0 26px 40px -26px hsl(var(--ink)/.55);transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-4px)}
+.rz-pf-sec{animation:rzpf-in .6s cubic-bezier(.2,.8,.2,1) both}
+.rz-pf-sec:nth-of-type(2){animation-delay:.08s}.rz-pf-sec:nth-of-type(3){animation-delay:.16s}.rz-pf-sec:nth-of-type(4){animation-delay:.24s}
+@keyframes rzpf-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes rzpf-float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-14px,10px,0)}}
+@keyframes rzpf-spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+@keyframes rzpf-ring{to{transform:rotateX(68deg) rotateZ(360deg)}}
+@keyframes rzpf-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:560px){.rz-pf-top{padding:1.2rem}.rz-pf-cube{right:14px;top:44px;margin-top:0;zoom:.6}.rz-pf-ring{display:none}}
+@media(prefers-reduced-motion:reduce){.rz-pf-top,.rz-pf-orb,.rz-pf-cube,.rz-pf-ring,.rz-pf-sec{animation:none!important}.rz-pf-top,.rz-pf-top .rz-pf-photo,.rz-pf-tile{transform:none!important}}

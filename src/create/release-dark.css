@@ -5,6 +5,8 @@
 .rz-release-dark .rz-h2,.rz-release-dark b,.rz-release-dark .rz-bylink{color:hsl(var(--wst))}
 .rz-rd-tabs{display:flex;flex-wrap:wrap;gap:.2rem;width:max-content;max-width:100%;margin:0 0 1rem!important}
 .rz-rd-main{min-width:0}
+.rz-release-dark #open-roles{scroll-margin-top:90px}
+.rz-release-dark .rz-role-target{background:hsl(var(--wsp));box-shadow:inset 3px 0 hsl(var(--wsy));scroll-margin-top:90px}
 .rz-rd-side{text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
 .rz-rd-side:hover{border-color:hsl(var(--wsm))}
 .rz-release-dark .rz-inv,.rz-release-dark .rz-split,.rz-release-dark .rz-chip{background:hsl(var(--wsp));border-color:hsl(var(--wsl));color:hsl(var(--wst))}

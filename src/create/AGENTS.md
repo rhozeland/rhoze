@@ -1,4 +1,5 @@
 # Creation and release views
+- Discover role links use release-navigation to select and scroll to advertised openings without auto-opening applications; open-role visibility is independent of private team details so directory links never reach a hidden section.
 
 - Crop project covers with react-easy-crop and upload a flattened 16:9 image, so existing project cards and pages preserve the chosen framing without schema changes.
 - Keep market data in `pumpfun-coin` and embedded charts in `ReleasePrice`; unavailable prices/changes stay null so unindexed tokens never show invented performance.

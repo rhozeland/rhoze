@@ -20,7 +20,7 @@ import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
 import { completeDraftHandoff, PENDING_DRAFT_KEY } from "./draft-handoff";
 import RoleDetails from './RoleDetails';
-import { ROLE_DETAIL_FIELDS, firstRoleMissingDetails, roleDetails } from './role-details';
+import { ROLE_DETAIL_FIELDS, firstRoleMissingDetails, roleDetails, type RoleDetails as RoleDetailValues } from './role-details';
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";

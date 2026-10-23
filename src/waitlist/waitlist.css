@@ -41,3 +41,4 @@
 .waitlist-page .waitlist-form .waitlist-submit{min-height:40px;font-size:12.5px;font-weight:600;margin-top:4px}
 .waitlist-success h2{font-size:22px}
 @media(max-width:600px){.waitlist-main{padding:22px 18px 20px}.waitlist-heading h1{font-size:23px}}
+.waitlist-page .waitlist-roles button[aria-pressed=true],.waitlist-page .waitlist-roles button[aria-pressed=true]:hover{background:hsl(var(--ink))!important;color:hsl(var(--card))!important;border-color:hsl(var(--ink))!important}

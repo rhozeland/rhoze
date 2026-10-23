@@ -19,7 +19,7 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="py-8 px-6 border-t border-border">
+    <footer className="site-footer py-8 px-6 border-t border-border">
       <div className="container mx-auto max-w-6xl flex flex-wrap gap-4 items-center justify-between">
         <p className="text-sm text-muted-foreground font-body">
           © {new Date().getFullYear()} Rhozeland. All rights reserved.

@@ -170,8 +170,8 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Unified Discover
-- [ ] Combine Work, People and Open calls with one search, matching category chips and existing card styles.
-- [ ] Verify real public results, filters, links and desktop/phone layouts.
+- [x] Combine Work, People and Open calls with one search, matching category chips and existing card styles.
+- [x] Verify real public results, search/category filters, profile/project/Create links, view URLs and desktop/phone layouts; nine tests pass.
 
 ## Save draft account handoff
 - [x] Fix shared button contrast; checked nine public destinations in both themes, sign-in forms and all five workspace tabs at 1280/855/390px using a controlled workspace fixture; eight existing action tests pass.

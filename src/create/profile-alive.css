@@ -5,7 +5,7 @@ html.dark .rz-pf-top::after{background:radial-gradient(420px circle at var(--mx,
 .rz-pf-top>*:not(.rz-pf-depth){position:relative;z-index:1}
 .rz-pf-top .rz-pf-photo{transform:translateZ(40px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 20px 34px -18px hsl(var(--ink)/.55),0 0 0 4px hsl(var(--card)/.8);border-radius:22px}
 .rz-pf-top h1{letter-spacing:-.02em;font-size:clamp(1.8rem,3.4vw,2.4rem)}
-.rz-pf-depth{position:absolute;inset:0;z-index:0;pointer-events:none;transform-style:preserve-3d}
+.rz-pf-depth{position:absolute;inset:0;z-index:0;pointer-events:none;perspective:500px}
 .rz-pf-orb{position:absolute;border-radius:50%;filter:blur(28px);opacity:.55;animation:rzpf-float 9s ease-in-out infinite}
 .rz-pf-orb.a{width:160px;height:160px;right:8%;top:-40px;background:hsl(18 92% 70%)}
 .rz-pf-orb.b{width:120px;height:120px;right:28%;bottom:-50px;background:hsl(48 96% 62%);animation-delay:-3s}

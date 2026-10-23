@@ -4,18 +4,17 @@
 @tailwind utilities;
 
 .waitlist-page {
-  --background: 270 7% 6%;
-  --foreground: 33 27% 94%;
-  --card: 276 11% 9%;
-  --card-foreground: 33 27% 94%;
-  --border: 264 12% 17%;
-  --input: 264 12% 17%;
-  --muted-foreground: 268 8% 64%;
-  --primary: 52 89% 63%;
-  --primary-foreground: 270 7% 6%;
-  --accent: 264 12% 17%;
-  --accent-foreground: 33 27% 94%;
-  --ring: 52 89% 63%;
+  --background: var(--surface);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
+  --border: var(--line);
+  --input: var(--strong);
+  --muted-foreground: var(--mut);
+  --primary: var(--ink);
+  --primary-foreground: var(--card);
+  --accent: var(--alt);
+  --accent-foreground: var(--ink);
+  --ring: var(--ink);
 }
 
 @layer base {

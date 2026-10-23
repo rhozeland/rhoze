@@ -32,6 +32,7 @@
 - Read discussion through published-project-only functions with server-resolved public authors and owner writes, because private accounts must stay hidden. Comments award no rewards to avoid farming.
 - Keep home-motion.js fed by Discover registries; portfolio-projects preserves sources and admin-write portfolio_details stores lore/tokens, never inferred ownership.
 - Scope toolbar styles in discover-toolbar.css, mirrored on both Discover pages, to preserve shared navigation.
+- Keep unified Discover controls in DiscoverDirectory, bridging search/category changes to the preserved Work grid; People reads only public creator_directory and open calls only published releases, so card styles and privacy remain separate.
 
 - Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
 

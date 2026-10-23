@@ -20,7 +20,7 @@ import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
 import { completeDraftHandoff, PENDING_DRAFT_KEY } from "./draft-handoff";
 import RoleDetails from './RoleDetails';
-import { ROLE_DETAIL_FIELDS, roleDetails, type RoleDetails as RoleDetailValues } from './role-details';
+import { ROLE_DETAIL_FIELDS, firstRoleMissingDetails, roleDetails } from './role-details';
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -518,8 +518,8 @@ export default function CreateProject() {
   const validateTeam = () => {
     if (!makers.includes("open_roles")) return "";
     if (!roles.some((r) => r.name.trim())) return "Add at least one open role, or remove that option.";
-    const missing = roles.find((r) => r.name.trim() && !(r.description?.trim() && r.requirements?.trim() && r.location?.trim()));
-    return missing ? `Add responsibilities, requirements and location for "${missing.name.trim()}". Only timing is optional.` : "";
+    const missing = firstRoleMissingDetails(roles);
+    return missing ? `Add responsibilities, requirements and location for "${missing.name?.trim()}". Only timing is optional.` : "";
   };
   const goNext = () => {
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };

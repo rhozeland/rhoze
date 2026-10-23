@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowUpRight, Search, Shuffle, Users, LayoutGrid, Megaphone } from 'lucide-react';
+import { ArrowUpRight, Search, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,7 +10,7 @@ import './discover-directory.css';
 
 type Person = { id: string; slug: string | null; display_name: string; photo_url: string | null; disciplines: string[] | null; bio: string | null; hourly_rate_cents: number | null; hourly_rate_max_cents: number | null; rating: number | null; completed_projects: number | null; trending: boolean | null };
 type Call = { slug: string; title: string; creator_name: string; answers: { roles?: { name: string; count?: number; rate?: string }[]; makers?: unknown; description?: string } | null };
-const views = [{ id: 'work', label: 'Work', icon: LayoutGrid }, { id: 'people', label: 'People', icon: Users }, { id: 'open-calls', label: 'Open calls', icon: Megaphone }] as const;
+const views = [{ id: 'work', label: 'Work' }, { id: 'people', label: 'People' }, { id: 'open-calls', label: 'Open Calls' }] as const;
 const rate = (p: Person) => {
   if (!p.hourly_rate_cents || p.hourly_rate_cents <= 0) return 'Rate on request';
   const f = (n: number) => '$' + (n / 100).toLocaleString('en-CA');
@@ -48,7 +48,8 @@ export default function DiscoverDirectory() {
   const filteredPeople = people.filter(p => matchesDirectory([p.display_name, p.bio, ...(p.disciplines || [])].join(' '), p.disciplines || [], query, category));
   const filteredCalls = calls.filter(c => matchesDirectory([c.title, c.creator_name, c.answers?.description, ...(c.answers?.roles?.map(r => r.name) || [])].join(' '), c.answers?.roles?.map(r => r.name) || [], query, category));
   return <section className="rz-discovery-hub">
-    <div className="rz-discovery-top"><h1>Discover</h1><div role="group" aria-label="Discover section" className="rz-discovery-switch">{views.map(v => <Button key={v.id} variant="outline" aria-pressed={view === v.id} onClick={() => changeView(v.id)}><v.icon size={15}/>{v.label}</Button>)}</div><Button asChild><a href="/create.html?new=1">Create a project<ArrowUpRight size={15}/></a></Button></div>
+    <div className="rz-discovery-top"><h1>Discover</h1><Button asChild><a href="/create.html?new=1">Create a project<ArrowUpRight size={15}/></a></Button></div>
+    <nav aria-label="Discover sections" className="rz-discovery-switch">{views.map(v => <Button key={v.id} variant="ghost" aria-pressed={view === v.id} onClick={() => changeView(v.id)}>{v.label}</Button>)}</nav>
     <div className="rz-discovery-search-row"><label className="rz-discovery-search"><Search size={17}/><input type="search" aria-label="Search Discover" placeholder={view === 'work' ? 'Search projects…' : view === 'people' ? 'Search people or skills…' : 'Search projects or roles…'} value={query} onChange={e => { setQuery(e.target.value); setPage(1); }}/></label>{view === 'work' ? <Button variant="outline" size="icon" aria-label="Shuffle projects" title="Shuffle projects" onClick={() => document.getElementById('shuffleToggle')?.click()}><Shuffle size={16}/></Button> : <Select value={category} onValueChange={value => { setCategory(value); setPage(1); }}><SelectTrigger className="rz-discovery-role-filter" aria-label="Filter by role"><SelectValue/></SelectTrigger><SelectContent className="rz-discovery-role-menu">{chips.map(c => <SelectItem key={c} value={c}>{c === 'All' ? 'All roles' : c}</SelectItem>)}</SelectContent></Select>}</div>
     {view === 'work' && <div className="rz-discovery-chips" role="group" aria-label="Work categories">{chips.map(c => <Button key={c} variant="outline" aria-pressed={category === c} onClick={() => { setCategory(c); setPage(1); }}>{c === 'All' ? 'All work' : c}</Button>)}</div>}
     {view === 'work' ? <details className="rz-discovery-explore"><summary>Globe & Flow</summary><DiscoverExplorer/></details> : <>

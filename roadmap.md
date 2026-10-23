@@ -170,6 +170,7 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Unified Discover
+- [x] Restyle Work, People and Open Calls as minimal text sections; verified switching, links and spacing at 1280/610/390px while preserving shared search, filters, fonts and gradient.
 - [x] Fix shared footer contrast in light/dark modes; verified readable text and links on Discover, home, About, Create, Rewards and Waitlist.
 - [x] Clean up Open calls cards; verified real role filtering, search, application/project links and compact layouts at 1280/855/390px.
 - [x] Simplify role filters and profile cards; verified real role filtering, search, profile links and layouts at 1280/855/390px.

@@ -10,6 +10,7 @@ import { SupporterHome } from "./SupporterHome";
 import "./supporter.css";
 import { ProfileProgress } from "./CreatorPass";
 import { ProfileDepth } from "./ProfileDepth";
+import ProfileSections from "./ProfileSections";
 
 export const slugify = (t: string) => (t || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const db = supabase as any;
@@ -211,6 +212,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
               <Avatar src={c.photo_url} name={c.display_name} className="rz-pf-photo" />
               <div className="rz-pf-id">
                 <h1>{c.display_name}</h1>
+                {c.bio?.trim() && <p className="rz-pf-bio rz-profile-intro">{c.bio}</p>}
                 {c.user_id && <ProfileProgress userId={c.user_id} />}
                 {!!c.disciplines?.length && <div className="rz-pf-tags">{c.disciplines.map((d) => <span key={d}>{d}</span>)}</div>}
                 {(!fan || c.rating != null) && <p className="rz-pf-meta">{!fan && <b>{rate}</b>}{!fan && c.rating != null && " · "}{c.rating != null && <>{Number(c.rating).toFixed(1)} ★</>}</p>}
@@ -230,9 +232,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
 
             {editing && isOwner && uid && <CreatorEditor c={c} uid={uid} onSaved={() => { setEditing(false); load(); }} />}
 
-            {c.bio?.trim() && <section className="rz-pf-sec"><h2>Bio</h2>
-              <p className="rz-pf-bio">{c.bio}</p></section>}
-
+            <ProfileSections>
             <ProfileProjects projects={projects} owner={isOwner} />
             {c.user_id && <LikedProjects userId={c.user_id} />}
 
@@ -256,6 +256,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
             {isOwner && !fan && uid && <SupporterHome userId={uid} heading="Supporting" />}
 
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
+            </ProfileSections>
           </>
         )}
       </div>
@@ -442,6 +443,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
             {editing && canEdit && <BrandEditor slug={slug} initial={{ slug, name, logo_url: brand?.logo_url ?? null, category: brand?.category ?? null, bio: brand?.bio ?? null }} onSaved={() => { setEditing(false); load(); }} />}
 
+            <ProfileSections>
             <ProfileProjects projects={rels} owner={canEdit} />
             {(brand?.user_id || rels[0]?.user_id) && <LikedProjects userId={brand?.user_id || rels[0]?.user_id} />}
 
@@ -455,6 +457,7 @@ export function BrandProfile({ slug }: { slug: string }) {
                   ))}
                 </ul>
               )}</section>}
+            </ProfileSections>
           </>
         )}
       </div>

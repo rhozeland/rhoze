@@ -28,10 +28,11 @@
 .rz-team-planner{margin-bottom:1rem}
 .rz-role-editor+.rz-role-editor{border-top:1px solid hsl(var(--line))}
 .rz-role-details-editor{padding:0 .6rem .65rem}
-.rz-role-details-editor summary{cursor:pointer;font-size:12px;font-weight:600;width:fit-content;padding:6px 0;color:hsl(var(--ink))}
-.rz-role-details-editor summary span{font-weight:400;color:hsl(var(--mut))}
+.rz-role-details-caption{font-size:12px;font-weight:600;padding:6px 0 0;color:hsl(var(--ink))}
+.rz-role-details-caption span{font-weight:400;color:hsl(var(--mut))}
 .rz-role-details-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding-top:8px}
 .rz-role-details-fields label{min-width:0;display:grid;gap:5px;font-size:12px}
+.rz-role-details-fields label em{font-style:normal;color:hsl(var(--mut));margin-left:5px}
 .rz-role-details-fields textarea{resize:vertical}
 .rz-role-detail-display{display:grid;gap:10px;margin:10px 0 0;font-size:12px}
 .rz-role-detail-display dt{font-size:11px;color:hsl(var(--mut));margin-bottom:3px}

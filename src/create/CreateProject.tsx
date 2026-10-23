@@ -20,7 +20,7 @@ import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
 import { completeDraftHandoff, PENDING_DRAFT_KEY } from "./draft-handoff";
 import RoleDetails from './RoleDetails';
-import { ROLE_DETAIL_FIELDS, roleDetails, type RoleDetails as RoleDetailValues } from './role-details';
+import { ROLE_DETAIL_FIELDS, firstRoleMissingDetails, roleDetails, type RoleDetails as RoleDetailValues } from './role-details';
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -515,7 +515,12 @@ export default function CreateProject() {
     return "";
   };
   const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline) || (coinChoice === "own" ? (mint.trim() ? tokenPairingError(mint) : "Paste your Pump.fun coin address, or pick another option.") : "");
-  const validateTeam = () => makers.includes("open_roles") && !roles.some((r) => r.name.trim()) ? "Add at least one open role, or remove that option." : "";
+  const validateTeam = () => {
+    if (!makers.includes("open_roles")) return "";
+    if (!roles.some((r) => r.name.trim())) return "Add at least one open role, or remove that option.";
+    const missing = firstRoleMissingDetails(roles);
+    return missing ? `Add responsibilities, requirements and location for "${missing.name?.trim()}". Only timing is optional.` : "";
+  };
   const goNext = () => {
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
     const question = IDEA_QUESTIONS[ideaIndex];
@@ -682,12 +687,14 @@ export default function CreateProject() {
                   <input className="rz-in" value={x.rate} maxLength={60} aria-label={`Role ${i + 1} rate`} placeholder="e.g. $300/day" onChange={(e) => updateRole(x.id, { rate: e.target.value })} />
                   <Button variant="outline" className="rz-ico" aria-label="Remove role" onClick={() => setRoles((rs) => rs.filter((y) => y.id !== x.id))}><Trash2 size={13} /></Button>
                 </div>
-                <details className="rz-role-details-editor" open={Object.keys(roleDetails(x)).length > 0 || undefined}>
-                  <summary>Role details <span>(optional)</span></summary>
-                  <div className="rz-role-details-fields">{ROLE_DETAIL_FIELDS.map(({ key, label, placeholder, multiline }) => <label key={key}><span>{label}</span>{multiline ? <textarea className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} rows={3} maxLength={2000} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/> : <input className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} maxLength={300} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/>}</label>)}</div>
-                </details>
+                <div className="rz-role-details-editor">
+                  <div className="rz-role-details-caption">Role details <span>(timing optional)</span></div>
+                  <div className="rz-role-details-fields">{ROLE_DETAIL_FIELDS.map(({ key, label, placeholder, multiline, optional }) => <label key={key}><span>{label}{optional && <em>(optional)</em>}</span>{multiline ? <textarea className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} rows={3} maxLength={2000} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/> : <input className="rz-in" aria-label={`Role ${i + 1} ${label.toLowerCase()}`} maxLength={300} placeholder={placeholder} value={x[key] || ''} onChange={e => updateRole(x.id, { [key]: e.target.value })}/>}</label>)}</div>
+                </div>
                 </div>
               ))}
+
+
               {!roles.length && <div className="rz-note" style={{ padding: ".8rem" }}>No roles yet. Add one below.</div>}
               <div className="rz-actions" style={{ marginTop: ".6rem" }}>
                 <Button variant="outline" className="rz-btn" disabled={roles.length >= 20} onClick={() => setRoles((rs) => [...rs, { id: uid(), name: "", count: "1", rate: "" }])}><Plus size={13} /> Add role</Button>

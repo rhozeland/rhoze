@@ -5,3 +5,5 @@
 @keyframes rz-flow-enter{from{opacity:.6;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
 @media(max-width:640px){.rz-explorer-heading{align-items:flex-start;flex-direction:column;padding:0 14px}.rz-explorer-world{grid-template-columns:1fr;gap:4px;padding:0 14px}.rz-explorer-world .rz-globe-stage{max-width:270px}.rz-explorer-index{display:none}.rz-flow-browser{padding:0 14px}.rz-flow-media{height:290px}.rz-flow-controls{gap:14px}.rz-explorer-heading h1{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.rz-flow-surface,.rz-globe-spotlight{animation:none}}
+/* Dark mode: darken the explorer panel tokens; globe colors stay as-is. */
+.dark .rz-discover-explorer{--ink:0 0% 95%;--mut:0 0% 72%;--line:240 4% 28%;--card:240 5% 12%;--alt:240 5% 16%}

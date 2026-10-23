@@ -620,7 +620,7 @@ export default function CreateProject() {
           <TeamPlanner people={people} onChange={setPeople} />
           <div className="rz-maker-grid">
             {MAKERS.map((m) => (
-              <Button variant="outline" key={m.id} type="button" className={`rz-maker-card ${makers.includes(m.id) ? "on" : ""}`} onClick={() => toggleMaker(m.id)}>
+              <Button variant="outline" key={m.id} type="button" aria-pressed={makers.includes(m.id)} className={`rz-maker-card ${makers.includes(m.id) ? "on" : ""}`} onClick={() => toggleMaker(m.id)}>
                 <b>{m.title}</b><span>{m.desc}</span>
               </Button>
             ))}

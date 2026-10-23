@@ -26,3 +26,18 @@
 @keyframes waitlist-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media(max-width:600px){.waitlist-page>.rz-stage{padding:28px 20px 36px}.waitlist-heading h1{font-size:30px}.waitlist-heading p{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.waitlist-main{animation:none}}
+/* compact, cleaner card */
+.waitlist-main{width:min(420px,100%);padding:28px 28px 24px;border:1px solid hsl(var(--line)/.6);border-radius:18px;background:hsl(var(--card)/.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 50px -30px hsl(var(--ink)/.35)}
+.waitlist-heading{margin-bottom:20px}
+.waitlist-eyebrow{font-size:10px;margin-bottom:10px}
+.waitlist-heading h1{font-size:26px;line-height:1.15;margin:0 0 8px}
+.waitlist-heading p{font-size:13px;line-height:1.5;max-width:320px}
+.waitlist-form{gap:14px}
+.waitlist-form label,.waitlist-form legend{font-size:11px;margin-bottom:6px}
+.waitlist-form input{height:38px;font-size:13px;border-radius:10px}
+.waitlist-roles{gap:6px}
+.waitlist-page .waitlist-form button{min-height:30px;padding:5px 12px;font-size:11.5px;font-weight:500;border-color:hsl(var(--line))}
+.waitlist-page .waitlist-roles button[aria-pressed=true]{border-color:hsl(var(--ink))}
+.waitlist-page .waitlist-form .waitlist-submit{min-height:40px;font-size:12.5px;font-weight:600;margin-top:4px}
+.waitlist-success h2{font-size:22px}
+@media(max-width:600px){.waitlist-main{padding:22px 18px 20px}.waitlist-heading h1{font-size:23px}}

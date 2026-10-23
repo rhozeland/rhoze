@@ -274,6 +274,13 @@
       "when": 1792783933269,
       "tag": "0038_project_board",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1792784952397,
+      "tag": "0039_board_holder_share",
+      "breakpoints": true
     }
   ]
 }

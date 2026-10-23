@@ -951,6 +951,7 @@
   </script>
   <script type="module">
   import { indexCreatorProfiles } from '/creator-profile-links.js';
+  import { indexCoinPairs, applyCoinBadges } from '/coin-badges.js';
   /* Discover: prepend published community projects (open project pop-up) and link names to real profiles. */
   (function () {
     var API = 'https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/';
@@ -962,10 +963,11 @@
     var start = function () { if (done) return; done = true; window.__rzInitGrid && window.__rzInitGrid(); };
     setTimeout(start, 3000);
     Promise.all([
-      get('releases?select=slug,title,creator_name,cover_url,coin_image,user_id,published_at,answers&status=eq.published&order=published_at.desc&limit=60'),
+      get('releases?select=slug,title,creator_name,cover_url,coin_image,user_id,published_at,answers,coin_mint,coin_ticker&status=eq.published&order=published_at.desc&limit=60'),
+      get('portfolio_details?select=slug,coin_mint,coin_ticker&coin_mint=not.is.null&limit=500'),
       get('creator_directory?select=slug,display_name,user_id&is_public=eq.true&approved=eq.true&user_id=not.is.null&limit=1000')
     ]).then(function (res) {
-      var rels = res[0] || [], people = res[1] || [];
+      var rels = res[0] || [], people = res[1] || [], archive = res[2] || [];
       var profiles = indexCreatorProfiles(people);
       var byUser = profiles.byUser, byName = profiles.byName;
       window.__rzProfiles = byName;
@@ -994,6 +996,7 @@
           grid.insertBefore(a, first);
         });
       }
+      if (grid) applyCoinBadges(grid, indexCoinPairs(rels.concat(archive)));
       start();
     });
     /* Names: community project creators and matching real accounts open their profile page. */

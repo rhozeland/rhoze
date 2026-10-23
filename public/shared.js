@@ -486,6 +486,19 @@ setupHoverVideos();
     document.querySelectorAll('.footer-contact').forEach(function(menu){
       menu.innerHTML='<h3 class="footer-heading">Project inquiries</h3><a href="mailto:collab@rhozeland.com">collab@rhozeland.com</a>';
     });
+    document.querySelectorAll('footer').forEach(function(footer){
+      if (footer.querySelector('.theme-toggle')) return;
+      var button=document.createElement('button');
+      button.type='button'; button.className='theme-toggle';
+      function sync(){
+        var dark=document.documentElement.classList.contains('dark');
+        button.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');
+        button.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">'+(dark?'<circle cx="12" cy="12" r="5"/>':'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>')+'</svg><span>'+(dark?'Light':'Dark')+'</span>';
+      }
+      button.addEventListener('click',function(){toggleTheme();window.dispatchEvent(new Event('theme-changed'));sync();});
+      (footer.querySelector('.footer-bottom')||footer).appendChild(button);sync();
+      new MutationObserver(sync).observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    });
     var paths=['<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5z"/>','<path d="M12 5v14M5 12h14"/>','<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13"/><path d="M12 8H8a3 3 0 1 1 3-3l1 3Zm0 0h4a3 3 0 1 0-3-3l-1 3Z"/>'];
     document.querySelectorAll('.site-nav .sn-links, .site-nav .nav-links, .site-nav .figma-nav-links, #mobileMenu').forEach(function(menu){
       Array.from(menu.children).forEach(function(el){if(!el.classList.contains('nav-auth-wrap') && !/sign in/i.test(el.textContent)) el.remove();});

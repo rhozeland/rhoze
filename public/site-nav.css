@@ -118,3 +118,7 @@ html.dark{--site-footer-surface:240 10% 9%;--site-footer-ink:0 0% 94%;--site-foo
 :is(.footer,.site-footer) a:hover,:is(.footer,.site-footer) a:focus-visible{color:hsl(var(--site-footer-ink))!important}
 :is(.footer,.site-footer) a:focus-visible{outline:2px solid hsl(var(--site-footer-ink));outline-offset:4px}
 .rz-footer{--footer-strip-surface:0 0% 10%;--footer-strip-ink:0 0% 96%;background:hsl(var(--footer-strip-surface))!important;color:hsl(var(--footer-strip-ink))!important}.rz-footer a,.rz-footer span{color:hsl(var(--footer-strip-ink))!important;opacity:1!important}
+.rz-footer .theme-toggle{display:inline-flex;align-items:center;gap:6px;margin-left:12px;height:32px;padding:4px 8px;background:transparent!important;color:hsl(var(--footer-strip-ink))!important;border:1px solid hsl(var(--footer-strip-ink)/.4);border-radius:6px;font:inherit;vertical-align:middle}
+footer .theme-toggle{cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.rz-footer .theme-toggle:hover{border-color:hsl(var(--footer-strip-ink));background:hsl(var(--footer-strip-ink)/.12)!important}
+footer .theme-toggle:focus-visible{outline:2px solid currentColor;outline-offset:3px}

@@ -118,7 +118,7 @@
       </div>
 
       <!-- PROJECT GRID -->
-      <section class="section" style="padding-left:0; padding-right:0; padding-top:0;">
+      <section class="section" id="discoverWorkSection" style="padding-left:0; padding-right:0; padding-top:0;">
         <div class="projects-grid" id="projectsGrid">
           <a href="/project/sefra-cozal" data-source-url="https://www.youtube.com/watch?v=WLpDRh8JsxY" class="work-card work-card--square fade-in" data-hover-video="true" data-category="visual,audio" data-artist="Cozal" data-date="2026-07" data-order="0.1">
             <img src="/images/cozal-sefra-thumb.jpg" alt="Sefra — Cozal" loading="lazy" />
@@ -652,8 +652,17 @@
     var dropdownItems = document.querySelectorAll('.filter-dropdown-item');
     var shuffleBtn = document.getElementById('shuffleToggle');
     var modal = document.getElementById('artistModal');
-    var currentSearch = '';
-    var currentFilter = 'portfolio'; // portfolio, newest, video, audio, photo
+    var sharedSearch = document.querySelector('.rz-discovery-search input');
+    var currentSearch = sharedSearch ? sharedSearch.value.trim().toLowerCase() : '';
+    var selectedChip = document.querySelector('.rz-discovery-chips [aria-pressed=true]');
+    var categoryLabel = selectedChip ? selectedChip.textContent.trim().toLowerCase() : '';
+    var currentFilter = ['visual','audio','development'].includes(categoryLabel) ? categoryLabel : 'portfolio';
+    window.addEventListener('rz-discover-work', function(e) {
+      if (document.body.dataset.discoverView !== 'work') return;
+      currentSearch = e.detail.query.trim().toLowerCase();
+      currentFilter = e.detail.category;
+      renderGrid();
+    });
 
     // Dropdown toggle
     dropdownBtn.addEventListener('click', function(e) {
@@ -755,6 +764,11 @@
     }
 
     var filterResults = document.getElementById('filterResults');
+    var emptyResults = document.createElement('p');
+    emptyResults.className = 'rz-directory-empty';
+    emptyResults.textContent = 'No projects match your search.';
+    emptyResults.hidden = true;
+    grid.after(emptyResults);
 
     function scrollToGrid() {
       if (!grid) return;
@@ -796,6 +810,7 @@
         filterResults.classList.toggle('visible', !!isFiltered);
       }
 
+      emptyResults.hidden = visible.length > 0;
       syncProjectGridRows();
       if (typeof setupHoverVideos === 'function') setupHoverVideos();
 
@@ -808,6 +823,7 @@
     if (searchInput) {
       var searchScrollTimer = null;
       searchInput.addEventListener('input', function() {
+        if (document.body.dataset.discoverView !== 'work') return;
         currentSearch = searchInput.value.trim().toLowerCase();
         renderGrid();
         clearTimeout(searchScrollTimer);

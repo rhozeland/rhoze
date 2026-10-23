@@ -169,7 +169,6 @@
 - [x] Add shared More like this recommendations below all public archive, release and Exclusive project views.
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
-## Save draft account handoff
 ## Unified Discover
 - [ ] Combine Work, People and Open calls with one search, matching category chips and existing card styles.
 - [ ] Verify real public results, filters, links and desktop/phone layouts.

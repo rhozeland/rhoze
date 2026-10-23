@@ -1,4 +1,5 @@
 # Creation and release views
+- Scope People masonry styling to its own directory modifier, preserving the Work grid and Open Calls layout; use natural-height CSS columns and a stretched profile link for whole-card navigation.
 - Keep optional role details in release answers using role-details normalization for save/restore, and share the display across Review and public openings; this preserves the existing owner-checked save path without new storage.
 - Discover role links use release-navigation to select and scroll to advertised openings without auto-opening applications; open-role visibility is independent of private team details so directory links never reach a hidden section.
 

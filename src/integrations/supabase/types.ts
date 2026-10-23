@@ -2412,6 +2412,7 @@ export type Database = {
           body: string | null
           color: string | null
           created_at: string
+          holders_visible: boolean
           id: string
           kind: string
           release_id: string
@@ -2425,6 +2426,7 @@ export type Database = {
           body?: string | null
           color?: string | null
           created_at?: string
+          holders_visible?: boolean
           id?: string
           kind: string
           release_id: string
@@ -2438,6 +2440,7 @@ export type Database = {
           body?: string | null
           color?: string | null
           created_at?: string
+          holders_visible?: boolean
           id?: string
           kind?: string
           release_id?: string

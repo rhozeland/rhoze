@@ -1,0 +1,1 @@
+ALTER TABLE public.release_board_items ADD COLUMN holders_visible boolean NOT NULL DEFAULT false;

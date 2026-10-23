@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, X } from "lucide-react";
+import { Play, Pause, X, Eye, EyeOff } from "lucide-react";
 import "./board.css";
 
-type Item = { id: string; kind: "note" | "image" | "audio" | "colour" | "link"; x: number; y: number; color: string | null; body: string | null; url: string | null; storage_path: string | null };
+type Item = { id: string; kind: "note" | "image" | "audio" | "colour" | "link"; x: number; y: number; color: string | null; body: string | null; url: string | null; storage_path: string | null; holders_visible?: boolean };
 const NOTE_COLORS = ["yellow", "pink", "orange", "blue"] as const;
 const db = () => (supabase.from as any)("release_board_items");
 
@@ -75,10 +75,11 @@ export default function ProjectBoard({ releaseId }: { releaseId: string }) {
   return (
     <div className="rz-board">
       <div className="rz-board-canvas" ref={canvas}>
-        {items.length === 0 && <p className="rz-board-empty">Add notes, images, audio, colours and links with the toolbar below. Only you can see this board.</p>}
+        {items.length === 0 && <p className="rz-board-empty">Add notes, images, audio, colours and links with the toolbar below. Only you can see this board. Mark items "Holders" to share them on your Exclusive page.</p>}
         {items.map((it) => (
           <div key={it.id} className={`rz-bi rz-bi-${it.kind}${it.kind === "note" ? ` c-${it.color || "yellow"}` : ""}`} style={{ left: it.x, top: it.y }} onPointerDown={(e) => drag(e, it)}>
             <button type="button" className="rz-bi-del" aria-label="Delete item" onClick={() => remove(it)}><X size={12} /></button>
+            <button type="button" className={`rz-bi-share${it.holders_visible ? " on" : ""}`} aria-pressed={!!it.holders_visible} title={it.holders_visible ? "Coin holders can see this" : "Only you can see this"} onClick={() => patch(it.id, { holders_visible: !it.holders_visible })}>{it.holders_visible ? <Eye size={12} /> : <EyeOff size={12} />}{it.holders_visible ? "Holders" : "Private"}</button>
             {it.kind === "note" && <textarea aria-label="Note" defaultValue={it.body || ""} placeholder="Type a note…" maxLength={2000} onBlur={(e) => e.target.value !== (it.body || "") && patch(it.id, { body: e.target.value })} />}
             {it.kind === "image" && (blobs[it.id] || it.url ? <img src={blobs[it.id] || it.url!} alt={it.body || "Board image"} draggable={false} /> : <span>Loading…</span>)}
             {it.kind === "audio" && <AudioCard src={blobs[it.id]} name={it.body || "Audio clip"} />}
@@ -115,5 +116,35 @@ function AudioCard({ src, name }: { src?: string; name: string }) {
       </div>
       {src && <audio ref={a} src={src} onPlay={() => setOn(true)} onPause={() => setOn(false)} onEnded={() => setOn(false)} />}
     </div>
+  );
+}
+
+export type SharedBoardItem = { id: string; kind: Item["kind"]; x: number; y: number; color: string | null; body: string | null; url: string | null };
+/** Read-only board for coin holders on the Exclusive page. Media URLs are short-lived signed links, rendered via blob: URLs. */
+export function HolderBoard({ items }: { items: SharedBoardItem[] }) {
+  const [blobs, setBlobs] = useState<Record<string, string>>({});
+  useEffect(() => {
+    items.forEach(async (it) => {
+      if (!it.url || it.kind === "link" || blobs[it.id]) return;
+      try { const b = await (await fetch(it.url)).blob(); setBlobs((s) => ({ ...s, [it.id]: URL.createObjectURL(b) })); } catch { /* skip */ }
+    });
+  }, [items]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!items.length) return null;
+  const h = Math.max(420, ...items.map((i) => i.y + 260));
+  return (
+    <section className="rz-ws-dark rz-holder-board" aria-label="Project board">
+      <h2>Project board</h2>
+      <div className="rz-board-canvas" style={{ minHeight: h }}>
+        {items.map((it) => (
+          <div key={it.id} className={`rz-bi rz-bi-${it.kind}${it.kind === "note" ? ` c-${it.color || "yellow"}` : ""}`} style={{ left: it.x, top: it.y, cursor: "default" }}>
+            {it.kind === "note" && <p className="rz-bi-text">{it.body}</p>}
+            {it.kind === "image" && (blobs[it.id] ? <img src={blobs[it.id]} alt={it.body || "Board image"} /> : <span>Loading…</span>)}
+            {it.kind === "audio" && <AudioCard src={blobs[it.id]} name={it.body || "Audio clip"} />}
+            {it.kind === "colour" && <div className="rz-bi-swatch" style={{ background: it.color || "#F5DD4B" }}><span>{it.color}</span></div>}
+            {it.kind === "link" && it.url && <a href={it.url} target="_blank" rel="noopener noreferrer"><b>{it.body}</b><small>{it.url}</small></a>}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

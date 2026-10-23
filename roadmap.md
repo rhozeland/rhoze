@@ -170,6 +170,7 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Save draft account handoff
+- [x] Fix shared button contrast; checked nine public destinations in both themes, sign-in forms and all five workspace tabs at 1280/855/390px using a controlled workspace fixture; eight existing action tests pass.
 - [x] Hide empty creator/brand profile sections; verified Madi’s populated projects and likes remain visible at 1280/855/390px, with liked-project privacy tests passing.
 - [x] Make both Save draft actions resume account setup when signed out and attach drafts before opening the owner's profile.
 - [x] Verify real signed-out save opens signup/login; test ownership claim and private-list readback without call confirmation.

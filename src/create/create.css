@@ -63,7 +63,18 @@
 .rz-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 .rz-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.5rem;margin-top:1.8rem}
 .rz-btn{display:inline-flex;align-items:center;justify-content:center;gap:.3rem;min-height:2.2rem;padding:.4rem 1rem;border:1px solid hsl(var(--ink));border-radius:999px;background:hsl(var(--card));color:hsl(var(--ink));font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:none;font-family:inherit}
-.rz-btn.pri{background:hsl(var(--ink));color:hsl(var(--card))}.rz-btn:disabled{border-color:hsl(var(--line));background:hsl(var(--line));color:hsl(var(--mut));cursor:not-allowed}
+.rz-btn.pri{background:hsl(var(--ink));color:hsl(var(--card))}.rz-btn:disabled{border-color:hsl(var(--line));background:hsl(var(--line));color:hsl(var(--ink));cursor:not-allowed}
+/* Public shells use the editorial palette, even when the host has .dark.
+   Pair both halves of the UI palette so outline controls never inherit dark
+   backgrounds with the shell's near-black text. */
+.rz-flow{--background:var(--card);--foreground:var(--ink);--accent:var(--alt);--accent-foreground:var(--ink);--primary:var(--ink);--primary-foreground:var(--card);--secondary:var(--line);--secondary-foreground:var(--ink);--border:var(--line);--input:var(--strong);--ring:var(--ink)}
+.rz-flow :is([data-button-variant="outline"],.rz-btn,.rz-ws-tab){background:hsl(var(--card));color:hsl(var(--ink));border-color:hsl(var(--strong))}
+.rz-flow :is([data-button-variant="outline"],.rz-btn,.rz-ws-tab):hover{background:hsl(var(--alt));color:hsl(var(--ink))}
+.rz-flow :is(.rz-btn.pri,.rz-ws-tab[aria-selected="true"]){background:hsl(var(--ink));color:hsl(var(--card));border-color:hsl(var(--ink))}
+.rz-flow :is(.rz-btn.pri,.rz-ws-tab[aria-selected="true"]):hover{background:hsl(var(--strong));color:hsl(var(--card))}
+.rz-flow [data-button-variant="ghost"]{color:hsl(var(--ink))}
+.rz-flow :is(.rz-btn,.rz-ws-tab,[data-button-variant]):disabled{opacity:1;color:hsl(var(--ink));background:hsl(var(--line));cursor:not-allowed}
+.rz-flow :is(.rz-btn,.rz-ws-tab,[data-button-variant]):focus-visible{outline:2px solid hsl(var(--ink));outline-offset:3px}
 .rz-textlink{background:none;border:0;font-size:.72rem;text-decoration:underline;color:hsl(var(--ink));cursor:pointer;font-family:inherit}
 .rz-err{color:hsl(var(--bad));font-size:.7rem;text-align:center;margin-top:.6rem}
 .rz-note{text-align:center;color:hsl(var(--mut));font-size:.66rem;margin-top:.6rem}

@@ -154,3 +154,7 @@
 - [ ] Verify password-reset email delivery and provider settings — hosted service remains paused; no live recovery check possible.
 - [ ] Verify employee access with a real signed-in session after hosted accounts resume.
 - [x] Recommend one homepage with artist/brand paths sharing accounts and projects; leave the homepage unchanged.
+
+## Uploaded workspace redesign
+- [ ] Identify the workspace matching Overview/Roadmap/Rollout/Board/Story/Team — awaiting the page link or confirmation of the intended project; this interface is absent from the current site.
+- [ ] Apply the supplied page-only design while preserving all data/actions, then verify desktop and 390px phone layout — blocked on workspace identification.

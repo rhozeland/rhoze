@@ -515,7 +515,12 @@ export default function CreateProject() {
     return "";
   };
   const validateScope = () => scopeError(budgetCents, needQuote, timelineMode, timeline, deadline) || (coinChoice === "own" ? (mint.trim() ? tokenPairingError(mint) : "Paste your Pump.fun coin address, or pick another option.") : "");
-  const validateTeam = () => makers.includes("open_roles") && !roles.some((r) => r.name.trim()) ? "Add at least one open role, or remove that option." : "";
+  const validateTeam = () => {
+    if (!makers.includes("open_roles")) return "";
+    if (!roles.some((r) => r.name.trim())) return "Add at least one open role, or remove that option.";
+    const missing = roles.find((r) => r.name.trim() && !(r.description?.trim() && r.requirements?.trim() && r.location?.trim()));
+    return missing ? `Add responsibilities, requirements and location for "${missing.name.trim()}". Only timing is optional.` : "";
+  };
   const goNext = () => {
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
     const question = IDEA_QUESTIONS[ideaIndex];

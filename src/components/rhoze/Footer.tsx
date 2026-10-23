@@ -4,6 +4,7 @@ import { Sun, Moon } from "lucide-react";
 import logoBlack from "@/assets/logo-black.webp";
 import logoWhite from "@/assets/logo-white.webp";
 import logoColor from "@/assets/logo-color.webp";
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Footer = () => {
   const [hovered, setHovered] = useState(false);
@@ -33,15 +34,7 @@ const Footer = () => {
             Portal
           </a>
           {[["/discover.html","Discover"],["/create.html","Create"],["/rewards","Rewards"],["/about.html","Our story"],["/waitlist","Join the waitlist"],["mailto:collab@rhozeland.com","Project inquiries"]].map(([href,label])=><a key={href} href={href} className="text-sm text-muted-foreground hover:text-foreground transition-colors font-body">{label}</a>)}
-          <Button variant="ghost"
-            onClick={toggleTheme}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-body"
-            aria-label="Toggle theme"
-            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            <span>{isDark ? "Light" : "Dark"}</span>
-          </Button>
+          <ThemeToggle />
         </div>
       </div>
     </footer>

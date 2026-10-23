@@ -1,5 +1,6 @@
 import "./create.css";
 import SiteNav from "@/components/SiteNav";
+import ThemeToggle from '@/components/ThemeToggle';
 
 export type Milestone = { id: string; title: string; deliverable: string; amount_cents: number };
 
@@ -15,6 +16,7 @@ export function Shell({ children, right, className = "" }: { children: React.Rea
       <main className="rz-stage">{right && <div className="rz-subnav">{right}</div>}{children}</main>
       <footer className="rz-footer">
         <span>© 2026 Rhozeland</span> · <a href="/discover.html">Discover</a> · <a href="/create.html">Create</a> · <a href="/rewards">Rewards</a> · <a href="/about.html">Our story</a> · <a href="/waitlist">Join the waitlist</a> · <a href="mailto:collab@rhozeland.com">Project inquiries</a>
+        <ThemeToggle />
       </footer>
     </div>
   );

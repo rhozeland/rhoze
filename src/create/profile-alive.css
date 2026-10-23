@@ -25,5 +25,5 @@ html.dark .rz-pf-top::after{background:radial-gradient(420px circle at var(--mx,
 @keyframes rzpf-spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
 @keyframes rzpf-ring{to{transform:rotateX(68deg) rotateZ(360deg)}}
 @keyframes rzpf-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@media(max-width:560px){.rz-pf-top{padding:1.2rem}.rz-pf-cube{right:10px;top:34px;width:34px;height:34px;margin-top:0}.rz-pf-cube i{border-radius:6px}.rz-pf-cube .f1,.rz-pf-cube .f2,.rz-pf-cube .f3,.rz-pf-cube .f4,.rz-pf-cube .f5,.rz-pf-cube .f6{transform-origin:center}.rz-pf-ring{display:none}}
+@media(max-width:560px){.rz-pf-top{padding:1.2rem}.rz-pf-cube{right:14px;top:44px;margin-top:0;zoom:.6}.rz-pf-ring{display:none}}
 @media(prefers-reduced-motion:reduce){.rz-pf-top,.rz-pf-orb,.rz-pf-cube,.rz-pf-ring,.rz-pf-sec{animation:none!important}.rz-pf-top,.rz-pf-top .rz-pf-photo,.rz-pf-tile{transform:none!important}}

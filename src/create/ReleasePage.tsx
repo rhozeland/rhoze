@@ -21,6 +21,7 @@ import './board.css';
 import './release-dark.css';
 import { hasOpenRoles } from './project-flow';
 import { openRoleTarget } from './release-navigation';
+import RoleDetails from './RoleDetails';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -395,6 +396,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                     <div key={i} id={`open-role-${i}`} className={`rz-row${roleTarget.index === i ? ' rz-role-target' : ''}`} style={{ gridTemplateColumns: "1fr auto", fontSize: ".78rem", alignItems: "center" }}>
                       <div><b>{role.name}</b><div style={{ color: "hsl(var(--mut))", fontSize: ".72rem", marginTop: ".15rem" }}>{role.count} {Number(role.count) === 1 ? "spot" : "spots"}{role.rate ? ` · ${role.rate}` : ""}</div></div>
                       <Button variant="outline" size="sm" onClick={() => openApply(i)}>Apply</Button>
+                      <div className="rz-opening-details"><RoleDetails role={role}/></div>
                     </div>
                   ))}
                 </div>

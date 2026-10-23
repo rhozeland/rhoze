@@ -15,8 +15,12 @@ const db = supabase as any;
 const fromSlug = () => new URLSearchParams(location.search).get("from");
 
 function DraftsHeading() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(() => new URLSearchParams(location.search).get("drafts") === "1");
   const [drafts, setDrafts] = useState<any[] | undefined>(undefined);
+  useEffect(() => {
+    if (!open || drafts !== undefined) return;
+    supabase.rpc("my_releases").then(({ data }) => setDrafts((data || []).filter(r => r.status !== "published" && r.status !== "archived")));
+  }, [open, drafts]);
   const toggle = async () => {
     const next = !open;
     setOpen(next);
@@ -33,6 +37,7 @@ function DraftsHeading() {
           Drafts
         </button>
       </h2>
+      {new URLSearchParams(location.search).get("saved") === "1" && <p className="rz-note" role="status">Draft saved to your profile · only you can see it.</p>}
       {open && (
         <div className="rz-drafts-list">
           {drafts === undefined && <p className="rz-pf-empty">Loading…</p>}
@@ -515,7 +520,12 @@ export function MyProfile() {
   const [country, setCountry] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
-  const go = (p: any) => location.replace(`/${p.kind}/${p.slug}${new URLSearchParams(location.search).get("settings") === "1" ? "?settings=1" : ""}`);
+  const go = (p: any) => {
+    const query = new URLSearchParams();
+    const current = new URLSearchParams(location.search);
+    for (const key of ["settings", "drafts", "saved"]) if (current.get(key) === "1") query.set(key, "1");
+    location.replace(`/${p.kind}/${p.slug}${query.size ? `?${query}` : ""}`);
+  };
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (!data.session) return setState("out");

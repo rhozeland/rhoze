@@ -18,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Info } from "lucide-react";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
+import { completeDraftHandoff, PENDING_DRAFT_KEY } from "./draft-handoff";
 
 const TOKEN_KEY = "rz_release_token";
 const DRAFT_KEY = "rz_release_draft";
@@ -184,6 +185,8 @@ export default function CreateProject() {
     return () => { active = false; if (url) URL.revokeObjectURL(url); };
   }, [cover]);
   const [authFor, setAuthFor] = useState<string | null>(null);
+  const [savingToProfile, setSavingToProfile] = useState(false);
+  const draftHandoffBusy = useRef(false);
 
   const budgetCents = Math.max(0, Math.round((parseFloat(budget.replace(/[^0-9.]/g, "")) || 0) * 100));
   const artistPct = Math.max(0, 100 - feePct - causePct - tPct);
@@ -274,17 +277,52 @@ export default function CreateProject() {
     payout_wallet: wallet.trim(), cover_url: cover ?? "", current_step: s,
   });
 
-  const save = async (s = step): Promise<string | null> => {
+  const save = async (s = step, includeTeam = true): Promise<string | null> => {
     setSaving(true); setErr("");
+    try {
     const { data, error } = await (supabase.rpc as any)("release_save", { p_token: token, p_id: draftId, p_data: payload(s) });
-    setSaving(false);
-    if (error) { setErr("We couldn't save your draft. Check your connection and try again."); return null; }
+    if (error || !data) { setErr("We couldn't save your draft. Check your connection and try again."); return null; }
     setDraftId(data); localStorage.setItem(DRAFT_KEY, data);
     const u = new URL(location.href); u.searchParams.set("draft", data); u.searchParams.delete("new"); history.replaceState(null, "", u);
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) { try { await saveTeam(data, people); } catch { setErr("Project saved, but your team shortlist couldn't be saved. Try again."); return null; } }
+    if (session && includeTeam) { try { await saveTeam(data, people); } catch { setErr("Project saved, but your team shortlist couldn't be saved. Try again."); return null; } }
     setSavedAt(new Date());
     return data as string;
+    } catch { setErr("We couldn't save your draft. Check your connection and try again."); return null; }
+    finally { setSaving(false); }
+  };
+
+  const finishDraft = async (id: string) => {
+    if (draftHandoffBusy.current) return;
+    draftHandoffBusy.current = true;
+    setSavingToProfile(true); setErr("");
+    try {
+      const path = await completeDraftHandoff(id, {
+        claim: async () => { const { error } = await supabase.rpc("release_claim", { p_token: token }); if (error) throw error; },
+        saveTeam: async () => {
+          const stored = sessionStorage.getItem(`${PENDING_DRAFT_KEY}_team`);
+          await saveTeam(id, stored ? JSON.parse(stored) : people);
+        },
+        list: async () => { const { data, error } = await supabase.rpc("my_releases"); if (error) throw error; return data || []; },
+      });
+      localStorage.removeItem(PENDING_DRAFT_KEY);
+      sessionStorage.removeItem(`${PENDING_DRAFT_KEY}_team`);
+      localStorage.removeItem(DRAFT_KEY);
+      location.href = path;
+    } catch { setErr("Your draft is saved, but we couldn't add it to your profile. Press Save draft to try again."); }
+    finally { draftHandoffBusy.current = false; setSavingToProfile(false); }
+  };
+
+  const saveToProfile = async () => {
+    if (saving || savingToProfile) return;
+    const id = await save(step, false);
+    if (!id) return;
+    localStorage.removeItem(PENDING_KEY);
+    localStorage.setItem(PENDING_DRAFT_KEY, id);
+    sessionStorage.setItem(`${PENDING_DRAFT_KEY}_team`, JSON.stringify(people));
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setAuthFor(id); return; }
+    await finishDraft(id);
   };
 
   const generateBrief = async () => {
@@ -389,10 +427,16 @@ export default function CreateProject() {
     await finishPublish(id);
   };
   useEffect(() => {
+    const resume = () => {
+      const draft = localStorage.getItem(PENDING_DRAFT_KEY);
+      if (draft) { setAuthFor(null); void finishDraft(draft); return; }
+      const pending = localStorage.getItem(PENDING_KEY);
+      if (pending) { setAuthFor(null); void finishPublish(pending); }
+    };
+    supabase.auth.getUser().then(({ data }) => { if (data.user) resume(); });
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
-        const pending = localStorage.getItem(PENDING_KEY);
-        if (pending) setTimeout(() => { setAuthFor(null); finishPublish(pending); }, 0);
+        setTimeout(resume, 0);
       }
     });
     return () => data.subscription.unsubscribe();
@@ -500,7 +544,7 @@ export default function CreateProject() {
       <ExistingProjects expandedBar />
       <div className="rz-wizard-toolbar">
         <div className="rz-wizard-toolbar-actions">
-          <Button variant="outline" className="rz-btn" onClick={() => save()} disabled={saving}>{saving ? "Saving…" : "Save draft"}</Button>
+          <Button variant="outline" className="rz-btn" onClick={saveToProfile} disabled={saving || savingToProfile}>{saving || savingToProfile ? "Saving…" : "Save draft"}</Button>
         </div>
       </div>
       <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "call" || stepKey === "review" ? "rz-card-wide" : ""}`}>
@@ -704,13 +748,13 @@ export default function CreateProject() {
               <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
               <Button variant="outline" className="rz-btn pri" disabled={publishing || genBusy} onClick={publish}>{publishing ? "Opening…" : callChoice ? "Create project & book call" : "Create private project"}</Button>
             </div>
-            <div style={{ textAlign: "center", marginTop: ".6rem" }}><Button variant="outline" className="rz-textlink" disabled={saving} onClick={() => save(FLOW.length)}>{saving ? "Saving…" : "Save as draft"}</Button></div>
+            <div style={{ textAlign: "center", marginTop: ".6rem" }}><Button variant="outline" className="rz-textlink" disabled={saving || savingToProfile} onClick={saveToProfile}>{saving || savingToProfile ? "Saving…" : "Save as draft"}</Button></div>
             <p className="rz-note">Private workspace · publish to Discover later, only when you choose.</p>
           </>
         )}
 
         {err && <div className="rz-err">{err}</div>}
-        {authFor && <AuthModal intro={callChoice ? "Create an account to confirm your call. We'll pick up right where you left off." : undefined} onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
+        {authFor && <AuthModal action={localStorage.getItem(PENDING_DRAFT_KEY) ? " and save draft" : " and create project"} intro={localStorage.getItem(PENDING_DRAFT_KEY) ? "Create an account or log in to keep this private draft on your profile." : callChoice ? "Create an account to confirm your call. We'll pick up right where you left off." : "Create an account to manage your private project."} onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
           redirectTo={`${location.origin}/create.html?draft=${authFor}`} />}
         {savedAt && <div className="rz-note rz-saved">Project saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
       </div>

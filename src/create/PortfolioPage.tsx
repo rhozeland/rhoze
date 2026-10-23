@@ -12,6 +12,7 @@ import PortfolioHeart from './PortfolioHeart';
 import ProjectRewards from './ProjectRewards';
 import RelatedProjects from './RelatedProjects';
 import './leaderboard.css';
+import './board.css';
 type Entry = { slug: string; title: string; artist: string; image: string; source_url: string; tag: string; date: string; categories: string; story?: string; cultural_context?: string; rhozeland_contribution?: string };
 export default function PortfolioPage({ slug }: { slug: string }) {
   const [entry, setEntry] = useState<Entry | null | undefined>();
@@ -60,7 +61,7 @@ export default function PortfolioPage({ slug }: { slug: string }) {
   }, [slug]);
   useEffect(() => { if (entry) document.title = `${entry.title} — Project archive | Rhozeland`; }, [entry]);
   const videoUrl = entry ? archiveYouTubeEmbed(entry.source_url) : null;
-  return <Shell className="rz-release-view"><article className="rz-portfolio">
+  return <Shell className="rz-release-view"><article className="rz-portfolio rz-ws-dark rz-archive-dark">
     <Button variant="ghost" asChild><a href="/discover.html"><ArrowLeft size={16} /> Discover</a></Button>
     {entry === undefined ? <p>Loading project…</p> : !entry ? <h1>Project not found</h1> : <>
       {admin && <Button variant="outline" onClick={() => setEditing(!editing)}>{editing ? 'Close editor' : 'Edit project record'}</Button>}

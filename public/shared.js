@@ -468,8 +468,10 @@ setupHoverVideos();
       } catch(e) {}
       return wrap;
     }
-    if (cta) cta.replaceWith(build('nav-cta'));
-    if (mCta) mCta.replaceWith(build(''));
+    if (cta) cta.replaceWith(build('nav-cta sn-signin'));
+    else nav.insertBefore(build('nav-cta sn-signin'), nav.querySelector('.menu-toggle'));
+    if (mCta) mCta.replaceWith(build('sn-signin'));
+    else if (menu) menu.appendChild(build('sn-signin'));
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
 })();

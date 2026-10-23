@@ -23,6 +23,7 @@ import { hasOpenRoles } from './project-flow';
 import { openRoleTarget } from './release-navigation';
 import RoleDetails from './RoleDetails';
 import PublicProjectCanvas from './PublicProjectCanvas';
+import { ExclusiveFeed } from './ExclusivePage';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -46,7 +47,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [r, setR] = useState<any>(undefined);
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
-  const [tab, setTab] = useState<"board" | "overview" | "roadmap" | "people" | "budget" | "unlocks">("board");
+  const [tab, setTab] = useState<"board" | "overview" | "roadmap" | "people" | "budget" | "unlocks" | "exclusive">(new URLSearchParams(location.search).get('tab') === 'exclusive' || location.hash === '#exclusive' ? 'exclusive' : 'board');
   const [holds, setHolds] = useState(false);
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
@@ -90,7 +91,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
   useEffect(() => {
     (supabase.from as any)("releases")
-      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,cover_url,user_id,published_at,status")
+      .select("id,title,creator_name,answers,budget_cents,artist_pct,fee_pct,cause_pct,cause_name,milestones,coin_mint,coin_ticker,coin_name,coin_image,cover_url,user_id,published_at,status,owner_note")
       .eq("slug", slug).eq("status", "published").maybeSingle()
       .then(async ({ data }: any) => {
         setR(data ?? null);
@@ -253,7 +254,14 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   );
   const pubs = { ...DEFAULT_PUBLIC_SECTIONS, ...(r?.answers?.public_sections || {}) };
   const merged = !!(r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1");
-  const show = (k: typeof tab) => merged || tab === 'board' || tab === k;
+  const show = (k: typeof tab) => tab !== 'exclusive' && (merged || tab === 'board' || tab === k);
+  const openExclusive = () => {
+    setTab('exclusive');
+    const url = new URL(location.href);
+    url.searchParams.set('tab', 'exclusive'); url.hash = 'exclusive';
+    history.replaceState(null, '', url);
+    requestAnimationFrame(() => document.getElementById('exclusive')?.scrollIntoView({ block: 'start' }));
+  };
   const closeProject = () => {
     if (window.self !== window.top && new URLSearchParams(location.search).get("projectView") === "1") {
       window.parent.postMessage("rhoze:close-project", location.origin);
@@ -298,7 +306,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <div className="rz-release-tools">
               <ProjectHeart releaseId={r.id} />
               <Button variant="outline" size="icon" className="rz-release-share" title="Share project" aria-label="Share project" onClick={() => setShareOpen(true)}><Share2 size={16} /></Button>
-              <Button asChild className="rz-btn pri"><a href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a></Button>
+              <Button className="rz-btn pri" onClick={openExclusive}>Support</Button>
             </div>
             </header>}
             {(() => {
@@ -307,11 +315,11 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
               if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
               if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Budget"]);
-              list.push(["unlocks", "Unlocks"]);
-              if (merged) return <div className="rz-ws-eyebrow rz-rd-merged-label">Public page · what visitors see</div>;
-              return <nav className="rz-ws-tabs rz-rd-tabs" role="tablist" aria-label="Project sections">{list.map(([k, l]) => <button key={k} role="tab" type="button" className="rz-ws-tab" aria-selected={tab === k} onClick={() => setTab(k)}>{l}</button>)}</nav>;
+               list.push(["exclusive", "Exclusive"]);
+              return <nav className="rz-ws-tabs rz-rd-tabs" role="tablist" aria-label="Project sections">{list.map(([k, l]) => <Button variant="ghost" key={k} role="tab" type="button" className="rz-ws-tab" aria-selected={tab === k} onClick={() => { setTab(k); const url = new URL(location.href); url.searchParams.set('tab', k); url.hash = k === 'exclusive' ? 'exclusive' : ''; history.replaceState(null, '', url); }}>{l}</Button>)}</nav>;
             })()}
             <div className="rz-board-layout rz-rd-layout"><div className="rz-rd-main"><PublicProjectCanvas>
+            {tab === 'exclusive' && <section id="exclusive"><ExclusiveFeed slug={slug} project={r} owner={isOwner} /></section>}
             {show("overview") && <>
             <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
@@ -342,7 +350,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
              {(isOwner || pubs.money) && <p className="rz-note">Planning budget: {money(budget)} · payment status is tracked in the private workspace.</p>}
 
             <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
-              <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support this project</a>
+              <Button className="rz-btn pri" onClick={openExclusive}>Support this project</Button>
               {!walletAddr && <button className="rz-btn" onClick={openConnect} disabled={connecting}>{connecting ? "Connecting…" : "Connect wallet"}</button>}
               <button className="rz-textlink" onClick={copyLink}>{copied ? "Link copied" : "Copy link"}</button>
               <button className="rz-textlink" onClick={() => setShareOpen(true)}>Share</button>
@@ -421,10 +429,10 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 <span className="rz-ico-btn" aria-label="Play">▶</span>
                 <div><b>Behind the scenes update</b><small>Unlocked for everyone</small></div>
               </div>
-              <a className={`rz-unlock ${holds ? "ok" : ""}`} href={`/release/${encodeURIComponent(slug)}/exclusive`} style={{ color: "inherit", textDecoration: "none" }}>
+              <Button variant="ghost" className={`rz-unlock ${holds ? "ok" : ""}`} onClick={openExclusive}>
                 <span className="rz-ico-btn" aria-hidden>{holds ? "→" : "🔒"}</span>
                 <div><b>Holder feed</b><small>{holds ? "Unlocked with your wallet. Open the feed" : `Stems, files and updates for ${ticker ? "$" + ticker : "coin"} holders`}</small></div>
-              </a>
+              </Button>
             </div>
             {connErr && (
               <p className="rz-note" style={{ marginTop: ".8rem" }}>
@@ -449,7 +457,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               </button>}
               <div className="rz-side-card"><h4>Release as a coin</h4>
                 <p>{ticker ? <>Paired with <b>${ticker}</b>{mcap !== null ? ` · ${fmtMcap(mcap)}` : ""}.</> : "No coin attached yet."}</p>
-                <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a>
+                <Button className="rz-btn pri" onClick={openExclusive}>Support</Button>
                 {pumpUrl && <a className="rz-btn" href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a>}
               </div>
               {rolesVisible && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("people")}><h4>Open roles</h4>

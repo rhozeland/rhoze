@@ -1,6 +1,6 @@
 // /release/:slug/exclusive — holder-only feed. Holders prove wallet ownership by
 // signing a message; the backend checks their balance before returning posts.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import bs58 from "bs58";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
@@ -124,12 +124,21 @@ export default function ExclusivePage({ slug }: { slug: string }) {
   return <SolanaWalletProvider onError={() => setConnErr(true)}><Inner slug={slug} connErr={connErr} setConnErr={setConnErr} /></SolanaWalletProvider>;
 }
 
-function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; setConnErr: (v: boolean) => void }) {
+function FeedFrame({ embedded, children, ...props }: { embedded: boolean; children: ReactNode; className: string; right: ReactNode }) {
+  return embedded ? <div className="rz-exclusive-integrated">{children}</div> : <Shell {...props}>{children}</Shell>;
+}
+
+export function ExclusiveFeed({ slug, project, owner }: { slug: string; project: any; owner: boolean }) {
+  const [connErr, setConnErr] = useState(false);
+  return <Inner slug={slug} project={project} owner={owner} embedded connErr={connErr} setConnErr={setConnErr} />;
+}
+
+function Inner({ slug, connErr, setConnErr, embedded = false, project, owner = false }: { slug: string; connErr: boolean; setConnErr: (v: boolean) => void; embedded?: boolean; project?: any; owner?: boolean }) {
   const { publicKey, connected, connecting, signMessage } = useWallet();
   const { setVisible } = useWalletModal();
   const walletAddr = publicKey?.toBase58() ?? "";
-  const [r, setR] = useState<any>(undefined);
-  const [isOwner, setIsOwner] = useState(false);
+  const [r, setR] = useState<any>(project);
+  const [isOwner, setIsOwner] = useState(owner);
   const [bal, setBal] = useState<"idle" | "loading" | "holds" | "none" | "error">("idle");
   const [balTry, setBalTry] = useState(0);
   const [posts, setPosts] = useState<Post[] | null>(null);
@@ -144,7 +153,6 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   const [noteText, setNoteText] = useState("");
   const [noteErr, setNoteErr] = useState("");
   const [supportOpen, setSupportOpen] = useState(false);
-  useEffect(() => { document.documentElement.classList.add("rz-exclusive"); return () => document.documentElement.classList.remove("rz-exclusive"); }, []);
   const saveNote = async (v: string) => {
     setNoteErr("");
     const { error } = await (supabase as any).rpc("release_set_note", { p_id: r.id, p_note: v });
@@ -153,6 +161,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   };
 
   useEffect(() => {
+    if (embedded) { setR(project); setIsOwner(owner); return; }
     (supabase.from as any)("releases").select("id,title,creator_name,coin_mint,coin_ticker,cover_url,user_id,milestones,owner_note")
       .eq("slug", slug).eq("status", "published").maybeSingle()
       .then(async ({ data }: any) => {
@@ -162,7 +171,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
         const { data: u } = await supabase.auth.getUser();
         if (u.user && data.user_id === u.user.id) setIsOwner(true);
       }, () => setR(null));
-  }, [slug]);
+  }, [slug, embedded, project, owner]);
 
   const ticker = r?.coin_ticker ? String(r.coin_ticker).replace(/^\$/, "") : "";
   const tk = ticker ? "$" + ticker : "the coin";
@@ -255,7 +264,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
   let n = 0; const anim = () => ({ style: { ["--i" as any]: n++ } });
 
   return (
-    <Shell className={new URLSearchParams(location.search).get("projectView") === "1" ? "rz-release-view rz-release-embedded" : ""} right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href={`/release/${encodeURIComponent(slug)}`}>Back to project</a>}>
+    <FeedFrame embedded={embedded} className={new URLSearchParams(location.search).get("projectView") === "1" ? "rz-release-view rz-release-embedded" : ""} right={walletAddr ? <span className="rz-wallet-chip"><i />{shortAddr} <small>Solana</small></span> : <a className="rz-link" href={`/release/${encodeURIComponent(slug)}`}>Back to project</a>}>
       <div className="rz-board-page">
         {r && isOwner && <div className="rz-owner rz-board-owner"><span>You own this project</span></div>}
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
@@ -265,13 +274,13 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
         )}
         {r && (
           <>
-            <a className="rz-textlink" href={`/release/${encodeURIComponent(slug)}`}>← {r.title}</a>
+            {!embedded && <a className="rz-textlink" href={`/release/${encodeURIComponent(slug)}`}>← {r.title}</a>}
             <div className="rz-board-head">
               <h1>Exclusive feed {member && <span className="rz-member"><Sparkles size={12} aria-hidden="true" />Member</span>}</h1>
               <p>Updates, stems and files from {r.creator_name || "the creator"}, for people who hold {tk}.</p>
             </div>
 
-            {!unlocked && <SupportInfo creator={r.creator_name || "the creator"} tk={tk} nextMs={nextMs} />}
+            {!unlocked && <details className="rz-feed-access"><summary>Holder access · how it works</summary><SupportInfo creator={r.creator_name || "the creator"} tk={tk} nextMs={nextMs} /></details>}
 
             {member && r.coin_mint && <div className="rz-welcome">Welcome in. As a {tk} holder you can see every update on this feed.</div>}
             {(r.owner_note || isOwner) && (
@@ -346,7 +355,7 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
               </div>
             )}
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
-            <RelatedProjects href={`/release/${slug}`} artist={r.creator_name} categories={r.answers?.category} />
+            {!embedded && <RelatedProjects href={`/release/${slug}`} artist={r.creator_name} categories={r.answers?.category} />}
           </>
         )}
       </div>
@@ -425,6 +434,6 @@ function Inner({ slug, connErr, setConnErr }: { slug: string; connErr: boolean; 
           </div>
         </div>
       )}
-    </Shell>
+    </FeedFrame>
   );
 }

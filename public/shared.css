@@ -906,6 +906,37 @@ button { background: none; border: 0; cursor: pointer; }
 
 /* Old separate arrow removed — now integrated into .work-type-tag::after */
 
+/* Coin-pairing marker: small badge in the corner of a card whose project has a paired coin */
+.work-coin-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.5rem 0.22rem 0.32rem;
+  border-radius: 999px;
+  background: hsla(0 0% 0% / 0.62);
+  border: 1px solid hsla(45 90% 60% / 0.45);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.work-coin-badge svg {
+  width: 12px;
+  height: 12px;
+  color: hsl(var(--accent-gold));
+  flex-shrink: 0;
+}
+
+
 /* View-count / stat badge inside .work-body */
 .work-views {
   display: inline-flex;
@@ -2313,6 +2344,16 @@ button { background: none; border: 0; cursor: pointer; }
   }
   .projects-grid .work-type-tag {
     display: none !important;
+  }
+  .projects-grid .work-coin-badge {
+    top: 0.4rem;
+    left: 0.4rem;
+    padding: 0.16rem 0.36rem 0.16rem 0.24rem;
+    font-size: 0.55rem;
+  }
+  .projects-grid .work-coin-badge svg {
+    width: 10px;
+    height: 10px;
   }
   .section { padding-left: 1.2rem; padding-right: 1.2rem; }
   /* Compact services on mobile */

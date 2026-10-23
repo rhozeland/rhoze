@@ -11,3 +11,10 @@ export function roleDetails(value: RoleDetails | null | undefined): RoleDetails 
     return text ? [[key, text]] : [];
   }));
 }
+
+export const ROLE_REQUIRED_KEYS = ['description', 'requirements', 'location'] as const;
+
+/** First open role (named) missing a required detail field, or null. Timing is the only optional field. */
+export function firstRoleMissingDetails(roles: Array<Partial<RoleDetails> & { name?: string }> | null | undefined) {
+  return (roles ?? []).find((r) => (r.name ?? '').trim() && !ROLE_REQUIRED_KEYS.every((k) => typeof r[k] === 'string' && (r[k] as string).trim())) ?? null;
+}

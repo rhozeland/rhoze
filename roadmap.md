@@ -170,6 +170,11 @@
 - [x] Verify related-project links, real artwork and desktop/phone layout; confirm the section on live published release and Exclusive pages.
 
 ## Save draft account handoff
+## Unified Discover
+- [ ] Combine Work, People and Open calls with one search, matching category chips and existing card styles.
+- [ ] Verify real public results, filters, links and desktop/phone layouts.
+
+## Save draft account handoff
 - [x] Fix shared button contrast; checked nine public destinations in both themes, sign-in forms and all five workspace tabs at 1280/855/390px using a controlled workspace fixture; eight existing action tests pass.
 - [x] Hide empty creator/brand profile sections; verified Madi’s populated projects and likes remain visible at 1280/855/390px, with liked-project privacy tests passing.
 - [x] Make both Save draft actions resume account setup when signed out and attach drafts before opening the owner's profile.

@@ -160,6 +160,7 @@
 - [ ] Apply the supplied page-only design while preserving all data/actions, then verify desktop and 390px phone layout — must be implemented in the Creator OS project chat; cross-project access is read-only.
 
 ## Early access waitlist
-- [ ] Add private waitlist storage, validated signup, unique referrals and real public count above 25.
-- [ ] Build /waitlist and team-admin list/export; connect Soon destinations and shared footers.
-- [ ] Verify signup, duplicate, referral, privacy and desktop/390px form flows.
+- [x] Add private waitlist storage, validated signup, unique referrals and real public count above 25.
+- [x] Build /waitlist and team-admin list/export; connect Soon destinations and shared footers.
+- [x] Verify real signup, duplicate, stored referral, public privacy and desktop/390px form flows; remove temporary signups.
+- [ ] Verify signed-in admin list/export — requesting account has no matched auth user; needs preview admin sign-in.

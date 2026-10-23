@@ -31,6 +31,9 @@ html:not(.site-embedded) .site-nav{border-radius:0}
 .site-nav + .mobile-menu .nav-icon{display:none!important}.site-nav + .mobile-menu .mobile-cta{color:hsl(var(--site-nav-ink))!important;border-color:hsl(var(--site-nav-line))!important}
 .site-nav + .mobile-menu [hidden]{display:none!important}
 .sn-mobile{display:none}.sn-mobile.open{display:flex;flex-direction:column}
+.sn-mobile .sn-signin{display:inline-flex;align-items:center;justify-content:center;min-height:40px;margin-top:.75rem;padding:.5rem 1rem;border:1px solid hsl(var(--site-nav-line))!important;border-radius:8px;background:hsl(var(--site-nav-surface))!important;color:hsl(var(--site-nav-ink))!important;font-size:.95rem;font-weight:600;line-height:1.2;white-space:normal}
+.sn-mobile .sn-signin:hover{background:hsl(var(--site-nav-hover))!important;color:hsl(var(--site-nav-ink))!important}
+.sn-mobile .sn-signin:focus-visible{outline:2px solid hsl(var(--site-nav-ink));outline-offset:3px}
 .site-nav .sn-extra{display:flex;align-items:center;flex-shrink:0}
 .site-nav .sn-extra .rz-btn,.site-nav .sn-extra .rz-link,.site-nav .sn-extra .rz-wallet-chip{color:hsl(var(--site-nav-ink));border-color:hsl(var(--site-nav-line));background:transparent}
 @media(max-width:900px){.site-nav{min-height:65px;border-radius:18px 18px 0 0;padding:.65rem 1rem!important}.site-nav .sn-links,.site-nav .figma-nav-links,.site-nav .nav-cta,.site-nav .sn-signin{display:none!important}.site-nav .menu-toggle,.site-nav .sn-toggle{display:inline-flex!important;margin-left:auto}.site-nav .sn-extra{margin-left:auto}.site-nav .sn-extra + .sn-toggle{margin-left:0}.site-nav .brand img,.site-nav .sn-brand img{width:32px;height:32px}.site-nav .brand-text,.site-nav .sn-brand span{font-size:1.05rem}}

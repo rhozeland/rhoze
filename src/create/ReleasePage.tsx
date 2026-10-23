@@ -17,6 +17,8 @@ import ProjectStory from "./ProjectStory";
 import ProjectRewards from "./ProjectRewards";
 import RelatedProjects from "./RelatedProjects";
 import './leaderboard.css';
+import './board.css';
+import './release-dark.css';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
 const CAUSE_WALLET = "Cz4P…w2Lb";
@@ -40,6 +42,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [r, setR] = useState<any>(undefined);
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [tab, setTab] = useState<"overview" | "roadmap" | "people" | "budget" | "unlocks">("overview");
   const [holds, setHolds] = useState(false);
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
@@ -254,7 +257,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
       {r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1" && (
         <ProjectWorkspace r={r} onSaved={(next) => setR({ ...r, ...next })} />
       )}
-      <div className="rz-card rz-release-content">
+      <div className={`rz-card rz-release-content${r ? " rz-ws-dark rz-release-dark" : ""}`}>
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /><div className="rz-skel" /></>}
         {r === null && (
           <div className="rz-head"><h1>Project not found</h1><p>This page may be unpublished or the link is wrong.</p>
@@ -264,7 +267,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           <>
             <header className="rz-release-header">
             <div className="rz-head">
-              <h1>{new URLSearchParams(location.search).get("projectView") === "1" ? <a href={`/release/${encodeURIComponent(slug)}`} target="_top" style={{ color: "inherit", textDecoration: "none" }}>{r.title}</a> : r.title}</h1>
+              <div className="rz-ws-eyebrow">Public project · {(r.milestones || []).length} {(r.milestones || []).length === 1 ? "phase" : "phases"}</div>
+              <h1 className="rz-ws-title">{new URLSearchParams(location.search).get("projectView") === "1" ? <a href={`/release/${encodeURIComponent(slug)}`} target="_top" style={{ color: "inherit", textDecoration: "none" }}>{r.title}</a> : r.title}</h1>
               <p>by {profileHref ? <a href={profileHref} className="rz-bylink"><b>{r.creator_name}</b></a> : <b>{r.creator_name || "Rhozeland artist"}</b>}</p>
               {r.fingerprint && <details className="rz-note" style={{ marginTop: 6 }}><summary style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}><Fingerprint size={14} /> Fingerprinted{r.chain_signature ? " · on Solana" : ""}</summary><p style={{ margin: "6px 0 0", fontSize: 12 }}>SHA-256 of this project as published{r.fingerprinted_at ? ` on ${new Date(r.fingerprinted_at).toLocaleDateString()}` : ""}:<br /><code style={{ wordBreak: "break-all" }}>{r.fingerprint}</code><br />{r.chain_signature ? <a href={`https://solscan.io/tx/${r.chain_signature}`} target="_blank" rel="noopener noreferrer">View on-chain record</a> : "Solana stamp pending."}</p></details>}
             </div>
@@ -274,6 +278,17 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               <Button asChild className="rz-btn pri"><a href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a></Button>
             </div>
             </header>
+            {(() => {
+              const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
+              const list: [typeof tab, string][] = [["overview", "Overview"]];
+              if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
+              if ((isOwner || pubs.team) && roleCount > 0) list.push(["people", "People"]);
+              if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Budget"]);
+              list.push(["unlocks", "Unlocks"]);
+              return <nav className="rz-ws-tabs rz-rd-tabs" role="tablist" aria-label="Project sections">{list.map(([k, l]) => <button key={k} role="tab" type="button" className="rz-ws-tab" aria-selected={tab === k} onClick={() => setTab(k)}>{l}</button>)}</nav>;
+            })()}
+            <div className="rz-board-layout rz-rd-layout"><div className="rz-rd-main">
+            {tab === "overview" && <>
             <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
             {parseMediaLinks([...(r.answers?.media_links || []), r.answers?.source_url].filter(Boolean)).length ? (
@@ -288,6 +303,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               {r.answers?.audience && <p className="rz-release-audience">{r.answers.audience}</p>}
             </section>}
             {(isOwner || pubs.overview) && <ProjectStory story={r.answers || {}} />}
+            </>}
+            {(tab === "overview" || tab === "budget") && <>
             <h2 className="rz-h2">Project release</h2>
 
             <div className="rz-release-coin">
@@ -308,6 +325,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 
+            </>}
+            {tab === "budget" && <>
             {(isOwner || pubs.money) && <>
             <h2 className="rz-h2">Project breakdown</h2>
             <div className="rz-split" style={{ marginBottom: "1rem" }}>
@@ -329,7 +348,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             {r.coin_mint && !isOwner && !pubs.money && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
             {r.coin_mint && <p className="rz-note break-all">Solana contract: <code>{r.coin_mint}</code> <Button variant="ghost" size="sm" onClick={async () => { try { await navigator.clipboard.writeText(r.coin_mint); setNote("Contract address copied."); } catch { setNote("Could not copy the address."); } }}>Copy address</Button></p>}
 
-            {(isOwner || pubs.plan) && <>
+            </>}
+            {tab === "roadmap" && (isOwner || pubs.plan) && <>
             <h2 className="rz-h2">Roadmap &amp; deliverables</h2>
             <div className="rz-inv">
               <div className="rz-inv-h" style={{ gridTemplateColumns: "1.6rem 1fr 1.4fr 7rem" }}><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span></div>
@@ -344,7 +364,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
 
             </>}
 
-            {(isOwner || pubs.team) && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
+            {tab === "people" && (isOwner || pubs.team) && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && (
               <>
                 <h2 className="rz-h2">We're hiring</h2>
                 <div className="rz-inv">
@@ -359,6 +379,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               </>
             )}
 
+            {tab === "unlocks" && <>
             {holdMsg === "holds" && (
               <p className="rz-note" style={{ marginTop: "1.2rem", padding: ".8rem 1rem", border: "1px solid hsl(var(--line))", borderRadius: 12 }}>
                 You hold {ticker ? "$" + ticker : "the coin"} — your unlocks are below
@@ -393,7 +414,24 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             )}
 
             <p className="rz-note" style={{ marginTop: "1.6rem" }}>Tokens trade on Pump.fun. Rhoze does not operate the sale.</p>
-            <ProjectDiscussion releaseId={r.id} />
+            </>}
+            {tab === "overview" && <ProjectDiscussion releaseId={r.id} />}
+            </div>
+            <aside className="rz-board-side">
+              {(isOwner || pubs.plan) && (r.milestones || []).length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("roadmap")}><h4>Roadmap</h4>
+                <div className="rz-side-big">{statuses.filter((x) => x === "Delivered").length}/{(r.milestones || []).length}</div>
+                {(r.milestones || []).slice(0, 4).map((m: any, i: number) => <div className="rz-side-row" key={i}><span>{m.title}</span><small>{statuses[i] || "Upcoming"}</small></div>)}
+              </button>}
+              <div className="rz-side-card"><h4>Release as a coin</h4>
+                <p>{ticker ? <>Paired with <b>${ticker}</b>{mcap !== null ? ` · ${fmtMcap(mcap)}` : ""}.</> : "No coin attached yet."}</p>
+                <a className="rz-btn pri" href={`/release/${encodeURIComponent(slug)}/exclusive`}>Support</a>
+                {pumpUrl && <a className="rz-btn" href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a>}
+              </div>
+              {(isOwner || pubs.team) && Array.isArray(r.answers?.roles) && r.answers.roles.length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("people")}><h4>Open roles</h4>
+                {r.answers.roles.slice(0, 4).map((role: any, i: number) => <div className="rz-side-row" key={i}><span>{role.name}</span><small>{role.rate || `${role.count || 1} spot`}</small></div>)}
+              </button>}
+            </aside>
+            </div>
           </>
         )}
       </div>

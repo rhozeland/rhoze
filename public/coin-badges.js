@@ -26,6 +26,10 @@ export function coinBadgeLabel(ticker) {
   return t ? '$' + t : 'Coin';
 }
 
+export function matchesCoinFilter(card, connectedOnly) {
+  return !connectedOnly || Boolean(card?.dataset.coinMint?.trim());
+}
+
 function slugFromHref(href) {
   const m = (href || '').match(/^\/(?:project|release)\/([^/?#]+)/);
   if (!m) return '';
@@ -45,6 +49,7 @@ export function applyCoinBadges(grid, pairs) {
     if (!slug) continue;
     const pair = pairs[slug];
     if (!pair) continue;
+    card.dataset.coinMint = pair.mint;
     const label = coinBadgeLabel(pair.ticker);
     const badge = document.createElement('span');
     badge.className = 'work-coin-badge';

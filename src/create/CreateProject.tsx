@@ -541,14 +541,14 @@ export default function CreateProject() {
 
   return (
     <Shell className="rz-create-simple">
-      <ExistingProjects expandedBar />
+      <div className="rz-create-panel">
       <div className="rz-wizard-toolbar">
+        <ExistingProjects expandedBar />
         <div className="rz-wizard-toolbar-actions">
           <Button variant="outline" className="rz-btn" onClick={saveToProfile} disabled={saving || savingToProfile}>{saving || savingToProfile ? "Saving…" : "Save draft"}</Button>
         </div>
       </div>
       <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "call" || stepKey === "review" ? "rz-card-wide" : ""}`}>
-        <FileText className="rz-wizard-mark" size={30} aria-hidden="true" />
         <div className="rz-wizard-progress">
           <div className="rz-wizard-count"><span>Step {step} of {FLOW.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
           <progress aria-label="Project creation progress" max={FLOW.length} value={step} />
@@ -616,7 +616,7 @@ export default function CreateProject() {
               {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
             </div>
           </div>
-          <div className="rz-actions rz-wizard-next"><Button variant="outline" className="rz-btn pri" disabled={coverBusy || !!coverFile} onClick={goNext}>Next <ArrowRight size={14} /></Button></div>
+          <div className="rz-actions rz-wizard-next">{ideaIndex > 0 && <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft size={14}/>Back</Button>}<Button variant="outline" className="rz-btn pri" disabled={coverBusy || !!coverFile} onClick={goNext}>Continue <ArrowRight size={14} /></Button></div>
         </>}
 
         {stepKey === "scope" && <>
@@ -757,6 +757,7 @@ export default function CreateProject() {
         {authFor && <AuthModal action={localStorage.getItem(PENDING_DRAFT_KEY) ? " and save draft" : " and create project"} intro={localStorage.getItem(PENDING_DRAFT_KEY) ? "Create an account or log in to keep this private draft on your profile." : callChoice ? "Create an account to confirm your call. We'll pick up right where you left off." : "Create an account to manage your private project."} onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
           redirectTo={`${location.origin}/create.html?draft=${authFor}`} />}
         {savedAt && <div className="rz-note rz-saved">Project saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
+      </div>
       </div>
     </Shell>
   );

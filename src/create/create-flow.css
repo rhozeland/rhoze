@@ -41,3 +41,28 @@
 .rz-person-avatar img{width:100%;height:100%;object-fit:cover}
 .rz-private-head{max-width:960px;margin:1rem auto}
 .rz-create-simple .rz-wizard{box-shadow:none;background:transparent;border:0}
+/* Reference-inspired framing, without changing fonts or shared page backgrounds. */
+.rz-create-simple .rz-stage{padding:28px 24px 22px}
+.rz-create-panel{max-width:940px;width:100%;margin:0 auto;background:hsl(var(--card)/.58);border:1px solid hsl(var(--card)/.9);border-radius:16px;padding:24px 36px 28px;min-width:0}
+.rz-create-panel .rz-wizard-toolbar{max-width:none;gap:16px;margin:0 0 32px;justify-content:flex-end;align-items:flex-start}
+.rz-create-panel .rz-existing-bar{flex:1;min-width:0;max-width:none;margin:0}
+.rz-create-panel .rz-existing-bar>button{width:100%;min-height:44px;border-radius:8px;background:hsl(var(--card)/.8);border-color:hsl(var(--line));color:hsl(var(--ink))}
+.rz-create-panel .rz-wizard-toolbar-actions{flex:none}
+.rz-create-panel .rz-wizard-toolbar-actions .rz-btn{min-height:44px;min-width:120px;background:transparent}
+.rz-create-simple .rz-create-panel .rz-wizard,.rz-create-simple .rz-create-panel .rz-wizard.rz-card-wide{width:100%;max-width:780px;margin:0 auto;padding:0}
+.rz-create-panel .rz-wizard-progress{max-width:580px;margin:0 auto 28px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 20px;align-items:center}
+.rz-create-panel .rz-wizard-count{grid-column:1/-1;margin:0;font-size:12px;font-weight:600;text-transform:uppercase}
+.rz-create-panel .rz-wizard-progress progress{height:7px;min-width:0}
+.rz-create-panel .rz-wizard-progress p{margin:0;font-size:11px;text-align:right;text-transform:uppercase}
+.rz-create-panel .rz-wizard .rz-head{text-align:center;margin-bottom:26px}
+.rz-create-panel .rz-wizard .rz-head h1{font-size:36px;line-height:1.2;font-weight:700;letter-spacing:0;color:hsl(var(--ink));overflow-wrap:anywhere}
+.rz-create-panel .rz-wizard .rz-head p{font-size:14px;margin-top:10px}
+.rz-create-panel .rz-field label{font-size:13px}
+.rz-create-panel .rz-wizard .rz-in{background:hsl(var(--card)/.85);min-height:48px;padding:12px 16px;font-size:14px;border-radius:8px}
+.rz-create-panel .rz-idea-question{min-height:120px}
+.rz-create-panel .rz-wizard>.rz-actions{margin-top:24px;justify-content:center;gap:12px;flex-wrap:wrap}
+.rz-create-panel .rz-wizard>.rz-actions .rz-btn.pri{min-height:46px;width:min(380px,100%);font-size:14px;padding:12px 20px}
+.rz-create-panel .rz-wizard-next{flex-direction:row}
+.rz-create-panel .rz-wizard .rz-money .rz-in{padding-left:32px}
+@media(max-width:860px){.rz-create-simple .rz-stage{padding:20px 18px}.rz-create-panel{padding:20px 24px 24px}.rz-create-panel .rz-wizard .rz-head h1{font-size:30px}.rz-create-panel .rz-wizard-toolbar{margin-bottom:24px}}
+@media(max-width:520px){.rz-create-simple .rz-stage{padding:16px 12px}.rz-create-panel{padding:16px 16px 22px;border-radius:12px}.rz-create-panel .rz-wizard-toolbar{gap:8px;flex-wrap:wrap;margin-bottom:24px}.rz-create-panel .rz-existing-bar{flex-basis:100%}.rz-create-panel .rz-wizard-toolbar-actions .rz-btn{min-height:38px;min-width:104px}.rz-create-panel .rz-wizard .rz-head h1{font-size:26px}.rz-create-panel .rz-wizard .rz-head p{font-size:12px}.rz-create-panel .rz-wizard-progress{gap:8px 12px;margin-bottom:24px}.rz-create-panel .rz-wizard-count{font-size:10px}.rz-create-panel .rz-wizard-progress p{font-size:9px}.rz-create-panel .rz-wizard>.rz-actions .rz-btn.pri{width:100%}.rz-create-panel .rz-wizard .rz-in{font-size:16px}}

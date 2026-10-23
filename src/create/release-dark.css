@@ -1,0 +1,13 @@
+.rz-release-dark.rz-card{background:hsl(var(--wsb))!important;color:hsl(var(--wst));border-color:hsl(var(--wsl))!important;--ink:30 30% 94%;--mut:270 6% 64%;--line:270 10% 17%;--card:270 8% 9%;--alt:270 8% 12%}
+.rz-release-dark .rz-release-header{align-items:flex-end;margin-bottom:1rem}
+.rz-release-dark .rz-head h1{color:hsl(var(--wst))}
+.rz-release-dark .rz-head p,.rz-release-dark .rz-note{color:hsl(var(--wsm))}
+.rz-release-dark .rz-h2,.rz-release-dark b,.rz-release-dark .rz-bylink{color:hsl(var(--wst))}
+.rz-rd-tabs{display:flex;flex-wrap:wrap;gap:.2rem;width:max-content;max-width:100%;margin:0 0 1rem!important}
+.rz-rd-main{min-width:0}
+.rz-rd-side{text-align:left;font:inherit;color:inherit;cursor:pointer;width:100%}
+.rz-rd-side:hover{border-color:hsl(var(--wsm))}
+.rz-release-dark .rz-inv,.rz-release-dark .rz-split,.rz-release-dark .rz-chip{background:hsl(var(--wsp));border-color:hsl(var(--wsl));color:hsl(var(--wst))}
+.rz-release-dark .rz-textlink{color:hsl(var(--wst))}
+.rz-release-dark .rz-release-share,.rz-release-dark [data-button-variant]{color:hsl(var(--wst));border-color:hsl(var(--wsl));background:hsl(var(--wsp))}
+@media(max-width:900px){.rz-rd-layout{grid-template-columns:1fr}.rz-rd-layout .rz-board-side{order:-1}}

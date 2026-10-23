@@ -156,5 +156,5 @@
 - [x] Recommend one homepage with artist/brand paths sharing accounts and projects; leave the homepage unchanged.
 
 ## Uploaded workspace redesign
-- [ ] Identify the workspace matching Overview/Roadmap/Rollout/Board/Story/Team — awaiting the page link or confirmation of the intended project; this interface is absent from the current site.
-- [ ] Apply the supplied page-only design while preserving all data/actions, then verify desktop and 390px phone layout — blocked on workspace identification.
+- [x] Identify the workspace matching Overview/Roadmap/Rollout/Board/Story/Team — exact match is in Rhozeland Creator OS, not this site.
+- [ ] Apply the supplied page-only design while preserving all data/actions, then verify desktop and 390px phone layout — must be implemented in the Creator OS project chat; cross-project access is read-only.

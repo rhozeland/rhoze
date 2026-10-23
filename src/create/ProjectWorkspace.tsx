@@ -16,7 +16,8 @@ import ProjectBoard from "./ProjectBoard";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
-type Tab = "board" | "overview" | "plan" | "team" | "money" | "payments";
+export type WorkspaceTab = "board" | "overview" | "plan" | "team" | "money" | "payments";
+type Tab = WorkspaceTab;
 export type PublicSections = { overview: boolean; plan: boolean; team: boolean; money: boolean };
 
 export const DEFAULT_PUBLIC_SECTIONS: PublicSections = { overview: true, plan: false, team: false, money: false };
@@ -31,8 +32,10 @@ const MAKERS_OPTIONS: { value: string; label: string }[] = [
 
 /** Owner-only workspace: Overview, Plan, Team & chat, Money tabs, each with a public-visibility switch.
  *  Saves through the existing owner-checked release_save(p_token, p_id, p_data) function. */
-export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (next: any) => void }) {
-  const [tab, setTab] = useState<Tab>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "board"));
+export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, extraTabs = [] }: { r: any; onSaved: (next: any) => void; activeTab?: string; onTabChange?: (tab: string) => void; extraTabs?: [string, string][] }) {
+  const [localTab, setLocalTab] = useState<string>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "board"));
+  const tab = activeTab ?? localTab;
+  const setTab = (next: string) => { setLocalTab(next); onTabChange?.(next); };
   const [milestones, setMilestones] = useState<Milestone[]>(() => (r.milestones || []).map((m: any) => ({ id: m.id || uid(), title: m.title || "", deliverable: m.deliverable || "", amount_cents: Number(m.amount_cents) || 0, done: !!m.done })));
   const [makers, setMakers] = useState<string[]>(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
   const [people, setPeople] = useState<TeamPerson[]>([]);
@@ -134,7 +137,7 @@ export default function ProjectWorkspace({ r, onSaved }: { r: any; onSaved: (nex
       <div className="rz-ws-top"><div><div className="rz-ws-eyebrow">{r.status === "published" ? "Public project" : "Private space"} · {milestones.length} {milestones.length === 1 ? "phase" : "phases"}</div><h1 className="rz-ws-title">{title || "Untitled project"}</h1></div>
       {coinLaunchRequested({ coin_mint: mint, answers: r.answers }) && <div className="rz-split" role="status" style={{ marginBottom: ".9rem" }}><div className="rz-split-row" style={{ gridTemplateColumns: "1fr" }}><b>Coin launch requested</b></div></div>}
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
-        {([["board", "Board"], ["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]] as [Tab, string][]).map(([k, label]) => (
+        {([...[["board", "Board"], ["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]], ...extraTabs] as [string, string][]).map(([k, label]) => (
           <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>
         ))}
       </div></div>

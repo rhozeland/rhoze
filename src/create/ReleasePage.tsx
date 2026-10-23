@@ -48,6 +48,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [tab, setTab] = useState<"board" | "overview" | "roadmap" | "people" | "budget" | "unlocks" | "exclusive">(new URLSearchParams(location.search).get('tab') === 'exclusive' || location.hash === '#exclusive' ? 'exclusive' : 'board');
+  const [workspaceTab, setWorkspaceTab] = useState<string>(new URLSearchParams(location.search).get('tab') === 'exclusive' || location.hash === '#exclusive' ? 'exclusive' : new URLSearchParams(location.search).get('paid') ? 'payments' : 'board');
   const [holds, setHolds] = useState(false);
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);
@@ -78,6 +79,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   useEffect(() => {
     if (!r || !rolesVisible || !roleTarget.requested) return;
     setTab('people');
+    setWorkspaceTab('people');
   }, [r, rolesVisible, roleTarget.requested]);
 
   useEffect(() => {
@@ -254,9 +256,11 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   );
   const pubs = { ...DEFAULT_PUBLIC_SECTIONS, ...(r?.answers?.public_sections || {}) };
   const merged = !!(r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1");
-  const show = (k: typeof tab) => tab !== 'exclusive' && (merged || tab === 'board' || tab === k);
+  const show = (k: typeof tab) => tab !== 'exclusive' && ((merged && workspaceTab === 'publicPage') || tab === 'board' || tab === k);
+  const publicVisible = !merged || ['publicPage', 'people', 'exclusive'].includes(workspaceTab);
   const openExclusive = () => {
     setTab('exclusive');
+    setWorkspaceTab('exclusive');
     const url = new URL(location.href);
     url.searchParams.set('tab', 'exclusive'); url.hash = 'exclusive';
     history.replaceState(null, '', url);
@@ -286,8 +290,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
         </div>
       )}
       {r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1" && (
-        <ProjectWorkspace r={r} onSaved={(next) => setR({ ...r, ...next })} />
+        <ProjectWorkspace r={r} activeTab={workspaceTab} onTabChange={(next) => { setWorkspaceTab(next); if (next === 'exclusive') setTab('exclusive'); else if (next === 'people') setTab('people'); else if (next === 'publicPage') setTab('overview'); }} extraTabs={[["publicPage", "Project page"], ...(rolesVisible && r.answers?.roles?.length ? [["people", "Open roles"]] as [string, string][] : []), ["exclusive", "Exclusive"]]} onSaved={(next) => setR({ ...r, ...next })} />
       )}
+      {publicVisible && <>
       <div className={`rz-card rz-release-content${r ? " rz-ws-dark rz-release-dark" : ""}${merged ? " rz-release-merged" : ""}`}>
         {r === undefined && <><div className="rz-skel" /><div className="rz-skel" /><div className="rz-skel" /></>}
         {r === null && (
@@ -310,6 +315,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             </header>}
             {(() => {
+              if (merged) return null;
               const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
               const list: [typeof tab, string][] = [["board", "Board"], ["overview", "Overview"]];
               if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
@@ -468,6 +474,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
           </>
         )}
       </div>
+      </>}
 
       {r && <RelatedProjects href={`/release/${slug}`} artist={r.creator_name} categories={r.answers?.category} />}
 

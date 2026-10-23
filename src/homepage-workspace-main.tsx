@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import StartPage from "@/start/StartPage";
 import ReleasePage from "@/create/ReleasePage";
-import ExclusivePage from "@/create/ExclusivePage";
 import PrivateWorkspace from "@/create/PrivateWorkspace";
 import PortfolioPage from "@/create/PortfolioPage";
 import RewardsPage from "@/create/RewardsPage";
@@ -81,11 +80,9 @@ if (/^\/waitlist\/?$/.test(location.pathname)) {
   // Discover is the static Featured Projects page (public/discover.html).
   location.replace("/discover.html" + location.search);
 } else if (exclusiveMatch) {
-  document.documentElement.classList.add("release-mode");
-  const el = document.createElement("div");
-  el.id = "release-root";
-  document.body.appendChild(el);
-  createRoot(el).render(<ExclusivePage slug={decodeURIComponent(exclusiveMatch[1])} />);
+  const params = new URLSearchParams(location.search);
+  params.set("tab", "exclusive");
+  location.replace(`/release/${exclusiveMatch[1]}?${params}#exclusive`);
 } else if (releaseMatch) {
   document.documentElement.classList.add("release-mode");
   const el = document.createElement("div");

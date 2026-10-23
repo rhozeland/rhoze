@@ -16,6 +16,7 @@
 - Mark explicitly initiated conversations server-side in `dm_threads.personal_started`, because application-only threads must not appear as personal chats until a participant starts a conversation.
 - Portal inbox dialogs into the page's active React mount, because release-mode hides other direct children of the document body.
 - Use only public cover artwork for locked Exclusive preview cards; keep post text and private media behind existing owner/wallet checks so visual teasers never expose protected content.
+- Render ExclusiveFeed inside ReleasePage using its wallet provider and public release record; redirect legacy Exclusive URLs to the release tab, preserving signature-gated reads without duplicate shells.
 - Store per-project workspace choices (makers, timeline, public section switches) inside the release `answers` JSON saved via `release_save`, because the owner-checked save path already protects them and no schema change is needed.
 - Read scoped rules in `src/create/AGENTS.md` and `src/shop/AGENTS.md` before editing those directories.
 - Award public-account $RHOZE rewards only through database triggers into `user_rewards_ledger` (unique per user/kind/reference, amounts in `rz_reward_amount`), because clients must never mint rewards and repeated actions must not farm them.

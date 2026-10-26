@@ -582,21 +582,21 @@
   !function(){
     var KEY='rz-discover-scroll:'+location.pathname+location.search;
     try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(e){}
-    function save(){ try{ sessionStorage.setItem(KEY, String(window.scrollY||0)); }catch(e){} }
-    var t; window.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(save,120); }, {passive:true});
-    window.addEventListener('pagehide', save);
-    document.addEventListener('click', function(e){ if(e.target.closest && e.target.closest('a')) save(); }, true);
-    var y=0; try{ y=parseInt(sessionStorage.getItem(KEY)||'0',10)||0; }catch(e){}
-    if(y>0){
-      var start=Date.now();
-      (function tryRestore(){
-        var max=document.documentElement.scrollHeight-window.innerHeight;
-        if(max>=y-4){ window.scrollTo(0,y); return; }
-        window.scrollTo(0,max);
-        if(Date.now()-start<4000) setTimeout(tryRestore,100); else window.scrollTo(0,y);
-      })();
-    }
-    window.addEventListener('pageshow', function(ev){ if(ev.persisted && y>0) window.scrollTo(0,y); });
+    var restoring=false;
+    function save(href,top){ if(restoring) return; try{ var o={y:window.scrollY||0}; if(href){o.href=href;o.top=top;} else { var prev=JSON.parse(sessionStorage.getItem(KEY)||'{}'); if(prev.href&&Math.abs((prev.y||0)-o.y)<40){o.href=prev.href;o.top=prev.top;} } sessionStorage.setItem(KEY, JSON.stringify(o)); }catch(e){} }
+    var t; window.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(function(){save();},150); }, {passive:true});
+    document.addEventListener('click', function(e){ var a=e.target.closest&&e.target.closest('a'); if(a) save(a.getAttribute('href'), a.getBoundingClientRect().top); }, true);
+    var st={}; try{ st=JSON.parse(sessionStorage.getItem(KEY)||'{}'); }catch(e){}
+    if(!(st.y>0)) return;
+    restoring=true; var start=Date.now(), stop=false;
+    ['wheel','touchstart','keydown','mousedown'].forEach(function(n){ window.addEventListener(n,function(){stop=true;restoring=false;},{once:true,passive:true}); });
+    (function tick(){
+      if(stop) return;
+      var el=null; if(st.href){ try{ el=document.querySelector('a[href="'+CSS.escape(st.href)+'"]'); }catch(e){} }
+      if(el) window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - st.top);
+      else window.scrollTo(0, Math.min(st.y, document.documentElement.scrollHeight-window.innerHeight));
+      if(Date.now()-start<3000) requestAnimationFrame(tick); else restoring=false;
+    })();
   }();
   </script>
 

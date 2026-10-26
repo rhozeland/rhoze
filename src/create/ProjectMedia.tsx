@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import './project-media.css';
 
 function PlatformIcon({ name }: { name: string }) {
-  if (name === "Spotify") return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M6.5 9c4-1.4 8-1 11 1M7 12.5c3.5-1.1 6.9-.7 9.5 1M8 16c2.7-.8 5.3-.5 7.5.8" strokeLinecap="round" /></svg>;
-  if (name === "SoundCloud") return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 13v3m3-6v7m3-9v9m3-11v11m3 0h5a3 3 0 0 0 0-6h-1a5 5 0 0 0-4-5Z" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-  if (name === "YouTube") return <Youtube size={18} />;
-  if (name === "Instagram") return <Instagram size={18} />;
-  if (name === "LinkedIn") return <Linkedin size={18} />;
-  if (/Luma|Eventbrite/.test(name)) return <CalendarDays size={18} />;
-  if (/Apple Music|Bandcamp|TikTok/.test(name)) return <Music2 size={18} />;
-  return <Link2 size={18} />;
+  if (name === "Spotify") return <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M6.5 9c4-1.4 8-1 11 1M7 12.5c3.5-1.1 6.9-.7 9.5 1M8 16c2.7-.8 5.3-.5 7.5.8" strokeLinecap="round" /></svg>;
+  if (name === "SoundCloud") return <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true"><path d="M2 13v3m3-6v7m3-9v9m3-11v11m3 0h5a3 3 0 0 0 0-6h-1a5 5 0 0 0-4-5Z" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+  if (name === "YouTube") return <Youtube size={13} strokeWidth={1.9} />;
+  if (name === "Instagram") return <Instagram size={13} strokeWidth={1.9} />;
+  if (name === "LinkedIn") return <Linkedin size={13} strokeWidth={1.9} />;
+  if (/Luma|Eventbrite/.test(name)) return <CalendarDays size={13} strokeWidth={1.9} />;
+  if (/Apple Music|Bandcamp|TikTok/.test(name)) return <Music2 size={13} strokeWidth={1.9} />;
+  return <Link2 size={13} strokeWidth={1.9} />;
 }
 
 /** Media viewer + social/event links for a project page. Renders nothing when there's nothing to show. */

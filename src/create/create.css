@@ -337,6 +337,12 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-media-stage.tall{aspect-ratio:auto;height:352px}
 .rz-media-stage.img{aspect-ratio:auto;max-height:420px;display:flex;justify-content:center}
 .rz-media-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.rz-media-stage video{width:100%;height:100%;object-fit:contain}
+.rz-media-stage:has(audio){display:grid;place-items:center;aspect-ratio:auto;min-height:120px;padding:16px}
+.rz-media-stage audio{width:100%;max-width:480px}
+.rz-media .rz-note{margin:0;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.rz-media .rz-note a{color:inherit;text-decoration:underline}
+.rz-media .rz-note svg{display:inline;vertical-align:middle}
 .rz-media-stage.img img{max-height:420px;width:auto;max-width:100%;object-fit:contain}
 .rz-media-strip{display:flex;gap:.45rem;overflow-x:auto;padding-bottom:2px}
 .rz-media-thumb{flex:0 0 auto;width:84px;height:52px;border-radius:9px;overflow:hidden;border:1px solid hsl(var(--border));background:hsl(var(--card));cursor:pointer;padding:0;opacity:.7;transition:opacity .2s,transform .2s}

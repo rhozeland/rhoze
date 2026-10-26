@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Shell } from "./shared";
 import ProjectStory from "./ProjectStory";
 import ReleasePrice, { formatReleasePrice } from "./ReleasePrice";
-import { archiveYouTubeEmbed } from './archive-media';
+import ProjectMedia from './ProjectMedia';
 import { Copy, ExternalLink, ArrowLeft } from 'lucide-react';
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import "./portfolio.css";
@@ -61,7 +61,6 @@ export default function PortfolioPage({ slug }: { slug: string }) {
     return () => { active = false; };
   }, [slug]);
   useEffect(() => { if (entry) document.title = `${entry.title} — Project archive | Rhozeland`; }, [entry]);
-  const videoUrl = entry ? archiveYouTubeEmbed(entry.source_url) : null;
   return <Shell className="rz-release-view"><article className="rz-portfolio rz-ws-dark rz-archive-dark">
     <Button variant="ghost" asChild><a href="/discover.html" onClick={e => { try { const ref = document.referrer ? new URL(document.referrer) : null; if (ref && ref.origin === location.origin && /^\/discover/.test(ref.pathname) && history.length > 1) { e.preventDefault(); history.back(); } } catch { /* fall through to link */ } }}><ArrowLeft size={16} /> Discover</a></Button>
     {entry === undefined ? <p>Loading project…</p> : !entry ? <h1>Project not found</h1> : <>
@@ -74,8 +73,7 @@ export default function PortfolioPage({ slug }: { slug: string }) {
         {!saved.rhozeland_contribution && <section><h2>Rhozeland's contribution</h2><p className="text-muted-foreground">Detailed production credits and the project's story have not been documented here yet.</p></section>}
       </PublicProjectCanvas></div><aside className="rz-portfolio-sidebar">
         <section className="rz-portfolio-media" aria-label="Original media">
-          {videoUrl ? <iframe src={videoUrl} title={`${entry.title} — original YouTube video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin" /> : <img className="rz-portfolio-cover" src={entry.image} alt={`${entry.title} — ${entry.artist}`} />}
-          <Button variant="outline" size="sm" asChild><a href={entry.source_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={14} />{videoUrl ? 'Open on YouTube' : 'View original work'}</a></Button>
+          <ProjectMedia key={slug} links={[entry.source_url]} cover={entry.image} title={entry.title} />
         </section>
         <section><h2>Project record</h2><dl><dt>Creator</dt><dd>{entry.artist}</dd><dt>Format</dt><dd>{entry.tag}</dd>{entry.date && <><dt>Released</dt><dd>{entry.date}</dd></>}</dl></section>
         <section className="rz-portfolio-activity" aria-label="Project activity"><h2>Project activity</h2><PortfolioHeart slug={slug} /><ProjectRewards portfolioSlug={slug} /></section>

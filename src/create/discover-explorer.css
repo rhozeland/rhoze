@@ -6,4 +6,12 @@
 @media(max-width:640px){.rz-explorer-heading{align-items:flex-start;flex-direction:column;padding:0 14px}.rz-explorer-world{grid-template-columns:1fr;gap:4px;padding:0 14px}.rz-explorer-world .rz-globe-stage{max-width:270px}.rz-explorer-index{display:none}.rz-flow-browser{padding:0 14px}.rz-flow-media{height:290px}.rz-flow-controls{gap:14px}.rz-explorer-heading h1{font-size:23px}}
 @media(prefers-reduced-motion:reduce){.rz-flow-surface,.rz-globe-spotlight{animation:none}}
 /* Dark mode: darken the explorer panel tokens; globe colors stay as-is. */
+.rz-flow-media{height:auto;min-height:240px;display:block;overflow:visible;background:transparent}
+.rz-flow-media .rz-media{max-width:none;width:100%;margin:0}
+.rz-flow-media .rz-media-stage{background:hsl(var(--alt));border-color:hsl(var(--line));border-radius:6px}
+.rz-flow-media .rz-media-stage.tall{height:460px}
+.rz-flow-media .rz-media-stage.img{height:360px}
+.rz-flow-media .rz-media-stage.img img{width:100%;height:100%;object-fit:contain}
+.rz-flow-media .rz-media-thumb{height:48px;width:84px;padding:0;flex-shrink:0}
+@media(max-width:640px){.rz-flow-media .rz-media-stage.img{height:290px}.rz-flow-media .rz-media-stage.tall{height:400px}}
 .dark .rz-discover-explorer{--ink:0 0% 95%;--mut:0 0% 72%;--line:240 4% 28%;--card:240 5% 12%;--alt:240 5% 16%}

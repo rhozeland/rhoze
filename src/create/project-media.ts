@@ -3,6 +3,7 @@ import { archiveYouTubeEmbed } from "./archive-media";
 export type MediaItem =
   | { kind: "embed"; url: string; embed: string; label: string; tall?: boolean }
   | { kind: "image"; url: string; label: string }
+  | { kind: "video" | "audio"; url: string; label: string }
   | { kind: "link"; url: string; label: string; site: string };
 
 const SITES: [RegExp, string][] = [
@@ -33,6 +34,14 @@ export function classifyMedia(raw: string): MediaItem | null {
   if (sp) return { kind: "embed", url, embed: `https://open.spotify.com/embed/${sp[1]}/${sp[2]}`, label: "Spotify", tall: sp[1] !== "track" };
   if (host === "soundcloud.com" && u.pathname.length > 1)
     return { kind: "embed", url, embed: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&visual=true`, label: "SoundCloud" };
+  const instagram = host === "instagram.com" && u.pathname.match(/\/(?:p|reel|reels|tv)\/([\w-]+)(?:\/|$)/);
+  if (instagram) return { kind: "embed", url, embed: `https://www.instagram.com/p/${instagram[1]}/embed/`, label: "Instagram", tall: true };
+  const tiktok = host === "tiktok.com" && u.pathname.match(/^\/@[^/]+\/video\/(\d+)\/?$/);
+  if (tiktok) return { kind: "embed", url, embed: `https://www.tiktok.com/player/v1/${tiktok[1]}`, label: "TikTok", tall: true };
+  if (host === "music.apple.com" && /^\/[a-z]{2}\/(album|playlist|music-video)\//.test(u.pathname))
+    return { kind: "embed", url, embed: `https://embed.music.apple.com${u.pathname}${u.search}`, label: "Apple Music", tall: true };
+  if (/\.(mp4|webm|mov)$/i.test(u.pathname)) return { kind: "video", url, label: "Video" };
+  if (/\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(u.pathname)) return { kind: "audio", url, label: "Audio" };
   if (/\.(jpe?g|png|webp|gif|avif)$/i.test(u.pathname)) return { kind: "image", url, label: "Image" };
   return { kind: "link", url, label: siteName(host), site: siteName(host) };
 }

@@ -577,6 +577,28 @@
 
   </div>
   <script src="/shared.js"></script>
+  <script>
+  /* Remember Discover scroll position so Back returns to the same spot. */
+  !function(){
+    var KEY='rz-discover-scroll:'+location.pathname+location.search;
+    try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(e){}
+    function save(){ try{ sessionStorage.setItem(KEY, String(window.scrollY||0)); }catch(e){} }
+    var t; window.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(save,120); }, {passive:true});
+    window.addEventListener('pagehide', save);
+    document.addEventListener('click', function(e){ if(e.target.closest && e.target.closest('a')) save(); }, true);
+    var y=0; try{ y=parseInt(sessionStorage.getItem(KEY)||'0',10)||0; }catch(e){}
+    if(y>0){
+      var start=Date.now();
+      (function tryRestore(){
+        var max=document.documentElement.scrollHeight-window.innerHeight;
+        if(max>=y-4){ window.scrollTo(0,y); return; }
+        window.scrollTo(0,max);
+        if(Date.now()-start<4000) setTimeout(tryRestore,100); else window.scrollTo(0,y);
+      })();
+    }
+    window.addEventListener('pageshow', function(ev){ if(ev.persisted && y>0) window.scrollTo(0,y); });
+  }();
+  </script>
 
   <!-- Artist Modal -->
   <div class="artist-modal-overlay" id="artistModal">

@@ -10,9 +10,9 @@ describe("project media links", () => {
   });
   it("rejects non-web links", () => expect(classifyMedia("javascript:alert(1)")).toBeNull());
   it("drops duplicates", () => expect(parseMediaLinks(["https://lu.ma/a", "https://lu.ma/a"])).toHaveLength(1));
-  it("embeds Instagram posts and named-account reels", () => {
-    expect(classifyMedia("https://www.instagram.com/runnersclubco/reel/DKXax4qA4u3/")).toMatchObject({ kind: "embed", embed: "https://www.instagram.com/p/DKXax4qA4u3/embed/" });
-    expect(classifyMedia("https://www.instagram.com/p/DJ90KlZIg3r/")).toMatchObject({ kind: "embed" });
+  it("keeps Instagram posts and named-account reels as original links instead of blocked embeds", () => {
+    expect(classifyMedia("https://www.instagram.com/runnersclubco/reel/DKXax4qA4u3/")).toMatchObject({ kind: "link", url: "https://www.instagram.com/runnersclubco/reel/DKXax4qA4u3/", site: "Instagram" });
+    expect(classifyMedia("https://www.instagram.com/p/DJ90KlZIg3r/")).toMatchObject({ kind: "link", site: "Instagram" });
   });
   it("embeds TikTok video permalinks", () => expect(classifyMedia("https://www.tiktok.com/@creator/video/123456789")).toMatchObject({ kind: "embed", embed: "https://www.tiktok.com/player/v1/123456789" }));
   it("plays direct audio and video attachments", () => {

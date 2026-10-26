@@ -18,7 +18,7 @@ function PlatformIcon({ name }: { name: string }) {
 /** Media viewer + social/event links for a project page. Renders nothing when there's nothing to show. */
 export default function ProjectMedia({ links, cover, title }: { links: unknown; cover?: string | null; title: string }) {
   const items = parseMediaLinks(links);
-  const viewable = [...items.filter((m) => m.kind !== "link"), ...(cover && !items.some(m => m.url === cover) ? [{ kind: "image", url: cover, label: "Cover" } as MediaItem] : [])];
+  const viewable = [...(cover ? [{ kind: "image", url: cover, label: "Cover" } as MediaItem] : []), ...items.filter(m => m.kind !== "link" && m.url !== cover)];
   const outbound = items.filter(m => m.kind !== "image");
   const [i, setI] = useState(0);
   if (!viewable.length && !outbound.length) return null;

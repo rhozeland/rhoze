@@ -186,6 +186,7 @@
 - [ ] Verify signed-in save and profile readback with the requesting account — no matching account exists for session minting; needs preview sign-in.
 
 ## Discover coin badges
+- [ ] Show supported project attachments inside archive/release pages and Flow; verify public playback surfaces and source fallbacks.
 - [x] Compact release covers to 360×203px and unify owner navigation; verified all eight sections signed in, one menu, public cover sizing, tablet overflow, runtime and navigation tests without saving changes.
 - [x] Integrate Exclusive into the release Board; verified legacy redirect, Support/tab navigation, locked public previews, desktop/phone layout and navigation tests. Real holder signing remains wallet-dependent.
 - [x] Add a corner coin badge to every Discover project card whose own record carries a paired mint (release or archive), mirrored on all Discover copies.

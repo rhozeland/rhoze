@@ -35,7 +35,7 @@
 - Scope toolbar styles in discover-toolbar.css, mirrored on both Discover pages, to preserve shared navigation.
 - Keep unified Discover controls in DiscoverDirectory, bridging search/category changes to the preserved Work grid; People reads only public creator_directory and open calls only published releases, so card styles and privacy remain separate.
 
-- Use owner-only project_bookmarks and Creator OS Flow navigation over public registries; never reward views/bookmarks to prevent farming.
+- Flow uses public registries and ProjectMedia's allowlisted embeds/native playback, never private Board/Exclusive files; bookmarks stay owner-only and views/bookmarks earn no rewards.
 
 - Read portal roles from the database, never cache; preserve permissions and read-only XP. Share destinations via portalRouting; team-entry denial stays visible. Scope phone editors in admin-mobile.css.
 - Link wallets only via signed-message proof (wallet-replace-external), trigger-guarded, because addresses alone prove nothing; credits only from confirmed payments.

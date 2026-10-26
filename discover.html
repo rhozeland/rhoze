@@ -577,6 +577,28 @@
 
   </div>
   <script src="/shared.js"></script>
+  <script>
+  /* Remember Discover scroll position so Back returns to the same spot. */
+  !function(){
+    var KEY='rz-discover-scroll:'+location.pathname+location.search;
+    try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(e){}
+    var restoring=false;
+    function save(href,top){ if(restoring) return; try{ var o={y:window.scrollY||0}; if(href){o.href=href;o.top=top;o.i=arguments[2]||0;} else { var prev=JSON.parse(sessionStorage.getItem(KEY)||'{}'); if(prev.href&&Math.abs((prev.y||0)-o.y)<40){o.href=prev.href;o.top=prev.top;o.i=prev.i;} } sessionStorage.setItem(KEY, JSON.stringify(o)); }catch(e){} }
+    var t; window.addEventListener('scroll', function(){ clearTimeout(t); t=setTimeout(function(){save();},150); }, {passive:true});
+    document.addEventListener('click', function(e){ var a=e.target.closest&&e.target.closest('a'); if(a){ var h=a.getAttribute('href'), i=0; try{ i=Array.prototype.indexOf.call(document.querySelectorAll('a[href="'+CSS.escape(h)+'"]'),a);}catch(x){} save(h, a.getBoundingClientRect().top, i); } }, true);
+    var st={}; try{ st=JSON.parse(sessionStorage.getItem(KEY)||'{}'); }catch(e){}
+    if(!(st.y>0)) return;
+    restoring=true; var start=Date.now(), stop=false;
+    ['wheel','touchstart','keydown','mousedown'].forEach(function(n){ window.addEventListener(n,function(){stop=true;restoring=false;},{once:true,passive:true}); });
+    (function tick(){
+      if(stop) return;
+      var el=null; if(st.href){ try{ el=document.querySelectorAll('a[href="'+CSS.escape(st.href)+'"]')[st.i||0]||null; }catch(e){} }
+      if(el) window.scrollTo(0, window.scrollY + el.getBoundingClientRect().top - st.top);
+      else window.scrollTo(0, Math.min(st.y, document.documentElement.scrollHeight-window.innerHeight));
+      if(Date.now()-start<3000) requestAnimationFrame(tick); else restoring=false;
+    })();
+  }();
+  </script>
 
   <!-- Artist Modal -->
   <div class="artist-modal-overlay" id="artistModal">

@@ -1,5 +1,5 @@
-import {useEffect,useMemo,useState} from 'react';
-import {Globe2,Play,LayoutGrid,ChevronDown} from 'lucide-react';
+import {useEffect,useState} from 'react';
+import {Globe2,Play} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import DiscoverGlobe,{type GlobePin} from './globe/DiscoverGlobe';
 import {publicLocation} from './globe/locations';

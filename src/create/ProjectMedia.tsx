@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ExternalLink, Image as ImageIcon, Play, CalendarDays, Link2 } from "lucide-react";
 import { parseMediaLinks, type MediaItem } from "./project-media";
 import { Button } from "@/components/ui/button";
+import './project-media.css';
 
 /** Media viewer + social/event links for a project page. Renders nothing when there's nothing to show. */
 export default function ProjectMedia({ links, cover, title }: { links: unknown; cover?: string | null; title: string }) {

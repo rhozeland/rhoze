@@ -34,8 +34,9 @@ export function classifyMedia(raw: string): MediaItem | null {
   if (sp) return { kind: "embed", url, embed: `https://open.spotify.com/embed/${sp[1]}/${sp[2]}`, label: "Spotify", tall: sp[1] !== "track" };
   if (host === "soundcloud.com" && u.pathname.length > 1)
     return { kind: "embed", url, embed: `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&visual=true`, label: "SoundCloud" };
-  const instagram = host === "instagram.com" && u.pathname.match(/\/(?:p|reel|reels|tv)\/([\w-]+)(?:\/|$)/);
-  if (instagram) return { kind: "embed", url, embed: `https://www.instagram.com/p/${instagram[1]}/embed/`, label: "Instagram", tall: true };
+  // Instagram can return a blocked/deleted-post screen even for valid public
+  // permalinks. Preserve the original link rather than mounting that screen.
+  if (host === "instagram.com") return { kind: "link", url, label: "Instagram", site: "Instagram" };
   const tiktok = host === "tiktok.com" && u.pathname.match(/^\/@[^/]+\/video\/(\d+)\/?$/);
   if (tiktok) return { kind: "embed", url, embed: `https://www.tiktok.com/player/v1/${tiktok[1]}`, label: "TikTok", tall: true };
   if (host === "music.apple.com" && /^\/[a-z]{2}\/(album|playlist|music-video)\//.test(u.pathname))

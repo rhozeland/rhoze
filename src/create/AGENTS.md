@@ -15,3 +15,4 @@
 - Keep portfolio likes as persistent owner-only identities with immutable project references and trigger-awarded points; unlike/re-like must never mint twice.
 - Archive media uses validated YouTube URLs in a compact side column with photo fallback; paired-token statistics reuse pumpfun-coin and ReleasePrice, so stories lead without fabricated market data.
 - ProjectMedia imports its own viewer stylesheet so the independent Discover entry has the same media controls as release and archive pages.
+- ProjectMedia leads with available artwork and treats unreliable Instagram embeds as original source links, so provider error screens cannot replace the first project visual.

@@ -47,7 +47,7 @@ export default function ProjectMedia({ links, cover, title }: { links: unknown; 
         <div className="rz-media-links">
           {outbound.map((l) => (
             <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="rz-media-platform" aria-label={`Open ${title} on ${l.label}`} title={`Open on ${l.label}`}>
-              <PlatformIcon name={l.label} /><ExternalLink size={9} className="rz-media-platform-external" aria-hidden="true" />
+              <PlatformIcon name={l.label} /><ExternalLink size={7} className="rz-media-platform-external" aria-hidden="true" />
             </a>
           ))}
         </div>

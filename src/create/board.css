@@ -14,6 +14,12 @@
 .rz-ws-dark .rz-in{background:hsl(var(--wsp));color:hsl(var(--wst));border-color:hsl(var(--wsl))}
 .rz-ws-dark .rz-btn,.rz-ws-dark .rz-ws-milestone{background:hsl(var(--wsp))!important;color:hsl(var(--wst))!important;border-color:hsl(var(--wsl))!important}
 .rz-ws-dark .rz-btn.pri,.rz-ws-dark .rz-side-cta{background:hsl(var(--wsy))!important;color:hsl(var(--wsb))!important;border-color:hsl(var(--wsy))!important}
+/* Owner action bar rides the top of the dark workspace panel. */
+.rz-private-head .rz-actions{margin:0;justify-content:flex-start;gap:.5rem}
+.rz-private-head .rz-actions>*{background:hsl(270 8% 9%)!important;color:hsl(30 30% 94%)!important;border:1px solid hsl(270 10% 17%)!important}
+.rz-private-head .rz-actions>*:hover{background:hsl(270 10% 17%)!important;color:hsl(30 30% 94%)!important}
+.rz-private-head .rz-actions>*:disabled{opacity:.55}
+.rz-private-head+.rz-ws{margin-top:0;border-radius:0 0 16px 16px}
 .rz-board-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:1rem}
 .rz-board-side{display:grid;gap:1rem;align-content:start}
 .rz-side-card{border:1px solid hsl(var(--wsl));border-radius:16px;background:hsl(var(--wsp));padding:1.1rem}

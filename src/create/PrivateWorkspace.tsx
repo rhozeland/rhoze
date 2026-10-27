@@ -27,7 +27,7 @@ export default function PrivateWorkspace({ id }: { id: string }) {
     setBusy(true); setError("");
     const { data, error } = await supabase.rpc("release_publish", { p_id: id, p_token: localStorage.getItem("rz_release_token") || "" });
     setBusy(false);
-    if (error) { setError("Add at least one roadmap milestone and a project title before publishing."); return; }
+    if (error) { setError(/title/.test(error.message) ? "Add a project name before publishing." : "Couldn't publish. Try again."); return; }
     location.href = `/release/${data}`;
   };
   return <Shell><div className="rz-private-head">

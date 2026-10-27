@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
 
     if ((await balance(wallet, rel.coin_mint)) <= 0) return json({ holds: false, posts: [] });
 
-    const { data: posts } = await db.from('release_posts').select('id,body,media_path,media_kind,created_at')
+    const { data: posts } = await db.from('release_posts').select('id,body,media_path,media_kind,link_url,visibility,created_at')
       .eq('release_id', rel.id).order('created_at', { ascending: false }).limit(100);
     const out = await Promise.all((posts ?? []).map(async (p) => {
       let media_url: string | null = null;

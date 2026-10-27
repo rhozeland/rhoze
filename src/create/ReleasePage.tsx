@@ -1,4 +1,5 @@
 import ProjectMedia from "./ProjectMedia";
+import { PublicTeasers } from "./ProjectContent";
 import { parseMediaLinks } from "./project-media";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -341,6 +342,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               {r.answers?.description?.trim() ? <p>{r.answers.description.trim()}</p> : r.answers?.making ? <p>{r.answers.making.trim()}</p> : <p>{r.title} by {r.creator_name || "Rhozeland artist"}.</p>}
               {r.answers?.audience && <p className="rz-release-audience">{r.answers.audience}</p>}
             </section>}
+            <PublicTeasers slug={slug} title={r.title} locked={!!r.coin_mint} />
             {(isOwner || pubs.overview) && <ProjectStory story={r.answers || {}} />}
             </>}
             {(show("overview") || show("budget")) && <>

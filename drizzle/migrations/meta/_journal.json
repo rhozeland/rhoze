@@ -281,6 +281,13 @@
       "when": 1792784952397,
       "tag": "0039_board_holder_share",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1793129619517,
+      "tag": "0040_migration",
+      "breakpoints": true
     }
   ]
 }

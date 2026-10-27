@@ -13,10 +13,11 @@ import { money, uid } from "./shared";
 import "./workspace.css";
 import "./create-flow.css";
 import ProjectBoard from "./ProjectBoard";
+import ProjectContent from "./ProjectContent";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
-export type WorkspaceTab = "board" | "overview" | "plan" | "team" | "money" | "payments";
+export type WorkspaceTab = "content" | "board" | "overview" | "plan" | "team" | "money" | "payments";
 type Tab = WorkspaceTab;
 export type PublicSections = { overview: boolean; plan: boolean; team: boolean; money: boolean };
 
@@ -137,14 +138,15 @@ export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, e
       <div className="rz-ws-top"><div><div className="rz-ws-eyebrow">{r.status === "published" ? "Public project" : "Private space"} · {milestones.length} {milestones.length === 1 ? "phase" : "phases"}</div><h1 className="rz-ws-title">{title || "Untitled project"}</h1></div>
       {coinLaunchRequested({ coin_mint: mint, answers: r.answers }) && <div className="rz-split" role="status" style={{ marginBottom: ".9rem" }}><div className="rz-split-row" style={{ gridTemplateColumns: "1fr" }}><b>Coin launch requested</b></div></div>}
       <div className="rz-ws-tabs" role="tablist" aria-label="Project workspace">
-        {([...[["board", "Board"], ["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget"], ["payments", "Payments & schedule"]], ...extraTabs] as [string, string][]).map(([k, label]) => (
-          <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{label}</Button>
+        {([...[["content", "Content"], ["overview", "Details"], ["plan", "Roadmap"], ["team", "People"], ["money", "Budget & payments"]], ...extraTabs] as [string, string][]).map(([k, label]) => (
+          <Button variant="outline" key={k} type="button" className="rz-ws-tab" role="tab" aria-selected={tab === k || (k === "content" && tab === "board") || (k === "money" && tab === "payments")} onClick={() => setTab(k)}>{label}</Button>
         ))}
       </div></div>
       <ProjectCall releaseId={r.id} />
 
-      {tab === "board" && (
-        <div className="rz-board-layout">
+      {(tab === "content" || tab === "board") && <ProjectContent r={r} />}
+      {(tab === "content" || tab === "board") && (
+        <details className="rz-ct-notes"><summary>Private notes board · sticky notes and moodboard only you can see</summary><div className="rz-board-layout">
           <ProjectBoard releaseId={r.id} />
           <aside className="rz-board-side">
             <div className="rz-side-card"><h4>Roadmap</h4><div className="rz-side-big">{milestones.filter((m) => m.done).length}/{milestones.length}</div>
@@ -156,7 +158,7 @@ export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, e
               <a className="rz-btn rz-side-cta" href="https://pump.fun/create" target="_blank" rel="noopener noreferrer">Launch on pump.fun</a><Button variant="outline" type="button" className="rz-btn" onClick={() => setTab("money")}>Have us run it</Button></>}
             </div>
           </aside>
-        </div>
+        </div></details>
       )}
 
       {tab === "overview" && (
@@ -239,7 +241,7 @@ export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, e
           </div>
         </div>
       )}
-      {tab === "payments" && <div><div className="rz-ws-panel-head"><h3>Payments &amp; schedule</h3></div><ProjectPayments r={r} /></div>}
+      {(tab === "payments" || tab === "money") && <div style={{ marginTop: 24 }}><div className="rz-ws-panel-head"><h3>Payments &amp; schedule</h3></div><ProjectPayments r={r} /></div>}
       {err && <p className="rz-note" style={{ marginTop: ".6rem" }}>{err}</p>}
     </div>
   );

@@ -2612,28 +2612,34 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          link_url: string | null
           media_kind: string | null
           media_path: string | null
           release_id: string
           user_id: string
+          visibility: string
         }
         Insert: {
           body: string
           created_at?: string
           id?: string
+          link_url?: string | null
           media_kind?: string | null
           media_path?: string | null
           release_id: string
           user_id: string
+          visibility?: string
         }
         Update: {
           body?: string
           created_at?: string
           id?: string
+          link_url?: string | null
           media_kind?: string | null
           media_path?: string | null
           release_id?: string
           user_id?: string
+          visibility?: string
         }
         Relationships: [
           {
@@ -4246,6 +4252,17 @@ export type Database = {
         Args: { p_slug: string }
         Returns: {
           likes: number
+        }[]
+      }
+      release_public_posts: {
+        Args: { p_slug: string }
+        Returns: {
+          body: string
+          created_at: string
+          id: string
+          link_url: string
+          media_kind: string
+          media_path: string
         }[]
       }
       release_publish: {

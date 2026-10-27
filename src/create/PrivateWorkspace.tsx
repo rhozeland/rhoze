@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Shell } from "./shared";
 import ProjectWorkspace from "./ProjectWorkspace";
+import "./project-content.css";
 
 export default function PrivateWorkspace({ id }: { id: string }) {
   const [project, setProject] = useState<any>(undefined);
@@ -31,5 +32,5 @@ export default function PrivateWorkspace({ id }: { id: string }) {
   };
   return <Shell><div className="rz-private-head">
     {project && <div className="rz-actions"><Button variant="outline" asChild><a href={`/create.html?draft=${id}`}>Edit project</a></Button>{project.status !== "published" && <Button variant="outline" disabled={busy} onClick={publish}>{busy ? "Publishing…" : "Publish to Discover"}</Button>}{project.status === "published" && <Button variant="outline" disabled={busy} onClick={makePrivate}>Make private</Button>}<Button variant="ghost" asChild><a href="/me">My profile</a></Button></div>}
-  </div>{project === undefined ? <p>Loading…</p> : project ? <ProjectWorkspace r={project} onSaved={setProject} /> : <p>Sign in to the project owner's account to open this workspace.</p>}{error && <p role="alert">{error}</p>}</Shell>;
+  </div>{project && <p className="rz-ws-publish">{project.status === "published" ? <><b>Live on Discover</b><a href={`/release/${project.slug}`}>View public page</a></> : <><b>Private — only you can see this.</b><span>To publish:</span><span className={project.title?.trim() ? "ok" : "todo"}>{project.title?.trim() ? "✓" : "○"} Project name</span><span className={(project.milestones || []).length ? "ok" : "todo"}>{(project.milestones || []).length ? "✓" : "○"} At least one roadmap phase</span></>}</p>}{project === undefined ? <p>Loading…</p> : project ? <ProjectWorkspace r={project} onSaved={setProject} /> : <p>Sign in to the project owner's account to open this workspace.</p>}{error && <p role="alert">{error}</p>}</Shell>;
 }

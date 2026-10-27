@@ -4,7 +4,7 @@ import { IDEA_QUESTIONS, IDEA_SCREENS, FLEXIBLE_TIMELINES, PRIVATE_PROJECT_STATU
 describe("private project flow", () => {
   it("starts private rather than publishing", () => expect(PRIVATE_PROJECT_STATUS).toBe("draft"));
   it("keeps separate idea questions without an Artist/Brand question", () => expect(IDEA_QUESTIONS).toEqual(["title", "name", "making", "description", "audience", "location", "category", "cover"]));
-  it("groups the idea into three screens", () => expect(IDEA_SCREENS.flat()).toEqual([...IDEA_QUESTIONS]));
+  it("puts the goal first and every basic on one screen", () => { expect(IDEA_SCREENS[0]).toEqual(["goal"]); expect(IDEA_SCREENS[1]).toEqual([...IDEA_QUESTIONS]); });
   it("requires the project name before advancing its question", () => expect(validateIdeaQuestion("title", "")).toBe("Give your project a name."));
   it("allows an estimate without a fixed budget", () => expect(scopeError(0, true, "flexible", "1 week", "")).toBe(""));
   it("lets a portfolio share skip the budget and timeline", () => expect(scopeError(0, false, "flexible", "", "")).toBe(""));

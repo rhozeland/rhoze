@@ -80,13 +80,15 @@ export default function PortfolioPage({ slug }: { slug: string }) {
         <section className="rz-portfolio-media" aria-label="Original media">
           <ProjectMedia key={slug} links={[entry.source_url]} cover={entry.image} title={entry.title} />
         </section>
-        <section className="rz-portfolio-coin" aria-label="Project coin"><h2><Coins size={14} /> Project coin</h2>
-          {saved.coin_mint ? <><p>Paired with {saved.coin_ticker ? <b>${saved.coin_ticker}</b> : 'a coin'}{marketCap !== null && ` · ${formatReleasePrice(marketCap)} mcap`}.</p><div className="rz-portfolio-coin-actions"><Button asChild className="rz-btn pri"><a href={pumpUrl} target="_blank" rel="noopener noreferrer">Support</a></Button><Button variant="outline" asChild><a href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a></Button></div></>
-            : <><p>No coin attached yet.</p><div className="rz-portfolio-coin-actions">{admin ? <Button variant="outline" onClick={() => setEditing(true)}>Attach a coin</Button> : <Button variant="outline" asChild><a href={teamMail(`Launch a coin for ${entry.title}`)}>Request a coin</a></Button>}</div></>}
+        <dl className="rz-portfolio-facts" aria-label="Project record"><div><dt>Creator</dt><dd>{entry.artist}</dd></div><div><dt>Format</dt><dd>{entry.tag}</dd></div>{entry.date && <div><dt>Released</dt><dd>{entry.date}</dd></div>}</dl>
+        <section className="rz-portfolio-back" aria-label="Back this project"><h2>Back this project</h2>
+          <div className="rz-portfolio-back-row"><span className="rz-portfolio-back-icon"><Coins size={16} /></span><div><b>Project coin</b>
+            {saved.coin_mint ? <><p>Paired with {saved.coin_ticker ? <b>${saved.coin_ticker}</b> : 'a coin'}{marketCap !== null && ` · ${formatReleasePrice(marketCap)} mcap`}.</p><div className="rz-portfolio-coin-actions"><Button size="sm" variant="outline" asChild><a href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun ↗</a></Button></div></>
+              : <><p>No coin attached yet.</p><div className="rz-portfolio-coin-actions">{admin ? <Button size="sm" variant="outline" onClick={() => setEditing(true)}>Attach a coin</Button> : <Button size="sm" variant="outline" asChild><a href={teamMail(`Launch a coin for ${entry.title}`)}>Request a coin</a></Button>}</div></>}
+          </div></div>
+          <div className="rz-portfolio-back-row"><span className="rz-portfolio-back-icon"><HandCoins size={16} /></span><div><b>Fund the next chapter</b><p>Back {entry.title} or collaborate with the team.</p><div className="rz-portfolio-coin-actions"><Button size="sm" variant="outline" asChild><a href={teamMail(`Fund ${entry.title}`)}>Contact the team</a></Button></div></div></div>
         </section>
-        <section className="rz-portfolio-coin" aria-label="Fund this project"><h2><HandCoins size={14} /> Fund this project</h2><p>Back {entry.title}'s next chapter or collaborate with the team behind it.</p><div className="rz-portfolio-coin-actions"><Button variant="outline" asChild><a href={teamMail(`Fund ${entry.title}`)}>Contact the team</a></Button></div></section>
-        <section><h2>Project record</h2><dl><dt>Creator</dt><dd>{entry.artist}</dd><dt>Format</dt><dd>{entry.tag}</dd>{entry.date && <><dt>Released</dt><dd>{entry.date}</dd></>}</dl></section>
-        <section className="rz-portfolio-activity" aria-label="Project activity"><h2>Project activity</h2><PortfolioHeart slug={slug} /><ProjectRewards portfolioSlug={slug} /></section>
+        <div className="rz-portfolio-activity" aria-label="Project activity"><ProjectRewards portfolioSlug={slug} /></div>
       </aside></div>
       {saved.coin_mint && <section className="rz-portfolio-token" aria-label="Paired token">
         <header><h2>{saved.coin_ticker ? `$${saved.coin_ticker}` : 'Paired token'}</h2><span>Solana · Paired token</span></header>

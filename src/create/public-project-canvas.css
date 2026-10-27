@@ -16,3 +16,6 @@
 .rz-archive-dark .rz-portfolio-narrative p{margin-bottom:0}
 .rz-archive-dark .rz-project-heart[aria-pressed=true]{background:hsl(var(--wsy));color:hsl(var(--wsb));border-color:hsl(var(--wsy))}
 @media(max-width:640px){.rz-public-canvas-content{padding:12px}.rz-public-canvas-scroll{max-height:none;min-height:260px}.rz-public-canvas-content>section{padding:14px}}
+.rz-public-canvas-content>section>:first-child,.rz-public-canvas-content>.rz-project-story>:first-child,.rz-public-canvas-content>section>:first-child>:first-child{margin-top:0!important;padding-top:0}
+.rz-public-canvas-content>section>:last-child{margin-bottom:0}
+.rz-public-canvas-content>.rz-price{margin-top:0}

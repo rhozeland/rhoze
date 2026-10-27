@@ -52,3 +52,12 @@
 .rz-archive-dark .rz-ws .rz-in{background:hsl(var(--wsb));color:hsl(var(--wst));border-color:hsl(var(--wsl))}
 @media(max-width:760px){.rz-portfolio.rz-archive-dark{padding:18px}.rz-archive-dark>header h1{font-size:36px}.rz-archive-dark .rz-portfolio-body{grid-template-columns:1fr;gap:16px}.rz-archive-dark .rz-portfolio-sidebar{border:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.rz-archive-dark .rz-portfolio-media{max-width:none}}
 @media(max-width:420px){.rz-portfolio.rz-archive-dark{padding:16px}.rz-archive-dark>header h1{font-size:32px}.rz-archive-dark .rz-portfolio-sidebar{grid-template-columns:1fr}}
+/* Archive pages share the release page's action row and coin/funding panels. */
+.rz-portfolio-tools{float:right;display:flex;align-items:center;gap:10px}
+.rz-portfolio-tools .rz-portfolio-heart-corner,.rz-portfolio-tools>*{position:static!important}
+.rz-portfolio-share{border-radius:999px}
+.rz-portfolio-coin h2{display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.rz-portfolio-coin p{margin:8px 0 12px;font-size:14px}
+.rz-portfolio-coin-actions{display:flex;flex-wrap:wrap;gap:8px}
+.rz-portfolio-chart{padding:14px!important}
+.rz-portfolio a.rz-btn{text-decoration:none}

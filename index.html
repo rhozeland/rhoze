@@ -3618,6 +3618,9 @@
           .era-line.has-detail .era-detail { opacity:1; transform:translateY(0); pointer-events:auto; max-height:260px; }
           .era-detail-media { position:relative; aspect-ratio:1/1; border-radius:var(--radius-md); overflow:hidden; border:1px solid hsl(var(--line)); background:hsl(var(--surface)); }
           .era-detail-media img, .era-detail-media iframe { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border:0; }
+          .era-play { position:absolute; inset:0; margin:auto; width:54px; height:54px; border-radius:50%; border:0; background:#fff; color:hsl(var(--ink)); display:grid; place-items:center; cursor:pointer; transition:transform .15s ease; box-shadow:0 6px 18px rgba(0,0,0,.25); }
+          .era-play:hover { transform:scale(1.06); }
+          .era-play:focus-visible { outline:2px solid hsl(var(--ring)); outline-offset:3px; }
           .era-detail-copy { text-align:left; max-width:420px; }
           .era-detail-year { display:block; font-size:0.6rem; font-weight:800; letter-spacing:0.16em; text-transform:uppercase; color:hsl(var(--muted)); margin-bottom:0.2rem; }
           .era-detail-copy h4 { margin:0; color:hsl(var(--ink)); font-size:0.95rem; line-height:1.2; font-weight:700; }
@@ -4457,10 +4460,17 @@
               if (desc) desc.textContent = node.dataset.desc || '';
               swapTagline(node.dataset.era);
               if (!media) return;
-              if (playVideo && node.dataset.video) {
-                media.innerHTML = '<iframe src="'+node.dataset.video+'" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen loading="lazy"></iframe>';
-              } else {
-                media.innerHTML = '<img src="'+node.dataset.image+'" alt="'+(node.dataset.alt || '')+'" loading="lazy" />';
+              media.innerHTML = '<img src="'+node.dataset.image+'" alt="'+(node.dataset.alt || '')+'" loading="lazy" />';
+              if (node.dataset.video) {
+                var playBtn = document.createElement('button');
+                playBtn.type = 'button';
+                playBtn.className = 'era-play';
+                playBtn.setAttribute('aria-label', 'Play the Rhozeland documentary');
+                playBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+                playBtn.addEventListener('click', function(){
+                  media.innerHTML = '<iframe src="'+node.dataset.video+'" title="The Rhozeland Documentary" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+                });
+                media.appendChild(playBtn);
               }
             }
             function restoreDefault() { if (defaultNode) render(defaultNode, true); }

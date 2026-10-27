@@ -65,7 +65,7 @@
 .rz-person small{color:hsl(var(--mut));font-size:.7rem}
 .rz-person-avatar{width:32px;height:32px;display:grid;place-items:center;overflow:hidden;border-radius:50%}
 .rz-person-avatar img{width:100%;height:100%;object-fit:cover}
-.rz-private-head{max-width:1440px;margin:1rem auto 0;padding:.9rem 1.5rem;background:hsl(270 6% 6%);border-radius:16px 16px 0 0}
+.rz-private-head{max-width:1440px;margin:1rem auto 0;padding:1rem 1.5rem .75rem;background:hsl(270 6% 6%);border-radius:16px 16px 0 0}
 @media(max-width:600px){.rz-private-head{padding:.8rem 1rem}}
 .rz-create-simple .rz-wizard{box-shadow:none;background:transparent;border:0}
 /* Reference-inspired framing, without changing fonts or shared page backgrounds. */

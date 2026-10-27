@@ -14,6 +14,7 @@ import "./workspace.css";
 import "./create-flow.css";
 import ProjectBoard from "./ProjectBoard";
 import ProjectContent from "./ProjectContent";
+import { LiveReleasePrice } from "./ReleasePrice";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 
 type Milestone = { id?: string; title: string; deliverable: string; amount_cents: number; done?: boolean };
@@ -144,6 +145,7 @@ export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, e
       </div></div>
       <ProjectCall releaseId={r.id} />
 
+      {r.coin_mint && (tab === "content" || tab === "board" || tab === "money" || tab === "payments") && <LiveReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={String(r.coin_ticker || "").replace(/^\$/, "")} />}
       {(tab === "content" || tab === "board") && <ProjectContent r={r} />}
       {(tab === "content" || tab === "board") && (
         <details className="rz-ct-notes"><summary>Private notes board · sticky notes and moodboard only you can see</summary><div className="rz-board-layout">

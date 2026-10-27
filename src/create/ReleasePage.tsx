@@ -354,7 +354,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>
 
-             {(isOwner || pubs.money) && <p className="rz-note">Planning budget: {money(budget)} · payment status is tracked in the private workspace.</p>}
+             {(isOwner || pubs.money) && <p className="rz-note">Planning budget: {r.answers?.need_quote ? "estimate requested" : budget ? money(budget) : "not set yet"} · payment status is tracked in the private workspace.</p>}
 
             <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
               <Button className="rz-btn pri" onClick={openExclusive}>Support this project</Button>
@@ -369,12 +369,12 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             {(isOwner || pubs.money) && <>
             <h2 className="rz-h2">Project breakdown</h2>
             <div className="rz-split" style={{ marginBottom: "1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{money(budget)}</span></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{r.answers?.need_quote ? "Estimate requested" : budget ? money(budget) : "Not set yet"}</span></div>
               <div className="rz-bar">
                 <i className="rz-c-a" style={{ width: `${r.artist_pct}%` }} /><i className="rz-c-f" style={{ width: `${r.fee_pct}%` }} /><i className="rz-c-c" style={{ width: `${r.cause_pct}%` }} />
               </div>
               {[["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland fee (includes coin launch)", r.fee_pct], ["rz-c-c", r.cause_name ? `Cause: ${r.cause_name}` : "Cause", r.cause_pct]].map(([c, l, p]) => (
-                <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{money(budget * Number(p) / 100)}</span></div>
+                <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{budget ? money(budget * Number(p) / 100) : "—"}</span></div>
               ))}
               <div className="rz-cause">
                 <span>Rewards go to {r.cause_name || "a cause the artist will name soon"}</span>

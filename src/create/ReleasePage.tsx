@@ -349,9 +349,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <h2 className="rz-h2">Project release</h2>
 
             <div className="rz-release-coin">
-              {ticker && pumpUrl ? (
+              {r.coin_mint && pumpUrl ? (
                 <a className="rz-chip" href={pumpUrl} target="_blank" rel="noopener noreferrer">
-                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
+                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>{ticker ? `$${ticker}` : "Project coin"}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
                 </a>
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>
@@ -462,8 +462,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 <div className="rz-side-big">{statuses.filter((x) => x === "Delivered").length}/{(r.milestones || []).length}</div>
                 {(r.milestones || []).slice(0, 4).map((m: any, i: number) => <div className="rz-side-row" key={i}><span>{m.title}</span><small>{statuses[i] || "Upcoming"}</small></div>)}
               </button>}
-              <div className="rz-side-card"><h4>Release as a coin</h4>
-                <p>{ticker ? <>Paired with <b>${ticker}</b>{mcap !== null ? ` · ${fmtMcap(mcap)}` : ""}.</> : "No coin attached yet."}</p>
+              <div className="rz-side-card"><h4>{r.coin_mint ? "Project coin" : "Release as a coin"}</h4>
+                <p>{r.coin_mint ? <>Paired with <b>{ticker ? `$${ticker}` : "a coin"}</b>{mcap !== null ? ` · ${fmtMcap(mcap)}` : ""}.</> : "No coin attached yet."}</p>
                 <Button className="rz-btn pri" onClick={openExclusive}>Support</Button>
                 {pumpUrl && <a className="rz-btn" href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a>}
               </div>

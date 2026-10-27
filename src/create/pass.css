@@ -13,6 +13,6 @@
 .rz-pass-benefits li a b{display:block;font-size:12px;font-weight:650}
 .rz-pass-benefits li a small{display:block;font-size:11px;line-height:1.4;color:hsl(var(--mut));margin-top:2px}
 .rz-pass-benefit-icon{display:grid;place-items:center;width:26px;height:26px;flex:none;border-radius:50%;background:hsl(var(--ink));color:hsl(var(--card))}
-.rz-pass-benefits li a>svg{color:hsl(var(--mut))}
+.rz-pass-benefits li a>svg{color:hsl(var(--ink)/.6)}
 .rz-pass-benefits>p:last-child{margin-top:12px;padding-top:10px;border-top:1px solid hsl(var(--line));font-size:11px}
 @media(prefers-reduced-motion:reduce){.rz-pass-benefits li a{transition:none}.rz-pass-benefits li a:hover{transform:none}}

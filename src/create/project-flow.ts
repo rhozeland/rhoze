@@ -8,9 +8,9 @@ export function validateIdeaQuestion(key: string, value: string) {
   return !value.trim() ? required[key] || "" : "";
 }
 export function scopeError(budgetCents: number, estimate: boolean, mode: string, timeline: string, deadline: string) {
-  if (!estimate && budgetCents < 100) return "Enter a budget, or ask for an estimate.";
+  // Budget and timeline are optional so a project can be shared for a portfolio with neither set.
+  void budgetCents; void estimate; void timeline;
   if (mode === "date" && !deadline) return "Pick a target date.";
-  if (mode !== "date" && !timeline) return "Pick a timeline.";
   return "";
 }
 export const PRIVATE_PROJECT_STATUS = "draft";

@@ -629,16 +629,16 @@ export default function CreateProject() {
         </>}
 
         {stepKey === "scope" && <>
-          <div className="rz-head"><h1>What's the scope?</h1><p>Set a budget and a timeline, or plan with an estimate.</p></div>
+          <div className="rz-head"><h1>What's the scope?</h1><p>Set a budget and a timeline, or leave them blank if you're just sharing your work.</p></div>
           <div className="rz-wizard-fields">
             <div className="rz-field">
-              <label htmlFor="project-budget" className={needQuote ? "rz-opt" : ""}>Budget (CAD)</label>
+              <label htmlFor="project-budget">Budget <span className="rz-opt">· optional</span></label>
               <div className="rz-money"><span>$</span><input id="project-budget" className="rz-in" disabled={needQuote} inputMode="decimal" value={budget} placeholder="Enter amount" onChange={(e) => setBudget(e.target.value.replace(/[^0-9.,]/g, ""))} /></div>
               <Popover><PopoverTrigger asChild><Button variant="ghost" size="icon" aria-label="Budget and taxes"><Info size={14} /></Button></PopoverTrigger><PopoverContent>Applicable taxes may be added to the final estimate. Your planning budget is not a payment.</PopoverContent></Popover>
               <label className="rz-quote-toggle"><input type="checkbox" checked={needQuote} onChange={(e) => { setNeedQuote(e.target.checked); if (e.target.checked) setBudget(""); }} /> Estimate needed (no fixed budget yet)</label>
             </div>
             <div className="rz-field">
-              <label>Timeline</label>
+              <label>Timeline <span className="rz-opt">· optional</span></label>
               <div className="rz-timeline-grid">{[["flexible", "Flexible timing"], ["date", "Exact date"]].map(([key, label]) => <Button key={key} variant="outline" className={`rz-chipbtn ${timelineMode === key ? "on" : ""}`} aria-pressed={timelineMode === key} onClick={() => setTimelineMode(key)}>{label}</Button>)}</div>
               {timelineMode === "date" && <Calendar mode="single" selected={deadline ? new Date(`${deadline}T12:00:00`) : undefined} onSelect={(date) => setDeadline(date ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}` : "")} />}
               {timelineMode === "flexible" && <>
@@ -733,8 +733,8 @@ export default function CreateProject() {
             </div>
             <div className="rz-review-section">Scope</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{needQuote ? "Estimate needed" : money(budgetCents)}</b></div>
-              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Timeline</span><span>{timelineMode === "date" ? deadline : timeline || "—"}</span></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Budget</span><b>{needQuote ? "Estimate needed" : budgetCents ? money(budgetCents) : "Not set yet"}</b></div>
+              <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Timeline</span><span>{timelineMode === "date" ? (deadline || "Not set yet") : timeline || "Not set yet"}</span></div>
               {coinChoice === "rhozeland" && <div className="rz-split-row" style={{ gridTemplateColumns: "6rem 1fr" }}><span className="rz-opt">Coin</span><span>Coin launch requested</span></div>}
               {coin && <div className="rz-split-row"><span>Paired token</span><span className="break-all">{coin.ticker ? `$${coin.ticker} · ` : ""}{coin.mint}</span></div>}
             </div>

@@ -349,9 +349,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <h2 className="rz-h2">Project release</h2>
 
             <div className="rz-release-coin">
-              {ticker && pumpUrl ? (
+              {r.coin_mint && pumpUrl ? (
                 <a className="rz-chip" href={pumpUrl} target="_blank" rel="noopener noreferrer">
-                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>${ticker}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
+                  {r.coin_image && <img src={r.coin_image} alt="" />}<b>{ticker ? `$${ticker}` : "Project coin"}</b>{mcap !== null ? <small>{fmtMcap(mcap)}</small> : <small>On Pump.fun</small>}
                 </a>
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>

@@ -44,3 +44,26 @@ export function CreatorPass({ userId }: { userId: string }) {
     <footer><a href="/me?settings=1">Edit profile <ArrowUpRight size={14}/></a><a href="/discover.html">Discover projects <ArrowUpRight size={14}/></a></footer>
   </section>;
 }
+const PASS_BENEFITS = [
+  { icon: Banknote, label: "Cash out", copy: "Send your $RHOZE to a Solana wallet.", href: "/rewards?tab=balance" },
+  { icon: ShoppingBag, label: "Rhozeland merch", copy: "Objects and apparel in the Shop.", href: "/rewards?tab=shop" },
+  { icon: CalendarClock, label: "Book sessions", copy: "Credits cover a 20-minute call with the team.", href: "/create.html" },
+  { icon: Rocket, label: "Fund your project", copy: "Put rewards toward your own project’s budget.", href: "/create.html" },
+];
+export function PassBenefits() {
+  const [perCredit, setPerCredit] = useState<number | null>(null);
+  useEffect(() => {
+    let live = true;
+    (db.rpc as any)("my_call_credits").then(({ data }: any) => {
+      const n = Number(data?.[0]?.rhoze_per_credit);
+      if (live && n > 0) setPerCredit(n);
+    });
+    return () => { live = false; };
+  }, []);
+  return <section className="rz-pass-benefits" aria-label="What your Creator Pass is for">
+    <h3>What it’s for</h3>
+    <p className="rz-standings-note">Everything you earn comes from work you actually did. Here’s what it turns into.</p>
+    <ul>{PASS_BENEFITS.map(b => <li key={b.label}><a href={b.href}><span className="rz-pass-benefit-icon"><b.icon size={14}/></span><span><b>{b.label}</b><small>{b.copy}</small></span><ArrowUpRight size={13}/></a></li>)}</ul>
+    <p className="rz-standings-note">{perCredit ? `${perCredit.toLocaleString()} $RHOZE = 1 credit. ` : ""}Shop checkout is card payment for now — reward redemption is coming.</p>
+  </section>;
+}

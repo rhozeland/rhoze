@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
-import { CreatorPass } from "./CreatorPass";
+import { CreatorPass, PassBenefits } from "./CreatorPass";
 import { RewardsCard } from "./Rewards";
 import Leaderboard from "./Leaderboard";
 export default function RewardsPage() {

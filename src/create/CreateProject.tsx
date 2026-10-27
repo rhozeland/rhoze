@@ -212,7 +212,9 @@ export default function CreateProject() {
   // Load draft or booking prefill
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const id = params.get("draft") || localStorage.getItem(DRAFT_KEY);
+    // Create always starts a fresh project; drafts reopen only via ?draft= (Existing Projects) or ?resume=1.
+    const id = params.get("draft") || (params.get("resume") === "1" ? localStorage.getItem(DRAFT_KEY) : null);
+    if (!id) localStorage.removeItem(DRAFT_KEY);
     let booking: any = {};
     try { booking = JSON.parse(sessionStorage.getItem("rz_booking") || localStorage.getItem("rz_booking") || "{}"); } catch { /* */ }
     const applyBooking = () => {

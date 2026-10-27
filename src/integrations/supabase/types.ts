@@ -2620,7 +2620,7 @@ export type Database = {
           visibility: string
         }
         Insert: {
-          body: string
+          body?: string
           created_at?: string
           id?: string
           link_url?: string | null

@@ -13,7 +13,7 @@ import ExistingProjects from "./ExistingProjects";
 import TeamPlanner from "./TeamPlanner";
 import RhozelandTeam from "./RhozelandTeam";
 import { saveTeam } from "./team-storage";
-import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_QUESTIONS, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
+import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";

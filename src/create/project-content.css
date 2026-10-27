@@ -53,3 +53,4 @@
 .rz-ct-who{border:1px solid hsl(0 0% 100%/.16)}
 .rz-ct-post:disabled{opacity:.45}
 @media(max-width:520px){.rz-ct-tool span{display:none}}
+.rz-ct .rz-ct-tool{flex-direction:row;margin:0;white-space:nowrap}

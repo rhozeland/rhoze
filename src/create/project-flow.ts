@@ -1,4 +1,6 @@
 export const IDEA_QUESTIONS = ["title", "name", "making", "description", "audience", "location", "category", "cover"] as const;
+export const IDEA_SCREENS = [["title", "name"], ["making", "description"], ["audience", "location", "category", "cover"]] as const;
+export const IDEA_SCREEN_TITLES = ["Name your project", "What are you making?", "Finishing touches"];
 export const FLEXIBLE_TIMELINES = ["1 week", "2 weeks", "1 month", "3 months", "Flexible"] as const;
 export type TeamPerson = { creator_id: string | null; display_name: string; email: string | null };
 export function validateIdeaQuestion(key: string, value: string) {

@@ -674,38 +674,40 @@ export default function CreateProject() {
         </>}
 
         {stepKey === "scope" && <>
-          <div className="rz-head"><h1>What's the scope?</h1><p>Set a budget and a timeline, or leave them blank if you're just sharing your work.</p></div>
-          <div className="rz-wizard-fields">
-            <div className="rz-field">
-              <label htmlFor="project-budget">Budget <span className="rz-opt">· optional</span></label>
-              <div className="rz-money"><span>$</span><input id="project-budget" className="rz-in" disabled={needQuote} inputMode="decimal" value={budget} placeholder="Enter amount" onChange={(e) => setBudget(e.target.value.replace(/[^0-9.,]/g, ""))} /></div>
-              <Popover><PopoverTrigger asChild><Button variant="ghost" size="icon" aria-label="Budget and taxes"><Info size={14} /></Button></PopoverTrigger><PopoverContent>Applicable taxes may be added to the final estimate. Your planning budget is not a payment.</PopoverContent></Popover>
-              <label className="rz-quote-toggle"><input type="checkbox" checked={needQuote} onChange={(e) => { setNeedQuote(e.target.checked); if (e.target.checked) setBudget(""); }} /> Estimate needed (no fixed budget yet)</label>
-            </div>
-            <div className="rz-field">
-              <label>Timeline <span className="rz-opt">· optional</span></label>
-              <div className="rz-timeline-grid">{[["flexible", "Flexible timing"], ["date", "Exact date"]].map(([key, label]) => <Button key={key} variant="outline" className={`rz-chipbtn ${timelineMode === key ? "on" : ""}`} aria-pressed={timelineMode === key} onClick={() => setTimelineMode(key)}>{label}</Button>)}</div>
-              {timelineMode === "date" && <Calendar mode="single" selected={deadline ? new Date(`${deadline}T12:00:00`) : undefined} onSelect={(date) => setDeadline(date ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}` : "")} />}
-              {timelineMode === "flexible" && <>
+          <div className="rz-head"><h1>What's the scope?</h1><p>All optional. Skip anything that doesn't apply.</p></div>
+          <div className="rz-scope">
+            <section className="rz-scope-row">
+              <h3>Budget</h3>
+              <div className="rz-scope-inline">
+                <div className="rz-money"><span>$</span><input id="project-budget" className="rz-in" aria-label="Budget" disabled={needQuote} inputMode="decimal" value={budget} placeholder={needQuote ? "Estimate needed" : "Amount"} onChange={(e) => setBudget(e.target.value.replace(/[^0-9.,]/g, ""))} /></div>
+                <button type="button" className={`rz-chipbtn ${needQuote ? "on" : ""}`} aria-pressed={needQuote} onClick={() => { setNeedQuote(!needQuote); if (!needQuote) setBudget(""); }}>Not sure yet</button>
+              </div>
+            </section>
+            <section className="rz-scope-row">
+              <h3>Timeline</h3>
               <div className="rz-timeline-grid">
                 {TIMELINES.map((t) => (
-                  <button key={t} type="button" className={`rz-chipbtn ${timeline === t ? "on" : ""}`} onClick={() => setTimeline(t)}>{t}</button>
+                  <button key={t} type="button" aria-pressed={timelineMode === "flexible" && timeline === t} className={`rz-chipbtn ${timelineMode === "flexible" && timeline === t ? "on" : ""}`} onClick={() => { setTimelineMode("flexible"); setTimeline(t); }}>{t}</button>
                 ))}
-              </div></>}
-            </div>
-          </div>
-          <div className="rz-field">
-            <label>Coin <span className="rz-opt">· optional</span></label>
-            <div className="rz-timeline-grid" role="radiogroup" aria-label="Coin">
-              {COIN_CHOICES.map(([k, l]) => <button key={k} type="button" role="radio" aria-checked={coinChoice === k} className={`rz-chipbtn ${coinChoice === k ? "on" : ""}`} onClick={() => setCoinChoice(k)}>{l}</button>)}
-            </div>
-            {coinChoice === "rhozeland" && <p className="rz-note">Rhozeland launches the coin for you. It's covered by the Rhozeland fee in your budget breakdown, so there's no extra cost. Your project shows "Coin launch requested" until the team adds it.</p>}
-            {coinChoice === "own" && <>
-            <input id="project-contract" className="rz-in" aria-label="Pump.fun coin address" placeholder="Pump.fun coin address (mint)" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); setMeta(null); }} />
-            <Button type="button" variant="outline" size="sm" className="rz-chipbtn" aria-pressed={mint.trim() === RHOZE_MINT} onClick={() => { setMint(RHOZE_MINT); setTicker("RHOZE"); setMeta(null); }}>Use $RHOZE</Button>
-            {mintOk && <label htmlFor="project-ticker">Ticker <span className="rz-opt">· optional</span><input id="project-ticker" className="rz-in" placeholder="e.g. RHOZE" maxLength={12} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} /></label>}
-            </>}
-            {coinChoice === "own" && <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>}
+                <button type="button" aria-pressed={timelineMode === "date"} className={`rz-chipbtn ${timelineMode === "date" ? "on" : ""}`} onClick={() => setTimelineMode("date")}>{timelineMode === "date" && deadline ? deadline : "Pick a date"}</button>
+              </div>
+              {timelineMode === "date" && <Calendar mode="single" selected={deadline ? new Date(`${deadline}T12:00:00`) : undefined} onSelect={(date) => setDeadline(date ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}` : "")} />}
+            </section>
+            <section className="rz-scope-row">
+              <h3>Coin</h3>
+              <div className="rz-timeline-grid" role="radiogroup" aria-label="Coin">
+                {COIN_CHOICES.map(([k, l]) => <button key={k} type="button" role="radio" aria-checked={coinChoice === k} className={`rz-chipbtn ${coinChoice === k ? "on" : ""}`} onClick={() => setCoinChoice(k)}>{l}</button>)}
+              </div>
+              {coinChoice === "rhozeland" && <p className="rz-note">Rhozeland launches it for you, covered by the Rhozeland fee.</p>}
+              {coinChoice === "own" && <>
+                <div className="rz-scope-inline">
+                  <input id="project-contract" className="rz-in" aria-label="Pump.fun coin address" placeholder="Paste Pump.fun address" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); setMeta(null); }} />
+                  <button type="button" className={`rz-chipbtn ${mint.trim() === RHOZE_MINT ? "on" : ""}`} aria-pressed={mint.trim() === RHOZE_MINT} onClick={() => { setMint(RHOZE_MINT); setTicker("RHOZE"); setMeta(null); }}>Use $RHOZE</button>
+                </div>
+                {mintOk && <input id="project-ticker" className="rz-in" aria-label="Ticker" placeholder="Ticker (optional), e.g. RHOZE" maxLength={12} value={ticker} onChange={(e) => setTicker(e.target.value.toUpperCase())} />}
+                <Popover><PopoverTrigger asChild><button type="button" className="rz-scope-more"><Info size={12} /> What this does</button></PopoverTrigger><PopoverContent>{TOKEN_PAIRING_NOTICE}</PopoverContent></Popover>
+              </>}
+            </section>
           </div>
           <div className="rz-actions">
             <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>

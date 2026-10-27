@@ -1,10 +1,11 @@
 export const IDEA_QUESTIONS = ["title", "name", "making", "description", "audience", "location", "category", "cover"] as const;
-export const IDEA_SCREENS = [["title", "name"], ["making", "description"], ["audience", "location", "category", "cover"]] as const;
-export const IDEA_SCREEN_TITLES = ["Name your project", "What are you making?", "Finishing touches"];
+// Screen 0 picks a goal (one tap); screen 1 holds every basic on one page.
+export const IDEA_SCREENS = [["goal"], ["title", "name", "making", "description", "audience", "location", "category", "cover"]] as const;
+export const IDEA_SCREEN_TITLES = ["What brings you here?", "The basics"];
 export const FLEXIBLE_TIMELINES = ["1 week", "2 weeks", "1 month", "3 months", "Flexible"] as const;
 export type TeamPerson = { creator_id: string | null; display_name: string; email: string | null };
 export function validateIdeaQuestion(key: string, value: string) {
-  const required: Record<string, string> = { title: "Give your project a name.", name: "Add your name.", making: "Tell us what you're making.", description: "Add a short description of your project." };
+  const required: Record<string, string> = { title: "Give your project a name.", name: "Add your name.", description: "Tell people what this project is." };
   return !value.trim() ? required[key] || "" : "";
 }
 export function scopeError(budgetCents: number, estimate: boolean, mode: string, timeline: string, deadline: string) {

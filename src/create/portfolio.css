@@ -60,3 +60,4 @@
 .rz-portfolio-coin p{margin:8px 0 12px;font-size:14px}
 .rz-portfolio-coin-actions{display:flex;flex-wrap:wrap;gap:8px}
 .rz-portfolio-chart{padding:14px!important}
+.rz-portfolio a.rz-btn{text-decoration:none}

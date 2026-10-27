@@ -13,7 +13,7 @@ import ExistingProjects from "./ExistingProjects";
 import TeamPlanner from "./TeamPlanner";
 import RhozelandTeam from "./RhozelandTeam";
 import { saveTeam } from "./team-storage";
-import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
+import { PROJECT_GOALS, flowForGoal, goalDefaults, type ProjectGoal, COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
@@ -110,6 +110,8 @@ export default function CreateProject() {
   const [draftId, setDraftId] = useState<string | null>(null);
   const [ptype, setPtype] = useState<PType>("artist");
   const [ideaIndex, setIdeaIndex] = useState(0);
+  const [goal, setGoal] = useState<ProjectGoal | "">("");
+  const flow = flowForGoal(goal);
   const [originalAnswers, setOriginalAnswers] = useState<Record<string, unknown>>({});
   const [people, setPeople] = useState<TeamPerson[]>([]);
   const [timelineMode, setTimelineMode] = useState("flexible");
@@ -117,7 +119,7 @@ export default function CreateProject() {
   const [stepKey, setStepKey] = useState<StepKey>("idea");
   const [talentPct, setTalentPct] = useState(15);
   const [roles, setRoles] = useState<Role[]>([]);
-  const step = Math.max(1, FLOW.indexOf(stepKey) + 1);
+  const step = Math.max(1, flow.indexOf(stepKey) + 1);
   const isBrand = ptype === "brand";
   const leadLabel = isBrand ? "Brand" : "Artist";
   const causeLabel = isBrand ? "Project" : "Cause";
@@ -258,6 +260,7 @@ export default function CreateProject() {
       setNeedQuote(!!r.answers?.need_quote);
       setTimeline(r.answers?.timeline || "");
       setMakers(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
+      if (typeof r.answers?.goal === "string" && PROJECT_GOALS.some((g) => g.id === r.answers.goal)) setGoal(r.answers.goal as ProjectGoal);
       setFeePct(Number(r.fee_pct)); setCausePct(Number(r.cause_pct)); setCauseName(r.cause_name || "");
       setRows((r.milestones || []).map((m: any) => ({ id: uid(), ...m })));
       setCoinChoice(r.coin_mint ? "own" : (r.answers?.coin_choice as CoinChoice) || "skip");
@@ -272,7 +275,7 @@ export default function CreateProject() {
     answers: {
       coin_choice: coinChoice,
       ...originalAnswers, idea_question: ideaIndex, timeline_mode: timelineMode, deadline,
-      wizard_step: FLOW[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(),
+      goal, wizard_step: flow[s - 1] || stepKey, making: making.trim(), description: desc.trim(), audience: audience.trim(),
       category, project_type: ptype, need_quote: needQuote, timeline, makers, city: city.trim(), country,
       ...{ talent_pct: talentPct, roles: roles.filter((x) => x.name.trim()).map((x) => ({ name: x.name.trim(), count: Math.max(1, parseInt(x.count) || 1), rate: x.rate.trim(), ...roleDetails(x) })) },
     },
@@ -388,6 +391,13 @@ export default function CreateProject() {
   };
 
   const updateRole = (id: string, patch: Partial<Role>) => setRoles((rs) => rs.map((x) => (x.id === id ? { ...x, ...patch } : x)));
+  const pickGoal = (g: ProjectGoal) => {
+    if (goal === g) { setGoal(""); return; }
+    setGoal(g);
+    const d = goalDefaults(g);
+    if (d.coin) setCoinChoice(d.coin);
+    if (d.rhozeland) setMakers((ms) => (ms.includes("rhozeland") ? ms : [...ms, "rhozeland"]));
+  };
   const toggleMaker = (id: string) => setMakers((ms) => (ms.includes(id) ? ms.filter((x) => x !== id) : [...ms, id]));
 
   // Optional existing-token pairing in Scope, retained in old drafts too.
@@ -424,7 +434,7 @@ export default function CreateProject() {
     location.href = `/workspace/${id}${call ? "?booked=1" : ""}`;
   };
   const publish = async () => {
-    const id = await save(FLOW.length);
+    const id = await save(flow.length);
     if (!id) return;
     const { data: { session } } = await supabase.auth.getSession();
     if (callChoice) localStorage.setItem(CALL_KEY, JSON.stringify(callChoice)); else localStorage.removeItem(CALL_KEY);
@@ -508,7 +518,7 @@ export default function CreateProject() {
   const updateRow = (id: string, patch: Partial<Milestone>) => setRows((rs) => rs.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   const move = (i: number, d: -1 | 1) => setRows((rs) => { const a = [...rs]; const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; });
 
-  const nextLabel = FLOW[step] ? STEP_LABEL[FLOW[step]] : null;
+  const nextLabel = flow[step] ? STEP_LABEL[flow[step]] : null;
 
   const validateIdea = () => {
     if (!name.trim()) return "Add your name.";
@@ -530,13 +540,13 @@ export default function CreateProject() {
     if (message) { setErr(message); return; }
     setErr("");
     if (stepKey === "idea" && ideaIndex < IDEA_SCREENS.length - 1) { setIdeaIndex(ideaIndex + 1); return; }
-    const next = FLOW[step];
-    if (next) { setStepKey(next); save(FLOW.indexOf(next) + 1); }
+    const next = flow[step];
+    if (next) { setStepKey(next); save(flow.indexOf(next) + 1); }
   };
   const back = () => {
     setErr("");
     if (stepKey === "idea" && ideaIndex > 0) { setIdeaIndex(ideaIndex - 1); return; }
-    const previous = FLOW[step - 2]; if (previous) { setStepKey(previous); if (previous === "idea") setIdeaIndex(IDEA_SCREENS.length - 1); }
+    const previous = flow[step - 2]; if (previous) { setStepKey(previous); if (previous === "idea") setIdeaIndex(IDEA_SCREENS.length - 1); }
   };
 
   const SplitMini = () => (
@@ -559,14 +569,24 @@ export default function CreateProject() {
       </div>
       <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "call" || stepKey === "review" ? "rz-card-wide" : ""}`}>
         <div className="rz-wizard-progress">
-          <div className="rz-wizard-count"><span>Step {step} of {FLOW.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
-          <progress aria-label="Project creation progress" max={FLOW.length} value={step} />
+          <div className="rz-wizard-count"><span>Step {step} of {flow.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
+          <progress aria-label="Project creation progress" max={flow.length} value={step} />
           <p>{nextLabel ? `Next: ${nextLabel}` : "Ready to create"}</p>
         </div>
 
         {stepKey === "idea" && <>
           <div className="rz-head"><h1>{IDEA_SCREEN_TITLES[ideaIndex]}</h1><p>{ideaIndex + 1} of {IDEA_SCREENS.length}{ideaIndex === 2 ? " · all optional" : ""}</p></div>
           <div className={`rz-wizard-fields rz-idea-question rz-idea-q-${ideaIndex}`}>
+            <div className="rz-field rz-full">
+              <label>What would you like to do? <span className="rz-opt">(optional · shapes the next steps)</span></label>
+              <div className="rz-maker-grid rz-goal-grid">
+                {PROJECT_GOALS.map((g) => (
+                  <Button variant="outline" key={g.id} type="button" aria-pressed={goal === g.id} className={`rz-maker-card ${goal === g.id ? "on" : ""}`} onClick={() => pickGoal(g.id)}>
+                    <b>{g.title}</b><span>{g.desc}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
             <div className="rz-field"><label htmlFor="project-name">Project name</label><input id="project-name" className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
             <div className="rz-field"><label htmlFor="creator-name">Your name</label><input id="creator-name" className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
             <div className="rz-field">
@@ -669,7 +689,7 @@ export default function CreateProject() {
         </>}
 
         {stepKey === "team" && <>
-          <div className="rz-head"><h1>Who's making it?</h1><p>Pick one or more. You can change this later.</p></div>
+          <div className="rz-head"><h1>Who's making it?</h1><p>Optional. Add people or skip if it's just you.</p></div>
           <TeamPlanner people={people} onChange={setPeople} />
           <div className="rz-maker-grid">
             {MAKERS.map((m) => (
@@ -706,7 +726,7 @@ export default function CreateProject() {
           )}
           <div className="rz-actions" style={{ marginTop: ".9rem" }}>
             <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft /> Back</Button>
-            <Button variant="outline" className="rz-btn pri" onClick={goNext}>Next: Book a call <ArrowRight size={14} /></Button>
+            <Button variant="outline" className="rz-btn pri" onClick={goNext}>{!makers.length && !people.length ? "Skip" : "Next"}{nextLabel ? `: ${nextLabel}` : ""} <ArrowRight size={14} /></Button>
           </div>
         </>}
 

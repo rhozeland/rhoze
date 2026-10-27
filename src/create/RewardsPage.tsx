@@ -20,6 +20,7 @@ export default function RewardsPage() {
   </div>
   {tab!=="leaders" && tab!=="shop" && uid===undefined && <p>Loading your account…</p>}
   {tab!=="leaders" && tab!=="shop" && uid===null && <section className="rz-rewards-gate"><h2>Your Creator Pass starts here.</h2><p>Sign in to see your earned rewards, contribution badges and progress.</p><Button variant="outline" className="rz-btn pri" onClick={()=>setAuth(true)}>Sign in</Button></section>}
+  {tab!=="leaders" && tab!=="shop" && uid===null && <PassBenefits/>}
   {uid && tab==="pass" && <div className="rz-rewards-columns"><CreatorPass userId={uid}/><div><h2>Keep building</h2><p className="rz-standings-note">Publish a project, support someone’s work or apply to collaborate. Your earned activity builds your XP—even after rewards leave your balance.</p><div className="rz-rewards-tabs"><Button asChild variant="outline" className="rz-btn"><a href="/create.html">Create a project</a></Button><Button asChild variant="outline" className="rz-btn"><a href="/discover.html">Explore projects</a></Button></div><p className="rz-standings-note">Your rank celebrates contributions, not a cash prize or guaranteed discount.</p></div></div>}
   {uid && tab==="balance" && <RewardsCard userId={uid}/>}
    {tab==="leaders" && <Leaderboard userId={uid} onBalance={()=>setTab("balance")}/>}

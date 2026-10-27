@@ -30,7 +30,6 @@ export default function PrivateWorkspace({ id }: { id: string }) {
     location.href = `/release/${data}`;
   };
   return <Shell><div className="rz-private-head">
-    <h1>{project?.title || "Project workspace"}</h1>
-    {project && <><p>{project.status === "published" ? "Published" : "Private"}</p><div className="rz-actions"><Button variant="outline" asChild><a href={`/create.html?draft=${id}`}>Edit project</a></Button>{project.status !== "published" && <Button variant="outline" disabled={busy} onClick={publish}>{busy ? "Publishing…" : "Publish to Discover"}</Button>}{project.status === "published" && <Button variant="outline" disabled={busy} onClick={makePrivate}>Make private</Button>}<Button variant="ghost" asChild><a href="/me">My profile</a></Button></div></>}
+    {project && <div className="rz-actions"><Button variant="outline" asChild><a href={`/create.html?draft=${id}`}>Edit project</a></Button>{project.status !== "published" && <Button variant="outline" disabled={busy} onClick={publish}>{busy ? "Publishing…" : "Publish to Discover"}</Button>}{project.status === "published" && <Button variant="outline" disabled={busy} onClick={makePrivate}>Make private</Button>}<Button variant="ghost" asChild><a href="/me">My profile</a></Button></div>}
   </div>{project === undefined ? <p>Loading…</p> : project ? <ProjectWorkspace r={project} onSaved={setProject} /> : <p>Sign in to the project owner's account to open this workspace.</p>}{error && <p role="alert">{error}</p>}</Shell>;
 }

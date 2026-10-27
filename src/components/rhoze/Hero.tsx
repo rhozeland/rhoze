@@ -72,6 +72,8 @@ const storyItems = [
 const Hero = () => {
   const [videos, setVideos] = useState<Video[]>(fallbackVideos);
   const [featured, setFeatured] = useState<Video>(fallbackVideos[0]);
+  const [started, setStarted] = useState(false);
+
   const railRef = useRef<HTMLDivElement>(null);
   const liveLabel = featured.live ? featured.title : "Offline";
   const displayTickerItems = tickerItems.map((item) =>
@@ -98,7 +100,9 @@ const Hero = () => {
 
   const playVideo = (video: Video) => {
     setFeatured(video);
+    setStarted(true);
   };
+
 
   const scrollRail = (direction: -1 | 1) => {
     const rail = railRef.current;
@@ -187,20 +191,45 @@ const Hero = () => {
               This week on <span className="text-transparent [-webkit-text-stroke:1.4px_hsl(var(--foreground))]">Rhozeland.</span>
             </h1>
 
-            <div className="relative mb-5 aspect-video overflow-hidden border border-foreground/20 bg-foreground">
-              <iframe
-                key={featured.id}
-                className="absolute inset-0 h-full w-full"
-                src={`https://www.youtube.com/embed/${featured.id}?autoplay=1&rel=0&modestbranding=1`}
-                title={featured.title}
-                allow="autoplay; encrypted-media; picture-in-picture"
-                allowFullScreen
-                loading="lazy"
-              />
+            <div className="relative mb-2 aspect-video overflow-hidden border border-foreground/20 bg-foreground">
+              {started ? (
+                <iframe
+                  key={featured.id}
+                  className="absolute inset-0 h-full w-full"
+                  src={`https://www.youtube.com/embed/${featured.id}?autoplay=1&rel=0&modestbranding=1`}
+                  title={featured.title}
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setStarted(true)}
+                  aria-label={`Play ${featured.title}`}
+                  className="group absolute inset-0 flex h-full w-full items-center justify-center bg-foreground"
+                >
+                  <img
+                    src={`https://i.ytimg.com/vi/${featured.id}/hqdefault.jpg`}
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover opacity-60 transition duration-300 group-hover:opacity-75"
+                    loading="lazy"
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
+                  />
+                  <span className="relative grid h-16 w-16 place-items-center rounded-full bg-background text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-transform duration-200 group-hover:scale-105">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+                  </span>
+                </button>
+              )}
               <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 bg-foreground/75 px-3 py-2 text-[0.62rem] font-black uppercase tracking-[0.16em] text-background">
-                <span className="h-2 w-2 rounded-full bg-destructive" aria-hidden="true" /> {featured.live ? "Live Now" : "Now Playing"} · {featured.published || "YouTube"}
+                <span className="h-2 w-2 rounded-full bg-destructive" aria-hidden="true" /> {featured.live ? "Live Now" : started ? "Now Playing" : "Ready"} · {featured.published || "YouTube"}
               </span>
             </div>
+            <p className="mb-5 text-[0.62rem] font-black uppercase tracking-[0.12em]">
+              <a href={`https://www.youtube.com/watch?v=${featured.id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-foreground">
+                Or watch on YouTube <ArrowUpRight size={12} />
+              </a>
+            </p>
+
 
             <p className="max-w-[62ch] text-base font-semibold leading-relaxed text-muted-foreground">
               <em className="font-black text-foreground">{featured.title}</em> — podcasts, documentaries, and live streams from the Rhozeland channel. New episode every Sunday.

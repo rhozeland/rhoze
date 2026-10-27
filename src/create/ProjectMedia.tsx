@@ -15,29 +15,50 @@ function PlatformIcon({ name }: { name: string }) {
   return <Link2 size={13} strokeWidth={1.9} />;
 }
 
+function autoplayUrl(embed: string) {
+  return embed + (embed.includes("?") ? "&" : "?") + "autoplay=1";
+}
+
 /** Media viewer + social/event links for a project page. Renders nothing when there's nothing to show. */
 export default function ProjectMedia({ links, cover, title }: { links: unknown; cover?: string | null; title: string }) {
   const items = parseMediaLinks(links);
   const viewable = [...(cover ? [{ kind: "image", url: cover, label: "Cover" } as MediaItem] : []), ...items.filter(m => m.kind !== "link" && m.url !== cover)];
   const outbound = items.filter(m => m.kind !== "image");
   const [i, setI] = useState(0);
+  const [playing, setPlaying] = useState(false);
   if (!viewable.length && !outbound.length) return null;
   const cur = viewable[Math.min(i, viewable.length - 1)];
+  const pick = (k: number) => { setI(k); setPlaying(false); };
   return (
     <section className="rz-media" aria-label="Project media">
       {cur && (
         <div className={`rz-media-stage${cur.kind === "embed" && cur.tall ? " tall" : ""}${cur.kind === "image" ? " img" : ""}`}>
-          {cur.kind === "embed"
-            ? <iframe key={cur.embed} src={cur.embed} title={`${title} · ${cur.label}`} loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+          {cur.kind === "embed" && !playing
+            ? (
+              <button type="button" className="rz-media-poster" onClick={() => setPlaying(true)} aria-label={`Play ${cur.label} here`}>
+                {cover ? <img src={cover} alt="" loading="lazy" /> : null}
+                <span className="rz-media-poster-play" aria-hidden="true"><Play size={20} /></span>
+                <span className="rz-media-poster-label">Play {cur.label}</span>
+              </button>
+            )
+            : cur.kind === "embed"
+            ? <iframe key={cur.embed} src={autoplayUrl(cur.embed)} title={`${title} · ${cur.label}`} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
             : cur.kind === "video" ? <video key={cur.url} controls playsInline src={cur.url} poster={cover || undefined} />
             : cur.kind === "audio" ? <audio key={cur.url} controls src={cur.url} />
             : <img src={cur.url} alt={`${title} ${cur.label}`} />}
         </div>
       )}
+      {cur?.kind === "embed" && (
+        <p className="rz-media-embed-note">
+          {playing
+            ? <>Video plays here. If nothing appears, <a href={cur.url} target="_blank" rel="noopener noreferrer">open it on {cur.label} <ExternalLink size={11} /></a>.</>
+            : <>Watch here, or <a href={cur.url} target="_blank" rel="noopener noreferrer">open it on {cur.label} <ExternalLink size={11} /></a>.</>}
+        </p>
+      )}
       {viewable.length > 1 && (
         <div className="rz-media-strip" role="tablist" aria-label="Choose media">
           {viewable.map((m, k) => (
-            <Button variant="outline" key={m.url} role="tab" aria-selected={k === i} className="rz-media-thumb" onClick={() => setI(k)} title={m.label}>
+            <Button variant="outline" key={m.url} role="tab" aria-selected={k === i} className="rz-media-thumb" onClick={() => pick(k)} title={m.label}>
               {m.kind === "image" ? <img src={m.url} alt="" /> : <span><Play size={14} />{m.label}</span>}
             </Button>
           ))}

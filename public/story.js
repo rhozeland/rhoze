@@ -1,4 +1,11 @@
 (function(){
+var film=document.querySelector('.story-film-play');
+if(film)film.addEventListener('click',function(){
+ var src=film.getAttribute('data-embed');if(!src)return;
+ var fr=document.createElement('iframe');fr.src=src;fr.title='The Rhozeland documentary';fr.setAttribute('allow','accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');fr.setAttribute('allowfullscreen','');
+ film.replaceWith(fr);
+});
+
 var mint='7khGn21aGKKAPi1LZF5EsdECdtyDcnYHtMKELrZDpump';
 var slugs=['true-north-transparency-true-north-transparency','2025-2026-development-toronto-palapa-tours','hacking-the-tower-indolestic','united-mma-sponsorship-bk-whiskey','welcome-to-toronto-academy-of-emc-toronto-emc','angry-mortgage-podcast-indolestic-marv','who-runs-the-world-runner-s-club','photoshoot-young-teelo-2','songwriting-camp-documentary-global-masterminds','privilege-jevy','sefra-cozal','saint-flair-west-ooak'];
 var track=document.querySelector('.story-work-track');

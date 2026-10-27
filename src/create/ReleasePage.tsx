@@ -48,7 +48,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const [isOwner, setIsOwner] = useState(false);
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [tab, setTab] = useState<"board" | "overview" | "roadmap" | "people" | "budget" | "unlocks" | "exclusive">(new URLSearchParams(location.search).get('tab') === 'exclusive' || location.hash === '#exclusive' ? 'exclusive' : 'board');
-  const [workspaceTab, setWorkspaceTab] = useState<string>(new URLSearchParams(location.search).get('tab') === 'exclusive' || location.hash === '#exclusive' ? 'exclusive' : new URLSearchParams(location.search).get('paid') ? 'payments' : 'board');
+  const [workspaceTab, setWorkspaceTab] = useState<string>(new URLSearchParams(location.search).get('tab') === 'exclusive' || location.hash === '#exclusive' ? 'exclusive' : new URLSearchParams(location.search).get('paid') ? 'payments' : 'overview');
   const [holds, setHolds] = useState(false);
   const walletAddr = publicKey?.toBase58() ?? "";
   const [receipt, setReceipt] = useState<{ idx: number; confirmed: boolean } | null>(null);

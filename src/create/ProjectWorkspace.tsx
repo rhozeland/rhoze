@@ -33,14 +33,14 @@ const MAKERS_OPTIONS: { value: string; label: string }[] = [
 /** Owner-only workspace: Overview, Plan, Team & chat, Money tabs, each with a public-visibility switch.
  *  Saves through the existing owner-checked release_save(p_token, p_id, p_data) function. */
 export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, extraTabs = [] }: { r: any; onSaved: (next: any) => void; activeTab?: string; onTabChange?: (tab: string) => void; extraTabs?: [string, string][] }) {
-  const [localTab, setLocalTab] = useState<string>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "board"));
+  const [localTab, setLocalTab] = useState<string>(() => (new URLSearchParams(location.search).get("paid") ? "payments" : "overview"));
   const tab = activeTab ?? localTab;
   const setTab = (next: string) => { setLocalTab(next); onTabChange?.(next); };
   const [milestones, setMilestones] = useState<Milestone[]>(() => (r.milestones || []).map((m: any) => ({ id: m.id || uid(), title: m.title || "", deliverable: m.deliverable || "", amount_cents: Number(m.amount_cents) || 0, done: !!m.done })));
   const [makers, setMakers] = useState<string[]>(Array.isArray(r.answers?.makers) ? r.answers.makers : []);
   const [people, setPeople] = useState<TeamPerson[]>([]);
   const [title, setTitle] = useState(r.title || "");
-  const [description, setDescription] = useState(r.answers?.description || "");
+  const [description, setDescription] = useState(r.answers?.description || r.answers?.making || "");
   const [story, setStory] = useState(r.answers?.story || "");
   const [context, setContext] = useState(r.answers?.cultural_context || "");
   const [contribution, setContribution] = useState(r.answers?.rhozeland_contribution || "");

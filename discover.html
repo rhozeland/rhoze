@@ -1011,7 +1011,7 @@
           var href = who ? '/creator/' + encodeURIComponent(who.slug) : '';
           var a = document.createElement('a');
           a.href = '/release/' + encodeURIComponent(r.slug);
-          a.className = 'work-card fade-in work-card--project';
+          a.className = 'work-card fade-in visible work-card--project';
           a.setAttribute('data-category', dc);
           a.setAttribute('data-artist', r.creator_name || '');
           a.setAttribute('data-date', d.toISOString().slice(0, 7));

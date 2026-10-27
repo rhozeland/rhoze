@@ -33,3 +33,9 @@
 .rz-ws-publish b{font-weight:600}
 .rz-ws-publish span.ok{opacity:.65}
 .rz-ws-publish span.todo{color:hsl(35 90% 45%)}
+.rz-ct .rz-ct-file,.rz-ct .rz-ct-link{flex-direction:row;white-space:nowrap;margin:0}
+.rz-ct .rz-ct-file svg,.rz-ct .rz-ct-link svg{flex:none}
+.rz-ct .rz-ct-link input{min-width:0;padding:0;height:auto;border:0}
+.rz-ct-notes{margin-top:18px}
+.rz-ct-notes summary{cursor:pointer;font-size:.88rem;color:hsl(0 0% 100%/.7)}
+.rz-ct-notes[open] summary{margin-bottom:12px}

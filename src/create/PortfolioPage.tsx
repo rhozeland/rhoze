@@ -5,7 +5,7 @@ import { Shell } from "./shared";
 import ProjectStory from "./ProjectStory";
 import ReleasePrice, { formatReleasePrice } from "./ReleasePrice";
 import ProjectMedia from './ProjectMedia';
-import { Copy, ExternalLink, ArrowLeft } from 'lucide-react';
+import { Copy, ExternalLink, ArrowLeft, Share2, Coins, HandCoins } from 'lucide-react';
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import "./portfolio.css";
 import PortfolioHeart from './PortfolioHeart';
@@ -27,6 +27,10 @@ export default function PortfolioPage({ slug }: { slug: string }) {
   const [price, setPrice] = useState<number | null>(null);
   const [marketCap, setMarketCap] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [shared, setShared] = useState(false);
+  const share = async () => { const url = location.href; try { if (navigator.share) { await navigator.share({ title: entry?.title, url }); return; } await navigator.clipboard.writeText(url); setShared(true); setTimeout(() => setShared(false), 2000); } catch { /* cancelled */ } };
+  const pumpUrl = saved.coin_mint ? `https://pump.fun/coin/${encodeURIComponent(saved.coin_mint)}` : '';
+  const teamMail = (subject: string) => `mailto:collab@rhozeland.com?subject=${encodeURIComponent(subject)}`;
   useEffect(() => {
     let active = true;
     (supabase.rpc as any)('portfolio_detail', { p_slug: slug }).then(({ data: rows }: any) => { const data = Array.isArray(rows) ? rows[0] : rows; if (active && data) { setDetails(data); setSaved(data); } });
@@ -66,8 +70,9 @@ export default function PortfolioPage({ slug }: { slug: string }) {
     {entry === undefined ? <p>Loading project…</p> : !entry ? <h1>Project not found</h1> : <>
       {admin && <Button variant="outline" onClick={() => setEditing(!editing)}>{editing ? 'Close editor' : 'Edit project record'}</Button>}
       {editing && <section className="rz-ws"><h2>Edit project record</h2>{([['story', 'The story'], ['cultural_context', 'Cultural context'], ['rhozeland_contribution', "Rhozeland's contribution"]] as const).map(([key, label]) => <label key={key}>{label}<textarea className="rz-in" rows={4} value={details[key]} onChange={e => setDetails({ ...details, [key]: e.target.value })} /></label>)}<label>Solana contract address<input className="rz-in" value={details.coin_mint} onChange={e => setDetails({ ...details, coin_mint: e.target.value })} /></label><label>Ticker<input className="rz-in" value={details.coin_ticker} onChange={e => setDetails({ ...details, coin_ticker: e.target.value.toUpperCase() })} /></label><p className="rz-note">{TOKEN_PAIRING_NOTICE}</p><Button variant="outline" disabled={busy} onClick={saveDetails}>{busy ? 'Saving…' : 'Save project record'}</Button>{error && <p role="alert">{error}</p>}</section>}
-      <header><PortfolioHeart slug={slug} corner /><p className="rz-portfolio-kicker">Project archive · {entry.tag}</p><h1>{entry.title}</h1><p>{entry.artist.split(',').map((name, i) => { const profile = profiles[name.normalize('NFC').trim().toLowerCase()]; return <span key={name}>{i > 0 && ' · '}{profile ? <a href={`/creator/${profile}`}>{name}</a> : name}</span>; })}{entry.date && ` · ${entry.date}`}</p></header>
+      <header><div className="rz-portfolio-tools"><PortfolioHeart slug={slug} corner /><Button variant="outline" size="icon" className="rz-portfolio-share" aria-label={shared ? 'Link copied' : 'Share project'} title={shared ? 'Link copied' : 'Share project'} onClick={share}><Share2 size={16} /></Button><Button asChild className="rz-portfolio-support"><a href={pumpUrl || teamMail(`Support ${entry.title}`)} {...(pumpUrl ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>Support</a></Button></div><p className="rz-portfolio-kicker">Project archive · {entry.tag}</p><h1>{entry.title}</h1><p>{entry.artist.split(',').map((name, i) => { const profile = profiles[name.normalize('NFC').trim().toLowerCase()]; return <span key={name}>{i > 0 && ' · '}{profile ? <a href={`/creator/${profile}`}>{name}</a> : name}</span>; })}{entry.date && ` · ${entry.date}`}</p></header>
       <div className="rz-portfolio-body"><div className="rz-portfolio-narrative"><PublicProjectCanvas>
+        {saved.coin_mint && <section className="rz-portfolio-chart"><ReleasePrice mint={saved.coin_mint} ticker={saved.coin_ticker} price={price} change={null} /></section>}
         <section><h2>About the project</h2><p>{entry.title} is a {entry.tag.toLowerCase()} by {entry.artist}{entry.date ? `, released in ${entry.date}` : ''}, featured in the Rhozeland portfolio.</p></section>
         <ProjectStory story={saved} />
         {!saved.rhozeland_contribution && <section><h2>Rhozeland's contribution</h2><p className="text-muted-foreground">Detailed production credits and the project's story have not been documented here yet.</p></section>}
@@ -75,6 +80,11 @@ export default function PortfolioPage({ slug }: { slug: string }) {
         <section className="rz-portfolio-media" aria-label="Original media">
           <ProjectMedia key={slug} links={[entry.source_url]} cover={entry.image} title={entry.title} />
         </section>
+        <section className="rz-portfolio-coin" aria-label="Project coin"><h2><Coins size={14} /> Project coin</h2>
+          {saved.coin_mint ? <><p>Paired with {saved.coin_ticker ? <b>${saved.coin_ticker}</b> : 'a coin'}{marketCap !== null && ` · ${formatReleasePrice(marketCap)} mcap`}.</p><div className="rz-portfolio-coin-actions"><Button asChild className="rz-portfolio-support"><a href={pumpUrl} target="_blank" rel="noopener noreferrer">Support</a></Button><Button variant="outline" asChild><a href={pumpUrl} target="_blank" rel="noopener noreferrer">Pump.fun</a></Button></div></>
+            : <><p>No coin attached yet.</p><div className="rz-portfolio-coin-actions">{admin ? <Button variant="outline" onClick={() => setEditing(true)}>Attach a coin</Button> : <Button variant="outline" asChild><a href={teamMail(`Launch a coin for ${entry.title}`)}>Request a coin</a></Button>}</div></>}
+        </section>
+        <section className="rz-portfolio-coin" aria-label="Fund this project"><h2><HandCoins size={14} /> Fund this project</h2><p>Back {entry.title}'s next chapter or collaborate with the team behind it.</p><div className="rz-portfolio-coin-actions"><Button variant="outline" asChild><a href={teamMail(`Fund ${entry.title}`)}>Contact the team</a></Button></div></section>
         <section><h2>Project record</h2><dl><dt>Creator</dt><dd>{entry.artist}</dd><dt>Format</dt><dd>{entry.tag}</dd>{entry.date && <><dt>Released</dt><dd>{entry.date}</dd></>}</dl></section>
         <section className="rz-portfolio-activity" aria-label="Project activity"><h2>Project activity</h2><PortfolioHeart slug={slug} /><ProjectRewards portfolioSlug={slug} /></section>
       </aside></div>
@@ -82,7 +92,6 @@ export default function PortfolioPage({ slug }: { slug: string }) {
         <header><h2>{saved.coin_ticker ? `$${saved.coin_ticker}` : 'Paired token'}</h2><span>Solana · Paired token</span></header>
         <dl className="rz-portfolio-token-stats"><div><dt>Price · USD</dt><dd>{price === null ? 'Unavailable' : formatReleasePrice(price)}</dd></div><div><dt>Market cap · USD</dt><dd>{marketCap === null ? 'Unavailable' : formatReleasePrice(marketCap)}</dd></div></dl>
         <div className="rz-portfolio-contract"><code>{saved.coin_mint}</code><Button size="icon" variant="outline" aria-label={copied ? 'Address copied' : 'Copy token address'} title={copied ? 'Address copied' : 'Copy token address'} onClick={async () => { try { await navigator.clipboard.writeText(saved.coin_mint); setCopied(true); } catch { setCopied(false); } }}><Copy size={16} /></Button><Button size="sm" variant="outline" asChild><a href={`https://solscan.io/token/${encodeURIComponent(saved.coin_mint)}`} target="_blank" rel="noopener noreferrer"><ExternalLink size={14} /> Token details</a></Button></div>
-        <details><summary>Live chart</summary><ReleasePrice mint={saved.coin_mint} ticker={saved.coin_ticker} price={price} change={null} /></details>
         <p className="rz-note">{TOKEN_PAIRING_NOTICE}</p>
       </section>}
       <RelatedProjects href={`/project/${slug}`} artist={entry.artist} categories={entry.categories || entry.tag} />

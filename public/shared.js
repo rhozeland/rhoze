@@ -432,11 +432,9 @@ setupHoverVideos();
       mm.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
       cluster.appendChild(mm); cluster.appendChild(b);
       var m = document.createElement('div'); m.className = 'sn-menu'; m.style.display = 'none';
-      var p = document.createElement('a'); p.href = '/me?settings=1'; p.textContent = 'Edit profile & settings';
       var o = document.createElement('button'); o.type = 'button'; o.textContent = 'Sign out'; o.addEventListener('click', signOut);
       var profile=document.createElement('a'); profile.href='/me'; profile.textContent='My profile';
-      var saved=document.createElement('a'); saved.href='/saved'; saved.textContent='Saved';
-      m.appendChild(profile); m.appendChild(p); m.appendChild(saved); m.appendChild(o);
+      m.appendChild(profile); m.appendChild(o);
       // Match existing team roles; the portal itself re-checks access.
       try {
         fetch('https://hdlpvcsxyxirywjkhsui.supabase.co/rest/v1/user_roles?select=role&user_id=eq.' + encodeURIComponent(sess.user.id), {

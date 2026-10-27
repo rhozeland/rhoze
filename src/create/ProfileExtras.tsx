@@ -207,6 +207,17 @@ function SignInGate({ what }: { what: string }) {
   );
 }
 
+/* Saved-list shortcut: the profile card's own route to the saved list. */
+export function SavedShortcut() {
+  const uid = useSession();
+  if (!uid) return null;
+  return (
+    <a className="rz-settings-btn rz-saved-shortcut" href="/saved" aria-label="Saved profiles" title="Saved profiles">
+      <Bookmark size={16} />
+    </a>
+  );
+}
+
 /* ---------------- /saved ---------------- */
 export function SavedPage() {
   const uid = useSession();

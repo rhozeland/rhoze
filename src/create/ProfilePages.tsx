@@ -3,7 +3,7 @@ import { Settings, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shell } from "./shared";
 import AuthModal from "./AuthModal";
-import { ProfileTools, Lightbox, MoreCreators, embedUrl, LocationFields, COUNTRY_NAMES } from "./ProfileExtras";
+import { ProfileTools, Lightbox, MoreCreators, embedUrl, LocationFields, COUNTRY_NAMES, SavedShortcut } from "./ProfileExtras";
 import CoverEditor from "./CoverEditor";
 import { LikedProjects, ProjectHeart } from "./ProjectLikes";
 import { SupporterHome } from "./SupporterHome";
@@ -125,7 +125,6 @@ function OwnerSettings({ onEdit, editing, visibility }: { onEdit: () => void; ed
       {open && (
         <div className="rz-settings-menu" role="menu">
           <button type="button" className="rz-btn pri" onClick={() => { onEdit(); setOpen(false); }}>{editing ? "Close editor" : "Edit profile"}</button>
-          <a className="rz-btn" href="/saved" role="menuitem">Saved</a>
           {visibility && (
             <div className="rz-settings-vis">
               <b>Profile visibility</b>
@@ -201,6 +200,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card rz-profile-glass">
         <div className="rz-profile-controls">
+          <SavedShortcut />
           {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         </div>
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
@@ -423,6 +423,7 @@ export function BrandProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card rz-profile-glass">
         <div className="rz-profile-controls">
+          <SavedShortcut />
           {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}

@@ -85,3 +85,6 @@
 .rz-portfolio-back-row:hover .rz-portfolio-back-icon{transform:scale(1.12) rotate(-8deg)}
 .rz-portfolio-back-row,.rz-portfolio-back-row>div{min-width:0}
 .rz-archive-dark .rz-portfolio-sidebar>.rz-portfolio-activity .rz-project-points{padding:0 4px}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas{padding-bottom:0}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-scroll{min-height:0;max-height:none}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-tools{display:none}

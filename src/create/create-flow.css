@@ -36,7 +36,8 @@
 .rz-review-section:first-child{margin-top:0}
 .rz-idea-question{display:block!important;min-height:170px}
 .rz-idea-question>.rz-field{display:none}
-.rz-idea-q-0>.rz-field:nth-child(1),.rz-idea-q-1>.rz-field:nth-child(2),.rz-idea-q-2>.rz-field:nth-child(3),.rz-idea-q-3>.rz-field:nth-child(4),.rz-idea-q-4>.rz-field:nth-child(5),.rz-idea-q-5>.rz-field:nth-child(6),.rz-idea-q-6>.rz-field:nth-child(7),.rz-idea-q-7>.rz-field:nth-child(8){display:block}
+.rz-idea-q-0>.rz-field:nth-child(-n+2),.rz-idea-q-1>.rz-field:nth-child(3),.rz-idea-q-1>.rz-field:nth-child(4),.rz-idea-q-2>.rz-field:nth-child(n+5){display:block}
+.rz-idea-question>.rz-field+.rz-field{margin-top:.8rem}
 .rz-team-planner{margin-bottom:1rem}
 .rz-role-editor+.rz-role-editor{border-top:1px solid hsl(var(--line))}
 .rz-role-details-editor{padding:0 .6rem .65rem}

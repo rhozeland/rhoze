@@ -13,7 +13,7 @@ import ExistingProjects from "./ExistingProjects";
 import TeamPlanner from "./TeamPlanner";
 import RhozelandTeam from "./RhozelandTeam";
 import { saveTeam } from "./team-storage";
-import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_QUESTIONS, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
+import { COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_QUESTIONS, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Info } from "lucide-react";
@@ -230,7 +230,7 @@ export default function CreateProject() {
       if (!r || (!fromParam && r.status !== "draft")) { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
       setDraftId(r.id);
       setOriginalAnswers(r.answers || {});
-      setIdeaIndex(fromParam ? 0 : Math.max(0, Math.min(IDEA_QUESTIONS.length - 1, Number(r.answers?.idea_question) || 0)));
+      setIdeaIndex(fromParam ? 0 : Math.max(0, Math.min(IDEA_SCREENS.length - 1, Number(r.answers?.idea_question) || 0)));
       setTimelineMode(r.answers?.timeline_mode || "flexible");
       setDeadline(r.answers?.deadline || "");
       const { data: team } = await supabase.from("release_team_members").select("creator_id,display_name,email").eq("release_id", r.id);
@@ -524,18 +524,17 @@ export default function CreateProject() {
   };
   const goNext = () => {
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
-    const question = IDEA_QUESTIONS[ideaIndex];
-    const message = stepKey === "idea" ? validateIdeaQuestion(question || "", values[question] || "") : stepKey === "scope" ? validateScope() : stepKey === "team" ? validateTeam() : "";
+    const message = stepKey === "idea" ? (IDEA_SCREENS[ideaIndex] || []).map((q) => validateIdeaQuestion(q, values[q] || "")).find(Boolean) || "" : stepKey === "scope" ? validateScope() : stepKey === "team" ? validateTeam() : "";
     if (message) { setErr(message); return; }
     setErr("");
-    if (stepKey === "idea" && ideaIndex < IDEA_QUESTIONS.length - 1) { setIdeaIndex(ideaIndex + 1); return; }
+    if (stepKey === "idea" && ideaIndex < IDEA_SCREENS.length - 1) { setIdeaIndex(ideaIndex + 1); return; }
     const next = FLOW[step];
     if (next) { setStepKey(next); save(FLOW.indexOf(next) + 1); }
   };
   const back = () => {
     setErr("");
     if (stepKey === "idea" && ideaIndex > 0) { setIdeaIndex(ideaIndex - 1); return; }
-    const previous = FLOW[step - 2]; if (previous) { setStepKey(previous); if (previous === "idea") setIdeaIndex(IDEA_QUESTIONS.length - 1); }
+    const previous = FLOW[step - 2]; if (previous) { setStepKey(previous); if (previous === "idea") setIdeaIndex(IDEA_SCREENS.length - 1); }
   };
 
   const SplitMini = () => (
@@ -564,7 +563,7 @@ export default function CreateProject() {
         </div>
 
         {stepKey === "idea" && <>
-          <div className="rz-head"><h1>{["What's your project called?", "What's your name?", "What are you making?", "A brief description", "Who is it for?", "Where is it based?", "Choose a category", "Add a cover"][ideaIndex]}</h1><p>Question {ideaIndex + 1} of {IDEA_QUESTIONS.length}</p></div>
+          <div className="rz-head"><h1>{IDEA_SCREEN_TITLES[ideaIndex]}</h1><p>{ideaIndex + 1} of {IDEA_SCREENS.length}{ideaIndex === 2 ? " · all optional" : ""}</p></div>
           <div className={`rz-wizard-fields rz-idea-question rz-idea-q-${ideaIndex}`}>
             <div className="rz-field"><label htmlFor="project-name">Project name</label><input id="project-name" className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
             <div className="rz-field"><label htmlFor="creator-name">Your name</label><input id="creator-name" className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>

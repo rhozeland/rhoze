@@ -577,7 +577,7 @@ export default function CreateProject() {
         {stepKey === "idea" && <>
           <div className="rz-head"><h1>{IDEA_SCREEN_TITLES[ideaIndex]}</h1><p>{ideaIndex + 1} of {IDEA_SCREENS.length}{ideaIndex === 2 ? " · all optional" : ""}</p></div>
           <div className={`rz-wizard-fields rz-idea-question rz-idea-q-${ideaIndex}`}>
-            {ideaIndex === 0 && <div className="rz-field rz-full">
+            <div className="rz-field rz-full">
               <label>What would you like to do? <span className="rz-opt">(optional · shapes the next steps)</span></label>
               <div className="rz-maker-grid rz-goal-grid">
                 {PROJECT_GOALS.map((g) => (
@@ -586,7 +586,7 @@ export default function CreateProject() {
                   </Button>
                 ))}
               </div>
-            </div>}
+            </div>
             <div className="rz-field"><label htmlFor="project-name">Project name</label><input id="project-name" className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
             <div className="rz-field"><label htmlFor="creator-name">Your name</label><input id="creator-name" className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
             <div className="rz-field">

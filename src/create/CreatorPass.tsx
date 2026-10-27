@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Award, ArrowUpRight, Sparkles, Folder, Heart, Users, Zap } from "lucide-react";
+import { Award, ArrowUpRight, Sparkles, Folder, Heart, Users, Zap, Banknote, ShoppingBag, CalendarClock, Rocket } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { passLevel, earnedBadges, type CreatorProgress } from "./pass-logic";
 import "./pass.css";

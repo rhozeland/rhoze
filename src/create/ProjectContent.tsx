@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Eye, Lock, Trash2, Upload, Link2 } from "lucide-react";
+import { Eye, Lock, Trash2, Link2, ImagePlus, Film, Music, X } from "lucide-react";
 import ProjectMedia from "./ProjectMedia";
 import "./project-content.css";
 
@@ -45,6 +45,9 @@ export default function ProjectContent({ r }: { r: any }) {
   const [vis, setVis] = useState<Vis>(r.coin_mint ? "holders" : "public");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [drag, setDrag] = useState(false);
+  const [showLink, setShowLink] = useState(false);
+  const addFiles = (fs: File[]) => { setErr(""); setFiles((cur) => [...cur, ...fs].slice(0, 10)); };
 
   const load = async () => {
     const { data } = await (supabase.from as any)("release_posts").select("id,body,media_path,media_kind,link_url,visibility,created_at").eq("release_id", r.id).order("created_at", { ascending: false });
@@ -72,8 +75,8 @@ export default function ProjectContent({ r }: { r: any }) {
     if (!rows.length) rows.push({ release_id: r.id, user_id: u.user?.id, body, link_url: url || null, visibility: vis });
     const { error } = await (supabase.from as any)("release_posts").insert(rows);
     setBusy(false);
-    if (error) return setErr("Couldn't post that. Try again.");
-    setText(""); setFiles([]); setLink(""); load();
+    if (error) return setErr("Couldn't post that: " + error.message);
+    setText(""); setFiles([]); setLink(""); setShowLink(false); load();
   };
 
   const toggle = async (p: ContentPost) => {
@@ -92,26 +95,27 @@ export default function ProjectContent({ r }: { r: any }) {
   const publicCount = (posts || []).filter((p) => p.visibility === "public").length;
   return (
     <div className="rz-ct">
-      <div className="rz-ct-compose">
-        <h3>Add content</h3>
-        <p className="rz-ct-hint">Videos, photos, audio, links or written updates. Keep most for {r.coin_mint ? "coin holders" : "supporters"} and make a few public as a teaser.</p>
-        <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={5000} placeholder="Write an update or a caption — e.g. behind the scenes from today's shoot" aria-label="Caption" />
-        <div className="rz-ct-row">
-          <label className="rz-ct-file"><Upload size={15} aria-hidden="true" />{files.length ? `${files.length} file${files.length > 1 ? "s" : ""} chosen` : "Upload photos / videos / audio"}
-            <input type="file" multiple accept="image/*,video/*,audio/*" hidden onChange={(e) => { setFiles(Array.from(e.target.files || [])); e.target.value = ""; }} /></label>
-          <label className="rz-ct-link"><Link2 size={15} aria-hidden="true" /><input value={link} onChange={(e) => setLink(e.target.value)} placeholder="YouTube, TikTok, Instagram, Spotify link" aria-label="Link" /></label>
-        </div>
-        <div className="rz-ct-row">
-          <div className="rz-ct-vis" role="radiogroup" aria-label="Who can see this">
-            <button type="button" role="radio" aria-checked={vis === "holders"} onClick={() => setVis("holders")}><Lock size={13} aria-hidden="true" />Holders only</button>
-            <button type="button" role="radio" aria-checked={vis === "public"} onClick={() => setVis("public")}><Eye size={13} aria-hidden="true" />Public teaser</button>
-          </div>
-          <Button type="button" className="rz-ct-post" disabled={busy} onClick={submit}>{busy ? "Posting…" : "Post"}</Button>
+      <div className={`rz-ct-compose${drag ? " drag" : ""}`}
+        onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
+        onDrop={(e) => { e.preventDefault(); setDrag(false); addFiles(Array.from(e.dataTransfer.files)); }}>
+        <textarea value={text} onChange={(e) => setText(e.target.value)} maxLength={5000} placeholder="Share an update, a behind-the-scenes moment, a sneak peek…" aria-label="Caption" />
+        {files.length > 0 && <div className="rz-ct-thumbs">{files.map((f, i) => <span key={i} className="rz-ct-thumb">
+          {f.type.startsWith("image/") ? <img src={URL.createObjectURL(f)} alt="" /> : f.type.startsWith("video/") ? <Film size={18} /> : <Music size={18} />}
+          <button type="button" aria-label={`Remove ${f.name}`} onClick={() => setFiles((fs) => fs.filter((_, j) => j !== i))}><X size={12} /></button></span>)}</div>}
+        {showLink && <label className="rz-ct-link"><Link2 size={14} aria-hidden="true" /><input autoFocus value={link} onChange={(e) => setLink(e.target.value)} placeholder="Paste a YouTube, TikTok, Instagram or Spotify link" aria-label="Link" /></label>}
+        <div className="rz-ct-bar">
+          <label className="rz-ct-tool" title="Add photos, videos or audio"><ImagePlus size={17} aria-hidden="true" /><span>Media</span>
+            <input type="file" multiple accept="image/*,video/*,audio/*" hidden onChange={(e) => { addFiles(Array.from(e.target.files || [])); e.target.value = ""; }} /></label>
+          <button type="button" className="rz-ct-tool" aria-pressed={showLink} onClick={() => setShowLink((v) => !v)}><Link2 size={17} aria-hidden="true" /><span>Link</span></button>
+          <span className="rz-ct-spacer" />
+          <button type="button" className="rz-ct-who" onClick={() => setVis(vis === "public" ? "holders" : "public")} title="Change who can see this">
+            {vis === "public" ? <><Eye size={14} />Everyone</> : <><Lock size={14} />{r.coin_mint ? "Holders only" : "Supporters only"}</>}</button>
+          <Button type="button" className="rz-ct-post" disabled={busy || (!text.trim() && !files.length && !link.trim())} onClick={submit}>{busy ? "Posting…" : "Post"}</Button>
         </div>
         {err && <p role="alert" className="rz-ct-err">{err}</p>}
       </div>
 
-      <div className="rz-ct-head"><h3>Your content</h3>{posts && <small>{posts.length} posts · {publicCount} public teaser{publicCount === 1 ? "" : "s"}{r.status !== "published" && " · teasers show once the project is published"}</small>}</div>
+      <div className="rz-ct-head"><h3>Posted</h3>{posts && <small>{posts.length} posts · {publicCount} public teaser{publicCount === 1 ? "" : "s"}{r.status !== "published" && " · teasers show once the project is published"}</small>}</div>
       {posts === null ? <p className="rz-ct-hint">Loading…</p> : !posts.length ? <p className="rz-ct-empty">Nothing yet. Your first post could be a behind-the-scenes video or a sneak peek photo.</p> : (
         <div className="rz-ct-grid">
           {posts.map((p) => <ContentCard key={p.id} p={p} title={r.title} footer={

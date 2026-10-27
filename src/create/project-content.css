@@ -39,3 +39,17 @@
 .rz-ct-notes{margin-top:18px}
 .rz-ct-notes summary{cursor:pointer;font-size:.88rem;color:hsl(0 0% 100%/.7)}
 .rz-ct-notes[open] summary{margin-bottom:12px}
+.rz-ct-compose{gap:8px;padding:12px;border-radius:18px;transition:border-color .15s,background .15s}
+.rz-ct-compose.drag{border-color:hsl(170 60% 70%);background:hsl(170 60% 70%/.08)}
+.rz-ct-compose textarea{min-height:64px;border:0;background:transparent;padding:6px 4px;font-size:.95rem;outline:0}
+.rz-ct-thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.rz-ct-thumb{position:relative;width:64px;height:64px;border-radius:10px;overflow:hidden;display:grid;place-items:center;background:hsl(0 0% 100%/.08)}
+.rz-ct-thumb img{width:100%;height:100%;object-fit:cover}
+.rz-ct-thumb button{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;border:0;display:grid;place-items:center;background:hsl(0 0% 0%/.7);color:hsl(0 0% 100%);cursor:pointer}
+.rz-ct-bar{display:flex;align-items:center;gap:4px;padding-top:8px;border-top:1px solid hsl(0 0% 100%/.08)}
+.rz-ct-spacer{flex:1}
+.rz-ct-tool,.rz-ct-who{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:0;background:none;color:hsl(0 0% 100%/.78);font-size:.84rem;cursor:pointer}
+.rz-ct-tool:hover,.rz-ct-who:hover,.rz-ct-tool[aria-pressed=true]{background:hsl(0 0% 100%/.1);color:hsl(0 0% 100%)}
+.rz-ct-who{border:1px solid hsl(0 0% 100%/.16)}
+.rz-ct-post:disabled{opacity:.45}
+@media(max-width:520px){.rz-ct-tool span{display:none}}

@@ -93,3 +93,10 @@
   .rzm-steps .rzm-lbl{display:none}
   .rzm-steps li.on .rzm-lbl{display:inline}
 }
+.rzm-cover:not(.has){aspect-ratio:auto;height:140px}
+/* Later steps share the same left-aligned headings and roomy actions. */
+.rzm-main .rz-head{text-align:left;margin-bottom:20px}
+.rzm-main .rz-head h1{font-size:30px;letter-spacing:-.02em;line-height:1.1}
+.rzm-main .rz-head p{margin:8px 0 0;max-width:none;font-size:14px;color:hsl(var(--mut))}
+.rzm-main .rz-actions{justify-content:space-between;margin-top:22px}
+@media(max-width:900px){.rzm-main .rz-head h1{font-size:24px}}

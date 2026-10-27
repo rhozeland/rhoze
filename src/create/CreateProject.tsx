@@ -16,7 +16,8 @@ import { saveTeam } from "./team-storage";
 import { PROJECT_GOALS, flowForGoal, goalDefaults, type ProjectGoal, COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Info } from "lucide-react";
+import { Info, Share2, Handshake, CalendarCheck, Coins, Rocket, ImagePlus, ChevronRight } from "lucide-react";
+import "./create-modern.css";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
 import { completeDraftHandoff, PENDING_DRAFT_KEY } from "./draft-handoff";
@@ -42,6 +43,8 @@ type StepKey = "idea" | "scope" | "team" | "call" | "review";
 const FLOW: StepKey[] = ["idea", "scope", "team", "call", "review"];
 const STEP_LABEL: Record<StepKey, string> = { idea: "The idea", scope: "Scope", team: "Who's making it", call: "Book a call", review: "Review" };
 const CALL_KEY = "rz_pending_call";
+const STEP_SHORT: Record<StepKey, string> = { idea: "Basics", scope: "Scope", team: "Team", call: "Call", review: "Review" };
+const GOAL_ICONS: Record<ProjectGoal, typeof Share2> = { share: Share2, assist: Handshake, book: CalendarCheck, coin_existing: Coins, coin_launch: Rocket };
 
 // Old (pre-merge) step keys map onto the new 4 steps so drafts saved by the
 // previous wizard still reopen at a sensible place.
@@ -234,7 +237,7 @@ export default function CreateProject() {
       if (!r || (!fromParam && r.status !== "draft")) { localStorage.removeItem(DRAFT_KEY); applyBooking(); return; }
       setDraftId(r.id);
       setOriginalAnswers(r.answers || {});
-      setIdeaIndex(fromParam ? 0 : Math.max(0, Math.min(IDEA_SCREENS.length - 1, Number(r.answers?.idea_question) || 0)));
+      setIdeaIndex(fromParam ? 1 : Math.max(0, Math.min(IDEA_SCREENS.length - 1, Number(r.answers?.idea_question) || 0)));
       setTimelineMode(r.answers?.timeline_mode || "flexible");
       setDeadline(r.answers?.deadline || "");
       const { data: team } = await supabase.from("release_team_members").select("creator_id,display_name,email").eq("release_id", r.id);
@@ -253,7 +256,7 @@ export default function CreateProject() {
       setStepKey(fromParam ? "idea" : resolved);
 
       setName(r.creator_name || booking.name || ""); setEmail(r.creator_email || booking.email || "");
-      setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || ""); setAudience(r.answers?.audience || "");
+      setTitle(r.title || ""); setMaking(r.answers?.making || ""); setDesc(r.answers?.description || r.answers?.making || ""); setAudience(r.answers?.audience || "");
       setCategory(r.answers?.category || "");
       setCity(r.answers?.city || ""); setCountry(r.answers?.country || "");
       setBudget(r.budget_cents ? String(r.budget_cents / 100) : "");
@@ -392,8 +395,8 @@ export default function CreateProject() {
 
   const updateRole = (id: string, patch: Partial<Role>) => setRoles((rs) => rs.map((x) => (x.id === id ? { ...x, ...patch } : x)));
   const pickGoal = (g: ProjectGoal) => {
-    if (goal === g) { setGoal(""); return; }
     setGoal(g);
+    setIdeaIndex(1);
     const d = goalDefaults(g);
     if (d.coin) setCoinChoice(d.coin);
     if (d.rhozeland) setMakers((ms) => (ms.includes("rhozeland") ? ms : [...ms, "rhozeland"]));
@@ -558,6 +561,39 @@ export default function CreateProject() {
     </div>
   );
 
+  const stepLabels = ["Goal", "Basics", ...flow.slice(1).map((k) => STEP_SHORT[k])];
+  const curIdx = stepKey === "idea" ? ideaIndex : flow.indexOf(stepKey) + 1;
+  const jumpTo = (i: number) => {
+    if (i > curIdx) return; setErr("");
+    if (i <= 1) { setStepKey("idea"); setIdeaIndex(i); } else setStepKey(flow[i - 1]);
+  };
+  const timelineText = timelineMode === "date" ? deadline : timeline;
+  const makerNames = [...makers.map((id) => MAKERS.find((m) => m.id === id)?.title).filter(Boolean), ...people.map((p) => p.display_name)] as string[];
+  const namedRoles = makers.includes("open_roles") ? roles.filter((x) => x.name.trim()) : [];
+  const preview = (
+    <aside className={`rzm-preview${stepKey === "review" ? " show" : ""}`} aria-label="Project page preview">
+      <div className="rzm-pv-label">Live preview · your project page</div>
+      <div className="rzm-pv-card">
+        <div className="rzm-pv-cover">{coverPreview ? <img src={coverPreview} alt="" /> : <span>{(title.trim() || "R").slice(0, 1).toUpperCase()}</span>}
+          {(coin || coinChoice === "rhozeland") && <em className="rzm-pv-coin"><Coins size={11} /> {coin ? (coin.ticker ? `$${coin.ticker}` : "Coin") : "Coin soon"}</em>}
+        </div>
+        <div className="rzm-pv-body">
+          {category && <small className="rzm-pv-cat">{category}</small>}
+          <h3>{title.trim() || "Your project name"}</h3>
+          <p className="rzm-pv-by">by {name.trim() || "you"}</p>
+          <p className="rzm-pv-desc">{desc.trim() || "Your description shows here."}</p>
+          <dl className="rzm-pv-stats">
+            <div><dt>Budget</dt><dd>{needQuote ? "Estimate" : budgetCents ? money(budgetCents) : "Not set"}</dd></div>
+            <div><dt>Timeline</dt><dd>{timelineText || "Not set"}</dd></div>
+            <div><dt>Team</dt><dd>{makerNames.length ? makerNames.length : "Just you"}</dd></div>
+          </dl>
+          {namedRoles.length > 0 && <div className="rzm-pv-roles"><b>Hiring</b>{namedRoles.slice(0, 4).map((r) => <span key={r.id}>{r.name}</span>)}</div>}
+        </div>
+      </div>
+      <p className="rzm-pv-note">Private until you publish.</p>
+    </aside>
+  );
+
   return (
     <Shell className="rz-create-simple">
       <div className="rz-create-panel">
@@ -567,85 +603,74 @@ export default function CreateProject() {
           <Button variant="outline" className="rz-btn" onClick={saveToProfile} disabled={saving || savingToProfile}>{saving || savingToProfile ? "Saving…" : "Save draft"}</Button>
         </div>
       </div>
-      <div className={`rz-card rz-wizard ${stepKey === "team" || stepKey === "call" || stepKey === "review" ? "rz-card-wide" : ""}`}>
-        <div className="rz-wizard-progress">
-          <div className="rz-wizard-count"><span>Step {step} of {flow.length}</span><span>{STEP_LABEL[stepKey]}</span></div>
-          <progress aria-label="Project creation progress" max={flow.length} value={step} />
-          <p>{nextLabel ? `Next: ${nextLabel}` : "Ready to create"}</p>
-        </div>
+      <div className="rzm-layout">
+      <div className="rz-card rz-wizard rzm-main">
+        <ol className="rzm-steps" aria-label="Project creation progress">
+          {stepLabels.map((l, i) => (
+            <li key={l} className={i === curIdx ? "on" : i < curIdx ? "done" : ""}>
+              <button type="button" disabled={i > curIdx} aria-current={i === curIdx ? "step" : undefined} onClick={() => jumpTo(i)}>
+                <span className="rzm-dot">{i < curIdx ? <Check size={11} /> : i + 1}</span><span className="rzm-lbl">{l}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
 
-        {stepKey === "idea" && <>
-          <div className="rz-head"><h1>{IDEA_SCREEN_TITLES[ideaIndex]}</h1><p>{ideaIndex + 1} of {IDEA_SCREENS.length}{ideaIndex === 2 ? " · all optional" : ""}</p></div>
-          <div className={`rz-wizard-fields rz-idea-question rz-idea-q-${ideaIndex}`}>
-            <div className="rz-field rz-full">
-              <label>What would you like to do? <span className="rz-opt">(optional · shapes the next steps)</span></label>
-              <div className="rz-maker-grid rz-goal-grid">
-                {PROJECT_GOALS.map((g) => (
-                  <Button variant="outline" key={g.id} type="button" aria-pressed={goal === g.id} className={`rz-maker-card ${goal === g.id ? "on" : ""}`} onClick={() => pickGoal(g.id)}>
-                    <b>{g.title}</b><span>{g.desc}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
-            <div className="rz-field"><label htmlFor="project-name">Project name</label><input id="project-name" className="rz-in" value={title} maxLength={120} placeholder="e.g. Summer EP launch" onChange={(e) => setTitle(e.target.value)} /></div>
-            <div className="rz-field"><label htmlFor="creator-name">Your name</label><input id="creator-name" className="rz-in" value={name} maxLength={100} onChange={(e) => setName(e.target.value)} /></div>
-            <div className="rz-field">
-              <label htmlFor="project-brief">What are you making?</label>
-              <textarea id="project-brief" className="rz-in rz-wizard-textarea" value={making} maxLength={600} placeholder="A 4-track EP with a music video and cover art…" onChange={(e) => setMaking(e.target.value)} />
-              <div className="rz-brief-ai">
-                <Button type="button" variant="outline" className="rz-btn" onClick={generateBrief} disabled={briefBusy}>
-                  <Sparkles size={14} aria-hidden="true" /> {briefBusy ? "Writing your brief…" : making.trim() ? "Improve with AI" : "Generate with AI"}
-                </Button>
-                {briefErr && <p className="rz-brief-ai-err" role="alert">{briefErr}</p>}
-              </div>
-            </div>
-            <div className="rz-field">
-              <label htmlFor="project-description">Brief description</label>
-              <textarea id="project-description" className="rz-in" value={desc} maxLength={600} rows={4} placeholder="The story behind your project and what you'll release." onChange={(e) => setDesc(e.target.value)} />
-              <div className="rz-brief-ai">
-                <Button type="button" variant="outline" className="rz-btn" onClick={generateDesc} disabled={descBusy}>
-                  <Sparkles size={14} aria-hidden="true" /> {descBusy ? "Writing your description…" : desc.trim() ? "Improve with AI" : "Generate with AI"}
-                </Button>
-                {descErr && <p className="rz-brief-ai-err" role="alert">{descErr}</p>}
-              </div>
-            </div>
-            <div className="rz-field"><label htmlFor="project-audience">Who is it for? <span className="rz-opt">(optional)</span></label><input id="project-audience" className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto" onChange={(e) => setAudience(e.target.value)} /></div>
-            <div className="rz-field rz-full">
-              <label>Where is this project based? <span className="rz-opt">(optional)</span></label>
-              <LocationFields city={city} country={country} onCity={setCity} onCountry={setCountry} />
-            </div>
-            <div className="rz-field">
-              <label>Category</label>
-              <div className="rz-category-grid">
-                {CATEGORIES.map((c) => (
-                  <button key={c} type="button" className={`rz-chipbtn ${category === c ? "on" : ""}`} onClick={() => setCategory((x) => (x === c ? "" : c))}>{c}</button>
-                ))}
-              </div>
-            </div>
-            <div className="rz-field rz-full">
-              <label>Cover art <span className="rz-opt">(optional · JPG, PNG or WebP · drag a photo here)</span></label>
-              <div
-                role="button" tabIndex={0} aria-label="Upload or drop cover art"
-                className={`rz-cover rz-cover-up${coverDrag ? " rz-cover-drag" : ""}`}
-                style={{ cursor: "pointer" }}
-                onClick={() => { if (!coverBusy) coverInput.current?.click(); }}
-                onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !coverBusy) { e.preventDefault(); coverInput.current?.click(); } }}
-                onDragEnter={(e) => { e.preventDefault(); if (!coverBusy) setCoverDrag(true); }}
-                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; if (!coverBusy) setCoverDrag(true); }}
-                onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setCoverDrag(false); }}
-                onDrop={(e) => { e.preventDefault(); e.stopPropagation(); setCoverDrag(false); if (!coverBusy) void dropCover(e.dataTransfer); }}
-              >
-                {coverPreview ? <img src={coverPreview} alt="Cover art preview" style={{ pointerEvents: "none" }} /> : <span style={{ pointerEvents: "none" }}>{coverDrag ? "Drop your photo here" : "Drag a photo here or click to upload"}</span>}
-              </div>
-              <div style={{ display: "flex", gap: ".4rem", flexWrap: "wrap" }}>
-                <Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={() => coverInput.current?.click()}>{coverBusy ? "Loading…" : cover ? "Replace image" : "Upload image"}</Button>
-                <input ref={coverInput} type="file" accept="image/jpeg,image/png,image/webp" hidden disabled={coverBusy} onChange={(e) => { selectCover(e.target.files?.[0]); e.target.value = ""; }} />
-                {cover && <><Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={adjustCover}>Adjust image</Button><Button type="button" variant="outline" className="rz-btn" disabled={coverBusy} onClick={() => { setCover(null); setCoverSource(null); }}>Remove</Button></>}
-              </div>
-              {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
-            </div>
+        {stepKey === "idea" && ideaIndex === 0 && <>
+          <div className="rzm-head"><h1>What brings you here?</h1><p>Pick one and we'll only ask what matters. You can change it later.</p></div>
+          <div className="rzm-goals">
+            {PROJECT_GOALS.map((g) => { const Icon = GOAL_ICONS[g.id]; return (
+              <button key={g.id} type="button" aria-pressed={goal === g.id} className={`rzm-goal ${goal === g.id ? "on" : ""}`} onClick={() => pickGoal(g.id)}>
+                <span className="rzm-goal-ico"><Icon size={18} /></span>
+                <span className="rzm-goal-txt"><b>{g.title}</b><small>{g.desc}</small></span>
+                <ChevronRight size={16} className="rzm-goal-go" />
+              </button>
+            ); })}
           </div>
-          <div className="rz-actions rz-wizard-next">{ideaIndex > 0 && <Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft size={14}/>Back</Button>}<Button variant="outline" className="rz-btn pri" disabled={coverBusy || !!coverFile} onClick={goNext}>Continue <ArrowRight size={14} /></Button></div>
+          <div className="rzm-skip"><button type="button" onClick={() => setIdeaIndex(1)}>Just start a project →</button></div>
+        </>}
+
+        {stepKey === "idea" && ideaIndex === 1 && <>
+          <div className="rzm-head"><h1>The basics</h1><p>This is what people see on your project page.</p></div>
+          <div className="rzm-basics">
+            <div
+              role="button" tabIndex={0} aria-label="Upload or drop cover art"
+              className={`rzm-cover${coverDrag ? " drag" : ""}${coverPreview ? " has" : ""}`}
+              onClick={() => { if (!coverBusy) coverInput.current?.click(); }}
+              onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !coverBusy) { e.preventDefault(); coverInput.current?.click(); } }}
+              onDragEnter={(e) => { e.preventDefault(); if (!coverBusy) setCoverDrag(true); }}
+              onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; if (!coverBusy) setCoverDrag(true); }}
+              onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setCoverDrag(false); }}
+              onDrop={(e) => { e.preventDefault(); e.stopPropagation(); setCoverDrag(false); if (!coverBusy) void dropCover(e.dataTransfer); }}
+            >
+              {coverPreview ? <img src={coverPreview} alt="Cover art preview" /> : <span><ImagePlus size={22} /><b>{coverBusy ? "Loading…" : coverDrag ? "Drop it here" : "Add a cover"}</b><small>Drag a photo or click · optional</small></span>}
+            </div>
+            <input ref={coverInput} type="file" accept="image/jpeg,image/png,image/webp" hidden disabled={coverBusy} onChange={(e) => { selectCover(e.target.files?.[0]); e.target.value = ""; }} />
+            {cover && <div className="rzm-cover-tools"><button type="button" disabled={coverBusy} onClick={adjustCover}>Adjust</button><button type="button" disabled={coverBusy} onClick={() => coverInput.current?.click()}>Replace</button><button type="button" disabled={coverBusy} onClick={() => { setCover(null); setCoverSource(null); }}>Remove</button></div>}
+            {coverFile && <CoverEditor file={coverFile} busy={coverBusy} onCancel={() => setCoverFile(null)} onApply={uploadCover} />}
+
+            <input id="project-name" aria-label="Project name" className="rzm-title" value={title} maxLength={120} placeholder="Project name" onChange={(e) => setTitle(e.target.value)} />
+            <div className="rzm-row">
+              <label className="rzm-field"><span>By</span><input id="creator-name" className="rz-in" value={name} maxLength={100} placeholder="Your name or alias" onChange={(e) => setName(e.target.value)} /></label>
+            </div>
+            <label className="rzm-field">
+              <span>About the project</span>
+              <textarea id="project-description" className="rz-in" value={desc} maxLength={600} rows={4} placeholder="What is it, and what's the story behind it?" onChange={(e) => setDesc(e.target.value)} />
+              <span className="rzm-ai">
+                <button type="button" onClick={generateDesc} disabled={descBusy}><Sparkles size={13} /> {descBusy ? "Writing…" : desc.trim() ? "Polish with AI" : "Write it with AI"}</button>
+                <small>{desc.length}/600</small>
+              </span>
+              {descErr && <p className="rz-brief-ai-err" role="alert">{descErr}</p>}
+            </label>
+            <div className="rzm-field"><span>Category</span>
+              <div className="rzm-chips">{CATEGORIES.map((c) => <button key={c} type="button" aria-pressed={category === c} className={category === c ? "on" : ""} onClick={() => setCategory((x) => (x === c ? "" : c))}>{c}</button>)}</div>
+            </div>
+            <details className="rzm-more" open={!!(audience || city || country)}>
+              <summary>More details <small>optional</small></summary>
+              <label className="rzm-field"><span>Who is it for?</span><input id="project-audience" className="rz-in" value={audience} maxLength={300} placeholder="Fans of R&B in Toronto" onChange={(e) => setAudience(e.target.value)} /></label>
+              <div className="rzm-field"><span>Where is it based?</span><LocationFields city={city} country={country} onCity={setCity} onCountry={setCountry} /></div>
+            </details>
+          </div>
+          <div className="rzm-actions"><Button variant="outline" className="rz-btn" onClick={back}><ArrowLeft size={14}/>Back</Button><Button variant="outline" className="rz-btn pri" disabled={coverBusy || !!coverFile} onClick={goNext}>Continue <ArrowRight size={14} /></Button></div>
         </>}
 
         {stepKey === "scope" && <>
@@ -741,8 +766,8 @@ export default function CreateProject() {
         {stepKey === "review" && (
           <>
             <div className="rz-head">
-              <h1>Review your project</h1>
-              <p>Check everything below. You can go back to edit any step.</p>
+              <h1>Looks good?</h1>
+              <p>Your project page is on the right. Tap any step above to change something.</p>
             </div>
             <div className="rz-review-section">The idea</div>
             <div className="rz-split" style={{ marginBottom: ".9rem" }}>
@@ -795,6 +820,8 @@ export default function CreateProject() {
         {authFor && <AuthModal action={localStorage.getItem(PENDING_DRAFT_KEY) ? " and save draft" : " and create project"} intro={localStorage.getItem(PENDING_DRAFT_KEY) ? "Create an account or log in to keep this private draft on your profile." : callChoice ? "Create an account to confirm your call. We'll pick up right where you left off." : "Create an account to manage your private project."} onClose={() => { setAuthFor(null); localStorage.removeItem(PENDING_KEY); }} onDone={() => setAuthFor(null)}
           redirectTo={`${location.origin}/create.html?draft=${authFor}`} />}
         {savedAt && <div className="rz-note rz-saved">Project saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
+      </div>
+      {preview}
       </div>
       </div>
     </Shell>

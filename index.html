@@ -3442,7 +3442,7 @@
         </section>
         <section class="fh-section fh-channel" aria-label="Inside Rhozeland"><div class="fh-wrap fh-updates-grid">
           <article class="fh-update fh-update-news"><header><h2>Rhozeland News</h2><a href="https://www.youtube.com/@Rhozeland" target="_blank" rel="noopener" aria-label="Visit Rhozeland on YouTube">↗</a></header>
-            <div class="r-eco-video"><iframe id="rEcoFeatured" src="https://www.youtube.com/embed/9rxMdl_mQws?rel=0&amp;modestbranding=1" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+            <div class="r-eco-video" id="rEcoVideo"><button type="button" class="r-eco-poster" id="rEcoPoster" aria-label="Play the latest video from Rhozeland"><img id="rEcoPosterImg" src="https://i.ytimg.com/vi/9rxMdl_mQws/hqdefault.jpg" alt="" loading="lazy"><span class="r-eco-poster-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span><span class="r-eco-poster-label">Watch</span></button><iframe id="rEcoFeatured" title="Latest from Rhozeland" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div><a class="r-eco-watch" id="rEcoWatch" href="https://www.youtube.com/watch?v=9rxMdl_mQws" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a>
           </article>
           <article class="fh-update fh-update-token"><header><h2>Creator Pass</h2><a href="/rewards" aria-label="Open Rewards">↗</a></header>
             <div class="fh-pass-panel"><div class="fh-rewards-summary"><img src="/images/logo-white.webp" alt=""><div><strong>Your contribution counts.</strong><p>Create. Support. Keep building.<br>Your rewards, XP and badges.</p></div><a class="fh-rewards-cta" href="/rewards">Open Rewards <span aria-hidden="true">↗</span></a></div>
@@ -3506,6 +3506,13 @@
           .r-eco .r-eco-title em { font-style: normal; color: transparent; -webkit-text-fill-color: transparent; -webkit-text-stroke: 1px hsl(var(--ink)); }
           .r-eco-video { position: relative; aspect-ratio: 16 / 9; background: hsl(var(--ink)); border: 1px solid hsl(var(--ink) / 0.2); overflow: hidden; margin-bottom: 1.25rem; }
           .r-eco-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+          .r-eco-poster { position: absolute; inset: 0; display: grid; place-items: center; border: 0; padding: 0; margin: 0; background: hsl(var(--ink)); color: #fff; cursor: pointer; overflow: hidden; z-index: 2; }
+          .r-eco-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .7; }
+          .r-eco-poster-play { position: relative; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: #fff; color: hsl(var(--ink)); transition: transform .15s ease; }
+          .r-eco-poster:hover .r-eco-poster-play { transform: scale(1.06); }
+          .r-eco-poster:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -3px; }
+          .r-eco-poster-label { position: absolute; bottom: .7rem; left: .8rem; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: hsl(var(--ink)); color: #fff; padding: .28rem .5rem; border-radius: 5px; }
+          .r-eco-watch { display: inline-flex; align-items: center; gap: .35rem; font-size: 12px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; color: inherit; }
           .r-eco-live-tag { position: absolute; left: 1rem; bottom: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.65rem; background: hsl(var(--ink) / 0.72); color: hsl(var(--surface-card)); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
           .r-eco-live-dot { width: 0.5rem; height: 0.5rem; border-radius: 999px; background: #e94560; box-shadow: 0 0 0 0 rgba(233,69,96,0.65); animation: rEcoPulse 2s infinite; }
           .r-eco-dek { max-width: 62ch; color: hsl(var(--muted)); font-size: 1rem; font-weight: 600; line-height: 1.6; margin: 0; }
@@ -5021,14 +5028,30 @@
           .then(function(d){ return (d && d.videos) || []; });
       }
 
+      var featuredId = '9rxMdl_mQws', played = false;
+      function hidePoster(){ var p = document.getElementById('rEcoPoster'); if (p) p.hidden = true; }
+      function playFeatured(){
+        var iframe = document.getElementById('rEcoFeatured');
+        if (!iframe || !featuredId) return;
+        iframe.src = 'https://www.youtube.com/embed/' + featuredId + '?autoplay=1&rel=0&modestbranding=1';
+        played = true; hidePoster();
+      }
+      var rEcoPosterEl = document.getElementById('rEcoPoster');
+      if (rEcoPosterEl) rEcoPosterEl.addEventListener('click', playFeatured);
+
       function renderChannel(videos){
         if (!videos.length) return;
         var latest = videos[0];
         var iframe = document.getElementById('rEcoFeatured');
-        if (iframe) {
-          iframe.src = 'https://www.youtube.com/embed/' + latest.id + '?rel=0&modestbranding=1';
-          iframe.title = latest.title;
-        }
+        featuredId = latest.id;
+        if (iframe) iframe.title = latest.title;
+        var posterImg = document.getElementById('rEcoPosterImg');
+        if (posterImg) posterImg.src = 'https://i.ytimg.com/vi/' + latest.id + '/hqdefault.jpg';
+        var posterBtn = document.getElementById('rEcoPoster');
+        if (posterBtn) posterBtn.setAttribute('aria-label', 'Play ' + (latest.title || 'the latest video'));
+        var watchLink = document.getElementById('rEcoWatch');
+        if (watchLink) watchLink.href = 'https://www.youtube.com/watch?v=' + latest.id;
+        if (played && iframe) iframe.src = 'https://www.youtube.com/embed/' + latest.id + '?rel=0&modestbranding=1';
         var tag = document.getElementById('rEcoFeaturedTag');
         if (tag) tag.textContent = (latest.live ? 'LIVE NOW · ' : 'Latest · ') + TIME_AGO(latest.published);
         var dek = document.getElementById('rEcoFeaturedDek');
@@ -5067,6 +5090,7 @@
               if (iframe) {
                 iframe.src = 'https://www.youtube.com/embed/' + clickedId + '?autoplay=1&rel=0&modestbranding=1';
                 iframe.title = clickedTitle;
+                played = true; featuredId = clickedId; hidePoster();
               }
               if (tag) tag.textContent = (clickedLive ? 'LIVE NOW · ' : 'Now Playing · ') + TIME_AGO(clickedPub);
               if (dek) dek.innerHTML = '<em>' + clickedTitle.replace(/[<>&]/g, function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c];}) + '</em> — from the Rhozeland channel. New episode every Sunday.';

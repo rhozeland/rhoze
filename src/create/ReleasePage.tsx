@@ -317,7 +317,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             {(() => {
               if (merged) return null;
               const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
-              const list: [typeof tab, string][] = [["board", "Board"], ["overview", "Overview"]];
+              const list: [typeof tab, string][] = [["board", "All details"], ["overview", "Overview"]];
               if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
               if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
               if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Budget"]);
@@ -326,6 +326,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             })()}
             <div className="rz-board-layout rz-rd-layout"><div className="rz-rd-main"><PublicProjectCanvas>
             {tab === 'exclusive' && <section id="exclusive"><ExclusiveFeed slug={slug} project={r} owner={isOwner} /></section>}
+            {r.coin_mint && (show("overview") || show("budget")) && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
             {show("overview") && <>
             <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
@@ -381,9 +382,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               </div>
             </div>
 
-            {r.coin_mint && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
             </>}
-            {r.coin_mint && !isOwner && !pubs.money && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
             {r.coin_mint && <p className="rz-note break-all">Solana contract: <code>{r.coin_mint}</code> <Button variant="ghost" size="sm" onClick={async () => { try { await navigator.clipboard.writeText(r.coin_mint); setNote("Contract address copied."); } catch { setNote("Could not copy the address."); } }}>Copy address</Button></p>}
 
             </>}

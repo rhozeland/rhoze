@@ -100,3 +100,12 @@
 .rzm-main .rz-head p{margin:8px 0 0;max-width:none;font-size:14px;color:hsl(var(--mut))}
 .rzm-main .rz-actions{justify-content:space-between;margin-top:22px}
 @media(max-width:900px){.rzm-main .rz-head h1{font-size:24px}}
+
+/* Scope step: three calm rows */
+.rz-scope{display:flex;flex-direction:column;gap:0;border-top:1px solid hsl(var(--border)/.5)}
+.rz-scope-row{display:flex;flex-direction:column;gap:.6rem;padding:1rem 0;border-bottom:1px solid hsl(var(--border)/.5)}
+.rz-scope-row h3{margin:0;font-size:.8rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;opacity:.7}
+.rz-scope-inline{display:flex;gap:.5rem;align-items:stretch;flex-wrap:wrap}
+.rz-scope-inline>.rz-money,.rz-scope-inline>.rz-in{flex:1 1 14rem;min-width:0}
+.rz-scope-more{display:inline-flex;align-items:center;gap:.3rem;background:none;border:0;padding:0;font-size:.75rem;opacity:.65;cursor:pointer;color:inherit;align-self:flex-start}
+.rz-scope-more:hover{opacity:1}

@@ -1,3 +1,5 @@
+import * as React from "react";
+import { supabase } from "@/integrations/supabase/client";
 export function formatReleasePrice(price: number) {
   if (price === 0) return "$0.00";
   if (price < 0.00000001) return `$${price.toExponential(2)}`;
@@ -20,4 +22,18 @@ export default function ReleasePrice({ mint, ticker, price, change }: {
         <iframe className="rz-price-chart" src={chartUrl} title={`${ticker ? `$${ticker}` : "Project coin"} live price chart powered by Birdeye`} allowFullScreen />
     </section>
   );
+}
+/** Chart that loads its own live price; used in the owner workspace. */
+export function LiveReleasePrice({ mint, ticker }: { mint: string; ticker: string }) {
+  const [p, setP] = React.useState<{ price: number | null; change: number | null }>({ price: null, change: null });
+  React.useEffect(() => {
+    let alive = true;
+    supabase.functions.invoke("pumpfun-coin", { body: { mint } }).then(({ data }: any) => {
+      if (!alive) return;
+      const ok = (n: any) => typeof n === "number" && Number.isFinite(n);
+      setP({ price: ok(data?.priceUsd) && data.priceUsd >= 0 ? data.priceUsd : null, change: ok(data?.change24h) ? data.change24h : null });
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [mint]);
+  return <ReleasePrice mint={mint} ticker={ticker} price={p.price} change={p.change} />;
 }

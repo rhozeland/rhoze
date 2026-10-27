@@ -61,3 +61,30 @@
 .rz-portfolio-coin-actions{display:flex;flex-wrap:wrap;gap:8px}
 .rz-portfolio-chart{padding:14px!important}
 .rz-portfolio a.rz-btn{text-decoration:none}
+/* Archive redesign: fewer boxes, varied rhythm */
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas{border:0;background-image:none;background-color:transparent;padding-bottom:56px}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-content{padding:0;counter-reset:rzsec}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-content>section:not(.rz-portfolio-chart){background:transparent;border:0;border-radius:0;border-left:2px solid hsl(var(--wsl));padding:4px 0 4px 20px;margin:0 0 28px;position:relative;transition:border-color .25s}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-content>section:not(.rz-portfolio-chart):hover{border-left-color:hsl(var(--wsy))}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-content>section:not(.rz-portfolio-chart)>h2::before{counter-increment:rzsec;content:"0" counter(rzsec);display:block;font-size:11px;letter-spacing:.12em;color:hsl(var(--wsy));margin-bottom:6px}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-content>section:first-of-type:not(.rz-portfolio-chart) p{font-size:18px;line-height:1.6;color:hsl(var(--wst))}
+.rz-archive-dark .rz-portfolio-sidebar>section.rz-portfolio-media{background:transparent;border:0;padding:0}
+.rz-archive-dark .rz-portfolio-media img,.rz-archive-dark .rz-portfolio-media iframe{transition:transform .35s ease,box-shadow .35s ease;border-radius:10px}
+.rz-archive-dark .rz-portfolio-media:hover img{transform:translateY(-3px) rotate(-.6deg);box-shadow:0 18px 40px -18px hsl(var(--wsy)/.45)}
+.rz-portfolio-facts{display:flex;flex-wrap:wrap;gap:6px;margin:0!important}
+.rz-portfolio-facts>div{border:1px solid hsl(var(--wsl));border-radius:999px;padding:4px 12px;display:flex;gap:6px;align-items:baseline;font-size:12px}
+.rz-portfolio-facts dt{margin:0!important;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+.rz-portfolio-facts dd{margin:0!important}
+.rz-archive-dark .rz-portfolio-sidebar>section.rz-portfolio-back{background:linear-gradient(150deg,hsl(var(--wsy)/.14),hsl(var(--wsp)) 55%);border-color:hsl(var(--wsy)/.35);border-radius:14px;padding:18px}
+.rz-portfolio-back h2{font-size:12px!important;text-transform:uppercase;letter-spacing:.12em;color:hsl(var(--wsy))}
+.rz-portfolio-back-row{display:flex;gap:12px;padding:12px 0}
+.rz-portfolio-back-row+.rz-portfolio-back-row{border-top:1px dashed hsl(var(--wsl))}
+.rz-portfolio-back-row b{font-size:14px}
+.rz-portfolio-back-row p{font-size:13px!important;line-height:1.5!important;color:hsl(var(--wsm));margin:2px 0 8px!important}
+.rz-portfolio-back-icon{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:hsl(var(--wsy)/.18);color:hsl(var(--wsy));transition:transform .3s}
+.rz-portfolio-back-row:hover .rz-portfolio-back-icon{transform:scale(1.12) rotate(-8deg)}
+.rz-portfolio-back-row,.rz-portfolio-back-row>div{min-width:0}
+.rz-archive-dark .rz-portfolio-sidebar>.rz-portfolio-activity .rz-project-points{padding:0 4px}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas{padding-bottom:0}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-scroll{min-height:0;max-height:none}
+.rz-archive-dark .rz-portfolio-narrative .rz-public-canvas-tools{display:none}

@@ -321,13 +321,13 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               const list: [typeof tab, string][] = [["board", "All details"], ["overview", "Overview"]];
               if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
               if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
-              if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Budget"]);
+              if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Funding"]);
                list.push(["exclusive", "Exclusive"]);
               return <nav className="rz-ws-tabs rz-rd-tabs" role="tablist" aria-label="Project sections">{list.map(([k, l]) => <Button variant="ghost" key={k} role="tab" type="button" className="rz-ws-tab" aria-selected={tab === k} onClick={() => { setTab(k); const url = new URL(location.href); url.searchParams.set('tab', k); url.hash = k === 'exclusive' ? 'exclusive' : ''; history.replaceState(null, '', url); }}>{l}</Button>)}</nav>;
             })()}
             <div className="rz-board-layout rz-rd-layout"><div className="rz-rd-main"><PublicProjectCanvas>
             {tab === 'exclusive' && <section id="exclusive"><ExclusiveFeed slug={slug} project={r} owner={isOwner} /></section>}
-            {r.coin_mint && (show("overview") || show("budget")) && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
+            {r.coin_mint && show("overview") && <ReleasePrice key={r.coin_mint} mint={r.coin_mint} ticker={ticker} price={priceUsd} change={change24h} />}
             {show("overview") && <>
             <ProjectRewards releaseId={r.id} />
             <ProjectMetricsBadges slug={slug} milestones={r.milestones} openRoles={Array.isArray(r.answers?.roles) ? r.answers.roles.reduce((a: number, x: any) => a + (Number(x.count) || 1), 0) : 0} mcap={mcap} />
@@ -345,7 +345,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <PublicTeasers slug={slug} title={r.title} locked={!!r.coin_mint} />
             {(isOwner || pubs.overview) && <ProjectStory story={r.answers || {}} />}
             </>}
-            {(show("overview") || show("budget")) && <>
+            {show("overview") && <>
             <h2 className="rz-h2">Project release</h2>
 
             <div className="rz-release-coin">
@@ -367,27 +367,30 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             {note && <p className="rz-note" style={{ marginTop: "-.8rem", marginBottom: "1rem" }}>{note}</p>}
 
             </>}
-            {show("budget") && <>
-            {(isOwner || pubs.money) && <>
-            <h2 className="rz-h2">Project breakdown</h2>
-            <div className="rz-split" style={{ marginBottom: "1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".75rem", fontWeight: 600 }}><span>Budget</span><span>{r.answers?.need_quote ? "Estimate requested" : budget ? money(budget) : "Not set yet"}</span></div>
-              <div className="rz-bar">
-                <i className="rz-c-a" style={{ width: `${r.artist_pct}%` }} /><i className="rz-c-f" style={{ width: `${r.fee_pct}%` }} /><i className="rz-c-c" style={{ width: `${r.cause_pct}%` }} />
-              </div>
-              {[["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland fee (includes coin launch)", r.fee_pct], ["rz-c-c", r.cause_name ? `Cause: ${r.cause_name}` : "Cause", r.cause_pct]].map(([c, l, p]) => (
-                <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{budget ? money(budget * Number(p) / 100) : "—"}</span></div>
-              ))}
-              <div className="rz-cause">
-                <span>Rewards go to {r.cause_name || "a cause the artist will name soon"}</span>
-                <code>{CAUSE_WALLET}</code>
-              </div>
-            </div>
-
-            </>}
-            {r.coin_mint && <p className="rz-note break-all">Solana contract: <code>{r.coin_mint}</code> <Button variant="ghost" size="sm" onClick={async () => { try { await navigator.clipboard.writeText(r.coin_mint); setNote("Contract address copied."); } catch { setNote("Could not copy the address."); } }}>Copy address</Button></p>}
-
-            </>}
+            {show("budget") && (() => {
+              const ms = (r.milestones || []) as any[];
+              const fundedCents = ms.reduce((t, m, i) => t + (statuses[i] === "Funded" || statuses[i] === "Delivered" ? Number(m.amount_cents) || 0 : 0), 0);
+              const goal = budget || ms.reduce((t, m) => t + (Number(m.amount_cents) || 0), 0);
+              const pct = goal ? Math.min(100, Math.round(fundedCents / goal * 100)) : 0;
+              const showMoney = isOwner || pubs.money;
+              return <section className="rz-funding" aria-label="Funding">
+                <h2 className="rz-h2">How you can back this</h2>
+                <div className="rz-funding-ways">
+                  <div className="rz-funding-way"><b>Follow the journey</b><p>See updates, behind-the-scenes and progress in the project's workspace.</p><Button size="sm" className="rz-btn pri" onClick={openExclusive}>Open workspace</Button></div>
+                  {r.coin_mint && pumpUrl && <div className="rz-funding-way"><b>Buy {ticker ? `$${ticker}` : "the project coin"}</b><p>Holders unlock exclusive posts and files{mcap !== null ? ` · ${fmtMcap(mcap)} mcap` : ""}.</p><Button size="sm" variant="outline" asChild><a href={pumpUrl} target="_blank" rel="noopener noreferrer">Buy on Pump.fun ↗</a></Button></div>}
+                </div>
+                {showMoney && goal > 0 && <>
+                  <h2 className="rz-h2">Funding progress</h2>
+                  <div className="rz-split" style={{ marginBottom: "1rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".85rem", fontWeight: 600 }}><span>{money(fundedCents)} raised</span><span>of {money(goal)}</span></div>
+                    <div className="rz-bar" aria-label={`${pct}% funded`}><i className="rz-c-a" style={{ width: `${pct}%` }} /></div>
+                    {ms.map((m, i) => <div className="rz-split-row" key={i} style={{ gridTemplateColumns: "1fr auto auto" }}><span>{m.title}</span><span className="rz-amt">{money(m.amount_cents)}</span><span>{pill(statuses[i] || "Upcoming")}</span></div>)}
+                    <p className="rz-note" style={{ marginTop: ".6rem" }}>Where the money goes: {Number(r.artist_pct)}% to the artist, {Number(r.fee_pct)}% Rhozeland fee{Number(r.cause_pct) ? `, ${Number(r.cause_pct)}% to ${r.cause_name || "a cause"}` : ""}.</p>
+                  </div>
+                </>}
+                {showMoney && goal === 0 && <p className="rz-note">{r.answers?.need_quote ? "The budget is being estimated with Rhozeland." : "No budget set yet."}</p>}
+              </section>;
+            })()}
             {show("roadmap") && (isOwner || pubs.plan) && <>
             <h2 className="rz-h2">Roadmap &amp; deliverables</h2>
             <div className="rz-inv">

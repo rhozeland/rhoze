@@ -27,7 +27,6 @@ import PublicProjectCanvas from './PublicProjectCanvas';
 import { ExclusiveFeed } from './ExclusivePage';
 
 type Status = "Upcoming" | "Funded" | "Delivered";
-const CAUSE_WALLET = "Cz4P…w2Lb";
 
 const firstSentence = (t?: string) => {
   if (!t) return "";

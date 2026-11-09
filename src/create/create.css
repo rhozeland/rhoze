@@ -354,3 +354,6 @@ button.rz-pf-tile{padding:0;cursor:pointer;font:inherit;text-align:left;width:10
 .rz-media-links{display:flex;flex-wrap:wrap;gap:.4rem}
 .rz-media-links .rz-chip{display:inline-flex;align-items:center;gap:5px;text-decoration:none}
 @media (max-width:640px){.rz-media-stage.tall{height:300px}.rz-media-thumb{width:70px;height:44px}}
+.rz-funding-ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;margin-bottom:1.4rem}
+.rz-funding-way{display:flex;flex-direction:column;gap:.4rem;align-items:flex-start;padding:1rem;border-radius:14px;background:hsl(var(--foreground)/.05);border:1px solid hsl(var(--foreground)/.1)}
+.rz-funding-way p{margin:0;font-size:.8rem;color:hsl(var(--mut))}

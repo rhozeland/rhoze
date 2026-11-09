@@ -13,12 +13,16 @@
 export type TaxConfig = {
   cpp: { rate: number; rate2: number; basic_exemption: number; max_pensionable: number; max_pensionable2: number };
   ei: { rate: number; max_insurable: number; employer_multiplier: number };
-  federal: { basic_personal: number; lowest_rate: number; brackets: { up_to: number | null; rate: number }[] };
+  federal: { basic_personal: number; lowest_rate: number; brackets: { up_to: number | null; rate: number }[]; canada_employment?: number };
   provincial: Record<string, {
     basic_personal: number;
     lowest_rate: number;
     brackets: { up_to: number | null; rate: number }[];
     surtax?: { over: number; rate: number }[];
+    /** Ontario tax reduction basic amount (dollars). Omitted → no reduction. */
+    reduction_basic?: number;
+    /** Ontario Health Premium on/off (defaults on for ON). */
+    health_premium?: boolean;
   }>;
 };
 
@@ -64,7 +68,8 @@ export type PayrollResult = {
   cpp2_cents: number;
   ei_cents: number;
   fed_tax_cents: number;
-  prov_tax_cents: number;
+  prov_tax_cents: number;      // includes Ontario Health Premium
+  ohp_cents: number;           // Ontario Health Premium portion of prov_tax
   deductions_cents: number;
   expense_cents: number;       // non-taxable reimbursement
   net_cents: number;
@@ -108,7 +113,7 @@ export function calcPayroll(opts: {
   if (p.worker_type !== "employee") {
     return {
       earnings_cents: earnings, vacation_cents: 0, gross_cents: earnings,
-      cpp_cents: 0, cpp2_cents: 0, ei_cents: 0, fed_tax_cents: 0, prov_tax_cents: 0,
+      cpp_cents: 0, cpp2_cents: 0, ei_cents: 0, fed_tax_cents: 0, prov_tax_cents: 0, ohp_cents: 0,
       deductions_cents: 0, expense_cents: expense, net_cents: earnings + expense,
       employer_cpp_cents: 0, employer_ei_cents: 0,
     };
@@ -145,21 +150,24 @@ export function calcPayroll(opts: {
     ei = Math.min(clampPos(gross * config.ei.rate), Math.max(0, maxEiYear - ytd.ei_cents));
   }
 
-  // ---- Income tax -------------------------------------------------------
-  // Annual taxable income net of the CPP enhanced portion is approximated by
-  // annualizing the period gross; CPP/EI are then credited at the lowest rate.
-  const annual = gross * freq;
-  const annualCpp = (cpp + cpp2) * freq;
+  // ---- Income tax (CRA T4127 annualized method) ----------------------
+  // F5: enhanced CPP (the part above the 4.95% base rate) and all CPP2 are
+  // deducted from income; only the base portion earns the K2 credit.
+  const baseShare = config.cpp.rate > 0 ? Math.min(1, 0.0495 / config.cpp.rate) : 1;
+  const enhancedCpp = cpp * (1 - baseShare) + cpp2;
+  const annual = Math.max(0, (gross - enhancedCpp) * freq);
+  const annualBaseCpp = cpp * baseShare * freq;
   const annualEi = ei * freq;
 
   const prov = config.provincial[p.province] ?? config.provincial.ON;
 
   const fedClaim = p.td1_federal_cents > 0 ? p.td1_federal_cents : c(config.federal.basic_personal);
-  const fedCredits = (fedClaim + annualCpp + annualEi) * config.federal.lowest_rate;
-  let fedAnnual = Math.max(0, bracketTax(annual, config.federal.brackets) - fedCredits);
+  const cea = Math.min(gross * freq, c(config.federal.canada_employment ?? 0));
+  const fedCredits = (fedClaim + annualBaseCpp + annualEi + cea) * config.federal.lowest_rate;
+  const fedAnnual = Math.max(0, bracketTax(annual, config.federal.brackets) - fedCredits);
 
   const provClaim = p.td1_provincial_cents > 0 ? p.td1_provincial_cents : c(prov.basic_personal);
-  const provCredits = (provClaim + annualCpp + annualEi) * prov.lowest_rate;
+  const provCredits = (provClaim + annualBaseCpp + annualEi) * prov.lowest_rate;
   let provAnnual = Math.max(0, bracketTax(annual, prov.brackets) - provCredits);
 
   // Ontario-style surtax on basic provincial tax
@@ -171,9 +179,14 @@ export function calcPayroll(opts: {
     }
     provAnnual += surtax;
   }
+  // Ontario tax reduction: 2 × basic amount − provincial tax, never negative
+  if (prov.reduction_basic) provAnnual = Math.max(0, provAnnual - Math.max(0, 2 * c(prov.reduction_basic) - provAnnual));
+
+  const ohpAnnual = p.province === "ON" && prov.health_premium !== false ? ontarioHealthPremium(annual) : 0;
 
   const fedTax = Math.round(fedAnnual / freq) + Math.round((p.extra_tax_cents || 0));
-  const provTax = Math.round(provAnnual / freq);
+  const ohp = Math.round(ohpAnnual / freq);
+  const provTax = Math.round(provAnnual / freq) + ohp;
 
   const deductions = cpp + cpp2 + ei + fedTax + provTax;
   const net = gross - deductions + expense;
@@ -187,12 +200,27 @@ export function calcPayroll(opts: {
     ei_cents: ei,
     fed_tax_cents: fedTax,
     prov_tax_cents: provTax,
+    ohp_cents: ohp,
     deductions_cents: deductions,
     expense_cents: expense,
     net_cents: net,
     employer_cpp_cents: cpp + cpp2,
     employer_ei_cents: Math.round(ei * config.ei.employer_multiplier),
   };
+}
+
+/** Ontario Health Premium on annual taxable income (cents in, cents out). */
+export function ontarioHealthPremium(annualCents: number): number {
+  const a = annualCents / 100;
+  const step = (base: number, from: number, rate: number, cap: number) => Math.min(cap, base + rate * (a - from));
+  let d = 0;
+  if (a <= 20000) d = 0;
+  else if (a <= 36000) d = step(0, 20000, 0.06, 300);
+  else if (a <= 48000) d = step(300, 36000, 0.06, 450);
+  else if (a <= 72000) d = step(450, 48000, 0.25, 600);
+  else if (a <= 200000) d = step(600, 72000, 0.25, 750);
+  else d = step(750, 200000, 0.25, 900);
+  return Math.round(d * 100);
 }
 
 export const PROVINCES = [

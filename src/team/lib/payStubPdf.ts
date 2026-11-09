@@ -5,7 +5,7 @@ type StubLike = {
   gross_cents: number; vacation_cents: number; cpp_cents: number; cpp2_cents: number;
   ei_cents: number; fed_tax_cents: number; prov_tax_cents: number; deductions_cents: number;
   net_cents: number; expense_cents: number; hourly_cents: number; flat_cents: number;
-  revshare_cents: number; worker_type: string; province: string; pay_frequency: number;
+  revshare_cents: number; employer_cpp_cents?: number; employer_ei_cents?: number; worker_type: string; province: string; pay_frequency: number;
   paid_at?: string | null; paid_method?: string | null; paid_reference?: string | null;
   ytd?: any; breakdown?: any;
 };
@@ -70,67 +70,68 @@ export function buildPayStubPdf(opts: {
   );
   y += 10; line(y); y += 8;
 
-  // Earnings
-  heading("Earnings");
-  if (stub.hourly_cents) row("Hourly work", stub.hourly_cents);
-  if (stub.flat_cents) row("Flat-fee deliverables", stub.flat_cents);
-  if (stub.revshare_cents) row("Revenue share", stub.revshare_cents);
-  if (stub.vacation_cents) row("Vacation pay", stub.vacation_cents);
-  line(y - 4); y += 8;
-  row("Gross pay", stub.gross_cents, true);
-
-  // Deductions
-  if (stub.worker_type === "employee") {
-    heading("Deductions");
-    row("CPP contribution", stub.cpp_cents);
-    if (stub.cpp2_cents) row("CPP2 contribution", stub.cpp2_cents);
-    row("Employment Insurance", stub.ei_cents);
-    row("Federal income tax", stub.fed_tax_cents);
-    row("Provincial income tax", stub.prov_tax_cents);
-    line(y - 4); y += 8;
-    row("Total deductions", stub.deductions_cents, true);
-  } else {
-    heading("Deductions");
-    doc.setFont("helvetica", "italic"); doc.setFontSize(9); doc.setTextColor(120);
-    doc.text("Contractor — no source deductions withheld. You are responsible for your own remittances.", M, y);
-    y += 18;
-  }
-
-  if (stub.expense_cents) {
-    heading("Non-taxable reimbursements");
-    row("Expense reimbursement", stub.expense_cents);
-  }
-
-  // Net
-  y += 6;
-  doc.setFillColor(245, 245, 245);
-  doc.rect(M, y - 4, W - M * 2, 30, "F");
-  y += 16;
-  value("NET PAY", M + 10, y, true);
-  doc.setFont("helvetica", "bold"); doc.setFontSize(13);
-  doc.text(formatCents(stub.net_cents), W - M - 10, y, { align: "right" });
-  y += 28;
-
-  // YTD
+  // QuickBooks-style tables: Description | Hours | Rate | Current | YTD
   const ytd = stub.ytd || {};
-  if (Object.keys(ytd).length) {
-    heading("Year to date");
-    doc.setFontSize(9);
-    const cells: [string, number][] = [
-      ["Gross", ytd.gross_cents ?? 0],
-      ["CPP", (ytd.cpp_cents ?? 0) + (ytd.cpp2_cents ?? 0)],
-      ["EI", ytd.ei_cents ?? 0],
-      ["Income tax", (ytd.fed_tax_cents ?? 0) + (ytd.prov_tax_cents ?? 0)],
-      ["Net", ytd.net_cents ?? 0],
-    ];
-    const colW = (W - M * 2) / cells.length;
-    cells.forEach(([n, v], i) => {
-      label(n, M + i * colW, y);
-      doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.setTextColor(20);
-      doc.text(formatCents(v), M + i * colW, y + 13);
-    });
-    y += 30;
+  const cols = { hours: W - M - 250, rate: W - M - 175, cur: W - M - 85, ytd: W - M };
+  const th = (title: string, withHours = false) => {
+    y += 6; doc.setFillColor(238, 238, 238); doc.rect(M, y - 10, W - M * 2, 16, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(60);
+    doc.text(title.toUpperCase(), M + 6, y);
+    if (withHours) { doc.text("HOURS", cols.hours, y, { align: "right" }); doc.text("RATE", cols.rate, y, { align: "right" }); }
+    doc.text("CURRENT", cols.cur, y, { align: "right" }); doc.text("YTD", cols.ytd - 6, y, { align: "right" });
+    y += 16;
+  };
+  const tr = (name: string, cur: number, ytdVal?: number | null, bold = false, hours?: number | null, rate?: number | null) => {
+    doc.setFont("helvetica", bold ? "bold" : "normal"); doc.setFontSize(9); doc.setTextColor(20);
+    doc.text(name, M + 6, y, { maxWidth: cols.hours - M - 60 });
+    if (hours != null) doc.text(hours.toFixed(2), cols.hours, y, { align: "right" });
+    if (rate != null) doc.text(formatCents(rate), cols.rate, y, { align: "right" });
+    doc.text(formatCents(cur), cols.cur, y, { align: "right" });
+    if (ytdVal != null) doc.text(formatCents(ytdVal), cols.ytd - 6, y, { align: "right" });
+    y += 14;
+  };
+  const bd = stub.breakdown || {};
+
+  th("Earnings", true);
+  const hourly: any[] = bd.hourly_lines || [];
+  if (hourly.length) hourly.forEach((l) => tr(l.deliverable || (l.type === "specialist" ? "Specialist hours" : "Regular pay"), l.amount_cents, null, false, Number(l.hours) || 0, l.rate_cents));
+  else if (stub.hourly_cents) tr("Regular pay", stub.hourly_cents);
+  const flats: any[] = bd.flat_lines || [];
+  if (flats.length) flats.forEach((l) => tr(l.deliverable || "Flat-fee deliverable", l.amount_cents));
+  else if (stub.flat_cents) tr("Flat-fee deliverables", stub.flat_cents);
+  if (stub.revshare_cents) tr("Revenue share", stub.revshare_cents);
+  if (stub.vacation_cents) tr("Vacation pay", stub.vacation_cents);
+  line(y - 8); tr("Gross pay", stub.gross_cents, ytd.gross_cents ?? null, true);
+
+  if (stub.worker_type === "employee") {
+    th("Statutory deductions");
+    tr("Canada Pension Plan (CPP)", stub.cpp_cents, ytd.cpp_cents ?? null);
+    if (stub.cpp2_cents || ytd.cpp2_cents) tr("Second CPP (CPP2)", stub.cpp2_cents, ytd.cpp2_cents ?? null);
+    tr("Employment Insurance (EI)", stub.ei_cents, ytd.ei_cents ?? null);
+    tr("Federal income tax", stub.fed_tax_cents, ytd.fed_tax_cents ?? null);
+    tr(stub.province === "ON" ? "Ontario income tax (incl. health premium)" : `Provincial income tax (${stub.province})`, stub.prov_tax_cents, ytd.prov_tax_cents ?? null);
+    line(y - 8); tr("Total deductions", stub.deductions_cents, ytd.gross_cents != null && ytd.net_cents != null ? ytd.gross_cents - ytd.net_cents : null, true);
+  } else {
+    y += 6; doc.setFont("helvetica", "italic"); doc.setFontSize(9); doc.setTextColor(120);
+    doc.text("Contractor — no source deductions withheld. You are responsible for your own remittances.", M, y); y += 16;
   }
+
+  if (stub.expense_cents) { th("Non-taxable reimbursements"); tr("Expense reimbursement", stub.expense_cents); }
+
+  // Net pay
+  y += 8; doc.setFillColor(20, 20, 20); doc.rect(M, y - 4, W - M * 2, 28, "F");
+  y += 14; doc.setTextColor(255); doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+  doc.text("NET PAY", M + 10, y);
+  doc.setFontSize(12); doc.text(formatCents(stub.net_cents), cols.cur, y, { align: "right" });
+  doc.setFontSize(9); if (ytd.net_cents != null) doc.text(formatCents(ytd.net_cents), cols.ytd - 6, y, { align: "right" });
+  doc.setTextColor(20); y += 26;
+
+  if (stub.worker_type === "employee" && (stub.employer_cpp_cents || stub.employer_ei_cents)) {
+    th("Employer contributions (not deducted from your pay)");
+    tr("Employer CPP", stub.employer_cpp_cents || 0);
+    tr("Employer EI", stub.employer_ei_cents || 0);
+  }
+  y += 4;
 
   if (stub.paid_at) {
     doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(120);

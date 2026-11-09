@@ -13,6 +13,7 @@ import { formatCents, toCents, formatDate } from "../lib/format";
 import { cn } from "@/lib/utils";
 import PayrollRun from "../components/PayrollRun";
 import PayrollSetup from "../components/PayrollSetup";
+import RemittanceReport from "../components/RemittanceReport";
 import { downloadPayStub } from "../lib/payStubPdf";
 import {
   Dialog,
@@ -145,7 +146,7 @@ function useEntrySaver(queryKey: any[]) {
 export default function TimeAndPay() {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();
-  const [view, setView] = useState<"mine" | "stubs" | "admin" | "setup" | "payroll">("mine");
+  const [view, setView] = useState<"mine" | "stubs" | "admin" | "setup" | "payroll" | "taxes">("mine");
   const [activePeriodId, setActivePeriodId] = useState<string>("");
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [editingUserName, setEditingUserName] = useState<string>("");
@@ -239,6 +240,7 @@ export default function TimeAndPay() {
           {isAdmin && <Button size="sm" variant={view === "admin" ? "secondary" : "ghost"} onClick={() => setView("admin")} className="h-8 shrink-0 text-xs">Approval queue</Button>}
           {isAdmin && <Button size="sm" variant={view === "setup" ? "secondary" : "ghost"} onClick={() => setView("setup")} className="h-8 shrink-0 text-xs">Payroll setup</Button>}
           {isAdmin && <Button size="sm" variant={view === "payroll" ? "secondary" : "ghost"} onClick={() => setView("payroll")} className="h-8 shrink-0 text-xs">Run payroll</Button>}
+          {isAdmin && <Button size="sm" variant={view === "taxes" ? "secondary" : "ghost"} onClick={() => setView("taxes")} className="h-8 shrink-0 text-xs">Taxes &amp; remittances</Button>}
         </div>
       </div>
 
@@ -406,6 +408,8 @@ export default function TimeAndPay() {
             setView("mine");
           }}
         />
+      ) : view === "taxes" && isAdmin ? (
+        <RemittanceReport />
       ) : view === "setup" && isAdmin ? (
         <PayrollSetup />
       ) : view === "payroll" && isAdmin && activePeriod ? (
@@ -477,6 +481,14 @@ function MyPayStubs({ userId, periods }: { userId: string; periods: any[] }) {
         <h2 className="text-lg font-semibold">My pay stubs</h2>
         <p className="text-xs text-muted-foreground">Download your statement of earnings for any processed pay period.</p>
       </div>
+      {(() => { const yr = String(new Date().getFullYear()); const ys = stubs.filter((s: any) => String(s.paid_at || s.created_at).startsWith(yr)); if (!ys.length) return null; const t = (f: (s: any) => number) => ys.reduce((a: number, s: any) => a + (f(s) || 0), 0); return (
+        <div className="grid grid-cols-2 gap-3 rounded-lg border border-border bg-card p-3 sm:grid-cols-5">
+          <StubAmount label={`Gross ${yr}`} value={t((s) => s.gross_cents)} />
+          <StubAmount label="CPP" value={t((s) => s.cpp_cents + s.cpp2_cents)} />
+          <StubAmount label="EI" value={t((s) => s.ei_cents)} />
+          <StubAmount label="Income tax" value={t((s) => s.fed_tax_cents + s.prov_tax_cents)} />
+          <StubAmount label="Net pay" value={t((s) => s.net_cents)} strong />
+        </div>); })()}
       <div className="overflow-hidden rounded-lg border border-border bg-card">
         {stubs.map((stub: any) => {
           const period = periodMap.get(stub.timesheet_period_id);

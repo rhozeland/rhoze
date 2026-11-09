@@ -12,7 +12,8 @@ import { ProjectHeart } from "./ProjectLikes";
 import ProjectWorkspace, { DEFAULT_PUBLIC_SECTIONS } from "./ProjectWorkspace";
 import { ProjectMetricsBadges } from "./ProjectMetrics";
 import { Button } from "@/components/ui/button";
-import { X, Share2, Fingerprint } from "lucide-react";
+import { X, Share2, Fingerprint, MoreHorizontal, Pencil, Archive, Trash2, Users } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import ProjectDiscussion from "./ProjectDiscussion";
 import ProjectStory from "./ProjectStory";
 import ProjectRewards from "./ProjectRewards";
@@ -255,7 +256,8 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
     <span className={`rz-status rz-status-${s.toLowerCase()}`}>{s}</span>
   );
   const pubs = { ...DEFAULT_PUBLIC_SECTIONS, ...(r?.answers?.public_sections || {}) };
-  const merged = !!(r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1");
+  const manageMode = new URLSearchParams(location.search).get("manage") === "1";
+  const merged = !!(r && isOwner && manageMode && new URLSearchParams(location.search).get("projectView") !== "1");
   const show = (k: typeof tab) => tab !== 'exclusive' && ((merged && workspaceTab === 'publicPage') || tab === 'board' || tab === k);
   const publicVisible = !merged || ['publicPage', 'people', 'exclusive'].includes(workspaceTab);
   const openExclusive = () => {
@@ -276,20 +278,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   return (
     <Shell className={`rz-release-view${new URLSearchParams(location.search).get("projectView") === "1" ? " rz-release-embedded" : ""}`}>
       <Button variant="ghost" size="icon" className="rz-release-close" aria-label="Close project" title="Close project" onClick={closeProject}><X size={20} /></Button>
-      {r && isOwner && (
-        <div className="rz-owner">
-          <span>You own this page</span>
-          <div>
-            <a className="rz-btn" href={`/workspace/${r.id}`}>Edit project</a>
-            <a className="rz-btn" href="/me">My profile</a>
-            <button className="rz-btn" onClick={archive}>Archive</button>
-            <button className="rz-btn" onClick={() => setConfirmDel(true)}>Delete</button>
-            {r.answers?.roles?.length > 0 && <button className="rz-btn" onClick={loadApplicants}>Applicants</button>}
-            <a className="rz-btn" href={`/workspace/${r.id}`}>Workspace</a>
-          </div>
-        </div>
-      )}
-      {r && isOwner && new URLSearchParams(location.search).get("projectView") !== "1" && (
+      {merged && (
         <ProjectWorkspace r={r} activeTab={workspaceTab} onTabChange={(next) => { setWorkspaceTab(next); if (next === 'exclusive') setTab('exclusive'); else if (next === 'people') setTab('people'); else if (next === 'publicPage') setTab('overview'); }} extraTabs={[["publicPage", "Project page"], ...(rolesVisible && r.answers?.roles?.length ? [["people", "Open roles"]] as [string, string][] : []), ["exclusive", "Exclusive"]]} onSaved={(next) => setR({ ...r, ...next })} />
       )}
       {publicVisible && <>
@@ -312,6 +301,13 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               <ProjectHeart releaseId={r.id} />
               <Button variant="outline" size="icon" className="rz-release-share" title="Share project" aria-label="Share project" onClick={() => setShareOpen(true)}><Share2 size={16} /></Button>
               <Button className="rz-btn pri" onClick={openExclusive}>Support</Button>
+              {isOwner && <DropdownMenu><DropdownMenuTrigger asChild><Button variant="outline" size="icon" className="rz-release-share" aria-label="Manage your project" title="Manage your project"><MoreHorizontal size={16} /></Button></DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild><a href={`/workspace/${r.id}`}><Pencil size={14} /> Edit project</a></DropdownMenuItem>
+                  {r.answers?.roles?.length > 0 && <DropdownMenuItem onSelect={loadApplicants}><Users size={14} /> Applicants</DropdownMenuItem>}
+                  <DropdownMenuItem onSelect={archive}><Archive size={14} /> Archive</DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive" onSelect={() => setConfirmDel(true)}><Trash2 size={14} /> Delete</DropdownMenuItem>
+                </DropdownMenuContent></DropdownMenu>}
             </div>
             </header>}
             {(() => {

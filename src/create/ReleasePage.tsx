@@ -314,7 +314,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               if (merged) return null;
               const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
               const list: [typeof tab, string][] = [["board", "All details"], ["overview", "Overview"]];
-              if pubs.plan list.push(["roadmap", "Roadmap"]);
+              if (pubs.plan) list.push(["roadmap", "Roadmap"]);
               if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
               if (pubs.money || r.coin_mint) list.push(["budget", "Funding"]);
                list.push(["exclusive", "Exclusive"]);

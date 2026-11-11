@@ -75,7 +75,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
   const unlockRef = useRef<HTMLHeadingElement>(null);
   const rolesRef = useRef<HTMLElement>(null);
   const roleTarget = openRoleTarget(location.search, location.hash, r?.answers?.roles?.length || 0);
-  const rolesVisible = isOwner || hasOpenRoles(r?.answers);
+  const rolesVisible = hasOpenRoles(r?.answers);
 
   useEffect(() => {
     if (!r || !rolesVisible || !roleTarget.requested) return;
@@ -314,9 +314,9 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               if (merged) return null;
               const roleCount = Array.isArray(r.answers?.roles) ? r.answers.roles.length : 0;
               const list: [typeof tab, string][] = [["board", "All details"], ["overview", "Overview"]];
-              if (isOwner || pubs.plan) list.push(["roadmap", "Roadmap"]);
+              if pubs.plan list.push(["roadmap", "Roadmap"]);
               if (rolesVisible && roleCount > 0) list.push(["people", "Open roles"]);
-              if (isOwner || pubs.money || r.coin_mint) list.push(["budget", "Funding"]);
+              if (pubs.money || r.coin_mint) list.push(["budget", "Funding"]);
                list.push(["exclusive", "Exclusive"]);
               return <nav className="rz-ws-tabs rz-rd-tabs" role="tablist" aria-label="Project sections">{list.map(([k, l]) => <Button variant="ghost" key={k} role="tab" type="button" className="rz-ws-tab" aria-selected={tab === k} onClick={() => { setTab(k); const url = new URL(location.href); url.searchParams.set('tab', k); url.hash = k === 'exclusive' ? 'exclusive' : ''; history.replaceState(null, '', url); }}>{l}</Button>)}</nav>;
             })()}
@@ -332,13 +332,13 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             <div className="rz-cover">
               {r.cover_url || r.coin_image ? <img src={r.cover_url || r.coin_image} alt={`${r.title} cover art`} /> : <span>{r.title}</span>}
             </div>)}
-            {(isOwner || pubs.overview) && <section className="rz-release-about">
+            {pubs.overview && <section className="rz-release-about">
               <h2 className="rz-h2">About the project</h2>
               {r.answers?.description?.trim() ? <p>{r.answers.description.trim()}</p> : r.answers?.making ? <p>{r.answers.making.trim()}</p> : <p>{r.title} by {r.creator_name || "Rhozeland artist"}.</p>}
               {r.answers?.audience && <p className="rz-release-audience">{r.answers.audience}</p>}
             </section>}
             <PublicTeasers slug={slug} title={r.title} locked={!!r.coin_mint} />
-            {(isOwner || pubs.overview) && <ProjectStory story={r.answers || {}} />}
+            {pubs.overview && <ProjectStory story={r.answers || {}} />}
             </>}
             {show("overview") && <>
             <h2 className="rz-h2">Project release</h2>
@@ -351,7 +351,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               ) : <span className="rz-chip"><small>No coin attached yet</small></span>}
             </div>
 
-             {(isOwner || pubs.money) && <p className="rz-note">Planning budget: {r.answers?.need_quote ? "estimate requested" : budget ? money(budget) : "not set yet"} · payment status is tracked in the private workspace.</p>}
+             {pubs.money && <p className="rz-note">Planning budget: {r.answers?.need_quote ? "estimate requested" : budget ? money(budget) : "not set yet"} · payment status is tracked in the private workspace.</p>}
 
             <div className="rz-actions" style={{ marginTop: "1rem", marginBottom: "1.4rem" }}>
               <Button className="rz-btn pri" onClick={openExclusive}>Support this project</Button>
@@ -367,7 +367,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
               const fundedCents = ms.reduce((t, m, i) => t + (statuses[i] === "Funded" || statuses[i] === "Delivered" ? Number(m.amount_cents) || 0 : 0), 0);
               const goal = budget || ms.reduce((t, m) => t + (Number(m.amount_cents) || 0), 0);
               const pct = goal ? Math.min(100, Math.round(fundedCents / goal * 100)) : 0;
-              const showMoney = isOwner || pubs.money;
+              const showMoney = pubs.money;
               return <section className="rz-funding" aria-label="Funding">
                 <h2 className="rz-h2">How you can back this</h2>
                 <div className="rz-funding-ways">
@@ -386,7 +386,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                 {showMoney && goal === 0 && <p className="rz-note">{r.answers?.need_quote ? "The budget is being estimated with Rhozeland." : "No budget set yet."}</p>}
               </section>;
             })()}
-            {show("roadmap") && (isOwner || pubs.plan) && <>
+            {show("roadmap") && pubs.plan && <>
             <h2 className="rz-h2">Roadmap &amp; deliverables</h2>
             <div className="rz-inv">
               <div className="rz-inv-h" style={{ gridTemplateColumns: "1.6rem 1fr 1.4fr 7rem" }}><span>#</span><span>Milestone</span><span>Deliverable</span><span style={{ textAlign: "right" }}>Amount</span></div>
@@ -456,7 +456,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             {show("overview") && <ProjectDiscussion releaseId={r.id} />}
             </PublicProjectCanvas></div>
             {!merged && <aside className="rz-board-side">
-              {(isOwner || pubs.plan) && (r.milestones || []).length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("roadmap")}><h4>Roadmap</h4>
+              {pubs.plan && (r.milestones || []).length > 0 && <button type="button" className="rz-side-card rz-rd-side" onClick={() => setTab("roadmap")}><h4>Roadmap</h4>
                 <div className="rz-side-big">{statuses.filter((x) => x === "Delivered").length}/{(r.milestones || []).length}</div>
                 {(r.milestones || []).slice(0, 4).map((m: any, i: number) => <div className="rz-side-row" key={i}><span>{m.title}</span><small>{statuses[i] || "Upcoming"}</small></div>)}
               </button>}

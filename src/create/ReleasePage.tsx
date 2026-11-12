@@ -380,7 +380,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
                     <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".85rem", fontWeight: 600 }}><span>{money(fundedCents)} raised</span><span>of {money(goal)}</span></div>
                     <div className="rz-bar" aria-label={`${pct}% funded`}><i className="rz-c-a" style={{ width: `${pct}%` }} /></div>
                     {ms.map((m, i) => <div className="rz-split-row" key={i} style={{ gridTemplateColumns: "1fr auto auto" }}><span>{m.title}</span><span className="rz-amt">{money(m.amount_cents)}</span><span>{pill(statuses[i] || "Upcoming")}</span></div>)}
-                    <p className="rz-note" style={{ marginTop: ".6rem" }}>Where the money goes: {Number(r.artist_pct)}% to the artist, {Number(r.fee_pct)}% Rhozeland fee{Number(r.cause_pct) ? `, ${Number(r.cause_pct)}% to ${r.cause_name || "a cause"}` : ""}.</p>
+                    <p className="rz-note" style={{ marginTop: ".6rem" }}>Where the money goes: {Number(r.artist_pct)}% to the artist, {Number(r.fee_pct)}% Rhozeland fee{Number(r.cause_pct) ? `, ${Number(r.cause_pct)}% to ${r.cause_name || "the project"}` : ""}.</p>
                   </div>
                 </>}
                 {showMoney && goal === 0 && <p className="rz-note">{r.answers?.need_quote ? "The budget is being estimated with Rhozeland." : "No budget set yet."}</p>}
@@ -587,7 +587,7 @@ function ReleaseInner({ slug, connErr, setConnErr }: { slug: string; connErr: bo
             </div>
             {(() => {
               const amt = Number(r.milestones[receipt.idx]?.amount_cents || 0);
-              return [["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland", r.fee_pct], ["rz-c-c", "Cause", r.cause_pct]].map(([c, l, p]) => (
+              return [["rz-c-a", "Artist", r.artist_pct], ["rz-c-f", "Rhozeland", r.fee_pct], ["rz-c-c", "Project", r.cause_pct]].map(([c, l, p]) => (
                 <div className="rz-split-row" key={l as string}><span className={`rz-sw ${c}`} /><span>{l}</span><span className="rz-amt" style={{ fontWeight: 500 }}>{Number(p)}%</span><span className="rz-amt">{money(amt * Number(p) / 100)}</span></div>
               ));
             })()}

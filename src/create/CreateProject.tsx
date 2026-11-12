@@ -125,7 +125,7 @@ export default function CreateProject() {
   const step = Math.max(1, flow.indexOf(stepKey) + 1);
   const isBrand = ptype === "brand";
   const leadLabel = isBrand ? "Brand" : "Artist";
-  const causeLabel = isBrand ? "Project" : "Cause";
+  const causeLabel = "Project";
   const tPct = isBrand ? talentPct : 0;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

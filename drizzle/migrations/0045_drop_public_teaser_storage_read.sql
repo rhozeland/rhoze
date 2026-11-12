@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone reads public teaser media" ON storage.objects;

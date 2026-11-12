@@ -4107,6 +4107,17 @@ export type Database = {
           entries: Json
         }[]
       }
+      payroll_save_my_setup: {
+        Args: {
+          p_extra_tax_cents: number
+          p_province: string
+          p_sin_last4: string
+          p_td1_federal_cents: number
+          p_td1_provincial_cents: number
+          p_worker_type: string
+        }
+        Returns: undefined
+      }
       portfolio_detail: {
         Args: { p_slug: string }
         Returns: {

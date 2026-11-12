@@ -416,6 +416,7 @@ export function BrandProfile({ slug }: { slug: string }) {
 
   const name = brand?.name || rels?.[0]?.creator_name || "";
   const exists = !!brand || (rels?.length ?? 0) > 0;
+  const isSelf = !!uid && !!brand?.user_id && brand.user_id === uid;
   const hiring = (rels ?? []).flatMap((r) =>
     (r.answers?.project_type === "brand" && Array.isArray(r.answers?.roles) ? r.answers.roles : [])
       .map((role: any, i: number) => ({ role, i, r }))
@@ -425,8 +426,8 @@ export function BrandProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card rz-profile-glass">
         <div className="rz-profile-controls">
-          <SavedShortcut />
-          {canEdit && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
+          {!isSelf && <SavedShortcut />}
+          {isSelf && exists && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} />}
         </div>
         {rels === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {rels !== undefined && !exists && <NotFound what="Brand" />}

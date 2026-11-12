@@ -12,7 +12,7 @@ const values = [
   {
     icon: Heart,
     title: "For the Trenches",
-    desc: "Real support for real people. Grants, causes, and community-first economics.",
+    desc: "Real support for real people. Grants, projects, and community-first economics.",
     color: "bg-rhoze-lavender",
   },
   {

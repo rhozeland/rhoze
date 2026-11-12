@@ -228,7 +228,7 @@ export default function ProjectWorkspace({ r, onSaved, activeTab, onTabChange, e
           <p className="rz-ws-note">Planning only · applicable taxes may be added to the final estimate. No money has been paid.</p>
           <div className="rz-ws-split-row"><span>Project %</span><input className="rz-in" type="number" min={0} max={100} value={artistPct} onChange={(e) => setArtistPct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <div className="rz-ws-split-row"><span>Rhozeland fee (includes coin launch) %</span><input className="rz-in" type="number" min={0} max={100} value={feePct} onChange={(e) => setFeePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
-          <div className="rz-ws-split-row"><span>Cause %</span><input className="rz-in" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
+          <div className="rz-ws-split-row"><span>Project %</span><input className="rz-in" type="number" min={0} max={100} value={causePct} onChange={(e) => setCausePct(Math.max(0, Math.min(100, Number(e.target.value) || 0)))} /></div>
           <p className="rz-ws-note">{splitTotal === 100 ? "Totals 100%" : `Must total 100% (currently ${splitTotal}%)`}</p>
           <div className="rz-ws-row" style={{ marginTop: ".8rem" }}>
             <input className="rz-in" aria-label="Solana contract address" placeholder="Solana contract address · optional" value={mint} onChange={(e) => { setMint(e.target.value); setTicker(""); }} />

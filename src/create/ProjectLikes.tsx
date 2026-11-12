@@ -68,14 +68,21 @@ export function LikedProjects({ userId }: { userId: string }) {
     let alive = true;
     const load = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      const [prefs, likes] = await Promise.all([
+      const [prefs, likes, archiveLikes, archive] = await Promise.all([
         supabase.from("project_like_preferences").select("is_public").eq("user_id", userId).maybeSingle(),
         supabase.from("project_likes").select("created_at,releases(id,slug,title,creator_name,cover_url,coin_image)").eq("user_id", userId).order("created_at", { ascending: false }),
+        supabase.from("portfolio_project_likes").select("slug,created_at").eq("user_id", userId).eq("liked", true),
+        fetch("/portfolio-projects.json").then(r => (r.ok ? r.json() : [])).catch(() => []),
       ]);
       if (!alive) return;
       setOwn(session?.user.id === userId); setPublic(prefs.data?.is_public === true);
       if (prefs.error || likes.error) setError("Couldn’t load liked projects. Please refresh to try again.");
-      setRows((likes.data ?? []).flatMap(l => l.releases ? [l.releases] : []));
+      const entries = new Map((archive as any[]).map((e: any) => [e.slug, e]));
+      const merged = [
+        ...(likes.data ?? []).flatMap(l => l.releases ? [{ key: l.releases.id, href: `/release/${l.releases.slug}`, cover: l.releases.cover_url || l.releases.coin_image, creator: l.releases.creator_name, title: l.releases.title, at: l.created_at }] : []),
+        ...(archiveLikes.data ?? []).flatMap((l: any) => { const e = entries.get(l.slug); return e ? [{ key: `a-${l.slug}`, href: `/project/${l.slug}`, cover: e.image, creator: e.artist, title: e.title, at: l.created_at }] : []; }),
+      ].sort((a, b) => String(b.at).localeCompare(String(a.at)));
+      setRows(merged);
     };
     load();
     return () => { alive = false; };

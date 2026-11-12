@@ -182,6 +182,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
   useEffect(() => { load(); }, [slug]);
 
   const isOwner = !!c && !!uid && (c.user_id === uid || team);
+  const isSelf = !!c && !!uid && c.user_id === uid;
   const [visBusy, setVisBusy] = useState(false);
   const setVisibility = async (v: boolean) => {
     if (!c || c.is_public === v) return;
@@ -200,8 +201,8 @@ export function CreatorProfile({ slug }: { slug: string }) {
     <Shell>
       <div className="rz-card rz-profile-glass">
         <div className="rz-profile-controls">
-          <SavedShortcut />
-          {isOwner && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
+          {!isSelf && <SavedShortcut />}
+          {isSelf && <OwnerSettings editing={editing} onEdit={() => setEditing((e) => !e)} visibility={{ isPublic: c?.is_public !== false, busy: visBusy, onChange: setVisibility }} />}
         </div>
         {c === undefined && <><div className="rz-skel" /><div className="rz-skel" /></>}
         {c === null && <NotFound what="Creator" />}

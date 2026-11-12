@@ -7,6 +7,7 @@ import "./project-likes.css";
 
 export function ProjectHeart({ releaseId }: { releaseId: string }) {
   const [liked, setLiked] = useState(false);
+  const [own, setOwn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [auth, setAuth] = useState(false);
   const [error, setError] = useState("");
@@ -14,9 +15,12 @@ export function ProjectHeart({ releaseId }: { releaseId: string }) {
     let alive = true;
     const load = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { if (alive) setLiked(false); return; }
-      const { data } = await supabase.from("project_likes").select("release_id").eq("user_id", session.user.id).eq("release_id", releaseId).maybeSingle();
-      if (alive) setLiked(!!data);
+      if (!session) { if (alive) { setLiked(false); setOwn(false); } return; }
+      const [like, rel] = await Promise.all([
+        supabase.from("project_likes").select("release_id").eq("user_id", session.user.id).eq("release_id", releaseId).maybeSingle(),
+        supabase.from("releases").select("user_id").eq("id", releaseId).maybeSingle(),
+      ]);
+      if (alive) { setLiked(!!like.data); setOwn(!!rel.data?.user_id && rel.data.user_id === session.user.id); }
     };
     load();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { setTimeout(load, 0); });

@@ -399,6 +399,7 @@ export function BrandProfile({ slug }: { slug: string }) {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [canEdit, setCanEdit] = useState(false);
   const [editing, setEditing] = useState(false);
+  const { uid } = useUser();
 
   const load = async () => {
     await supabase.auth.getSession();

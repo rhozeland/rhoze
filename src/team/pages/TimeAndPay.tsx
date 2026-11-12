@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import PayrollRun from "../components/PayrollRun";
 import PayrollSetup from "../components/PayrollSetup";
 import RemittanceReport from "../components/RemittanceReport";
+import MyPayrollSetup from "../components/MyPayrollSetup";
 import { downloadPayStub } from "../lib/payStubPdf";
 import {
   Dialog,
@@ -398,7 +399,7 @@ export default function TimeAndPay() {
           </div>
         )
       ) : view === "stubs" ? (
-        <MyPayStubs userId={user?.id ?? ""} periods={periods ?? []} />
+        <div className="space-y-4"><MyPayrollSetup userId={user?.id ?? ""} /><MyPayStubs userId={user?.id ?? ""} periods={periods ?? []} /></div>
       ) : view === "admin" && isAdmin ? (
         <ApprovalQueue
           periodId={periodId}

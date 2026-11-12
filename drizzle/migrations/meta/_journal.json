@@ -323,6 +323,13 @@
       "when": 1794499874574,
       "tag": "0045_drop_public_teaser_storage_read",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1794527844957,
+      "tag": "0046_payroll_self_setup",
+      "breakpoints": true
     }
   ]
 }

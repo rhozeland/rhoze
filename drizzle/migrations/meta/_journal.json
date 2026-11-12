@@ -316,6 +316,13 @@
       "when": 1794498855418,
       "tag": "0044_widen_application_attachment_types",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1794499874574,
+      "tag": "0045_drop_public_teaser_storage_read",
+      "breakpoints": true
     }
   ]
 }

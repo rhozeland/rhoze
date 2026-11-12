@@ -133,8 +133,8 @@ export default function ProjectContent({ r }: { r: any }) {
 export function PublicTeasers({ slug, title, locked }: { slug: string; title: string; locked: boolean }) {
   const [posts, setPosts] = useState<ContentPost[]>([]);
   useEffect(() => {
-    (supabase.rpc as any)("release_public_posts", { p_slug: slug }).then(async ({ data }: any) => {
-      setPosts(await Promise.all((data || []).map(async (p: any) => ({ ...p, media_url: p.media_path ? await sign(p.media_path) : null }))));
+    supabase.functions.invoke("release-public-posts", { body: { slug } }).then(({ data }: any) => {
+      setPosts(data?.posts || []);
     });
   }, [slug]);
   if (!posts.length) return null;

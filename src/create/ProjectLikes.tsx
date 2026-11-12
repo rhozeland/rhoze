@@ -7,6 +7,7 @@ import "./project-likes.css";
 
 export function ProjectHeart({ releaseId }: { releaseId: string }) {
   const [liked, setLiked] = useState(false);
+  const [own, setOwn] = useState(false);
   const [busy, setBusy] = useState(false);
   const [auth, setAuth] = useState(false);
   const [error, setError] = useState("");
@@ -14,9 +15,12 @@ export function ProjectHeart({ releaseId }: { releaseId: string }) {
     let alive = true;
     const load = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { if (alive) setLiked(false); return; }
-      const { data } = await supabase.from("project_likes").select("release_id").eq("user_id", session.user.id).eq("release_id", releaseId).maybeSingle();
-      if (alive) setLiked(!!data);
+      if (!session) { if (alive) { setLiked(false); setOwn(false); } return; }
+      const [like, rel] = await Promise.all([
+        supabase.from("project_likes").select("release_id").eq("user_id", session.user.id).eq("release_id", releaseId).maybeSingle(),
+        supabase.from("releases").select("user_id").eq("id", releaseId).maybeSingle(),
+      ]);
+      if (alive) { setLiked(!!like.data); setOwn(!!rel.data?.user_id && rel.data.user_id === session.user.id); }
     };
     load();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => { setTimeout(load, 0); });
@@ -36,6 +40,7 @@ export function ProjectHeart({ releaseId }: { releaseId: string }) {
     } catch { setError("Couldn’t save your like. Please try again."); }
     finally { setBusy(false); }
   };
+  if (own) return null;
   return <>
     <span className="rz-like-control">
       <Button variant="outline" size="icon" className="rz-project-heart rz-release-share" aria-label={liked ? "Unlike project" : "Like project"} title={liked ? "Unlike project" : "Like project"} aria-pressed={liked} disabled={busy} onClick={toggle}><Heart size={16} /></Button>

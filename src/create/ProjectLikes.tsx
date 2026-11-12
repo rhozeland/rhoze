@@ -104,9 +104,9 @@ export function LikedProjects({ userId }: { userId: string }) {
       </div>}
     </div>
     {error && <p role="alert" className="rz-pf-empty">{error}</p>}
-    {<div className="rz-feed">{rows.map(r => <a key={r.id} className="rz-feed-card" href={`/release/${r.slug}`}>
-      <span className="rz-feed-cover">{r.cover_url || r.coin_image ? <LikedCover url={r.cover_url || r.coin_image} title={r.title} /> : <i>{r.title}</i>}</span>
-      <span className="rz-feed-meta"><small>{r.creator_name}</small><b>{r.title}</b></span>
+    {<div className="rz-feed">{rows.map(r => <a key={r.key} className="rz-feed-card" href={r.href}>
+      <span className="rz-feed-cover">{r.cover ? <LikedCover url={r.cover} title={r.title} /> : <i>{r.title}</i>}</span>
+      <span className="rz-feed-meta"><small>{r.creator}</small><b>{r.title}</b></span>
     </a>)}</div>}
   </section>;
 }

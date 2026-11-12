@@ -40,6 +40,7 @@ export function ProjectHeart({ releaseId }: { releaseId: string }) {
     } catch { setError("Couldn’t save your like. Please try again."); }
     finally { setBusy(false); }
   };
+  if (own) return null;
   return <>
     <span className="rz-like-control">
       <Button variant="outline" size="icon" className="rz-project-heart rz-release-share" aria-label={liked ? "Unlike project" : "Like project"} title={liked ? "Unlike project" : "Like project"} aria-pressed={liked} disabled={busy} onClick={toggle}><Heart size={16} /></Button>

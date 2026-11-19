@@ -399,7 +399,13 @@ export function BrandProfile({ slug }: { slug: string }) {
   const [brand, setBrand] = useState<Brand | null>(null);
   const [canEdit, setCanEdit] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [collabs, setCollabs] = useState<any[]>([]);
   const { uid } = useUser();
+
+  useEffect(() => {
+    if (slug !== "rhozeland") { setCollabs([]); return; }
+    fetch("/portfolio-projects.json").then((r) => r.json()).then((d) => setCollabs(Array.isArray(d) ? d : [])).catch(() => setCollabs([]));
+  }, [slug]);
 
   const load = async () => {
     await supabase.auth.getSession();
@@ -414,8 +420,8 @@ export function BrandProfile({ slug }: { slug: string }) {
   };
   useEffect(() => { load(); }, [slug]);
 
-  const name = brand?.name || rels?.[0]?.creator_name || "";
-  const exists = !!brand || (rels?.length ?? 0) > 0;
+  const name = brand?.name || rels?.[0]?.creator_name || (slug === "rhozeland" ? "Rhozeland" : "");
+  const exists = !!brand || (rels?.length ?? 0) > 0 || collabs.length > 0;
   const isSelf = !!uid && !!brand?.user_id && brand.user_id === uid;
   const hiring = (rels ?? []).flatMap((r) =>
     (r.answers?.project_type === "brand" && Array.isArray(r.answers?.roles) ? r.answers.roles : [])
@@ -449,6 +455,13 @@ export function BrandProfile({ slug }: { slug: string }) {
 
             <ProfileSections>
             <ProfileProjects projects={rels} owner={canEdit} />
+            {collabs.length > 0 && <section className="rz-pf-sec" id="collaborations"><h2>Collaborations</h2>
+              <div className="rz-feed">{collabs.map((c) => (
+                <a key={c.slug} className="rz-feed-card" href={`/project/${c.slug}`}>
+                  {c.image && <img src={c.image} alt="" loading="lazy" />}
+                  <span className="rz-feed-meta"><small>{c.artist}</small><b>{c.title}</b></span>
+                </a>))}</div>
+            </section>}
             {(brand?.user_id || rels[0]?.user_id) && <LikedProjects userId={brand?.user_id || rels[0]?.user_id} />}
 
             {hiring.length > 0 && <section className="rz-pf-sec" id="hiring"><h2>Currently hiring</h2>

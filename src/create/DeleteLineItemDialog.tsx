@@ -4,9 +4,11 @@ import {
     AlertDialogCancel,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogTitle
+    AlertDialogTitle,
+    AlertDialogContent,
+    AlertDialogDescription
 } from "@/components/ui/alert-dialog.tsx";
-import {AlertDialogContent, AlertDialogDescription} from "@radix-ui/react-alert-dialog";
+import {money} from "@/create/shared.tsx";
 
 
 // ---------------------------------------------------------------------------
@@ -14,15 +16,15 @@ import {AlertDialogContent, AlertDialogDescription} from "@radix-ui/react-alert-
 // Build the confirmation dialog (S)
 // ---------------------------------------------------------------------------
 
-export type LineItemSummary = {description: string, amount_cents: number, spent_on: string};
+export type LineItemSummary = {description: string, amount_cents: number, date_spent: string};
 
 type Props = {
-    item: LineItemSummary;
+    item: LineItemSummary | null;
     onCancel: () => void;
     onConfirm: () => Promise<void>;
 };
 
-export default function CreateLineItemDialog({item, onCancel, onConfirm}, props: Props) {
+export default function DeleteLineItemDialog({item, onCancel, onConfirm}: Props) {
     const [busy, setBusy] = useState(false);
     const [er, setEr] = useState("");
     const close = () => {if (busy) return; setEr(""); onCancel();};
@@ -37,16 +39,20 @@ export default function CreateLineItemDialog({item, onCancel, onConfirm}, props:
     }
 
     return(
-        <AlertDialog open={item} onOpenChange={(o)=> !o && close()}>
+        <AlertDialog open={!!item} onOpenChange={(o)=> !o && close()}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Did you want to remove this item/cost?</AlertDialogTitle>
-                    <AlertDialogDescription></AlertDialogDescription>
+                    <AlertDialogDescription>
+                        {item && <>"{item.description}": {money(item.amount_cents)}, {item.date_spent}<br/>
+                        Item will be removed and your spent total will update. This cannot be undone.</>}
+                    </AlertDialogDescription>
                 </AlertDialogHeader>
+                {er && <p role={"alert"} className={"rz-err"}>{er}</p>}
                 <AlertDialogFooter>
                     <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
                     <AlertDialogAction disabled={busy} onClick={confirm}>
-                        {busy ? "Removing cost from project..." : "Remove"}
+                        {busy ? "Removing cost..." : "Remove"}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

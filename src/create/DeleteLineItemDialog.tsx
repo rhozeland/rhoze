@@ -16,7 +16,7 @@ import {money} from "@/create/shared.tsx";
 // Build the confirmation dialog (S)
 // ---------------------------------------------------------------------------
 
-export type LineItemSummary = {description: string, amount_cents: number, date_spent: string};
+export type LineItemSummary = {label: string, amount_cents: number, entry_date: string};
 
 type Props = {
     item: LineItemSummary | null;
@@ -44,7 +44,7 @@ export default function DeleteLineItemDialog({item, onCancel, onConfirm}: Props)
                 <AlertDialogHeader>
                     <AlertDialogTitle>Did you want to remove this item/cost?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        {item && <>"{item.description}": {money(item.amount_cents)}, {item.date_spent}<br/>
+                        {item && <>"{item.label}": {money(item.amount_cents)}, {item.entry_date}<br/>
                         Item will be removed and your spent total will update. This cannot be undone.</>}
                     </AlertDialogDescription>
                 </AlertDialogHeader>

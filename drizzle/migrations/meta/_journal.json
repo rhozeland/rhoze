@@ -337,6 +337,13 @@
       "when": 1795077572214,
       "tag": "0047_harden_submission_approve_and_uploads",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1795476287301,
+      "tag": "0048_require_signin_for_uploads",
+      "breakpoints": true
     }
   ]
 }

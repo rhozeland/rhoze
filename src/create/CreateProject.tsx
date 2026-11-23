@@ -16,7 +16,7 @@ import { saveTeam } from "./team-storage";
 import { PROJECT_GOALS, flowForGoal, goalDefaults, type ProjectGoal, COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Info, Share2, Handshake, CalendarCheck, Coins, Rocket, ImagePlus, ChevronRight } from "lucide-react";
+import { Info, Share2, Handshake, CalendarCheck, Coins, Rocket, ImagePlus, ChevronRight, Megaphone } from "lucide-react";
 import "./create-modern.css";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
@@ -625,6 +625,11 @@ export default function CreateProject() {
                 <ChevronRight size={16} className="rzm-goal-go" />
               </button>
             ); })}
+            <a className="rzm-goal" href="/get-featured">
+              <span className="rzm-goal-ico"><Megaphone size={18} /></span>
+              <span className="rzm-goal-txt"><b>Get Featured</b><small>Submit your music, brand or creative work for an opportunity to be featured across Rhozeland's Instagram and Facebook.</small></span>
+              <ChevronRight size={16} className="rzm-goal-go" />
+            </a>
           </div>
           <div className="rzm-skip"><button type="button" onClick={() => setIdeaIndex(1)}>Just start a project →</button></div>
         </>}

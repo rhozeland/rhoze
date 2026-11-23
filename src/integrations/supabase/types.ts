@@ -1047,6 +1047,160 @@ export type Database = {
           },
         ]
       }
+      featured_application_events: {
+        Row: {
+          actor: string | null
+          application_id: string
+          created_at: string
+          id: string
+          status: string
+        }
+        Insert: {
+          actor?: string | null
+          application_id: string
+          created_at?: string
+          id?: string
+          status: string
+        }
+        Update: {
+          actor?: string | null
+          application_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_application_events_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "featured_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      featured_application_notes: {
+        Row: {
+          application_id: string
+          author: string
+          body: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          application_id: string
+          author?: string
+          body: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          application_id?: string
+          author?: string
+          body?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_application_notes_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "featured_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      featured_applications: {
+        Row: {
+          applicant_reply: string | null
+          category: string
+          consent_at: string
+          consent_ownership: boolean
+          consent_promotion: boolean
+          created_at: string
+          decision_message: string | null
+          description: string
+          details: Json
+          extra_links: string[]
+          facebook_url: string | null
+          id: string
+          images: string[]
+          info_request: string | null
+          instagram: string
+          instagram_url: string | null
+          main_link: string
+          name: string
+          pitch: string
+          primary_image: string
+          published_at: string | null
+          scheduled_for: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          video_link: string | null
+          website: string | null
+        }
+        Insert: {
+          applicant_reply?: string | null
+          category: string
+          consent_at?: string
+          consent_ownership: boolean
+          consent_promotion: boolean
+          created_at?: string
+          decision_message?: string | null
+          description: string
+          details?: Json
+          extra_links?: string[]
+          facebook_url?: string | null
+          id?: string
+          images?: string[]
+          info_request?: string | null
+          instagram: string
+          instagram_url?: string | null
+          main_link: string
+          name: string
+          pitch: string
+          primary_image: string
+          published_at?: string | null
+          scheduled_for?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          video_link?: string | null
+          website?: string | null
+        }
+        Update: {
+          applicant_reply?: string | null
+          category?: string
+          consent_at?: string
+          consent_ownership?: boolean
+          consent_promotion?: boolean
+          created_at?: string
+          decision_message?: string | null
+          description?: string
+          details?: Json
+          extra_links?: string[]
+          facebook_url?: string | null
+          id?: string
+          images?: string[]
+          info_request?: string | null
+          instagram?: string
+          instagram_url?: string | null
+          main_link?: string
+          name?: string
+          pitch?: string
+          primary_image?: string
+          published_at?: string | null
+          scheduled_for?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          video_link?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       ig_threads: {
         Row: {
           commenter: boolean
@@ -3995,6 +4149,20 @@ export type Database = {
         Returns: number
       }
       ensure_personal_project: { Args: { _user_id: string }; Returns: string }
+      featured_published: {
+        Args: never
+        Returns: {
+          category: string
+          facebook_url: string
+          instagram_url: string
+          name: string
+          published_at: string
+        }[]
+      }
+      featured_reply: {
+        Args: { p_id: string; p_reply: string }
+        Returns: undefined
+      }
       get_checkout_outcome: {
         Args: { _session_id: string }
         Returns: {

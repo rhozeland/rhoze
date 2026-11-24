@@ -4,8 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen,
   UserCircle2, Shield, LogOut, Calendar,
   FolderKanban, Inbox, Package, Clock,
-  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy, Menu, X, Radio, Newspaper, Rocket,
-} from "lucide-react";
+  Sparkles, ExternalLink, PanelLeftClose, PanelLeftOpen, MessageSquare, Trophy, Menu, X, Radio, Newspaper, Rocket, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +29,7 @@ const nav = [
 
 const adminNav = [
   { to: "/waitlist", label: "Waitlist", icon: Users },
+  { to: "/featured", label: "Get Featured", icon: Star },
   { to: "/team-admin", label: "Admin portal", icon: Shield },
   { to: "/intake", label: "Intake", icon: Inbox },
   { to: "/requests", label: "Credit requests", icon: MessageSquare },

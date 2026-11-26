@@ -234,7 +234,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
             {editing && isOwner && uid && <CreatorEditor c={c} uid={uid} onSaved={() => { setEditing(false); load(); }} />}
 
             <ProfileSections>
-            <ProfileProjects projects={projects} owner={isOwner} />
+            <ProfileProjects projects={projects} owner={isSelf} />
             {c.user_id && <LikedProjects userId={c.user_id} />}
 
             {!fan && samples.length > 0 && <section className="rz-pf-sec"><h2>Work samples</h2>
@@ -454,7 +454,7 @@ export function BrandProfile({ slug }: { slug: string }) {
             {editing && canEdit && <BrandEditor slug={slug} initial={{ slug, name, logo_url: brand?.logo_url ?? null, category: brand?.category ?? null, bio: brand?.bio ?? null }} onSaved={() => { setEditing(false); load(); }} />}
 
             <ProfileSections>
-            <ProfileProjects projects={rels} owner={canEdit} />
+            <ProfileProjects projects={rels} owner={isSelf} />
             {collabs.length > 0 && <section className="rz-pf-sec" id="collaborations"><h2>Collaborations</h2>
               <div className="rz-feed">{collabs.map((c) => (
                 <a key={c.slug} className="rz-feed-card" href={`/project/${c.slug}`}>

@@ -208,7 +208,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
         {c === null && <NotFound what="Creator" />}
         {c && (
           <>
-            {isOwner && fan && uid && <SupporterHome userId={uid} heading="Your supporter home" />}
+            {isSelf && fan && uid && <SupporterHome userId={uid} heading="Your supporter home" />}
             <div className="rz-pf-top"><ProfileDepth />
               <Avatar src={c.photo_url} name={c.display_name} className="rz-pf-photo" />
               <div className="rz-pf-id">
@@ -254,7 +254,7 @@ export function CreatorProfile({ slug }: { slug: string }) {
                 </div>
               )}</section>}
 
-            {isOwner && !fan && uid && <SupporterHome userId={uid} heading="Supporting" />}
+            {isSelf && !fan && uid && <SupporterHome userId={uid} heading="Supporting" />}
 
             <MoreCreators slug={c.slug} tags={c.disciplines ?? []} Avatar={Avatar} />
             </ProfileSections>

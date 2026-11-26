@@ -513,3 +513,4 @@ setupHoverVideos();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',normalize); else normalize();
 })();
+(function(){ if (document.querySelector('script[data-rz-waitlist]')) return; var s = document.createElement('script'); s.src = '/waitlist-popup.js'; s.defer = true; s.setAttribute('data-rz-waitlist', ''); document.head.appendChild(s); })();

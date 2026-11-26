@@ -42,3 +42,8 @@
 .waitlist-success h2{font-size:22px}
 @media(max-width:600px){.waitlist-main{padding:22px 18px 20px}.waitlist-heading h1{font-size:23px}}
 .waitlist-page .waitlist-roles button[aria-pressed=true],.waitlist-page .waitlist-roles button[aria-pressed=true]:hover{background:hsl(var(--ink))!important;color:hsl(var(--card))!important;border-color:hsl(var(--ink))!important}
+.waitlist-upcoming{list-style:none;padding:0;margin:0 0 24px;display:grid;gap:8px}
+.waitlist-upcoming li{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid hsl(var(--line));background:hsl(var(--card))}
+.waitlist-upcoming b{display:block;font-size:13px;color:hsl(var(--ink))}
+.waitlist-upcoming span{font-size:12px;color:hsl(var(--mut))}
+.waitlist-upcoming em{margin-left:auto;font-style:normal;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 8px;border-radius:999px;background:hsl(var(--ink));color:hsl(var(--card))}

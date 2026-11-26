@@ -351,6 +351,13 @@
       "when": 1795476797596,
       "tag": "0049_get_featured_applications",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1795733029891,
+      "tag": "0050_scope_public_campaign_read",
+      "breakpoints": true
     }
   ]
 }

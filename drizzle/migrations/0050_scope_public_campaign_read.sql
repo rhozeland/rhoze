@@ -1,0 +1,2 @@
+ALTER POLICY "campaign_state public read" ON public.campaign_state TO anon, authenticated USING (id = 1);
+COMMENT ON POLICY "campaign_state public read" ON public.campaign_state IS 'Public access is limited to the site campaign singleton; no blanket read permission for additional campaign records.';

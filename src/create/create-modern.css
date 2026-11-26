@@ -20,6 +20,9 @@
 .rzm-head h1{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:0;color:hsl(var(--ink))}
 .rzm-head p{margin:8px 0 0;font-size:14px;color:hsl(var(--mut))}
 
+.rzm-layout.goal{grid-template-columns:minmax(0,760px);justify-content:center}
+.rzm-goal-eyebrow{display:block;margin-bottom:10px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:hsl(var(--mut))}
+.rzm-main .rzm-goal-actions{justify-content:flex-end}
 .rzm-goals{display:grid;gap:10px}
 .rzm-goal{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 16px;border:1px solid hsl(var(--line));border-radius:14px;background:hsl(var(--card));color:hsl(var(--ink));font:inherit;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
 .rzm-goal:hover{transform:translateY(-1px);border-color:hsl(var(--ink)/.4);box-shadow:0 8px 20px -12px hsl(var(--ink)/.35)}

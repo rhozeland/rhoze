@@ -16,7 +16,7 @@ import { saveTeam } from "./team-storage";
 import { PROJECT_GOALS, flowForGoal, goalDefaults, type ProjectGoal, COIN_CHOICES, FEE_LABEL, type CoinChoice, IDEA_SCREENS, IDEA_SCREEN_TITLES, FLEXIBLE_TIMELINES, scopeError, validateIdeaQuestion, type TeamPerson } from "./project-flow";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Info, Share2, Handshake, CalendarCheck, Coins, Rocket, ImagePlus, ChevronRight, Megaphone } from "lucide-react";
+import { Info, Share2, Handshake, CalendarCheck, Coins, Rocket, ImagePlus, ChevronRight, Users } from "lucide-react";
 import "./create-modern.css";
 import { tokenPairingError, TOKEN_PAIRING_NOTICE } from "./token-pairing";
 import { RHOZE_MINT } from "@/lib/rhozeChain";
@@ -44,7 +44,7 @@ const FLOW: StepKey[] = ["idea", "scope", "team", "call", "review"];
 const STEP_LABEL: Record<StepKey, string> = { idea: "The idea", scope: "Scope", team: "Who's making it", call: "Book a call", review: "Review" };
 const CALL_KEY = "rz_pending_call";
 const STEP_SHORT: Record<StepKey, string> = { idea: "Basics", scope: "Scope", team: "Team", call: "Call", review: "Review" };
-const GOAL_ICONS: Record<ProjectGoal, typeof Share2> = { share: Share2, assist: Handshake, book: CalendarCheck, coin_existing: Coins, coin_launch: Rocket };
+const GOAL_ICONS: Record<ProjectGoal, typeof Share2> = { share: Share2, assist: Handshake, collaborate: Users, book: CalendarCheck, coin_existing: Coins, coin_launch: Rocket };
 
 // Old (pre-merge) step keys map onto the new 4 steps so drafts saved by the
 // previous wizard still reopen at a sensible place.
@@ -396,7 +396,7 @@ export default function CreateProject() {
   const updateRole = (id: string, patch: Partial<Role>) => setRoles((rs) => rs.map((x) => (x.id === id ? { ...x, ...patch } : x)));
   const pickGoal = (g: ProjectGoal) => {
     setGoal(g);
-    setIdeaIndex(1);
+    setErr("");
     const d = goalDefaults(g);
     if (d.coin) setCoinChoice(d.coin);
     if (d.rhozeland) setMakers((ms) => (ms.includes("rhozeland") ? ms : [...ms, "rhozeland"]));
@@ -522,6 +522,7 @@ export default function CreateProject() {
   const move = (i: number, d: -1 | 1) => setRows((rs) => { const a = [...rs]; const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; });
 
   const nextLabel = flow[step] ? STEP_LABEL[flow[step]] : null;
+  const isGoalScreen = stepKey === "idea" && ideaIndex === 0;
 
   const validateIdea = () => {
     if (!name.trim()) return "Add your name.";
@@ -538,6 +539,7 @@ export default function CreateProject() {
     return missing ? `Add responsibilities, requirements and location for "${missing.name?.trim()}". Only timing is optional.` : "";
   };
   const goNext = () => {
+    if (stepKey === "idea" && ideaIndex === 0 && !goal) { setErr("Choose a goal to continue."); return; }
     const values: Record<string, string> = { title, name, making, description: desc, audience, location: city, category, cover: cover || "" };
     const message = stepKey === "idea" ? (IDEA_SCREENS[ideaIndex] || []).map((q) => validateIdeaQuestion(q, values[q] || "")).find(Boolean) || "" : stepKey === "scope" ? validateScope() : stepKey === "team" ? validateTeam() : "";
     if (message) { setErr(message); return; }
@@ -603,7 +605,7 @@ export default function CreateProject() {
           <Button variant="outline" className="rz-btn" onClick={saveToProfile} disabled={saving || savingToProfile}>{saving || savingToProfile ? "Saving…" : "Save draft"}</Button>
         </div>
       </div>
-      <div className="rzm-layout">
+      <div className={`rzm-layout${isGoalScreen ? " goal" : ""}`}>
       <div className="rz-card rz-wizard rzm-main">
         <ol className="rzm-steps" aria-label="Project creation progress">
           {stepLabels.map((l, i) => (
@@ -616,7 +618,7 @@ export default function CreateProject() {
         </ol>
 
         {stepKey === "idea" && ideaIndex === 0 && <>
-          <div className="rzm-head"><h1>What brings you here?</h1><p>Pick one and we'll only ask what matters. You can change it later.</p></div>
+          <div className="rzm-head"><span className="rzm-goal-eyebrow">Choose your goal</span><h1>What are you looking to accomplish?</h1><p>Choose one primary goal. You can change it later.</p></div>
           <div className="rzm-goals">
             {PROJECT_GOALS.map((g) => { const Icon = GOAL_ICONS[g.id]; return (
               <button key={g.id} type="button" aria-pressed={goal === g.id} className={`rzm-goal ${goal === g.id ? "on" : ""}`} onClick={() => pickGoal(g.id)}>
@@ -625,13 +627,8 @@ export default function CreateProject() {
                 <ChevronRight size={16} className="rzm-goal-go" />
               </button>
             ); })}
-            <a className="rzm-goal" href="/get-featured">
-              <span className="rzm-goal-ico"><Megaphone size={18} /></span>
-              <span className="rzm-goal-txt"><b>Get Featured</b><small>Submit your music, brand or creative work for an opportunity to be featured across Rhozeland's Instagram and Facebook.</small></span>
-              <ChevronRight size={16} className="rzm-goal-go" />
-            </a>
           </div>
-          <div className="rzm-skip"><button type="button" onClick={() => setIdeaIndex(1)}>Just start a project →</button></div>
+          <div className="rzm-actions rzm-goal-actions"><Button variant="outline" className="rz-btn pri" disabled={!goal} onClick={goNext}>Continue <ArrowRight size={14} /></Button></div>
         </>}
 
         {stepKey === "idea" && ideaIndex === 1 && <>
@@ -828,7 +825,7 @@ export default function CreateProject() {
           redirectTo={`${location.origin}/create.html?draft=${authFor}`} />}
         {savedAt && <div className="rz-note rz-saved">Project saved {savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</div>}
       </div>
-      {preview}
+      {!isGoalScreen && preview}
       </div>
       </div>
     </Shell>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { IDEA_QUESTIONS, IDEA_SCREENS, FLEXIBLE_TIMELINES, PRIVATE_PROJECT_STATUS, hasOpenRoles, scopeError, validateIdeaQuestion } from "./project-flow";
+import { IDEA_QUESTIONS, IDEA_SCREENS, FLEXIBLE_TIMELINES, PRIVATE_PROJECT_STATUS, PROJECT_GOALS, hasOpenRoles, scopeError, validateIdeaQuestion } from "./project-flow";
 
 describe("private project flow", () => {
   it("starts private rather than publishing", () => expect(PRIVATE_PROJECT_STATUS).toBe("draft"));
@@ -13,7 +13,9 @@ describe("private project flow", () => {
   it("lets any project have open roles regardless of account type", () => expect(hasOpenRoles({ makers: ["open_roles"], roles: [{ name: "Editor" }] })).toBe(true));
 });import { flowForGoal, goalDefaults } from "./project-flow";
 describe("project goals", () => {
+  it("offers exactly the three primary goals", () => expect(PROJECT_GOALS.map((goal) => goal.title)).toEqual(["Showcase a project", "Get support for a project", "Build with other people"]));
   it("skips booking a call when only sharing", () => expect(flowForGoal("share")).not.toContain("call"));
+  it("keeps collaboration separate from Rhozeland support calls", () => expect(flowForGoal("collaborate")).not.toContain("call"));
   it("skips booking a call for a project that already has a coin", () => expect(flowForGoal("coin_existing")).not.toContain("call"));
   it("offers a call when booking Rhozeland", () => expect(flowForGoal("book")).toContain("call"));
   it("preselects pasting a coin for existing coins", () => expect(goalDefaults("coin_existing").coin).toBe("own"));

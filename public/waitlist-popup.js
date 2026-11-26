@@ -9,7 +9,8 @@
   var FEATURES = [
     ['Find Work', 'Open calls and creator listings.'],
     ['School', 'Learn the craft, project by project.'],
-    ['Database', 'Find collaborators in the network.']
+    ['Database', 'Find collaborators in the network.'],
+    ['Turn your project into a coin', 'Launch a coin connected to your project.']
   ];
   var ROLES = [['artist','Artist'],['brand','Brand'],['creative','Creative for hire'],['fan','Fan']];
   function remember(joined){ try { localStorage.setItem(KEY, JSON.stringify({ at: Date.now(), joined: !!joined })); } catch(e) {} }

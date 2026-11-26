@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { waitlistSchema, visibleCount } from './logic';
 import { Shell } from '@/create/shared';
 import './waitlist.css';
-const upcoming = [['Find Work','Open calls and creator listings.'],['School','Learn the craft, project by project.'],['Database','Find collaborators in the network.']] as const;
+const upcoming = [['Find Work','Open calls and creator listings.'],['School','Learn the craft, project by project.'],['Database','Find collaborators in the network.'],['Turn your project into a coin','Launch a coin connected to your project.']] as const;
 const roles = [['artist','Artist'],['brand','Brand'],['creative','Creative for hire'],['fan','Fan']] as const;
 export default function WaitlistPage(){
  const [email,setEmail]=useState(''),[role,setRole]=useState(''),[project,setProject]=useState('');

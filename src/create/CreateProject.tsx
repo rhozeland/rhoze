@@ -400,6 +400,7 @@ export default function CreateProject() {
     const d = goalDefaults(g);
     if (d.coin) setCoinChoice(d.coin);
     if (d.rhozeland) setMakers((ms) => (ms.includes("rhozeland") ? ms : [...ms, "rhozeland"]));
+    setIdeaIndex(1);
   };
   const toggleMaker = (id: string) => setMakers((ms) => (ms.includes(id) ? ms.filter((x) => x !== id) : [...ms, id]));
 
@@ -628,7 +629,6 @@ export default function CreateProject() {
               </button>
             ); })}
           </div>
-          <div className="rzm-actions rzm-goal-actions"><Button variant="outline" className="rz-btn pri" disabled={!goal} onClick={goNext}>Continue <ArrowRight size={14} /></Button></div>
         </>}
 
         {stepKey === "idea" && ideaIndex === 1 && <>
